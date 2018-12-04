@@ -17,7 +17,7 @@ class ImageUrl(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. Publicly reachable URL of an image
+    :param url: Required. Publicly reachable URL of an image.
     :type url: str
     """
 

@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class FaceRectangle(Model):
     """An object describing face rectangle.
 
-    :param left: X-coordinate of the top left point of the face.
+    :param left: X-coordinate of the top left point of the face, in pixels.
     :type left: int
-    :param top: Y-coordinate of the top left point of the face.
+    :param top: Y-coordinate of the top left point of the face, in pixels.
     :type top: int
-    :param width: Width measured from the top-left point of the face.
+    :param width: Width measured from the top-left point of the face, in
+     pixels.
     :type width: int
-    :param height: Height measured from the top-left point of the face.
+    :param height: Height measured from the top-left point of the face, in
+     pixels.
     :type height: int
     """
 

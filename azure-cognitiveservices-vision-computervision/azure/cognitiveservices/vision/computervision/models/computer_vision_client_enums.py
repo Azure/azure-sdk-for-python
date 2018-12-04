@@ -18,40 +18,12 @@ class Gender(str, Enum):
     female = "Female"
 
 
-class ComputerVisionErrorCodes(str, Enum):
-
-    invalid_image_url = "InvalidImageUrl"
-    invalid_image_format = "InvalidImageFormat"
-    invalid_image_size = "InvalidImageSize"
-    not_supported_visual_feature = "NotSupportedVisualFeature"
-    not_supported_image = "NotSupportedImage"
-    invalid_details = "InvalidDetails"
-    not_supported_language = "NotSupportedLanguage"
-    bad_argument = "BadArgument"
-    failed_to_process = "FailedToProcess"
-    timeout = "Timeout"
-    internal_server_error = "InternalServerError"
-    unspecified = "Unspecified"
-    storage_exception = "StorageException"
-
-
 class TextOperationStatusCodes(str, Enum):
 
     not_started = "Not Started"
     running = "Running"
     failed = "Failed"
     succeeded = "Succeeded"
-
-
-class VisualFeatureTypes(str, Enum):
-
-    image_type = "ImageType"
-    faces = "Faces"
-    adult = "Adult"
-    categories = "Categories"
-    color = "Color"
-    tags = "Tags"
-    description = "Description"
 
 
 class OcrLanguages(str, Enum):
@@ -83,6 +55,18 @@ class OcrLanguages(str, Enum):
     sr_cyrl = "sr-Cyrl"
     sr_latn = "sr-Latn"
     sk = "sk"
+
+
+class VisualFeatureTypes(str, Enum):
+
+    image_type = "ImageType"
+    faces = "Faces"
+    adult = "Adult"
+    categories = "Categories"
+    color = "Color"
+    tags = "Tags"
+    description = "Description"
+    objects = "Objects"
 
 
 class TextRecognitionMode(str, Enum):

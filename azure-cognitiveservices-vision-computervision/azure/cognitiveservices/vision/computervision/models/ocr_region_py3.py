@@ -23,7 +23,7 @@ class OcrRegion(Model):
      according to the detected text angle (see textAngle property), with the
      origin at the top-left corner, and the y-axis pointing down.
     :type bounding_box: str
-    :param lines:
+    :param lines: An array of recognized lines of text.
     :type lines:
      list[~azure.cognitiveservices.vision.computervision.models.OcrLine]
     """

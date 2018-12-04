@@ -17,7 +17,8 @@ class LandmarksModel(Model):
 
     :param name: Name of the landmark.
     :type name: str
-    :param confidence: Confidence level for the landmark recognition.
+    :param confidence: Confidence level for the landmark recognition as a
+     value ranging from 0 to 1.
     :type confidence: float
     """
 
