@@ -34,10 +34,10 @@ class ArmDisasterRecovery(Resource):
      be replicated.
     :vartype pending_replication_operations_count: long
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub
-     namespace name, which is part of GEO DR pairning
+     namespace name, which is part of GEO DR pairing
     :type partner_namespace: str
     :param alternate_name: Primary/Secondary eventhub namespace name, which is
-     part of GEO DR pairning
+     part of GEO DR pairing
     :type alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or
      'PrimaryNotReplicating' or 'Secondary'. Possible values include:

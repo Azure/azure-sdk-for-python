@@ -17,7 +17,7 @@ class CheckNameAvailability(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Name to check the namespce name availability
+    :param name: Required. The Name to check the namespace name availability
      and The namespace name can contain only letters, numbers, and hyphens. The
      namespace must start with a letter, and it must end with a letter or
      number.

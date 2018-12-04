@@ -163,7 +163,7 @@ class MigrationConfigsOperations(object):
 
     def create_and_start_migration(
             self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates Migration configuration and starts migration of enties from
+        """Creates Migration configuration and starts migration of entities from
         Standard to Premium namespace.
 
         :param resource_group_name: Name of the Resource group within the
@@ -340,7 +340,7 @@ class MigrationConfigsOperations(object):
     def complete_migration(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """This operation Completes Migration of entities by pointing the
-        connection strings to Premium namespace and any enties created after
+        connection strings to Premium namespace and any entities created after
         the operation will be under Premium Namespace. CompleteMigration
         operation will fail when entity migration is in-progress.
 

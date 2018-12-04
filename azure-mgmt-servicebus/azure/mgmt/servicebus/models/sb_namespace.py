@@ -30,7 +30,7 @@ class SBNamespace(TrackedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param sku: Porperties of Sku
+    :param sku: Properties of Sku
     :type sku: ~azure.mgmt.servicebus.models.SBSku
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
