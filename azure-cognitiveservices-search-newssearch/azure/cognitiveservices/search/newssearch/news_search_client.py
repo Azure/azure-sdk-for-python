@@ -16,52 +16,60 @@ from .operations.news_operations import NewsOperations
 from . import models
 
 
-class NewsSearchAPIConfiguration(Configuration):
-    """Configuration for NewsSearchAPI
+class NewsSearchClientConfiguration(Configuration):
+    """Configuration for NewsSearchClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: "https://westus.api.cognitive.microsoft.com",
+     "https://api.cognitive.microsoft.com").
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, endpoint, credentials):
 
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
+        base_url = '{Endpoint}/bing/v7.0'
 
-        super(NewsSearchAPIConfiguration, self).__init__(base_url)
+        super(NewsSearchClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-search-newssearch/{}'.format(VERSION))
 
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class NewsSearchAPI(SDKClient):
+class NewsSearchClient(SDKClient):
     """The News Search API lets you send a search query to Bing and get back a list of news that are relevant to the search query. This section provides technical details about the query parameters and headers that you use to request news and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the web for news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
     :ivar config: Configuration for client.
-    :vartype config: NewsSearchAPIConfiguration
+    :vartype config: NewsSearchClientConfiguration
 
     :ivar news: News operations
     :vartype news: azure.cognitiveservices.search.newssearch.operations.NewsOperations
 
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: "https://westus.api.cognitive.microsoft.com",
+     "https://api.cognitive.microsoft.com").
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, endpoint, credentials):
 
-        self.config = NewsSearchAPIConfiguration(credentials, base_url)
-        super(NewsSearchAPI, self).__init__(self.config.credentials, self.config)
+        self.config = NewsSearchClientConfiguration(endpoint, credentials)
+        super(NewsSearchClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

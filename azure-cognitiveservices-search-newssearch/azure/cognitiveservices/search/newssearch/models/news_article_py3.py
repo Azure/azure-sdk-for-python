@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .article import Article
+from .article_py3 import Article
 
 
 class NewsArticle(Article):
