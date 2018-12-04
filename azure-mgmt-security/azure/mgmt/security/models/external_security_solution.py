@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class ExternalSecuritySolution(Model):
     """Represents a security solution external to Azure Security Center which
-    sends information to an OMS workspace and whos data is displayed by Azure
+    sends information to an OMS workspace and whose data is displayed by Azure
     Security Center.
 
     You probably want to use the sub-classes and not this class directly. Known
