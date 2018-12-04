@@ -12,11 +12,13 @@ jobs:
     matrix:
       Python_27:
         python.version: '2.7'
+      Python_34:
+        python.version: '3.4'
       Python_35:
         python.version: '3.5'
       Python_36:
         python.version: '3.6'
-    maxParallel: 3
+    maxParallel: 4
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'

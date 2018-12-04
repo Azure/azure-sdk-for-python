@@ -1,0 +1,26 @@
+jobs:
+- job: Special Python Distro Tests
+  dependsOn:
+  - 'Publish'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: |
+     mkdir local_install
+     cd local_install
+     
+     wget https://s3.amazonaws.com/travis-python-archives/binaries/ubuntu/14.04/x86_64/pypy3.5-5.8.0.tar.bz2
+     tar -xjf pypy3.5-5.8.0.tar.bz2
+     
+    displayName: 'Install and Activate pypy Python'
+    continueOnError: true
+
+  - script: '$(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 scripts/dev_setup.py'
+    displayName: 'Setup Tests'
+    continueOnError: true
+
+  - script: |
+     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest . --ignore=local_install
+     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
+    displayName: 'Execute Tests'
+    continueOnError: true
