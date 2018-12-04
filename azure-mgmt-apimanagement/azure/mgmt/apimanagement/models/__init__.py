@@ -73,6 +73,9 @@ try:
     from .backend_reconnect_contract_py3 import BackendReconnectContract
     from .certificate_contract_py3 import CertificateContract
     from .certificate_create_or_update_parameters_py3 import CertificateCreateOrUpdateParameters
+    from .resource_sku_py3 import ResourceSku
+    from .resource_sku_capacity_py3 import ResourceSkuCapacity
+    from .resource_sku_result_py3 import ResourceSkuResult
     from .certificate_information_py3 import CertificateInformation
     from .certificate_configuration_py3 import CertificateConfiguration
     from .hostname_configuration_py3 import HostnameConfiguration
@@ -222,6 +225,9 @@ except (SyntaxError, ImportError):
     from .backend_reconnect_contract import BackendReconnectContract
     from .certificate_contract import CertificateContract
     from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
+    from .resource_sku import ResourceSku
+    from .resource_sku_capacity import ResourceSkuCapacity
+    from .resource_sku_result import ResourceSkuResult
     from .certificate_information import CertificateInformation
     from .certificate_configuration import CertificateConfiguration
     from .hostname_configuration import HostnameConfiguration
@@ -324,6 +330,7 @@ from .authorization_server_contract_paged import AuthorizationServerContractPage
 from .backend_contract_paged import BackendContractPaged
 from .certificate_contract_paged import CertificateContractPaged
 from .operation_paged import OperationPaged
+from .resource_sku_result_paged import ResourceSkuResultPaged
 from .api_management_service_resource_paged import ApiManagementServiceResourcePaged
 from .email_template_contract_paged import EmailTemplateContractPaged
 from .group_contract_paged import GroupContractPaged
@@ -354,8 +361,9 @@ from .api_management_client_enums import (
     ClientAuthenticationMethod,
     BearerTokenSendingMethod,
     BackendProtocol,
-    HostnameType,
     SkuType,
+    ResourceSkuCapacityScaleType,
+    HostnameType,
     VirtualNetworkType,
     NameAvailabilityReason,
     GroupType,
@@ -437,6 +445,9 @@ __all__ = [
     'BackendReconnectContract',
     'CertificateContract',
     'CertificateCreateOrUpdateParameters',
+    'ResourceSku',
+    'ResourceSkuCapacity',
+    'ResourceSkuResult',
     'CertificateInformation',
     'CertificateConfiguration',
     'HostnameConfiguration',
@@ -539,6 +550,7 @@ __all__ = [
     'BackendContractPaged',
     'CertificateContractPaged',
     'OperationPaged',
+    'ResourceSkuResultPaged',
     'ApiManagementServiceResourcePaged',
     'EmailTemplateContractPaged',
     'GroupContractPaged',
@@ -568,8 +580,9 @@ __all__ = [
     'ClientAuthenticationMethod',
     'BearerTokenSendingMethod',
     'BackendProtocol',
-    'HostnameType',
     'SkuType',
+    'ResourceSkuCapacityScaleType',
+    'HostnameType',
     'VirtualNetworkType',
     'NameAvailabilityReason',
     'GroupType',

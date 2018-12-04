@@ -113,20 +113,27 @@ class BackendProtocol(str, Enum):
     soap = "soap"  #: The Backend is a SOAP service.
 
 
-class HostnameType(str, Enum):
-
-    proxy = "Proxy"
-    portal = "Portal"
-    management = "Management"
-    scm = "Scm"
-
-
 class SkuType(str, Enum):
 
     developer = "Developer"  #: Developer SKU of Api Management.
     standard = "Standard"  #: Standard SKU of Api Management.
     premium = "Premium"  #: Premium SKU of Api Management.
     basic = "Basic"  #: Basic SKU of Api Management.
+
+
+class ResourceSkuCapacityScaleType(str, Enum):
+
+    automatic = "automatic"
+    manual = "manual"
+    none = "none"
+
+
+class HostnameType(str, Enum):
+
+    proxy = "Proxy"
+    portal = "Portal"
+    management = "Management"
+    scm = "Scm"
 
 
 class VirtualNetworkType(str, Enum):
