@@ -213,12 +213,12 @@ class VolumesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [201, 202]:
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             deserialized = self._deserialize('Volume', response)
 
         if raw:
