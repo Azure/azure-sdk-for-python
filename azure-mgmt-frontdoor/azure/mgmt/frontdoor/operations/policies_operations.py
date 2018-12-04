@@ -169,7 +169,7 @@ class PoliciesOperations(object):
 
     def create_or_update(
             self, resource_group_name, policy_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or update policy with specified ruleset name within a resource
+        """Creates or update policy with specified rule set name within a resource
         group.
 
         :param resource_group_name: The name of the resource group.

@@ -17,7 +17,7 @@ class AzureManagedOverrideRuleGroup(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param rule_group_override: Required. Describes overrideruleGroup.
+    :param rule_group_override: Required. Describes override rule group.
      Possible values include: 'SqlInjection', 'XSS'
     :type rule_group_override: str or
      ~azure.mgmt.frontdoor.models.RuleGroupOverride
