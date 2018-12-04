@@ -93,7 +93,7 @@ class ResourcesOperations(object):
         on the groups until the move completes. .
 
         :param source_resource_group_name: The name of the resource group
-         containing the rsources to move.
+         containing the resources to move.
         :type source_resource_group_name: str
         :param resources: The IDs of the resources.
         :type resources: list[str]
