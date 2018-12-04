@@ -46,7 +46,7 @@ class RequestReportRecordContract(Model):
     :param cache: Specifies if response cache was involved in generating the
      response. If the value is none, the cache was not used. If the value is
      hit, cached response was returned. If the value is miss, the cache was
-     used but lookup resulted in a miss and request was fullfilled by the
+     used but lookup resulted in a miss and request was fulfilled by the
      backend.
     :type cache: str
     :param api_time: The total time it took to process this request.

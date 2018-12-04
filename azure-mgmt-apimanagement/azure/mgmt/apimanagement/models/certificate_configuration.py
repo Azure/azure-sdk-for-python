@@ -23,7 +23,7 @@ class CertificateConfiguration(Model):
     :param certificate_password: Certificate Password.
     :type certificate_password: str
     :param store_name: Required. The
-     System.Security.Cryptography.x509certificates.Storename certificate store
+     System.Security.Cryptography.x509certificates.StoreName certificate store
      location. Only Root and CertificateAuthority are valid locations. Possible
      values include: 'CertificateAuthority', 'Root'
     :type store_name: str or ~azure.mgmt.apimanagement.models.enum

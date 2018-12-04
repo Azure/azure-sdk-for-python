@@ -25,7 +25,7 @@ class BackendReconnectContract(Resource):
     :ivar type: Resource type for API Management resource.
     :vartype type: str
     :param after: Duration in ISO8601 format after which reconnect will be
-     initiated. Minimum duration of the Reconect is PT2M.
+     initiated. Minimum duration of the Reconnect is PT2M.
     :type after: timedelta
     """
 
