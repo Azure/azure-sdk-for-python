@@ -20,7 +20,7 @@ class UpgradeNotification(Model):
 
     :ivar name: Name of upgrade notification.
     :vartype name: str
-    :ivar timestamp: Timestamp when upgrade notification occured.
+    :ivar timestamp: Timestamp when upgrade notification occurred.
     :vartype timestamp: datetime
     :ivar upsell_notification: Details about this upgrade notification
     :vartype upsell_notification: dict[str, str]
