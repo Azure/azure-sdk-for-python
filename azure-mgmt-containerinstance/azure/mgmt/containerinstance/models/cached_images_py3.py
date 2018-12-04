@@ -17,6 +17,8 @@ class CachedImages(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param id: The resource Id of the cached image.
+    :type id: str
     :param os_type: Required. The OS type of the cached image.
     :type os_type: str
     :param image: Required. The cached image name.
@@ -29,11 +31,13 @@ class CachedImages(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'image': {'key': 'image', 'type': 'str'},
     }
 
-    def __init__(self, *, os_type: str, image: str, **kwargs) -> None:
+    def __init__(self, *, os_type: str, image: str, id: str=None, **kwargs) -> None:
         super(CachedImages, self).__init__(**kwargs)
+        self.id = id
         self.os_type = os_type
         self.image = image
