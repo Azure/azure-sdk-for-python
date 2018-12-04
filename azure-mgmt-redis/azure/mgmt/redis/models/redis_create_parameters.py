@@ -35,7 +35,7 @@ class RedisCreateParameters(Model):
     :type sku: ~azure.mgmt.redis.models.Sku
     :param subnet_id: The full resource ID of a subnet in a virtual network to
      deploy the Redis cache in. Example format:
-     /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
     :type subnet_id: str
     :param static_ip: Static IP address. Required when deploying a Redis cache
      inside an existing Azure Virtual Network.
