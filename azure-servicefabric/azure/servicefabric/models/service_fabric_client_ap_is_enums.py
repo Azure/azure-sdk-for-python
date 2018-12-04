@@ -958,7 +958,7 @@ class AutoScalingTriggerKind(str, Enum):
 
 class NodeStatusFilter(str, Enum):
 
-    default = "default"  #: This filter value will match all of the nodes excepts the ones with with status as Unknown or Removed.
+    default = "default"  #: This filter value will match all of the nodes excepts the ones with status as Unknown or Removed.
     all = "all"  #: This filter value will match all of the nodes.
     up = "up"  #: This filter value will match nodes that are Up.
     down = "down"  #: This filter value will match nodes that are Down.
