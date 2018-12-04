@@ -39,7 +39,7 @@ class CopyActivity(ExecutionActivity):
     :type source: ~azure.mgmt.datafactory.models.CopySource
     :param sink: Required. Copy activity sink.
     :type sink: ~azure.mgmt.datafactory.models.CopySink
-    :param translator: Copy activity translator. If not specified, tabular
+    :param translator: Copy activity translator. If not specificed, tabular
      translator is used.
     :type translator: ~azure.mgmt.datafactory.models.CopyTranslator
     :param enable_staging: Specifies whether to copy data via an interim

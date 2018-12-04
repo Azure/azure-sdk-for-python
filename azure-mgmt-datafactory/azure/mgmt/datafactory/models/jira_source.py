@@ -13,7 +13,7 @@ from .copy_source import CopySource
 
 
 class JiraSource(CopySource):
-    """A copy activity Jira Service source.
+    """A copy activity Jira Serivce source.
 
     All required parameters must be populated in order to send to Azure.
 

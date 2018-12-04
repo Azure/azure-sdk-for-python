@@ -37,18 +37,9 @@ class AzureBlobStorageLinkedService(LinkedService):
      with sasUri, serviceEndpoint property. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param account_key: The Azure key vault secret reference of accountKey in
-     connection string.
-    :type account_key:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Blob Storage resource. It is mutually
-     exclusive with connectionString, serviceEndpoint property. Type: string,
-     SecureString or AzureKeyVaultSecretReference.
-    :type sas_uri: object
-    :param sas_token: The Azure key vault secret reference of sasToken in sas
-     uri.
-    :type sas_token:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+     exclusive with connectionString, serviceEndpoint property.
+    :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
     :param service_endpoint: Blob service endpoint of the Azure Blob Storage
      resource. It is mutually exclusive with connectionString, sasUri property.
     :type service_endpoint: str
@@ -80,9 +71,7 @@ class AzureBlobStorageLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
-        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'object'},
-        'sas_token': {'key': 'typeProperties.sasToken', 'type': 'AzureKeyVaultSecretReference'},
+        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
         'service_endpoint': {'key': 'typeProperties.serviceEndpoint', 'type': 'str'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
@@ -93,9 +82,7 @@ class AzureBlobStorageLinkedService(LinkedService):
     def __init__(self, **kwargs):
         super(AzureBlobStorageLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
-        self.account_key = kwargs.get('account_key', None)
         self.sas_uri = kwargs.get('sas_uri', None)
-        self.sas_token = kwargs.get('sas_token', None)
         self.service_endpoint = kwargs.get('service_endpoint', None)
         self.service_principal_id = kwargs.get('service_principal_id', None)
         self.service_principal_key = kwargs.get('service_principal_key', None)

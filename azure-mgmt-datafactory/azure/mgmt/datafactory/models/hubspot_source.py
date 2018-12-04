@@ -13,7 +13,7 @@ from .copy_source import CopySource
 
 
 class HubspotSource(CopySource):
-    """A copy activity Hubspot Service source.
+    """A copy activity Hubspot Serivce source.
 
     All required parameters must be populated in order to send to Azure.
 

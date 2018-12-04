@@ -13,7 +13,7 @@ from .linked_service_py3 import LinkedService
 
 
 class HubspotLinkedService(LinkedService):
-    """Hubspot Service linked service.
+    """Hubspot Serivce linked service.
 
     All required parameters must be populated in order to send to Azure.
 

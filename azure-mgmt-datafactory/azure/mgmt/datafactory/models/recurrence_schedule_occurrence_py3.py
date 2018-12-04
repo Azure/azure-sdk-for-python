@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RecurrenceScheduleOccurrence(Model):
-    """The recurrence schedule occurrence.
+    """The recurrence schedule occurence.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection

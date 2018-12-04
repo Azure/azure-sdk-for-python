@@ -13,7 +13,7 @@ from .linked_service import LinkedService
 
 
 class XeroLinkedService(LinkedService):
-    """Xero Service linked service.
+    """Xero Serivce linked service.
 
     All required parameters must be populated in order to send to Azure.
 

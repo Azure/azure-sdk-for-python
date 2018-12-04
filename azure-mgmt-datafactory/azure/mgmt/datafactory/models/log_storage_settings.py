@@ -12,27 +12,35 @@
 from msrest.serialization import Model
 
 
-class RecurrenceScheduleOccurrence(Model):
-    """The recurrence schedule occurence.
+class LogStorageSettings(Model):
+    """Log storage settings.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param day: The day of the week. Possible values include: 'Sunday',
-     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    :type day: str or ~azure.mgmt.datafactory.models.DayOfWeek
-    :param occurrence: The occurrence.
-    :type occurrence: int
+    :param linked_service_name: Required. Log storage linked service
+     reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param path: The path to storage for storing detailed logs of activity
+     execution. Type: string (or Expression with resultType string).
+    :type path: object
     """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+    }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'day': {'key': 'day', 'type': 'DayOfWeek'},
-        'occurrence': {'key': 'occurrence', 'type': 'int'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'path': {'key': 'path', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(RecurrenceScheduleOccurrence, self).__init__(**kwargs)
+        super(LogStorageSettings, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.day = kwargs.get('day', None)
-        self.occurrence = kwargs.get('occurrence', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.path = kwargs.get('path', None)

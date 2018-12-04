@@ -37,18 +37,9 @@ class AzureStorageLinkedService(LinkedService):
      with sasUri property. Type: string, SecureString or
      AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param account_key: The Azure key vault secret reference of accountKey in
-     connection string.
-    :type account_key:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
-     exclusive with connectionString property. Type: string, SecureString or
-     AzureKeyVaultSecretReference.
-    :type sas_uri: object
-    :param sas_token: The Azure key vault secret reference of sasToken in sas
-     uri.
-    :type sas_token:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+     exclusive with connectionString property.
+    :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -67,17 +58,13 @@ class AzureStorageLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
-        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'object'},
-        'sas_token': {'key': 'typeProperties.sasToken', 'type': 'AzureKeyVaultSecretReference'},
+        'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, account_key=None, sas_uri=None, sas_token=None, encrypted_credential: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, sas_uri=None, encrypted_credential: str=None, **kwargs) -> None:
         super(AzureStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
-        self.account_key = account_key
         self.sas_uri = sas_uri
-        self.sas_token = sas_token
         self.encrypted_credential = encrypted_credential
         self.type = 'AzureStorage'

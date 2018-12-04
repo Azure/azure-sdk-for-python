@@ -36,10 +36,6 @@ class CouchbaseLinkedService(LinkedService):
     :param connection_string: An ODBC connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param cred_string: The Azure key vault secret reference of credString in
-     connection string.
-    :type cred_string:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -58,13 +54,11 @@ class CouchbaseLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'cred_string': {'key': 'typeProperties.credString', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(CouchbaseLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
-        self.cred_string = kwargs.get('cred_string', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Couchbase'

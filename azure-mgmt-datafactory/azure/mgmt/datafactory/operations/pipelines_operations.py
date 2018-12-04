@@ -322,8 +322,8 @@ class PipelinesOperations(object):
         :param pipeline_name: The pipeline name.
         :type pipeline_name: str
         :param reference_pipeline_run_id: The pipeline run identifier. If run
-         ID is specified the parameters of the specified run will be used to
-         create a new run.
+         ID is specified the parameters of the the specified run will be used
+         to create a new run.
         :type reference_pipeline_run_id: str
         :param parameters: Parameters of the pipeline run. These parameters
          will be used only if the runId is not specified.

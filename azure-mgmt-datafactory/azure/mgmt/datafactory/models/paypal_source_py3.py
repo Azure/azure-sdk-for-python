@@ -13,7 +13,7 @@ from .copy_source_py3 import CopySource
 
 
 class PaypalSource(CopySource):
-    """A copy activity Paypal Service source.
+    """A copy activity Paypal Serivce source.
 
     All required parameters must be populated in order to send to Azure.
 
