@@ -228,8 +228,8 @@ class ResourceLinksOperations(object):
         """Gets all the linked resources for the subscription.
 
         :param filter: The filter to apply on the list resource links
-         operation. The supported filter for list resource links is targetid.
-         For example, $filter=targetid eq {value}
+         operation. The supported filter for list resource links is targetId.
+         For example, $filter=targetId eq {value}
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
