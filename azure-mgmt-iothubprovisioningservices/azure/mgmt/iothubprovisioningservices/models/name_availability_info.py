@@ -21,7 +21,7 @@ class NameAvailabilityInfo(Model):
      include: 'Invalid', 'AlreadyExists'
     :type reason: str or
      ~azure.mgmt.iothubprovisioningservices.models.NameUnavailabilityReason
-    :param message: message containing a etailed reason name is unavailable
+    :param message: message containing a detailed reason name is unavailable
     :type message: str
     """
 

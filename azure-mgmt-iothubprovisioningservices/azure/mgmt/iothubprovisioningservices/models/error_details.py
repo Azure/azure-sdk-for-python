@@ -37,10 +37,10 @@ class ErrorDetails(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
-        'http_status_code': {'key': 'HttpStatusCode', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
-        'details': {'key': 'Details', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'http_status_code': {'key': 'httpStatusCode', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'str'},
     }
 
     def __init__(self):
