@@ -250,7 +250,7 @@ class SecretValueOperations(object):
 
     def list(
             self, resource_group_name, secret_resource_name, custom_headers=None, raw=False, **operation_config):
-        """List names of all values of the the specified secret resource.
+        """List names of all values of the specified secret resource.
 
         Gets information about all secret value resources of the specified
         secret resource. The information includes the names of the secret value
