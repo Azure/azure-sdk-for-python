@@ -94,6 +94,8 @@ class JobAddParameter(Model):
     :param uses_task_dependencies: Whether tasks in the job can define
      dependencies on each other. The default is false.
     :type uses_task_dependencies: bool
+    :param network_configuration: The network configuration for the job.
+    :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
     """
 
     _validation = {
@@ -115,6 +117,7 @@ class JobAddParameter(Model):
         'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -132,3 +135,4 @@ class JobAddParameter(Model):
         self.on_task_failure = kwargs.get('on_task_failure', None)
         self.metadata = kwargs.get('metadata', None)
         self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)
+        self.network_configuration = kwargs.get('network_configuration', None)

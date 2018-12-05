@@ -21,9 +21,6 @@ class VirtualMachineConfiguration(Model):
     :param image_reference: Required. A reference to the Azure Virtual
      Machines Marketplace image or the custom Virtual Machine image to use.
     :type image_reference: ~azure.batch.models.ImageReference
-    :param os_disk: Settings for the operating system disk of the Virtual
-     Machine.
-    :type os_disk: ~azure.batch.models.OSDisk
     :param node_agent_sku_id: Required. The SKU of the Batch node agent to be
      provisioned on compute nodes in the pool. The Batch node agent is a
      program that runs on each node in the pool, and provides the
@@ -36,7 +33,7 @@ class VirtualMachineConfiguration(Model):
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the imageReference
-     or osDisk property specifies a Linux OS image.
+     property specifies a Linux OS image.
     :type windows_configuration: ~azure.batch.models.WindowsConfiguration
     :param data_disks: The configuration for data disks attached to the
      comptue nodes in the pool. This property must be specified if the compute
@@ -73,7 +70,6 @@ class VirtualMachineConfiguration(Model):
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
         'node_agent_sku_id': {'key': 'nodeAgentSKUId', 'type': 'str'},
         'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
@@ -84,7 +80,6 @@ class VirtualMachineConfiguration(Model):
     def __init__(self, **kwargs):
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
         self.node_agent_sku_id = kwargs.get('node_agent_sku_id', None)
         self.windows_configuration = kwargs.get('windows_configuration', None)
         self.data_disks = kwargs.get('data_disks', None)

@@ -92,6 +92,8 @@ class CloudJob(Model):
      default is noaction. Possible values include: 'noAction',
      'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
+    :param network_configuration: The network configuration for the job.
+    :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
@@ -126,12 +128,13 @@ class CloudJob(Model):
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'execution_info': {'key': 'executionInfo', 'type': 'JobExecutionInformation'},
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
     }
 
-    def __init__(self, *, id: str=None, display_name: str=None, uses_task_dependencies: bool=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority: int=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, execution_info=None, stats=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, display_name: str=None, uses_task_dependencies: bool=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority: int=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, metadata=None, execution_info=None, stats=None, **kwargs) -> None:
         super(CloudJob, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -153,6 +156,7 @@ class CloudJob(Model):
         self.pool_info = pool_info
         self.on_all_tasks_complete = on_all_tasks_complete
         self.on_task_failure = on_task_failure
+        self.network_configuration = network_configuration
         self.metadata = metadata
         self.execution_info = execution_info
         self.stats = stats

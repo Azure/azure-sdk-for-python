@@ -49,6 +49,8 @@ class JobSpecification(Model):
      resource file download error. The default is noaction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
+    :param network_configuration: The network configuration for the job.
+    :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
     :param constraints: The execution constraints for jobs created under this
      schedule.
     :type constraints: ~azure.batch.models.JobConstraints
@@ -100,6 +102,7 @@ class JobSpecification(Model):
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
         'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
@@ -116,6 +119,7 @@ class JobSpecification(Model):
         self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)
         self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
         self.on_task_failure = kwargs.get('on_task_failure', None)
+        self.network_configuration = kwargs.get('network_configuration', None)
         self.constraints = kwargs.get('constraints', None)
         self.job_manager_task = kwargs.get('job_manager_task', None)
         self.job_preparation_task = kwargs.get('job_preparation_task', None)

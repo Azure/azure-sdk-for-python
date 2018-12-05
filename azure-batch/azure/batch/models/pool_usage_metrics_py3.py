@@ -35,12 +35,6 @@ class PoolUsageMetrics(Model):
     :param total_core_hours: Required. The total core hours used in the pool
      during this aggregation interval.
     :type total_core_hours: float
-    :param data_ingress_gi_b: Required. The cross data center network ingress
-     to the pool during this interval, in GiB.
-    :type data_ingress_gi_b: float
-    :param data_egress_gi_b: Required. The cross data center network egress
-     from the pool during this interval, in GiB.
-    :type data_egress_gi_b: float
     """
 
     _validation = {
@@ -49,8 +43,6 @@ class PoolUsageMetrics(Model):
         'end_time': {'required': True},
         'vm_size': {'required': True},
         'total_core_hours': {'required': True},
-        'data_ingress_gi_b': {'required': True},
-        'data_egress_gi_b': {'required': True},
     }
 
     _attribute_map = {
@@ -59,16 +51,12 @@ class PoolUsageMetrics(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'total_core_hours': {'key': 'totalCoreHours', 'type': 'float'},
-        'data_ingress_gi_b': {'key': 'dataIngressGiB', 'type': 'float'},
-        'data_egress_gi_b': {'key': 'dataEgressGiB', 'type': 'float'},
     }
 
-    def __init__(self, *, pool_id: str, start_time, end_time, vm_size: str, total_core_hours: float, data_ingress_gi_b: float, data_egress_gi_b: float, **kwargs) -> None:
+    def __init__(self, *, pool_id: str, start_time, end_time, vm_size: str, total_core_hours: float, **kwargs) -> None:
         super(PoolUsageMetrics, self).__init__(**kwargs)
         self.pool_id = pool_id
         self.start_time = start_time
         self.end_time = end_time
         self.vm_size = vm_size
         self.total_core_hours = total_core_hours
-        self.data_ingress_gi_b = data_ingress_gi_b
-        self.data_egress_gi_b = data_egress_gi_b

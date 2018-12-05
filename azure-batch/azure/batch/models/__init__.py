@@ -28,6 +28,7 @@ try:
     from .node_file_py3 import NodeFile
     from .schedule_py3 import Schedule
     from .job_constraints_py3 import JobConstraints
+    from .job_network_configuration_py3 import JobNetworkConfiguration
     from .container_registry_py3 import ContainerRegistry
     from .task_container_settings_py3 import TaskContainerSettings
     from .resource_file_py3 import ResourceFile
@@ -39,6 +40,7 @@ try:
     from .auto_user_specification_py3 import AutoUserSpecification
     from .user_identity_py3 import UserIdentity
     from .linux_user_configuration_py3 import LinuxUserConfiguration
+    from .windows_user_configuration_py3 import WindowsUserConfiguration
     from .user_account_py3 import UserAccount
     from .task_constraints_py3 import TaskConstraints
     from .output_file_blob_container_destination_py3 import OutputFileBlobContainerDestination
@@ -53,7 +55,6 @@ try:
     from .certificate_reference_py3 import CertificateReference
     from .metadata_item_py3 import MetadataItem
     from .cloud_service_configuration_py3 import CloudServiceConfiguration
-    from .os_disk_py3 import OSDisk
     from .windows_configuration_py3 import WindowsConfiguration
     from .data_disk_py3 import DataDisk
     from .container_configuration_py3 import ContainerConfiguration
@@ -122,7 +123,6 @@ try:
     from .pool_evaluate_auto_scale_parameter_py3 import PoolEvaluateAutoScaleParameter
     from .pool_resize_parameter_py3 import PoolResizeParameter
     from .pool_update_properties_parameter_py3 import PoolUpdatePropertiesParameter
-    from .pool_upgrade_os_parameter_py3 import PoolUpgradeOSParameter
     from .pool_patch_parameter_py3 import PoolPatchParameter
     from .task_update_parameter_py3 import TaskUpdateParameter
     from .node_update_user_parameter_py3 import NodeUpdateUserParameter
@@ -150,7 +150,6 @@ try:
     from .pool_resize_options_py3 import PoolResizeOptions
     from .pool_stop_resize_options_py3 import PoolStopResizeOptions
     from .pool_update_properties_options_py3 import PoolUpdatePropertiesOptions
-    from .pool_upgrade_os_options_py3 import PoolUpgradeOsOptions
     from .pool_remove_nodes_options_py3 import PoolRemoveNodesOptions
     from .account_list_node_agent_skus_options_py3 import AccountListNodeAgentSkusOptions
     from .account_list_pool_node_counts_options_py3 import AccountListPoolNodeCountsOptions
@@ -230,6 +229,7 @@ except (SyntaxError, ImportError):
     from .node_file import NodeFile
     from .schedule import Schedule
     from .job_constraints import JobConstraints
+    from .job_network_configuration import JobNetworkConfiguration
     from .container_registry import ContainerRegistry
     from .task_container_settings import TaskContainerSettings
     from .resource_file import ResourceFile
@@ -241,6 +241,7 @@ except (SyntaxError, ImportError):
     from .auto_user_specification import AutoUserSpecification
     from .user_identity import UserIdentity
     from .linux_user_configuration import LinuxUserConfiguration
+    from .windows_user_configuration import WindowsUserConfiguration
     from .user_account import UserAccount
     from .task_constraints import TaskConstraints
     from .output_file_blob_container_destination import OutputFileBlobContainerDestination
@@ -255,7 +256,6 @@ except (SyntaxError, ImportError):
     from .certificate_reference import CertificateReference
     from .metadata_item import MetadataItem
     from .cloud_service_configuration import CloudServiceConfiguration
-    from .os_disk import OSDisk
     from .windows_configuration import WindowsConfiguration
     from .data_disk import DataDisk
     from .container_configuration import ContainerConfiguration
@@ -324,7 +324,6 @@ except (SyntaxError, ImportError):
     from .pool_evaluate_auto_scale_parameter import PoolEvaluateAutoScaleParameter
     from .pool_resize_parameter import PoolResizeParameter
     from .pool_update_properties_parameter import PoolUpdatePropertiesParameter
-    from .pool_upgrade_os_parameter import PoolUpgradeOSParameter
     from .pool_patch_parameter import PoolPatchParameter
     from .task_update_parameter import TaskUpdateParameter
     from .node_update_user_parameter import NodeUpdateUserParameter
@@ -352,7 +351,6 @@ except (SyntaxError, ImportError):
     from .pool_resize_options import PoolResizeOptions
     from .pool_stop_resize_options import PoolStopResizeOptions
     from .pool_update_properties_options import PoolUpdatePropertiesOptions
-    from .pool_upgrade_os_options import PoolUpgradeOsOptions
     from .pool_remove_nodes_options import PoolRemoveNodesOptions
     from .account_list_node_agent_skus_options import AccountListNodeAgentSkusOptions
     from .account_list_pool_node_counts_options import AccountListPoolNodeCountsOptions
@@ -434,12 +432,14 @@ from .batch_service_client_enums import (
     DependencyAction,
     AutoUserScope,
     ElevationLevel,
+    LoginMode,
     OutputFileUploadCondition,
     ComputeNodeFillType,
     CertificateStoreLocation,
     CertificateVisibility,
     CachingType,
     StorageAccountType,
+    DynamicVNetAssignmentScope,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
     PoolLifetimeOption,
@@ -485,6 +485,7 @@ __all__ = [
     'NodeFile',
     'Schedule',
     'JobConstraints',
+    'JobNetworkConfiguration',
     'ContainerRegistry',
     'TaskContainerSettings',
     'ResourceFile',
@@ -496,6 +497,7 @@ __all__ = [
     'AutoUserSpecification',
     'UserIdentity',
     'LinuxUserConfiguration',
+    'WindowsUserConfiguration',
     'UserAccount',
     'TaskConstraints',
     'OutputFileBlobContainerDestination',
@@ -510,7 +512,6 @@ __all__ = [
     'CertificateReference',
     'MetadataItem',
     'CloudServiceConfiguration',
-    'OSDisk',
     'WindowsConfiguration',
     'DataDisk',
     'ContainerConfiguration',
@@ -579,7 +580,6 @@ __all__ = [
     'PoolEvaluateAutoScaleParameter',
     'PoolResizeParameter',
     'PoolUpdatePropertiesParameter',
-    'PoolUpgradeOSParameter',
     'PoolPatchParameter',
     'TaskUpdateParameter',
     'NodeUpdateUserParameter',
@@ -607,7 +607,6 @@ __all__ = [
     'PoolResizeOptions',
     'PoolStopResizeOptions',
     'PoolUpdatePropertiesOptions',
-    'PoolUpgradeOsOptions',
     'PoolRemoveNodesOptions',
     'AccountListNodeAgentSkusOptions',
     'AccountListPoolNodeCountsOptions',
@@ -688,12 +687,14 @@ __all__ = [
     'DependencyAction',
     'AutoUserScope',
     'ElevationLevel',
+    'LoginMode',
     'OutputFileUploadCondition',
     'ComputeNodeFillType',
     'CertificateStoreLocation',
     'CertificateVisibility',
     'CachingType',
     'StorageAccountType',
+    'DynamicVNetAssignmentScope',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',
     'PoolLifetimeOption',
