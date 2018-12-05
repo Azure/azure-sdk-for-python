@@ -26,11 +26,11 @@ class ReportConfigDataset(Model):
      ~azure.mgmt.costmanagement.models.ReportConfigDatasetConfiguration
     :param aggregation: Dictionary of aggregation expression to use in the
      report. The key of each item in the dictionary is the alias for the
-     aggregated column. Report can have up to 2 aggregation clauses.
+     aggregated column. Report can have upto 2 aggregation clauses.
     :type aggregation: dict[str,
      ~azure.mgmt.costmanagement.models.ReportConfigAggregation]
     :param grouping: Array of group by expression to use in the report. Report
-     can have up to 2 group by clauses.
+     can have upto 2 group by clauses.
     :type grouping:
      list[~azure.mgmt.costmanagement.models.ReportConfigGrouping]
     :param filter: Has filter expression to use in the report.
