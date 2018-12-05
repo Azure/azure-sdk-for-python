@@ -20,7 +20,7 @@ class Resource(Model):
 
     :ivar id: Fully qualified resource Id for the resource.
     :vartype id: str
-    :ivar name: The name of the resouce.
+    :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the service - e.g.
      "Microsoft.SignalRService/SignalR"

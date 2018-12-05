@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class SignalRUsageName(Model):
     """Localizable String object containing the name and a localized value.
 
-    :param value: The indentifier of the usage.
+    :param value: The identifier of the usage.
     :type value: str
     :param localized_value: Localized name of the usage.
     :type localized_value: str
