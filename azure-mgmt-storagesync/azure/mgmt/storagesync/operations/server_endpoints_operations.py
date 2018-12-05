@@ -591,7 +591,7 @@ class ServerEndpointsOperations(object):
 
     def recall_action(
             self, resource_group_name, storage_sync_service_name, sync_group_name, server_endpoint_name, pattern=None, recall_path=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Recall a serverendpoint.
+        """Recall a server endpoint.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
