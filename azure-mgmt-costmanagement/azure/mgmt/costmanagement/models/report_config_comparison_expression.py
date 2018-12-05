@@ -20,7 +20,7 @@ class ReportConfigComparisonExpression(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the column to use in comparison.
+    :param name: Required. The name of the column to use in comaprison.
     :type name: str
     :ivar operator: Required. The operator to use for comparison. Default
      value: "In" .

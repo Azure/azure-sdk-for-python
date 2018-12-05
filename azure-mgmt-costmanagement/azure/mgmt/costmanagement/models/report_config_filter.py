@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ReportConfigFilter(Model):
     """The filter expression to be used in the report.
 
-    :param and_property: The logical "AND" expression. Must have at least 2
+    :param and_property: The logical "AND" expression. Must have atleast 2
      items.
     :type and_property:
      list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
-    :param or_property: The logical "OR" expression. Must have at least 2
+    :param or_property: The logical "OR" expression. Must have atleast 2
      items.
     :type or_property:
      list[~azure.mgmt.costmanagement.models.ReportConfigFilter]

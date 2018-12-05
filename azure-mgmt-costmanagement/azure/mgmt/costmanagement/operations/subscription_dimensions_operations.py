@@ -45,7 +45,7 @@ class SubscriptionDimensionsOperations(object):
          Supported operators are 'eq','lt', 'gt', 'le', 'ge'.
         :type filter: str
         :param expand: May be used to expand the properties/data within a
-         dimension category. By default, data is not included when listing
+         dimension dategory. By default, data is not included when listing
          dimensions.
         :type expand: str
         :param skiptoken: Skiptoken is only used if a previous operation
