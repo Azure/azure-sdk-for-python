@@ -12,15 +12,38 @@ jobs:
      wget https://s3.amazonaws.com/travis-python-archives/binaries/ubuntu/14.04/x86_64/pypy3.5-5.8.0.tar.bz2
      tar -xjf pypy3.5-5.8.0.tar.bz2
      
-    displayName: 'Install and Activate pypy Python'
-    continueOnError: true
+    displayName: 'Download PyPy Python'
+    continueOnError: false
 
   - script: '$(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 scripts/dev_setup.py'
     displayName: 'Setup Tests'
     continueOnError: true
 
   - script: |
-     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest . --ignore=local_install
      $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
     displayName: 'Execute Tests'
+    continueOnError: true
+
+  - powershell: |
+     $inputFilterSet="$(build_targeting_string)"
+     
+     if ($inputFilterSet -eq "")
+     {
+         $inputFilterSet = "azure-*"
+     }
+     
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+         $foldersToIterate = Get-ChildItem -Name -Recurse -Filter "$inputFilter"
+         $foldersToIterate = $foldersToIterate.foreach({"$(Build.SourcesDirectory)/$_/"})
+         $folderCombination = $foldersToIterate -join " "
+     
+         $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest $folderCombination --ignore=local_install 
+     }
+    displayName: 'Run Test Subset'
+    continueOnError: true
+
+  - script: |
+     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
+    displayName: 'Check Setup.py Files'
     continueOnError: true
