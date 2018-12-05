@@ -102,7 +102,7 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts'}
 
     def get(
             self, resource_group, account_name, custom_headers=None, raw=False, **operation_config):
@@ -163,7 +163,7 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
 
     def _create_or_update_initial(
@@ -201,12 +201,12 @@ class AccountsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [201, 202]:
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             deserialized = self._deserialize('NetAppAccount', response)
 
         if raw:
@@ -267,7 +267,7 @@ class AccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
 
     def _delete_initial(
@@ -345,7 +345,7 @@ class AccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
     def update(
             self, resource_group, account_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -414,4 +414,4 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}

@@ -28,15 +28,14 @@ class VolumePatch(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: object
-    :param name1: FileSystem name. FileSystem name
-    :type name1: str
     :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Basic', 'Standard', 'Premium'. Default value:
-     "Standard" .
+     Possible values include: 'Standard', 'Premium', 'Extreme'. Default value:
+     "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
-     a file system in bytes. This is a soft quota used for alerting only. Upper
-     limit is 100TB. Default value: 0 .
+     a file system in bytes. This is a soft quota used for alerting only.
+     Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
+     107374182400 .
     :type usage_threshold: long
     """
 
@@ -44,7 +43,7 @@ class VolumePatch(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'usage_threshold': {'maximum': 109951162777600, 'minimum': 0},
+        'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
     }
 
     _attribute_map = {
@@ -53,18 +52,16 @@ class VolumePatch(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
-        'name1': {'key': 'properties.name', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, name1: str=None, service_level="Standard", usage_threshold: int=0, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, service_level="Premium", usage_threshold: int=107374182400, **kwargs) -> None:
         super(VolumePatch, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
         self.type = None
         self.tags = tags
-        self.name1 = name1
         self.service_level = service_level
         self.usage_threshold = usage_threshold

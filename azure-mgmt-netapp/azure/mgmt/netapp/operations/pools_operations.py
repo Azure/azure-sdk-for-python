@@ -105,7 +105,7 @@ class PoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/pools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools'}
 
     def get(
             self, resource_group, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
@@ -169,7 +169,7 @@ class PoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/pools/{poolName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
 
     def _create_or_update_initial(
@@ -206,12 +206,12 @@ class PoolsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [201, 202]:
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             deserialized = self._deserialize('CapacityPool', response)
 
         if raw:
@@ -273,7 +273,7 @@ class PoolsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/pools/{poolName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
     def update(
             self, resource_group, account_name, pool_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -345,7 +345,7 @@ class PoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/pools/{poolName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
 
     def _delete_initial(
@@ -427,4 +427,4 @@ class PoolsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/pools/{poolName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}

@@ -30,8 +30,6 @@ class NetAppAccount(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: object
-    :ivar account_id: accountId. UUID v4 used to identify the Account
-    :vartype account_id: str
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     """
@@ -41,7 +39,6 @@ class NetAppAccount(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'account_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'provisioning_state': {'readonly': True},
     }
 
@@ -51,7 +48,6 @@ class NetAppAccount(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -62,5 +58,4 @@ class NetAppAccount(Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
-        self.account_id = None
         self.provisioning_state = None

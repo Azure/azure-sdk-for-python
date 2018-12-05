@@ -9,11 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ServiceLevel(str, Enum):
+class SnapshotPatch(Model):
+    """Snapshot patch.
 
-    standard = "Standard"  #: Standard service level
-    premium = "Premium"  #: Premium service level
-    extreme = "Extreme"  #: Extreme service level
+    :param tags: Resource tags
+    :type tags: object
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SnapshotPatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

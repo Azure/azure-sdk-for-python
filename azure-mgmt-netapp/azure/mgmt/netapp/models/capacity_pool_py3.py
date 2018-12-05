@@ -30,17 +30,15 @@ class CapacityPool(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: object
-    :param account_id: Required. accountId. UUID v4 used to identify the
-     Account
-    :type account_id: str
     :ivar pool_id: poolId. UUID v4 used to identify the Pool
     :vartype pool_id: str
-    :param size: size. Provisioned size of the pool (in GB). Default value:
-     4096 .
-    :type size: int
+    :param size: size. Provisioned size of the pool (in bytes). Allowed values
+     are in 4TiB chunks (value must be multiply of 4398046511104). Default
+     value: 4398046511104 .
+    :type size: long
     :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Basic', 'Standard', 'Premium'. Default value:
-     "Standard" .
+     Possible values include: 'Standard', 'Premium', 'Extreme'. Default value:
+     "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
@@ -51,9 +49,8 @@ class CapacityPool(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'account_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'minimum': 4096},
+        'size': {'maximum': 549755813888000, 'minimum': 4398046511104},
         'provisioning_state': {'readonly': True},
     }
 
@@ -63,21 +60,19 @@ class CapacityPool(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'pool_id': {'key': 'properties.poolId', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'int'},
+        'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, account_id: str, tags=None, size: int=4096, service_level="Standard", **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, size: int=4398046511104, service_level="Premium", **kwargs) -> None:
         super(CapacityPool, self).__init__(**kwargs)
         self.location = location
         self.id = None
         self.name = None
         self.type = None
         self.tags = tags
-        self.account_id = account_id
         self.pool_id = None
         self.size = size
         self.service_level = service_level

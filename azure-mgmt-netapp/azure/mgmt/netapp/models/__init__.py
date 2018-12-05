@@ -23,6 +23,7 @@ try:
     from .volume_patch_py3 import VolumePatch
     from .mount_target_py3 import MountTarget
     from .snapshot_py3 import Snapshot
+    from .snapshot_patch_py3 import SnapshotPatch
     from .error_py3 import Error, ErrorException
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
@@ -38,6 +39,7 @@ except (SyntaxError, ImportError):
     from .volume_patch import VolumePatch
     from .mount_target import MountTarget
     from .snapshot import Snapshot
+    from .snapshot_patch import SnapshotPatch
     from .error import Error, ErrorException
 from .operation_paged import OperationPaged
 from .net_app_account_paged import NetAppAccountPaged
@@ -63,6 +65,7 @@ __all__ = [
     'VolumePatch',
     'MountTarget',
     'Snapshot',
+    'SnapshotPatch',
     'Error', 'ErrorException',
     'OperationPaged',
     'NetAppAccountPaged',
