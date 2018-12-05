@@ -45,8 +45,9 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
     :ivar server_role_results: Map of server role migration results.
     :vartype server_role_results: dict[str,
      ~azure.mgmt.datamigration.models.StartMigrationScenarioServerRoleResult]
-    :ivar orphaned_users: Map of users to database name of orphaned users.
-    :vartype orphaned_users: dict[str, str]
+    :ivar orphaned_users: List of orphaned users.
+    :vartype orphaned_users:
+     list[~azure.mgmt.datamigration.models.OrphanedUserInfo]
     :ivar databases: Selected databases as a map from database name to
      database id
     :vartype databases: dict[str, str]
@@ -94,7 +95,7 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         'logins': {'key': 'logins', 'type': '{str}'},
         'message': {'key': 'message', 'type': 'str'},
         'server_role_results': {'key': 'serverRoleResults', 'type': '{StartMigrationScenarioServerRoleResult}'},
-        'orphaned_users': {'key': 'orphanedUsers', 'type': '{str}'},
+        'orphaned_users': {'key': 'orphanedUsers', 'type': '[OrphanedUserInfo]'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},

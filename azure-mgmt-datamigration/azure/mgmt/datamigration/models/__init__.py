@@ -124,6 +124,7 @@ try:
     from .migrate_sql_server_sql_mi_task_output_login_level_py3 import MigrateSqlServerSqlMITaskOutputLoginLevel
     from .migrate_sql_server_sql_mi_task_output_agent_job_level_py3 import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .orphaned_user_info_py3 import OrphanedUserInfo
     from .start_migration_scenario_server_role_result_py3 import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
@@ -341,6 +342,7 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_mi_task_output_login_level import MigrateSqlServerSqlMITaskOutputLoginLevel
     from .migrate_sql_server_sql_mi_task_output_agent_job_level import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .orphaned_user_info import OrphanedUserInfo
     from .start_migration_scenario_server_role_result import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
@@ -611,6 +613,7 @@ __all__ = [
     'MigrateSqlServerSqlMITaskOutputLoginLevel',
     'MigrateSqlServerSqlMITaskOutputAgentJobLevel',
     'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
+    'OrphanedUserInfo',
     'StartMigrationScenarioServerRoleResult',
     'MigrateSqlServerSqlMITaskOutputMigrationLevel',
     'MigrateSqlServerSqlMITaskOutput',
