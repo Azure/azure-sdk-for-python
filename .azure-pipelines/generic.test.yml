@@ -44,10 +44,8 @@ jobs:
      
          pytest $folderCombination
      }
+    displayName: 'Run Test Subset'
 
   - script: |
      python ./setup.py check -r -s
     displayName: 'Check Setup.py Files'
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifacts'

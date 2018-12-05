@@ -19,11 +19,6 @@ jobs:
     displayName: 'Setup Tests'
     continueOnError: true
 
-  - script: |
-     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
-    displayName: 'Execute Tests'
-    continueOnError: true
-
   - powershell: |
      $inputFilterSet="$(build_targeting_string)"
      
