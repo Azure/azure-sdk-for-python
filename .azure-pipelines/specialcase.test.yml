@@ -1,5 +1,5 @@
 jobs:
-- job: Special Python Distro Tests
+- job: Special_Python_Distro_Tests
   dependsOn:
   - 'Publish'
   pool:
