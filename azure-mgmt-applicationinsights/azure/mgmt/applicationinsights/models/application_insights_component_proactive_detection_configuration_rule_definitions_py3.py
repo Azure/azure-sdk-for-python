@@ -22,7 +22,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
     :type display_name: str
     :param description: The rule description
     :type description: str
-    :param help_url: URL which displays aditional info about the proactive
+    :param help_url: URL which displays additional info about the proactive
      detection rule
     :type help_url: str
     :param is_hidden: A flag indicating whether the rule is hidden (from the

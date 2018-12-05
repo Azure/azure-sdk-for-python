@@ -244,7 +244,7 @@ class WorkItemConfigurationsOperations(object):
 
     def delete(
             self, resource_group_name, resource_name, work_item_config_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an workitem configuration of an Application Insights component.
+        """Delete a work item configuration of an Application Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

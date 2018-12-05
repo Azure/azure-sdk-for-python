@@ -17,7 +17,7 @@ class WorkItemCreateConfiguration(Model):
 
     :param connector_id: Unique connector id
     :type connector_id: str
-    :param connector_data_configuration: Serialized JSON object for detaile d
+    :param connector_data_configuration: Serialized JSON object for detailed
      properties
     :type connector_data_configuration: str
     :param validate_only: Boolean indicating validate only

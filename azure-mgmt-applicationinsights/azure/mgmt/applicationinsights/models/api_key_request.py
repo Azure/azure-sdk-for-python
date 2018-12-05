@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class APIKeyRequest(Model):
-    """An Application Insights component API Key createion request definition.
+    """An Application Insights component API Key creation request definition.
 
     :param name: The name of the API Key.
     :type name: str
