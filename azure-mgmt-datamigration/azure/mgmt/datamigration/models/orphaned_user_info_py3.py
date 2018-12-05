@@ -17,7 +17,7 @@ class OrphanedUserInfo(Model):
 
     :param name: Name of the orphaned user
     :type name: str
-    :param database_name: Parent DB of the user
+    :param database_name: Parent database of the user
     :type database_name: str
     """
 
