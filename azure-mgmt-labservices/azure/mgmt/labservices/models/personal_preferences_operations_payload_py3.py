@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class PersonalPerferencesOperationsPayload(Model):
+class PersonalPreferencesOperationsPayload(Model):
     """Represents payload for any Environment operations like get, start, stop,
     connect.
 
@@ -32,8 +32,8 @@ class PersonalPerferencesOperationsPayload(Model):
         'lab_resource_id': {'key': 'labResourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PersonalPerferencesOperationsPayload, self).__init__(**kwargs)
-        self.lab_account_resource_id = kwargs.get('lab_account_resource_id', None)
-        self.add_remove = kwargs.get('add_remove', None)
-        self.lab_resource_id = kwargs.get('lab_resource_id', None)
+    def __init__(self, *, lab_account_resource_id: str=None, add_remove=None, lab_resource_id: str=None, **kwargs) -> None:
+        super(PersonalPreferencesOperationsPayload, self).__init__(**kwargs)
+        self.lab_account_resource_id = lab_account_resource_id
+        self.add_remove = add_remove
+        self.lab_resource_id = lab_resource_id

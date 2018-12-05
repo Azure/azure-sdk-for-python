@@ -243,15 +243,15 @@ class GlobalUsersOperations(object):
     get_operation_status.metadata = {'url': '/providers/Microsoft.LabServices/users/{userName}/getOperationStatus'}
 
     def get_personal_preferences(
-            self, user_name, personal_perferences_operations_payload, custom_headers=None, raw=False, **operation_config):
+            self, user_name, personal_preferences_operations_payload, custom_headers=None, raw=False, **operation_config):
         """Get personal preferences for a user.
 
         :param user_name: The name of the user.
         :type user_name: str
-        :param personal_perferences_operations_payload: Represents payload for
+        :param personal_preferences_operations_payload: Represents payload for
          any Environment operations like get, start, stop, connect
-        :type personal_perferences_operations_payload:
-         ~azure.mgmt.labservices.models.PersonalPerferencesOperationsPayload
+        :type personal_preferences_operations_payload:
+         ~azure.mgmt.labservices.models.PersonalPreferencesOperationsPayload
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -286,7 +286,7 @@ class GlobalUsersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(personal_perferences_operations_payload, 'PersonalPerferencesOperationsPayload')
+        body_content = self._serialize.body(personal_preferences_operations_payload, 'PersonalPreferencesOperationsPayload')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
