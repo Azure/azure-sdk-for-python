@@ -74,7 +74,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(intent_create_object, 'ModelCreateObject')
@@ -150,7 +149,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -219,7 +217,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(model_create_object, 'ModelCreateObject')
@@ -295,7 +292,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -366,7 +362,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(hierarchical_model_create_object, 'HierarchicalEntityModel')
@@ -442,7 +437,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -513,7 +507,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(composite_model_create_object, 'CompositeEntityModel')
@@ -589,7 +582,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -662,7 +654,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -734,7 +725,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(closed_list_model_create_object, 'ClosedListModelCreateObject')
@@ -805,7 +795,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(prebuilt_extractor_names, '[str]')
@@ -881,7 +870,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -945,7 +933,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1018,7 +1005,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1094,7 +1080,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1161,7 +1146,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1233,7 +1217,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(model_update_object, 'ModelUpdateObject')
@@ -1308,7 +1291,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -1375,7 +1357,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1447,7 +1428,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(model_update_object, 'ModelUpdateObject')
@@ -1517,7 +1497,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -1584,7 +1563,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1658,7 +1636,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(hierarchical_model_update_object, 'HierarchicalEntityModel')
@@ -1728,7 +1705,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -1795,7 +1771,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -1869,7 +1844,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(composite_model_update_object, 'CompositeEntityModel')
@@ -1939,7 +1913,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2006,7 +1979,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2081,7 +2053,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(closed_list_model_update_object, 'ClosedListModelUpdateObject')
@@ -2157,7 +2128,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(closed_list_model_patch_object, 'ClosedListModelPatchObject')
@@ -2227,7 +2197,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2294,7 +2263,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2361,7 +2329,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2431,7 +2398,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -2508,7 +2474,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(word_list_base_update_object, 'WordListBaseUpdateObject')
@@ -2583,7 +2548,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2656,7 +2620,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2730,7 +2693,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(word_list_create_object, 'WordListObject')
@@ -2803,7 +2765,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(prebuilt_domain_object, 'PrebuiltDomainCreateBaseObject')
@@ -2877,7 +2838,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(prebuilt_domain_model_create_object, 'PrebuiltDomainModelCreateObject')
@@ -2944,7 +2904,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3015,7 +2974,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(prebuilt_domain_model_create_object, 'PrebuiltDomainModelCreateObject')
@@ -3082,7 +3040,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3146,7 +3103,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3213,7 +3169,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -3283,7 +3238,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3358,7 +3312,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(hierarchical_child_model_update_object, 'HierarchicalChildModelUpdateObject')
@@ -3431,7 +3384,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -3503,7 +3455,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(hierarchical_child_model_create_object, 'HierarchicalChildModelCreateObject')
@@ -3578,7 +3529,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(composite_child_model_create_object, 'CompositeChildModelCreateObject')
@@ -3651,7 +3601,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -3724,7 +3673,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3795,7 +3743,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(regex_entity_extractor_create_obj, 'RegexModelCreateObject')
@@ -3871,7 +3818,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -3942,7 +3888,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(extractor_create_object, 'PatternAnyModelCreateObject')
@@ -4012,7 +3957,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4084,7 +4028,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4154,7 +4097,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4226,7 +4168,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4296,7 +4237,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4368,7 +4308,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4438,7 +4377,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4510,7 +4448,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4580,7 +4517,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4652,7 +4588,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4722,7 +4657,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4794,7 +4728,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -4864,7 +4797,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -4936,7 +4868,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -5006,7 +4937,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -5078,7 +5008,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_create_object, 'EntityRoleCreateObject')
@@ -5148,7 +5077,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -5220,7 +5148,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(item, 'ExplicitListItemCreateObject')
@@ -5290,7 +5217,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -5364,7 +5290,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(regex_entity_update_object, 'RegexModelUpdateObject')
@@ -5434,7 +5359,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -5501,7 +5425,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -5575,7 +5498,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(pattern_any_update_object, 'PatternAnyModelUpdateObject')
@@ -5645,7 +5567,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -5715,7 +5636,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -5790,7 +5710,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -5863,7 +5782,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -5933,7 +5851,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -6008,7 +5925,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -6081,7 +5997,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -6151,7 +6066,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -6226,7 +6140,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -6299,7 +6212,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -6369,7 +6281,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -6444,7 +6355,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -6517,7 +6427,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -6587,7 +6496,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -6662,7 +6570,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -6735,7 +6642,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -6805,7 +6711,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -6880,7 +6785,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -6953,7 +6857,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -7023,7 +6926,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -7098,7 +7000,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -7171,7 +7072,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -7241,7 +7141,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -7316,7 +7215,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(entity_role_update_object, 'EntityRoleUpdateObject')
@@ -7389,7 +7287,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -7459,7 +7356,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -7534,7 +7430,6 @@ class ModelOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct body
         body_content = self._serialize.body(item, 'ExplicitListItemUpdateObject')
@@ -7607,7 +7502,6 @@ class ModelOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)

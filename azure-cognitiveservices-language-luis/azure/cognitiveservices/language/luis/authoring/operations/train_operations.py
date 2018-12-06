@@ -75,7 +75,6 @@ class TrainOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
@@ -145,7 +144,6 @@ class TrainOperations(object):
         header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("self.config.ocp_apim_subscription_key", self.config.ocp_apim_subscription_key, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)

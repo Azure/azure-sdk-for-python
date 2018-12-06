@@ -25,21 +25,16 @@ class LUISRuntimeClientConfiguration(Configuration):
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
-    :param ocp_apim_subscription_key: Subscription key which provides access
-     to this API.
-    :type ocp_apim_subscription_key: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, ocp_apim_subscription_key, credentials):
+            self, endpoint, credentials):
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        if ocp_apim_subscription_key is None:
-            raise ValueError("Parameter 'ocp_apim_subscription_key' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         base_url = '{Endpoint}/luis/v2.0'
@@ -49,7 +44,6 @@ class LUISRuntimeClientConfiguration(Configuration):
         self.add_user_agent('azure-cognitiveservices-language-luis/{}'.format(VERSION))
 
         self.endpoint = endpoint
-        self.ocp_apim_subscription_key = ocp_apim_subscription_key
         self.credentials = credentials
 
 
@@ -65,18 +59,15 @@ class LUISRuntimeClient(SDKClient):
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
-    :param ocp_apim_subscription_key: Subscription key which provides access
-     to this API.
-    :type ocp_apim_subscription_key: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, ocp_apim_subscription_key, credentials):
+            self, endpoint, credentials):
 
-        self.config = LUISRuntimeClientConfiguration(endpoint, ocp_apim_subscription_key, credentials)
+        self.config = LUISRuntimeClientConfiguration(endpoint, credentials)
         super(LUISRuntimeClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
