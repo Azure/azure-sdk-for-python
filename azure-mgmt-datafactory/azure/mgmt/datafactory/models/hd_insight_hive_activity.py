@@ -52,6 +52,11 @@ class HDInsightHiveActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param defines: Allows user to specify defines for Hive job request.
     :type defines: dict[str, object]
+    :param variables: User specified arguments under hivevar namespace.
+    :type variables: list[object]
+    :param query_timeout: Query timeout value (in minutes).  Effective when
+     the HDInsight culster is with ESP (Enterprise Security Package)
+    :type query_timeout: int
     """
 
     _validation = {
@@ -74,6 +79,8 @@ class HDInsightHiveActivity(ExecutionActivity):
         'script_path': {'key': 'typeProperties.scriptPath', 'type': 'object'},
         'script_linked_service': {'key': 'typeProperties.scriptLinkedService', 'type': 'LinkedServiceReference'},
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
+        'variables': {'key': 'typeProperties.variables', 'type': '[object]'},
+        'query_timeout': {'key': 'typeProperties.queryTimeout', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -84,4 +91,6 @@ class HDInsightHiveActivity(ExecutionActivity):
         self.script_path = kwargs.get('script_path', None)
         self.script_linked_service = kwargs.get('script_linked_service', None)
         self.defines = kwargs.get('defines', None)
+        self.variables = kwargs.get('variables', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'HDInsightHive'

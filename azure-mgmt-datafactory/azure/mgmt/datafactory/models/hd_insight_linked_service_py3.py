@@ -52,6 +52,9 @@ class HDInsightLinkedService(LinkedService):
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
     :type encrypted_credential: object
+    :param is_esp_enabled: Specify if the HDInsight is created with ESP
+     (Enterprise Security Package). Type: Boolean.
+    :type is_esp_enabled: object
     """
 
     _validation = {
@@ -72,9 +75,10 @@ class HDInsightLinkedService(LinkedService):
         'linked_service_name': {'key': 'typeProperties.linkedServiceName', 'type': 'LinkedServiceReference'},
         'hcatalog_linked_service_name': {'key': 'typeProperties.hcatalogLinkedServiceName', 'type': 'LinkedServiceReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+        'is_esp_enabled': {'key': 'typeProperties.isEspEnabled', 'type': 'object'},
     }
 
-    def __init__(self, *, cluster_uri, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, user_name=None, password=None, linked_service_name=None, hcatalog_linked_service_name=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, cluster_uri, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, user_name=None, password=None, linked_service_name=None, hcatalog_linked_service_name=None, encrypted_credential=None, is_esp_enabled=None, **kwargs) -> None:
         super(HDInsightLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.cluster_uri = cluster_uri
         self.user_name = user_name
@@ -82,4 +86,5 @@ class HDInsightLinkedService(LinkedService):
         self.linked_service_name = linked_service_name
         self.hcatalog_linked_service_name = hcatalog_linked_service_name
         self.encrypted_credential = encrypted_credential
+        self.is_esp_enabled = is_esp_enabled
         self.type = 'HDInsight'
