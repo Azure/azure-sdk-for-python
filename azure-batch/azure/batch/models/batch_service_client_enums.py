@@ -64,7 +64,7 @@ class ElevationLevel(str, Enum):
 class LoginMode(str, Enum):
 
     batch = "batch"  #: The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running parallel processes.
-    interactive = "interactive"  #: The LOGON32_LOGON_INTERACTIVE Win32 login mode. UAC is enabled on VirtualMachineConfiguration pools. If this option is used with an elevated user in a VirtualMachineConfiguration pool, the user session will not be elevated unless the application executed by the task command line is configured to always require administrative privilege or to always require maximum privilege.
+    interactive = "interactive"  #: The LOGON32_LOGON_INTERACTIVE Win32 login mode. UAC is enabled on Windows VirtualMachineConfiguration pools. If this option is used with an elevated user identity in a Windows VirtualMachineConfiguration pool, the user session will not be elevated unless the application executed by the task command line is configured to always require administrative privilege or to always require maximum privilege.
 
 
 class OutputFileUploadCondition(str, Enum):
