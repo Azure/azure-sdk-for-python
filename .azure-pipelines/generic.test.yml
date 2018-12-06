@@ -18,7 +18,6 @@ jobs:
         python.version: '3.5'
       Python_36:
         python.version: '3.6'
-    maxParallel: 4
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'

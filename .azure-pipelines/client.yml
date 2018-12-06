@@ -7,6 +7,9 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'  
 
+  strategy:
+    maxParallel: 1
+    
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.6'
