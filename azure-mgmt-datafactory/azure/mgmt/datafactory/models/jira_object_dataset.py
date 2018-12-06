@@ -13,7 +13,7 @@ from .dataset import Dataset
 
 
 class JiraObjectDataset(Dataset):
-    """Jira Serivce dataset.
+    """Jira Service dataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -39,6 +39,9 @@ class JiraObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
+    :param table_name: The table name. Type: string (or Expression with
+     resultType string).
+    :type table_name: object
     """
 
     _validation = {
@@ -55,8 +58,10 @@ class JiraObjectDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
+        'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(JiraObjectDataset, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
         self.type = 'JiraObject'

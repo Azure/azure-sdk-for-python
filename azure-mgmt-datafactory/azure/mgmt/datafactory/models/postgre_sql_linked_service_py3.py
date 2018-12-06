@@ -35,6 +35,10 @@ class PostgreSqlLinkedService(LinkedService):
     :type type: str
     :param connection_string: Required. The connection string.
     :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -54,11 +58,13 @@ class PostgreSqlLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, password=None, encrypted_credential=None, **kwargs) -> None:
         super(PostgreSqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
+        self.password = password
         self.encrypted_credential = encrypted_credential
         self.type = 'PostgreSql'

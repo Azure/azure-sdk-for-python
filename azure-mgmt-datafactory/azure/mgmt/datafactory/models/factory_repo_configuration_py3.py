@@ -22,7 +22,7 @@ class FactoryRepoConfiguration(Model):
 
     :param account_name: Required. Account name.
     :type account_name: str
-    :param repository_name: Required. Rrepository name.
+    :param repository_name: Required. Repository name.
     :type repository_name: str
     :param collaboration_branch: Required. Collaboration branch.
     :type collaboration_branch: str

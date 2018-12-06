@@ -36,6 +36,10 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     :param connection_string: Required. The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param service_principal_id: The ID of the service principal used to
      authenticate against Azure SQL Database. Type: string (or Expression with
      resultType string).
@@ -65,6 +69,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
@@ -74,6 +79,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     def __init__(self, **kwargs):
         super(AzureSqlDatabaseLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.password = kwargs.get('password', None)
         self.service_principal_id = kwargs.get('service_principal_id', None)
         self.service_principal_key = kwargs.get('service_principal_key', None)
         self.tenant = kwargs.get('tenant', None)

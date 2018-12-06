@@ -36,6 +36,9 @@ class VerticaLinkedService(LinkedService):
     :param connection_string: An ODBC connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param pwd: The Azure key vault secret reference of password in connection
+     string.
+    :type pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -54,11 +57,13 @@ class VerticaLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'pwd': {'key': 'typeProperties.pwd', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, pwd=None, encrypted_credential=None, **kwargs) -> None:
         super(VerticaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
+        self.pwd = pwd
         self.encrypted_credential = encrypted_credential
         self.type = 'Vertica'

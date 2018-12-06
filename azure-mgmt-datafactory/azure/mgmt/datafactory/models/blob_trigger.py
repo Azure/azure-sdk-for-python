@@ -13,7 +13,7 @@ from .multiple_pipeline_trigger import MultiplePipelineTrigger
 
 
 class BlobTrigger(MultiplePipelineTrigger):
-    """Trigger that runs everytime the selected Blob container changes.
+    """Trigger that runs every time the selected Blob container changes.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -50,6 +50,8 @@ try:
     from .factory_repo_update_py3 import FactoryRepoUpdate
     from .git_hub_access_token_request_py3 import GitHubAccessTokenRequest
     from .git_hub_access_token_response_py3 import GitHubAccessTokenResponse
+    from .user_access_policy_py3 import UserAccessPolicy
+    from .access_policy_response_py3 import AccessPolicyResponse
     from .pipeline_reference_py3 import PipelineReference
     from .trigger_pipeline_reference_py3 import TriggerPipelineReference
     from .factory_update_parameters_py3 import FactoryUpdateParameters
@@ -404,6 +406,8 @@ except (SyntaxError, ImportError):
     from .factory_repo_update import FactoryRepoUpdate
     from .git_hub_access_token_request import GitHubAccessTokenRequest
     from .git_hub_access_token_response import GitHubAccessTokenResponse
+    from .user_access_policy import UserAccessPolicy
+    from .access_policy_response import AccessPolicyResponse
     from .pipeline_reference import PipelineReference
     from .trigger_pipeline_reference import TriggerPipelineReference
     from .factory_update_parameters import FactoryUpdateParameters
@@ -828,6 +832,8 @@ __all__ = [
     'FactoryRepoUpdate',
     'GitHubAccessTokenRequest',
     'GitHubAccessTokenResponse',
+    'UserAccessPolicy',
+    'AccessPolicyResponse',
     'PipelineReference',
     'TriggerPipelineReference',
     'FactoryUpdateParameters',

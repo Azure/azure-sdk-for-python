@@ -37,8 +37,8 @@ class AmazonMWSLinkedService(LinkedService):
      mws.amazonservices.com)
     :type endpoint: object
     :param marketplace_id: Required. The Amazon Marketplace ID you want to
-     retrieve data from. To retrive data from multiple Marketplace IDs,
-     seperate them with a comma (,). (i.e. A2EUQ1WTGCTBG2)
+     retrieve data from. To retrieve data from multiple Marketplace IDs,
+     separate them with a comma (,). (i.e. A2EUQ1WTGCTBG2)
     :type marketplace_id: object
     :param seller_id: Required. The Amazon seller ID.
     :type seller_id: object

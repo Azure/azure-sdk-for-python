@@ -13,7 +13,7 @@ from .linked_service import LinkedService
 
 
 class JiraLinkedService(LinkedService):
-    """Jira Serivce linked service.
+    """Jira Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 

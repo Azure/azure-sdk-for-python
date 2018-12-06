@@ -36,6 +36,10 @@ class OracleLinkedService(LinkedService):
     :param connection_string: Required. The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -55,11 +59,13 @@ class OracleLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(OracleLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Oracle'

@@ -13,7 +13,7 @@ from .linked_service import LinkedService
 
 
 class PaypalLinkedService(LinkedService):
-    """Paypal Serivce linked service.
+    """Paypal Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 

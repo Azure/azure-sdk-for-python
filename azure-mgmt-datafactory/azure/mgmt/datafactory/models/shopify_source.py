@@ -13,7 +13,7 @@ from .copy_source import CopySource
 
 
 class ShopifySource(CopySource):
-    """A copy activity Shopify Serivce source.
+    """A copy activity Shopify Service source.
 
     All required parameters must be populated in order to send to Azure.
 

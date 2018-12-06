@@ -13,7 +13,7 @@ from .linked_service import LinkedService
 
 
 class SquareLinkedService(LinkedService):
-    """Square Serivce linked service.
+    """Square Service linked service.
 
     All required parameters must be populated in order to send to Azure.
 

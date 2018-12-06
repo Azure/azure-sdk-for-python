@@ -13,7 +13,7 @@ from .copy_source_py3 import CopySource
 
 
 class SquareSource(CopySource):
-    """A copy activity Square Serivce source.
+    """A copy activity Square Service source.
 
     All required parameters must be populated in order to send to Azure.
 

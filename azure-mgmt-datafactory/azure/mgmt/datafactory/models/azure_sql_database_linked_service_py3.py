@@ -36,6 +36,10 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     :param connection_string: Required. The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param service_principal_id: The ID of the service principal used to
      authenticate against Azure SQL Database. Type: string (or Expression with
      resultType string).
@@ -65,15 +69,17 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
         'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, connection_string, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, password=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None, **kwargs) -> None:
         super(AzureSqlDatabaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.connection_string = connection_string
+        self.password = password
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
