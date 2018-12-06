@@ -5,7 +5,17 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: 'pypy3 scripts/dev_setup.py'
+  - script: |
+     mkdir local_install
+     cd local_install
+     
+     wget https://s3.amazonaws.com/travis-python-archives/binaries/ubuntu/14.04/x86_64/pypy3.5-5.8.0.tar.bz2
+     tar -xjf pypy3.5-5.8.0.tar.bz2
+     
+    displayName: 'Download PyPy Python'
+    continueOnError: false
+    
+  - script: '$(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 scripts/dev_setup.py'
     displayName: 'Setup Tests'
     continueOnError: true
 
@@ -21,12 +31,12 @@ jobs:
      {
         $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
-        pypy3 -m pytest $folderCombination --ignore=local_install 
+        $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest $folderCombination --ignore=local_install
      }
     displayName: 'Run Test Subset'
     continueOnError: true
 
   - script: |
-     pypy3 ./setup.py check -r -s
+     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
     displayName: 'Check Setup.py Files'
     continueOnError: true
