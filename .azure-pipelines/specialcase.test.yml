@@ -19,7 +19,7 @@ jobs:
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-        $folderCombination = (Get-ChildItem -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+        $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
         pypy3 -m pytest $folderCombination --ignore=local_install 
      }

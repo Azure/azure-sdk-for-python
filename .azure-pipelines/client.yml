@@ -9,7 +9,7 @@ jobs:
 
   strategy:
     maxParallel: 1
-    
+
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.6'
@@ -34,7 +34,7 @@ jobs:
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-       $foldersToIterate=Get-ChildItem -Recurse -Filter "$inputFilter"
+       $foldersToIterate=Get-ChildItem -Filter "$inputFilter"
      
        foreach ($folder in $foldersToIterate)
        {
