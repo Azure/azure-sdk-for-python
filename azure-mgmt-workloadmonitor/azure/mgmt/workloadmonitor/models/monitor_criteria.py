@@ -22,9 +22,9 @@ class MonitorCriteria(Model):
      include: 'Error', 'Warning', 'Success', 'Unknown', 'Uninitialized'
     :vartype health_state: str or
      ~azure.mgmt.workloadmonitor.models.HealthState
-    :ivar threshold: Treshold value for this criteria
+    :ivar threshold: Threshold value for this criteria
     :vartype threshold: float
-    :ivar comparison_operator: Comparison enum on theshold of this criteria.
+    :ivar comparison_operator: Comparison enum on threshold of this criteria.
      Possible values include: 'Equals', 'GreaterThan', 'GreaterThanOrEqual',
      'LessThan', 'LessThanOrEqual', 'NotEquals'
     :vartype comparison_operator: str or

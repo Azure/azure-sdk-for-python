@@ -63,7 +63,7 @@ class Monitor(ProxyResource):
      ~azure.mgmt.workloadmonitor.models.MonitorState
     :ivar criteria: Collection of MonitorCriteria. For PATCH calls, instead of
      partial list, complete list of expected criteria should be passed for
-     proper updation.
+     proper updating.
     :vartype criteria:
      list[~azure.mgmt.workloadmonitor.models.MonitorCriteria]
     :ivar alert_generation: Generates alerts or not. Possible values include:
