@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DomainAvailablilityCheckResult(Model):
-    """Domain availablility check result.
+    """Domain availability check result.
 
     :param name: Name of the domain.
     :type name: str
