@@ -63,7 +63,7 @@ try:
     from .operation_result_py3 import OperationResult
     from .operation_status_payload_py3 import OperationStatusPayload
     from .operation_status_response_py3 import OperationStatusResponse
-    from .personal_perferences_operations_payload_py3 import PersonalPerferencesOperationsPayload
+    from .personal_preferences_operations_payload_py3 import PersonalPreferencesOperationsPayload
     from .publish_payload_py3 import PublishPayload
     from .register_payload_py3 import RegisterPayload
     from .reset_password_payload_py3 import ResetPasswordPayload
@@ -125,7 +125,7 @@ except (SyntaxError, ImportError):
     from .operation_result import OperationResult
     from .operation_status_payload import OperationStatusPayload
     from .operation_status_response import OperationStatusResponse
-    from .personal_perferences_operations_payload import PersonalPerferencesOperationsPayload
+    from .personal_preferences_operations_payload import PersonalPreferencesOperationsPayload
     from .publish_payload import PublishPayload
     from .register_payload import RegisterPayload
     from .reset_password_payload import ResetPasswordPayload
@@ -202,7 +202,7 @@ __all__ = [
     'OperationResult',
     'OperationStatusPayload',
     'OperationStatusResponse',
-    'PersonalPerferencesOperationsPayload',
+    'PersonalPreferencesOperationsPayload',
     'PublishPayload',
     'RegisterPayload',
     'ResetPasswordPayload',
