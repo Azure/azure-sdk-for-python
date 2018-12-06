@@ -15,7 +15,7 @@ jobs:
     displayName: 'Download PyPy Python'
     continueOnError: false
 
-  - script: '$(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 scripts/dev_setup.py'
+  - script: 'pypy3 scripts/dev_setup.py'
     displayName: 'Setup Tests'
     continueOnError: true
 
@@ -29,16 +29,14 @@ jobs:
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-         $foldersToIterate = Get-ChildItem -Name -Recurse -Filter "$inputFilter"
-         $foldersToIterate = $foldersToIterate.foreach({"$(Build.SourcesDirectory)/$_/"})
-         $folderCombination = $foldersToIterate -join " "
+        $folderCombination = (ls -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
-         $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest $folderCombination --ignore=local_install 
+        pypy3 -m pytest $folderCombination --ignore=local_install 
      }
     displayName: 'Run Test Subset'
     continueOnError: true
 
   - script: |
-     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
+     pypy3 ./setup.py check -r -s
     displayName: 'Check Setup.py Files'
     continueOnError: true

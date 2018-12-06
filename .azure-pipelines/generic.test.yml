@@ -33,16 +33,13 @@ jobs:
      
      if ($inputFilterSet -eq "")
      {
-         $inputFilterSet = "azure-*"
+        $inputFilterSet = "azure-*"
      }
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-         $foldersToIterate = Get-ChildItem -Name -Recurse -Filter "$inputFilter"
-         $foldersToIterate = $foldersToIterate.foreach({"$(Build.SourcesDirectory)/$_/"})
-         $folderCombination = $foldersToIterate -join " "
-     
-         pytest $folderCombination
+        $folderCombination = (ls -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+        pytest $folderCombination
      }
     displayName: 'Run Test Subset'
 
