@@ -35,10 +35,21 @@ class DeleteActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param recursive: If true, files under the folder path will be deleted
-     recursively. Default is true. Type: boolean (or Expression with resultType
-     boolean).
+    :param recursive: If true, files or sub-folders under current folder path
+     will be deleted recursively. Default is false. Type: boolean (or
+     Expression with resultType boolean).
     :type recursive: object
+    :param max_concurrent_connections: The max concurrent connections to
+     connect data source at the same time.
+    :type max_concurrent_connections: int
+    :param enable_logging: Whether to record detailed logs of delete-activity
+     execution. Default value is false. Type: boolean (or Expression with
+     resultType boolean).
+    :type enable_logging: object
+    :param log_storage_settings: Log storage settings customer need to provide
+     when enableLogging is true.
+    :type log_storage_settings:
+     ~azure.mgmt.datafactory.models.LogStorageSettings
     :param dataset: Required. Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
@@ -46,6 +57,7 @@ class DeleteActivity(ExecutionActivity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'max_concurrent_connections': {'minimum': 1},
         'dataset': {'required': True},
     }
 
@@ -59,11 +71,17 @@ class DeleteActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'recursive': {'key': 'typeProperties.recursive', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'typeProperties.maxConcurrentConnections', 'type': 'int'},
+        'enable_logging': {'key': 'typeProperties.enableLogging', 'type': 'object'},
+        'log_storage_settings': {'key': 'typeProperties.logStorageSettings', 'type': 'LogStorageSettings'},
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
     def __init__(self, **kwargs):
         super(DeleteActivity, self).__init__(**kwargs)
         self.recursive = kwargs.get('recursive', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.enable_logging = kwargs.get('enable_logging', None)
+        self.log_storage_settings = kwargs.get('log_storage_settings', None)
         self.dataset = kwargs.get('dataset', None)
         self.type = 'Delete'
