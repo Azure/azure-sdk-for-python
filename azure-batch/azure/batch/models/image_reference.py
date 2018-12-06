@@ -37,9 +37,8 @@ class ImageReference(Model):
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
      This property is mutually exclusive with other ImageReference properties.
      The virtual machine image must be in the same region and subscription as
-     the Azure Batch account. For information about the firewall settings for
-     the Batch node agent to communicate with the Batch service see
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+     the Azure Batch account. For more details, see
+     https://docs.microsoft.com/azure/batch/batch-custom-images.
     :type virtual_machine_image_id: str
     """
 

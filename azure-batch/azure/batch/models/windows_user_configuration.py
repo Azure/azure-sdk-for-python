@@ -16,8 +16,8 @@ class WindowsUserConfiguration(Model):
     """Properties used to create a user account on a Windows node.
 
     :param login_mode: The login mode for the user. The default value for
-     VirtualMachineConfiguration pools is interactive and for
-     CloudServiceConfiguration pools is batch. Possible values include:
+     VirtualMachineConfiguration pools is batch and for
+     CloudServiceConfiguration pools is interactive. Possible values include:
      'batch', 'interactive'
     :type login_mode: str or ~azure.batch.models.LoginMode
     """
