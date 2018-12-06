@@ -107,8 +107,7 @@ class TranslateOperations(object):
          `sourceText.text` would be the same Arabic text converted into Arab
          script.
          Example of JSON responses are provided in the examples section.
-        :type text:
-         list[~azure.cognitiveservices.translatortext.models.TranslateTextInput]
+        :type text: list[str]
         :param from_parameter: Specifies the language of the input text. Find
          which languages are available to translate from by looking up
          supported languages using the `translation` scope. If the `from`
@@ -257,7 +256,7 @@ class TranslateOperations(object):
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
-        body_content = self._serialize.body(text, '[TranslateTextInput]')
+        body_content = self._serialize.body(text, '[str]')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
