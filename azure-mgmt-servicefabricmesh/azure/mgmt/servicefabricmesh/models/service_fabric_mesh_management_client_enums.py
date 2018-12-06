@@ -18,7 +18,7 @@ class ResourceStatus(str, Enum):
     ready = "Ready"  #: Indicates the resource is ready. The value is 1.
     upgrading = "Upgrading"  #: Indicates the resource is upgrading. The value is 2.
     creating = "Creating"  #: Indicates the resource is being created. The value is 3.
-    deleting = "Deleting"  #: Indicates the resource is being deletd. The value is 4.
+    deleting = "Deleting"  #: Indicates the resource is being deleted. The value is 4.
     failed = "Failed"  #: Indicates the resource is not functional due to persistent failures. See statusDetails property for more details. The value is 5.
 
 
