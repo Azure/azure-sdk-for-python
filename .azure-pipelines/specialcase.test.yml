@@ -1,7 +1,7 @@
 jobs:
 - job: Special_Python_Distro_Tests
   dependsOn:
-  - 'Publish'
+  - 'Build_Target_Packages'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -19,7 +19,7 @@ jobs:
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-        $folderCombination = (ls -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+        $folderCombination = (Get-ChildItem -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
         pypy3 -m pytest $folderCombination --ignore=local_install 
      }

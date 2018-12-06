@@ -2,12 +2,17 @@ trigger:
 - master
 
 jobs:
-- job: 'Publish'
+- job: 'Build_Target_Packages'
 
   pool:
-    vmImage: 'vs2017-win2016'  
+    vmImage: 'ubuntu-16.04'  
 
   steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.6'
+    inputs:
+      versionSpec: 3.6
+
   - script: |
      python -m venv .\
      

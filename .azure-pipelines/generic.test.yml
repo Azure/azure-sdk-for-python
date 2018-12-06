@@ -5,7 +5,7 @@ parameters:
 jobs:
 - job: ${{ format('Test_{0}', parameters.name ) }}
   dependsOn:
-  - 'Publish'
+  - 'Build_Target_Packages'
   pool:
     vmImage: ${{ parameters.vmImage }}
   strategy:
@@ -38,7 +38,7 @@ jobs:
      
      foreach($inputFilter in "$inputFilterSet".split(","))
      {
-        $folderCombination = (ls -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+        $folderCombination = (Get-ChildItem -Directory -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
         pytest $folderCombination
      }
     displayName: 'Run Test Subset'
