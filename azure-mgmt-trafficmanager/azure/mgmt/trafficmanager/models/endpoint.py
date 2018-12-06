@@ -21,7 +21,7 @@ class Endpoint(ProxyResource):
     :param name: The name of the resource
     :type name: str
     :param type: The type of the resource. Ex-
-     Microsoft.Network/trafficmanagerProfiles.
+     Microsoft.Network/trafficManagerProfiles.
     :type type: str
     :param target_resource_id: The Azure Resource URI of the of the endpoint.
      Not applicable to endpoints of type 'ExternalEndpoints'.
