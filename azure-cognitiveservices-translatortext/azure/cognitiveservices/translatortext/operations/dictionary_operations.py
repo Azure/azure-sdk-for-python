@@ -86,7 +86,7 @@ class DictionaryOperations(object):
          | --------- | ----------------  |
          | ADJ       | Adjectives        |
          | ADV       | Adverbs           |
-         | CONJ      | Conjuctions       |
+         | CONJ      | Conjunctions       |
          | DET       | Determiners       |
          | MODAL     | Verbs             |
          | NOUN      | Nouns             |

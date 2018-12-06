@@ -147,4 +147,4 @@ class BreakSentenceOperations(object):
             return client_raw_response
 
         return deserialized
-    break_sentence_post.metadata = {'url': '/Breaksentence'}
+    break_sentence_post.metadata = {'url': '/BreakSentence'}

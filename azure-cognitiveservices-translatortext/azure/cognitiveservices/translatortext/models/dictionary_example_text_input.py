@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DictionaryExampleTextInput(Model):
-    """Text needed for a dictionary example rquest .
+    """Text needed for a dictionary example request .
 
     :param text:
     :type text: str
