@@ -17,10 +17,10 @@ class ExampleLabelObject(Model):
 
     :param text: The sample's utterance.
     :type text: str
-    :param entity_labels: The idenfied entities within the utterance.
+    :param entity_labels: The identified entities within the utterance.
     :type entity_labels:
      list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabelObject]
-    :param intent_name: The idenfitied intent representing the utterance.
+    :param intent_name: The identified intent representing the utterance.
     :type intent_name: str
     """
 

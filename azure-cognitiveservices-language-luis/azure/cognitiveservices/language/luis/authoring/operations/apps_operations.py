@@ -157,7 +157,7 @@ class AppsOperations(object):
     def import_method(
             self, luis_app, app_name=None, custom_headers=None, raw=False, **operation_config):
         """Imports an application to LUIS, the application's structure should be
-        included in in the request body.
+        included in the request body.
 
         :param luis_app: A LUIS application structure.
         :type luis_app:
