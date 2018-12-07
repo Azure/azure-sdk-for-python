@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -23,6 +23,7 @@ from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.task_operations import TaskOperations
 from .operations.compute_node_operations import ComputeNodeOperations
 from . import models
+from .custom.patch import patch_client
 
 
 class BatchServiceClientConfiguration(AzureConfiguration):
@@ -46,13 +47,13 @@ class BatchServiceClientConfiguration(AzureConfiguration):
 
         super(BatchServiceClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('batchserviceclient/{}'.format(VERSION))
+        self.add_user_agent('azure-batch/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
 
 
-class BatchServiceClient(object):
+class BatchServiceClient(SDKClient):
     """A client for issuing REST requests to the Azure Batch service.
 
     :ivar config: Configuration for client.
@@ -87,10 +88,10 @@ class BatchServiceClient(object):
             self, credentials, base_url=None):
 
         self.config = BatchServiceClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(BatchServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01.6.1'
+        self.api_version = '2018-08-01.7.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -112,3 +113,6 @@ class BatchServiceClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.compute_node = ComputeNodeOperations(
             self._client, self.config, self._serialize, self._deserialize)
+
+
+patch_client()

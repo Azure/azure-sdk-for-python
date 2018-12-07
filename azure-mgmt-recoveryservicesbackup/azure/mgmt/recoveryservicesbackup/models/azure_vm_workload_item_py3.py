@@ -16,7 +16,9 @@ class AzureVmWorkloadItem(WorkloadItem):
     """Azure VM workload-specific workload item.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSQLDatabaseWorkloadItem,
+    sub-classes are: AzureVmWorkloadSAPHanaDatabaseWorkloadItem,
+    AzureVmWorkloadSAPHanaSystemWorkloadItem,
+    AzureVmWorkloadSQLDatabaseWorkloadItem,
     AzureVmWorkloadSQLInstanceWorkloadItem
 
     All required parameters must be populated in order to send to Azure.
@@ -67,7 +69,7 @@ class AzureVmWorkloadItem(WorkloadItem):
     }
 
     _subtype_map = {
-        'workload_item_type': {'SQLDataBase': 'AzureVmWorkloadSQLDatabaseWorkloadItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceWorkloadItem'}
+        'workload_item_type': {'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseWorkloadItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemWorkloadItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseWorkloadItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceWorkloadItem'}
     }
 
     def __init__(self, *, backup_management_type: str=None, workload_type: str=None, friendly_name: str=None, protection_state=None, parent_name: str=None, server_name: str=None, is_auto_protectable: bool=None, subinquireditemcount: int=None, sub_workload_item_count: int=None, **kwargs) -> None:

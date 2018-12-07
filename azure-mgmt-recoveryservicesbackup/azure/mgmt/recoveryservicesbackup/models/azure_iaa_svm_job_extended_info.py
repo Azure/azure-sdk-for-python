@@ -20,6 +20,8 @@ class AzureIaaSVMJobExtendedInfo(Model):
      list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMJobTaskDetails]
     :param property_bag: Job properties.
     :type property_bag: dict[str, str]
+    :param internal_property_bag: Job internal properties.
+    :type internal_property_bag: dict[str, str]
     :param progress_percentage: Indicates progress of the job. Null if it has
      not started or completed.
     :type progress_percentage: float
@@ -31,6 +33,7 @@ class AzureIaaSVMJobExtendedInfo(Model):
     _attribute_map = {
         'tasks_list': {'key': 'tasksList', 'type': '[AzureIaaSVMJobTaskDetails]'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'internal_property_bag': {'key': 'internalPropertyBag', 'type': '{str}'},
         'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
         'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
     }
@@ -39,5 +42,6 @@ class AzureIaaSVMJobExtendedInfo(Model):
         super(AzureIaaSVMJobExtendedInfo, self).__init__(**kwargs)
         self.tasks_list = kwargs.get('tasks_list', None)
         self.property_bag = kwargs.get('property_bag', None)
+        self.internal_property_bag = kwargs.get('internal_property_bag', None)
         self.progress_percentage = kwargs.get('progress_percentage', None)
         self.dynamic_error_message = kwargs.get('dynamic_error_message', None)

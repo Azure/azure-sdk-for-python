@@ -75,15 +75,12 @@ class MgmtDnsTest(AzureMgmtTestCase):
         super(MgmtDnsTest, self).setUp()
         self.dns_client = self.create_mgmt_client(
             azure.mgmt.dns.DnsManagementClient,
-            base_url='https://api-dogfood.resources.windows-int.net/'
         )
         self.network_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient,
-            api_version='2017-09-01',
-            base_url='https://api-dogfood.resources.windows-int.net/'
         )
 
-    @ResourceGroupPreparer(client_kwargs={'base_url':'https://api-dogfood.resources.windows-int.net/'})
+    @ResourceGroupPreparer()
     def test_public_zone(self, resource_group, location):
         zone_name = self.get_resource_name('pydns.com')
 
@@ -182,7 +179,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
         )
         async_delete.wait()
 
-    @ResourceGroupPreparer(client_kwargs={'base_url':'https://api-dogfood.resources.windows-int.net/'})
+    @ResourceGroupPreparer()
     @VirtualNetworkPreparer()
     def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
         zone_name = self.get_resource_name('pydns.com')

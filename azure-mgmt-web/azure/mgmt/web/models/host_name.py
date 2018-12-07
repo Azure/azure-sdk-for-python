@@ -46,11 +46,11 @@ class HostName(Model):
         'host_name_type': {'key': 'hostNameType', 'type': 'HostNameType'},
     }
 
-    def __init__(self, name=None, site_names=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
-        super(HostName, self).__init__()
-        self.name = name
-        self.site_names = site_names
-        self.azure_resource_name = azure_resource_name
-        self.azure_resource_type = azure_resource_type
-        self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
-        self.host_name_type = host_name_type
+    def __init__(self, **kwargs):
+        super(HostName, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.site_names = kwargs.get('site_names', None)
+        self.azure_resource_name = kwargs.get('azure_resource_name', None)
+        self.azure_resource_type = kwargs.get('azure_resource_type', None)
+        self.custom_host_name_dns_record_type = kwargs.get('custom_host_name_dns_record_type', None)
+        self.host_name_type = kwargs.get('host_name_type', None)

@@ -18,12 +18,17 @@ class VirtualNetworkRule(Model):
     :param id: Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
     :type id: str
+    :param ignore_missing_vnet_service_endpoint: Create firewall rule before
+     the virtual network has vnet service endpoint enabled.
+    :type ignore_missing_vnet_service_endpoint: bool
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'ignore_missing_vnet_service_endpoint': {'key': 'ignoreMissingVNetServiceEndpoint', 'type': 'bool'},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, ignore_missing_vnet_service_endpoint: bool=None, **kwargs) -> None:
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.id = id
+        self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint

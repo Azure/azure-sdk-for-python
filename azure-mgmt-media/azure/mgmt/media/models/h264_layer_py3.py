@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .video_layer import VideoLayer
+from .video_layer_py3 import VideoLayer
 
 
 class H264Layer(VideoLayer):

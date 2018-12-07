@@ -22,6 +22,7 @@ from .recommendations_operations import RecommendationsOperations
 from .web_apps_operations import WebAppsOperations
 from .app_service_environments_operations import AppServiceEnvironmentsOperations
 from .app_service_plans_operations import AppServicePlansOperations
+from .resource_health_metadata_operations import ResourceHealthMetadataOperations
 
 __all__ = [
     'AppServiceCertificateOrdersOperations',
@@ -37,4 +38,5 @@ __all__ = [
     'WebAppsOperations',
     'AppServiceEnvironmentsOperations',
     'AppServicePlansOperations',
+    'ResourceHealthMetadataOperations',
 ]

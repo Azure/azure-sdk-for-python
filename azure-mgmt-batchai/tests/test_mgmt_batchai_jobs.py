@@ -15,281 +15,298 @@ from msrestazure.azure_exceptions import CloudError
 
 import azure.mgmt.batchai.models as models
 from azure.mgmt.batchai import BatchAIManagementClient
-from helpers import (
-    create_batchai_client, create_cluster, assert_existing_clusters_are, wait_for_nodes,
-    assert_remote_login_info_reported_for_nodes, assert_existing_clusters_are, get_node_ids, assert_file_in_file_share,
-    create_file_server, assert_existing_file_servers_are, wait_for_file_server, wait_for_job_start_running,
-    create_custom_job,wait_for_job_completion, assert_job_files_are, LOCATION, FAKE_STORAGE, NODE_STARTUP_TIMEOUT_SEC,
-    AUTO_SCALE_TIMEOUT_SEC, STANDARD_OUTPUT_DIRECTORY_ID, MINUTE, ClusterPreparer, assert_job_files_in_path_are,
-    JOB_OUTPUT_DIRECTORY_PATH_ENV, STDOUTERR_FOLDER_NAME, AZURE_FILES_MOUNTING_PATH, JOB_OUTPUT_DIRECTORY_ID,
-    OUTPUT_DIRECTORIES_FOLDER_NAME
-)
+from helpers import Helpers, ClusterPreparer
 
 
 class JobTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(JobTestCase, self).setUp()
-        self.client = create_batchai_client(self)  # type: BatchAIManagementClient
+        self.client = Helpers.create_batchai_client(self)  # type: BatchAIManagementClient
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_job_creation_and_deletion(self, resource_group, location, cluster, storage_account, storage_account_key):
         """Tests simple scenario for a job - submit, check results, delete."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1,
-                                        'echo hi | tee {0}/hi.txt'.format(JOB_OUTPUT_DIRECTORY_PATH_ENV),
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1,
+                                        'echo hi | tee {0}/hi.txt'.format(Helpers.JOB_OUTPUT_DIRECTORY_PATH_ENV),
                                         container=models.ContainerSettings(
                                             image_source_registry=models.ImageSourceRegistry(image='ubuntu'))
                                         )  # type: models.Job
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.succeeded)
         # Check standard job output
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'hi\n', u'stderr.txt': u''})
         # Check job's output
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     JOB_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.JOB_OUTPUT_DIRECTORY_ID,
                                      {u'hi.txt': u'hi\n'})
         # Check that we can access the output files directly in storage using path segment returned by the server
-        assert_file_in_file_share(self, storage_account.name, storage_account_key,
-                                          job.job_output_directory_path_segment + '/' + STDOUTERR_FOLDER_NAME,
+        Helpers.assert_file_in_file_share(self, storage_account.name, storage_account_key,
+                                          job.job_output_directory_path_segment + '/' + Helpers.STDOUTERR_FOLDER_NAME,
                                           'stdout.txt', u'hi\n')
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_running_job_deletion(self, resource_group, location, cluster):
         """Tests deletion of a running job."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1,
-                                        'sleep 600')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'sleep 600')
         self.assertEqual(
-            wait_for_job_start_running(self.is_live, self.client, resource_group.name, job.name,
-                                               MINUTE),
+            Helpers.wait_for_job_start_running(self.is_live, self.client, resource_group.name, job.name,
+                                               Helpers.MINUTE),
             models.ExecutionState.running)
 
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_running_job_termination(self, resource_group, location, cluster):
         """Tests termination of a running job."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'longrunning', 1,
-                                        'sleep 600')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'longrunning', 1, 'sleep 600')
         self.assertEqual(
-            wait_for_job_start_running(self.is_live, self.client, resource_group.name, job.name,
-                                               MINUTE),
+            Helpers.wait_for_job_start_running(self.is_live, self.client, resource_group.name, job.name,
+                                               Helpers.MINUTE),
             models.ExecutionState.running)
 
-        self.client.jobs.terminate(resource_group.name, job.name).result()
+        self.client.jobs.terminate(
+            resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME, job.name).result()
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.failed)
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer(target_nodes=0, wait=False)
     def test_queued_job_termination(self, resource_group, location, cluster):
         """Tests termination of a job in queued state."""
         # Create a job which will be in queued state because the cluster has no compute nodes.
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1, 'true')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'true')
 
-        self.client.jobs.terminate(resource_group.name, job.name).result()
+        self.client.jobs.terminate(
+            resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME, job.name).result()
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.failed)
 
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_completed_job_termination(self, resource_group, location, cluster):
         """Tests termination of completed job."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1, 'true')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'true')
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
         # termination of completed job is NOP and must not change the execution state.
-        self.client.jobs.terminate(resource_group.name, job.name).result()
+        self.client.jobs.terminate(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name).result()
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_failed_job_reporting(self, resource_group, location, cluster):
         """Tests if job failure is reported correctly."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1,
-                                        'false')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'false')
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.failed)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
         self.assertEqual(job.execution_info.errors[0].code, 'JobFailed')
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_job_preparation_host(self, resource_group, location, cluster):
         """Tests job preparation execution for a job running on a host."""
         # create a job with job preparation which populates input data in $AZ_BATCHAI_INPUT_INPUT/hi.txt
-        job = create_custom_job(
-            self.client, resource_group.name, location, cluster.id, 'job', 1,
+        job = Helpers.create_custom_job(
+            self.client, resource_group.name, cluster.id, 'job', 1,
             'cat $AZ_BATCHAI_INPUT_INPUT/hi.txt',
             'mkdir -p $AZ_BATCHAI_INPUT_INPUT && echo hello | tee $AZ_BATCHAI_INPUT_INPUT/hi.txt')
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'hello\n',
                                       u'stderr.txt': u'',
                                       u'stdout-job_prep.txt': u'hello\n',
                                       u'stderr-job_prep.txt': u''})
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_job_preparation_container(self, resource_group, location, cluster):
         """Tests job preparation execution for a job running in a container."""
         # create a job with job preparation which populates input data in $AZ_BATCHAI_INPUT_INPUT/hi.txt
-        job = create_custom_job(
-            self.client, resource_group.name, location, cluster.id, 'job', 1,
+        job = Helpers.create_custom_job(
+            self.client, resource_group.name, cluster.id, 'job', 1,
             'cat $AZ_BATCHAI_INPUT_INPUT/hi.txt',
             'mkdir -p $AZ_BATCHAI_INPUT_INPUT && echo hello | tee $AZ_BATCHAI_INPUT_INPUT/hi.txt',
             container=models.ContainerSettings(
                 image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'hello\n',
                                       u'stderr.txt': u'',
                                       u'stdout-job_prep.txt': u'hello\n',
                                       u'stderr-job_prep.txt': u''})
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_job_host_preparation_failure_reporting(self, resource_group, location, cluster):
         """Tests if job preparation failure is reported correctly."""
         # create a job with failing job preparation
-        job = create_custom_job(
-            self.client, resource_group.name, location, cluster.id, 'job', 1, 'true', 'false')
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'true', 'false')
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.failed)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
         self.assertEqual(job.execution_info.errors[0].code, 'JobPreparationFailed')
         print(job.serialize())
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer()
     def test_job_container_preparation_failure_reporting(self, resource_group, location, cluster):
         """Tests if job preparation failure is reported correctly."""
         # create a job with failing job preparation
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1, 'true',
-                                        'false',
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 1, 'true', 'false',
                                         container=models.ContainerSettings(
                                             image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.failed)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
         self.assertEqual(job.execution_info.exit_code, 1)
         self.assertEqual(len(job.execution_info.errors), 1)
         self.assertEqual(job.execution_info.errors[0].code, 'JobPreparationFailed')
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer(target_nodes=2)
     def test_password_less_ssh(self, resource_group, location, cluster):
         """Tests if password-less ssh is configured on hosts."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 2,
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 2,
                                         'ssh 10.0.0.4 echo done && ssh 10.0.0.5 echo done')
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
 
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'done\ndone\n',
                                       u'stderr.txt': re.compile('Permanently added.*')})
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer(target_nodes=2)
     def test_password_less_ssh_in_container(self, resource_group, location, cluster):
         """Tests if password-less ssh is configured in containers."""
-        job = create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 2,
+        job = Helpers.create_custom_job(self.client, resource_group.name, cluster.id, 'job', 2,
                                         'ssh 10.0.0.5 echo done && ssh 10.0.0.5 echo done',
                                         container=models.ContainerSettings(
                                             image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'done\ndone\n',
                                       u'stderr.txt': re.compile('Permanently added.*')})
-        self.client.jobs.delete(resource_group.name, job.name).result()
-        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, job.name))
+        self.client.jobs.delete(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                job.name).result()
+        self.assertRaises(CloudError, lambda: self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME,
+                                                                   Helpers.DEFAULT_EXPERIMENT_NAME, job.name))
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer(target_nodes=1)
     def test_job_level_mounting(self, resource_group, location, cluster, storage_account, storage_account_key):
         """Tests if it's possible to mount external file systems for a job."""
         job_name = 'job'
 
         # Create file share and container to mount on the job level
-        if storage_account.name != FAKE_STORAGE.name:
+        if storage_account.name != Helpers.FAKE_STORAGE.name:
             files = FileService(storage_account.name, storage_account_key)
             files.create_share('jobshare', fail_on_exist=False)
             blobs = BlockBlobService(storage_account.name, storage_account_key)
@@ -297,9 +314,10 @@ class JobTestCase(AzureMgmtTestCase):
 
         job = self.client.jobs.create(
             resource_group.name,
+            Helpers.DEFAULT_WORKSPACE_NAME,
+            Helpers.DEFAULT_EXPERIMENT_NAME,
             job_name,
             parameters=models.JobCreateParameters(
-                location=location,
                 cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
                 mount_volumes=models.MountVolumes(
@@ -326,7 +344,7 @@ class JobTestCase(AzureMgmtTestCase):
                     ]
                 ),
                 # Put standard output on cluster level AFS to check that the job has access to it.
-                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
+                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(Helpers.AZURE_FILES_MOUNTING_PATH),
                 # Create two output directories on job level AFS and blobfuse.
                 output_directories=[
                     models.OutputDirectory(id='OUTPUT1', path_prefix='$AZ_BATCHAI_JOB_MOUNT_ROOT/job_afs'),
@@ -351,48 +369,50 @@ class JobTestCase(AzureMgmtTestCase):
             )
         ).result()
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.succeeded)
 
-        job = self.client.jobs.get(resource_group.name, job.name)
+        job = self.client.jobs.get(resource_group.name, Helpers.DEFAULT_WORKSPACE_NAME, Helpers.DEFAULT_EXPERIMENT_NAME,
+                                   job.name)
         # Assert job and job prep standard output is populated on cluster level filesystem
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'done\n', u'stderr.txt': u'',
                                       u'stdout-job_prep.txt': u'done\n', u'stderr-job_prep.txt': u''})
         # Assert files are generated on job level AFS
-        assert_job_files_are(self, self.client, resource_group.name, job.name, 'OUTPUT1',
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name, 'OUTPUT1',
                                      {u'job_afs.txt': u'afs\n', u'prep_afs.txt': u'afs\n', u'afs': None})
         # Assert files are generated on job level blobfuse
-        assert_job_files_are(self, self.client, resource_group.name, job.name, 'OUTPUT2',
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name, 'OUTPUT2',
                                      {u'job_bfs.txt': u'bfs\n', u'prep_bfs.txt': u'bfs\n', u'bfs': None})
         # Assert subfolders are available via API
-        assert_job_files_in_path_are(self, self.client, resource_group.name, job.name, 'OUTPUT1',
+        Helpers.assert_job_files_in_path_are(self, self.client, resource_group.name, job.name, 'OUTPUT1',
                                              'afs', {u'job_afs.txt': u'afs\n'})
-        assert_job_files_in_path_are(self, self.client, resource_group.name, job.name, 'OUTPUT2',
+        Helpers.assert_job_files_in_path_are(self, self.client, resource_group.name, job.name, 'OUTPUT2',
                                              'bfs', {u'job_bfs.txt': u'bfs\n'})
 
         # Assert that we can access the output files created on job level mount volumes directly in storage using path
         # segment returned by the server.
-        if storage_account.name != FAKE_STORAGE.name:
+        if storage_account.name != Helpers.FAKE_STORAGE.name:
             files = FileService(storage_account.name, storage_account_key)
             self.assertTrue(
                 files.exists('jobshare', job.job_output_directory_path_segment +
-                             '/' + OUTPUT_DIRECTORIES_FOLDER_NAME, 'job_afs.txt'))
+                             '/' + Helpers.OUTPUT_DIRECTORIES_FOLDER_NAME, 'job_afs.txt'))
             blobs = BlockBlobService(storage_account.name, storage_account_key)
             self.assertTrue(
                 blobs.exists('jobcontainer', job.job_output_directory_path_segment +
-                             '/' + OUTPUT_DIRECTORIES_FOLDER_NAME + '/job_bfs.txt'))
+                             '/' + Helpers.OUTPUT_DIRECTORIES_FOLDER_NAME + '/job_bfs.txt'))
         # After the job is done the filesystems should be unmounted automatically, check this by submitting a new job.
         checker = self.client.jobs.create(
             resource_group.name,
+            Helpers.DEFAULT_WORKSPACE_NAME,
+            Helpers.DEFAULT_EXPERIMENT_NAME,
             'checker',
             parameters=models.JobCreateParameters(
                 location=location,
                 cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
-                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
+                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(Helpers.AZURE_FILES_MOUNTING_PATH),
                 custom_toolkit_settings=models.CustomToolkitSettings(
                     command_line='echo job; df | grep -E "job_bfs|job_afs"'
                 )
@@ -400,28 +420,29 @@ class JobTestCase(AzureMgmtTestCase):
         ).result()
         # Check the job failed because there are not job level mount volumes anymore
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, checker.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, checker.name,
+                                            Helpers.MINUTE),
             models.ExecutionState.failed)
         # Check that the cluster level AFS was still mounted
-        assert_job_files_are(self, self.client, resource_group.name, checker.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, checker.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'job\n', u'stderr.txt': u''})
 
-    @ResourceGroupPreparer(location=LOCATION)
-    @StorageAccountPreparer(name_prefix='psdk', location=LOCATION, playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
+    @StorageAccountPreparer(name_prefix='psdk', location=Helpers.LOCATION, playback_fake_resource=Helpers.FAKE_STORAGE)
     @ClusterPreparer(target_nodes=1)
     def test_job_environment_variables_and_secrets(self, resource_group, location, cluster):
         """Tests if it's possible to mount external file systems for a job."""
         job_name = 'job'
         job = self.client.jobs.create(
             resource_group.name,
+            Helpers.DEFAULT_WORKSPACE_NAME,
+            Helpers.DEFAULT_EXPERIMENT_NAME,
             job_name,
             parameters=models.JobCreateParameters(
-                location=location,
                 cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
-                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
+                std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(Helpers.AZURE_FILES_MOUNTING_PATH),
                 environment_variables=[
                     models.EnvironmentVariable(name='VARIABLE', value='VALUE')
                 ],
@@ -439,8 +460,7 @@ class JobTestCase(AzureMgmtTestCase):
             )
         ).result()  # type: models.Job
         self.assertEqual(
-            wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
-                                            MINUTE),
+            Helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, Helpers.MINUTE),
             models.ExecutionState.succeeded)
         # Check that environment variables are reported by the server.
         self.assertEqual(len(job.environment_variables), 1)
@@ -451,7 +471,7 @@ class JobTestCase(AzureMgmtTestCase):
         self.assertEqual(job.secrets[0].name, 'SECRET_VARIABLE')
         self.assertIsNone(job.secrets[0].value)
         # Check that job and job prep had access to the env variables and secrets.
-        assert_job_files_are(self, self.client, resource_group.name, job.name,
-                                     STANDARD_OUTPUT_DIRECTORY_ID,
+        Helpers.assert_job_files_are(self, self.client, resource_group.name, job.name,
+                                     Helpers.STANDARD_OUTPUT_DIRECTORY_ID,
                                      {u'stdout.txt': u'VALUE SECRET\n', u'stderr.txt': u'',
                                       u'stdout-job_prep.txt': u'VALUE SECRET\n', u'stderr-job_prep.txt': u''})

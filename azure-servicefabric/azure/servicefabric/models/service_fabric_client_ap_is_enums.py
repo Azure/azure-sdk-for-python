@@ -113,7 +113,7 @@ class NodeUpgradePhase(str, Enum):
 class FailureReason(str, Enum):
 
     none = "None"  #: Indicates the reason is invalid or unknown. All Service Fabric enumerations have the invalid type. The value is zero.
-    interrupted = "Interrupted"  #: There was an external request to rollback the upgrade. The value is 1
+    interrupted = "Interrupted"  #: There was an external request to roll back the upgrade. The value is 1
     health_check = "HealthCheck"  #: The upgrade failed due to health policy violations. The value is 2
     upgrade_domain_timeout = "UpgradeDomainTimeout"  #: An upgrade domain took longer than the allowed upgrade domain timeout to process. The value is 3
     overall_upgrade_timeout = "OverallUpgradeTimeout"  #: The overall upgrade took longer than the allowed upgrade timeout to process. The value is 4
@@ -268,6 +268,11 @@ class FabricErrorCodes(str, Enum):
     fabric_e_backup_policy_already_existing = "FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING"
     fabric_e_invalid_service_scaling_policy = "FABRIC_E_INVALID_SERVICE_SCALING_POLICY"
     e_invalidarg = "E_INVALIDARG"
+    fabric_e_single_instance_application_already_exists = "FABRIC_E_SINGLE_INSTANCE_APPLICATION_ALREADY_EXISTS"
+    fabric_e_single_instance_application_not_found = "FABRIC_E_SINGLE_INSTANCE_APPLICATION_NOT_FOUND"
+    fabric_e_volume_already_exists = "FABRIC_E_VOLUME_ALREADY_EXISTS"
+    fabric_e_volume_not_found = "FABRIC_E_VOLUME_NOT_FOUND"
+    serialization_error = "SerializationError"
 
 
 class FabricEventKind(str, Enum):
@@ -873,6 +878,38 @@ class ScalingMechanismKind(str, Enum):
     invalid = "Invalid"  #: Indicates the scaling mechanism is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
     partition_instance_count = "PartitionInstanceCount"  #: Indicates a mechanism for scaling where new instances are added or removed from a partition. The value is 1.
     add_remove_incremental_named_partition = "AddRemoveIncrementalNamedPartition"  #: Indicates a mechanism for scaling where new named partitions are added or removed from a service. The value is 2.
+
+
+class ServiceResourceStatus(str, Enum):
+
+    unknown = "Unknown"
+    active = "Active"
+    upgrading = "Upgrading"
+    deleting = "Deleting"
+    creating = "Creating"
+    failed = "Failed"
+
+
+class ApplicationResourceStatus(str, Enum):
+
+    invalid = "Invalid"
+    ready = "Ready"
+    upgrading = "Upgrading"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class DiagnosticsSinkKind(str, Enum):
+
+    invalid = "Invalid"  #: Indicates an invalid sink kind. All Service Fabric enumerations have the invalid type.
+    azure_internal_monitoring_pipeline = "AzureInternalMonitoringPipeline"  #: Diagnostics settings for Geneva.
+
+
+class OperatingSystemTypes(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
 
 
 class NodeStatusFilter(str, Enum):

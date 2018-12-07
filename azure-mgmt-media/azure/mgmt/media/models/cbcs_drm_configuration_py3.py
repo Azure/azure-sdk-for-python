@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class CbcsDrmConfiguration(Model):
-    """Class to specify drm configurations of CommonEncryptionCbcs scheme in
+    """Class to specify DRM configurations of CommonEncryptionCbcs scheme in
     Streaming Policy.
 
-    :param fair_play: Fairplay configurations
+    :param fair_play: FairPlay configurations
     :type fair_play:
      ~azure.mgmt.media.models.StreamingPolicyFairPlayConfiguration
     :param play_ready: PlayReady configurations

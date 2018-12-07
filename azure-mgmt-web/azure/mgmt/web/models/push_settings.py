@@ -18,6 +18,8 @@ class PushSettings(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,8 +28,8 @@ class PushSettings(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param is_push_enabled: Gets or sets a flag indicating whether the Push
-     endpoint is enabled.
+    :param is_push_enabled: Required. Gets or sets a flag indicating whether
+     the Push endpoint is enabled.
     :type is_push_enabled: bool
     :param tag_whitelist_json: Gets or sets a JSON string containing a list of
      tags that are whitelisted for use by the push registration endpoint.
@@ -63,9 +65,9 @@ class PushSettings(ProxyOnlyResource):
         'dynamic_tags_json': {'key': 'properties.dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, is_push_enabled, kind=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
-        super(PushSettings, self).__init__(kind=kind)
-        self.is_push_enabled = is_push_enabled
-        self.tag_whitelist_json = tag_whitelist_json
-        self.tags_requiring_auth = tags_requiring_auth
-        self.dynamic_tags_json = dynamic_tags_json
+    def __init__(self, **kwargs):
+        super(PushSettings, self).__init__(**kwargs)
+        self.is_push_enabled = kwargs.get('is_push_enabled', None)
+        self.tag_whitelist_json = kwargs.get('tag_whitelist_json', None)
+        self.tags_requiring_auth = kwargs.get('tags_requiring_auth', None)
+        self.dynamic_tags_json = kwargs.get('dynamic_tags_json', None)

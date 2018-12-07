@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_key_policy_configuration import ContentKeyPolicyConfiguration
+from .content_key_policy_configuration_py3 import ContentKeyPolicyConfiguration
 
 
 class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
@@ -19,7 +19,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param ask: Required. The key that must be used as FairPlay ASk.
+    :param ask: Required. The key that must be used as FairPlay Application
+     Secret key.
     :type ask: bytearray
     :param fair_play_pfx_password: Required. The password encrypting FairPlay
      certificate in PKCS 12 (pfx) format.

@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class AutoScaleRun(Model):
     """The results and errors from an execution of a pool autoscale formula.
 
-    :param timestamp: The time at which the autoscale formula was last
-     evaluated.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The time at which the autoscale formula was
+     last evaluated.
     :type timestamp: datetime
     :param results: The final values of all variables used in the evaluation
      of the autoscale formula. Each variable value is returned in the form
@@ -37,8 +39,8 @@ class AutoScaleRun(Model):
         'error': {'key': 'error', 'type': 'AutoScaleRunError'},
     }
 
-    def __init__(self, timestamp, results=None, error=None):
-        super(AutoScaleRun, self).__init__()
-        self.timestamp = timestamp
-        self.results = results
-        self.error = error
+    def __init__(self, **kwargs):
+        super(AutoScaleRun, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.results = kwargs.get('results', None)
+        self.error = kwargs.get('error', None)

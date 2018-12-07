@@ -34,7 +34,7 @@ class OperationListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(OperationListResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None

@@ -53,7 +53,7 @@ class ProtectionContainer(Model):
     }
 
     _subtype_map = {
-        'container_type': {'AzureBackupServerContainer': 'AzureBackupServerContainer', 'AzureSqlContainer': 'AzureSqlContainer', 'StorageContainer': 'AzureStorageContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'MABWindowsContainer': 'MabContainer'}
+        'container_type': {'AzureBackupServerContainer': 'AzureBackupServerContainer', 'AzureSqlContainer': 'AzureSqlContainer', 'StorageContainer': 'AzureStorageContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'Windows': 'MabContainer'}
     }
 
     def __init__(self, **kwargs):

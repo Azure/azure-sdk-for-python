@@ -78,4 +78,4 @@ class MabContainer(ProtectionContainer):
         self.extended_info = extended_info
         self.mab_container_health_details = mab_container_health_details
         self.container_health_state = container_health_state
-        self.container_type = 'MABWindowsContainer'
+        self.container_type = 'Windows'

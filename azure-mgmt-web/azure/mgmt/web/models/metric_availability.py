@@ -26,7 +26,7 @@ class MetricAvailability(Model):
         'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self, time_grain=None, blob_duration=None):
-        super(MetricAvailability, self).__init__()
-        self.time_grain = time_grain
-        self.blob_duration = blob_duration
+    def __init__(self, **kwargs):
+        super(MetricAvailability, self).__init__(**kwargs)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.blob_duration = kwargs.get('blob_duration', None)

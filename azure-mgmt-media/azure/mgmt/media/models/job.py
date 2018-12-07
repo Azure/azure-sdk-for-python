@@ -47,6 +47,9 @@ class Job(ProxyResource):
      priority jobs are processed before lower priority jobs. If not set, the
      default is normal. Possible values include: 'Low', 'Normal', 'High'
     :type priority: str or ~azure.mgmt.media.models.Priority
+    :param correlation_data: Customer provided correlation data that will be
+     returned in Job and JobOutput state events.
+    :type correlation_data: dict[str, str]
     """
 
     _validation = {
@@ -71,6 +74,7 @@ class Job(ProxyResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
         'priority': {'key': 'properties.priority', 'type': 'Priority'},
+        'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -82,3 +86,4 @@ class Job(ProxyResource):
         self.last_modified = None
         self.outputs = kwargs.get('outputs', None)
         self.priority = kwargs.get('priority', None)
+        self.correlation_data = kwargs.get('correlation_data', None)

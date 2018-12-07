@@ -1,4 +1,11 @@
 {
+  "azure-applicationinsights": {
+		"service_name": "Application Insights",
+		"category ": "Client",
+    "namespaces": [
+      "azure.applicationinsights"
+    ]
+	},
   "azure-batch": {
     "category ": "Client",
     "namespaces": [
@@ -122,6 +129,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-loganalytics": {
+		"service_name": "Log Analytics",
+		"category ": "Client",
+    "namespaces": [
+      "azure.loganalytics"
+    ]
+	},
   "azure-mgmt-advisor": {
     "category ": "Management",
     "namespaces": [
@@ -333,6 +347,13 @@
       "azure.mgmt.machinelearningcompute"
     ],
     "service_name": "Machine Learning Compute"
+  },
+  "azure-mgmt-managementgroups": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.managementgroups"
+    ],
+    "service_name": "Management Groups"
   },
   "azure-mgmt-media": {
     "category ": "Management",

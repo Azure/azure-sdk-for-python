@@ -1,9 +1,9 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure ImageSearch Client Library.
+This is the Microsoft Azure Cognitive Services Image Search Client Library.
 
-This package has been tested with Python 2.7, 3.4, 3.5 and 3.6.
+This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
@@ -30,9 +30,9 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Image Search
+For code examples, see `Cognitive Services Image Search
 <https://docs.microsoft.com/python/api/overview/azure/cognitive-services>`__
-on readthedocs.org.
+on docs.microsoft.com.
 
 
 Provide Feedback

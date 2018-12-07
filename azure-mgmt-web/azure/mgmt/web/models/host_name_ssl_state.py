@@ -41,11 +41,11 @@ class HostNameSslState(Model):
         'host_type': {'key': 'hostType', 'type': 'HostType'},
     }
 
-    def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None, host_type=None):
-        super(HostNameSslState, self).__init__()
-        self.name = name
-        self.ssl_state = ssl_state
-        self.virtual_ip = virtual_ip
-        self.thumbprint = thumbprint
-        self.to_update = to_update
-        self.host_type = host_type
+    def __init__(self, **kwargs):
+        super(HostNameSslState, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.ssl_state = kwargs.get('ssl_state', None)
+        self.virtual_ip = kwargs.get('virtual_ip', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.to_update = kwargs.get('to_update', None)
+        self.host_type = kwargs.get('host_type', None)
