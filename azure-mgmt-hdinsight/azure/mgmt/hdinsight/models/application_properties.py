@@ -44,8 +44,6 @@ class ApplicationProperties(Model):
     :vartype created_date: str
     :ivar marketplace_identifier: The marketplace identifier.
     :vartype marketplace_identifier: str
-    :param additional_properties: The additional properties for application.
-    :type additional_properties: str
     """
 
     _validation = {
@@ -67,7 +65,6 @@ class ApplicationProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'created_date': {'key': 'createdDate', 'type': 'str'},
         'marketplace_identifier': {'key': 'marketplaceIdentifier', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -83,4 +80,3 @@ class ApplicationProperties(Model):
         self.errors = kwargs.get('errors', None)
         self.created_date = None
         self.marketplace_identifier = None
-        self.additional_properties = kwargs.get('additional_properties', None)
