@@ -80,7 +80,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
 
     def refresh(
             self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Refresh a ssis integration runtime object metadata.
+        """Refresh a SSIS integration runtime object metadata.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -124,7 +124,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
 
     def get(
             self, resource_group_name, factory_name, integration_runtime_name, metadata_path=None, custom_headers=None, raw=False, **operation_config):
-        """Get a ssis integration runtime object metadata by specified path. The
+        """Get a SSIS integration runtime object metadata by specified path. The
         return is pageable metadata list.
 
         :param resource_group_name: The resource group name.
@@ -133,7 +133,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param metadata_path: Metadata path
+        :param metadata_path: Metadata path.
         :type metadata_path: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

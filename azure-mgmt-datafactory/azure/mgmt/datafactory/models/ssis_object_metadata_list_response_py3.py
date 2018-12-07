@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class SsisObjectMetadataListResponse(Model):
-    """A list of Ssis object metadata.
+    """A list of SSIS object metadata.
 
-    :param value: List of Ssis object metadata
+    :param value: List of SSIS object metadata.
     :type value: list[~azure.mgmt.datafactory.models.SsisObjectMetadata]
     :param next_link: The link to the next page of results, if any remaining
      results exist.

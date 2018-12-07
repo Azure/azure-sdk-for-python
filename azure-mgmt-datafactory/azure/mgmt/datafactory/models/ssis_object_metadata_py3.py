@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SsisObjectMetadata(Model):
-    """Ssis object metadata.
+    """SSIS object metadata.
 
     All required parameters must be populated in order to send to Azure.
 

@@ -298,6 +298,7 @@ try:
     from .azure_table_source_py3 import AzureTableSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
+    from .log_storage_settings_py3 import LogStorageSettings
     from .delete_activity_py3 import DeleteActivity
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object_py3 import CustomActivityReferenceObject
@@ -656,6 +657,7 @@ except (SyntaxError, ImportError):
     from .azure_table_source import AzureTableSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
+    from .log_storage_settings import LogStorageSettings
     from .delete_activity import DeleteActivity
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object import CustomActivityReferenceObject
@@ -1085,6 +1087,7 @@ __all__ = [
     'AzureTableSource',
     'CopySource',
     'LookupActivity',
+    'LogStorageSettings',
     'DeleteActivity',
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',

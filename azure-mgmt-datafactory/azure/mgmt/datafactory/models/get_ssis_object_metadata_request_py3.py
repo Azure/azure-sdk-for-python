@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class GetSsisObjectMetadataRequest(Model):
-    """The request payload of get ssis object metadata.
+    """The request payload of get SSIS object metadata.
 
-    :param metadata_path: Metadata path
+    :param metadata_path: Metadata path.
     :type metadata_path: str
     """
 

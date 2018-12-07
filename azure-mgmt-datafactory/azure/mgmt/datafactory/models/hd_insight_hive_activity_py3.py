@@ -52,6 +52,11 @@ class HDInsightHiveActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param defines: Allows user to specify defines for Hive job request.
     :type defines: dict[str, object]
+    :param variables: User specified arguments under hivevar namespace.
+    :type variables: list[object]
+    :param query_timeout: Query timeout value (in minutes).  Effective when
+     the HDInsight culster is with ESP (Enterprise Security Package)
+    :type query_timeout: int
     """
 
     _validation = {
@@ -74,9 +79,11 @@ class HDInsightHiveActivity(ExecutionActivity):
         'script_path': {'key': 'typeProperties.scriptPath', 'type': 'object'},
         'script_linked_service': {'key': 'typeProperties.scriptLinkedService', 'type': 'LinkedServiceReference'},
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
+        'variables': {'key': 'typeProperties.variables', 'type': '[object]'},
+        'query_timeout': {'key': 'typeProperties.queryTimeout', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, script_path=None, script_linked_service=None, defines=None, **kwargs) -> None:
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, script_path=None, script_linked_service=None, defines=None, variables=None, query_timeout: int=None, **kwargs) -> None:
         super(HDInsightHiveActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
@@ -84,4 +91,6 @@ class HDInsightHiveActivity(ExecutionActivity):
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.defines = defines
+        self.variables = variables
+        self.query_timeout = query_timeout
         self.type = 'HDInsightHive'
