@@ -20,7 +20,7 @@ class LoadBalancerConfiguration(Model):
      ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
     :param public_ip_address_resource_id: Resource id of the public IP.
     :type public_ip_address_resource_id: str
-    :param load_balancer_resource_id: Subnet used to include private IP.
+    :param load_balancer_resource_id: Resource id of the load balancer.
     :type load_balancer_resource_id: str
     :param probe_port: Probe port.
     :type probe_port: int
