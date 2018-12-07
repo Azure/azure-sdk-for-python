@@ -18,17 +18,12 @@ class AdditionalFeaturesServerConfigurations(Model):
     :param is_rservices_enabled: Enable or disable R services (SQL 2016
      onwards).
     :type is_rservices_enabled: bool
-    :param backup_permissions_for_azure_backup_svc: Enable or disable Azure
-     Backup service.
-    :type backup_permissions_for_azure_backup_svc: bool
     """
 
     _attribute_map = {
         'is_rservices_enabled': {'key': 'isRServicesEnabled', 'type': 'bool'},
-        'backup_permissions_for_azure_backup_svc': {'key': 'backupPermissionsForAzureBackupSvc', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(AdditionalFeaturesServerConfigurations, self).__init__(**kwargs)
         self.is_rservices_enabled = kwargs.get('is_rservices_enabled', None)
-        self.backup_permissions_for_azure_backup_svc = kwargs.get('backup_permissions_for_azure_backup_svc', None)
