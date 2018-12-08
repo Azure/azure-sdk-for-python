@@ -58,6 +58,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -74,9 +75,16 @@ class IntegrationRuntimeObjectMetadataOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SsisObjectMetadataStatusResponse', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
 
     def refresh(
             self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, polling=True, **operation_config):
@@ -93,10 +101,13 @@ class IntegrationRuntimeObjectMetadataOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :return: An instance of LROPoller that returns
+         SsisObjectMetadataStatusResponse or
+         ClientRawResponse<SsisObjectMetadataStatusResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datafactory.models.SsisObjectMetadataStatusResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datafactory.models.SsisObjectMetadataStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._refresh_initial(
@@ -109,9 +120,13 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         )
 
         def get_long_running_output(response):
+            deserialized = self._deserialize('SsisObjectMetadataStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         lro_delay = operation_config.get(
             'long_running_operation_timeout',

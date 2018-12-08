@@ -77,6 +77,7 @@ try:
     from .operation_service_specification_py3 import OperationServiceSpecification
     from .operation_py3 import Operation
     from .get_ssis_object_metadata_request_py3 import GetSsisObjectMetadataRequest
+    from .ssis_object_metadata_status_response_py3 import SsisObjectMetadataStatusResponse
     from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference_py3 import TriggerReference
     from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
@@ -436,6 +437,7 @@ except (SyntaxError, ImportError):
     from .operation_service_specification import OperationServiceSpecification
     from .operation import Operation
     from .get_ssis_object_metadata_request import GetSsisObjectMetadataRequest
+    from .ssis_object_metadata_status_response import SsisObjectMetadataStatusResponse
     from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference import TriggerReference
     from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
@@ -866,6 +868,7 @@ __all__ = [
     'OperationServiceSpecification',
     'Operation',
     'GetSsisObjectMetadataRequest',
+    'SsisObjectMetadataStatusResponse',
     'SelfDependencyTumblingWindowTriggerReference',
     'TriggerReference',
     'TumblingWindowTriggerDependencyReference',
