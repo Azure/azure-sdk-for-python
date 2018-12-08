@@ -93,7 +93,7 @@ except (SyntaxError, ImportError):
     from .filters import Filters
     from .knowledge_request import KnowledgeRequest
     from .visual_search_request import VisualSearchRequest
-from .visual_search_api_enums import (
+from .visual_search_client_enums import (
     Currency,
     ItemAvailability,
     ErrorCode,
