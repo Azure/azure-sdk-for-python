@@ -466,7 +466,7 @@ class PolicyAssignmentsOperations(object):
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -536,7 +536,7 @@ class PolicyAssignmentsOperations(object):
 
         Policy assignments are inherited by child resources. For example, when
         you apply a policy to a resource group that policy is assigned to all
-        resources in the group. When providing a scope for the assigment, use
+        resources in the group. When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -611,7 +611,7 @@ class PolicyAssignmentsOperations(object):
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Gets a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
