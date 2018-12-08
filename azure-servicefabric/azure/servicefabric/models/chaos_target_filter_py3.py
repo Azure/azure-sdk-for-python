@@ -47,7 +47,7 @@ class ChaosTargetFilter(Model):
      number, a config upgrade is required for
      MaxNumberOfNodeTypesInChaosEntityFilter configuration.
     :type node_type_inclusion_list: list[str]
-    :param application_inclusion_list: A list of application URI's to include
+    :param application_inclusion_list: A list of application URIs to include
      in Chaos faults.
      All replicas belonging to services of these applications are amenable to
      replica faults (restart replica, remove replica, move primary, and move
