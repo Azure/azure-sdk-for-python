@@ -83,8 +83,8 @@ class CertificateStoreLocation(str, Enum):
 class CertificateVisibility(str, Enum):
 
     start_task = "starttask"  #: The certificate should be visible to the user account under which the start task is run.
-    task = "task"  #: The certificate should be visibile to the user accounts under which job tasks are run.
-    remote_user = "remoteuser"  #: The certificate should be visibile to the user accounts under which users remotely access the node.
+    task = "task"  #: The certificate should be visible to the user accounts under which job tasks are run.
+    remote_user = "remoteuser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
 
 class CachingType(str, Enum):
@@ -230,7 +230,7 @@ class ComputeNodeState(str, Enum):
     unknown = "unknown"  #: The Batch service has lost contact with the node, and does not know its true state.
     leaving_pool = "leavingpool"  #: The node is leaving the pool, either because the user explicitly removed it or because the pool is resizing or autoscaling down.
     offline = "offline"  #: The node is not currently running a task, and scheduling of new tasks to the node is disabled.
-    preempted = "preempted"  #: The low-priority node has been preempted. Tasks which were running on the node when it was pre-empted will be rescheduled when another node becomes available.
+    preempted = "preempted"  #: The low-priority node has been preempted. Tasks which were running on the node when it was preempted will be rescheduled when another node becomes available.
 
 
 class SchedulingState(str, Enum):

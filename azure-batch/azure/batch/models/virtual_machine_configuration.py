@@ -39,7 +39,7 @@ class VirtualMachineConfiguration(Model):
      or osDisk property specifies a Linux OS image.
     :type windows_configuration: ~azure.batch.models.WindowsConfiguration
     :param data_disks: The configuration for data disks attached to the
-     comptue nodes in the pool. This property must be specified if the compute
+     compute nodes in the pool. This property must be specified if the compute
      nodes in the pool need to have empty data disks attached to them. This
      cannot be updated. Each node gets its own disk (the disk is not a file
      share). Existing disks cannot be attached, each attached disk is empty.
