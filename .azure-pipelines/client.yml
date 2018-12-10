@@ -13,14 +13,6 @@ jobs:
     inputs:
       versionSpec: 3.6
 
-  - script: |
-     python -m venv .\
-     
-     pip install git+https://github.com/lmazuel/swagger-to-sdk
-     pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
-
-    displayName: 'Prep Environment, Install Packages'
-
   - powershell: |
      $inputFilterSet="$(build_targeting_string)"
      
@@ -35,7 +27,7 @@ jobs:
      
        foreach ($folder in $foldersToIterate)
        {
-         python ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
+         python3 ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
        }
      }
      

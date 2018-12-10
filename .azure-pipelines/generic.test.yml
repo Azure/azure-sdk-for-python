@@ -18,6 +18,8 @@ jobs:
         python.version: '3.5'
       Python_36:
         python.version: '3.6'
+      Python_37:
+        python.version: '3.7'
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'
