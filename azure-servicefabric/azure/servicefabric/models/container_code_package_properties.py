@@ -57,7 +57,7 @@ class ContainerCodePackageProperties(Model):
     :type diagnostics: ~azure.servicefabric.models.DiagnosticsRef
     :param reliable_collections_refs: A list of ReliableCollection resources
      used by this particular code package. Please refer to
-     ReliablecollectionsRef for more details.
+     ReliableCollectionsRef for more details.
     :type reliable_collections_refs:
      list[~azure.servicefabric.models.ReliableCollectionsRef]
     :ivar instance_view: Runtime information of a container instance.

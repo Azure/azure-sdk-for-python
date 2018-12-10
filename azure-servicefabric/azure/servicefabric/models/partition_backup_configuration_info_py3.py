@@ -33,7 +33,7 @@ class PartitionBackupConfigurationInfo(BackupConfigurationInfo):
     :param service_name: The full name of the service with 'fabric:' URI
      scheme.
     :type service_name: str
-    :param partition_id: The partition ID indentifying the partition.
+    :param partition_id: The partition ID identifying the partition.
     :type partition_id: str
     """
 
