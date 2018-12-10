@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class RoutingTwinProperties(Model):
-    """RoutingTwinProperties.
+class IotHubPropertiesDeviceStreams(Model):
+    """The device streams properties of iothub.
 
-    :param desired: Twin desired properties
-    :type desired: object
-    :param reported: Twin desired properties
-    :type reported: object
+    :param streaming_endpoints: List of Device Streams Endpoints.
+    :type streaming_endpoints: list[str]
     """
 
     _attribute_map = {
-        'desired': {'key': 'desired', 'type': 'object'},
-        'reported': {'key': 'reported', 'type': 'object'},
+        'streaming_endpoints': {'key': 'streamingEndpoints', 'type': '[str]'},
     }
 
-    def __init__(self, *, desired=None, reported=None, **kwargs) -> None:
-        super(RoutingTwinProperties, self).__init__(**kwargs)
-        self.desired = desired
-        self.reported = reported
+    def __init__(self, **kwargs):
+        super(IotHubPropertiesDeviceStreams, self).__init__(**kwargs)
+        self.streaming_endpoints = kwargs.get('streaming_endpoints', None)
