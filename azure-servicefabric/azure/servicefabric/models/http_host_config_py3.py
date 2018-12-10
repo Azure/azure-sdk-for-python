@@ -21,7 +21,7 @@ class HttpHostConfig(Model):
     :type name: str
     :param routes: Required. Route information to use for routing. Routes are
      processed in the order they are specified. Specify routes that are more
-     specific before routes that can hamdle general cases.
+     specific before routes that can handle general cases.
     :type routes: list[~azure.servicefabric.models.HttpRouteConfig]
     """
 

@@ -532,14 +532,14 @@ class EntryPointStatus(str, Enum):
 
 class ChaosStatus(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid Chaos status. All Service Fabric enumerations have the invalid type. The valus is zero.
+    invalid = "Invalid"  #: Indicates an invalid Chaos status. All Service Fabric enumerations have the invalid type. The value is zero.
     running = "Running"  #: Indicates that Chaos is not stopped. The value is one.
     stopped = "Stopped"  #: Indicates that Chaos is not scheduling further faults. The value is two.
 
 
 class ChaosScheduleStatus(str, Enum):
 
-    invalid = "Invalid"  #: Indicates an invalid Chaos Schedule status. All Service Fabric enumerations have the invalid type. The valus is zero.
+    invalid = "Invalid"  #: Indicates an invalid Chaos Schedule status. All Service Fabric enumerations have the invalid type. The value is zero.
     stopped = "Stopped"  #: Indicates that the schedule is stopped and not being used to schedule runs of chaos. The value is one.
     active = "Active"  #: Indicates that the schedule is active and is being used to schedule runs of Chaos. The value is two.
     expired = "Expired"  #: Indicates that the schedule is expired and will no longer be used to schedule runs of Chaos. The value is three.
@@ -887,7 +887,7 @@ class ResourceStatus(str, Enum):
     ready = "Ready"  #: Indicates the resource is ready. The value is 1.
     upgrading = "Upgrading"  #: Indicates the resource is upgrading. The value is 2.
     creating = "Creating"  #: Indicates the resource is being created. The value is 3.
-    deleting = "Deleting"  #: Indicates the resource is being deletd. The value is 4.
+    deleting = "Deleting"  #: Indicates the resource is being deleted. The value is 4.
     failed = "Failed"  #: Indicates the resource is not functional due to persistent failures. See statusDetails property for more details. The value is 5.
 
 
