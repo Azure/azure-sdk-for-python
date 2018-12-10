@@ -36,7 +36,7 @@ jobs:
         $inputFilterSet = "azure-*"
      }
      
-     foreach($inputFilter in "$inputFilterSet".split(","))
+     foreach($inputFilter in $inputFilterSet.split(","))
      {
         $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
         pytest $folderCombination
