@@ -13,6 +13,11 @@ jobs:
     inputs:
       versionSpec: 3.6
 
+  - script: |
+     pip install wheel
+
+    displayName: 'Prep Environment, Install Packages'
+
   - powershell: |
      $inputFilterSet="$(build_targeting_string)"
      
