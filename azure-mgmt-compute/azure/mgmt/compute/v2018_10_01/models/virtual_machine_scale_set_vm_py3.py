@@ -37,6 +37,9 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
+    :param protect_from_scale_in: Specifies whether the virtual machine
+     instance shouldn't be considered for deletion during a scale-in operation
+    :type protect_from_scale_in: bool
     :ivar vm_id: Azure VM unique ID.
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
@@ -131,6 +134,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_id': {'key': 'instanceId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
+        'protect_from_scale_in': {'key': 'properties.protectFromScaleIn', 'type': 'bool'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
@@ -147,11 +151,12 @@ class VirtualMachineScaleSetVM(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, plan=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, protect_from_scale_in: bool=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, plan=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags, **kwargs)
         self.instance_id = None
         self.sku = None
         self.latest_model_applied = None
+        self.protect_from_scale_in = protect_from_scale_in
         self.vm_id = None
         self.instance_view = None
         self.hardware_profile = hardware_profile
