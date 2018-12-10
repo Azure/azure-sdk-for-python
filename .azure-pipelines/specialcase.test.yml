@@ -5,38 +5,29 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: |
-     mkdir local_install
-     cd local_install
-     
-     wget https://s3.amazonaws.com/travis-python-archives/binaries/ubuntu/14.04/x86_64/pypy3.5-5.8.0.tar.bz2
-     tar -xjf pypy3.5-5.8.0.tar.bz2
-     
-    displayName: 'Download PyPy Python'
-    continueOnError: false
-    
-  - script: '$(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 scripts/dev_setup.py'
-    displayName: 'Setup Tests'
-    continueOnError: true
-
   - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
+     cd ~/
+     wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
+     tar xf pypy3-v6.0.0-linux64.tar.bz2
+     cd $(Build.SourcesDirectory)
      
-     if ($inputFilterSet -eq "")
-     {
-         $inputFilterSet = "azure-*"
-     }
+     ~/pypy3-v6.0.0-linux64/bin/pypy3 -m ensurepip
+     ~/pypy3-v6.0.0-linux64/bin/pypy3 scripts/dev_setup.py
      
-     foreach($inputFilter in "$inputFilterSet".split(","))
-     {
-        $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+      $inputFilterSet="$(build_targeting_string)"
+      
+      if ($inputFilterSet -eq "")
+      {
+          $inputFilterSet = "azure-*"
+      }
+      
+      foreach($inputFilter in "$inputFilterSet".split(","))
+      {
+         $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+      
+         ~/pypy3-v6.0.0-linux64/bin/pypy3 -m pytest $folderCombination
+      }
      
-        $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 -m pytest $folderCombination --ignore=local_install
-     }
-    displayName: 'Run Test Subset'
-    continueOnError: true
-
-  - script: |
-     $(Build.SourcesDirectory)/local_install/opt/python/pypy3.5-5.8.0/bin/pypy3 ./setup.py check -r -s
-    displayName: 'Check Setup.py Files'
-    continueOnError: true
+     ~/pypy3-v6.0.0-linux64/bin/pypy3 ./setup.py check -r -s
+    displayName: 'Setup and Run Filtered Tests PyPy3'
+    enabled: true
