@@ -31,7 +31,7 @@ jobs:
      ~/pypy3-v6.0.0-linux64/bin/pypy3 ./setup.py check -r -s
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
-    enabled: true
+    
   - powershell: |
      sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
      cd ~/
