@@ -30,4 +30,5 @@ jobs:
      
      ~/pypy3-v6.0.0-linux64/bin/pypy3 ./setup.py check -r -s
     displayName: 'Setup and Run Filtered Tests PyPy3'
+    continueOnError: true
     enabled: true
