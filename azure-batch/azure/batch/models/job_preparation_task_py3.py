@@ -104,7 +104,7 @@ class JobPreparationTask(Model):
     :type wait_for_success: bool
     :param user_identity: The user identity under which the Job Preparation
      task runs. If omitted, the task runs as a non-administrative user unique
-     to the task on Windows nodes, or a a non-administrative user unique to the
+     to the task on Windows nodes, or a non-administrative user unique to the
      pool on Linux nodes.
     :type user_identity: ~azure.batch.models.UserIdentity
     :param rerun_on_node_reboot_after_success: Whether the Batch service
