@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.5.0 (2018-12-10)
+++++++++++++++++++
+
+**Features**
+
+- Add network rule set to registry properties
+
 2.4.0 (2018-11-05)
 ++++++++++++++++++
 
