@@ -21,11 +21,18 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
      the subscription and resource group.
     :type name: str
     :param count: Required. Number of agents (VMs) to host docker containers.
-     Allowed values must be in the range of 1 to 5 (inclusive). The default
-     value is 2. . Default value: 2 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
-     'Standard_D2s_v3', 'Standard_D4s_v3'
+     'Standard_D2s_v3', 'Standard_D4s_v3', 'Standard_D8s_v3',
+     'Standard_D16s_v3', 'Standard_D32s_v3', 'Standard_D64s_v3',
+     'Standard_DS4_v2', 'Standard_DS5_v2', 'Standard_F8s_v2',
+     'Standard_F16s_v2', 'Standard_F32s_v2', 'Standard_F64s_v2',
+     'Standard_F72s_v2', 'Standard_F8s', 'Standard_F16s', 'Standard_E4s_v3',
+     'Standard_E8s_v3', 'Standard_E16s_v3', 'Standard_E20s_v3',
+     'Standard_E32s_v3', 'Standard_E64s_v3', 'Standard_GS2', 'Standard_GS3',
+     'Standard_GS4', 'Standard_GS5', 'Standard_DS12_v2', 'Standard_DS13_v2',
+     'Standard_DS14_v2', 'Standard_DS15_v2', 'Standard_L4s', 'Standard_L8s',
+     'Standard_L16s', 'Standard_L32s'
     :type vm_size: str or
      ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftContainerServiceVMSize
     :param subnet_cidr: Subnet CIDR for the peering. Default value:
@@ -44,7 +51,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
 
     _validation = {
         'name': {'required': True},
-        'count': {'required': True, 'maximum': 5, 'minimum': 1},
+        'count': {'required': True},
         'vm_size': {'required': True},
     }
 
@@ -57,7 +64,7 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=2, subnet_cidr: str="10.0.0.0/24", os_type="Linux", role=None, **kwargs) -> None:
+    def __init__(self, *, name: str, count: int, vm_size, subnet_cidr: str="10.0.0.0/24", os_type="Linux", role=None, **kwargs) -> None:
         super(OpenShiftManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
