@@ -30,7 +30,7 @@ class RoleAssignment(Model):
     :type role_definition_id: str
     :param principal_id: The principal ID.
     :type principal_id: str
-    :param can_delegate: The Delegation flag for the roleassignment
+    :param can_delegate: The Delegation flag for the role assignment
     :type can_delegate: bool
     """
 

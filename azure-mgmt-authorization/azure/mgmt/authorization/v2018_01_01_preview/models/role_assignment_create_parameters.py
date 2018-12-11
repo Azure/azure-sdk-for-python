@@ -24,7 +24,7 @@ class RoleAssignmentCreateParameters(Model):
      maps to the ID inside the Active Directory. It can point to a user,
      service principal, or security group.
     :type principal_id: str
-    :param can_delegate: The delgation flag used for creating a role
+    :param can_delegate: The delegation flag used for creating a role
      assignment
     :type can_delegate: bool
     """
