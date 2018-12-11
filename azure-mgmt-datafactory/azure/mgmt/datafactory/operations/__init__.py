@@ -12,6 +12,7 @@
 from .operations import Operations
 from .factories_operations import FactoriesOperations
 from .integration_runtimes_operations import IntegrationRuntimesOperations
+from .integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
 from .integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .linked_services_operations import LinkedServicesOperations
 from .datasets_operations import DatasetsOperations
@@ -26,6 +27,7 @@ __all__ = [
     'Operations',
     'FactoriesOperations',
     'IntegrationRuntimesOperations',
+    'IntegrationRuntimeObjectMetadataOperations',
     'IntegrationRuntimeNodesOperations',
     'LinkedServicesOperations',
     'DatasetsOperations',

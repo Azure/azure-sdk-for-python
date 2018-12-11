@@ -449,6 +449,14 @@ class IntegrationRuntimeEdition(str, Enum):
     enterprise = "Enterprise"
 
 
+class SsisObjectMetadataType(str, Enum):
+
+    folder = "Folder"
+    project = "Project"
+    package = "Package"
+    environment = "Environment"
+
+
 class IntegrationRuntimeAuthKeyName(str, Enum):
 
     auth_key1 = "authKey1"
