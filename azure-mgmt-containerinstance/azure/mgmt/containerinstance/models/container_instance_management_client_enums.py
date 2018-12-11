@@ -18,6 +18,21 @@ class ContainerNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class GpuSku(str, Enum):
+
+    k80 = "K80"
+    p100 = "P100"
+    v100 = "V100"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
 class ContainerGroupRestartPolicy(str, Enum):
 
     always = "Always"

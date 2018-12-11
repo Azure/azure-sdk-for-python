@@ -23,7 +23,7 @@ class WorkflowTriggerHistoryFilter(Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'WorkflowStatus'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, *, status=None, **kwargs) -> None:

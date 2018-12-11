@@ -17,6 +17,7 @@ from .operations.container_groups_operations import ContainerGroupsOperations
 from .operations.operations import Operations
 from .operations.container_group_usage_operations import ContainerGroupUsageOperations
 from .operations.container_operations import ContainerOperations
+from .operations.service_association_link_operations import ServiceAssociationLinkOperations
 from . import models
 
 
@@ -68,6 +69,8 @@ class ContainerInstanceManagementClient(SDKClient):
     :vartype container_group_usage: azure.mgmt.containerinstance.operations.ContainerGroupUsageOperations
     :ivar container: Container operations
     :vartype container: azure.mgmt.containerinstance.operations.ContainerOperations
+    :ivar service_association_link: ServiceAssociationLink operations
+    :vartype service_association_link: azure.mgmt.containerinstance.operations.ServiceAssociationLinkOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -86,7 +89,7 @@ class ContainerInstanceManagementClient(SDKClient):
         super(ContainerInstanceManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-09-01'
+        self.api_version = '2018-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -97,4 +100,6 @@ class ContainerInstanceManagementClient(SDKClient):
         self.container_group_usage = ContainerGroupUsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.container = ContainerOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_association_link = ServiceAssociationLinkOperations(
             self._client, self.config, self._serialize, self._deserialize)

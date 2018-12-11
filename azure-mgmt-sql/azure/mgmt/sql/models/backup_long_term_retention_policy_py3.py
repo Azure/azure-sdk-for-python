@@ -27,8 +27,8 @@ class BackupLongTermRetentionPolicy(ProxyResource):
     :param weekly_retention: The weekly retention policy for an LTR backup in
      an ISO 8601 format.
     :type weekly_retention: str
-    :param monthly_retention: The montly retention policy for an LTR backup in
-     an ISO 8601 format.
+    :param monthly_retention: The monthly retention policy for an LTR backup
+     in an ISO 8601 format.
     :type monthly_retention: str
     :param yearly_retention: The yearly retention policy for an LTR backup in
      an ISO 8601 format.

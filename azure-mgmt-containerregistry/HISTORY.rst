@@ -3,6 +3,38 @@
 Release History
 ===============
 
+2.5.0 (2018-12-10)
+++++++++++++++++++
+
+**Features**
+
+- Add network rule set to registry properties
+
+2.4.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add context token to task step
+
+2.3.0 (2018-10-17)
+++++++++++++++++++
+
+- Support context path, source location URL, and pull request based triggers for task/run.
+- Allow specifying credentials for source registry on import image.
+
+2.2.0 (2018-09-11)
+++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.get_build_source_upload_url
+- Added operation RegistriesOperations.schedule_run
+- Added operation group RunsOperations
+- Added operation group TasksOperations
+
+Default API version is now 2018-09-01
+
 2.1.0 (2018-07-26)
 ++++++++++++++++++
 

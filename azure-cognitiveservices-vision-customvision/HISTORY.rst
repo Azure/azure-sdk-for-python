@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.4.0 (2018-11-13)
+++++++++++++++++++
+
+- The API client name was changed from TrainingAPI to CustomVisionTrainingClient, in keeping with other Azure SDKs.
+- The way the Azure region is specfied has changed.  Specifically, the AzureRegion property was dropped in favor of an Endpoint property. If you were previously specifying an AzureRegion value, you should now specify Endpoint='https://{AzureRegion}.api.cognitive.microsoft.com' instead. This change ensures better global coverage.
+- Added ONNX 1.2 as an export option
+- Added negative tag support.
+
 0.3.0 (2018-07-12)
 ++++++++++++++++++
 

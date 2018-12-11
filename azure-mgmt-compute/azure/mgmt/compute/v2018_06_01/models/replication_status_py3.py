@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class ReplicationStatus(Model):
-    """This is the replication status of the gallery image version.
+    """This is the replication status of the gallery Image Version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar aggregated_state: This is the aggregated replication status based on
-     the regional replication status. Possible values include: 'Unknown',
-     'InProgress', 'Completed', 'Failed'
+     all the regional replication status flags. Possible values include:
+     'Unknown', 'InProgress', 'Completed', 'Failed'
     :vartype aggregated_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.AggregatedReplicationState
     :ivar summary: This is a summary of replication status for each region.

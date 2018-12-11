@@ -17,11 +17,13 @@ class ResourceAccess(Model):
     requires. The resourceAccess property of the RequiredResourceAccess type is
     a collection of ResourceAccess.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param id: The unique identifier for one of the OAuth2Permission or
-     AppRole instances that the resource application exposes.
+    :param id: Required. The unique identifier for one of the OAuth2Permission
+     or AppRole instances that the resource application exposes.
     :type id: str
     :param type: Specifies whether the id property references an
      OAuth2Permission or an AppRole. Possible values are "scope" or "role".
@@ -38,8 +40,8 @@ class ResourceAccess(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id, additional_properties=None, type=None):
-        super(ResourceAccess, self).__init__()
-        self.additional_properties = additional_properties
-        self.id = id
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ResourceAccess, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)

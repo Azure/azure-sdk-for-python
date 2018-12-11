@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class EventSubscription(Resource):
@@ -39,10 +39,11 @@ class EventSubscription(Resource):
     :type filter: ~azure.mgmt.eventgrid.models.EventSubscriptionFilter
     :param labels: List of user defined labels.
     :type labels: list[str]
+    :param expiration_time_utc: Expiration time of the event subscription.
+    :type expiration_time_utc: datetime
     :param event_delivery_schema: The event delivery schema for the event
      subscription. Possible values include: 'EventGridSchema',
-     'InputEventSchema', 'CloudEventV01Schema'. Default value:
-     "EventGridSchema" .
+     'CloudEventV01Schema', 'CustomInputSchema'
     :type event_delivery_schema: str or
      ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
@@ -71,18 +72,20 @@ class EventSubscription(Resource):
         'destination': {'key': 'properties.destination', 'type': 'EventSubscriptionDestination'},
         'filter': {'key': 'properties.filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
+        'expiration_time_utc': {'key': 'properties.expirationTimeUtc', 'type': 'iso-8601'},
         'event_delivery_schema': {'key': 'properties.eventDeliverySchema', 'type': 'str'},
         'retry_policy': {'key': 'properties.retryPolicy', 'type': 'RetryPolicy'},
         'dead_letter_destination': {'key': 'properties.deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, event_delivery_schema="EventGridSchema", retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, event_delivery_schema=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscription, self).__init__(**kwargs)
         self.topic = None
         self.provisioning_state = None
         self.destination = destination
         self.filter = filter
         self.labels = labels
+        self.expiration_time_utc = expiration_time_utc
         self.event_delivery_schema = event_delivery_schema
         self.retry_policy = retry_policy
         self.dead_letter_destination = dead_letter_destination
