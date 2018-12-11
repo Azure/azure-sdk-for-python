@@ -29,7 +29,7 @@ class Sku(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'SkuName'},
+        'name': {'key': 'name', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'ResourceReference'},
     }
 
