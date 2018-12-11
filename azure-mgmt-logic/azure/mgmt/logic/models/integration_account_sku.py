@@ -18,7 +18,7 @@ class IntegrationAccountSku(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The sku name. Possible values include:
-     'NotSpecified', 'Free', 'Standard'
+     'NotSpecified', 'Free', 'Basic', 'Standard'
     :type name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
     """
 
@@ -27,7 +27,7 @@ class IntegrationAccountSku(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'IntegrationAccountSkuName'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

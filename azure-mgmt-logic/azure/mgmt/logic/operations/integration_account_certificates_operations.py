@@ -11,18 +11,19 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class SessionsOperations(object):
-    """SessionsOperations operations.
+class IntegrationAccountCertificatesOperations(object):
+    """IntegrationAccountCertificatesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2016-06-01".
+    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
     """
 
     models = models
@@ -32,13 +33,13 @@ class SessionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2018-07-01-preview"
 
         self.config = config
 
-    def list_by_integration_accounts(
-            self, resource_group_name, integration_account_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of integration account sessions.
+    def list(
+            self, resource_group_name, integration_account_name, top=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of integration account certificates.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -46,24 +47,21 @@ class SessionsOperations(object):
         :type integration_account_name: str
         :param top: The number of items to be included in the result.
         :type top: int
-        :param filter: The filter to apply on the operation.
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of IntegrationAccountSession
+        :return: An iterator like instance of IntegrationAccountCertificate
         :rtype:
-         ~azure.mgmt.logic.models.IntegrationAccountSessionPaged[~azure.mgmt.logic.models.IntegrationAccountSession]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+         ~azure.mgmt.logic.models.IntegrationAccountCertificatePaged[~azure.mgmt.logic.models.IntegrationAccountCertificate]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_integration_accounts.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -76,8 +74,6 @@ class SessionsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -85,7 +81,7 @@ class SessionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -94,46 +90,47 @@ class SessionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
         # Deserialize response
-        deserialized = models.IntegrationAccountSessionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.IntegrationAccountCertificatePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.IntegrationAccountSessionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.IntegrationAccountCertificatePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_integration_accounts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates'}
 
     def get(
-            self, resource_group_name, integration_account_name, session_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an integration account session.
+            self, resource_group_name, integration_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an integration account certificate.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param session_name: The integration account session name.
-        :type session_name: str
+        :param certificate_name: The integration account certificate name.
+        :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IntegrationAccountSession or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession or
+        :return: IntegrationAccountCertificate or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountCertificate or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -141,7 +138,7 @@ class SessionsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'sessionName': self._serialize.url("session_name", session_name, 'str')
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -151,7 +148,7 @@ class SessionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -160,46 +157,49 @@ class SessionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountSession', response)
+            deserialized = self._deserialize('IntegrationAccountCertificate', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'}
 
     def create_or_update(
-            self, resource_group_name, integration_account_name, session_name, session, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an integration account session.
+            self, resource_group_name, integration_account_name, certificate_name, certificate, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an integration account certificate.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param session_name: The integration account session name.
-        :type session_name: str
-        :param session: The integration account session.
-        :type session: ~azure.mgmt.logic.models.IntegrationAccountSession
+        :param certificate_name: The integration account certificate name.
+        :type certificate_name: str
+        :param certificate: The integration account certificate.
+        :type certificate:
+         ~azure.mgmt.logic.models.IntegrationAccountCertificate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IntegrationAccountSession or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.IntegrationAccountSession or
+        :return: IntegrationAccountCertificate or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountCertificate or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -207,7 +207,7 @@ class SessionsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'sessionName': self._serialize.url("session_name", session_name, 'str')
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -217,6 +217,7 @@ class SessionsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -226,40 +227,41 @@ class SessionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(session, 'IntegrationAccountSession')
+        body_content = self._serialize.body(certificate, 'IntegrationAccountCertificate')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountSession', response)
+            deserialized = self._deserialize('IntegrationAccountCertificate', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('IntegrationAccountSession', response)
+            deserialized = self._deserialize('IntegrationAccountCertificate', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'}
 
     def delete(
-            self, resource_group_name, integration_account_name, session_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an integration account session.
+            self, resource_group_name, integration_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an integration account certificate.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param session_name: The integration account session name.
-        :type session_name: str
+        :param certificate_name: The integration account certificate name.
+        :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -267,8 +269,7 @@ class SessionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -276,7 +277,7 @@ class SessionsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'sessionName': self._serialize.url("session_name", session_name, 'str')
+            'certificateName': self._serialize.url("certificate_name", certificate_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -286,7 +287,6 @@ class SessionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -295,13 +295,15 @@ class SessionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'}
