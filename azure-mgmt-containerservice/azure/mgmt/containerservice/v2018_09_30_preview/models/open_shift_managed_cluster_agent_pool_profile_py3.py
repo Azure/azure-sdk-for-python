@@ -21,8 +21,6 @@ class OpenShiftManagedClusterAgentPoolProfile(Model):
      the subscription and resource group.
     :type name: str
     :param count: Required. Number of agents (VMs) to host docker containers.
-     Allowed values must be in the range of 1 to 5 (inclusive). The default
-     value is 2.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_D2s_v3', 'Standard_D4s_v3', 'Standard_D8s_v3',
