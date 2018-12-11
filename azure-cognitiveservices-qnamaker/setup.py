@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-qnamaker"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_NAME = "azure-cognitiveservices-knowledge-qnamaker"
+PACKAGE_PPRINT_NAME = "QnA Maker"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -75,13 +75,13 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.cognitiveservices',
+        'azure.cognitiveservices.knowledge',
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg'],
+        ":python_version<'3.0'": ['azure-cognitiveservices-knowledge-nspkg'],
     }
 )
