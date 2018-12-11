@@ -22,26 +22,17 @@ class NetworkConfiguration(Model):
      Azure Batch account. The specified subnet should have enough free IP
      addresses to accommodate the number of nodes in the pool. If the subnet
      doesn't have enough free IP addresses, the pool will partially allocate
-     compute nodes, and a resize error will occur. The 'MicrosoftAzureBatch'
-     service principal must have the 'Classic Virtual Machine Contributor'
-     Role-Based Access Control (RBAC) role for the specified VNet. The
-     specified subnet must allow communication from the Azure Batch service to
-     be able to schedule tasks on the compute nodes. This can be verified by
-     checking if the specified VNet has any associated Network Security Groups
-     (NSG). If communication to the compute nodes in the specified subnet is
-     denied by an NSG, then the Batch service will set the state of the compute
-     nodes to unusable. For pools created with virtualMachineConfiguration only
-     ARM virtual networks ('Microsoft.Network/virtualNetworks') are supported,
-     but for pools created with cloudServiceConfiguration both ARM and classic
-     virtual networks are supported. If the specified VNet has any associated
-     Network Security Groups (NSG), then a few reserved system ports must be
-     enabled for inbound communication. For pools created with a virtual
-     machine configuration, enable ports 29876 and 29877, as well as port 22
-     for Linux and port 3389 for Windows. For pools created with a cloud
-     service configuration, enable ports 10100, 20100, and 30100. Also enable
-     outbound connections to Azure Storage on port 443. For more details see:
+     compute nodes, and a resize error will occur. For pools created with
+     virtualMachineConfiguration only ARM virtual networks
+     ('Microsoft.Network/virtualNetworks') are supported, but for pools created
+     with cloudServiceConfiguration both ARM and classic virtual networks are
+     supported. For more details, see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
+    :param dynamic_vnet_assignment_scope: The scope of dynamic vnet
+     assignment. Possible values include: 'none', 'job'
+    :type dynamic_vnet_assignment_scope: str or
+     ~azure.batch.models.DynamicVNetAssignmentScope
     :param endpoint_configuration: The configuration for endpoints on compute
      nodes in the Batch pool. Pool endpoint configuration is only supported on
      pools with the virtualMachineConfiguration property.
@@ -51,10 +42,12 @@ class NetworkConfiguration(Model):
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'dynamic_vnet_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'DynamicVNetAssignmentScope'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkConfiguration, self).__init__(**kwargs)
         self.subnet_id = kwargs.get('subnet_id', None)
+        self.dynamic_vnet_assignment_scope = kwargs.get('dynamic_vnet_assignment_scope', None)
         self.endpoint_configuration = kwargs.get('endpoint_configuration', None)

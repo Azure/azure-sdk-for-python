@@ -92,6 +92,8 @@ class CloudJob(Model):
      default is noaction. Possible values include: 'noAction',
      'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
+    :param network_configuration: The network configuration for the job.
+    :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
@@ -126,6 +128,7 @@ class CloudJob(Model):
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'execution_info': {'key': 'executionInfo', 'type': 'JobExecutionInformation'},
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
@@ -153,6 +156,7 @@ class CloudJob(Model):
         self.pool_info = kwargs.get('pool_info', None)
         self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
         self.on_task_failure = kwargs.get('on_task_failure', None)
+        self.network_configuration = kwargs.get('network_configuration', None)
         self.metadata = kwargs.get('metadata', None)
         self.execution_info = kwargs.get('execution_info', None)
         self.stats = kwargs.get('stats', None)

@@ -49,6 +49,8 @@ class JobSpecification(Model):
      resource file download error. The default is noaction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
+    :param network_configuration: The network configuration for the job.
+    :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
     :param constraints: The execution constraints for jobs created under this
      schedule.
     :type constraints: ~azure.batch.models.JobConstraints
@@ -100,6 +102,7 @@ class JobSpecification(Model):
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
         'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
@@ -109,13 +112,14 @@ class JobSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, *, pool_info, priority: int=None, display_name: str=None, uses_task_dependencies: bool=None, on_all_tasks_complete=None, on_task_failure=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, pool_info, priority: int=None, display_name: str=None, uses_task_dependencies: bool=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, **kwargs) -> None:
         super(JobSpecification, self).__init__(**kwargs)
         self.priority = priority
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies
         self.on_all_tasks_complete = on_all_tasks_complete
         self.on_task_failure = on_task_failure
+        self.network_configuration = network_configuration
         self.constraints = constraints
         self.job_manager_task = job_manager_task
         self.job_preparation_task = job_preparation_task

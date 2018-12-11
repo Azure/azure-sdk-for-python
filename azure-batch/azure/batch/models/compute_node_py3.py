@@ -24,7 +24,7 @@ class ComputeNode(Model):
     :type url: str
     :param state: The current state of the compute node. The low-priority node
      has been preempted. Tasks which were running on the node when it was
-     preempted will be rescheduled when another node becomes available.
+     pre-empted will be rescheduled when another node becomes available.
      Possible values include: 'idle', 'rebooting', 'reimaging', 'running',
      'unusable', 'creating', 'starting', 'waitingForStartTask',
      'startTaskFailed', 'unknown', 'leavingPool', 'offline', 'preempted'
@@ -35,11 +35,13 @@ class ComputeNode(Model):
     :param state_transition_time: The time at which the compute node entered
      its current state.
     :type state_transition_time: datetime
-    :param last_boot_time: The time at which the compute node was started.
-     This property may not be present if the node state is unusable.
+    :param last_boot_time: The last time at which the compute node was
+     started. This property may not be present if the node state is unusable.
     :type last_boot_time: datetime
     :param allocation_time: The time at which this compute node was allocated
-     to the pool.
+     to the pool. This is the time when the node was initially allocated and
+     doesn't change once set. It is not updated when the node is service healed
+     or preempted.
     :type allocation_time: datetime
     :param ip_address: The IP address that other compute nodes can use to
      communicate with this compute node. Every node that is added to a pool is
