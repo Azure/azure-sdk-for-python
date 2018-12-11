@@ -592,11 +592,13 @@ class AppsOperations(object):
     update.metadata = {'url': '/apps/{appId}'}
 
     def delete(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, force=False, custom_headers=None, raw=False, **operation_config):
         """Deletes an application.
 
         :param app_id: The application ID.
         :type app_id: str
+        :param force: A flag to indicate whether to force an operation.
+        :type force: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -619,6 +621,8 @@ class AppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if force is not None:
+            query_parameters['force'] = self._serialize.query("force", force, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -1160,3 +1164,135 @@ class AppsOperations(object):
 
         return deserialized
     list_available_custom_prebuilt_domains_for_culture.metadata = {'url': '/apps/customprebuiltdomains/{culture}'}
+
+    def package_published_application_as_gzip(
+            self, app_id, slot_name, custom_headers=None, raw=False, **operation_config):
+        """package - Gets published LUIS application package in binary stream GZip
+        format.
+
+        Packages published LUIS application as GZip.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param slot_name: The publishing slot name.
+        :type slot_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.package_published_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'slotName': self._serialize.url("slot_name", slot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_published_application_as_gzip.metadata = {'url': '/package/{appId}/slot/{slotName}/gzip'}
+
+    def package_trained_application_as_gzip(
+            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+        """package - Gets trained LUIS application package in binary stream GZip
+        format.
+
+        Packages trained LUIS application as GZip.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.package_trained_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 400, 401, 403, 429]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+        if response.status_code == 400:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 401:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 403:
+            deserialized = self._deserialize('ErrorResponse', response)
+        if response.status_code == 429:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_trained_application_as_gzip.metadata = {'url': '/package/{appId}/versions/{versionId}/gzip'}
