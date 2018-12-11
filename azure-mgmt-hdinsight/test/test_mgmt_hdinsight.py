@@ -9,7 +9,7 @@ import unittest
 
 from azure.mgmt.hdinsight import HDInsightManagementClient
 from azure.mgmt.hdinsight.models import *
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 
 
 class HDInsightTestConfig:
@@ -19,11 +19,12 @@ class HDInsightTestConfig:
     cluster_password = "Password1!"
     ssh_username = "sshuser"
     ssh_password = "Password1!"
-    storage_account = "wawonsdkncentralus.blob.core.windows.net"
+    storage_account_suffix = ".blob.core.windows.net"
 
-    # Sensitive test configs
-    storage_account_key = ""
-
+    FAKE_STORAGE = FakeStorageAccount(
+        name='pyhdi',
+        id='',
+    )
 
 class MgmtHDInsightTest(AzureMgmtTestCase):
 
@@ -34,10 +35,22 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=HDInsightTestConfig.location)
-    def test_cluster_create(self, resource_group, location):
+    @StorageAccountPreparer(name_prefix='hdipy', location=HDInsightTestConfig.location, playback_fake_resource=HDInsightTestConfig.FAKE_STORAGE)
+    def test_cluster_create(self, resource_group, location, storage_account, storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-py-humboldt')
+        create_params = self.get_extended_create_params(location, cluster_name, storage_account.name, storage_account_key)
+        create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
+        cluster = create_poller.result()
+        self.validate_cluster(create_params, cluster)
 
-        create_params = ClusterCreateParametersExtended(
+        scale_poller = self.hdinsight_client.clusters.resize(resource_group.name, cluster_name, target_instance_count=2)
+        scale_poller.wait()
+
+        delete_poller = self.hdinsight_client.clusters.delete(resource_group.name, cluster_name)
+        delete_poller.wait()
+
+    def get_extended_create_params(self, location, cluster_name, storage_account_name, storage_account_key):
+        return ClusterCreateParametersExtended(
             location=location,
             tags={},
             properties=ClusterCreateProperties(
@@ -82,24 +95,14 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                 ),
                 storage_profile=StorageProfile(
                     storageaccounts=[StorageAccount(
-                        name=HDInsightTestConfig.storage_account,
-                        key=HDInsightTestConfig.storage_account_key,
+                        name=storage_account_name + HDInsightTestConfig.storage_account_suffix,
+                        key=storage_account_key,
                         container=cluster_name.lower(),
                         is_default=True
                     )]
                 )
             )
         )
-
-        create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
-        cluster = create_poller.result()
-        self.validate_cluster(create_params, cluster)
-
-        scale_poller = self.hdinsight_client.clusters.resize(resource_group.name, cluster_name, target_instance_count=2)
-        scale_poller.wait()
-
-        delete_poller = self.hdinsight_client.clusters.delete(resource_group.name, cluster_name)
-        delete_poller.wait()
 
     def validate_cluster(self, create_parameters, cluster_response):
         self.assertEqual(create_parameters.properties.tier, cluster_response.properties.tier)
