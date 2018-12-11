@@ -83,7 +83,7 @@ class ImageObject(MediaObject):
      image is of an apple pie, this object includes a count of the number of
      websites where you can buy an apple pie. To indicate the number of offers
      in your UX, include badging such as a shopping cart icon that contains the
-     count. When the user clicks on the icon, use imageInisghtsToken in a
+     count. When the user clicks on the icon, use imageInsightsToken in a
      subsequent Visual Search API call to get the list of shopping websites.
     :vartype insights_metadata:
      ~azure.cognitiveservices.search.visualsearch.models.ImagesImageMetadata
@@ -93,7 +93,7 @@ class ImageObject(MediaObject):
      color that dominates the image. Use the color as the temporary background
      in your client until the image is loaded.
     :vartype accent_color: str
-    :ivar visual_words: For interal use only.
+    :ivar visual_words: For internal use only.
     :vartype visual_words: str
     """
 
