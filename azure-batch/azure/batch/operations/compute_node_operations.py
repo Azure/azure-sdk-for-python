@@ -22,7 +22,7 @@ class ComputeNodeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ComputeNodeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -80,6 +80,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.add_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -173,6 +174,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.delete_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'userName': self._serialize.url("user_name", user_name, 'str')
@@ -267,6 +269,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.update_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'userName': self._serialize.url("user_name", user_name, 'str')
@@ -360,6 +363,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -465,6 +469,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.reboot.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -568,6 +573,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.reimage.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -671,6 +677,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.disable_scheduling.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -765,6 +772,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.enable_scheduling.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -857,6 +865,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get_remote_login_settings.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -960,6 +969,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get_remote_desktop.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -1065,6 +1075,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.upload_batch_service_logs.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -1170,6 +1181,7 @@ class ComputeNodeOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'poolId': self._serialize.url("pool_id", pool_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

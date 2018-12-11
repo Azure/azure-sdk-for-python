@@ -23,8 +23,8 @@ class TaskConstraints(Model):
     :param retention_time: The minimum time to retain the task directory on
      the compute node where it ran, from the time it completes execution. After
      this time, the Batch service may delete the task directory and all its
-     contents. The default is infinite, i.e. the task directory will be
-     retained until the compute node is removed or reimaged.
+     contents. The default is 7 days, i.e. the task directory will be retained
+     for 7 days unless the compute node is removed or the job is deleted.
     :type retention_time: timedelta
     :param max_task_retry_count: The maximum number of times the task may be
      retried. The Batch service retries a task if its exit code is nonzero.
@@ -34,9 +34,7 @@ class TaskConstraints(Model):
      maximum retry count is 3, Batch tries the task up to 4 times (one initial
      try and 3 retries). If the maximum retry count is 0, the Batch service
      does not retry the task after the first attempt. If the maximum retry
-     count is -1, the Batch service retries the task without limit. Resource
-     files and application packages are only downloaded again if the task is
-     retried on a new compute node.
+     count is -1, the Batch service retries the task without limit.
     :type max_task_retry_count: int
     """
 

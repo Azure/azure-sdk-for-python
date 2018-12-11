@@ -19,7 +19,7 @@ class ExitOptions(Model):
      the task completes with the given exit condition and the job's
      onTaskFailed property is 'performExitOptionsJobAction'. The default is
      none for exit code 0 and terminate for all other exit conditions. If the
-     job's onTaskFailed property is noAction, then specifying this property
+     job's onTaskFailed property is noaction, then specifying this property
      returns an error and the add task request fails with an invalid property
      value error; if you are calling the REST API directly, the HTTP status
      code is 400 (Bad Request). Possible values include: 'none', 'disable',

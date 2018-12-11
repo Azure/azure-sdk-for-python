@@ -85,8 +85,8 @@ class TaskAddParameter(Model):
     :type affinity_info: ~azure.batch.models.AffinityInformation
     :param constraints: The execution constraints that apply to this task. If
      you do not specify constraints, the maxTaskRetryCount is the
-     maxTaskRetryCount specified for the job, and the maxWallClockTime and
-     retentionTime are infinite.
+     maxTaskRetryCount specified for the job, the maxWallClockTime is infinite,
+     and the retentionTime is 7 days.
     :type constraints: ~azure.batch.models.TaskConstraints
     :param user_identity: The user identity under which the task runs. If
      omitted, the task runs as a non-administrative user unique to the task.
