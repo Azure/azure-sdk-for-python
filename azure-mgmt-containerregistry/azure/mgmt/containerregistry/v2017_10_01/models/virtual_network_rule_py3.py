@@ -13,10 +13,14 @@ from msrest.serialization import Model
 
 
 class VirtualNetworkRule(Model):
-    """The virtual network rule for a container registry.
+    """Virtual network rule.
 
     All required parameters must be populated in order to send to Azure.
 
+    :param action: The action of virtual network rule. Possible values
+     include: 'Allow'. Default value: "Allow" .
+    :type action: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.Action
     :param id: Required. Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type id: str
@@ -27,9 +31,11 @@ class VirtualNetworkRule(Model):
     }
 
     _attribute_map = {
+        'action': {'key': 'action', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
+    def __init__(self, *, id: str, action="Allow", **kwargs) -> None:
         super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.action = action
         self.id = id

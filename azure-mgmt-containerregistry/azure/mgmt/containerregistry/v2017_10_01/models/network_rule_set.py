@@ -25,6 +25,9 @@ class NetworkRuleSet(Model):
     :param virtual_network_rules: The virtual network rules.
     :type virtual_network_rules:
      list[~azure.mgmt.containerregistry.v2017_10_01.models.VirtualNetworkRule]
+    :param ip_rules: The IP ACL rules.
+    :type ip_rules:
+     list[~azure.mgmt.containerregistry.v2017_10_01.models.IPRule]
     """
 
     _validation = {
@@ -34,9 +37,11 @@ class NetworkRuleSet(Model):
     _attribute_map = {
         'default_action': {'key': 'defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkRuleSet, self).__init__(**kwargs)
         self.default_action = kwargs.get('default_action', "Allow")
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.ip_rules = kwargs.get('ip_rules', None)

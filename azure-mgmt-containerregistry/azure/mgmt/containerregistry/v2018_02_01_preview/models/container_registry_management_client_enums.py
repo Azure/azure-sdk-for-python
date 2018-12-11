@@ -50,6 +50,11 @@ class DefaultAction(str, Enum):
     deny = "Deny"
 
 
+class Action(str, Enum):
+
+    allow = "Allow"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
