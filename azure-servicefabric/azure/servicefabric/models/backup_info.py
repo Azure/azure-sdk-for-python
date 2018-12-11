@@ -39,11 +39,14 @@ class BackupInfo(Model):
     :type backup_type: str or ~azure.servicefabric.models.BackupType
     :param epoch_of_last_backup_record: Epoch of the last record in this
      backup.
-    :type epoch_of_last_backup_record: ~azure.servicefabric.models.BackupEpoch
+    :type epoch_of_last_backup_record: ~azure.servicefabric.models.Epoch
     :param lsn_of_last_backup_record: LSN of the last record in this backup.
     :type lsn_of_last_backup_record: str
     :param creation_time_utc: The date time when this backup was taken.
     :type creation_time_utc: datetime
+    :param service_manifest_version: Manifest Version of the service this
+     partition backup belongs to.
+    :type service_manifest_version: str
     :param failure_error: Denotes the failure encountered in getting backup
      point information.
     :type failure_error: ~azure.servicefabric.models.FabricErrorError
@@ -57,9 +60,10 @@ class BackupInfo(Model):
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
         'backup_location': {'key': 'BackupLocation', 'type': 'str'},
         'backup_type': {'key': 'BackupType', 'type': 'str'},
-        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'BackupEpoch'},
+        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'Epoch'},
         'lsn_of_last_backup_record': {'key': 'LsnOfLastBackupRecord', 'type': 'str'},
         'creation_time_utc': {'key': 'CreationTimeUtc', 'type': 'iso-8601'},
+        'service_manifest_version': {'key': 'ServiceManifestVersion', 'type': 'str'},
         'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
     }
 
@@ -75,4 +79,5 @@ class BackupInfo(Model):
         self.epoch_of_last_backup_record = kwargs.get('epoch_of_last_backup_record', None)
         self.lsn_of_last_backup_record = kwargs.get('lsn_of_last_backup_record', None)
         self.creation_time_utc = kwargs.get('creation_time_utc', None)
+        self.service_manifest_version = kwargs.get('service_manifest_version', None)
         self.failure_error = kwargs.get('failure_error', None)
