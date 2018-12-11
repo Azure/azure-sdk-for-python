@@ -21,21 +21,22 @@ class VirtualNetworkRule(Model):
      include: 'Allow'. Default value: "Allow" .
     :type action: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.Action
-    :param id: Required. Resource ID of a subnet, for example:
+    :param virtual_network_resource_id: Required. Resource ID of a subnet, for
+     example:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :type id: str
+    :type virtual_network_resource_id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        'virtual_network_resource_id': {'required': True},
     }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'virtual_network_resource_id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, action="Allow", **kwargs) -> None:
+    def __init__(self, *, virtual_network_resource_id: str, action="Allow", **kwargs) -> None:
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.action = action
-        self.id = id
+        self.virtual_network_resource_id = virtual_network_resource_id

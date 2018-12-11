@@ -21,21 +21,21 @@ class IPRule(Model):
      'Allow'. Default value: "Allow" .
     :type action: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.Action
-    :param value: Required. Specifies the IP or IP range in CIDR format. Only
-     IPV4 address is allowed.
-    :type value: str
+    :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
+     format. Only IPV4 address is allowed.
+    :type ip_address_or_range: str
     """
 
     _validation = {
-        'value': {'required': True},
+        'ip_address_or_range': {'required': True},
     }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'ip_address_or_range': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IPRule, self).__init__(**kwargs)
         self.action = kwargs.get('action', "Allow")
-        self.value = kwargs.get('value', None)
+        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
