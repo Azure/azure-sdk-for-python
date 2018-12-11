@@ -14,7 +14,7 @@ from msrest.serialization import Model
 
 class RegenerateAccessKeyParameters(Model):
     """Parameters supplied to the regenerate authorization rule operation,
-    specifies which key neeeds to be reset.
+    specifies which key needs to be reset.
 
     :param key_type: The access key to regenerate. Possible values include:
      'PrimaryKey', 'SecondaryKey'

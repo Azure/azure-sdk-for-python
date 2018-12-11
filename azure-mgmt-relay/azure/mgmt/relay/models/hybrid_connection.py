@@ -34,7 +34,7 @@ class HybridConnection(Resource):
     :param requires_client_authorization: Returns true if client authorization
      is needed for this hybrid connection; otherwise, false.
     :type requires_client_authorization: bool
-    :param user_metadata: The usermetadata is a placeholder to store
+    :param user_metadata: The userMetadata is a placeholder to store
      user-defined string data for the hybrid connection endpoint. For example,
      it can be used to store descriptive data, such as a list of teams and
      their contact information. Also, user-defined configuration settings can

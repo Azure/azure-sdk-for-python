@@ -42,7 +42,7 @@ class WcfRelay(Resource):
     :param requires_transport_security: Returns true if transport security is
      needed for this relay; otherwise, false.
     :type requires_transport_security: bool
-    :param user_metadata: The usermetadata is a placeholder to store
+    :param user_metadata: The userMetadata is a placeholder to store
      user-defined string data for the WCF Relay endpoint. For example, it can
      be used to store descriptive data, such as list of teams and their contact
      information. Also, user-defined configuration settings can be stored.
