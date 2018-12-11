@@ -49,9 +49,9 @@ class Query(Model):
         'search_link': {'key': 'searchLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, text: str, **kwargs) -> None:
         super(Query, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+        self.text = text
         self.display_text = None
         self.web_search_url = None
         self.search_link = None

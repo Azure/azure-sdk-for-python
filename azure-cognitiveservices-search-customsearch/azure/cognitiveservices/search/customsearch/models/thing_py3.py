@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .thing import Thing
+from .response_py3 import Response
 
 
-class CreativeWork(Thing):
-    """CreativeWork.
+class Thing(Response):
+    """Thing.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WebPage
+    sub-classes are: CreativeWork
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -38,13 +38,6 @@ class CreativeWork(Thing):
     :vartype description: str
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
-    :ivar thumbnail_url: The URL to a thumbnail of the item.
-    :vartype thumbnail_url: str
-    :ivar provider: The source of the creative work.
-    :vartype provider:
-     list[~azure.cognitiveservices.search.customsearch.models.Thing]
-    :ivar text:
-    :vartype text: str
     """
 
     _validation = {
@@ -55,9 +48,6 @@ class CreativeWork(Thing):
         'url': {'readonly': True},
         'description': {'readonly': True},
         'bing_id': {'readonly': True},
-        'thumbnail_url': {'readonly': True},
-        'provider': {'readonly': True},
-        'text': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,18 +58,16 @@ class CreativeWork(Thing):
         'url': {'key': 'url', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'bing_id': {'key': 'bingId', 'type': 'str'},
-        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': '[Thing]'},
-        'text': {'key': 'text', 'type': 'str'},
     }
 
     _subtype_map = {
-        '_type': {'WebPage': 'WebPage'}
+        '_type': {'CreativeWork': 'CreativeWork'}
     }
 
-    def __init__(self, **kwargs):
-        super(CreativeWork, self).__init__(**kwargs)
-        self.thumbnail_url = None
-        self.provider = None
-        self.text = None
-        self._type = 'CreativeWork'
+    def __init__(self, **kwargs) -> None:
+        super(Thing, self).__init__(**kwargs)
+        self.name = None
+        self.url = None
+        self.description = None
+        self.bing_id = None
+        self._type = 'Thing'
