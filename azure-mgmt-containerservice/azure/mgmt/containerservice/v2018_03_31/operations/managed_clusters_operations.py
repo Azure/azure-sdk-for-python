@@ -381,9 +381,9 @@ class ManagedClustersOperations(object):
 
     def list_cluster_user_credentials(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets clusteruser credential of a managed cluster.
+        """Gets cluster user credential of a managed cluster.
 
-        Gets clusteruser credential of the managed cluster with a specified
+        Gets cluster user credential of the managed cluster with a specified
         resource group and name.
 
         :param resource_group_name: The name of the resource group.
