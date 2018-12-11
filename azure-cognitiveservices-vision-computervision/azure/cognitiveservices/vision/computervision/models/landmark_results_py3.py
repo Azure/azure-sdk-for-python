@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class LandmarkResults(Model):
-    """List of landmarks recognized in the image.
+    """Result of domain-specific classifications for the domain of landmarks.
 
-    :param landmarks:
+    :param landmarks: List of landmarks recognized in the image.
     :type landmarks:
      list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
     :param request_id: Id of the REST API request.

@@ -22,21 +22,26 @@ try:
     from .image_caption_py3 import ImageCaption
     from .image_description_details_py3 import ImageDescriptionDetails
     from .face_description_py3 import FaceDescription
+    from .bounding_rect_py3 import BoundingRect
+    from .object_hierarchy_py3 import ObjectHierarchy
+    from .detected_object_py3 import DetectedObject
     from .image_metadata_py3 import ImageMetadata
     from .image_analysis_py3 import ImageAnalysis
+    from .image_description_py3 import ImageDescription
+    from .detect_result_py3 import DetectResult
+    from .model_description_py3 import ModelDescription
+    from .list_models_result_py3 import ListModelsResult
+    from .domain_model_results_py3 import DomainModelResults
     from .ocr_word_py3 import OcrWord
     from .ocr_line_py3 import OcrLine
     from .ocr_region_py3 import OcrRegion
     from .ocr_result_py3 import OcrResult
-    from .model_description_py3 import ModelDescription
-    from .list_models_result_py3 import ListModelsResult
-    from .domain_model_results_py3 import DomainModelResults
-    from .celebrity_results_py3 import CelebrityResults
-    from .landmark_results_py3 import LandmarkResults
-    from .image_description_py3 import ImageDescription
     from .tag_result_py3 import TagResult
-    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
+    from .area_of_interest_result_py3 import AreaOfInterestResult
     from .image_url_py3 import ImageUrl
+    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
+    from .landmark_results_py3 import LandmarkResults
+    from .celebrity_results_py3 import CelebrityResults
     from .word_py3 import Word
     from .line_py3 import Line
     from .recognition_result_py3 import RecognitionResult
@@ -54,31 +59,35 @@ except (SyntaxError, ImportError):
     from .image_caption import ImageCaption
     from .image_description_details import ImageDescriptionDetails
     from .face_description import FaceDescription
+    from .bounding_rect import BoundingRect
+    from .object_hierarchy import ObjectHierarchy
+    from .detected_object import DetectedObject
     from .image_metadata import ImageMetadata
     from .image_analysis import ImageAnalysis
+    from .image_description import ImageDescription
+    from .detect_result import DetectResult
+    from .model_description import ModelDescription
+    from .list_models_result import ListModelsResult
+    from .domain_model_results import DomainModelResults
     from .ocr_word import OcrWord
     from .ocr_line import OcrLine
     from .ocr_region import OcrRegion
     from .ocr_result import OcrResult
-    from .model_description import ModelDescription
-    from .list_models_result import ListModelsResult
-    from .domain_model_results import DomainModelResults
-    from .celebrity_results import CelebrityResults
-    from .landmark_results import LandmarkResults
-    from .image_description import ImageDescription
     from .tag_result import TagResult
-    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
+    from .area_of_interest_result import AreaOfInterestResult
     from .image_url import ImageUrl
+    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
+    from .landmark_results import LandmarkResults
+    from .celebrity_results import CelebrityResults
     from .word import Word
     from .line import Line
     from .recognition_result import RecognitionResult
     from .text_operation_result import TextOperationResult
 from .computer_vision_client_enums import (
     Gender,
-    ComputerVisionErrorCodes,
     TextOperationStatusCodes,
-    VisualFeatureTypes,
     OcrLanguages,
+    VisualFeatureTypes,
     TextRecognitionMode,
     Details,
 )
@@ -96,30 +105,34 @@ __all__ = [
     'ImageCaption',
     'ImageDescriptionDetails',
     'FaceDescription',
+    'BoundingRect',
+    'ObjectHierarchy',
+    'DetectedObject',
     'ImageMetadata',
     'ImageAnalysis',
+    'ImageDescription',
+    'DetectResult',
+    'ModelDescription',
+    'ListModelsResult',
+    'DomainModelResults',
     'OcrWord',
     'OcrLine',
     'OcrRegion',
     'OcrResult',
-    'ModelDescription',
-    'ListModelsResult',
-    'DomainModelResults',
-    'CelebrityResults',
-    'LandmarkResults',
-    'ImageDescription',
     'TagResult',
-    'ComputerVisionError', 'ComputerVisionErrorException',
+    'AreaOfInterestResult',
     'ImageUrl',
+    'ComputerVisionError', 'ComputerVisionErrorException',
+    'LandmarkResults',
+    'CelebrityResults',
     'Word',
     'Line',
     'RecognitionResult',
     'TextOperationResult',
     'Gender',
-    'ComputerVisionErrorCodes',
     'TextOperationStatusCodes',
-    'VisualFeatureTypes',
     'OcrLanguages',
+    'VisualFeatureTypes',
     'TextRecognitionMode',
     'Details',
 ]

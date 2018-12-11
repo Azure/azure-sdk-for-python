@@ -29,8 +29,8 @@ class OcrResult(Model):
      recognized correctly.
     :type text_angle: float
     :param orientation: Orientation of the text recognized in the image. The
-     value (up,down,left, or right) refers to the direction that the top of the
-     recognized text is facing, after the image has been rotated around its
+     value (up, down, left, or right) refers to the direction that the top of
+     the recognized text is facing, after the image has been rotated around its
      center according to the detected text angle (see textAngle property).
     :type orientation: str
     :param regions: An array of objects, where each object represents a region
