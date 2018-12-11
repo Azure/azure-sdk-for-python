@@ -25,7 +25,7 @@ class ChangeNotReimportedDelta(Model):
      list[~azure.mgmt.adhybridhealthservice.models.AttributeDelta]
     :param operation_type: The operation type. Possible values include:
      'Undefined', 'None', 'Add', 'Replace', 'Update', 'Delete', 'Obsolete',
-     'DeletAdd'
+     'DeleteAdd'
     :type operation_type: str or
      ~azure.mgmt.adhybridhealthservice.models.DeltaOperationType
     """
