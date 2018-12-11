@@ -21,7 +21,7 @@ class RegenerateActionParameter(Model):
     """
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'KeyType'},
+        'key_type': {'key': 'keyType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

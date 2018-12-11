@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.clusters_operations import ClustersOperations
 from .operations.databases_operations import DatabasesOperations
+from .operations.event_hub_connections_operations import EventHubConnectionsOperations
 from .operations.operations import Operations
 from . import models
 
@@ -63,6 +64,8 @@ class KustoManagementClient(SDKClient):
     :vartype clusters: azure.mgmt.kusto.operations.ClustersOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.kusto.operations.DatabasesOperations
+    :ivar event_hub_connections: EventHubConnections operations
+    :vartype event_hub_connections: azure.mgmt.kusto.operations.EventHubConnectionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.kusto.operations.Operations
 
@@ -83,13 +86,15 @@ class KustoManagementClient(SDKClient):
         super(KustoManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-07-privatepreview'
+        self.api_version = '2018-09-07-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.event_hub_connections = EventHubConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
