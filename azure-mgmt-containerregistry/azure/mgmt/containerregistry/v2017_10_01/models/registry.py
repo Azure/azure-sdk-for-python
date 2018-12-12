@@ -54,6 +54,9 @@ class Registry(Resource):
      container registry. Only applicable to Classic SKU.
     :type storage_account:
      ~azure.mgmt.containerregistry.v2017_10_01.models.StorageAccountProperties
+    :param network_rule_set: The network rule set for a container registry.
+    :type network_rule_set:
+     ~azure.mgmt.containerregistry.v2017_10_01.models.NetworkRuleSet
     """
 
     _validation = {
@@ -81,6 +84,7 @@ class Registry(Resource):
         'status': {'key': 'properties.status', 'type': 'Status'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
+        'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
     }
 
     def __init__(self, **kwargs):
@@ -92,3 +96,4 @@ class Registry(Resource):
         self.status = None
         self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
         self.storage_account = kwargs.get('storage_account', None)
+        self.network_rule_set = kwargs.get('network_rule_set', None)

@@ -27,7 +27,7 @@ class IntegrationAccountSchemaFilter(Model):
     }
 
     _attribute_map = {
-        'schema_type': {'key': 'schemaType', 'type': 'SchemaType'},
+        'schema_type': {'key': 'schemaType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
