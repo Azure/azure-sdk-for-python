@@ -9,39 +9,53 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Application(Model):
+class Application(ProxyResource):
     """Contains information about an application in a Batch account.
 
-    :param id: A string that uniquely identifies the application within the
-     account.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
     :param display_name: The display name for the application.
     :type display_name: str
-    :param packages: The list of packages under this application.
-    :type packages: list[~azure.mgmt.batch.models.ApplicationPackage]
     :param allow_updates: A value indicating whether packages within the
      application may be overwritten using the same version string.
     :type allow_updates: bool
     :param default_version: The package to use if a client requests the
-     application but does not specify a version.
+     application but does not specify a version. This property can only be set
+     to the name of an existing package.
     :type default_version: str
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'packages': {'key': 'packages', 'type': '[ApplicationPackage]'},
-        'allow_updates': {'key': 'allowUpdates', 'type': 'bool'},
-        'default_version': {'key': 'defaultVersion', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'allow_updates': {'key': 'properties.allowUpdates', 'type': 'bool'},
+        'default_version': {'key': 'properties.defaultVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Application, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
         self.display_name = kwargs.get('display_name', None)
-        self.packages = kwargs.get('packages', None)
         self.allow_updates = kwargs.get('allow_updates', None)
         self.default_version = kwargs.get('default_version', None)

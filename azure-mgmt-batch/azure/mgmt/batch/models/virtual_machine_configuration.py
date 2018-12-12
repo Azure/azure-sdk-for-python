@@ -21,9 +21,6 @@ class VirtualMachineConfiguration(Model):
     :param image_reference: Required. A reference to the Azure Virtual
      Machines Marketplace Image or the custom Virtual Machine Image to use.
     :type image_reference: ~azure.mgmt.batch.models.ImageReference
-    :param os_disk: Settings for the operating system disk of the Virtual
-     Machine.
-    :type os_disk: ~azure.mgmt.batch.models.OSDisk
     :param node_agent_sku_id: Required. The SKU of the Batch node agent to be
      provisioned on compute nodes in the pool. The Batch node agent is a
      program that runs on each node in the pool, and provides the
@@ -50,6 +47,13 @@ class VirtualMachineConfiguration(Model):
      Windows_Server - The on-premises license is for Windows Server.
      Windows_Client - The on-premises license is for Windows Client.
     :type license_type: str
+    :param container_configuration: The container configuration for the pool.
+     If specified, setup is performed on each node in the pool to allow tasks
+     to run in containers. All regular tasks and job manager tasks run on this
+     pool must specify the containerSettings property, and all other tasks may
+     specify it.
+    :type container_configuration:
+     ~azure.mgmt.batch.models.ContainerConfiguration
     """
 
     _validation = {
@@ -59,18 +63,18 @@ class VirtualMachineConfiguration(Model):
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
         'node_agent_sku_id': {'key': 'nodeAgentSkuId', 'type': 'str'},
         'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
         self.node_agent_sku_id = kwargs.get('node_agent_sku_id', None)
         self.windows_configuration = kwargs.get('windows_configuration', None)
         self.data_disks = kwargs.get('data_disks', None)
         self.license_type = kwargs.get('license_type', None)
+        self.container_configuration = kwargs.get('container_configuration', None)

@@ -56,6 +56,13 @@ class StartTask(Model):
      task is still running; and even if the start task fails, new tasks will
      continue to be scheduled on the node. The default is false.
     :type wait_for_success: bool
+    :param container_settings: The settings for the container under which the
+     start task runs. When this is specified, all directories recursively below
+     the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the
+     node) are mapped into the container, all task environment variables are
+     mapped into the container, and the task command line is executed in the
+     container.
+    :type container_settings: ~azure.mgmt.batch.models.TaskContainerSettings
     """
 
     _attribute_map = {
@@ -65,6 +72,7 @@ class StartTask(Model):
         'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
+        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
     }
 
     def __init__(self, **kwargs):
@@ -75,3 +83,4 @@ class StartTask(Model):
         self.user_identity = kwargs.get('user_identity', None)
         self.max_task_retry_count = kwargs.get('max_task_retry_count', None)
         self.wait_for_success = kwargs.get('wait_for_success', None)
+        self.container_settings = kwargs.get('container_settings', None)

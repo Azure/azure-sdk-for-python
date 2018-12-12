@@ -19,10 +19,8 @@ try:
     from .batch_account_regenerate_key_parameters_py3 import BatchAccountRegenerateKeyParameters
     from .batch_account_keys_py3 import BatchAccountKeys
     from .activate_application_package_parameters_py3 import ActivateApplicationPackageParameters
-    from .application_create_parameters_py3 import ApplicationCreateParameters
-    from .application_package_py3 import ApplicationPackage
     from .application_py3 import Application
-    from .application_update_parameters_py3 import ApplicationUpdateParameters
+    from .application_package_py3 import ApplicationPackage
     from .batch_location_quota_py3 import BatchLocationQuota
     from .resource_py3 import Resource
     from .proxy_resource_py3 import ProxyResource
@@ -32,9 +30,10 @@ try:
     from .certificate_create_or_update_parameters_py3 import CertificateCreateOrUpdateParameters
     from .cloud_service_configuration_py3 import CloudServiceConfiguration
     from .image_reference_py3 import ImageReference
-    from .os_disk_py3 import OSDisk
     from .windows_configuration_py3 import WindowsConfiguration
     from .data_disk_py3 import DataDisk
+    from .container_registry_py3 import ContainerRegistry
+    from .container_configuration_py3 import ContainerConfiguration
     from .virtual_machine_configuration_py3 import VirtualMachineConfiguration
     from .deployment_configuration_py3 import DeploymentConfiguration
     from .fixed_scale_settings_py3 import FixedScaleSettings
@@ -48,12 +47,14 @@ try:
     from .network_configuration_py3 import NetworkConfiguration
     from .task_scheduling_policy_py3 import TaskSchedulingPolicy
     from .linux_user_configuration_py3 import LinuxUserConfiguration
+    from .windows_user_configuration_py3 import WindowsUserConfiguration
     from .user_account_py3 import UserAccount
     from .metadata_item_py3 import MetadataItem
     from .resource_file_py3 import ResourceFile
     from .environment_setting_py3 import EnvironmentSetting
     from .auto_user_specification_py3 import AutoUserSpecification
     from .user_identity_py3 import UserIdentity
+    from .task_container_settings_py3 import TaskContainerSettings
     from .start_task_py3 import StartTask
     from .certificate_reference_py3 import CertificateReference
     from .application_package_reference_py3 import ApplicationPackageReference
@@ -74,10 +75,8 @@ except (SyntaxError, ImportError):
     from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyParameters
     from .batch_account_keys import BatchAccountKeys
     from .activate_application_package_parameters import ActivateApplicationPackageParameters
-    from .application_create_parameters import ApplicationCreateParameters
-    from .application_package import ApplicationPackage
     from .application import Application
-    from .application_update_parameters import ApplicationUpdateParameters
+    from .application_package import ApplicationPackage
     from .batch_location_quota import BatchLocationQuota
     from .resource import Resource
     from .proxy_resource import ProxyResource
@@ -87,9 +86,10 @@ except (SyntaxError, ImportError):
     from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
     from .cloud_service_configuration import CloudServiceConfiguration
     from .image_reference import ImageReference
-    from .os_disk import OSDisk
     from .windows_configuration import WindowsConfiguration
     from .data_disk import DataDisk
+    from .container_registry import ContainerRegistry
+    from .container_configuration import ContainerConfiguration
     from .virtual_machine_configuration import VirtualMachineConfiguration
     from .deployment_configuration import DeploymentConfiguration
     from .fixed_scale_settings import FixedScaleSettings
@@ -103,12 +103,14 @@ except (SyntaxError, ImportError):
     from .network_configuration import NetworkConfiguration
     from .task_scheduling_policy import TaskSchedulingPolicy
     from .linux_user_configuration import LinuxUserConfiguration
+    from .windows_user_configuration import WindowsUserConfiguration
     from .user_account import UserAccount
     from .metadata_item import MetadataItem
     from .resource_file import ResourceFile
     from .environment_setting import EnvironmentSetting
     from .auto_user_specification import AutoUserSpecification
     from .user_identity import UserIdentity
+    from .task_container_settings import TaskContainerSettings
     from .start_task import StartTask
     from .certificate_reference import CertificateReference
     from .application_package_reference import ApplicationPackageReference
@@ -120,6 +122,7 @@ except (SyntaxError, ImportError):
     from .check_name_availability_parameters import CheckNameAvailabilityParameters
     from .check_name_availability_result import CheckNameAvailabilityResult
 from .batch_account_paged import BatchAccountPaged
+from .application_package_paged import ApplicationPackagePaged
 from .application_paged import ApplicationPaged
 from .operation_paged import OperationPaged
 from .certificate_paged import CertificatePaged
@@ -141,6 +144,7 @@ from .batch_management_client_enums import (
     NetworkSecurityGroupRuleAccess,
     ComputeNodeFillType,
     ElevationLevel,
+    LoginMode,
     AutoUserScope,
     CertificateStoreLocation,
     CertificateVisibility,
@@ -157,10 +161,8 @@ __all__ = [
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountKeys',
     'ActivateApplicationPackageParameters',
-    'ApplicationCreateParameters',
-    'ApplicationPackage',
     'Application',
-    'ApplicationUpdateParameters',
+    'ApplicationPackage',
     'BatchLocationQuota',
     'Resource',
     'ProxyResource',
@@ -170,9 +172,10 @@ __all__ = [
     'CertificateCreateOrUpdateParameters',
     'CloudServiceConfiguration',
     'ImageReference',
-    'OSDisk',
     'WindowsConfiguration',
     'DataDisk',
+    'ContainerRegistry',
+    'ContainerConfiguration',
     'VirtualMachineConfiguration',
     'DeploymentConfiguration',
     'FixedScaleSettings',
@@ -186,12 +189,14 @@ __all__ = [
     'NetworkConfiguration',
     'TaskSchedulingPolicy',
     'LinuxUserConfiguration',
+    'WindowsUserConfiguration',
     'UserAccount',
     'MetadataItem',
     'ResourceFile',
     'EnvironmentSetting',
     'AutoUserSpecification',
     'UserIdentity',
+    'TaskContainerSettings',
     'StartTask',
     'CertificateReference',
     'ApplicationPackageReference',
@@ -203,6 +208,7 @@ __all__ = [
     'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
     'BatchAccountPaged',
+    'ApplicationPackagePaged',
     'ApplicationPaged',
     'OperationPaged',
     'CertificatePaged',
@@ -223,6 +229,7 @@ __all__ = [
     'NetworkSecurityGroupRuleAccess',
     'ComputeNodeFillType',
     'ElevationLevel',
+    'LoginMode',
     'AutoUserScope',
     'CertificateStoreLocation',
     'CertificateVisibility',

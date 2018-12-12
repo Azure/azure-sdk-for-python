@@ -36,20 +36,8 @@ class Certificate(ProxyResource):
     :param format: The format of the certificate - either Pfx or Cer. If
      omitted, the default is Pfx. Possible values include: 'Pfx', 'Cer'
     :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :ivar provisioning_state: The provisioned state of the resource. Values
-     are:
-     Succeeded - The certificate is available for use in pools.
-     Deleting - The user has requested that the certificate be deleted, but the
-     delete operation has not yet completed. You may not reference the
-     certificate when creating or updating pools.
-     Failed - The user requested that the certificate be deleted, but there are
-     pools that still have references to the certificate, or it is still
-     installed on one or more compute nodes. (The latter can occur if the
-     certificate has been removed from the pool, but the node has not yet
-     restarted. Nodes refresh their certificates only when they restart.) You
-     may use the cancel certificate delete operation to cancel the delete, or
-     the delete certificate operation to retry the delete. Possible values
-     include: 'Succeeded', 'Deleting', 'Failed'
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Succeeded', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.CertificateProvisioningState
     :ivar provisioning_state_transition_time: The time at which the
