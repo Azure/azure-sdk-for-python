@@ -11,24 +11,26 @@ jobs:
      tar xf pypy3-v6.0.0-linux64.tar.bz2
      cd $(Build.SourcesDirectory)
      
-     ~/pypy3-v6.0.0-linux64/bin/pypy3 -m ensurepip
-     ~/pypy3-v6.0.0-linux64/bin/pypy3 scripts/dev_setup.py
+     Set-Item -Path Env:PATH -Value ("/home/vsts/pypy3-v6.0.0-linux64/bin:" + $Env:PATH)
+
+     pypy3 -m ensurepip
+     pypy3 scripts/dev_setup.py
      
-      $inputFilterSet="$(build_targeting_string)"
+     $inputFilterSet="$(build_targeting_string)"
       
-      if ($inputFilterSet -eq "")
-      {
-          $inputFilterSet = "azure-*"
-      }
+     if ($inputFilterSet -eq "")
+     {
+        $inputFilterSet = "azure-*"
+     }
       
-      foreach($inputFilter in "$inputFilterSet".split(","))
-      {
-         $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
-      
-         ~/pypy3-v6.0.0-linux64/bin/pypy3 -m pytest $folderCombination
-      }
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
-     ~/pypy3-v6.0.0-linux64/bin/pypy3 ./setup.py check -r -s
+        pypy3 -m pytest $folderCombination
+     }
+     
+     pypy3 ./setup.py check -r -s
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -44,23 +46,25 @@ jobs:
      
      cd $(Build.SourcesDirectory)
      
-     ~/bin/python3 -m ensurepip
-     ~/bin/python3 scripts/dev_setup.py
+     Set-Item -Path Env:PATH -Value ("/home/vsts/bin:" + $Env:PATH)
+
+     python3 -m ensurepip
+     python3 scripts/dev_setup.py
      
-      $inputFilterSet="$(build_targeting_string)"
+     $inputFilterSet="$(build_targeting_string)"
       
-      if ($inputFilterSet -eq "")
-      {
-          $inputFilterSet = "azure-*"
-      }
+     if ($inputFilterSet -eq "")
+     {
+        $inputFilterSet = "azure-*"
+     }
       
-      foreach($inputFilter in "$inputFilterSet".split(","))
-      {
-         $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
-      
-         ~/bin/python3 -m pytest $folderCombination
-      }
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
      
-     ~/bin/python3 ./setup.py check -r -s
+        python3 -m pytest $folderCombination
+     }
+     
+     python3 ./setup.py check -r -s
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true
