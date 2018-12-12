@@ -19,7 +19,7 @@ class SourceUpdateParameters(Model):
      values include: 'Github', 'VisualStudioTeamService'
     :type source_control_type: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.SourceControlType
-    :param repository_url: The full URL to the source code respository
+    :param repository_url: The full URL to the source code repository
     :type repository_url: str
     :param branch: The branch name of the source code.
     :type branch: str
