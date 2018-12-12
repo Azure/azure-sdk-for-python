@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class RoutingTwinProperties(Model):
     """RoutingTwinProperties.
 
-    :param desired_properties: Twin desired properties
-    :type desired_properties: object
-    :param reported_properties: Twin desired properties
-    :type reported_properties: object
+    :param desired: Twin desired properties
+    :type desired: object
+    :param reported: Twin desired properties
+    :type reported: object
     """
 
     _attribute_map = {
-        'desired_properties': {'key': 'desiredProperties', 'type': 'object'},
-        'reported_properties': {'key': 'reportedProperties', 'type': 'object'},
+        'desired': {'key': 'desired', 'type': 'object'},
+        'reported': {'key': 'reported', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(RoutingTwinProperties, self).__init__(**kwargs)
-        self.desired_properties = kwargs.get('desired_properties', None)
-        self.reported_properties = kwargs.get('reported_properties', None)
+        self.desired = kwargs.get('desired', None)
+        self.reported = kwargs.get('reported', None)
