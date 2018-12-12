@@ -228,7 +228,7 @@ class BlueprintsOperations(object):
 
     def list(
             self, management_group_name, custom_headers=None, raw=False, **operation_config):
-        """Create or update blueprint definition.
+        """List Blueprint definitions within a Management Group.
 
         :param management_group_name: ManagementGroup where blueprint stores.
         :type management_group_name: str

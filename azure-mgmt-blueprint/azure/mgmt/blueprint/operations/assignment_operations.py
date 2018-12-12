@@ -107,7 +107,7 @@ class AssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}/operations'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}/assignmentOperations'}
 
     def get(
             self, scope, assignment_name, assignment_operation_name, custom_headers=None, raw=False, **operation_config):
@@ -174,4 +174,4 @@ class AssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}/operations/{assignmentOperationName}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}/assignmentOperations/{assignmentOperationName}'}
