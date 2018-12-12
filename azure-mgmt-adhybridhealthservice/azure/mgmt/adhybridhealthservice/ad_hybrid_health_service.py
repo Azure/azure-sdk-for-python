@@ -59,7 +59,7 @@ class ADHybridHealthServiceConfiguration(AzureConfiguration):
 
 
 class ADHybridHealthService(SDKClient):
-    """REST APIs for Azure Active Drectory Connect Health
+    """REST APIs for Azure Active Directory Connect Health
 
     :ivar config: Configuration for client.
     :vartype config: ADHybridHealthServiceConfiguration
