@@ -11,6 +11,7 @@ jobs:
      tar xf pypy3-v6.0.0-linux64.tar.bz2
      cd $(Build.SourcesDirectory)
      
+     $storedPath=$Env:PATH
      Set-Item -Path Env:PATH -Value ("/home/vsts/pypy3-v6.0.0-linux64/bin:" + $Env:PATH)
 
      pypy3 -m ensurepip
@@ -31,6 +32,7 @@ jobs:
      }
      
      pypy3 ./setup.py check -r -s
+     Set-Item -Path Env:PATH -Value ($storedPath)
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -45,7 +47,7 @@ jobs:
      make install
      
      cd $(Build.SourcesDirectory)
-     
+     $storedPath=$Env:PATH     
      Set-Item -Path Env:PATH -Value ("/home/vsts/bin:" + $Env:PATH)
 
      python3 -m ensurepip
@@ -66,5 +68,6 @@ jobs:
      }
      
      python3 ./setup.py check -r -s
+     Set-Item -Path Env:PATH -Value ($storedPath)
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true
