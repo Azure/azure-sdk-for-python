@@ -61,6 +61,12 @@ class ElevationLevel(str, Enum):
     admin = "admin"  #: The user is a user with elevated access and operates with full Administrator permissions.
 
 
+class LoginMode(str, Enum):
+
+    batch = "batch"  #: The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running parallel processes.
+    interactive = "interactive"  #: The LOGON32_LOGON_INTERACTIVE Win32 login mode. UAC is enabled on Windows VirtualMachineConfiguration pools. If this option is used with an elevated user identity in a Windows VirtualMachineConfiguration pool, the user session will not be elevated unless the application executed by the task command line is configured to always require administrative privilege or to always require maximum privilege.
+
+
 class OutputFileUploadCondition(str, Enum):
 
     task_success = "tasksuccess"  #: Upload the file(s) only after the task process exits with an exit code of 0.
@@ -83,8 +89,8 @@ class CertificateStoreLocation(str, Enum):
 class CertificateVisibility(str, Enum):
 
     start_task = "starttask"  #: The certificate should be visible to the user account under which the start task is run.
-    task = "task"  #: The certificate should be visibile to the user accounts under which job tasks are run.
-    remote_user = "remoteuser"  #: The certificate should be visibile to the user accounts under which users remotely access the node.
+    task = "task"  #: The certificate should be visible to the user accounts under which job tasks are run.
+    remote_user = "remoteuser"  #: The certificate should be visible to the user accounts under which users remotely access the node.
 
 
 class CachingType(str, Enum):
@@ -98,6 +104,12 @@ class StorageAccountType(str, Enum):
 
     standard_lrs = "standard_lrs"  #: The data disk should use standard locally redundant storage.
     premium_lrs = "premium_lrs"  #: The data disk should use premium locally redundant storage.
+
+
+class DynamicVNetAssignmentScope(str, Enum):
+
+    none = "none"  #: No dynamic VNet assignment is enabled.
+    job = "job"  #: Dynamic VNet assignment is done per-job.
 
 
 class InboundEndpointProtocol(str, Enum):
@@ -178,7 +190,6 @@ class PoolState(str, Enum):
 
     active = "active"  #: The pool is available to run tasks subject to the availability of compute nodes.
     deleting = "deleting"  #: The user has requested that the pool be deleted, but the delete operation has not yet completed.
-    upgrading = "upgrading"  #: The user has requested that the operating system of the pool's nodes be upgraded, but the upgrade operation has not yet completed (that is, some nodes in the pool have not yet been upgraded). While upgrading, the pool may be able to run tasks (with reduced capacity) but this is not guaranteed.
 
 
 class AllocationState(str, Enum):

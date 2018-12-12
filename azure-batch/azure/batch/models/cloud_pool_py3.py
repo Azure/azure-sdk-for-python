@@ -41,7 +41,7 @@ class CloudPool(Model):
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
     :param state: The current state of the pool. Possible values include:
-     'active', 'deleting', 'upgrading'
+     'active', 'deleting'
     :type state: str or ~azure.batch.models.PoolState
     :param state_transition_time: The time at which the pool entered its
      current state.

@@ -16,9 +16,6 @@ class CloudServiceConfiguration(Model):
     """The configuration for nodes in a pool based on the Azure Cloud Services
     platform.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param os_family: Required. The Azure Guest OS family to be installed on
@@ -30,32 +27,22 @@ class CloudServiceConfiguration(Model):
      see Azure Guest OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
-    :param target_os_version: The Azure Guest OS version to be installed on
-     the virtual machines in the pool. The default value is * which specifies
-     the latest operating system version for the specified OS family.
-    :type target_os_version: str
-    :ivar current_os_version: The Azure Guest OS Version currently installed
-     on the virtual machines in the pool. This may differ from targetOSVersion
-     if the pool state is Upgrading. In this case some virtual machines may be
-     on the targetOSVersion and some may be on the currentOSVersion during the
-     upgrade process. Once all virtual machines have upgraded, currentOSVersion
-     is updated to be the same as targetOSVersion.
-    :vartype current_os_version: str
+    :param os_version: The Azure Guest OS version to be installed on the
+     virtual machines in the pool. The default value is * which specifies the
+     latest operating system version for the specified OS family.
+    :type os_version: str
     """
 
     _validation = {
         'os_family': {'required': True},
-        'current_os_version': {'readonly': True},
     }
 
     _attribute_map = {
         'os_family': {'key': 'osFamily', 'type': 'str'},
-        'target_os_version': {'key': 'targetOSVersion', 'type': 'str'},
-        'current_os_version': {'key': 'currentOSVersion', 'type': 'str'},
+        'os_version': {'key': 'osVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(CloudServiceConfiguration, self).__init__(**kwargs)
         self.os_family = kwargs.get('os_family', None)
-        self.target_os_version = kwargs.get('target_os_version', None)
-        self.current_os_version = None
+        self.os_version = kwargs.get('os_version', None)
