@@ -12,7 +12,7 @@ jobs:
      cd $(Build.SourcesDirectory)
      
      $storedPath=$Env:PATH
-     Set-Item -Path Env:PATH -Value ("/home/vsts/pypy3-v6.0.0-linux64/bin:" + $Env:PATH)
+     $Env:PATH="/home/vsts/pypy3-v6.0.0-linux64/bin:" + $Env:PATH
 
      pypy3 -m ensurepip
      pypy3 scripts/dev_setup.py
@@ -32,7 +32,7 @@ jobs:
      }
      
      pypy3 ./setup.py check -r -s
-     Set-Item -Path Env:PATH -Value ($storedPath)
+     $Env:PATH=$storedPath
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -48,7 +48,7 @@ jobs:
      
      cd $(Build.SourcesDirectory)
      $storedPath=$Env:PATH     
-     Set-Item -Path Env:PATH -Value ("/home/vsts/bin:" + $Env:PATH)
+     $Env:PATH="/home/vsts/bin:" + $Env:PATH
 
      python3 -m ensurepip
      python3 scripts/dev_setup.py
@@ -68,6 +68,6 @@ jobs:
      }
      
      python3 ./setup.py check -r -s
-     Set-Item -Path Env:PATH -Value ($storedPath)
+     $Env:PATH=$storedPath
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true

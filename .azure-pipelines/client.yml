@@ -28,7 +28,7 @@ jobs:
      
      foreach($inputFilter in $inputFilterSet.split(","))
      {
-       $foldersToIterate=Get-ChildItem -Filter "$inputFilter"
+       $foldersToIterate = gci -Filter "$inputFilter"
      
        foreach ($folder in $foldersToIterate)
        {

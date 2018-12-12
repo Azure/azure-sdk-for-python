@@ -39,7 +39,7 @@ jobs:
      
      foreach($inputFilter in $inputFilterSet.split(","))
      {
-        $folderCombination = (Get-ChildItem -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
         pytest $folderCombination
      }
     displayName: 'Run Test Subset'
