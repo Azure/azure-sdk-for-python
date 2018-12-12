@@ -31,6 +31,8 @@ def travis_build_package():
     This method prints on stdout for Travis.
     Return is obj to pass to sys.exit() directly
     """
+    omitted_release_packages = ['azure-keyvault']
+
     travis_tag = os.environ.get('TRAVIS_TAG')
     if not travis_tag:
         print("TRAVIS_TAG environment variable is not present")
@@ -47,6 +49,10 @@ def travis_build_package():
     except InvalidVersion:
         print("Version must be a valid PEP440 version (version is: {})".format(version))
         return "Version must be a valid PEP440 version (version is: {})".format(version)
+
+    if name.lower() in omitted_release_packages:
+        print("The input package {} has been disabled for release from Travis.CI.".format(name))
+        return "The input package {} has been disabled for release from Travis.CI.".format(name)
 
     abs_dist_path = Path(os.environ['TRAVIS_BUILD_DIR'], 'dist')
     create_package(name, str(abs_dist_path))
