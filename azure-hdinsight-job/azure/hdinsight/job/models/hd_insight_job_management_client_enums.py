@@ -20,5 +20,6 @@ class ApplicationState(str, Enum):
     accepted = "ACCEPTED"
     running = "RUNNING"
     finished = "FINISHED"
+    finishing = "FINISHING"
     failed = "FAILED"
     killed = "KILLED"
