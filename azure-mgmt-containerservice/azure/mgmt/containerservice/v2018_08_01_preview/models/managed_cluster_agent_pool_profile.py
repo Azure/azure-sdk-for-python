@@ -81,7 +81,7 @@ class ManagedClusterAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
+    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet
      identifier.
     :type vnet_subnet_id: str
     :param max_pods: Maximum number of pods that can run on a node.
@@ -97,8 +97,8 @@ class ManagedClusterAgentPoolProfile(Model):
     :type min_count: int
     :param enable_auto_scaling: Whether to enable auto-scaler
     :type enable_auto_scaling: bool
-    :param type: AgentPoolType represents types of agentpool. Possible values
-     include: 'VirtualMachineScaleSets', 'AvailabilitySet'
+    :param type: AgentPoolType represents types of an agent pool. Possible
+     values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
      ~azure.mgmt.containerservice.v2018_08_01_preview.models.AgentPoolType
     """

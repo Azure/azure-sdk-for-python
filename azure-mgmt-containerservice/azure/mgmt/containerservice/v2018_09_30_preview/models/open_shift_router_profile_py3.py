@@ -20,7 +20,7 @@ class OpenShiftRouterProfile(Model):
 
     :param name: Name of the router profile.
     :type name: str
-    :param public_subdomain: DNS subdomain for openshift router.
+    :param public_subdomain: DNS subdomain for OpenShift router.
     :type public_subdomain: str
     :ivar fqdn: Auto-allocated FQDN for the OpenShift router.
     :vartype fqdn: str

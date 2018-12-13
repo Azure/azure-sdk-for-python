@@ -38,7 +38,7 @@ class ManagedCluster(Resource):
     :type kubernetes_version: str
     :param dns_prefix: DNS prefix specified when creating the managed cluster.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the master pool.
+    :ivar fqdn: FQDN for the master pool.
     :vartype fqdn: str
     :param agent_pool_profiles: Properties of the agent pool. Currently only
      one agent pool can exist.
