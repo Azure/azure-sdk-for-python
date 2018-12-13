@@ -66,6 +66,8 @@ from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .restore_points_operations import RestorePointsOperations
+from .managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
+from .managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -140,6 +142,8 @@ __all__ = [
     'ServerDnsAliasesOperations',
     'ServerSecurityAlertPoliciesOperations',
     'RestorePointsOperations',
+    'ManagedDatabaseSecurityAlertPoliciesOperations',
+    'ManagedServerSecurityAlertPoliciesOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
