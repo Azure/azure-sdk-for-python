@@ -16,11 +16,6 @@ from subprocess import check_call, CalledProcessError
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
 
-# optional argument in a situation where we want to build a single package
-parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
-parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
-args = parser.parse_args()
-
 def pip_command(command, error_ok=False):
     try:
         print('Executing: ' + command)
@@ -45,13 +40,13 @@ def expand_dependencies(targeted_packages):
     else: 
         return expanded_package_list
 
-packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
-targetedPackages = expand_dependencies([os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))])
+# optional argument in a situation where we want to build a single package
+parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
+parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
+args = parser.parse_args()
 
-# if the # of packages does not match the targeted subset
-#if Counter(packages) != Counter(targetedPackages):
-    # we need to do some 
-#    requirements = [os.path.dirname(p) for p in glob.glob('{0}/dev_requirements.txt')]
+packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+targeted_packages = expand_dependencies([os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))])
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if 'nspkg' in p]
@@ -60,7 +55,7 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 # Manually push meta-packages at the end, in reverse dependency order
 meta_packages = ['azure-mgmt', 'azure']
 
-content_packages = [p for p in packages if p not in nspkg_packages+meta_packages and p in targetedPackages]
+content_packages = [p for p in packages if p not in nspkg_packages+meta_packages and p in targeted_packages]
 
 # Put azure-common in front
 if 'azure-common' in content_packages:
