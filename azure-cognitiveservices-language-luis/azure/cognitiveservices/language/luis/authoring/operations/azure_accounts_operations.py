@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import HttpOperationError
 
 from .. import models
 
@@ -51,10 +50,12 @@ class AzureAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.assign_to_app.metadata['url']
@@ -84,21 +85,13 @@ class AzureAccountsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
             deserialized = self._deserialize('OperationStatus', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -121,10 +114,12 @@ class AzureAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_assigned.metadata['url']
@@ -147,21 +142,13 @@ class AzureAccountsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[AzureAccountInfoObject]', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -187,10 +174,12 @@ class AzureAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.remove_from_app.metadata['url']
@@ -220,21 +209,13 @@ class AzureAccountsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationStatus', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -254,10 +235,12 @@ class AzureAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_user_luis_accounts.metadata['url']
@@ -279,21 +262,13 @@ class AzureAccountsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('[AzureAccountInfoObject]', response)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

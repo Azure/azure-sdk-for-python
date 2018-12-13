@@ -665,8 +665,11 @@ class AppsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :return: ProductionOrStagingEndpointInfo or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.ProductionOrStagingEndpointInfo
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
@@ -697,7 +700,7 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 207, 503]:
+        if response.status_code not in [201, 207]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -706,8 +709,6 @@ class AppsOperations(object):
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
         if response.status_code == 207:
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
-        if response.status_code == 503:
-            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1166,7 +1167,7 @@ class AppsOperations(object):
     list_available_custom_prebuilt_domains_for_culture.metadata = {'url': '/apps/customprebuiltdomains/{culture}'}
 
     def package_published_application_as_gzip(
-            self, app_id, slot_name, custom_headers=None, raw=False, **operation_config):
+            self, app_id, slot_name, custom_headers=None, raw=False, callback=None, **operation_config):
         """package - Gets published LUIS application package in binary stream GZip
         format.
 
@@ -1179,12 +1180,17 @@ class AppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.package_published_application_as_gzip.metadata['url']
@@ -1206,23 +1212,15 @@ class AppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        response = self._client.send(request, stream=True, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._client.stream_download(response, callback)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1232,7 +1230,7 @@ class AppsOperations(object):
     package_published_application_as_gzip.metadata = {'url': '/package/{appId}/slot/{slotName}/gzip'}
 
     def package_trained_application_as_gzip(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """package - Gets trained LUIS application package in binary stream GZip
         format.
 
@@ -1245,12 +1243,17 @@ class AppsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.package_trained_application_as_gzip.metadata['url']
@@ -1272,23 +1275,15 @@ class AppsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        response = self._client.send(request, stream=True, **operation_config)
 
-        if response.status_code not in [200, 400, 401, 403, 429]:
-            raise HttpOperationError(self._deserialize, response)
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._client.stream_download(response, callback)
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 401:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 403:
-            deserialized = self._deserialize('ErrorResponse', response)
-        if response.status_code == 429:
-            deserialized = self._deserialize('ErrorResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
