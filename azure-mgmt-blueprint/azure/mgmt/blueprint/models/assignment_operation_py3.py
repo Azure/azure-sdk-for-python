@@ -35,7 +35,7 @@ class AssignmentOperation(AzureResourceBase):
     :type time_started: str
     :param time_finished: Finish time of the overall underlying deployments.
     :type time_finished: str
-    :param deployments: list of jobs in this assignment operation.
+    :param deployments: List of jobs in this assignment operation.
     :type deployments:
      list[~azure.mgmt.blueprint.models.AssignmentDeploymentJob]
     """

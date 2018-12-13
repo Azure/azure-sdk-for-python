@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class AssignmentDeploymentJobResult(Model):
-    """result of each individual deployment in a blueprint assignment.
+    """Result of each individual deployment in a blueprint assignment.
 
-    :param error: contains error details if deployment job failed.
+    :param error: Contains error details if deployment job failed.
     :type error: ~azure.mgmt.blueprint.models.AzureResourceManagerError
-    :param resources: resources created as result of the deployment job.
+    :param resources: Resources created as result of the deployment job.
     :type resources:
      list[~azure.mgmt.blueprint.models.AssignmentJobCreatedResource]
     """

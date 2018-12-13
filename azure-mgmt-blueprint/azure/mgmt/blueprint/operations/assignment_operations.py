@@ -120,7 +120,7 @@ class AssignmentOperations(object):
         :type scope: str
         :param assignment_name: name of the assignment.
         :type assignment_name: str
-        :param assignment_operation_name: name of the assignment operation.
+        :param assignment_operation_name: Name of the assignment operation.
         :type assignment_operation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

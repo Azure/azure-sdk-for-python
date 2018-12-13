@@ -23,9 +23,9 @@ class AssignmentDeploymentJob(Model):
     :type job_id: str
     :param job_state: State of this job.
     :type job_state: str
-    :param result: deployment job result.
+    :param result: Deployment job result.
     :type result: ~azure.mgmt.blueprint.models.AssignmentDeploymentJobResult
-    :param history: result of this deployment job for each retry.
+    :param history: Result of this deployment job for each retry.
     :type history:
      list[~azure.mgmt.blueprint.models.AssignmentDeploymentJobResult]
     :param request_uri: Reference to deployment job resource id.
