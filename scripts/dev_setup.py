@@ -46,6 +46,8 @@ parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='D
 args = parser.parse_args()
 
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+
+# keep targeted packages separate. python2 needs the nspkgs to work properly.
 targeted_packages = expand_dependencies([os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))])
 
 # Extract nspkg and sort nspkg by number of "-"
