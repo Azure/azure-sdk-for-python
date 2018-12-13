@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class ServerSecurityAlertPolicy(ProxyResource):
-    """A server security alert policy.
+class ManagedServerSecurityAlertPolicy(ProxyResource):
+    """A managed server security alert policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -76,7 +76,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
     }
 
     def __init__(self, **kwargs):
-        super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
+        super(ManagedServerSecurityAlertPolicy, self).__init__(**kwargs)
         self.state = kwargs.get('state', None)
         self.disabled_alerts = kwargs.get('disabled_alerts', None)
         self.email_addresses = kwargs.get('email_addresses', None)
