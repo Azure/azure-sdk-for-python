@@ -85,9 +85,9 @@ class ExportError(Model):
     :type aad_source_of_authority: str
     :param aad_user_principal_name: The AAD side user principal name.
     :type aad_user_principal_name: str
-    :param aad_distringuished_name: The AAD side distinguished name for the
+    :param aad_distinguished_name: The AAD side distinguished name for the
      object.
-    :type aad_distringuished_name: str
+    :type aad_distinguished_name: str
     :param aad_mail: The AAD side email for the object.
     :type aad_mail: str
     :param last_dir_sync_time: The date and time of last sync run.
@@ -130,13 +130,13 @@ class ExportError(Model):
         'aad_display_name': {'key': 'aadDisplayName', 'type': 'str'},
         'aad_source_of_authority': {'key': 'aadSourceOfAuthority', 'type': 'str'},
         'aad_user_principal_name': {'key': 'aadUserPrincipalName', 'type': 'str'},
-        'aad_distringuished_name': {'key': 'aadDistringuishedName', 'type': 'str'},
+        'aad_distinguished_name': {'key': 'aadDistinguishedName', 'type': 'str'},
         'aad_mail': {'key': 'aadMail', 'type': 'str'},
         'last_dir_sync_time': {'key': 'lastDirSyncTime', 'type': 'iso-8601'},
         'modified_attribute_value': {'key': 'modifiedAttributeValue', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, run_step_result_id: str=None, connector_id: str=None, type: str=None, error_code: str=None, message: str=None, server_error_detail: str=None, time_first_occured=None, retry_count: int=None, cs_object_id: str=None, dn: str=None, min_limit: str=None, max_limit: str=None, cloud_anchor: str=None, attribute_name: str=None, attribute_value: str=None, attribute_multi_value: bool=None, object_id_conflict: str=None, sam_account_name: str=None, ad_object_type: str=None, ad_object_guid: str=None, ad_display_name: str=None, ad_source_of_authority: str=None, ad_source_anchor: str=None, ad_user_principal_name: str=None, ad_distinguished_name: str=None, ad_mail: str=None, time_occured=None, aad_object_type: str=None, aad_object_guid: str=None, aad_display_name: str=None, aad_source_of_authority: str=None, aad_user_principal_name: str=None, aad_distringuished_name: str=None, aad_mail: str=None, last_dir_sync_time=None, modified_attribute_value: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, run_step_result_id: str=None, connector_id: str=None, type: str=None, error_code: str=None, message: str=None, server_error_detail: str=None, time_first_occured=None, retry_count: int=None, cs_object_id: str=None, dn: str=None, min_limit: str=None, max_limit: str=None, cloud_anchor: str=None, attribute_name: str=None, attribute_value: str=None, attribute_multi_value: bool=None, object_id_conflict: str=None, sam_account_name: str=None, ad_object_type: str=None, ad_object_guid: str=None, ad_display_name: str=None, ad_source_of_authority: str=None, ad_source_anchor: str=None, ad_user_principal_name: str=None, ad_distinguished_name: str=None, ad_mail: str=None, time_occured=None, aad_object_type: str=None, aad_object_guid: str=None, aad_display_name: str=None, aad_source_of_authority: str=None, aad_user_principal_name: str=None, aad_distinguished_name: str=None, aad_mail: str=None, last_dir_sync_time=None, modified_attribute_value: str=None, **kwargs) -> None:
         super(ExportError, self).__init__(**kwargs)
         self.id = id
         self.run_step_result_id = run_step_result_id
@@ -171,7 +171,7 @@ class ExportError(Model):
         self.aad_display_name = aad_display_name
         self.aad_source_of_authority = aad_source_of_authority
         self.aad_user_principal_name = aad_user_principal_name
-        self.aad_distringuished_name = aad_distringuished_name
+        self.aad_distinguished_name = aad_distinguished_name
         self.aad_mail = aad_mail
         self.last_dir_sync_time = last_dir_sync_time
         self.modified_attribute_value = modified_attribute_value

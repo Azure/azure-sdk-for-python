@@ -85,9 +85,9 @@ class ExportError(Model):
     :type aad_source_of_authority: str
     :param aad_user_principal_name: The AAD side user principal name.
     :type aad_user_principal_name: str
-    :param aad_distringuished_name: The AAD side distinguished name for the
+    :param aad_distinguished_name: The AAD side distinguished name for the
      object.
-    :type aad_distringuished_name: str
+    :type aad_distinguished_name: str
     :param aad_mail: The AAD side email for the object.
     :type aad_mail: str
     :param last_dir_sync_time: The date and time of last sync run.
@@ -130,7 +130,7 @@ class ExportError(Model):
         'aad_display_name': {'key': 'aadDisplayName', 'type': 'str'},
         'aad_source_of_authority': {'key': 'aadSourceOfAuthority', 'type': 'str'},
         'aad_user_principal_name': {'key': 'aadUserPrincipalName', 'type': 'str'},
-        'aad_distringuished_name': {'key': 'aadDistringuishedName', 'type': 'str'},
+        'aad_distinguished_name': {'key': 'aadDistinguishedName', 'type': 'str'},
         'aad_mail': {'key': 'aadMail', 'type': 'str'},
         'last_dir_sync_time': {'key': 'lastDirSyncTime', 'type': 'iso-8601'},
         'modified_attribute_value': {'key': 'modifiedAttributeValue', 'type': 'str'},
@@ -171,7 +171,7 @@ class ExportError(Model):
         self.aad_display_name = kwargs.get('aad_display_name', None)
         self.aad_source_of_authority = kwargs.get('aad_source_of_authority', None)
         self.aad_user_principal_name = kwargs.get('aad_user_principal_name', None)
-        self.aad_distringuished_name = kwargs.get('aad_distringuished_name', None)
+        self.aad_distinguished_name = kwargs.get('aad_distinguished_name', None)
         self.aad_mail = kwargs.get('aad_mail', None)
         self.last_dir_sync_time = kwargs.get('last_dir_sync_time', None)
         self.modified_attribute_value = kwargs.get('modified_attribute_value', None)
