@@ -10,10 +10,16 @@ from __future__ import print_function
 import sys
 import glob
 import os
+import argparse
+from collections import Counter
 from subprocess import check_call, CalledProcessError
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
 
+# optional argument in a situation where we want to build a single package
+parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
+parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
+args = parser.parse_args()
 
 def pip_command(command, error_ok=False):
     try:
@@ -25,19 +31,41 @@ def pip_command(command, error_ok=False):
         if not error_ok:
             sys.exit(1)
 
+def expand_dependencies(targeted_packages):
+    expanded_package_list = targeted_packages[:]
+    for package_name in targeted_packages: 
+        if os.path.isfile('{}/dev_requirements.txt'.format(package_name)):
+            expanded_package_list.extend([line.rstrip('\n') for line in open('{}/dev_requirements.txt'.format(package_name))])
+            expanded_package_list = list(set(expanded_package_list))
+
+    # if our set of packages has expanded, recurse, otherwise we are guaranteed to be done. 
+    # worst case in this situation is that we include all azure* packages anyway.
+    if Counter(targeted_packages) != Counter(expanded_package_list):
+        return expand_dependencies(expanded_package_list)
+    else: 
+        return expanded_package_list
+
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+targetedPackages = expand_dependencies([os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))])
+
+# if the # of packages does not match the targeted subset
+#if Counter(packages) != Counter(targetedPackages):
+    # we need to do some 
+#    requirements = [os.path.dirname(p) for p in glob.glob('{0}/dev_requirements.txt')]
 
 # Extract nspkg and sort nspkg by number of "-"
-nspkg_packages = [p for p in packages if "nspkg" in p]
+nspkg_packages = [p for p in packages if 'nspkg' in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Manually push meta-packages at the end, in reverse dependency order
 meta_packages = ['azure-mgmt', 'azure']
 
-content_packages = [p for p in packages if p not in nspkg_packages+meta_packages]
+content_packages = [p for p in packages if p not in nspkg_packages+meta_packages and p in targetedPackages]
+
 # Put azure-common in front
-content_packages.remove("azure-common")
-content_packages.insert(0, "azure-common")
+if 'azure-common' in content_packages:
+    content_packages.remove('azure-common')
+content_packages.insert(0, 'azure-common')
 
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))

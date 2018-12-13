@@ -1,0 +1,3 @@
+azure-mgmt-authorization
+azure-mgmt-keyvault
+azure-sdk-tools
