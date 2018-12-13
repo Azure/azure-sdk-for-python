@@ -89,3 +89,5 @@ class WebhookAction(str, Enum):
     push = "push"
     delete = "delete"
     quarantine = "quarantine"
+    chart_push = "chart_push"
+    chart_delete = "chart_delete"
