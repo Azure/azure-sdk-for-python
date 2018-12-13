@@ -21,7 +21,7 @@ class HeatMapModel(ProxyResource):
     :param name: The name of the resource
     :type name: str
     :param type: The type of the resource. Ex-
-     Microsoft.Network/trafficmanagerProfiles.
+     Microsoft.Network/trafficManagerProfiles.
     :type type: str
     :param start_time: The beginning of the time window for this HeatMap,
      inclusive.

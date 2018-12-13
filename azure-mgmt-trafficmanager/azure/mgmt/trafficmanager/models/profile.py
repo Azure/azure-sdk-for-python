@@ -21,7 +21,7 @@ class Profile(TrackedResource):
     :param name: The name of the resource
     :type name: str
     :param type: The type of the resource. Ex-
-     Microsoft.Network/trafficmanagerProfiles.
+     Microsoft.Network/trafficManagerProfiles.
     :type type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
