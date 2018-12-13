@@ -45,8 +45,8 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
     :ivar server_role_results: Map of server role migration results.
     :vartype server_role_results: dict[str,
      ~azure.mgmt.datamigration.models.StartMigrationScenarioServerRoleResult]
-    :ivar orphaned_users: List of orphaned users.
-    :vartype orphaned_users:
+    :ivar orphaned_users_info: List of orphaned users.
+    :vartype orphaned_users_info:
      list[~azure.mgmt.datamigration.models.OrphanedUserInfo]
     :ivar databases: Selected databases as a map from database name to
      database id
@@ -75,7 +75,7 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         'logins': {'readonly': True},
         'message': {'readonly': True},
         'server_role_results': {'readonly': True},
-        'orphaned_users': {'readonly': True},
+        'orphaned_users_info': {'readonly': True},
         'databases': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server_brand_version': {'readonly': True},
@@ -95,7 +95,7 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         'logins': {'key': 'logins', 'type': '{str}'},
         'message': {'key': 'message', 'type': 'str'},
         'server_role_results': {'key': 'serverRoleResults', 'type': '{StartMigrationScenarioServerRoleResult}'},
-        'orphaned_users': {'key': 'orphanedUsers', 'type': '[OrphanedUserInfo]'},
+        'orphaned_users_info': {'key': 'orphanedUsersInfo', 'type': '[OrphanedUserInfo]'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
@@ -114,7 +114,7 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         self.logins = None
         self.message = None
         self.server_role_results = None
-        self.orphaned_users = None
+        self.orphaned_users_info = None
         self.databases = None
         self.source_server_version = None
         self.source_server_brand_version = None
