@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .media_job_state_change_event_data import MediaJobStateChangeEventData
 
 
-class MediaJobStateChangeEventData(Model):
-    """Schema of the Data property of an EventGridEvent for a
-    Microsoft.Media.JobStateChange event.
+class MediaJobScheduledEventData(MediaJobStateChangeEventData):
+    """Job scheduled event data.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -43,7 +42,4 @@ class MediaJobStateChangeEventData(Model):
     }
 
     def __init__(self, **kwargs):
-        super(MediaJobStateChangeEventData, self).__init__(**kwargs)
-        self.previous_state = None
-        self.state = None
-        self.correlation_data = kwargs.get('correlation_data', None)
+        super(MediaJobScheduledEventData, self).__init__(**kwargs)

@@ -48,6 +48,32 @@ try:
     from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
+    from .media_job_error_detail_py3 import MediaJobErrorDetail
+    from .media_job_error_py3 import MediaJobError
+    from .media_job_output_py3 import MediaJobOutput
+    from .media_job_output_asset_py3 import MediaJobOutputAsset
+    from .media_job_output_state_change_event_data_py3 import MediaJobOutputStateChangeEventData
+    from .media_job_scheduled_event_data_py3 import MediaJobScheduledEventData
+    from .media_job_processing_event_data_py3 import MediaJobProcessingEventData
+    from .media_job_canceling_event_data_py3 import MediaJobCancelingEventData
+    from .media_job_finished_event_data_py3 import MediaJobFinishedEventData
+    from .media_job_canceled_event_data_py3 import MediaJobCanceledEventData
+    from .media_job_errored_event_data_py3 import MediaJobErroredEventData
+    from .media_job_output_canceled_event_data_py3 import MediaJobOutputCanceledEventData
+    from .media_job_output_canceling_event_data_py3 import MediaJobOutputCancelingEventData
+    from .media_job_output_errored_event_data_py3 import MediaJobOutputErroredEventData
+    from .media_job_output_finished_event_data_py3 import MediaJobOutputFinishedEventData
+    from .media_job_output_processing_event_data_py3 import MediaJobOutputProcessingEventData
+    from .media_job_output_scheduled_event_data_py3 import MediaJobOutputScheduledEventData
+    from .media_live_event_encoder_connected_event_data_py3 import MediaLiveEventEncoderConnectedEventData
+    from .media_live_event_connection_rejected_event_data_py3 import MediaLiveEventConnectionRejectedEventData
+    from .media_live_event_encoder_disconnected_event_data_py3 import MediaLiveEventEncoderDisconnectedEventData
+    from .media_live_event_incoming_stream_received_event_data_py3 import MediaLiveEventIncomingStreamReceivedEventData
+    from .media_live_event_incoming_streams_out_of_sync_event_data_py3 import MediaLiveEventIncomingStreamsOutOfSyncEventData
+    from .media_live_event_incoming_video_streams_out_of_sync_event_data_py3 import MediaLiveEventIncomingVideoStreamsOutOfSyncEventData
+    from .media_live_event_incoming_data_chunk_dropped_event_data_py3 import MediaLiveEventIncomingDataChunkDroppedEventData
+    from .media_live_event_ingest_heartbeat_event_data_py3 import MediaLiveEventIngestHeartbeatEventData
+    from .media_live_event_track_discontinuity_detected_event_data_py3 import MediaLiveEventTrackDiscontinuityDetectedEventData
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -87,8 +113,37 @@ except (SyntaxError, ImportError):
     from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data import MediaJobStateChangeEventData
+    from .media_job_error_detail import MediaJobErrorDetail
+    from .media_job_error import MediaJobError
+    from .media_job_output import MediaJobOutput
+    from .media_job_output_asset import MediaJobOutputAsset
+    from .media_job_output_state_change_event_data import MediaJobOutputStateChangeEventData
+    from .media_job_scheduled_event_data import MediaJobScheduledEventData
+    from .media_job_processing_event_data import MediaJobProcessingEventData
+    from .media_job_canceling_event_data import MediaJobCancelingEventData
+    from .media_job_finished_event_data import MediaJobFinishedEventData
+    from .media_job_canceled_event_data import MediaJobCanceledEventData
+    from .media_job_errored_event_data import MediaJobErroredEventData
+    from .media_job_output_canceled_event_data import MediaJobOutputCanceledEventData
+    from .media_job_output_canceling_event_data import MediaJobOutputCancelingEventData
+    from .media_job_output_errored_event_data import MediaJobOutputErroredEventData
+    from .media_job_output_finished_event_data import MediaJobOutputFinishedEventData
+    from .media_job_output_processing_event_data import MediaJobOutputProcessingEventData
+    from .media_job_output_scheduled_event_data import MediaJobOutputScheduledEventData
+    from .media_live_event_encoder_connected_event_data import MediaLiveEventEncoderConnectedEventData
+    from .media_live_event_connection_rejected_event_data import MediaLiveEventConnectionRejectedEventData
+    from .media_live_event_encoder_disconnected_event_data import MediaLiveEventEncoderDisconnectedEventData
+    from .media_live_event_incoming_stream_received_event_data import MediaLiveEventIncomingStreamReceivedEventData
+    from .media_live_event_incoming_streams_out_of_sync_event_data import MediaLiveEventIncomingStreamsOutOfSyncEventData
+    from .media_live_event_incoming_video_streams_out_of_sync_event_data import MediaLiveEventIncomingVideoStreamsOutOfSyncEventData
+    from .media_live_event_incoming_data_chunk_dropped_event_data import MediaLiveEventIncomingDataChunkDroppedEventData
+    from .media_live_event_ingest_heartbeat_event_data import MediaLiveEventIngestHeartbeatEventData
+    from .media_live_event_track_discontinuity_detected_event_data import MediaLiveEventTrackDiscontinuityDetectedEventData
 from .event_grid_client_enums import (
-    JobState,
+    MediaJobState,
+    MediaJobErrorCode,
+    MediaJobErrorCategory,
+    MediaJobRetry,
 )
 
 __all__ = [
@@ -130,5 +185,34 @@ __all__ = [
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'MediaJobStateChangeEventData',
-    'JobState',
+    'MediaJobErrorDetail',
+    'MediaJobError',
+    'MediaJobOutput',
+    'MediaJobOutputAsset',
+    'MediaJobOutputStateChangeEventData',
+    'MediaJobScheduledEventData',
+    'MediaJobProcessingEventData',
+    'MediaJobCancelingEventData',
+    'MediaJobFinishedEventData',
+    'MediaJobCanceledEventData',
+    'MediaJobErroredEventData',
+    'MediaJobOutputCanceledEventData',
+    'MediaJobOutputCancelingEventData',
+    'MediaJobOutputErroredEventData',
+    'MediaJobOutputFinishedEventData',
+    'MediaJobOutputProcessingEventData',
+    'MediaJobOutputScheduledEventData',
+    'MediaLiveEventEncoderConnectedEventData',
+    'MediaLiveEventConnectionRejectedEventData',
+    'MediaLiveEventEncoderDisconnectedEventData',
+    'MediaLiveEventIncomingStreamReceivedEventData',
+    'MediaLiveEventIncomingStreamsOutOfSyncEventData',
+    'MediaLiveEventIncomingVideoStreamsOutOfSyncEventData',
+    'MediaLiveEventIncomingDataChunkDroppedEventData',
+    'MediaLiveEventIngestHeartbeatEventData',
+    'MediaLiveEventTrackDiscontinuityDetectedEventData',
+    'MediaJobState',
+    'MediaJobErrorCode',
+    'MediaJobErrorCategory',
+    'MediaJobRetry',
 ]
