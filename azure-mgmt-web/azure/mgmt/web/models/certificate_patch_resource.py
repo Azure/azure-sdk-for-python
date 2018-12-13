@@ -44,7 +44,7 @@ class CertificatePatchResource(ProxyOnlyResource):
     :vartype issuer: str
     :ivar issue_date: Certificate issue Date.
     :vartype issue_date: datetime
-    :ivar expiration_date: Certificate expriration date.
+    :ivar expiration_date: Certificate expiration date.
     :vartype expiration_date: datetime
     :param password: Required. Certificate password.
     :type password: str

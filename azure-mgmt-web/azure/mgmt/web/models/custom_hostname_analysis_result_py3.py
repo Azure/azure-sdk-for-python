@@ -40,7 +40,7 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     :ivar has_conflict_on_scale_unit: <code>true</code> if there is a conflict
      on a scale unit; otherwise, <code>false</code>.
     :vartype has_conflict_on_scale_unit: bool
-    :ivar has_conflict_across_subscription: <code>true</code> if htere is a
+    :ivar has_conflict_across_subscription: <code>true</code> if there is a
      conflict across subscriptions; otherwise, <code>false</code>.
     :vartype has_conflict_across_subscription: bool
     :ivar conflicting_app_resource_id: Name of the conflicting app on scale
