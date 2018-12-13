@@ -30,8 +30,8 @@ class MetricDefinition(Model):
     :ivar unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond'
     :vartype unit: str or ~azure.mgmt.sql.models.UnitDefinitionType
-    :ivar metric_availabilities: The list of database metric availabities for
-     the metric.
+    :ivar metric_availabilities: The list of database metric availabilities
+     for the metric.
     :vartype metric_availabilities:
      list[~azure.mgmt.sql.models.MetricAvailability]
     """

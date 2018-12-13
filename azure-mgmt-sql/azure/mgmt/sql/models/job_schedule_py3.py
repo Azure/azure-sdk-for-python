@@ -27,7 +27,7 @@ class JobSchedule(Model):
     :param enabled: Whether or not the schedule is enabled.
     :type enabled: bool
     :param interval: Value of the schedule's recurring interval, if the
-     scheduletype is recurring. ISO8601 duration format.
+     schedule type is recurring. ISO8601 duration format.
     :type interval: str
     """
 
