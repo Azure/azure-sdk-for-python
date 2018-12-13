@@ -34,7 +34,7 @@ class BreakSentenceOperations(object):
         self.config = config
 
     def break_sentence_post(
-            self, api_version, text, language=None, script=None, ocp_apim_subscription_key=None, client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, text, language=None, script=None, client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Identifies the position of sentence boundaries in a piece of text.
         .
 
@@ -80,11 +80,6 @@ class BreakSentenceOperations(object):
          If a script is not specified, the default script of the language will
          be assumed.
         :type script: str
-        :param ocp_apim_subscription_key: This is used to pass a key for
-         authentication. If you are passing a token for authentication then use
-         the previous "Authorization" header option. **ONE OF THESE METHODS
-         MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param client_trace_id: A client-generated GUID to uniquely identify
          the request. You can omit this header if you include the trace ID in
          the query string using a query parameter named ClientTraceId.
@@ -122,8 +117,6 @@ class BreakSentenceOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if client_trace_id is not None:
             header_parameters['ClientTraceId'] = self._serialize.header("client_trace_id", client_trace_id, 'str')
 

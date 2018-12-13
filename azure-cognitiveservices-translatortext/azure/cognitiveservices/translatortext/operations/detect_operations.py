@@ -34,7 +34,7 @@ class DetectOperations(object):
         self.config = config
 
     def detect_post(
-            self, api_version, text, ocp_apim_subscription_key=None, client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, text, client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Identifies the language of a string of text.
         .
 
@@ -73,10 +73,6 @@ class DetectOperations(object):
          It is used for troubleshooting purposes.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DetectTextInput]
-        :param ocp_apim_subscription_key: This is used to pass a key for auth.
-         If you are passing a token for auth then use the previous header auth
-         option. **ONE OF THESE METHODS MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param client_trace_id: A client-generated GUID to uniquely identify
          the request. Note that you can omit this header if you include the
          trace ID in the query string using a query parameter named
@@ -111,8 +107,6 @@ class DetectOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if client_trace_id is not None:
             header_parameters['ClientTraceId'] = self._serialize.header("client_trace_id", client_trace_id, 'str')
 

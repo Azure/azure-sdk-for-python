@@ -34,7 +34,7 @@ class DictionaryOperations(object):
         self.config = config
 
     def lookup_post(
-            self, api_version, from_parameter, to, text, ocp_apim_subscription_key=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, from_parameter, to, text, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Provides alternative translations for a word and a small number of
         idiomatic phrases. Each translation has a `part-of-speech` and a list
         of `back-translations`. The back-translations enable a user to
@@ -144,10 +144,6 @@ class DictionaryOperations(object):
          It is used for troubleshooting purposes.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DictionaryLookupTextInput]
-        :param ocp_apim_subscription_key: This is used to pass a key for auth.
-         If you are passing a token for auth then use the previous header auth
-         option. **ONE OF THESE METHODS MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param x_client_trace_id: A client-generated GUID to uniquely identify
          the request. Note that you can omit this header if you include the
          trace ID in the query string using a query parameter named
@@ -184,8 +180,6 @@ class DictionaryOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if x_client_trace_id is not None:
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 

@@ -34,7 +34,7 @@ class DictionaryExamplesOperations(object):
         self.config = config
 
     def examples_post(
-            self, api_version, from_parameter, to, text, ocp_apim_subscription_key=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, from_parameter, to, text, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Provides examples that show how terms in the dictionary are used in
         context. This operation is used in tandem with `Dictionary lookup`.
         .
@@ -103,10 +103,6 @@ class DictionaryExamplesOperations(object):
          (OK) but the `examples` list is an empty list.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DictionaryExampleTextInput]
-        :param ocp_apim_subscription_key: This is used to pass a key for auth.
-         If you are passing a token for auth then use the previous header auth
-         option. **ONE OF THESE METHODS MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param x_client_trace_id: A client-generated GUID to uniquely identify
          the request. Note that you can omit this header if you include the
          trace ID in the query string using a query parameter named
@@ -143,8 +139,6 @@ class DictionaryExamplesOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if x_client_trace_id is not None:
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 

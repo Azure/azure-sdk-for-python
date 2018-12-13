@@ -34,7 +34,7 @@ class TransliterateOperations(object):
         self.config = config
 
     def post(
-            self, api_version, language, from_script, to_script, texts, ocp_apim_subscription_key=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, language, from_script, to_script, texts, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Converts the text of a language in one script into another type of
         script. Example-
         Japanese script "こんにちは"
@@ -76,10 +76,6 @@ class TransliterateOperations(object):
          * `script`- A string specifying the script used in the output.
         :type texts:
          list[~azure.cognitiveservices.translatortext.models.TransliterateTextInput]
-        :param ocp_apim_subscription_key: This is used to pass a key for auth.
-         If you are passing a token for auth then use the previous header auth
-         option. **ONE OF THESE METHODS MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param x_client_trace_id: A client-generated GUID to uniquely identify
          the request. You can omit this header if you include the trace ID in
          the query string using a query parameter named ClientTraceId.
@@ -116,8 +112,6 @@ class TransliterateOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if x_client_trace_id is not None:
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 

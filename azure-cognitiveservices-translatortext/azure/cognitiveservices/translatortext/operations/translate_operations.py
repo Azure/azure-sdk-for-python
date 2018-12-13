@@ -34,7 +34,7 @@ class TranslateOperations(object):
         self.config = config
 
     def translate_post(
-            self, api_version, to, text, from_parameter=None, text_type=None, category=None, profanity_action=None, profanity_marker=None, include_alignment=None, include_sentence_length=None, suggested_from=None, from_script=None, to_script=None, ocp_apim_subscription_key=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, to, text, from_parameter=None, text_type=None, category=None, profanity_action=None, profanity_marker=None, include_alignment=None, include_sentence_length=None, suggested_from=None, from_script=None, to_script=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Translates text into one or more languages.
         .
 
@@ -191,10 +191,6 @@ class TranslateOperations(object):
         :type from_script: str
         :param to_script: Specifies the script of the translated text.
         :type to_script: list[str]
-        :param ocp_apim_subscription_key: This is used to pass a key for auth.
-         If you are passing a token for auth then use the previous header auth
-         option. **ONE OF THESE METHODS MUST BE USED.**
-        :type ocp_apim_subscription_key: str
         :param x_client_trace_id: A client-generated GUID to uniquely identify
          the request. Note that you can omit this header if you include the
          trace ID in the query string using a query parameter named
@@ -250,8 +246,6 @@ class TranslateOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if ocp_apim_subscription_key is not None:
-            header_parameters['Ocp-Apim-Subscription-Key'] = self._serialize.header("ocp_apim_subscription_key", ocp_apim_subscription_key, 'str')
         if x_client_trace_id is not None:
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
