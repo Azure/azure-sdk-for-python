@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "4.3.0"
+from .container_services_operations import ContainerServicesOperations
 
+__all__ = [
+    'ContainerServicesOperations',
+]

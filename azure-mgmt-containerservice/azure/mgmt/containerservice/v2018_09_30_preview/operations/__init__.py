@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "4.3.0"
+from .open_shift_managed_clusters_operations import OpenShiftManagedClustersOperations
 
+__all__ = [
+    'OpenShiftManagedClustersOperations',
+]
