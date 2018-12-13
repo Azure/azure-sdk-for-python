@@ -17,7 +17,7 @@ class RoleAssignmentFilter(Model):
 
     :param principal_id: Returns role assignment of the specific principal.
     :type principal_id: str
-    :param can_delegate: The Delegation flag for the roleassignment
+    :param can_delegate: The Delegation flag for the role assignment
     :type can_delegate: bool
     """
 

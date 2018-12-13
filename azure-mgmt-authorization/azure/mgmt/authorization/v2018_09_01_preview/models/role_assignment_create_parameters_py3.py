@@ -30,7 +30,7 @@ class RoleAssignmentCreateParameters(Model):
      'DirectoryObjectOrGroup', 'Everyone'
     :type principal_type: str or
      ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
-    :param can_delegate: The delgation flag used for creating a role
+    :param can_delegate: The delegation flag used for creating a role
      assignment
     :type can_delegate: bool
     """

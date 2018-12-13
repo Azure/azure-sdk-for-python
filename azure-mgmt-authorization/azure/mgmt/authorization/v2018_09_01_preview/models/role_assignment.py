@@ -36,7 +36,7 @@ class RoleAssignment(Model):
      'DirectoryObjectOrGroup', 'Everyone'
     :type principal_type: str or
      ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
-    :param can_delegate: The Delegation flag for the roleassignment
+    :param can_delegate: The Delegation flag for the role assignment
     :type can_delegate: bool
     """
 
