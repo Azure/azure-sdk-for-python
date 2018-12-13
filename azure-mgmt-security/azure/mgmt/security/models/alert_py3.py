@@ -44,8 +44,10 @@ class Alert(Resource):
     :ivar action_taken: The action that was taken as a response to the alert
      (Active, Blocked etc.)
     :vartype action_taken: str
-    :ivar reported_severity: Estimated severity of this alert
-    :vartype reported_severity: str
+    :ivar reported_severity: Estimated severity of this alert. Possible values
+     include: 'Silent', 'Information', 'Low', 'High'
+    :vartype reported_severity: str or
+     ~azure.mgmt.security.models.ReportedSeverity
     :ivar compromised_entity: The entity that the incident happened on
     :vartype compromised_entity: str
     :ivar associated_resource: Azure resource ID of the associated resource
@@ -57,6 +59,9 @@ class Alert(Resource):
     :ivar can_be_investigated: Whether this alert can be investigated with
      Azure Security Center
     :vartype can_be_investigated: bool
+    :ivar is_incident: Whether this alert is for incident type or not
+     (otherwise - single alert)
+    :vartype is_incident: bool
     :param entities: objects that are related to this alerts
     :type entities: list[~azure.mgmt.security.models.AlertEntity]
     :ivar confidence_score: level of confidence we have on the alert
@@ -93,6 +98,7 @@ class Alert(Resource):
         'associated_resource': {'readonly': True},
         'system_source': {'readonly': True},
         'can_be_investigated': {'readonly': True},
+        'is_incident': {'readonly': True},
         'confidence_score': {'readonly': True, 'maximum': 1, 'minimum': 0},
         'subscription_id': {'readonly': True},
         'instance_id': {'readonly': True},
@@ -118,6 +124,7 @@ class Alert(Resource):
         'extended_properties': {'key': 'properties.extendedProperties', 'type': '{object}'},
         'system_source': {'key': 'properties.systemSource', 'type': 'str'},
         'can_be_investigated': {'key': 'properties.canBeInvestigated', 'type': 'bool'},
+        'is_incident': {'key': 'properties.isIncident', 'type': 'bool'},
         'entities': {'key': 'properties.entities', 'type': '[AlertEntity]'},
         'confidence_score': {'key': 'properties.confidenceScore', 'type': 'float'},
         'confidence_reasons': {'key': 'properties.confidenceReasons', 'type': '[AlertConfidenceReason]'},
@@ -143,6 +150,7 @@ class Alert(Resource):
         self.extended_properties = extended_properties
         self.system_source = None
         self.can_be_investigated = None
+        self.is_incident = None
         self.entities = entities
         self.confidence_score = None
         self.confidence_reasons = confidence_reasons

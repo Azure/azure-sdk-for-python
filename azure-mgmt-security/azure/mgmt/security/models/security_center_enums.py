@@ -41,6 +41,14 @@ class SettingKind(str, Enum):
     data_export_setting = "DataExportSetting"
 
 
+class ReportedSeverity(str, Enum):
+
+    silent = "Silent"
+    information = "Information"
+    low = "Low"
+    high = "High"
+
+
 class SecurityFamily(str, Enum):
 
     waf = "Waf"
