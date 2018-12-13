@@ -486,6 +486,7 @@ class ManagedDatabaseStatus(str, Enum):
     shutdown = "Shutdown"
     creating = "Creating"
     inaccessible = "Inaccessible"
+    updating = "Updating"
 
 
 class CatalogCollationType(str, Enum):
@@ -499,6 +500,7 @@ class ManagedDatabaseCreateMode(str, Enum):
     default = "Default"
     restore_external_backup = "RestoreExternalBackup"
     point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
 
 
 class AutomaticTuningServerMode(str, Enum):
