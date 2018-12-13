@@ -1,0 +1,3 @@
+azure-sdk-tools
+azure-common
+azure-mgmt-resource
