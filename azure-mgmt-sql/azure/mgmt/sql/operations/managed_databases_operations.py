@@ -417,7 +417,7 @@ class ManagedDatabasesOperations(object):
 
     def delete(
             self, resource_group_name, managed_instance_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the managed database.
+        """Deletes a managed database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

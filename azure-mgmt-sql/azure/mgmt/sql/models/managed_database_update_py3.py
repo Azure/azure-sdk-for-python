@@ -20,8 +20,8 @@ class ManagedDatabaseUpdate(Model):
 
     :param collation: Collation of the managed database.
     :type collation: str
-    :ivar status: Status for the database. Possible values include: 'Online',
-     'Offline', 'Shutdown', 'Creating', 'Inaccessible'
+    :ivar status: Status of the database. Possible values include: 'Online',
+     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Updating'
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: datetime
@@ -44,8 +44,11 @@ class ManagedDatabaseUpdate(Model):
      database. SourceDatabaseName, SourceManagedInstanceName and PointInTime
      must be specified. RestoreExternalBackup: Create a database by restoring
      from external backup files. Collation, StorageContainerUri and
-     StorageContainerSasToken must be specified. Possible values include:
-     'Default', 'RestoreExternalBackup', 'PointInTimeRestore'
+     StorageContainerSasToken must be specified. Recovery: Creates a database
+     by restoring a geo-replicated backup. RecoverableDatabaseId must be
+     specified as the recoverable database resource ID to restore. Possible
+     values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
+     'Recovery'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -54,6 +57,9 @@ class ManagedDatabaseUpdate(Model):
     :param source_database_id: The resource identifier of the source database
      associated with create operation of this database.
     :type source_database_id: str
+    :param restorable_dropped_database_id: The restorable dropped database
+     resource id to restore when creating this database.
+    :type restorable_dropped_database_id: str
     :param storage_container_sas_token: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the storage
      container sas token.
@@ -61,6 +67,9 @@ class ManagedDatabaseUpdate(Model):
     :ivar failover_group_id: Instance Failover Group resource identifier that
      this managed database belongs to.
     :vartype failover_group_id: str
+    :param recoverable_database_id: The resource identifier of the recoverable
+     database associated with create operation of this database.
+    :type recoverable_database_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -84,12 +93,14 @@ class ManagedDatabaseUpdate(Model):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'storage_container_uri': {'key': 'properties.storageContainerUri', 'type': 'str'},
         'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
+        'restorable_dropped_database_id': {'key': 'properties.restorableDroppedDatabaseId', 'type': 'str'},
         'storage_container_sas_token': {'key': 'properties.storageContainerSasToken', 'type': 'str'},
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
+        'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, storage_container_sas_token: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, tags=None, **kwargs) -> None:
         super(ManagedDatabaseUpdate, self).__init__(**kwargs)
         self.collation = collation
         self.status = None
@@ -101,6 +112,8 @@ class ManagedDatabaseUpdate(Model):
         self.create_mode = create_mode
         self.storage_container_uri = storage_container_uri
         self.source_database_id = source_database_id
+        self.restorable_dropped_database_id = restorable_dropped_database_id
         self.storage_container_sas_token = storage_container_sas_token
         self.failover_group_id = None
+        self.recoverable_database_id = recoverable_database_id
         self.tags = tags
