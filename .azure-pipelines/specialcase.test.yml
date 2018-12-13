@@ -1,3 +1,6 @@
+# Variables: 
+#  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+
 jobs:
 - job: Special_Python_Distro_Tests
   dependsOn:
