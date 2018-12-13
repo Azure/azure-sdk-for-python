@@ -17,7 +17,7 @@ class AppState(Model):
 
     :param state: The State of the application. Possible values include:
      'NEW', 'NEW_SAVING', 'SUBMITTED', 'ACCEPTED', 'RUNNING', 'FINISHED',
-     'FAILED', 'KILLED'
+     'FINISHING', 'FAILED', 'KILLED'
     :type state: str or ~azure.hdinsight.job.models.ApplicationState
     """
 
