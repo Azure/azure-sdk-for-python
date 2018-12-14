@@ -13,7 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.instance_operations import InstanceOperations
+from .operations.instances_operations import InstancesOperations
 from .operations.attested_operations import AttestedOperations
 from .operations.identity_operations import IdentityOperations
 from . import models
@@ -27,14 +27,11 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version1: This is the API version to use. Possible values
-     include: '2018-02-01', '2018-04-02', '2018-10-01'
-    :type api_version1: str or ~azure.imds.models.ApiVersion
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, api_version1=None, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -47,7 +44,6 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.api_version1 = api_version1
 
 
 class InstanceMetadataClient(SDKClient):
@@ -56,8 +52,8 @@ class InstanceMetadataClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: InstanceMetadataClientConfiguration
 
-    :ivar instance: Instance operations
-    :vartype instance: azure.imds.operations.InstanceOperations
+    :ivar instances: Instances operations
+    :vartype instances: azure.imds.operations.InstancesOperations
     :ivar attested: Attested operations
     :vartype attested: azure.imds.operations.AttestedOperations
     :ivar identity: Identity operations
@@ -66,16 +62,13 @@ class InstanceMetadataClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version1: This is the API version to use. Possible values
-     include: '2018-02-01', '2018-04-02', '2018-10-01'
-    :type api_version1: str or ~azure.imds.models.ApiVersion
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, api_version1=None, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = InstanceMetadataClientConfiguration(credentials, api_version1, base_url)
+        self.config = InstanceMetadataClientConfiguration(credentials, base_url)
         super(InstanceMetadataClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -83,7 +76,7 @@ class InstanceMetadataClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.instance = InstanceOperations(
+        self.instances = InstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.attested = AttestedOperations(
             self._client, self.config, self._serialize, self._deserialize)

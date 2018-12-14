@@ -22,7 +22,7 @@ class AttestedOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: This is the API version to use. Possible values include: '2018-02-01', '2018-04-02', '2018-10-01'. Constant value: "2018-10-01".
+    :ivar api_version: This is the API version to use. Constant value: "2018-10-01".
     :ivar metadata: This must be set to 'true'. Constant value: "true".
     """
 
@@ -85,7 +85,7 @@ class AttestedOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Attested', response)
+            deserialized = self._deserialize('AttestedData', response)
         if response.status_code == 400:
             deserialized = self._deserialize('ErrorResponse', response)
         if response.status_code == 403:

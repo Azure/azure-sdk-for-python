@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .instance_operations import InstanceOperations
+from .instances_operations import InstancesOperations
 from .attested_operations import AttestedOperations
 from .identity_operations import IdentityOperations
 
 __all__ = [
-    'InstanceOperations',
+    'InstancesOperations',
     'AttestedOperations',
     'IdentityOperations',
 ]

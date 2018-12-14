@@ -23,7 +23,7 @@ class IdentityOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar metadata: This must be set to 'true'. Constant value: "true".
-    :ivar api_version: This is the API version to use. Possible values include: '2018-02-01', '2018-04-02', '2018-10-01'. Constant value: "2018-10-01".
+    :ivar api_version: This is the API version to use. Constant value: "2018-10-01".
     """
 
     models = models

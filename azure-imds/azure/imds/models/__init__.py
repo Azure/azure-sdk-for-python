@@ -21,7 +21,7 @@ try:
     from .network_interface_py3 import NetworkInterface
     from .network_py3 import Network
     from .instance_py3 import Instance
-    from .attested_py3 import Attested
+    from .attested_data_py3 import AttestedData
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .identity_error_response_py3 import IdentityErrorResponse, IdentityErrorResponseException
     from .identity_token_response_py3 import IdentityTokenResponse
@@ -38,14 +38,13 @@ except (SyntaxError, ImportError):
     from .network_interface import NetworkInterface
     from .network import Network
     from .instance import Instance
-    from .attested import Attested
+    from .attested_data import AttestedData
     from .error_response import ErrorResponse, ErrorResponseException
     from .identity_error_response import IdentityErrorResponse, IdentityErrorResponseException
     from .identity_token_response import IdentityTokenResponse
     from .identity_info_response import IdentityInfoResponse
 from .instance_metadata_client_enums import (
     Error,
-    ApiVersion,
     BypassCache,
 )
 
@@ -61,12 +60,11 @@ __all__ = [
     'NetworkInterface',
     'Network',
     'Instance',
-    'Attested',
+    'AttestedData',
     'ErrorResponse', 'ErrorResponseException',
     'IdentityErrorResponse', 'IdentityErrorResponseException',
     'IdentityTokenResponse',
     'IdentityInfoResponse',
     'Error',
-    'ApiVersion',
     'BypassCache',
 ]

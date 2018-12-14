@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NetworkInterface(Model):
-    """NetworkInterface.
+    """This contains data about the network interface.
 
     :param ipv4:
     :type ipv4: ~azure.imds.models.NetworkInterfaceIpv4

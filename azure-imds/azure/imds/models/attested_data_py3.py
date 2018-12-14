@@ -12,11 +12,11 @@
 from msrest.serialization import Model
 
 
-class Attested(Model):
+class AttestedData(Model):
     """This is the response from the Attested_GetDocument operation.
 
     :param signature: This is the encoded string containing the VM ID, plan
-     information, and nonce value.
+     information, public key, timestamp, and nonce value.
     :type signature: str
     :param encoding: This is the encoding scheme of the signature.
     :type encoding: str
@@ -27,7 +27,7 @@ class Attested(Model):
         'encoding': {'key': 'encoding', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Attested, self).__init__(**kwargs)
-        self.signature = kwargs.get('signature', None)
-        self.encoding = kwargs.get('encoding', None)
+    def __init__(self, *, signature: str=None, encoding: str=None, **kwargs) -> None:
+        super(AttestedData, self).__init__(**kwargs)
+        self.signature = signature
+        self.encoding = encoding

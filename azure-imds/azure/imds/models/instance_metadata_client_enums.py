@@ -28,13 +28,6 @@ class Error(str, Enum):
     too_many_requests = "too_many_requests"
 
 
-class ApiVersion(str, Enum):
-
-    two_zero_one_eight_zero_two_zero_one = "2018-02-01"
-    two_zero_one_eight_zero_four_zero_two = "2018-04-02"
-    two_zero_one_eight_one_zero_zero_one = "2018-10-01"
-
-
 class BypassCache(str, Enum):
 
     true = "true"
