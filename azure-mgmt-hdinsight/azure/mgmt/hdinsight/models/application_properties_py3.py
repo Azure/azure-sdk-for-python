@@ -44,8 +44,6 @@ class ApplicationProperties(Model):
     :vartype created_date: str
     :ivar marketplace_identifier: The marketplace identifier.
     :vartype marketplace_identifier: str
-    :param additional_properties: The additional properties for application.
-    :type additional_properties: str
     """
 
     _validation = {
@@ -67,10 +65,9 @@ class ApplicationProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'created_date': {'key': 'createdDate', 'type': 'str'},
         'marketplace_identifier': {'key': 'marketplaceIdentifier', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'str'},
     }
 
-    def __init__(self, *, compute_profile=None, install_script_actions=None, uninstall_script_actions=None, https_endpoints=None, ssh_endpoints=None, application_type: str=None, errors=None, additional_properties: str=None, **kwargs) -> None:
+    def __init__(self, *, compute_profile=None, install_script_actions=None, uninstall_script_actions=None, https_endpoints=None, ssh_endpoints=None, application_type: str=None, errors=None, **kwargs) -> None:
         super(ApplicationProperties, self).__init__(**kwargs)
         self.compute_profile = compute_profile
         self.install_script_actions = install_script_actions
@@ -83,4 +80,3 @@ class ApplicationProperties(Model):
         self.errors = errors
         self.created_date = None
         self.marketplace_identifier = None
-        self.additional_properties = additional_properties

@@ -75,7 +75,7 @@ class WorkflowRun(SubResource):
         'wait_end_time': {'key': 'properties.waitEndTime', 'type': 'iso-8601'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'code': {'key': 'properties.code', 'type': 'str'},
         'error': {'key': 'properties.error', 'type': 'object'},
         'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},

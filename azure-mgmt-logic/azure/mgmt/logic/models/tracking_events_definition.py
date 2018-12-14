@@ -34,7 +34,7 @@ class TrackingEventsDefinition(Model):
 
     _attribute_map = {
         'source_type': {'key': 'sourceType', 'type': 'str'},
-        'track_events_options': {'key': 'trackEventsOptions', 'type': 'TrackEventsOperationOptions'},
+        'track_events_options': {'key': 'trackEventsOptions', 'type': 'str'},
         'events': {'key': 'events', 'type': '[TrackingEvent]'},
     }
 
