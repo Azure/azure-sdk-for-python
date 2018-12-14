@@ -16,8 +16,8 @@ class ConnectionInfo(Model):
     """Defines the connection properties of a server.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: PostgreSqlConnectionInfo, MySqlConnectionInfo,
-    MongoDbConnectionInfo, SqlConnectionInfo
+    sub-classes are: MiSqlConnectionInfo, PostgreSqlConnectionInfo,
+    MySqlConnectionInfo, MongoDbConnectionInfo, SqlConnectionInfo
 
     All required parameters must be populated in order to send to Azure.
 
@@ -40,7 +40,7 @@ class ConnectionInfo(Model):
     }
 
     _subtype_map = {
-        'type': {'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'MongoDbConnectionInfo': 'MongoDbConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
+        'type': {'MiSqlConnectionInfo': 'MiSqlConnectionInfo', 'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'MongoDbConnectionInfo': 'MongoDbConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
     }
 
     def __init__(self, *, user_name: str=None, password: str=None, **kwargs) -> None:

@@ -15,14 +15,27 @@ from msrest.serialization import Model
 class MigrateSyncCompleteCommandOutput(Model):
     """Output for command that completes sync migration for a database.
 
-    :param errors: List of errors that happened during the command execution
-    :type errors: list[~azure.mgmt.datamigration.models.ReportableException]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Result identifier
+    :vartype id: str
+    :ivar errors: List of errors that happened during the command execution
+    :vartype errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'errors': {'readonly': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'errors': {'key': 'errors', 'type': '[ReportableException]'},
     }
 
     def __init__(self, **kwargs):
         super(MigrateSyncCompleteCommandOutput, self).__init__(**kwargs)
-        self.errors = kwargs.get('errors', None)
+        self.id = None
+        self.errors = None

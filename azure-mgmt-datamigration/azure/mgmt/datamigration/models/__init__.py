@@ -16,6 +16,9 @@ try:
     from .project_file_py3 import ProjectFile
     from .odata_error_py3 import ODataError
     from .reportable_exception_py3 import ReportableException
+    from .migrate_mi_sync_complete_command_output_py3 import MigrateMISyncCompleteCommandOutput
+    from .migrate_mi_sync_complete_command_input_py3 import MigrateMISyncCompleteCommandInput
+    from .migrate_mi_sync_complete_command_properties_py3 import MigrateMISyncCompleteCommandProperties
     from .migrate_sync_complete_command_output_py3 import MigrateSyncCompleteCommandOutput
     from .migrate_sync_complete_command_input_py3 import MigrateSyncCompleteCommandInput
     from .migrate_sync_complete_command_properties_py3 import MigrateSyncCompleteCommandProperties
@@ -23,6 +26,7 @@ try:
     from .get_tde_certificates_sql_task_output_py3 import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input_py3 import SelectedCertificateInput
     from .file_share_py3 import FileShare
+    from .mi_sql_connection_info_py3 import MiSqlConnectionInfo
     from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
     from .my_sql_connection_info_py3 import MySqlConnectionInfo
     from .mongo_db_connection_info_py3 import MongoDbConnectionInfo
@@ -42,10 +46,15 @@ try:
     from .mongo_db_database_settings_py3 import MongoDbDatabaseSettings
     from .mongo_db_migration_settings_py3 import MongoDbMigrationSettings
     from .validate_mongo_db_task_properties_py3 import ValidateMongoDbTaskProperties
+    from .validate_migration_input_sql_server_sql_mi_sync_task_output_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
+    from .azure_active_directory_app_py3 import AzureActiveDirectoryApp
+    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
+    from .sql_server_sql_mi_sync_task_input_py3 import SqlServerSqlMISyncTaskInput
+    from .validate_migration_input_sql_server_sql_mi_sync_task_input_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskInput
+    from .validate_migration_input_sql_server_sql_mi_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
     from .database_backup_info_py3 import DatabaseBackupInfo
     from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share_py3 import BlobShare
-    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
     from .validate_migration_input_sql_server_sql_mi_task_input_py3 import ValidateMigrationInputSqlServerSqlMITaskInput
     from .validate_migration_input_sql_server_sql_mi_task_properties_py3 import ValidateMigrationInputSqlServerSqlMITaskProperties
     from .validate_sync_migration_input_sql_server_task_output_py3 import ValidateSyncMigrationInputSqlServerTaskOutput
@@ -103,10 +112,19 @@ try:
     from .migrate_sql_server_sql_db_database_input_py3 import MigrateSqlServerSqlDbDatabaseInput
     from .migrate_sql_server_sql_db_task_input_py3 import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties_py3 import MigrateSqlServerSqlDbTaskProperties
+    from .migrate_sql_server_sql_mi_sync_task_output_error_py3 import MigrateSqlServerSqlMISyncTaskOutputError
+    from .backup_file_info_py3 import BackupFileInfo
+    from .backup_set_info_py3 import BackupSetInfo
+    from .migrate_sql_server_sql_mi_sync_task_output_database_level_py3 import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_mi_sync_task_output_migration_level_py3 import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_mi_sync_task_output_py3 import MigrateSqlServerSqlMISyncTaskOutput
+    from .migrate_sql_server_sql_mi_sync_task_input_py3 import MigrateSqlServerSqlMISyncTaskInput
+    from .migrate_sql_server_sql_mi_sync_task_properties_py3 import MigrateSqlServerSqlMISyncTaskProperties
     from .migrate_sql_server_sql_mi_task_output_error_py3 import MigrateSqlServerSqlMITaskOutputError
     from .migrate_sql_server_sql_mi_task_output_login_level_py3 import MigrateSqlServerSqlMITaskOutputLoginLevel
     from .migrate_sql_server_sql_mi_task_output_agent_job_level_py3 import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .orphaned_user_info_py3 import OrphanedUserInfo
     from .start_migration_scenario_server_role_result_py3 import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
@@ -116,6 +134,9 @@ try:
     from .connect_to_target_azure_db_for_my_sql_task_output_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input_py3 import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
+    from .connect_to_target_sql_mi_sync_task_output_py3 import ConnectToTargetSqlMISyncTaskOutput
+    from .connect_to_target_sql_mi_sync_task_input_py3 import ConnectToTargetSqlMISyncTaskInput
+    from .connect_to_target_sql_mi_sync_task_properties_py3 import ConnectToTargetSqlMISyncTaskProperties
     from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
     from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
     from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
@@ -126,11 +147,17 @@ try:
     from .get_user_tables_sql_task_output_py3 import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input_py3 import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties_py3 import GetUserTablesSqlTaskProperties
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_output_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_input_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
     from .connect_to_target_sql_db_task_output_py3 import ConnectToTargetSqlDbTaskOutput
     from .connect_to_target_sql_sql_db_sync_task_input_py3 import ConnectToTargetSqlSqlDbSyncTaskInput
     from .connect_to_target_sql_sql_db_sync_task_properties_py3 import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input_py3 import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties_py3 import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_source_postgre_sql_sync_task_output_py3 import ConnectToSourcePostgreSqlSyncTaskOutput
+    from .connect_to_source_postgre_sql_sync_task_input_py3 import ConnectToSourcePostgreSqlSyncTaskInput
+    from .connect_to_source_postgre_sql_sync_task_properties_py3 import ConnectToSourcePostgreSqlSyncTaskProperties
     from .migration_eligibility_info_py3 import MigrationEligibilityInfo
     from .connect_to_source_sql_server_task_output_agent_job_level_py3 import ConnectToSourceSqlServerTaskOutputAgentJobLevel
     from .connect_to_source_sql_server_task_output_login_level_py3 import ConnectToSourceSqlServerTaskOutputLoginLevel
@@ -207,6 +234,9 @@ except (SyntaxError, ImportError):
     from .project_file import ProjectFile
     from .odata_error import ODataError
     from .reportable_exception import ReportableException
+    from .migrate_mi_sync_complete_command_output import MigrateMISyncCompleteCommandOutput
+    from .migrate_mi_sync_complete_command_input import MigrateMISyncCompleteCommandInput
+    from .migrate_mi_sync_complete_command_properties import MigrateMISyncCompleteCommandProperties
     from .migrate_sync_complete_command_output import MigrateSyncCompleteCommandOutput
     from .migrate_sync_complete_command_input import MigrateSyncCompleteCommandInput
     from .migrate_sync_complete_command_properties import MigrateSyncCompleteCommandProperties
@@ -214,6 +244,7 @@ except (SyntaxError, ImportError):
     from .get_tde_certificates_sql_task_output import GetTdeCertificatesSqlTaskOutput
     from .selected_certificate_input import SelectedCertificateInput
     from .file_share import FileShare
+    from .mi_sql_connection_info import MiSqlConnectionInfo
     from .postgre_sql_connection_info import PostgreSqlConnectionInfo
     from .my_sql_connection_info import MySqlConnectionInfo
     from .mongo_db_connection_info import MongoDbConnectionInfo
@@ -233,10 +264,15 @@ except (SyntaxError, ImportError):
     from .mongo_db_database_settings import MongoDbDatabaseSettings
     from .mongo_db_migration_settings import MongoDbMigrationSettings
     from .validate_mongo_db_task_properties import ValidateMongoDbTaskProperties
+    from .validate_migration_input_sql_server_sql_mi_sync_task_output import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
+    from .azure_active_directory_app import AzureActiveDirectoryApp
+    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
+    from .sql_server_sql_mi_sync_task_input import SqlServerSqlMISyncTaskInput
+    from .validate_migration_input_sql_server_sql_mi_sync_task_input import ValidateMigrationInputSqlServerSqlMISyncTaskInput
+    from .validate_migration_input_sql_server_sql_mi_sync_task_properties import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
     from .database_backup_info import DatabaseBackupInfo
     from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share import BlobShare
-    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
     from .validate_migration_input_sql_server_sql_mi_task_input import ValidateMigrationInputSqlServerSqlMITaskInput
     from .validate_migration_input_sql_server_sql_mi_task_properties import ValidateMigrationInputSqlServerSqlMITaskProperties
     from .validate_sync_migration_input_sql_server_task_output import ValidateSyncMigrationInputSqlServerTaskOutput
@@ -294,10 +330,19 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_db_database_input import MigrateSqlServerSqlDbDatabaseInput
     from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
+    from .migrate_sql_server_sql_mi_sync_task_output_error import MigrateSqlServerSqlMISyncTaskOutputError
+    from .backup_file_info import BackupFileInfo
+    from .backup_set_info import BackupSetInfo
+    from .migrate_sql_server_sql_mi_sync_task_output_database_level import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_mi_sync_task_output_migration_level import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_mi_sync_task_output import MigrateSqlServerSqlMISyncTaskOutput
+    from .migrate_sql_server_sql_mi_sync_task_input import MigrateSqlServerSqlMISyncTaskInput
+    from .migrate_sql_server_sql_mi_sync_task_properties import MigrateSqlServerSqlMISyncTaskProperties
     from .migrate_sql_server_sql_mi_task_output_error import MigrateSqlServerSqlMITaskOutputError
     from .migrate_sql_server_sql_mi_task_output_login_level import MigrateSqlServerSqlMITaskOutputLoginLevel
     from .migrate_sql_server_sql_mi_task_output_agent_job_level import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .orphaned_user_info import OrphanedUserInfo
     from .start_migration_scenario_server_role_result import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
@@ -307,6 +352,9 @@ except (SyntaxError, ImportError):
     from .connect_to_target_azure_db_for_my_sql_task_output import ConnectToTargetAzureDbForMySqlTaskOutput
     from .connect_to_target_azure_db_for_my_sql_task_input import ConnectToTargetAzureDbForMySqlTaskInput
     from .connect_to_target_azure_db_for_my_sql_task_properties import ConnectToTargetAzureDbForMySqlTaskProperties
+    from .connect_to_target_sql_mi_sync_task_output import ConnectToTargetSqlMISyncTaskOutput
+    from .connect_to_target_sql_mi_sync_task_input import ConnectToTargetSqlMISyncTaskInput
+    from .connect_to_target_sql_mi_sync_task_properties import ConnectToTargetSqlMISyncTaskProperties
     from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
     from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
     from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
@@ -317,11 +365,17 @@ except (SyntaxError, ImportError):
     from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_output import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_input import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
+    from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
     from .connect_to_target_sql_db_task_output import ConnectToTargetSqlDbTaskOutput
     from .connect_to_target_sql_sql_db_sync_task_input import ConnectToTargetSqlSqlDbSyncTaskInput
     from .connect_to_target_sql_sql_db_sync_task_properties import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_source_postgre_sql_sync_task_output import ConnectToSourcePostgreSqlSyncTaskOutput
+    from .connect_to_source_postgre_sql_sync_task_input import ConnectToSourcePostgreSqlSyncTaskInput
+    from .connect_to_source_postgre_sql_sync_task_properties import ConnectToSourcePostgreSqlSyncTaskProperties
     from .migration_eligibility_info import MigrationEligibilityInfo
     from .connect_to_source_sql_server_task_output_agent_job_level import ConnectToSourceSqlServerTaskOutputAgentJobLevel
     from .connect_to_source_sql_server_task_output_login_level import ConnectToSourceSqlServerTaskOutputLoginLevel
@@ -418,6 +472,8 @@ from .data_migration_service_client_enums import (
     MigrationState,
     DatabaseMigrationStage,
     MigrationStatus,
+    BackupFileStatus,
+    DatabaseMigrationState,
     LoginMigrationStage,
     LoginType,
     DatabaseState,
@@ -449,6 +505,9 @@ __all__ = [
     'ProjectFile',
     'ODataError',
     'ReportableException',
+    'MigrateMISyncCompleteCommandOutput',
+    'MigrateMISyncCompleteCommandInput',
+    'MigrateMISyncCompleteCommandProperties',
     'MigrateSyncCompleteCommandOutput',
     'MigrateSyncCompleteCommandInput',
     'MigrateSyncCompleteCommandProperties',
@@ -456,6 +515,7 @@ __all__ = [
     'GetTdeCertificatesSqlTaskOutput',
     'SelectedCertificateInput',
     'FileShare',
+    'MiSqlConnectionInfo',
     'PostgreSqlConnectionInfo',
     'MySqlConnectionInfo',
     'MongoDbConnectionInfo',
@@ -475,10 +535,15 @@ __all__ = [
     'MongoDbDatabaseSettings',
     'MongoDbMigrationSettings',
     'ValidateMongoDbTaskProperties',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskOutput',
+    'AzureActiveDirectoryApp',
+    'MigrateSqlServerSqlMIDatabaseInput',
+    'SqlServerSqlMISyncTaskInput',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskInput',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskProperties',
     'DatabaseBackupInfo',
     'ValidateMigrationInputSqlServerSqlMITaskOutput',
     'BlobShare',
-    'MigrateSqlServerSqlMIDatabaseInput',
     'ValidateMigrationInputSqlServerSqlMITaskInput',
     'ValidateMigrationInputSqlServerSqlMITaskProperties',
     'ValidateSyncMigrationInputSqlServerTaskOutput',
@@ -536,10 +601,19 @@ __all__ = [
     'MigrateSqlServerSqlDbDatabaseInput',
     'MigrateSqlServerSqlDbTaskInput',
     'MigrateSqlServerSqlDbTaskProperties',
+    'MigrateSqlServerSqlMISyncTaskOutputError',
+    'BackupFileInfo',
+    'BackupSetInfo',
+    'MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlMISyncTaskOutputMigrationLevel',
+    'MigrateSqlServerSqlMISyncTaskOutput',
+    'MigrateSqlServerSqlMISyncTaskInput',
+    'MigrateSqlServerSqlMISyncTaskProperties',
     'MigrateSqlServerSqlMITaskOutputError',
     'MigrateSqlServerSqlMITaskOutputLoginLevel',
     'MigrateSqlServerSqlMITaskOutputAgentJobLevel',
     'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
+    'OrphanedUserInfo',
     'StartMigrationScenarioServerRoleResult',
     'MigrateSqlServerSqlMITaskOutputMigrationLevel',
     'MigrateSqlServerSqlMITaskOutput',
@@ -549,6 +623,9 @@ __all__ = [
     'ConnectToTargetAzureDbForMySqlTaskOutput',
     'ConnectToTargetAzureDbForMySqlTaskInput',
     'ConnectToTargetAzureDbForMySqlTaskProperties',
+    'ConnectToTargetSqlMISyncTaskOutput',
+    'ConnectToTargetSqlMISyncTaskInput',
+    'ConnectToTargetSqlMISyncTaskProperties',
     'ConnectToTargetSqlMITaskOutput',
     'ConnectToTargetSqlMITaskInput',
     'ConnectToTargetSqlMITaskProperties',
@@ -559,11 +636,17 @@ __all__ = [
     'GetUserTablesSqlTaskOutput',
     'GetUserTablesSqlTaskInput',
     'GetUserTablesSqlTaskProperties',
+    'ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput',
+    'ConnectToTargetAzureDbForPostgreSqlSyncTaskInput',
+    'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties',
     'ConnectToTargetSqlDbTaskOutput',
     'ConnectToTargetSqlSqlDbSyncTaskInput',
     'ConnectToTargetSqlSqlDbSyncTaskProperties',
     'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskProperties',
+    'ConnectToSourcePostgreSqlSyncTaskOutput',
+    'ConnectToSourcePostgreSqlSyncTaskInput',
+    'ConnectToSourcePostgreSqlSyncTaskProperties',
     'MigrationEligibilityInfo',
     'ConnectToSourceSqlServerTaskOutputAgentJobLevel',
     'ConnectToSourceSqlServerTaskOutputLoginLevel',
@@ -659,6 +742,8 @@ __all__ = [
     'MigrationState',
     'DatabaseMigrationStage',
     'MigrationStatus',
+    'BackupFileStatus',
+    'DatabaseMigrationState',
     'LoginMigrationStage',
     'LoginType',
     'DatabaseState',

@@ -19,16 +19,22 @@ class ProjectTaskProperties(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: GetTdeCertificatesSqlTaskProperties,
     ValidateMongoDbTaskProperties,
+    ValidateMigrationInputSqlServerSqlMISyncTaskProperties,
     ValidateMigrationInputSqlServerSqlMITaskProperties,
     ValidateMigrationInputSqlServerSqlDbSyncTaskProperties,
     MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties,
     MigrateMySqlAzureDbForMySqlSyncTaskProperties,
     MigrateSqlServerSqlDbSyncTaskProperties,
-    MigrateSqlServerSqlDbTaskProperties, MigrateSqlServerSqlMITaskProperties,
-    MigrateMongoDbTaskProperties, ConnectToTargetAzureDbForMySqlTaskProperties,
-    ConnectToTargetSqlMITaskProperties, GetUserTablesSqlSyncTaskProperties,
-    GetUserTablesSqlTaskProperties, ConnectToTargetSqlSqlDbSyncTaskProperties,
+    MigrateSqlServerSqlDbTaskProperties,
+    MigrateSqlServerSqlMISyncTaskProperties,
+    MigrateSqlServerSqlMITaskProperties, MigrateMongoDbTaskProperties,
+    ConnectToTargetAzureDbForMySqlTaskProperties,
+    ConnectToTargetSqlMISyncTaskProperties, ConnectToTargetSqlMITaskProperties,
+    GetUserTablesSqlSyncTaskProperties, GetUserTablesSqlTaskProperties,
+    ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties,
+    ConnectToTargetSqlSqlDbSyncTaskProperties,
     ConnectToTargetSqlDbTaskProperties,
+    ConnectToSourcePostgreSqlSyncTaskProperties,
     ConnectToSourceSqlServerSyncTaskProperties,
     ConnectToSourceSqlServerTaskProperties, ConnectToMongoDbTaskProperties,
     ConnectToSourceMySqlTaskProperties,
@@ -71,7 +77,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties'}
+        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties'}
     }
 
     def __init__(self, **kwargs):
