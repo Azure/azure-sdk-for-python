@@ -79,7 +79,7 @@ class DeltaOperationType(str, Enum):
     update = "Update"
     delete = "Delete"
     obsolete = "Obsolete"
-    delet_add = "DeletAdd"
+    delete_add = "DeleteAdd"
 
 
 class HealthStatus(str, Enum):

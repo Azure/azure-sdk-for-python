@@ -26,8 +26,8 @@ class Tenant(Model):
      automatically receive updates for Azure Active Directory Connect Health
      client side features.
     :type agent_auto_update: bool
-    :param alert_suppression_time_in_mins: The time in minutues after which an
-     alert will be autosupressed.
+    :param alert_suppression_time_in_mins: The time in minutes after which an
+     alert will be auto-suppressed.
     :type alert_suppression_time_in_mins: int
     :param consented_to_microsoft_dev_ops: Indicates if the tenant data can be
      seen by Microsoft through Azure portal.
@@ -46,9 +46,9 @@ class Tenant(Model):
     :param disabled_reason: The reason due to which the tenant was disabled in
      Azure Active Directory Connect Health.
     :type disabled_reason: int
-    :param global_admins_email: The list of golbal administrators for the
+    :param global_admins_email: The list of global administrators for the
      tenant.
-    :type global_admins_email: object
+    :type global_admins_email: list[str]
     :param initial_domain: The initial domain of the tenant.
     :type initial_domain: str
     :param last_disabled: The date and time, in UTC, when the tenant was last
@@ -89,7 +89,7 @@ class Tenant(Model):
         'dev_ops_ttl': {'key': 'devOpsTtl', 'type': 'iso-8601'},
         'disabled': {'key': 'disabled', 'type': 'bool'},
         'disabled_reason': {'key': 'disabledReason', 'type': 'int'},
-        'global_admins_email': {'key': 'globalAdminsEmail', 'type': 'object'},
+        'global_admins_email': {'key': 'globalAdminsEmail', 'type': '[str]'},
         'initial_domain': {'key': 'initialDomain', 'type': 'str'},
         'last_disabled': {'key': 'lastDisabled', 'type': 'iso-8601'},
         'last_verified': {'key': 'lastVerified', 'type': 'iso-8601'},

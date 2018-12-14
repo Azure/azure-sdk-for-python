@@ -17,13 +17,13 @@ class RunStep(Model):
 
     :param batch_size: The batch size used by the run step.
     :type batch_size: int
-    :param object_process_limit: The obect processing limit.
+    :param object_process_limit: The object processing limit.
     :type object_process_limit: int
     :param object_delete_limit: The object deletion limit.
     :type object_delete_limit: int
     :param page_size: The page size of the run step.
     :type page_size: int
-    :param partition_id: The Id of the partition that a current run setp
+    :param partition_id: The Id of the partition that a current run step
      operation is executing.
     :type partition_id: str
     :param operation_type: The run step operation types.

@@ -30,7 +30,7 @@ class ExportError(Model):
     :param server_error_detail: The server error detail.
     :type server_error_detail: str
     :param time_first_occured: The date and time when the export error first
-     occured.
+     occurred.
     :type time_first_occured: datetime
     :param retry_count: The retry count.
     :type retry_count: int
@@ -72,7 +72,7 @@ class ExportError(Model):
     :type ad_distinguished_name: str
     :param ad_mail: The email for the AD object.
     :type ad_mail: str
-    :param time_occured: The date and time of occurance.
+    :param time_occured: The date and time of occurrence.
     :type time_occured: datetime
     :param aad_object_type: The AAD side object type.
     :type aad_object_type: str
@@ -92,7 +92,7 @@ class ExportError(Model):
     :type aad_mail: str
     :param last_dir_sync_time: The date and time of last sync run.
     :type last_dir_sync_time: datetime
-    :param modified_attribute_value: The modified atttribute value.
+    :param modified_attribute_value: The modified attribute value.
     :type modified_attribute_value: str
     """
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AdditionalInformation(Model):
-    """The addtional information for a property.
+    """The additional information for a property.
 
     :param title_name: The title name for the property.
     :type title_name: str

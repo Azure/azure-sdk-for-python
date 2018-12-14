@@ -44,7 +44,7 @@ class MergedExportError(Model):
     :type existing_object:
      ~azure.mgmt.adhybridhealthservice.models.AssociatedObject
     :param modified_or_removed_attribute_value: The modified or removed
-     attribute vlaue.
+     attribute value.
     :type modified_or_removed_attribute_value: str
     :param run_step_result_id: The run step result Id.
     :type run_step_result_id: str
