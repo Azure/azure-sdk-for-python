@@ -28,7 +28,7 @@ class MetricMetadata(Model):
     :param value_kind: Indicates if the metrics is a rate,value, percent or
      duration type.
     :type value_kind: str
-    :param min_value: The minimun value.
+    :param min_value: The minimum value.
     :type min_value: int
     :param max_value: The maximum value.
     :type max_value: int

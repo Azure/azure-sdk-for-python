@@ -27,13 +27,13 @@ class ConnectorObjectError(Model):
     :type error_code: str
     :param message: The message for the object error.
     :type message: str
-    :param entry_number: The entry number for object error occured.
+    :param entry_number: The entry number for object error occurred.
     :type entry_number: int
     :param line_number: The line number for the object error.
     :type line_number: int
     :param column_number: The column number for the object error.
     :type column_number: int
-    :param dn: The distingished name of the object.
+    :param dn: The distinguished name of the object.
     :type dn: str
     :param anchor: The name for the anchor of the object.
     :type anchor: str

@@ -17,7 +17,7 @@ class ReplicationStatus(Model):
 
     :param forest_name: The forest name.
     :type forest_name: str
-    :param total_dc_count: The total numbe of domain controllers for a given
+    :param total_dc_count: The total number of domain controllers for a given
      forest.
     :type total_dc_count: int
     :param error_dc_count: The total number of domain controllers with error

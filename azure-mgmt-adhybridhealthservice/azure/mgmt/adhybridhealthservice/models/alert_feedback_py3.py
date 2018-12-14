@@ -18,7 +18,7 @@ class AlertFeedback(Model):
     :param level: The alert level which indicates the severity of the alert.
     :type level: str
     :param state: The alert state which can be either active or resolved with
-     multile resolution types.
+     multiple resolution types.
     :type state: str
     :param short_name: The alert short name.
     :type short_name: str

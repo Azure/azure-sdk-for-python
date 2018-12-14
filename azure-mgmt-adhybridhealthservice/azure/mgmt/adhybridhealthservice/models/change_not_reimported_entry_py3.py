@@ -21,7 +21,7 @@ class ChangeNotReimportedEntry(Model):
     :type parent_anchor: str
     :param primary_object_class: The primary object class.
     :type primary_object_class: str
-    :param object_classes: The olist of object classes.
+    :param object_classes: The list of object classes.
     :type object_classes: list[str]
     :param dn_attributes: The delta attributes for distinguished names.
     :type dn_attributes:

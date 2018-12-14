@@ -21,7 +21,7 @@ class Alert(Model):
      Possible values include: 'Warning', 'Error', 'PreWarning'
     :type level: str or ~azure.mgmt.adhybridhealthservice.models.Level
     :param state: The alert state which can be either active or resolved with
-     multile resolution types. Possible values include: 'Active',
+     multiple resolution types. Possible values include: 'Active',
      'ResolvedByPositiveResult', 'ResolvedManually', 'ResolvedByTimer',
      'ResolvedByStateChange'
     :type state: str or ~azure.mgmt.adhybridhealthservice.models.State

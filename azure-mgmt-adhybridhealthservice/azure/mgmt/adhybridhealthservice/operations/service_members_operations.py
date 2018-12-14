@@ -310,7 +310,7 @@ class ServiceMembersOperations(object):
         """Gets the details of an alert for a given service and server
         combination.
 
-        :param service_member_id: The server Id for which the laert details
+        :param service_member_id: The server Id for which the alert details
          needs to be queried.
         :type service_member_id: str
         :param service_name: The name of the service.

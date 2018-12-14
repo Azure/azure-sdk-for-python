@@ -45,8 +45,8 @@ class AddsServiceMember(Model):
     :param additional_information: The additional information, if any, for the
      server.
     :type additional_information: str
-    :param created_date: The date time , in UTC, when the server was
-     onboaraded to Azure Active Directory Connect Health.
+    :param created_date: The date time , in UTC, when the server was onboarded
+     to Azure Active Directory Connect Health.
     :type created_date: datetime
     :param dimensions: The server specific configuration related dimensions.
     :type dimensions: list[~azure.mgmt.adhybridhealthservice.models.Item]
@@ -66,7 +66,7 @@ class AddsServiceMember(Model):
     :param last_server_reported_monitoring_level_change: The date and time, in
      UTC, when the server's data monitoring configuration was last changed.
     :type last_server_reported_monitoring_level_change: datetime
-    :param last_updated: The date and time, in UTC, when the server proeprties
+    :param last_updated: The date and time, in UTC, when the server properties
      were last updated.
     :type last_updated: datetime
     :param machine_id: The id of the machine.
