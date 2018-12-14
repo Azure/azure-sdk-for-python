@@ -50,7 +50,7 @@ def travis_build_package():
         print("Version must be a valid PEP440 version (version is: {})".format(version))
         return "Version must be a valid PEP440 version (version is: {})".format(version)
 
-    if name.lower() in omitted_release_packages:
+    if name.lower() in OMITTED_RELEASE_PACKAGES:
         print("The input package {} has been disabled for release from Travis.CI.".format(name))
         return
 
