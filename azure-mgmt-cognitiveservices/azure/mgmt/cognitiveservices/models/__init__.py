@@ -57,9 +57,7 @@ from .cognitive_services_account_paged import CognitiveServicesAccountPaged
 from .resource_sku_paged import ResourceSkuPaged
 from .operation_entity_paged import OperationEntityPaged
 from .cognitive_services_management_client_enums import (
-    SkuName,
     SkuTier,
-    Kind,
     ProvisioningState,
     KeyName,
     UnitType,
@@ -93,9 +91,7 @@ __all__ = [
     'CognitiveServicesAccountPaged',
     'ResourceSkuPaged',
     'OperationEntityPaged',
-    'SkuName',
     'SkuTier',
-    'Kind',
     'ProvisioningState',
     'KeyName',
     'UnitType',

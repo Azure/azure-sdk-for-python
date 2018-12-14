@@ -44,15 +44,9 @@ class CheckSkuAvailabilityOperations(object):
         :param location: Resource location.
         :type location: str
         :param skus: The SKU of the resource.
-        :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
-        :param kind: The Kind of the resource. Possible values include:
-         'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
-         'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision',
-         'ContentModerator', 'CustomSpeech', 'CustomVision.Prediction',
-         'CustomVision.Training', 'Emotion', 'Face', 'LUIS', 'QnAMaker',
-         'SpeakerRecognition', 'SpeechTranslation', 'TextAnalytics',
-         'TextTranslation', 'WebLM'
-        :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
+        :type skus: list[str]
+        :param kind: The Kind of the resource.
+        :type kind: str
         :param type: The Type of the resource.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
