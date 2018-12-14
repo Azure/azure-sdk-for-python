@@ -13,15 +13,24 @@ from msrest.serialization import Model
 
 
 class GalleryImageIdentifier(Model):
-    """This is the gallery image identifier.
+    """This is the gallery Image Definition identifier.
 
-    :param publisher: The gallery image publisher name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param publisher: Required. The name of the gallery Image Definition
+     publisher.
     :type publisher: str
-    :param offer: The gallery image offer name.
+    :param offer: Required. The name of the gallery Image Definition offer.
     :type offer: str
-    :param sku: The gallery image sku name.
+    :param sku: Required. The name of the gallery Image Definition SKU.
     :type sku: str
     """
+
+    _validation = {
+        'publisher': {'required': True},
+        'offer': {'required': True},
+        'sku': {'required': True},
+    }
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},

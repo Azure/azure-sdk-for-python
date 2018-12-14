@@ -33,6 +33,8 @@ class EventSubscriptionFilter(Model):
      SubjectEndsWith properties of the filter
      should be compared in a case sensitive manner. Default value: False .
     :type is_subject_case_sensitive: bool
+    :param advanced_filters: A list of advanced filters.
+    :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
     """
 
     _attribute_map = {
@@ -40,6 +42,7 @@ class EventSubscriptionFilter(Model):
         'subject_ends_with': {'key': 'subjectEndsWith', 'type': 'str'},
         'included_event_types': {'key': 'includedEventTypes', 'type': '[str]'},
         'is_subject_case_sensitive': {'key': 'isSubjectCaseSensitive', 'type': 'bool'},
+        'advanced_filters': {'key': 'advancedFilters', 'type': '[AdvancedFilter]'},
     }
 
     def __init__(self, **kwargs):
@@ -48,3 +51,4 @@ class EventSubscriptionFilter(Model):
         self.subject_ends_with = kwargs.get('subject_ends_with', None)
         self.included_event_types = kwargs.get('included_event_types', None)
         self.is_subject_case_sensitive = kwargs.get('is_subject_case_sensitive', False)
+        self.advanced_filters = kwargs.get('advanced_filters', None)

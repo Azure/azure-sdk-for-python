@@ -27,10 +27,10 @@ class GraphError(Model):
         'message': {'key': 'odata\\.error.message.value', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(GraphError, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(GraphError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class GraphErrorException(HttpOperationError):

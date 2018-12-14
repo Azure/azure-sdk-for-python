@@ -28,7 +28,7 @@ class X12MessageFilter(Model):
     }
 
     _attribute_map = {
-        'message_filter_type': {'key': 'messageFilterType', 'type': 'MessageFilterType'},
+        'message_filter_type': {'key': 'messageFilterType', 'type': 'str'},
     }
 
     def __init__(self, *, message_filter_type, **kwargs) -> None:

@@ -33,8 +33,8 @@ class SignInName(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, type=None, value=None):
-        super(SignInName, self).__init__()
-        self.additional_properties = additional_properties
-        self.type = type
-        self.value = value
+    def __init__(self, **kwargs):
+        super(SignInName, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', None)

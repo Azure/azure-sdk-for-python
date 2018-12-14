@@ -24,7 +24,7 @@ class StorageAccount(Model):
      specified for WASB storage accounts.
     :type container: str
     :param file_system: The filesystem, only to be specified for Azure Data
-     Lake Storage Gen 2.
+     Lake Storage type Gen 2.
     :type file_system: str
     :param key: The storage account access key.
     :type key: str

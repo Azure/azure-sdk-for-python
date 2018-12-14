@@ -30,8 +30,8 @@ class StackMinorVersion(Model):
         'is_default': {'key': 'isDefault', 'type': 'bool'},
     }
 
-    def __init__(self, display_version=None, runtime_version=None, is_default=None):
-        super(StackMinorVersion, self).__init__()
-        self.display_version = display_version
-        self.runtime_version = runtime_version
-        self.is_default = is_default
+    def __init__(self, **kwargs):
+        super(StackMinorVersion, self).__init__(**kwargs)
+        self.display_version = kwargs.get('display_version', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.is_default = kwargs.get('is_default', None)

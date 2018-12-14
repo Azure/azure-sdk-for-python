@@ -36,7 +36,7 @@ class OperationResultProperties(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'correlation': {'key': 'correlation', 'type': 'RunActionCorrelation'},
-        'status': {'key': 'status', 'type': 'WorkflowStatus'},
+        'status': {'key': 'status', 'type': 'str'},
         'code': {'key': 'code', 'type': 'str'},
         'error': {'key': 'error', 'type': 'object'},
     }

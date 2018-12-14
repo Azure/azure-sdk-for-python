@@ -29,8 +29,8 @@ class Capability(Model):
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None, reason=None):
-        super(Capability, self).__init__()
-        self.name = name
-        self.value = value
-        self.reason = reason
+    def __init__(self, **kwargs):
+        super(Capability, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.reason = kwargs.get('reason', None)

@@ -26,7 +26,7 @@ class HostingEnvironmentDiagnostics(Model):
         'diagnosics_output': {'key': 'diagnosicsOutput', 'type': 'str'},
     }
 
-    def __init__(self, name=None, diagnosics_output=None):
-        super(HostingEnvironmentDiagnostics, self).__init__()
-        self.name = name
-        self.diagnosics_output = diagnosics_output
+    def __init__(self, **kwargs):
+        super(HostingEnvironmentDiagnostics, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.diagnosics_output = kwargs.get('diagnosics_output', None)
