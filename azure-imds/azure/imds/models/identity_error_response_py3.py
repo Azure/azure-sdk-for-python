@@ -18,7 +18,7 @@ class IdentityErrorResponse(Model):
     occurs.
 
     :param error: Error code. Possible values include: 'invalid_request',
-     'unauthorize_client', 'access_denied', 'unsupported_response_type',
+     'unauthorized_client', 'access_denied', 'unsupported_response_type',
      'invalid_scope', 'server_error', 'service_unavailable', 'bad_request',
      'forbidden', 'not_found', 'method_not_allowed', 'too_many_requests'
     :type error: str or ~azure.imds.models.Error

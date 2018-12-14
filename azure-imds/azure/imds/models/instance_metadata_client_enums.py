@@ -15,7 +15,7 @@ from enum import Enum
 class Error(str, Enum):
 
     invalid_request = "invalid_request"
-    unauthorize_client = "unauthorize_client"
+    unauthorized_client = "unauthorized_client"
     access_denied = "access_denied"
     unsupported_response_type = "unsupported_response_type"
     invalid_scope = "invalid_scope"
