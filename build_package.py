@@ -19,6 +19,7 @@ except ImportError: # Should not happen, but at worst in most case this is the s
     from pip._vendor.packaging.version import parse as Version, InvalidVersion
 
 DEFAULT_DEST_FOLDER = "./dist"
+OMITTED_RELEASE_PACKAGES = ['azure-keyvault']
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     absdirpath = os.path.abspath(name)
@@ -31,7 +32,6 @@ def travis_build_package():
     This method prints on stdout for Travis.
     Return is obj to pass to sys.exit() directly
     """
-    omitted_release_packages = ['azure-keyvault']
 
     travis_tag = os.environ.get('TRAVIS_TAG')
     if not travis_tag:
@@ -52,7 +52,7 @@ def travis_build_package():
 
     if name.lower() in omitted_release_packages:
         print("The input package {} has been disabled for release from Travis.CI.".format(name))
-        return "The input package {} has been disabled for release from Travis.CI.".format(name)
+        return
 
     abs_dist_path = Path(os.environ['TRAVIS_BUILD_DIR'], 'dist')
     create_package(name, str(abs_dist_path))
