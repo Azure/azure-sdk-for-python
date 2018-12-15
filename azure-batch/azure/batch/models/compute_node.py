@@ -24,7 +24,7 @@ class ComputeNode(Model):
     :type url: str
     :param state: The current state of the compute node. The low-priority node
      has been preempted. Tasks which were running on the node when it was
-     pre-empted will be rescheduled when another node becomes available.
+     preempted will be rescheduled when another node becomes available.
      Possible values include: 'idle', 'rebooting', 'reimaging', 'running',
      'unusable', 'creating', 'starting', 'waitingForStartTask',
      'startTaskFailed', 'unknown', 'leavingPool', 'offline', 'preempted'
