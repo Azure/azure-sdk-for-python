@@ -55,7 +55,7 @@ class HDInsightHiveActivity(ExecutionActivity):
     :param variables: User specified arguments under hivevar namespace.
     :type variables: list[object]
     :param query_timeout: Query timeout value (in minutes).  Effective when
-     the HDInsight culster is with ESP (Enterprise Security Package)
+     the HDInsight cluster is with ESP (Enterprise Security Package)
     :type query_timeout: int
     """
 
