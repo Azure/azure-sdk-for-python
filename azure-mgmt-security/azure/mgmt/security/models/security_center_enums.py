@@ -83,6 +83,18 @@ class ExternalSecuritySolutionKind(str, Enum):
     aad = "AAD"
 
 
+class NorthSouthProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class NorthSouthTrafficDirection(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

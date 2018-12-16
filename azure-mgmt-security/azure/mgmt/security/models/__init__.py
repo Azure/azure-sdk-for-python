@@ -60,6 +60,10 @@ try:
     from .external_security_solution_kind1_py3 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties_py3 import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1_py3 import AadConnectivityState1
+    from .traffic_hardening_rule_py3 import TrafficHardeningRule
+    from .traffic_alert_traffic_item_py3 import TrafficAlertTrafficItem
+    from .traffic_alert_py3 import TrafficAlert
+    from .north_south_hardenings_py3 import NorthSouthHardenings
     from .connected_resource_py3 import ConnectedResource
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
@@ -114,6 +118,10 @@ except (SyntaxError, ImportError):
     from .external_security_solution_kind1 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1 import AadConnectivityState1
+    from .traffic_hardening_rule import TrafficHardeningRule
+    from .traffic_alert_traffic_item import TrafficAlertTrafficItem
+    from .traffic_alert import TrafficAlert
+    from .north_south_hardenings import NorthSouthHardenings
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
@@ -131,6 +139,7 @@ from .alert_paged import AlertPaged
 from .discovered_security_solution_paged import DiscoveredSecuritySolutionPaged
 from .jit_network_access_policy_paged import JitNetworkAccessPolicyPaged
 from .external_security_solution_paged import ExternalSecuritySolutionPaged
+from .north_south_hardenings_paged import NorthSouthHardeningsPaged
 from .topology_resource_paged import TopologyResourcePaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .security_center_enums import (
@@ -145,6 +154,8 @@ from .security_center_enums import (
     StatusReason,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
+    NorthSouthProtocol,
+    NorthSouthTrafficDirection,
     ConnectionType,
 )
 
@@ -199,6 +210,10 @@ __all__ = [
     'ExternalSecuritySolutionKind1',
     'ExternalSecuritySolutionProperties',
     'AadConnectivityState1',
+    'TrafficHardeningRule',
+    'TrafficAlertTrafficItem',
+    'TrafficAlert',
+    'NorthSouthHardenings',
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
@@ -216,6 +231,7 @@ __all__ = [
     'DiscoveredSecuritySolutionPaged',
     'JitNetworkAccessPolicyPaged',
     'ExternalSecuritySolutionPaged',
+    'NorthSouthHardeningsPaged',
     'TopologyResourcePaged',
     'AllowedConnectionsResourcePaged',
     'AlertNotifications',
@@ -229,5 +245,7 @@ __all__ = [
     'StatusReason',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
+    'NorthSouthProtocol',
+    'NorthSouthTrafficDirection',
     'ConnectionType',
 ]
