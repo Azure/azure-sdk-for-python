@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class NetworkInterfaceIpv4(Model):
     """NetworkInterfaceIpv4.
 
-    :param ip_address:
+    :param ip_address: This is the IP address
     :type ip_address: list[~azure.imds.models.Ipv4Properties]
-    :param subnet:
+    :param subnet: This is the subnet
     :type subnet: list[~azure.imds.models.SubnetProperties]
     """
 

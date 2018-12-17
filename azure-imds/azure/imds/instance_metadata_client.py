@@ -36,7 +36,7 @@ class InstanceMetadataClientConfiguration(AzureConfiguration):
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'http://169.254.169.254/metadata'
+            base_url = 'https://169.254.169.254/metadata'
 
         super(InstanceMetadataClientConfiguration, self).__init__(base_url)
 

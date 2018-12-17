@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Network(Model):
     """Network Metadata.
 
-    :param interface:
+    :param interface: This contains data about the network interface.
     :type interface: list[~azure.imds.models.NetworkInterface]
     """
 

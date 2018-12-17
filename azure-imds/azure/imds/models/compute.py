@@ -31,7 +31,7 @@ class Compute(Model):
     :param placement_group_id: This is the placement group of your Virtual
      Machine Scale Set.
     :type placement_group_id: str
-    :param plan:
+    :param plan: This contains the data about the plan.
     :type plan: ~azure.imds.models.PlanProperties
     :param public_keys: This is information about the SSH certificate
     :type public_keys: list[~azure.imds.models.PublicKeysProperties]
