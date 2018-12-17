@@ -37,7 +37,7 @@ class ChaosTargetFilter(Model):
      All types of faults (restart node, restart code package, remove replica,
      restart replica, move primary, and move secondary) are enabled for the
      nodes of these node types.
-     If a nodetype (say NodeTypeX) does not appear in the
+     If a node type (say NodeTypeX) does not appear in the
      NodeTypeInclusionList, then node level faults (like NodeRestart) will
      never be enabled for the nodes of
      NodeTypeX, but code package and replica faults can still be enabled for
