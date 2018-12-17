@@ -21,7 +21,7 @@ class TrafficAlert(Model):
      'Inbound', 'Outbound'
     :type direction: str or
      ~azure.mgmt.security.models.NorthSouthTrafficDirection
-    :param destination_port: The alert's deStination port
+    :param destination_port: The alert's destination port
     :type destination_port: int
     :param protocol: The alert's transport protocol. Possible values include:
      'TCP', 'UDP'
