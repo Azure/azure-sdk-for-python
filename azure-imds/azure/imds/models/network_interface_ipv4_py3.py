@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NetworkInterfaceIpv4(Model):
-    """NetworkInterfaceIpv4.
+    """This contains the IPv4 address.
 
     :param ip_address: This is the IP address
     :type ip_address: list[~azure.imds.models.Ipv4Properties]

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class NetworkInterface(Model):
     """This contains data about the network interface.
 
-    :param ipv4:
+    :param ipv4: This contains the IPv4 address.
     :type ipv4: ~azure.imds.models.NetworkInterfaceIpv4
-    :param ipv6:
+    :param ipv6: This contains the IPv6 address.
     :type ipv6: ~azure.imds.models.NetworkInterfaceIpv6
     :param mac_address: This is the MAC address of the interface.
     :type mac_address: str

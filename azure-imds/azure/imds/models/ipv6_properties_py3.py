@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Ipv6Properties(Model):
     """This contains the IPv6 properties.
 
-    :param private_ip_address: This is the private IPV6 address assigned to
+    :param private_ip_address: This is the private IPv6 address assigned to
      the interface.
     :type private_ip_address: str
     """
