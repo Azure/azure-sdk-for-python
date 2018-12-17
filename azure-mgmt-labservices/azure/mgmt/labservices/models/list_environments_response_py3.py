@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ListEnvironmentsResponse(Model):
     """Represents the list of environments owned by a user.
 
-    :param environments: List of all the evironments
+    :param environments: List of all the environments
     :type environments:
      list[~azure.mgmt.labservices.models.EnvironmentDetails]
     """
