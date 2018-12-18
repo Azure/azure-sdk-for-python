@@ -22,6 +22,7 @@ try:
     from .purge_parameters_py3 import PurgeParameters
     from .sub_resource_py3 import SubResource
     from .cache_configuration_py3 import CacheConfiguration
+    from .redirect_configuration_py3 import RedirectConfiguration
     from .routing_rule_update_parameters_py3 import RoutingRuleUpdateParameters
     from .backend_py3 import Backend
     from .load_balancing_settings_update_parameters_py3 import LoadBalancingSettingsUpdateParameters
@@ -61,6 +62,7 @@ except (SyntaxError, ImportError):
     from .purge_parameters import PurgeParameters
     from .sub_resource import SubResource
     from .cache_configuration import CacheConfiguration
+    from .redirect_configuration import RedirectConfiguration
     from .routing_rule_update_parameters import RoutingRuleUpdateParameters
     from .backend import Backend
     from .load_balancing_settings_update_parameters import LoadBalancingSettingsUpdateParameters
@@ -96,6 +98,7 @@ from .frontend_endpoint_paged import FrontendEndpointPaged
 from .web_application_firewall_policy1_paged import WebApplicationFirewallPolicy1Paged
 from .front_door_management_client_enums import (
     FrontDoorResourceState,
+    RoutingRuleType,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
     FrontDoorCertificateSource,
@@ -106,6 +109,8 @@ from .front_door_management_client_enums import (
     FrontDoorForwardingProtocol,
     FrontDoorQuery,
     DynamicCompressionEnabled,
+    FrontDoorRedirectProtocol,
+    FrontDoorDestinationProtocol,
     SessionAffinityEnabledState,
     ResourceType,
     Availability,
@@ -134,6 +139,7 @@ __all__ = [
     'PurgeParameters',
     'SubResource',
     'CacheConfiguration',
+    'RedirectConfiguration',
     'RoutingRuleUpdateParameters',
     'Backend',
     'LoadBalancingSettingsUpdateParameters',
@@ -168,6 +174,7 @@ __all__ = [
     'FrontendEndpointPaged',
     'WebApplicationFirewallPolicy1Paged',
     'FrontDoorResourceState',
+    'RoutingRuleType',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
     'FrontDoorCertificateSource',
@@ -178,6 +185,8 @@ __all__ = [
     'FrontDoorForwardingProtocol',
     'FrontDoorQuery',
     'DynamicCompressionEnabled',
+    'FrontDoorRedirectProtocol',
+    'FrontDoorDestinationProtocol',
     'SessionAffinityEnabledState',
     'ResourceType',
     'Availability',

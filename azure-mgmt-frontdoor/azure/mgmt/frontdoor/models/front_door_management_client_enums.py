@@ -22,6 +22,12 @@ class FrontDoorResourceState(str, Enum):
     deleting = "Deleting"
 
 
+class RoutingRuleType(str, Enum):
+
+    forward = "Forward"
+    redirect = "Redirect"
+
+
 class CustomHttpsProvisioningState(str, Enum):
 
     enabling = "Enabling"
@@ -90,6 +96,21 @@ class DynamicCompressionEnabled(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class FrontDoorRedirectProtocol(str, Enum):
+
+    moved301 = "Moved(301)"
+    found302 = "Found(302)"
+    temporary_redirect307 = "TemporaryRedirect(307)"
+    permanent_redirect308 = "PermanentRedirect(308)"
+
+
+class FrontDoorDestinationProtocol(str, Enum):
+
+    match_request = "MatchRequest"
+    htt = "Htt"
+    https = "Https"
 
 
 class SessionAffinityEnabledState(str, Enum):

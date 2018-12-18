@@ -16,9 +16,6 @@ class RoutingRule(SubResource):
     """A routing rule represents a specification for traffic to treat and where to
     send it, along with health probe information.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param id: Resource ID.
     :type id: str
     :param frontend_endpoints: Frontend endpoints associated with this rule
@@ -47,19 +44,19 @@ class RoutingRule(SubResource):
      'Disabled'
     :type enabled_state: str or
      ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
+    :param redirect_configuration: A reference to the redirect routing
+     configuration.
+    :type redirect_configuration:
+     ~azure.mgmt.frontdoor.models.RedirectConfiguration
     :param resource_state: Resource status. Possible values include:
      'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
     :type resource_state: str or
      ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :param name: Resource name.
     :type name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :param type: Resource type. Possible values include: 'Forward', 'Redirect'
+    :type type: str or ~azure.mgmt.frontdoor.models.RoutingRuleType
     """
-
-    _validation = {
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -71,6 +68,7 @@ class RoutingRule(SubResource):
         'cache_configuration': {'key': 'properties.cacheConfiguration', 'type': 'CacheConfiguration'},
         'backend_pool': {'key': 'properties.backendPool', 'type': 'SubResource'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        'redirect_configuration': {'key': 'properties.redirectConfiguration', 'type': 'RedirectConfiguration'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -86,6 +84,7 @@ class RoutingRule(SubResource):
         self.cache_configuration = kwargs.get('cache_configuration', None)
         self.backend_pool = kwargs.get('backend_pool', None)
         self.enabled_state = kwargs.get('enabled_state', None)
+        self.redirect_configuration = kwargs.get('redirect_configuration', None)
         self.resource_state = kwargs.get('resource_state', None)
         self.name = kwargs.get('name', None)
-        self.type = None
+        self.type = kwargs.get('type', None)

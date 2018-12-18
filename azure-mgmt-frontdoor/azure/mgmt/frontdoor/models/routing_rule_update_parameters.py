@@ -41,6 +41,10 @@ class RoutingRuleUpdateParameters(Model):
      'Disabled'
     :type enabled_state: str or
      ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
+    :param redirect_configuration: A reference to the redirect routing
+     configuration.
+    :type redirect_configuration:
+     ~azure.mgmt.frontdoor.models.RedirectConfiguration
     """
 
     _attribute_map = {
@@ -52,6 +56,7 @@ class RoutingRuleUpdateParameters(Model):
         'cache_configuration': {'key': 'cacheConfiguration', 'type': 'CacheConfiguration'},
         'backend_pool': {'key': 'backendPool', 'type': 'SubResource'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        'redirect_configuration': {'key': 'redirectConfiguration', 'type': 'RedirectConfiguration'},
     }
 
     def __init__(self, **kwargs):
@@ -64,3 +69,4 @@ class RoutingRuleUpdateParameters(Model):
         self.cache_configuration = kwargs.get('cache_configuration', None)
         self.backend_pool = kwargs.get('backend_pool', None)
         self.enabled_state = kwargs.get('enabled_state', None)
+        self.redirect_configuration = kwargs.get('redirect_configuration', None)

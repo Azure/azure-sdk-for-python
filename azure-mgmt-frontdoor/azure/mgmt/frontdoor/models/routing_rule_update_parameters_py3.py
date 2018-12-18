@@ -41,6 +41,10 @@ class RoutingRuleUpdateParameters(Model):
      'Disabled'
     :type enabled_state: str or
      ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
+    :param redirect_configuration: A reference to the redirect routing
+     configuration.
+    :type redirect_configuration:
+     ~azure.mgmt.frontdoor.models.RedirectConfiguration
     """
 
     _attribute_map = {
@@ -52,9 +56,10 @@ class RoutingRuleUpdateParameters(Model):
         'cache_configuration': {'key': 'cacheConfiguration', 'type': 'CacheConfiguration'},
         'backend_pool': {'key': 'backendPool', 'type': 'SubResource'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        'redirect_configuration': {'key': 'redirectConfiguration', 'type': 'RedirectConfiguration'},
     }
 
-    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, **kwargs) -> None:
+    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, redirect_configuration=None, **kwargs) -> None:
         super(RoutingRuleUpdateParameters, self).__init__(**kwargs)
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
@@ -64,3 +69,4 @@ class RoutingRuleUpdateParameters(Model):
         self.cache_configuration = cache_configuration
         self.backend_pool = backend_pool
         self.enabled_state = enabled_state
+        self.redirect_configuration = redirect_configuration
