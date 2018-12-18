@@ -1,2 +1,2 @@
-azure-sdk-tools
+-e ../azure-sdk-tools
 azure-mgmt-billing

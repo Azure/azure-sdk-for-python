@@ -25,6 +25,13 @@ DEPENDENCIES = [
     'pyopenssl' # azure-servicemanagement-legacy
 ]
 
+extras = {
+    'develop':[
+        'azure-mgmt-resource'
+        'azure-mgmt-storage'
+    ]
+}
+
 setup(
     name = "azure-sdk-tools",
     version = "0.0.0",
@@ -34,6 +41,7 @@ setup(
     packages=find_packages(),
     long_description="Specific tools for Azure SDK for Python testing",
     install_requires=DEPENDENCIES,
+    extras_requires
     entry_points = {
         'console_scripts': [
             'generate_package=packaging_tools.generate_package:generate_main',

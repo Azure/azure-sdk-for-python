@@ -1,1 +1,1 @@
-azure-sdk-tools
+-e ../azure-sdk-tools

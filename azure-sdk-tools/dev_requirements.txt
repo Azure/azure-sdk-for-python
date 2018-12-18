@@ -1,2 +1,4 @@
-azure-mgmt-resource
-azure-mgmt-storage
+azure-storage-blob
+azure-storage-file
+azure-storage-common
+pyopenssl
