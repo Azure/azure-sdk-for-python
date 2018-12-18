@@ -69,7 +69,7 @@ class IntegrationAccountSchema(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'schema_type': {'key': 'properties.schemaType', 'type': 'SchemaType'},
+        'schema_type': {'key': 'properties.schemaType', 'type': 'str'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'document_name': {'key': 'properties.documentName', 'type': 'str'},
         'file_name': {'key': 'properties.fileName', 'type': 'str'},

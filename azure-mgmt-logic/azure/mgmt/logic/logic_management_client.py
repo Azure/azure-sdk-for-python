@@ -13,27 +13,28 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
-import uuid
 from .operations.workflows_operations import WorkflowsOperations
 from .operations.workflow_versions_operations import WorkflowVersionsOperations
 from .operations.workflow_triggers_operations import WorkflowTriggersOperations
+from .operations.workflow_version_triggers_operations import WorkflowVersionTriggersOperations
 from .operations.workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
 from .operations.workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
-from .operations.workflow_run_action_scoped_repetitions_operations import WorkflowRunActionScopedRepetitionsOperations
+from .operations.workflow_run_action_repetitions_request_histories_operations import WorkflowRunActionRepetitionsRequestHistoriesOperations
+from .operations.workflow_run_action_request_histories_operations import WorkflowRunActionRequestHistoriesOperations
+from .operations.workflow_run_action_scope_repetitions_operations import WorkflowRunActionScopeRepetitionsOperations
 from .operations.workflow_run_operations import WorkflowRunOperations
 from .operations.integration_accounts_operations import IntegrationAccountsOperations
 from .operations.integration_account_assemblies_operations import IntegrationAccountAssembliesOperations
 from .operations.integration_account_batch_configurations_operations import IntegrationAccountBatchConfigurationsOperations
-from .operations.schemas_operations import SchemasOperations
-from .operations.maps_operations import MapsOperations
-from .operations.partners_operations import PartnersOperations
-from .operations.agreements_operations import AgreementsOperations
-from .operations.certificates_operations import CertificatesOperations
-from .operations.sessions_operations import SessionsOperations
+from .operations.integration_account_schemas_operations import IntegrationAccountSchemasOperations
+from .operations.integration_account_maps_operations import IntegrationAccountMapsOperations
+from .operations.integration_account_partners_operations import IntegrationAccountPartnersOperations
+from .operations.integration_account_agreements_operations import IntegrationAccountAgreementsOperations
+from .operations.integration_account_certificates_operations import IntegrationAccountCertificatesOperations
+from .operations.integration_account_sessions_operations import IntegrationAccountSessionsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -81,6 +82,8 @@ class LogicManagementClient(SDKClient):
     :vartype workflow_versions: azure.mgmt.logic.operations.WorkflowVersionsOperations
     :ivar workflow_triggers: WorkflowTriggers operations
     :vartype workflow_triggers: azure.mgmt.logic.operations.WorkflowTriggersOperations
+    :ivar workflow_version_triggers: WorkflowVersionTriggers operations
+    :vartype workflow_version_triggers: azure.mgmt.logic.operations.WorkflowVersionTriggersOperations
     :ivar workflow_trigger_histories: WorkflowTriggerHistories operations
     :vartype workflow_trigger_histories: azure.mgmt.logic.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_runs: WorkflowRuns operations
@@ -89,8 +92,12 @@ class LogicManagementClient(SDKClient):
     :vartype workflow_run_actions: azure.mgmt.logic.operations.WorkflowRunActionsOperations
     :ivar workflow_run_action_repetitions: WorkflowRunActionRepetitions operations
     :vartype workflow_run_action_repetitions: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsOperations
-    :ivar workflow_run_action_scoped_repetitions: WorkflowRunActionScopedRepetitions operations
-    :vartype workflow_run_action_scoped_repetitions: azure.mgmt.logic.operations.WorkflowRunActionScopedRepetitionsOperations
+    :ivar workflow_run_action_repetitions_request_histories: WorkflowRunActionRepetitionsRequestHistories operations
+    :vartype workflow_run_action_repetitions_request_histories: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsRequestHistoriesOperations
+    :ivar workflow_run_action_request_histories: WorkflowRunActionRequestHistories operations
+    :vartype workflow_run_action_request_histories: azure.mgmt.logic.operations.WorkflowRunActionRequestHistoriesOperations
+    :ivar workflow_run_action_scope_repetitions: WorkflowRunActionScopeRepetitions operations
+    :vartype workflow_run_action_scope_repetitions: azure.mgmt.logic.operations.WorkflowRunActionScopeRepetitionsOperations
     :ivar workflow_run_operations: WorkflowRunOperations operations
     :vartype workflow_run_operations: azure.mgmt.logic.operations.WorkflowRunOperations
     :ivar integration_accounts: IntegrationAccounts operations
@@ -99,18 +106,20 @@ class LogicManagementClient(SDKClient):
     :vartype integration_account_assemblies: azure.mgmt.logic.operations.IntegrationAccountAssembliesOperations
     :ivar integration_account_batch_configurations: IntegrationAccountBatchConfigurations operations
     :vartype integration_account_batch_configurations: azure.mgmt.logic.operations.IntegrationAccountBatchConfigurationsOperations
-    :ivar schemas: Schemas operations
-    :vartype schemas: azure.mgmt.logic.operations.SchemasOperations
-    :ivar maps: Maps operations
-    :vartype maps: azure.mgmt.logic.operations.MapsOperations
-    :ivar partners: Partners operations
-    :vartype partners: azure.mgmt.logic.operations.PartnersOperations
-    :ivar agreements: Agreements operations
-    :vartype agreements: azure.mgmt.logic.operations.AgreementsOperations
-    :ivar certificates: Certificates operations
-    :vartype certificates: azure.mgmt.logic.operations.CertificatesOperations
-    :ivar sessions: Sessions operations
-    :vartype sessions: azure.mgmt.logic.operations.SessionsOperations
+    :ivar integration_account_schemas: IntegrationAccountSchemas operations
+    :vartype integration_account_schemas: azure.mgmt.logic.operations.IntegrationAccountSchemasOperations
+    :ivar integration_account_maps: IntegrationAccountMaps operations
+    :vartype integration_account_maps: azure.mgmt.logic.operations.IntegrationAccountMapsOperations
+    :ivar integration_account_partners: IntegrationAccountPartners operations
+    :vartype integration_account_partners: azure.mgmt.logic.operations.IntegrationAccountPartnersOperations
+    :ivar integration_account_agreements: IntegrationAccountAgreements operations
+    :vartype integration_account_agreements: azure.mgmt.logic.operations.IntegrationAccountAgreementsOperations
+    :ivar integration_account_certificates: IntegrationAccountCertificates operations
+    :vartype integration_account_certificates: azure.mgmt.logic.operations.IntegrationAccountCertificatesOperations
+    :ivar integration_account_sessions: IntegrationAccountSessions operations
+    :vartype integration_account_sessions: azure.mgmt.logic.operations.IntegrationAccountSessionsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.logic.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -127,7 +136,7 @@ class LogicManagementClient(SDKClient):
         super(LogicManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-06-01'
+        self.api_version = '2018-07-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -137,6 +146,8 @@ class LogicManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_triggers = WorkflowTriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_version_triggers = WorkflowVersionTriggersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_runs = WorkflowRunsOperations(
@@ -145,7 +156,11 @@ class LogicManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workflow_run_action_scoped_repetitions = WorkflowRunActionScopedRepetitionsOperations(
+        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_operations = WorkflowRunOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -155,75 +170,17 @@ class LogicManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.schemas = SchemasOperations(
+        self.integration_account_schemas = IntegrationAccountSchemasOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.maps = MapsOperations(
+        self.integration_account_maps = IntegrationAccountMapsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.partners = PartnersOperations(
+        self.integration_account_partners = IntegrationAccountPartnersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.agreements = AgreementsOperations(
+        self.integration_account_agreements = IntegrationAccountAgreementsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.certificates = CertificatesOperations(
+        self.integration_account_certificates = IntegrationAccountCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.sessions = SessionsOperations(
+        self.integration_account_sessions = IntegrationAccountSessionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def list_operations(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Logic REST API operations.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
-        :rtype:
-         ~azure.mgmt.logic.models.OperationPaged[~azure.mgmt.logic.models.Operation]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_operations.metadata['url']
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_operations.metadata = {'url': '/providers/Microsoft.Logic/operations'}
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)

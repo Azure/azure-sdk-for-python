@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
 0.10.0 (2018-10-18)
 +++++++++++++++++++
 
