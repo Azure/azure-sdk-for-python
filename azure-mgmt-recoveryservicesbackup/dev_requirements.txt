@@ -1,2 +1,2 @@
 -e ../azure-sdk-tools
-azure-mgmt-recoveryservices
+-e ../azure-mgmt-recoveryservices

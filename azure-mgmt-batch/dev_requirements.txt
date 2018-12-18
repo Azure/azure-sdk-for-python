@@ -1,2 +1,2 @@
 -e ../azure-sdk-tools
-azure-mgmt-keyvault
+-e ../azure-mgmt-keyvault
