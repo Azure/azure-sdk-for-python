@@ -17,7 +17,6 @@ DEPENDENCIES = [
     'pytest>=3.5.1',
     # 'azure-devtools>=0.4.1' override by packaging needs
     'readme_renderer',
-
     'azure-storage-blob',
     'azure-storage-file',
     'azure-storage-common',

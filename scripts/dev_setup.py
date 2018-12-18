@@ -16,7 +16,7 @@ from subprocess import check_call, CalledProcessError
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
 
-def pip_command(command, additionalDir='', error_ok=False):
+def pip_command(command, additionalDir='.', error_ok=False):
     try:
         print('Executing: ' + command)
         check_call([sys.executable, '-m', 'pip'] + command.split(), cwd=os.path.join(root_dir, additionalDir))
