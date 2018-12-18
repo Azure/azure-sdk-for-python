@@ -212,3 +212,10 @@ class ErrorSubCode(str, Enum):
     authorization_redundancy = "AuthorizationRedundancy"
     authorization_disabled = "AuthorizationDisabled"
     authorization_expired = "AuthorizationExpired"
+
+
+class SafeSearch(str, Enum):
+
+    off = "Off"
+    moderate = "Moderate"
+    strict = "Strict"

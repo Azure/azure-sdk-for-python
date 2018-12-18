@@ -16,52 +16,60 @@ from .operations.images_operations import ImagesOperations
 from . import models
 
 
-class VisualSearchAPIConfiguration(Configuration):
-    """Configuration for VisualSearchAPI
+class VisualSearchClientConfiguration(Configuration):
+    """Configuration for VisualSearchClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: "https://westus.api.cognitive.microsoft.com",
+     "https://api.cognitive.microsoft.com").
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, endpoint, credentials):
 
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
+        base_url = '{Endpoint}/bing/v7.0'
 
-        super(VisualSearchAPIConfiguration, self).__init__(base_url)
+        super(VisualSearchClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-search-visualsearch/{}'.format(VERSION))
 
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class VisualSearchAPI(SDKClient):
+class VisualSearchClient(SDKClient):
     """Visual Search API lets you discover insights about an image such as visually similar images, shopping sources, and related searches. The API can also perform text recognition, identify entities (people, places, things), return other topical content for the user to explore, and more. For more information, see [Visual Search Overview](https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/overview).
 
     :ivar config: Configuration for client.
-    :vartype config: VisualSearchAPIConfiguration
+    :vartype config: VisualSearchClientConfiguration
 
     :ivar images: Images operations
     :vartype images: azure.cognitiveservices.search.visualsearch.operations.ImagesOperations
 
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: "https://westus.api.cognitive.microsoft.com",
+     "https://api.cognitive.microsoft.com").
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, endpoint, credentials):
 
-        self.config = VisualSearchAPIConfiguration(credentials, base_url)
-        super(VisualSearchAPI, self).__init__(self.config.credentials, self.config)
+        self.config = VisualSearchClientConfiguration(endpoint, credentials)
+        super(VisualSearchClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
