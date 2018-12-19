@@ -22,7 +22,7 @@ class RedirectConfiguration(Model):
     :type redirect_type: str or
      ~azure.mgmt.frontdoor.models.FrontDoorRedirectProtocol
     :param destination_protocol: The protocol of the destination where the
-     traffic is forwarded to. Possible values include: 'MatchRequest', 'Htt',
+     traffic is forwarded to. Possible values include: 'MatchRequest', 'Http',
      'Https'
     :type destination_protocol: str or
      ~azure.mgmt.frontdoor.models.FrontDoorDestinationProtocol

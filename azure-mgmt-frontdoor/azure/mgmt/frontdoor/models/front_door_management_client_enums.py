@@ -22,12 +22,6 @@ class FrontDoorResourceState(str, Enum):
     deleting = "Deleting"
 
 
-class RoutingRuleType(str, Enum):
-
-    forward = "Forward"
-    redirect = "Redirect"
-
-
 class CustomHttpsProvisioningState(str, Enum):
 
     enabling = "Enabling"
@@ -73,6 +67,12 @@ class FrontDoorEnabledState(str, Enum):
     disabled = "Disabled"
 
 
+class FrontDoorRouteType(str, Enum):
+
+    forward = "Forward"
+    redirect = "Redirect"
+
+
 class FrontDoorProtocol(str, Enum):
 
     http = "Http"
@@ -109,7 +109,7 @@ class FrontDoorRedirectProtocol(str, Enum):
 class FrontDoorDestinationProtocol(str, Enum):
 
     match_request = "MatchRequest"
-    htt = "Htt"
+    http = "Http"
     https = "Https"
 
 

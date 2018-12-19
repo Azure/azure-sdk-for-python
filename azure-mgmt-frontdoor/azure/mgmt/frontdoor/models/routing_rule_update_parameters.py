@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class RoutingRuleUpdateParameters(Model):
     """Routing rules to apply to an endpoint.
 
+    :param route_type: Route type. Possible values include: 'Forward',
+     'Redirect'
+    :type route_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRouteType
     :param frontend_endpoints: Frontend endpoints associated with this rule
     :type frontend_endpoints: list[~azure.mgmt.frontdoor.models.SubResource]
     :param accepted_protocols: Protocol schemes to match for this rule
@@ -48,6 +51,7 @@ class RoutingRuleUpdateParameters(Model):
     """
 
     _attribute_map = {
+        'route_type': {'key': 'routeType', 'type': 'str'},
         'frontend_endpoints': {'key': 'frontendEndpoints', 'type': '[SubResource]'},
         'accepted_protocols': {'key': 'acceptedProtocols', 'type': '[str]'},
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
@@ -61,6 +65,7 @@ class RoutingRuleUpdateParameters(Model):
 
     def __init__(self, **kwargs):
         super(RoutingRuleUpdateParameters, self).__init__(**kwargs)
+        self.route_type = kwargs.get('route_type', None)
         self.frontend_endpoints = kwargs.get('frontend_endpoints', None)
         self.accepted_protocols = kwargs.get('accepted_protocols', None)
         self.patterns_to_match = kwargs.get('patterns_to_match', None)

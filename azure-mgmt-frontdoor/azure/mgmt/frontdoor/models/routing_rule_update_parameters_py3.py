@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class RoutingRuleUpdateParameters(Model):
     """Routing rules to apply to an endpoint.
 
+    :param route_type: Route type. Possible values include: 'Forward',
+     'Redirect'
+    :type route_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRouteType
     :param frontend_endpoints: Frontend endpoints associated with this rule
     :type frontend_endpoints: list[~azure.mgmt.frontdoor.models.SubResource]
     :param accepted_protocols: Protocol schemes to match for this rule
@@ -48,6 +51,7 @@ class RoutingRuleUpdateParameters(Model):
     """
 
     _attribute_map = {
+        'route_type': {'key': 'routeType', 'type': 'str'},
         'frontend_endpoints': {'key': 'frontendEndpoints', 'type': '[SubResource]'},
         'accepted_protocols': {'key': 'acceptedProtocols', 'type': '[str]'},
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
@@ -59,8 +63,9 @@ class RoutingRuleUpdateParameters(Model):
         'redirect_configuration': {'key': 'redirectConfiguration', 'type': 'RedirectConfiguration'},
     }
 
-    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, redirect_configuration=None, **kwargs) -> None:
+    def __init__(self, *, route_type=None, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, redirect_configuration=None, **kwargs) -> None:
         super(RoutingRuleUpdateParameters, self).__init__(**kwargs)
+        self.route_type = route_type
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
         self.patterns_to_match = patterns_to_match

@@ -16,8 +16,14 @@ class RoutingRule(SubResource):
     """A routing rule represents a specification for traffic to treat and where to
     send it, along with health probe information.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource ID.
     :type id: str
+    :param route_type: Route type. Possible values include: 'Forward',
+     'Redirect'
+    :type route_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRouteType
     :param frontend_endpoints: Frontend endpoints associated with this rule
     :type frontend_endpoints: list[~azure.mgmt.frontdoor.models.SubResource]
     :param accepted_protocols: Protocol schemes to match for this rule
@@ -54,12 +60,17 @@ class RoutingRule(SubResource):
      ~azure.mgmt.frontdoor.models.FrontDoorResourceState
     :param name: Resource name.
     :type name: str
-    :param type: Resource type. Possible values include: 'Forward', 'Redirect'
-    :type type: str or ~azure.mgmt.frontdoor.models.RoutingRuleType
+    :ivar type: Resource type.
+    :vartype type: str
     """
+
+    _validation = {
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'route_type': {'key': 'properties.routeType', 'type': 'str'},
         'frontend_endpoints': {'key': 'properties.frontendEndpoints', 'type': '[SubResource]'},
         'accepted_protocols': {'key': 'properties.acceptedProtocols', 'type': '[str]'},
         'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
@@ -74,8 +85,9 @@ class RoutingRule(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, redirect_configuration=None, resource_state=None, name: str=None, type=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, route_type=None, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, custom_forwarding_path: str=None, forwarding_protocol=None, cache_configuration=None, backend_pool=None, enabled_state=None, redirect_configuration=None, resource_state=None, name: str=None, **kwargs) -> None:
         super(RoutingRule, self).__init__(id=id, **kwargs)
+        self.route_type = route_type
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
         self.patterns_to_match = patterns_to_match
@@ -87,4 +99,4 @@ class RoutingRule(SubResource):
         self.redirect_configuration = redirect_configuration
         self.resource_state = resource_state
         self.name = name
-        self.type = type
+        self.type = None
