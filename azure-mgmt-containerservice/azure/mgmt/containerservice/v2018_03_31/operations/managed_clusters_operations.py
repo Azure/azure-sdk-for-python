@@ -802,9 +802,31 @@ class ManagedClustersOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}'}
 
-
-    def _reset_service_principal_profile_initial(
+    def reset_service_principal_profile(
             self, resource_group_name, resource_name, client_id, secret=None, custom_headers=None, raw=False, **operation_config):
+        """Reset Service Principal Profile of a managed cluster.
+
+        Update the service principal Profile for a managed cluster.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource.
+        :type resource_name: str
+        :param client_id: The ID for the service principal.
+        :type client_id: str
+        :param secret: The secret password associated with the service
+         principal in plain text.
+        :type secret: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ManagedCluster or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         parameters = models.ManagedClusterServicePrincipalProfile(client_id=client_id, secret=secret)
 
         # Construct URL
@@ -838,15 +860,13 @@ class ManagedClustersOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ManagedCluster', response)
         if response.status_code == 202:
             deserialized = self._deserialize('ManagedCluster', response)
 
@@ -855,66 +875,32 @@ class ManagedClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    reset_service_principal_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile'}
 
-    def reset_service_principal_profile(
-            self, resource_group_name, resource_name, client_id, secret=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Reset Service Principal Profile of a managed cluster.
+    def reset_aad_profile(
+            self, resource_group_name, resource_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Reset AAD Profile of a managed cluster.
 
-        Update the service principal Profile for a managed cluster.
+        Update the AAD Profile for a managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param client_id: The ID for the service principal.
-        :type client_id: str
-        :param secret: The secret password associated with the service
-         principal in plain text.
-        :type secret: str
+        :param parameters: Parameters supplied to the Reset AAD Profile
+         operation for a Managed Cluster.
+        :type parameters:
+         ~azure.mgmt.containerservice.v2018_03_31.models.ManagedClusterAADProfile
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns ManagedCluster or
-         ClientRawResponse<ManagedCluster> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster]]
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ManagedCluster or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._reset_service_principal_profile_initial(
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            client_id=client_id,
-            secret=secret,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('ManagedCluster', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    reset_service_principal_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile'}
-
-
-    def _reset_aad_profile_initial(
-            self, resource_group_name, resource_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.reset_aad_profile.metadata['url']
         path_format_arguments = {
@@ -946,15 +932,13 @@ class ManagedClustersOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ManagedCluster', response)
         if response.status_code == 202:
             deserialized = self._deserialize('ManagedCluster', response)
 
@@ -963,57 +947,4 @@ class ManagedClustersOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def reset_aad_profile(
-            self, resource_group_name, resource_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Reset AAD Profile of a managed cluster.
-
-        Update the AAD Profile for a managed cluster.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_name: The name of the managed cluster resource.
-        :type resource_name: str
-        :param parameters: Parameters supplied to the Reset AAD Profile
-         operation for a Managed Cluster.
-        :type parameters:
-         ~azure.mgmt.containerservice.v2018_03_31.models.ManagedClusterAADProfile
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns ManagedCluster or
-         ClientRawResponse<ManagedCluster> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2018_03_31.models.ManagedCluster]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._reset_aad_profile_initial(
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('ManagedCluster', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     reset_aad_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetAADProfile'}
