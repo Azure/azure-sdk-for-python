@@ -35,6 +35,8 @@ class MapsAccount(Resource):
     :vartype tags: dict[str, str]
     :ivar sku: The SKU of this account.
     :vartype sku: ~azure.mgmt.maps.models.Sku
+    :ivar properties: The map account properties.
+    :vartype properties: ~azure.mgmt.maps.models.MapsAccountProperties
     """
 
     _validation = {
@@ -44,6 +46,7 @@ class MapsAccount(Resource):
         'location': {'readonly': True},
         'tags': {'readonly': True},
         'sku': {'readonly': True},
+        'properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -53,6 +56,7 @@ class MapsAccount(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'properties': {'key': 'properties', 'type': 'MapsAccountProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -60,3 +64,4 @@ class MapsAccount(Resource):
         self.location = None
         self.tags = None
         self.sku = None
+        self.properties = None
