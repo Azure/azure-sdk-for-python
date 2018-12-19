@@ -14,7 +14,7 @@ from .proxy_resource_py3 import ProxyResource
 
 class CustomDomain(ProxyResource):
     """Friendly domain name mapping to the endpoint hostname that the customer
-    provides for branding purposes, e.g. www.consoto.com.
+    provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
