@@ -61,7 +61,7 @@ class ImageObject(MediaObject):
     :ivar content_size: Size of the media object content. Use format "value
      unit" (e.g., "1024 B").
     :vartype content_size: str
-    :ivar encoding_format: Encoding format (e.g., mp3, mp4, jpeg, etc).
+    :ivar encoding_format: Encoding format (e.g., png, gif, jpeg, etc).
     :vartype encoding_format: str
     :ivar host_page_display_url: Display URL of the page that hosts the media
      object.
@@ -83,7 +83,7 @@ class ImageObject(MediaObject):
      image is of an apple pie, this object includes a count of the number of
      websites where you can buy an apple pie. To indicate the number of offers
      in your UX, include badging such as a shopping cart icon that contains the
-     count. When the user clicks on the icon, use imageInisghtsToken in a
+     count. When the user clicks on the icon, use imageInsightsToken in a
      subsequent Visual Search API call to get the list of shopping websites.
     :vartype insights_metadata:
      ~azure.cognitiveservices.search.visualsearch.models.ImagesImageMetadata
@@ -93,7 +93,7 @@ class ImageObject(MediaObject):
      color that dominates the image. Use the color as the temporary background
      in your client until the image is loaded.
     :vartype accent_color: str
-    :ivar visual_words: For interal use only.
+    :ivar visual_words: For internal use only.
     :vartype visual_words: str
     """
 

@@ -33,6 +33,7 @@ try:
     from .feedback_properties_py3 import FeedbackProperties
     from .cloud_to_device_properties_py3 import CloudToDeviceProperties
     from .operations_monitoring_properties_py3 import OperationsMonitoringProperties
+    from .iot_hub_properties_device_streams_py3 import IotHubPropertiesDeviceStreams
     from .iot_hub_properties_py3 import IotHubProperties
     from .iot_hub_sku_info_py3 import IotHubSkuInfo
     from .iot_hub_description_py3 import IotHubDescription
@@ -54,6 +55,8 @@ try:
     from .user_subscription_quota_py3 import UserSubscriptionQuota
     from .user_subscription_quota_list_result_py3 import UserSubscriptionQuotaListResult
     from .routing_message_py3 import RoutingMessage
+    from .routing_twin_properties_py3 import RoutingTwinProperties
+    from .routing_twin_py3 import RoutingTwin
     from .test_all_routes_input_py3 import TestAllRoutesInput
     from .matched_route_py3 import MatchedRoute
     from .test_all_routes_result_py3 import TestAllRoutesResult
@@ -89,6 +92,7 @@ except (SyntaxError, ImportError):
     from .feedback_properties import FeedbackProperties
     from .cloud_to_device_properties import CloudToDeviceProperties
     from .operations_monitoring_properties import OperationsMonitoringProperties
+    from .iot_hub_properties_device_streams import IotHubPropertiesDeviceStreams
     from .iot_hub_properties import IotHubProperties
     from .iot_hub_sku_info import IotHubSkuInfo
     from .iot_hub_description import IotHubDescription
@@ -110,6 +114,8 @@ except (SyntaxError, ImportError):
     from .user_subscription_quota import UserSubscriptionQuota
     from .user_subscription_quota_list_result import UserSubscriptionQuotaListResult
     from .routing_message import RoutingMessage
+    from .routing_twin_properties import RoutingTwinProperties
+    from .routing_twin import RoutingTwin
     from .test_all_routes_input import TestAllRoutesInput
     from .matched_route import MatchedRoute
     from .test_all_routes_result import TestAllRoutesResult
@@ -170,6 +176,7 @@ __all__ = [
     'FeedbackProperties',
     'CloudToDeviceProperties',
     'OperationsMonitoringProperties',
+    'IotHubPropertiesDeviceStreams',
     'IotHubProperties',
     'IotHubSkuInfo',
     'IotHubDescription',
@@ -191,6 +198,8 @@ __all__ = [
     'UserSubscriptionQuota',
     'UserSubscriptionQuotaListResult',
     'RoutingMessage',
+    'RoutingTwinProperties',
+    'RoutingTwin',
     'TestAllRoutesInput',
     'MatchedRoute',
     'TestAllRoutesResult',
