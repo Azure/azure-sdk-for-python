@@ -15,6 +15,7 @@ from collections import Counter
 from subprocess import check_call, CalledProcessError
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
+ALL_PACKAGES_INDICATOR = 'azure*'
 
 def pip_command(command, additionalDir='.', error_ok=False):
     try:
@@ -70,7 +71,9 @@ if sys.version_info < (3, ):
 
 # install packages
 for package_name in content_packages:
-    if os.path.isfile('{}/dev_requirements.txt'.format(package_name)):
+    # if we are running dev_setup with no arguments. going after dev_requirements will be a pointless exercise
+    # and waste of cycles as all the dependencies will be installed regardless. 
+    if os.path.isfile('{}/dev_requirements.txt'.format(package_name)) and args.globArg != ALL_PACKAGES_INDICATOR:
         pip_command('install -r dev_requirements.txt', package_name)
     pip_command('install --ignore-requires-python -e {}'.format(package_name))
 
