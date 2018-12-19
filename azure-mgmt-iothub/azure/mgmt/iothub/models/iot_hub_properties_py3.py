@@ -60,6 +60,9 @@ class IotHubProperties(Model):
     :param operations_monitoring_properties:
     :type operations_monitoring_properties:
      ~azure.mgmt.iothub.models.OperationsMonitoringProperties
+    :param device_streams: The device streams properties of iothub.
+    :type device_streams:
+     ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
@@ -85,10 +88,11 @@ class IotHubProperties(Model):
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
         'operations_monitoring_properties': {'key': 'operationsMonitoringProperties', 'type': 'OperationsMonitoringProperties'},
+        'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, operations_monitoring_properties=None, features=None, **kwargs) -> None:
+    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, operations_monitoring_properties=None, device_streams=None, features=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
@@ -103,4 +107,5 @@ class IotHubProperties(Model):
         self.cloud_to_device = cloud_to_device
         self.comments = comments
         self.operations_monitoring_properties = operations_monitoring_properties
+        self.device_streams = device_streams
         self.features = features

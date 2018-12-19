@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .response_py3 import Response
 
 
 class ImageKnowledge(Response):
-    """ImageKnowledge.
+    """Defines a visual search API response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
