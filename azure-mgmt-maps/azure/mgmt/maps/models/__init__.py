@@ -14,6 +14,7 @@ try:
     from .error_py3 import Error, ErrorException
     from .resource_py3 import Resource
     from .sku_py3 import Sku
+    from .maps_account_properties_py3 import MapsAccountProperties
     from .maps_account_py3 import MapsAccount
     from .maps_account_create_parameters_py3 import MapsAccountCreateParameters
     from .maps_account_update_parameters_py3 import MapsAccountUpdateParameters
@@ -27,6 +28,7 @@ except (SyntaxError, ImportError):
     from .error import Error, ErrorException
     from .resource import Resource
     from .sku import Sku
+    from .maps_account_properties import MapsAccountProperties
     from .maps_account import MapsAccount
     from .maps_account_create_parameters import MapsAccountCreateParameters
     from .maps_account_update_parameters import MapsAccountUpdateParameters
@@ -46,6 +48,7 @@ __all__ = [
     'Error', 'ErrorException',
     'Resource',
     'Sku',
+    'MapsAccountProperties',
     'MapsAccount',
     'MapsAccountCreateParameters',
     'MapsAccountUpdateParameters',
