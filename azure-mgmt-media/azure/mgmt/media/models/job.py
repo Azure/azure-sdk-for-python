@@ -48,7 +48,7 @@ class Job(ProxyResource):
      default is normal. Possible values include: 'Low', 'Normal', 'High'
     :type priority: str or ~azure.mgmt.media.models.Priority
     :param correlation_data: Customer provided correlation data that will be
-     returned in Job completed events.
+     returned in Job and JobOutput state events.
     :type correlation_data: dict[str, str]
     """
 

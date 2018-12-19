@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .import_source_credentials_py3 import ImportSourceCredentials
     from .import_source_py3 import ImportSource
     from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
@@ -21,6 +22,8 @@ try:
     from .sku_py3 import Sku
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
+    from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .network_rule_set_py3 import NetworkRuleSet
     from .registry_py3 import Registry
     from .registry_update_parameters_py3 import RegistryUpdateParameters
     from .registry_password_py3 import RegistryPassword
@@ -75,6 +78,7 @@ try:
     from .build_task_build_request_py3 import BuildTaskBuildRequest
     from .quick_build_request_py3 import QuickBuildRequest
 except (SyntaxError, ImportError):
+    from .import_source_credentials import ImportSourceCredentials
     from .import_source import ImportSource
     from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
@@ -86,6 +90,8 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
+    from .virtual_network_rule import VirtualNetworkRule
+    from .network_rule_set import NetworkRuleSet
     from .registry import Registry
     from .registry_update_parameters import RegistryUpdateParameters
     from .registry_password import RegistryPassword
@@ -153,6 +159,7 @@ from .container_registry_management_client_enums import (
     SkuName,
     SkuTier,
     ProvisioningState,
+    DefaultAction,
     PasswordName,
     RegistryUsageUnit,
     PolicyStatus,
@@ -170,6 +177,7 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
+    'ImportSourceCredentials',
     'ImportSource',
     'ImportImageParameters',
     'RegistryNameCheckRequest',
@@ -181,6 +189,8 @@ __all__ = [
     'Sku',
     'Status',
     'StorageAccountProperties',
+    'VirtualNetworkRule',
+    'NetworkRuleSet',
     'Registry',
     'RegistryUpdateParameters',
     'RegistryPassword',
@@ -247,6 +257,7 @@ __all__ = [
     'SkuName',
     'SkuTier',
     'ProvisioningState',
+    'DefaultAction',
     'PasswordName',
     'RegistryUsageUnit',
     'PolicyStatus',

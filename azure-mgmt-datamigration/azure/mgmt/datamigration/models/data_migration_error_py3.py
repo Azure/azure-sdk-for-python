@@ -20,8 +20,7 @@ class DataMigrationError(Model):
 
     :ivar message: Error description
     :vartype message: str
-    :param type: Type of error. Possible values include: 'Default', 'Warning',
-     'Error'
+    :param type: Possible values include: 'Default', 'Warning', 'Error'
     :type type: str or ~azure.mgmt.datamigration.models.ErrorType
     """
 

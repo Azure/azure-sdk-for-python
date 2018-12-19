@@ -15,6 +15,7 @@ from .tasks_operations import TasksOperations
 from .projects_operations import ProjectsOperations
 from .usages_operations import UsagesOperations
 from .operations import Operations
+from .files_operations import FilesOperations
 
 __all__ = [
     'ResourceSkusOperations',
@@ -23,4 +24,5 @@ __all__ = [
     'ProjectsOperations',
     'UsagesOperations',
     'Operations',
+    'FilesOperations',
 ]

@@ -20,6 +20,8 @@ class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -62,6 +64,7 @@ class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -74,8 +77,8 @@ class PartitionPrimaryMoveAnalysisEvent(PartitionAnalysisEvent):
         'relevant_traces': {'key': 'RelevantTraces', 'type': 'str'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, when_move_completed, previous_node: str, current_node: str, move_reason: str, relevant_traces: str, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionPrimaryMoveAnalysisEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, metadata=metadata, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, when_move_completed, previous_node: str, current_node: str, move_reason: str, relevant_traces: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(PartitionPrimaryMoveAnalysisEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, metadata=metadata, **kwargs)
         self.when_move_completed = when_move_completed
         self.previous_node = previous_node
         self.current_node = current_node

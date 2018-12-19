@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-web"
+package_pprint_name = "Web Apps Management"
+package_doc_id = "webapps"
+is_stable = false
+is_arm = true

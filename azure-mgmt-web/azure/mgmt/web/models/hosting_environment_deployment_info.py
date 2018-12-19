@@ -26,7 +26,7 @@ class HostingEnvironmentDeploymentInfo(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, name=None, location=None):
-        super(HostingEnvironmentDeploymentInfo, self).__init__()
-        self.name = name
-        self.location = location
+    def __init__(self, **kwargs):
+        super(HostingEnvironmentDeploymentInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.location = kwargs.get('location', None)
