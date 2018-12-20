@@ -17,8 +17,8 @@ class RedirectConfiguration(Model):
     if the type property of RoutingRule is set to Redirect. .
 
     :param redirect_type: The redirect type the rule will use when redirecting
-     traffic. Possible values include: 'Moved(301)', 'Found(302)',
-     'TemporaryRedirect(307)', 'PermanentRedirect(308)'
+     traffic. Possible values include: 'Moved', 'Found', 'TemporaryRedirect',
+     'PermanentRedirect'
     :type redirect_type: str or
      ~azure.mgmt.frontdoor.models.FrontDoorRedirectProtocol
     :param destination_protocol: The protocol of the destination where the
@@ -34,11 +34,14 @@ class RedirectConfiguration(Model):
     :param destination_fragment: Fragment is the part of the URL that comes
      after #. Do not include the #.
     :type destination_fragment: str
-    :param preserve_path: Indicates whether the path is preserved.
-    :type preserve_path: bool
+    :param preserve_path: Indicates whether the path is preserved. Possible
+     values include: 'Yes', 'No'
+    :type preserve_path: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorPreservePath
     :param preserve_query_string: Indicates whether the query string is
-     preserved.
-    :type preserve_query_string: bool
+     preserved. Possible values include: 'Yes', 'No'
+    :type preserve_query_string: str or
+     ~azure.mgmt.frontdoor.models.FrontDoorPreserveQueryString
     :param extra_query_string: Any string to be added to the query string in
      the destination URL. ? and & will be added automatically so do not include
      them.
@@ -51,8 +54,8 @@ class RedirectConfiguration(Model):
         'destination_host': {'key': 'destinationHost', 'type': 'str'},
         'destination_path': {'key': 'destinationPath', 'type': 'str'},
         'destination_fragment': {'key': 'destinationFragment', 'type': 'str'},
-        'preserve_path': {'key': 'preservePath', 'type': 'bool'},
-        'preserve_query_string': {'key': 'preserveQueryString', 'type': 'bool'},
+        'preserve_path': {'key': 'preservePath', 'type': 'str'},
+        'preserve_query_string': {'key': 'preserveQueryString', 'type': 'str'},
         'extra_query_string': {'key': 'extraQueryString', 'type': 'str'},
     }
 

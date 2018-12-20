@@ -21,7 +21,9 @@ class RoutingRule(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param route_type: Route type. Possible values include: 'Forward',
+    :param route_type: The type of a routing rule. It must be set to Redirect
+     for a redirect routing rule. To be backwards-compatible, it is not needed
+     for a forwarding routing rule. Possible values include: 'Forwarding',
      'Redirect'
     :type route_type: str or ~azure.mgmt.frontdoor.models.FrontDoorRouteType
     :param frontend_endpoints: Frontend endpoints associated with this rule
@@ -51,7 +53,8 @@ class RoutingRule(SubResource):
     :type enabled_state: str or
      ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
     :param redirect_configuration: A reference to the redirect routing
-     configuration.
+     configuration. It is null for a forward-routing rule. But it must not be
+     null if the routeType property is set to Redirect.
     :type redirect_configuration:
      ~azure.mgmt.frontdoor.models.RedirectConfiguration
     :param resource_state: Resource status. Possible values include:

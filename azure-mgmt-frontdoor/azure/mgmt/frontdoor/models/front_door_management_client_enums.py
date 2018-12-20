@@ -69,7 +69,7 @@ class FrontDoorEnabledState(str, Enum):
 
 class FrontDoorRouteType(str, Enum):
 
-    forward = "Forward"
+    forwarding = "Forwarding"
     redirect = "Redirect"
 
 
@@ -100,10 +100,10 @@ class DynamicCompressionEnabled(str, Enum):
 
 class FrontDoorRedirectProtocol(str, Enum):
 
-    moved301 = "Moved(301)"
-    found302 = "Found(302)"
-    temporary_redirect307 = "TemporaryRedirect(307)"
-    permanent_redirect308 = "PermanentRedirect(308)"
+    moved = "Moved"
+    found = "Found"
+    temporary_redirect = "TemporaryRedirect"
+    permanent_redirect = "PermanentRedirect"
 
 
 class FrontDoorDestinationProtocol(str, Enum):
@@ -111,6 +111,18 @@ class FrontDoorDestinationProtocol(str, Enum):
     match_request = "MatchRequest"
     http = "Http"
     https = "Https"
+
+
+class FrontDoorPreservePath(str, Enum):
+
+    yes = "Yes"
+    no = "No"
+
+
+class FrontDoorPreserveQueryString(str, Enum):
+
+    yes = "Yes"
+    no = "No"
 
 
 class SessionAffinityEnabledState(str, Enum):
