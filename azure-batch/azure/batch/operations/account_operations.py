@@ -22,7 +22,7 @@ class AccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class AccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -79,6 +79,10 @@ class AccountOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list_node_agent_skus.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -173,6 +177,10 @@ class AccountOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list_pool_node_counts.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

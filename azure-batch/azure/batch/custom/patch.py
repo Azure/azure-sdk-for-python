@@ -219,7 +219,11 @@ def build_new_add_collection(original_add_collection):
         will not create extra tasks unexpectedly. If the response contains any
         tasks which failed to add, a client can retry the request. In a retry,
         it is most efficient to resubmit only tasks that failed to add, and to
-        omit tasks that were successfully added on the first attempt.
+        omit tasks that were successfully added on the first attempt. The 
+        maximum lifetime of a task from addition to completion is 180 days.
+        If a task has not completed within 180 days of being added it will be
+        terminated by the Batch service and left in whatever state it was in at
+        that time.
 
         :param job_id: The ID of the job to which the task collection is to be
             added.
