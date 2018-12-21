@@ -239,7 +239,7 @@ class HanaInstancesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HanaOnAzure/hanaInstances/{hanaInstanceName}'}
 
-    def update_tags(
+    def update(
             self, resource_group_name, hana_instance_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Patches the Tags field of a SAP HANA instance.
 
@@ -266,7 +266,7 @@ class HanaInstancesOperations(object):
         tags_parameter = models.Tags(tags=tags)
 
         # Construct URL
-        url = self.update_tags.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -309,7 +309,7 @@ class HanaInstancesOperations(object):
             return client_raw_response
 
         return deserialized
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HanaOnAzure/hanaInstances/{hanaInstanceName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HanaOnAzure/hanaInstances/{hanaInstanceName}'}
 
     def restart(
             self, resource_group_name, hana_instance_name, custom_headers=None, raw=False, **operation_config):
