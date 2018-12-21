@@ -53,9 +53,9 @@ class SitePhpErrorLogFlag(ProxyOnlyResource):
         'master_log_errors_max_length': {'key': 'properties.masterLogErrorsMaxLength', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, local_log_errors=None, master_log_errors=None, local_log_errors_max_length=None, master_log_errors_max_length=None):
-        super(SitePhpErrorLogFlag, self).__init__(kind=kind)
-        self.local_log_errors = local_log_errors
-        self.master_log_errors = master_log_errors
-        self.local_log_errors_max_length = local_log_errors_max_length
-        self.master_log_errors_max_length = master_log_errors_max_length
+    def __init__(self, **kwargs):
+        super(SitePhpErrorLogFlag, self).__init__(**kwargs)
+        self.local_log_errors = kwargs.get('local_log_errors', None)
+        self.master_log_errors = kwargs.get('master_log_errors', None)
+        self.local_log_errors_max_length = kwargs.get('local_log_errors_max_length', None)
+        self.master_log_errors_max_length = kwargs.get('master_log_errors_max_length', None)

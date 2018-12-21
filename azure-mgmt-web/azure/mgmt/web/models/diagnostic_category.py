@@ -45,6 +45,6 @@ class DiagnosticCategory(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(DiagnosticCategory, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(DiagnosticCategory, self).__init__(**kwargs)
         self.description = None

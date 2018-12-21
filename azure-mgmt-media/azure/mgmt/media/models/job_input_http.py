@@ -17,17 +17,17 @@ class JobInputHttp(JobInputClip):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param label: A label that is assigned to a JobInput, that is used to
+    :param odatatype: Required. Constant filled by server.
+    :type odatatype: str
+    :param files: List of files. Required for JobInputHttp.
+    :type files: list[str]
+    :param label: A label that is assigned to a JobInputClip, that is used to
      satisfy a reference used in the Transform. For example, a Transform can be
      authored so as to take an image file with the label 'xyz' and apply it as
      an overlay onto the input video before it is encoded. When submitting a
      Job, exactly one of the JobInputs should be the image file, and it should
      have the label 'xyz'.
     :type label: str
-    :param odatatype: Required. Constant filled by server.
-    :type odatatype: str
-    :param files: List of files. Required for JobInputHttp.
-    :type files: list[str]
     :param base_uri: Base URI for HTTPS job input. It will be concatenated
      with provided file names.   If no base uri is given, then the provided
      file list is assumed to be fully qualified uris.
@@ -39,9 +39,9 @@ class JobInputHttp(JobInputClip):
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'files': {'key': 'files', 'type': '[str]'},
+        'label': {'key': 'label', 'type': 'str'},
         'base_uri': {'key': 'baseUri', 'type': 'str'},
     }
 

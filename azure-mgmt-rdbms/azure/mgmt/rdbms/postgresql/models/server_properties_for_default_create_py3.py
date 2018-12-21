@@ -17,7 +17,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '9.5', '9.6'
+    :param version: Server version. Possible values include: '9.5', '9.6',
+     '10', '10.0', '10.2'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'

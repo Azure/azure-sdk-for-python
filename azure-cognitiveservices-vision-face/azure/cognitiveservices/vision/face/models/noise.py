@@ -31,7 +31,7 @@ class Noise(Model):
         'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, noise_level=None, value=None):
-        super(Noise, self).__init__()
-        self.noise_level = noise_level
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Noise, self).__init__(**kwargs)
+        self.noise_level = kwargs.get('noise_level', None)
+        self.value = kwargs.get('value', None)

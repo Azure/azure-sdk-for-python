@@ -56,6 +56,13 @@ class ManagedInstance(TrackedResource):
     :type v_cores: int
     :param storage_size_in_gb: The maximum storage size in GB.
     :type storage_size_in_gb: int
+    :param collation: Collation of the managed instance.
+    :type collation: str
+    :ivar dns_zone: The Dns Zone that the managed instance is in.
+    :vartype dns_zone: str
+    :param dns_zone_partner: The resource id of another managed instance whose
+     DNS zone this managed instance will share after creation.
+    :type dns_zone_partner: str
     """
 
     _validation = {
@@ -65,6 +72,7 @@ class ManagedInstance(TrackedResource):
         'location': {'required': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
+        'dns_zone': {'readonly': True},
     }
 
     _attribute_map = {
@@ -83,9 +91,12 @@ class ManagedInstance(TrackedResource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'v_cores': {'key': 'properties.vCores', 'type': 'int'},
         'storage_size_in_gb': {'key': 'properties.storageSizeInGB', 'type': 'int'},
+        'collation': {'key': 'properties.collation', 'type': 'str'},
+        'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
+        'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, **kwargs) -> None:
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -97,3 +108,6 @@ class ManagedInstance(TrackedResource):
         self.license_type = license_type
         self.v_cores = v_cores
         self.storage_size_in_gb = storage_size_in_gb
+        self.collation = collation
+        self.dns_zone = None
+        self.dns_zone_partner = dns_zone_partner
