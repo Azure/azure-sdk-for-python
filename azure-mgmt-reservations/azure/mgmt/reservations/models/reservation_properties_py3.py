@@ -19,7 +19,7 @@ class ReservationProperties(Model):
     sending a request.
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux', 'CosmosDb'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off',

@@ -23,6 +23,7 @@ from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.task_operations import TaskOperations
 from .operations.compute_node_operations import ComputeNodeOperations
 from . import models
+from .custom.patch import patch_client
 
 
 class BatchServiceClientConfiguration(AzureConfiguration):
@@ -33,16 +34,18 @@ class BatchServiceClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param batch_url: The base URL for all Azure Batch service requests.
+    :type batch_url: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, batch_url):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://batch.core.windows.net'
+        if batch_url is None:
+            raise ValueError("Parameter 'batch_url' must not be None.")
+        base_url = '{batchUrl}'
 
         super(BatchServiceClientConfiguration, self).__init__(base_url)
 
@@ -50,6 +53,7 @@ class BatchServiceClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.batch_url = batch_url
 
 
 class BatchServiceClient(SDKClient):
@@ -80,17 +84,18 @@ class BatchServiceClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param batch_url: The base URL for all Azure Batch service requests.
+    :type batch_url: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, batch_url):
 
-        self.config = BatchServiceClientConfiguration(credentials, base_url)
+        self.config = BatchServiceClientConfiguration(credentials, batch_url)
         super(BatchServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-08-01.7.0'
+        self.api_version = '2018-12-01.8.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -112,3 +117,6 @@ class BatchServiceClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.compute_node = ComputeNodeOperations(
             self._client, self.config, self._serialize, self._deserialize)
+
+
+patch_client()

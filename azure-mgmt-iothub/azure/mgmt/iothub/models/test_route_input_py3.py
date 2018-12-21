@@ -21,6 +21,8 @@ class TestRouteInput(Model):
     :type message: ~azure.mgmt.iothub.models.RoutingMessage
     :param route: Required. Route properties
     :type route: ~azure.mgmt.iothub.models.RouteProperties
+    :param twin: Routing Twin Reference
+    :type twin: ~azure.mgmt.iothub.models.RoutingTwin
     """
 
     _validation = {
@@ -30,9 +32,11 @@ class TestRouteInput(Model):
     _attribute_map = {
         'message': {'key': 'message', 'type': 'RoutingMessage'},
         'route': {'key': 'route', 'type': 'RouteProperties'},
+        'twin': {'key': 'twin', 'type': 'RoutingTwin'},
     }
 
-    def __init__(self, *, route, message=None, **kwargs) -> None:
+    def __init__(self, *, route, message=None, twin=None, **kwargs) -> None:
         super(TestRouteInput, self).__init__(**kwargs)
         self.message = message
         self.route = route
+        self.twin = twin

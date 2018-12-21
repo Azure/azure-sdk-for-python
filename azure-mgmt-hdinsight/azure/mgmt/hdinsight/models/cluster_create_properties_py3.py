@@ -31,6 +31,9 @@ class ClusterCreateProperties(Model):
     :type compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
     :param storage_profile: The storage profile.
     :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+    :param disk_encryption_properties: The disk encryption properties.
+    :type disk_encryption_properties:
+     ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
     """
 
     _attribute_map = {
@@ -41,9 +44,10 @@ class ClusterCreateProperties(Model):
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
+        'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, security_profile=None, compute_profile=None, storage_profile=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -52,3 +56,4 @@ class ClusterCreateProperties(Model):
         self.security_profile = security_profile
         self.compute_profile = compute_profile
         self.storage_profile = storage_profile
+        self.disk_encryption_properties = disk_encryption_properties

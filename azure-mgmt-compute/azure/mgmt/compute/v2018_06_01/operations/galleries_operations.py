@@ -95,14 +95,16 @@ class GalleriesOperations(object):
 
     def create_or_update(
             self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a gallery.
+        """Create or update a Shared Image Gallery.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery. The allowed
+         characters are alphabets and numbers with dots and periods allowed in
+         the middle. The maximum length is 80 characters.
         :type gallery_name: str
-        :param gallery: Parameters supplied to the create or update gallery
-         operation.
+        :param gallery: Parameters supplied to the create or update Shared
+         Image Gallery operation.
         :type gallery: ~azure.mgmt.compute.v2018_06_01.models.Gallery
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -146,11 +148,11 @@ class GalleriesOperations(object):
 
     def get(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves information about a gallery.
+        """Retrieves information about a Shared Image Gallery.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery.
         :type gallery_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -246,11 +248,12 @@ class GalleriesOperations(object):
 
     def delete(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a gallery.
+        """Delete a Shared Image Gallery.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery to be
+         deleted.
         :type gallery_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

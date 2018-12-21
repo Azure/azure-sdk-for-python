@@ -19,7 +19,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param ask: Required. The key that must be used as FairPlay ASk.
+    :param ask: Required. The key that must be used as FairPlay Application
+     Secret key.
     :type ask: bytearray
     :param fair_play_pfx_password: Required. The password encrypting FairPlay
      certificate in PKCS 12 (pfx) format.

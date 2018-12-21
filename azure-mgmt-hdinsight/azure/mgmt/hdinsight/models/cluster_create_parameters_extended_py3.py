@@ -21,16 +21,20 @@ class ClusterCreateParametersExtended(Model):
     :type tags: dict[str, str]
     :param properties: The cluster create parameters.
     :type properties: ~azure.mgmt.hdinsight.models.ClusterCreateProperties
+    :param identity: The identity of the cluster, if configured.
+    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'ClusterCreateProperties'},
+        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, properties=None, identity=None, **kwargs) -> None:
         super(ClusterCreateParametersExtended, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.properties = properties
+        self.identity = identity

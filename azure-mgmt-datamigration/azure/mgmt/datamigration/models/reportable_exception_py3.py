@@ -15,42 +15,35 @@ from msrest.serialization import Model
 class ReportableException(Model):
     """Exception object for all custom exceptions.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar message: Error message
-    :vartype message: str
-    :ivar file_path: The path to the file where exception occurred
-    :vartype file_path: str
-    :ivar line_number: The line number where exception occurred
-    :vartype line_number: str
-    :ivar h_result: Coded numerical value that is assigned to a specific
+    :param message: Error message
+    :type message: str
+    :param actionable_message: Actionable steps for this exception
+    :type actionable_message: str
+    :param file_path: The path to the file where exception occurred
+    :type file_path: str
+    :param line_number: The line number where exception occurred
+    :type line_number: str
+    :param h_result: Coded numerical value that is assigned to a specific
      exception
-    :vartype h_result: int
-    :ivar stack_trace: Stack trace
-    :vartype stack_trace: str
+    :type h_result: int
+    :param stack_trace: Stack trace
+    :type stack_trace: str
     """
-
-    _validation = {
-        'message': {'readonly': True},
-        'file_path': {'readonly': True},
-        'line_number': {'readonly': True},
-        'h_result': {'readonly': True},
-        'stack_trace': {'readonly': True},
-    }
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
+        'actionable_message': {'key': 'actionableMessage', 'type': 'str'},
         'file_path': {'key': 'filePath', 'type': 'str'},
         'line_number': {'key': 'lineNumber', 'type': 'str'},
         'h_result': {'key': 'hResult', 'type': 'int'},
         'stack_trace': {'key': 'stackTrace', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, message: str=None, actionable_message: str=None, file_path: str=None, line_number: str=None, h_result: int=None, stack_trace: str=None, **kwargs) -> None:
         super(ReportableException, self).__init__(**kwargs)
-        self.message = None
-        self.file_path = None
-        self.line_number = None
-        self.h_result = None
-        self.stack_trace = None
+        self.message = message
+        self.actionable_message = actionable_message
+        self.file_path = file_path
+        self.line_number = line_number
+        self.h_result = h_result
+        self.stack_trace = stack_trace

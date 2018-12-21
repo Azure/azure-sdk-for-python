@@ -20,6 +20,8 @@ class ServiceCreatedEvent(ServiceEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -80,6 +82,7 @@ class ServiceCreatedEvent(ServiceEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -96,8 +99,8 @@ class ServiceCreatedEvent(ServiceEvent):
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, service_type_name: str, application_name: str, application_type_name: str, service_instance: int, is_stateful: bool, partition_count: int, target_replica_set_size: int, min_replica_set_size: int, service_package_version: str, partition_id: str, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ServiceCreatedEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, service_id: str, service_type_name: str, application_name: str, application_type_name: str, service_instance: int, is_stateful: bool, partition_count: int, target_replica_set_size: int, min_replica_set_size: int, service_package_version: str, partition_id: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(ServiceCreatedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, service_id=service_id, **kwargs)
         self.service_type_name = service_type_name
         self.application_name = application_name
         self.application_type_name = application_type_name
