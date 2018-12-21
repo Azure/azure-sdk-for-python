@@ -31,10 +31,17 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
     # ARM?
     result['is_arm'] = result.pop("is_arm", True)
 
+    # Do I need msrestazure for this package?
+    result['need_msrestazure'] = result.pop("need_msrestazure", True)
+
     # Pre-compute some Jinja variable that are complicated to do inside the templates
     package_parts = result["package_nspkg"][:-len('-nspkg')].split('-')
     result['nspkg_names'] = [
         ".".join(package_parts[:i+1])
+        for i in range(len(package_parts))
+    ]
+    result['init_names'] = [
+        "/".join(package_parts[:i+1])+"/__init__.py"
         for i in range(len(package_parts))
     ]
 

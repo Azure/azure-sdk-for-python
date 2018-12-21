@@ -3,6 +3,33 @@
 Release History
 ===============
 
+0.53.0 (2018-11-27)
++++++++++++++++++++
+
+**Features**
+
+- Add PasswordCredentials.custom_key_identifier
+- Add Application.key_credentials
+- Add Application.password_credentials
+
+**Bugfix**
+
+- Fix KeyCredential.custom_key_identifier type from bytes to str
+
+0.52.0 (2018-10-29)
++++++++++++++++++++
+
+**Bugfix**
+
+- Add missing required_resource_access in Application
+
+0.51.1 (2018-10-16)
++++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 0.50.0 and 0.51.0. No code change.
+
 0.51.0 (2018-10-11)
 +++++++++++++++++++
 

@@ -18,22 +18,24 @@ class Image(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id:
+    :ivar id: Id of the image.
     :vartype id: str
-    :ivar created:
+    :ivar created: Date the image was created.
     :vartype created: datetime
-    :ivar width:
+    :ivar width: Width of the image.
     :vartype width: int
-    :ivar height:
+    :ivar height: Height of the image.
     :vartype height: int
-    :ivar image_uri:
-    :vartype image_uri: str
-    :ivar thumbnail_uri:
+    :ivar resized_image_uri: The URI to the (resized) image used for training.
+    :vartype resized_image_uri: str
+    :ivar thumbnail_uri: The URI to the thumbnail of the original image.
     :vartype thumbnail_uri: str
-    :ivar tags:
+    :ivar original_image_uri: The URI to the original uploaded image.
+    :vartype original_image_uri: str
+    :ivar tags: Tags associated with this image.
     :vartype tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageTag]
-    :ivar regions:
+    :ivar regions: Regions associated with this image.
     :vartype regions:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegion]
     """
@@ -43,8 +45,9 @@ class Image(Model):
         'created': {'readonly': True},
         'width': {'readonly': True},
         'height': {'readonly': True},
-        'image_uri': {'readonly': True},
+        'resized_image_uri': {'readonly': True},
         'thumbnail_uri': {'readonly': True},
+        'original_image_uri': {'readonly': True},
         'tags': {'readonly': True},
         'regions': {'readonly': True},
     }
@@ -54,8 +57,9 @@ class Image(Model):
         'created': {'key': 'created', 'type': 'iso-8601'},
         'width': {'key': 'width', 'type': 'int'},
         'height': {'key': 'height', 'type': 'int'},
-        'image_uri': {'key': 'imageUri', 'type': 'str'},
+        'resized_image_uri': {'key': 'resizedImageUri', 'type': 'str'},
         'thumbnail_uri': {'key': 'thumbnailUri', 'type': 'str'},
+        'original_image_uri': {'key': 'originalImageUri', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[ImageTag]'},
         'regions': {'key': 'regions', 'type': '[ImageRegion]'},
     }
@@ -66,7 +70,8 @@ class Image(Model):
         self.created = None
         self.width = None
         self.height = None
-        self.image_uri = None
+        self.resized_image_uri = None
         self.thumbnail_uri = None
+        self.original_image_uri = None
         self.tags = None
         self.regions = None

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .rating import Rating
+from .rating_py3 import Rating
 
 
 class AggregateRating(Rating):

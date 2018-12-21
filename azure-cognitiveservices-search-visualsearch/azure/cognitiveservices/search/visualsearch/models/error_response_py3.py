@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .response_py3 import Response
 from msrest.exceptions import HttpOperationError
 
 

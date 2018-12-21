@@ -44,6 +44,12 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
@@ -95,7 +101,9 @@ class RunStatus(str, Enum):
 class RunType(str, Enum):
 
     quick_build = "QuickBuild"
+    quick_run = "QuickRun"
     auto_build = "AutoBuild"
+    auto_run = "AutoRun"
 
 
 class OS(str, Enum):
@@ -145,6 +153,7 @@ class TokenType(str, Enum):
 class SourceTriggerEvent(str, Enum):
 
     commit = "commit"
+    pullrequest = "pullrequest"
 
 
 class TriggerStatus(str, Enum):
