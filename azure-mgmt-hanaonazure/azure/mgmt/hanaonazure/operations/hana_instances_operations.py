@@ -263,7 +263,7 @@ class HanaInstancesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.hanaonazure.models.ErrorResponseException>`
         """
-        hana_instance_patch_tags_parameter = models.Tags(tags=tags)
+        tags_parameter = models.Tags(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
@@ -290,7 +290,7 @@ class HanaInstancesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(hana_instance_patch_tags_parameter, 'Tags')
+        body_content = self._serialize.body(tags_parameter, 'Tags')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
