@@ -65,8 +65,8 @@ class X12EnvelopeOverride(Model):
         'sender_application_id': {'key': 'senderApplicationId', 'type': 'str'},
         'receiver_application_id': {'key': 'receiverApplicationId', 'type': 'str'},
         'functional_identifier_code': {'key': 'functionalIdentifierCode', 'type': 'str'},
-        'date_format': {'key': 'dateFormat', 'type': 'X12DateFormat'},
-        'time_format': {'key': 'timeFormat', 'type': 'X12TimeFormat'},
+        'date_format': {'key': 'dateFormat', 'type': 'str'},
+        'time_format': {'key': 'timeFormat', 'type': 'str'},
     }
 
     def __init__(self, *, target_namespace: str, protocol_version: str, message_id: str, responsible_agency_code: str, header_version: str, sender_application_id: str, receiver_application_id: str, date_format, time_format, functional_identifier_code: str=None, **kwargs) -> None:

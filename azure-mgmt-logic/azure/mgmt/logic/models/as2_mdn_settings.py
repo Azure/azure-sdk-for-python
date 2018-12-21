@@ -64,7 +64,7 @@ class AS2MdnSettings(Model):
         'sign_outbound_mdn_if_optional': {'key': 'signOutboundMdnIfOptional', 'type': 'bool'},
         'mdn_text': {'key': 'mdnText', 'type': 'str'},
         'send_inbound_mdn_to_message_box': {'key': 'sendInboundMdnToMessageBox', 'type': 'bool'},
-        'mic_hashing_algorithm': {'key': 'micHashingAlgorithm', 'type': 'HashingAlgorithm'},
+        'mic_hashing_algorithm': {'key': 'micHashingAlgorithm', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

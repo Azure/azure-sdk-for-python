@@ -40,9 +40,8 @@ class ServiceTypeHealthPolicy(Model):
      The computation rounds up to tolerate one failure on small numbers of
      replicas. Default percentage is zero. Default value: 0 .
     :type max_percent_unhealthy_replicas_per_partition: int
-    :param max_percent_unhealthy_services: The maximum maximum allowed
-     percentage of unhealthy services. Allowed values are Byte values from zero
-     to 100.
+    :param max_percent_unhealthy_services: The maximum allowed percentage of
+     unhealthy services. Allowed values are Byte values from zero to 100.
      The percentage represents the maximum tolerated percentage of services
      that can be unhealthy before the application is considered in error.
      If the percentage is respected but there is at least one unhealthy

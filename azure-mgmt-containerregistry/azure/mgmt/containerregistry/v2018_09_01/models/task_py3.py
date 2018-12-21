@@ -14,7 +14,7 @@ from .resource_py3 import Resource
 
 class Task(Resource):
     """The task that has the ARM resource and task properties.
-    The  task will have all information to schedule a run against it.
+    The task will have all information to schedule a run against it.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

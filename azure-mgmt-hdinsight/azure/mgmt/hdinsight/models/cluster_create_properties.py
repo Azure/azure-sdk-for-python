@@ -31,6 +31,9 @@ class ClusterCreateProperties(Model):
     :type compute_profile: ~azure.mgmt.hdinsight.models.ComputeProfile
     :param storage_profile: The storage profile.
     :type storage_profile: ~azure.mgmt.hdinsight.models.StorageProfile
+    :param disk_encryption_properties: The disk encryption properties.
+    :type disk_encryption_properties:
+     ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
     """
 
     _attribute_map = {
@@ -41,6 +44,7 @@ class ClusterCreateProperties(Model):
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
+        'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -52,3 +56,4 @@ class ClusterCreateProperties(Model):
         self.security_profile = kwargs.get('security_profile', None)
         self.compute_profile = kwargs.get('compute_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
+        self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
