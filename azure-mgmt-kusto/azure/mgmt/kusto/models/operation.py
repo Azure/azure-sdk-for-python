@@ -16,7 +16,7 @@ class Operation(Model):
     """A REST API operation.
 
     :param name: The operation name. This is of the format
-     {provider}/{resource}/{operation}
+     {provider}/{resource}/{operation}.
     :type name: str
     :param display: The object that describes the operation.
     :type display: ~azure.mgmt.kusto.models.OperationDisplay

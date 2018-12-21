@@ -20,6 +20,8 @@ class PartitionHealthReportExpiredEvent(PartitionEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -69,6 +71,7 @@ class PartitionHealthReportExpiredEvent(PartitionEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -83,8 +86,8 @@ class PartitionHealthReportExpiredEvent(PartitionEvent):
         'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(PartitionHealthReportExpiredEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
         self.source_id = source_id
         self.property = property
         self.health_state = health_state

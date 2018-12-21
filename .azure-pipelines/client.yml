@@ -1,0 +1,62 @@
+# Variables: 
+#  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+
+trigger:
+- master
+
+jobs:
+- job: 'Build_Target_Packages'
+
+  pool:
+    vmImage: 'ubuntu-16.04'  
+
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.6'
+    inputs:
+      versionSpec: 3.6
+
+  - script: |
+     pip install wheel
+
+    displayName: 'Prep Environment, Install Packages'
+
+  - powershell: |
+     $inputFilterSet="$(build_targeting_string)"
+     
+     if ($inputFilterSet -eq "")
+     {
+         $inputFilterSet = "azure-*"
+     }
+     
+     foreach($inputFilter in $inputFilterSet.split(","))
+     {
+       $foldersToIterate = gci -Filter "$inputFilter"
+     
+       foreach ($folder in $foldersToIterate)
+       {
+         python3 ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
+       }
+     }
+     
+    displayName: 'Generate Packages'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+
+- template: generic.test.yml
+  parameters:
+    name: Linux
+    vmImage: 'ubuntu-16.04'
+
+- template: generic.test.yml
+  parameters:
+    name: macOS
+    vmImage: 'macOS-10.13'
+
+- template: generic.test.yml
+  parameters:
+    name: Windows
+    vmImage: 'vs2017-win2016'
+
+- template: specialcase.test.yml

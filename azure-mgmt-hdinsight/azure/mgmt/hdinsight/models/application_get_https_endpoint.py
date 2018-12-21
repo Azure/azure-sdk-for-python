@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class ApplicationGetHttpsEndpoint(Model):
     """Gets the application HTTP endpoints.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, str]
     :param access_modes: The list of access modes for the application.
     :type access_modes: list[str]
     :param location: The location of the endpoint.
@@ -29,7 +26,6 @@ class ApplicationGetHttpsEndpoint(Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
         'access_modes': {'key': 'accessModes', 'type': '[str]'},
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
@@ -38,7 +34,6 @@ class ApplicationGetHttpsEndpoint(Model):
 
     def __init__(self, **kwargs):
         super(ApplicationGetHttpsEndpoint, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
         self.access_modes = kwargs.get('access_modes', None)
         self.location = kwargs.get('location', None)
         self.destination_port = kwargs.get('destination_port', None)
