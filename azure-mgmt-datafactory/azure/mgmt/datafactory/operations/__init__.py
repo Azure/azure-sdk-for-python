@@ -11,6 +11,7 @@
 
 from .operations import Operations
 from .factories_operations import FactoriesOperations
+from .exposure_control_operations import ExposureControlOperations
 from .integration_runtimes_operations import IntegrationRuntimesOperations
 from .integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
 from .integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
@@ -26,6 +27,7 @@ from .trigger_runs_operations import TriggerRunsOperations
 __all__ = [
     'Operations',
     'FactoriesOperations',
+    'ExposureControlOperations',
     'IntegrationRuntimesOperations',
     'IntegrationRuntimeObjectMetadataOperations',
     'IntegrationRuntimeNodesOperations',
