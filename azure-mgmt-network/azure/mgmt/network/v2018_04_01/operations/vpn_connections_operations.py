@@ -293,11 +293,9 @@ class VpnConnectionsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}'}
 
     def list_by_vpn_gateway(
-            self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves all vpn connections for a particular virtual wan vpn gateway.
 
-        :param resource_group_name: The resource group name of the VpnGateway.
-        :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -318,7 +316,6 @@ class VpnConnectionsOperations(object):
                 url = self.list_by_vpn_gateway.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -359,4 +356,4 @@ class VpnConnectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_vpn_gateway.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections'}
+    list_by_vpn_gateway.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections'}
