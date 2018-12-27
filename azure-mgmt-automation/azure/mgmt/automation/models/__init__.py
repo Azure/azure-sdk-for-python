@@ -82,6 +82,7 @@ try:
     from .linux_properties_py3 import LinuxProperties
     from .tag_settings_properties_py3 import TagSettingsProperties
     from .azure_query_properties_py3 import AzureQueryProperties
+    from .non_azure_query_properties_py3 import NonAzureQueryProperties
     from .target_properties_py3 import TargetProperties
     from .update_configuration_py3 import UpdateConfiguration
     from .task_properties_py3 import TaskProperties
@@ -217,6 +218,7 @@ except (SyntaxError, ImportError):
     from .linux_properties import LinuxProperties
     from .tag_settings_properties import TagSettingsProperties
     from .azure_query_properties import AzureQueryProperties
+    from .non_azure_query_properties import NonAzureQueryProperties
     from .target_properties import TargetProperties
     from .update_configuration import UpdateConfiguration
     from .task_properties import TaskProperties
@@ -412,6 +414,7 @@ __all__ = [
     'LinuxProperties',
     'TagSettingsProperties',
     'AzureQueryProperties',
+    'NonAzureQueryProperties',
     'TargetProperties',
     'UpdateConfiguration',
     'TaskProperties',
