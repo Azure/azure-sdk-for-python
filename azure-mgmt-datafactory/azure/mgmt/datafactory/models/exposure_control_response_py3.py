@@ -15,18 +15,26 @@ from msrest.serialization import Model
 class ExposureControlResponse(Model):
     """The exposure control response.
 
-    :param feature_name: The feature name.
-    :type feature_name: str
-    :param value: The feature value.
-    :type value: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar feature_name: The feature name.
+    :vartype feature_name: str
+    :ivar value: The feature value.
+    :vartype value: str
     """
+
+    _validation = {
+        'feature_name': {'readonly': True},
+        'value': {'readonly': True},
+    }
 
     _attribute_map = {
         'feature_name': {'key': 'featureName', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, feature_name: str=None, value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ExposureControlResponse, self).__init__(**kwargs)
-        self.feature_name = feature_name
-        self.value = value
+        self.feature_name = None
+        self.value = None
