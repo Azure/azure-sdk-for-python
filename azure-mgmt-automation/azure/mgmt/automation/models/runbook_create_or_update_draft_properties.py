@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RunbookCreateOrUpdateDraftProperties(Model):
-    """The parameters supplied to the create or update dratft runbook properties.
+    """The parameters supplied to the create or update draft runbook properties.
 
     All required parameters must be populated in order to send to Azure.
 

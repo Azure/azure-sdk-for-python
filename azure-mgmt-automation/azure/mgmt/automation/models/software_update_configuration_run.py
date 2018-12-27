@@ -28,13 +28,13 @@ class SoftwareUpdateConfigurationRun(Model):
      ~azure.mgmt.automation.models.UpdateConfigurationNavigation
     :ivar status: Status of the software update configuration run.
     :vartype status: str
-    :ivar configured_duration: configured duration for the software update
+    :ivar configured_duration: Configured duration for the software update
      configuration run.
     :vartype configured_duration: str
     :ivar os_type: Operating system target of the software update
      configuration triggered this run
     :vartype os_type: str
-    :ivar start_time: Etart time of the software update configuration run.
+    :ivar start_time: Start time of the software update configuration run.
     :vartype start_time: datetime
     :ivar end_time: End time of the software update configuration run.
     :vartype end_time: datetime
@@ -43,17 +43,20 @@ class SoftwareUpdateConfigurationRun(Model):
     :vartype computer_count: int
     :ivar failed_count: Number of computers with failed status.
     :vartype failed_count: int
-    :ivar creation_time: Creation time of theresource, which only appears in
+    :ivar creation_time: Creation time of the resource, which only appears in
      the response.
     :vartype creation_time: datetime
-    :ivar created_by: createdBy property, which only appears in the response.
+    :ivar created_by: CreatedBy property, which only appears in the response.
     :vartype created_by: str
     :ivar last_modified_time: Last time resource was modified, which only
      appears in the response.
     :vartype last_modified_time: datetime
-    :ivar last_modified_by: lastModifiedBy property, which only appears in the
+    :ivar last_modified_by: LastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
+    :param tasks: Software update configuration tasks triggered in this run
+    :type tasks:
+     ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTasks
     """
 
     _validation = {
@@ -87,6 +90,7 @@ class SoftwareUpdateConfigurationRun(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftareUpdateConfigurationRunTasks'},
     }
 
     def __init__(self, **kwargs):
@@ -105,3 +109,4 @@ class SoftwareUpdateConfigurationRun(Model):
         self.created_by = None
         self.last_modified_time = None
         self.last_modified_by = None
+        self.tasks = kwargs.get('tasks', None)
