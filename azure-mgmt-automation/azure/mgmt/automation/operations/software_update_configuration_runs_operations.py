@@ -121,7 +121,7 @@ class SoftwareUpdateConfigurationRunsOperations(object):
          'properties/startTime', and
          'properties/softwareUpdateConfiguration/name'
         :type filter: str
-        :param skip: Number of entries you skip before returning results
+        :param skip: number of entries you skip before returning results
         :type skip: str
         :param top: Maximum number of entries returned in the results
          collection

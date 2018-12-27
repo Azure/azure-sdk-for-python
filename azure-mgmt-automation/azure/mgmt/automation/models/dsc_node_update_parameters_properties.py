@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DscNodeUpdateParametersProperties(Model):
     """DscNodeUpdateParametersProperties.
 
-    :param name: Gets or sets the name of the dsc node configuration.
+    :param name: Gets or sets the name of the dsc nodeconfiguration.
     :type name: str
     """
 

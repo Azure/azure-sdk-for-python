@@ -32,7 +32,7 @@ class DscNode(ProxyResource):
     :type ip: str
     :param account_id: Gets or sets the account id of the node.
     :type account_id: str
-    :param dsc_node_name: Gets or sets the name of the dsc node configuration.
+    :param dsc_node_name: Gets or sets the name of the dsc nodeconfiguration.
     :type dsc_node_name: str
     :param status: Gets or sets the status of the node.
     :type status: str

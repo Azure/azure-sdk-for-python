@@ -19,12 +19,18 @@ class TargetProperties(Model):
      configuration.
     :type azure_queries:
      list[~azure.mgmt.automation.models.AzureQueryProperties]
+    :param non_azure_queries: List of non Azure queries in the software update
+     configuration.
+    :type non_azure_queries:
+     list[~azure.mgmt.automation.models.NonAzureQueryProperties]
     """
 
     _attribute_map = {
         'azure_queries': {'key': 'azureQueries', 'type': '[AzureQueryProperties]'},
+        'non_azure_queries': {'key': 'nonAzureQueries', 'type': '[NonAzureQueryProperties]'},
     }
 
     def __init__(self, **kwargs):
         super(TargetProperties, self).__init__(**kwargs)
         self.azure_queries = kwargs.get('azure_queries', None)
+        self.non_azure_queries = kwargs.get('non_azure_queries', None)

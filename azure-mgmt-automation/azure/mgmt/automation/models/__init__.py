@@ -82,17 +82,14 @@ try:
     from .linux_properties_py3 import LinuxProperties
     from .tag_settings_properties_py3 import TagSettingsProperties
     from .azure_query_properties_py3 import AzureQueryProperties
+    from .non_azure_query_properties_py3 import NonAzureQueryProperties
     from .target_properties_py3 import TargetProperties
     from .update_configuration_py3 import UpdateConfiguration
-    from .task_properties_py3 import TaskProperties
-    from .software_update_configuration_tasks_py3 import SoftwareUpdateConfigurationTasks
     from .software_update_configuration_py3 import SoftwareUpdateConfiguration
     from .collection_item_update_configuration_py3 import CollectionItemUpdateConfiguration
     from .software_update_configuration_collection_item_py3 import SoftwareUpdateConfigurationCollectionItem
     from .software_update_configuration_list_result_py3 import SoftwareUpdateConfigurationListResult
     from .update_configuration_navigation_py3 import UpdateConfigurationNavigation
-    from .softare_update_configuration_run_task_properties_py3 import SoftareUpdateConfigurationRunTaskProperties
-    from .softare_update_configuration_run_tasks_py3 import SoftareUpdateConfigurationRunTasks
     from .software_update_configuration_run_py3 import SoftwareUpdateConfigurationRun
     from .software_update_configuration_run_list_result_py3 import SoftwareUpdateConfigurationRunListResult
     from .job_navigation_py3 import JobNavigation
@@ -217,17 +214,14 @@ except (SyntaxError, ImportError):
     from .linux_properties import LinuxProperties
     from .tag_settings_properties import TagSettingsProperties
     from .azure_query_properties import AzureQueryProperties
+    from .non_azure_query_properties import NonAzureQueryProperties
     from .target_properties import TargetProperties
     from .update_configuration import UpdateConfiguration
-    from .task_properties import TaskProperties
-    from .software_update_configuration_tasks import SoftwareUpdateConfigurationTasks
     from .software_update_configuration import SoftwareUpdateConfiguration
     from .collection_item_update_configuration import CollectionItemUpdateConfiguration
     from .software_update_configuration_collection_item import SoftwareUpdateConfigurationCollectionItem
     from .software_update_configuration_list_result import SoftwareUpdateConfigurationListResult
     from .update_configuration_navigation import UpdateConfigurationNavigation
-    from .softare_update_configuration_run_task_properties import SoftareUpdateConfigurationRunTaskProperties
-    from .softare_update_configuration_run_tasks import SoftareUpdateConfigurationRunTasks
     from .software_update_configuration_run import SoftwareUpdateConfigurationRun
     from .software_update_configuration_run_list_result import SoftwareUpdateConfigurationRunListResult
     from .job_navigation import JobNavigation
@@ -412,17 +406,14 @@ __all__ = [
     'LinuxProperties',
     'TagSettingsProperties',
     'AzureQueryProperties',
+    'NonAzureQueryProperties',
     'TargetProperties',
     'UpdateConfiguration',
-    'TaskProperties',
-    'SoftwareUpdateConfigurationTasks',
     'SoftwareUpdateConfiguration',
     'CollectionItemUpdateConfiguration',
     'SoftwareUpdateConfigurationCollectionItem',
     'SoftwareUpdateConfigurationListResult',
     'UpdateConfigurationNavigation',
-    'SoftareUpdateConfigurationRunTaskProperties',
-    'SoftareUpdateConfigurationRunTasks',
     'SoftwareUpdateConfigurationRun',
     'SoftwareUpdateConfigurationRunListResult',
     'JobNavigation',

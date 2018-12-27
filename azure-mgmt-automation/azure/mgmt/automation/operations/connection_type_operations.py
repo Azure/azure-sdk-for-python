@@ -38,13 +38,13 @@ class ConnectionTypeOperations(object):
 
     def delete(
             self, resource_group_name, automation_account_name, connection_type_name, custom_headers=None, raw=False, **operation_config):
-        """Delete the connection type.
+        """Delete the connectiontype.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param connection_type_name: The name of connection type.
+        :param connection_type_name: The name of connectiontype.
         :type connection_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -93,13 +93,13 @@ class ConnectionTypeOperations(object):
 
     def get(
             self, resource_group_name, automation_account_name, connection_type_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the connection type identified by connection type name.
+        """Retrieve the connectiontype identified by connectiontype name.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param connection_type_name: The name of connection type.
+        :param connection_type_name: The name of connectiontype.
         :type connection_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -157,17 +157,17 @@ class ConnectionTypeOperations(object):
 
     def create_or_update(
             self, resource_group_name, automation_account_name, connection_type_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a connection type.
+        """Create a connectiontype.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param connection_type_name: The parameters supplied to the create or
-         update connection type operation.
+         update connectiontype operation.
         :type connection_type_name: str
         :param parameters: The parameters supplied to the create or update
-         connection type operation.
+         connectiontype operation.
         :type parameters:
          ~azure.mgmt.automation.models.ConnectionTypeCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
@@ -232,7 +232,7 @@ class ConnectionTypeOperations(object):
 
     def list_by_automation_account(
             self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a list of connection types.
+        """Retrieve a list of connectiontypes.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str

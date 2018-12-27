@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RunAsCredentialAssociationProperty(Model):
-    """Definition of RunAs credential to use for hybrid worker.
+    """Definition of runas credential to use for hybrid worker.
 
     :param name: Gets or sets the name of the credential.
     :type name: str

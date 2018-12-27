@@ -13,7 +13,7 @@ from .proxy_resource_py3 import ProxyResource
 
 
 class Variable(ProxyResource):
-    """Definition of the variable.
+    """Definition of the varible.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -52,7 +52,7 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :param job: Job associated with the software update configuration machine
      run
     :type job: ~azure.mgmt.automation.models.JobNavigation
-    :ivar creation_time: Creation time of the resource, which only appears in
+    :ivar creation_time: Creation time of theresource, which only appears in
      the response.
     :vartype creation_time: datetime
     :ivar created_by: createdBy property, which only appears in the response.
@@ -63,8 +63,6 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :ivar last_modified_by: lastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
-    :param error: Details of provisioning error
-    :type error: ~azure.mgmt.automation.models.ErrorResponse
     """
 
     _validation = {
@@ -103,10 +101,9 @@ class SoftwareUpdateConfigurationMachineRun(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, *, software_update_configuration=None, job=None, error=None, **kwargs) -> None:
+    def __init__(self, *, software_update_configuration=None, job=None, **kwargs) -> None:
         super(SoftwareUpdateConfigurationMachineRun, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -125,4 +122,3 @@ class SoftwareUpdateConfigurationMachineRun(Model):
         self.created_by = None
         self.last_modified_time = None
         self.last_modified_by = None
-        self.error = error
