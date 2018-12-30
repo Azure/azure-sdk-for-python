@@ -26,6 +26,13 @@ try:
     from .information_protection_keyword_py3 import InformationProtectionKeyword
     from .information_type_py3 import InformationType
     from .information_protection_policy_py3 import InformationProtectionPolicy
+    from .threshold_custom_alert_rule_py3 import ThresholdCustomAlertRule
+    from .time_window_custom_alert_rule_py3 import TimeWindowCustomAlertRule
+    from .allowlist_custom_alert_rule_py3 import AllowlistCustomAlertRule
+    from .denylist_custom_alert_rule_py3 import DenylistCustomAlertRule
+    from .iot_security_group_py3 import IotSecurityGroup
+    from .iot_security_group_list_py3 import IotSecurityGroupList
+    from .custom_alert_rule_py3 import CustomAlertRule
     from .location_py3 import Location
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -80,6 +87,13 @@ except (SyntaxError, ImportError):
     from .information_protection_keyword import InformationProtectionKeyword
     from .information_type import InformationType
     from .information_protection_policy import InformationProtectionPolicy
+    from .threshold_custom_alert_rule import ThresholdCustomAlertRule
+    from .time_window_custom_alert_rule import TimeWindowCustomAlertRule
+    from .allowlist_custom_alert_rule import AllowlistCustomAlertRule
+    from .denylist_custom_alert_rule import DenylistCustomAlertRule
+    from .iot_security_group import IotSecurityGroup
+    from .iot_security_group_list import IotSecurityGroupList
+    from .custom_alert_rule import CustomAlertRule
     from .location import Location
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -165,6 +179,13 @@ __all__ = [
     'InformationProtectionKeyword',
     'InformationType',
     'InformationProtectionPolicy',
+    'ThresholdCustomAlertRule',
+    'TimeWindowCustomAlertRule',
+    'AllowlistCustomAlertRule',
+    'DenylistCustomAlertRule',
+    'IotSecurityGroup',
+    'IotSecurityGroupList',
+    'CustomAlertRule',
     'Location',
     'OperationDisplay',
     'Operation',
