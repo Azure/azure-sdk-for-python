@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .setting_resource import SettingResource
 
 
-class Setting(Model):
+class Setting(SettingResource):
     """Represents a security setting in Azure Security Center.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataExportSetting
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,8 +26,10 @@ class Setting(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
+    :param kind: Required. the kind of the settings string
+     (DataExportSetting). Possible values include: 'DataExportSetting',
+     'AlertSuppressionSetting'
+    :type kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     _validation = {
@@ -47,13 +46,5 @@ class Setting(Model):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'kind': {'DataExportSetting': 'DataExportSetting'}
-    }
-
     def __init__(self, **kwargs):
         super(Setting, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.kind = None
