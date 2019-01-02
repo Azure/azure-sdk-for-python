@@ -21,9 +21,9 @@ class CustomDomain(Model):
     :param name: Required. Gets or sets the custom domain name assigned to the
      storage account. Name is the CNAME source.
     :type name: str
-    :param use_sub_domain: Indicates whether indirect CName validation is
+    :param use_sub_domain_name: Indicates whether indirect CName validation is
      enabled. Default value is false. This should only be set on updates.
-    :type use_sub_domain: bool
+    :type use_sub_domain_name: bool
     """
 
     _validation = {
@@ -32,10 +32,10 @@ class CustomDomain(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'use_sub_domain': {'key': 'useSubDomain', 'type': 'bool'},
+        'use_sub_domain_name': {'key': 'useSubDomainName', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(CustomDomain, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.use_sub_domain = kwargs.get('use_sub_domain', None)
+        self.use_sub_domain_name = kwargs.get('use_sub_domain_name', None)

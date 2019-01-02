@@ -632,7 +632,7 @@ class StorageAccountsOperations(object):
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param key_name: The name of storage keys that want to be regenerated,
-         possible vaules are key1, key2.
+         possible values are key1, key2.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

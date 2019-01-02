@@ -284,7 +284,7 @@ class StorageAccountsOperations(object):
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param expand: May be used to expand the properties within account's
-         properties. By default, data is not included when fecthing properties.
+         properties. By default, data is not included when fetching properties.
          Currently we only support geoReplicationStats. Possible values
          include: 'geoReplicationStats'
         :type expand: str or
@@ -640,7 +640,7 @@ class StorageAccountsOperations(object):
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param key_name: The name of storage keys that want to be regenerated,
-         possible vaules are key1, key2.
+         possible values are key1, key2.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
