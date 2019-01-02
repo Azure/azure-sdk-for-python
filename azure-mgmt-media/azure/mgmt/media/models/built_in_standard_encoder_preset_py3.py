@@ -21,7 +21,8 @@ class BuiltInStandardEncoderPreset(Preset):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param preset_name: Required. The built-in preset to be used for encoding
-     videos. Possible values include: 'AdaptiveStreaming',
+     videos. Possible values include: 'H264SingleBitrateSD',
+     'H264SingleBitrate720p', 'H264SingleBitrate1080p', 'AdaptiveStreaming',
      'AACGoodQualityAudio', 'H264MultipleBitrate1080p',
      'H264MultipleBitrate720p', 'H264MultipleBitrateSD'
     :type preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
@@ -34,7 +35,7 @@ class BuiltInStandardEncoderPreset(Preset):
 
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
-        'preset_name': {'key': 'presetName', 'type': 'EncoderNamedPreset'},
+        'preset_name': {'key': 'presetName', 'type': 'str'},
     }
 
     def __init__(self, *, preset_name, **kwargs) -> None:

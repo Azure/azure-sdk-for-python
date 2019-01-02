@@ -18,7 +18,7 @@ class ListServiceSasResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar service_sas_token: List service SAS credentials of speicific
+    :ivar service_sas_token: List service SAS credentials of specific
      resource.
     :vartype service_sas_token: str
     """

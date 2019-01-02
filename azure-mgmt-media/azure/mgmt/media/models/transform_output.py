@@ -20,8 +20,10 @@ class TransformOutput(Model):
 
     :param on_error: A Transform can define more than one outputs. This
      property defines what the service should do when one output fails - either
-     continue to produce other outputs, or, stop the other outputs. The default
-     is stop. Possible values include: 'StopProcessingJob', 'ContinueJob'
+     continue to produce other outputs, or, stop the other outputs. The overall
+     Job state will not reflect failures of outputs that are specified with
+     'ContinueJob'. The default is 'StopProcessingJob'. Possible values
+     include: 'StopProcessingJob', 'ContinueJob'
     :type on_error: str or ~azure.mgmt.media.models.OnErrorType
     :param relative_priority: Sets the relative priority of the
      TransformOutputs within a Transform. This sets the priority that the
@@ -39,8 +41,8 @@ class TransformOutput(Model):
     }
 
     _attribute_map = {
-        'on_error': {'key': 'onError', 'type': 'OnErrorType'},
-        'relative_priority': {'key': 'relativePriority', 'type': 'Priority'},
+        'on_error': {'key': 'onError', 'type': 'str'},
+        'relative_priority': {'key': 'relativePriority', 'type': 'str'},
         'preset': {'key': 'preset', 'type': 'Preset'},
     }
 

@@ -2,6 +2,8 @@
 __pycache__/
 *.pyc
 .pytest_cache
+.mypy_cache
+.cache
 
 # Virtual environment
 env*/
@@ -26,7 +28,7 @@ build/
 # Test results
 TestResults/
 
-# Credentials 
+# Credentials
 credentials_real.json
 testsettings_local.json
 testsettings_local.cfg
@@ -67,3 +69,5 @@ src/build
 
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
+
+code_reports

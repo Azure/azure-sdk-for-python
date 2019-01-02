@@ -21,7 +21,7 @@ class WorkflowTriggerFilter(Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'WorkflowState'},
+        'state': {'key': 'state', 'type': 'str'},
     }
 
     def __init__(self, *, state=None, **kwargs) -> None:

@@ -28,7 +28,7 @@ class HairColor(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, color=None, confidence=None):
-        super(HairColor, self).__init__()
-        self.color = color
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(HairColor, self).__init__(**kwargs)
+        self.color = kwargs.get('color', None)
+        self.confidence = kwargs.get('confidence', None)

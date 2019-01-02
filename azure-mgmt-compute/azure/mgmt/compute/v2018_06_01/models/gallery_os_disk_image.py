@@ -18,7 +18,8 @@ class GalleryOSDiskImage(GalleryDiskImage):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar size_in_gb: It indicates the size of the VHD to create.
+    :ivar size_in_gb: This property indicates the size of the VHD to be
+     created.
     :vartype size_in_gb: int
     :ivar host_caching: The host caching of the disk. Valid values are 'None',
      'ReadOnly', and 'ReadWrite'. Possible values include: 'None', 'ReadOnly',

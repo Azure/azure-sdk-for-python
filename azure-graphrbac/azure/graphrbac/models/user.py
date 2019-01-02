@@ -18,6 +18,8 @@ class User(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +28,7 @@ class User(DirectoryObject):
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
-    :param object_type: Constant filled by server.
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
@@ -84,17 +86,17 @@ class User(DirectoryObject):
         'sign_in_names': {'key': 'signInNames', 'type': '[SignInName]'},
     }
 
-    def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, user_principal_name=None, mail_nickname=None, mail=None, sign_in_names=None):
-        super(User, self).__init__(additional_properties=additional_properties)
-        self.immutable_id = immutable_id
-        self.usage_location = usage_location
-        self.given_name = given_name
-        self.surname = surname
-        self.user_type = user_type
-        self.account_enabled = account_enabled
-        self.display_name = display_name
-        self.user_principal_name = user_principal_name
-        self.mail_nickname = mail_nickname
-        self.mail = mail
-        self.sign_in_names = sign_in_names
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.immutable_id = kwargs.get('immutable_id', None)
+        self.usage_location = kwargs.get('usage_location', None)
+        self.given_name = kwargs.get('given_name', None)
+        self.surname = kwargs.get('surname', None)
+        self.user_type = kwargs.get('user_type', None)
+        self.account_enabled = kwargs.get('account_enabled', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.user_principal_name = kwargs.get('user_principal_name', None)
+        self.mail_nickname = kwargs.get('mail_nickname', None)
+        self.mail = kwargs.get('mail', None)
+        self.sign_in_names = kwargs.get('sign_in_names', None)
         self.object_type = 'User'

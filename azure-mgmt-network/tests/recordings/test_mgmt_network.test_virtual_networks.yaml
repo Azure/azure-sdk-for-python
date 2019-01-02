@@ -11,40 +11,40 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['392']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvnet4725106e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e\"\
-        ,\r\n  \"etag\": \"W/\\\"7fa57a5a-b312-47aa-9a9d-6c8645d663a5\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"e75383e3-cc8f-446f-b67d-68815833a568\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"a8c121c5-e4e5-447c-a0e3-dfa5317ef905\",\r\n    \"\
+        \   \"resourceGuid\": \"9d6271f7-14fa-47c5-832a-349717ac28fb\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pyvnetsubnetone4725106e\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"7fa57a5a-b312-47aa-9a9d-6c8645d663a5\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"e75383e3-cc8f-446f-b67d-68815833a568\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n      },\r\n      {\r\n        \"name\": \"pyvnetsubnettwo4725106e\",\r\
         \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"7fa57a5a-b312-47aa-9a9d-6c8645d663a5\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"e75383e3-cc8f-446f-b67d-68815833a568\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.2.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n      }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
         : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c84931ff-14f5-40b4-adb8-e1a17b2a68d4?api-version=2018-07-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e8dae37e-10b5-4666-bbff-f28cbc56ea7a?api-version=2018-10-01']
       cache-control: [no-cache]
       content-length: ['1923']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:10 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:39 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -58,17 +58,17 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c84931ff-14f5-40b4-adb8-e1a17b2a68d4?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e8dae37e-10b5-4666-bbff-f28cbc56ea7a?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['30']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:14 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:43 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -83,17 +83,17 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c84931ff-14f5-40b4-adb8-e1a17b2a68d4?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e8dae37e-10b5-4666-bbff-f28cbc56ea7a?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['29']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:25 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:54 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -108,28 +108,28 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvnet4725106e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e\"\
-        ,\r\n  \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"a8c121c5-e4e5-447c-a0e3-dfa5317ef905\",\r\n    \"\
+        \    \"resourceGuid\": \"9d6271f7-14fa-47c5-832a-349717ac28fb\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pyvnetsubnetone4725106e\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n      },\r\n      {\r\n        \"name\": \"pyvnetsubnettwo4725106e\",\r\
         \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.2.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
@@ -139,8 +139,8 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1926']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:25 GMT']
-      etag: [W/"0bbb8331-1ffe-491b-9a01-256358f3cff9"]
+      date: ['Tue, 27 Nov 2018 20:46:55 GMT']
+      etag: [W/"c2f739f2-c82a-479b-b37a-d3bfce069e04"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -155,29 +155,29 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvnet4725106e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e\"\
-        ,\r\n  \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"a8c121c5-e4e5-447c-a0e3-dfa5317ef905\",\r\n    \"\
+        \    \"resourceGuid\": \"9d6271f7-14fa-47c5-832a-349717ac28fb\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
         \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
         \   \"subnets\": [\r\n      {\r\n        \"name\": \"pyvnetsubnetone4725106e\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.1.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
         \r\n      },\r\n      {\r\n        \"name\": \"pyvnetsubnettwo4725106e\",\r\
         \n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e\"\
-        ,\r\n        \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.2.0/24\",\r\n          \"delegations\"\
         : []\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
@@ -187,8 +187,8 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1926']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:26 GMT']
-      etag: [W/"0bbb8331-1ffe-491b-9a01-256358f3cff9"]
+      date: ['Tue, 27 Nov 2018 20:46:55 GMT']
+      etag: [W/"c2f739f2-c82a-479b-b37a-d3bfce069e04"]
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -203,18 +203,18 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/CheckIPAddressAvailability?ipAddress=10.0.1.35&api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/CheckIPAddressAvailability?ipAddress=10.0.1.35&api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"available\": true\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['25']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:27 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -229,32 +229,32 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyvnet4725106e\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e\"\
-        ,\r\n      \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\",\r\
         \n      \"type\": \"Microsoft.Network/virtualNetworks\",\r\n      \"location\"\
         : \"westus\",\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"a8c121c5-e4e5-447c-a0e3-dfa5317ef905\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"9d6271f7-14fa-47c5-832a-349717ac28fb\"\
         ,\r\n        \"addressSpace\": {\r\n          \"addressPrefixes\": [\r\n \
         \           \"10.0.0.0/16\"\r\n          ]\r\n        },\r\n        \"dhcpOptions\"\
         : {\r\n          \"dnsServers\": [\r\n            \"10.1.1.1\",\r\n      \
         \      \"10.1.2.4\"\r\n          ]\r\n        },\r\n        \"subnets\": [\r\
         \n          {\r\n            \"name\": \"pyvnetsubnetone4725106e\",\r\n  \
         \          \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e\"\
-        ,\r\n            \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\
+        ,\r\n            \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\
         \",\r\n            \"properties\": {\r\n              \"provisioningState\"\
         : \"Succeeded\",\r\n              \"addressPrefix\": \"10.0.1.0/24\",\r\n\
         \              \"delegations\": []\r\n            },\r\n            \"type\"\
         : \"Microsoft.Network/virtualNetworks/subnets\"\r\n          },\r\n      \
         \    {\r\n            \"name\": \"pyvnetsubnettwo4725106e\",\r\n         \
         \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e\"\
-        ,\r\n            \"etag\": \"W/\\\"0bbb8331-1ffe-491b-9a01-256358f3cff9\\\"\
+        ,\r\n            \"etag\": \"W/\\\"c2f739f2-c82a-479b-b37a-d3bfce069e04\\\"\
         \",\r\n            \"properties\": {\r\n              \"provisioningState\"\
         : \"Succeeded\",\r\n              \"addressPrefix\": \"10.0.2.0/24\",\r\n\
         \              \"delegations\": []\r\n            },\r\n            \"type\"\
@@ -266,7 +266,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['2147']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:27 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -281,25 +281,25 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/virtualNetworks?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/virtualNetworks?api-version=2018-10-01
   response:
-    body: {string: '{"value":[{"name":"pyvnet4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e","etag":"W/\"0bbb8331-1ffe-491b-9a01-256358f3cff9\"","type":"Microsoft.Network/virtualNetworks","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"a8c121c5-e4e5-447c-a0e3-dfa5317ef905","addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.1.1","10.1.2.4"]},"subnets":[{"name":"pyvnetsubnetone4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e","etag":"W/\"0bbb8331-1ffe-491b-9a01-256358f3cff9\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.1.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"pyvnetsubnettwo4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e","etag":"W/\"0bbb8331-1ffe-491b-9a01-256358f3cff9\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.2.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"pyvirtnetb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef","etag":"W/\"786fd52f-bb0a-42cb-b713-8c6c9d254260\"","type":"Microsoft.Network/virtualNetworks","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"57b551b7-3508-465a-967f-b60b94942883","addressSpace":{"addressPrefixes":["10.11.0.0/16","10.12.0.0/16"]},"subnets":[{"name":"pysubnetfeb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef","etag":"W/\"786fd52f-bb0a-42cb-b713-8c6c9d254260\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.11.0.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"pysubnetbeb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef","etag":"W/\"786fd52f-bb0a-42cb-b713-8c6c9d254260\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.12.0.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"GatewaySubnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet","etag":"W/\"786fd52f-bb0a-42cb-b713-8c6c9d254260\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.12.255.0/27","ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef/ipConfigurations/default"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"wilxvm1VNET","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/wilxtest/providers/Microsoft.Network/virtualNetworks/wilxvm1VNET","etag":"W/\"a46ef478-203e-4fa1-ac9c-3f0c45a4efaa\"","type":"Microsoft.Network/virtualNetworks","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"f532ec91-debf-46ff-9d28-f2e177aa6e17","addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"subnets":[{"name":"wilxvm1Subnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/wilxtest/providers/Microsoft.Network/virtualNetworks/wilxvm1VNET/subnets/wilxvm1Subnet","etag":"W/\"a46ef478-203e-4fa1-ac9c-3f0c45a4efaa\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg6"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/wilxtest/providers/Microsoft.Network/networkInterfaces/wilxvm1VMNic/ipConfigurations/ipconfigwilxvm1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abunt3","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abunt3","etag":"W/\"950f2b68-6135-435a-9078-eab8b1621a23\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"1138617d-1a25-4252-8846-1a72b81aa4a8","addressSpace":{"addressPrefixes":["10.2.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abunt3/subnets/default","etag":"W/\"950f2b68-6135-435a-9078-eab8b1621a23\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.2.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu3634/ipConfigurations/ipconfig1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu1428/ipConfigurations/ipconfig1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu2743/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu-vnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu-vnet","etag":"W/\"713cff26-81d8-4eda-9b10-4dc7e237732a\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"ac579595-763e-4053-895d-cfbed48dd172","addressSpace":{"addressPrefixes":["10.3.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu-vnet/subnets/default","etag":"W/\"713cff26-81d8-4eda-9b10-4dc7e237732a\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.3.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu259/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu2","etag":"W/\"670a7d7f-7c3b-498e-acbe-d782e0a0460f\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"8d52136d-fdf0-413b-be8e-f68a7d57eddc","addressSpace":{"addressPrefixes":["10.5.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu2/subnets/default","etag":"W/\"670a7d7f-7c3b-498e-acbe-d782e0a0460f\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.5.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu2817/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu3","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu3","etag":"W/\"e35c9b50-5da4-4099-84f3-a1c0a265ff8c\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"fa919f6c-1730-4ba6-99a1-909f8ab380d0","addressSpace":{"addressPrefixes":["10.4.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu3/subnets/default","etag":"W/\"e35c9b50-5da4-4099-84f3-a1c0a265ff8c\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.4.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abunt4752/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"Dtlcliautomationlab","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestlab1/providers/Microsoft.Network/virtualNetworks/Dtlcliautomationlab","etag":"W/\"ec503b49-4483-4eaa-a5f0-78b45088e8d7\"","type":"Microsoft.Network/virtualNetworks","location":"southcentralus","tags":{"hidden-DevTestLabs-LabUId":"ca9ec547-32c5-422d-b3d2-25906ed71959"},"properties":{"provisioningState":"Succeeded","resourceGuid":"b083abf5-63cf-4ba2-b6fa-55ce660ce895","addressSpace":{"addressPrefixes":["10.0.0.0/20"]},"dhcpOptions":{"dnsServers":[]},"subnets":[{"name":"DtlcliautomationlabSubnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestlab1/providers/Microsoft.Network/virtualNetworks/Dtlcliautomationlab/subnets/DtlcliautomationlabSubnet","etag":"W/\"ec503b49-4483-4eaa-a5f0-78b45088e8d7\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/20","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg1"},"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"lmazuel-testcapture-vnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/virtualNetworks/lmazuel-testcapture-vnet","etag":"W/\"59405130-e3b3-42b9-904d-3f3b1b4bbfce\"","type":"Microsoft.Network/virtualNetworks","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"a1ba5e36-4ef1-4778-bac9-826091314efa","addressSpace":{"addressPrefixes":["10.1.0.0/24"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/virtualNetworks/lmazuel-testcapture-vnet/subnets/default","etag":"W/\"59405130-e3b3-42b9-904d-3f3b1b4bbfce\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.1.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg2"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/networkInterfaces/lmazuel-testcapture427/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}}]}'}
+    body: {string: '{"value":[{"name":"tosin-vmVNET","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/virtualNetworks/tosin-vmVNET","etag":"W/\"2c507d2d-b7f6-4149-8724-e539876f9754\"","type":"Microsoft.Network/virtualNetworks","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"f09dc357-46ca-44b0-a95b-9dfa8092c2d0","addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"subnets":[{"name":"tosin-vmSubnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/virtualNetworks/tosin-vmVNET/subnets/tosin-vmSubnet","etag":"W/\"2c507d2d-b7f6-4149-8724-e539876f9754\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg6"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/networkInterfaces/tosin-vmVMNic/ipConfigurations/ipconfigtosin-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/networkInterfaces/tosin-vm-generalizedVMNic/ipConfigurations/ipconfigtosin-vm-generalized"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"tosin-vnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/virtualNetworks/tosin-vnet","etag":"W/\"e76fad5b-8bb5-4482-993f-cc571b5d3261\"","type":"Microsoft.Network/virtualNetworks","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"d53a4ab2-7dd4-45d7-b6b0-bcd984a74c3f","addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"subnets":[{"name":"my-subnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/virtualNetworks/tosin-vnet/subnets/my-subnet","etag":"W/\"e76fad5b-8bb5-4482-993f-cc571b5d3261\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg6"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ova-test/providers/Microsoft.Network/networkInterfaces/test-vm-vnetVMNic/ipConfigurations/ipconfigtest-vm-vnet"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"pyvnet4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e","etag":"W/\"c2f739f2-c82a-479b-b37a-d3bfce069e04\"","type":"Microsoft.Network/virtualNetworks","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"9d6271f7-14fa-47c5-832a-349717ac28fb","addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.1.1","10.1.2.4"]},"subnets":[{"name":"pyvnetsubnetone4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e","etag":"W/\"c2f739f2-c82a-479b-b37a-d3bfce069e04\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.1.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"pyvnetsubnettwo4725106e","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e","etag":"W/\"c2f739f2-c82a-479b-b37a-d3bfce069e04\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.2.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"pyvirtnetb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef","etag":"W/\"ac7c1133-5987-4b3d-a426-2c9b0ffca1fe\"","type":"Microsoft.Network/virtualNetworks","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"06eb4b27-04da-43ea-8a5e-ebded8c62cc3","addressSpace":{"addressPrefixes":["10.11.0.0/16","10.12.0.0/16"]},"subnets":[{"name":"pysubnetfeb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef","etag":"W/\"ac7c1133-5987-4b3d-a426-2c9b0ffca1fe\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.11.0.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"pysubnetbeb4d417ef","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef","etag":"W/\"ac7c1133-5987-4b3d-a426-2c9b0ffca1fe\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.12.0.0/24","delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"},{"name":"GatewaySubnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet","etag":"W/\"ac7c1133-5987-4b3d-a426-2c9b0ffca1fe\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.12.255.0/27","ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef/ipConfigurations/default"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abunt3","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abunt3","etag":"W/\"0e9a2fe0-a94b-4f65-85b9-ab8fcaed8149\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"1138617d-1a25-4252-8846-1a72b81aa4a8","addressSpace":{"addressPrefixes":["10.2.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abunt3/subnets/default","etag":"W/\"0e9a2fe0-a94b-4f65-85b9-ab8fcaed8149\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.2.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu3634/ipConfigurations/ipconfig1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu1428/ipConfigurations/ipconfig1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu2743/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu-vnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu-vnet","etag":"W/\"5a0a8b60-b7ab-4407-9cb3-5d06b9871779\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"ac579595-763e-4053-895d-cfbed48dd172","addressSpace":{"addressPrefixes":["10.3.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu-vnet/subnets/default","etag":"W/\"5a0a8b60-b7ab-4407-9cb3-5d06b9871779\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.3.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu259/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu2","etag":"W/\"27aef006-e982-4285-92ba-677483aaeb03\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"8d52136d-fdf0-413b-be8e-f68a7d57eddc","addressSpace":{"addressPrefixes":["10.5.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu2/subnets/default","etag":"W/\"27aef006-e982-4285-92ba-677483aaeb03\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.5.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abuntu2817/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"abuntu3","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu3","etag":"W/\"e187a70d-2f97-40dc-8a5c-dae16721ddcb\"","type":"Microsoft.Network/virtualNetworks","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"fa919f6c-1730-4ba6-99a1-909f8ab380d0","addressSpace":{"addressPrefixes":["10.4.0.0/16"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/virtualNetworks/abuntu3/subnets/default","etag":"W/\"e187a70d-2f97-40dc-8a5c-dae16721ddcb\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.4.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/amar/providers/Microsoft.Network/networkInterfaces/abunt4752/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"Dtlcliautomationlab","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestlab1/providers/Microsoft.Network/virtualNetworks/Dtlcliautomationlab","etag":"W/\"260bff7b-7436-49c5-8836-49b261c2e518\"","type":"Microsoft.Network/virtualNetworks","location":"southcentralus","tags":{"hidden-DevTestLabs-LabUId":"ca9ec547-32c5-422d-b3d2-25906ed71959"},"properties":{"provisioningState":"Succeeded","resourceGuid":"b083abf5-63cf-4ba2-b6fa-55ce660ce895","addressSpace":{"addressPrefixes":["10.0.0.0/20"]},"dhcpOptions":{"dnsServers":[]},"subnets":[{"name":"DtlcliautomationlabSubnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestlab1/providers/Microsoft.Network/virtualNetworks/Dtlcliautomationlab/subnets/DtlcliautomationlabSubnet","etag":"W/\"260bff7b-7436-49c5-8836-49b261c2e518\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.0.0.0/20","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg1"},"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}},{"name":"lmazuel-testcapture-vnet","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/virtualNetworks/lmazuel-testcapture-vnet","etag":"W/\"e9cc42b4-8cd7-4839-ab92-fe3147b98a20\"","type":"Microsoft.Network/virtualNetworks","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"a1ba5e36-4ef1-4778-bac9-826091314efa","addressSpace":{"addressPrefixes":["10.1.0.0/24"]},"subnets":[{"name":"default","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/virtualNetworks/lmazuel-testcapture-vnet/subnets/default","etag":"W/\"e9cc42b4-8cd7-4839-ab92-fe3147b98a20\"","properties":{"provisioningState":"Succeeded","addressPrefix":"10.1.0.0/24","networkSecurityGroup":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Network/networkSecurityGroups/rg-cleanupservice-nsg2"},"ipConfigurations":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lmazuel-testcapture/providers/Microsoft.Network/networkInterfaces/lmazuel-testcapture427/ipConfigurations/ipconfig1"}],"delegations":[]},"type":"Microsoft.Network/virtualNetworks/subnets"}],"virtualNetworkPeerings":[],"enableDdosProtection":false,"enableVmProtection":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['13005']
+      content-length: ['14517']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:28 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-original-request-ids: [3746ddbf-6fb3-4a0c-99c6-aafe77bc144b, ab1974bf-68e2-4919-a939-f5c09eea903e,
-        ff91c719-edcf-4784-b98f-98ecc67eec07, f8cb52af-6f89-42ab-aac5-9b6bf5ef5504]
+      x-ms-original-request-ids: [7ad060c3-2b25-496c-8b97-3d6ff1c739de, 38285f4d-b1da-42a6-b824-354fef0afc26,
+        328381d1-11c5-4e23-b628-a6c897d1e752, 8882c43c-8bd7-4123-9cfb-69b1a07f6b86]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -308,20 +308,20 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e?api-version=2018-10-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3a441de5-5103-40e7-a0c5-05928cc2b23f?api-version=2018-07-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/68663164-1cd5-4547-8f58-106db3daf203?api-version=2018-10-01']
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Tue, 28 Aug 2018 18:03:29 GMT']
+      date: ['Tue, 27 Nov 2018 20:46:57 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/3a441de5-5103-40e7-a0c5-05928cc2b23f?api-version=2018-07-01']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/68663164-1cd5-4547-8f58-106db3daf203?api-version=2018-10-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -334,17 +334,17 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.5.4 msrest_azure/0.5.0
-          networkmanagementclient/2.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.1 msrest_azure/0.4.34
+          networkmanagementclient/2.4.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/3a441de5-5103-40e7-a0c5-05928cc2b23f?api-version=2018-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/68663164-1cd5-4547-8f58-106db3daf203?api-version=2018-10-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       cache-control: [no-cache]
       content-length: ['29']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 28 Aug 2018 18:03:39 GMT']
+      date: ['Tue, 27 Nov 2018 20:47:08 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]

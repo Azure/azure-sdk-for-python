@@ -3,6 +3,22 @@
 Release History
 ===============
 
+6.4.0.0 (2018-12-07)
+++++++++++++++++++++
+
+**Bugfixes**
+
+- Numerous improvements to descriptions and help texts
+
+**Features**
+
+- Add command to get cluster load
+- Add command to get cluster version
+- Add mesh gateway support
+- Add mesh support
+- Add command for rolling back compose deployment upgrades
+- Various new parameters added. 
+
 6.3.0.0 (2018-07-27)
 ++++++++++++++++++++
 

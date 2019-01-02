@@ -31,10 +31,23 @@ class JobOutput(Model):
      'Queued', 'Scheduled'
     :vartype state: str or ~azure.mgmt.media.models.JobState
     :ivar progress: If the JobOutput is in a Processing state, this contains
-     the job completion percentage.  The value is an estimate and not intended
-     to be used to predict job completion times. To determine if the JobOutput
+     the Job completion percentage. The value is an estimate and not intended
+     to be used to predict Job completion times. To determine if the JobOutput
      is complete, use the State property.
     :vartype progress: int
+    :param label: A label that is assigned to a JobOutput in order to help
+     uniquely identify it. This is useful when your Transform has more than one
+     TransformOutput, whereby your Job has more than one JobOutput. In such
+     cases, when you submit the Job, you will add two or more JobOutputs, in
+     the same order as TransformOutputs in the Transform. Subsequently, when
+     you retrieve the Job, either through events or on a GET request, you can
+     use the label to easily identify the JobOutput. If a label is not
+     provided, a default value of '{presetName}_{outputIndex}' will be used,
+     where the preset name is the name of the preset in the corresponding
+     TransformOutput and the output index is the relative index of the this
+     JobOutput within the Job. Note that this index is the same as the relative
+     index of the corresponding TransformOutput within its Transform.
+    :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
@@ -48,8 +61,9 @@ class JobOutput(Model):
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'JobError'},
-        'state': {'key': 'state', 'type': 'JobState'},
+        'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
+        'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
     }
 
@@ -62,4 +76,5 @@ class JobOutput(Model):
         self.error = None
         self.state = None
         self.progress = None
+        self.label = kwargs.get('label', None)
         self.odatatype = None

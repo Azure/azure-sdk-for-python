@@ -29,6 +29,9 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     :param ip_tags: The list of IP tags associated with the public IP address.
     :type ip_tags:
      list[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetIpTag]
+    :param public_ip_prefix: The PublicIPPrefix from which to allocate
+     publicIP addresses.
+    :type public_ip_prefix: ~azure.mgmt.compute.v2018_06_01.models.SubResource
     """
 
     _validation = {
@@ -40,11 +43,13 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
         'ip_tags': {'key': 'properties.ipTags', 'type': '[VirtualMachineScaleSetIpTag]'},
+        'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
     }
 
-    def __init__(self, *, name: str, idle_timeout_in_minutes: int=None, dns_settings=None, ip_tags=None, **kwargs) -> None:
+    def __init__(self, *, name: str, idle_timeout_in_minutes: int=None, dns_settings=None, ip_tags=None, public_ip_prefix=None, **kwargs) -> None:
         super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__(**kwargs)
         self.name = name
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.dns_settings = dns_settings
         self.ip_tags = ip_tags
+        self.public_ip_prefix = public_ip_prefix

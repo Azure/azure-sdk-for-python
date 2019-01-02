@@ -69,11 +69,11 @@ class WorkflowTrigger(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'WorkflowTriggerProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'WorkflowState'},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'last_execution_time': {'key': 'properties.lastExecutionTime', 'type': 'iso-8601'},
         'next_execution_time': {'key': 'properties.nextExecutionTime', 'type': 'iso-8601'},
         'recurrence': {'key': 'properties.recurrence', 'type': 'WorkflowTriggerRecurrence'},
