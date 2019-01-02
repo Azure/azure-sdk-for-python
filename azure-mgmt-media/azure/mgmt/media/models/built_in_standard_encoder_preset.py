@@ -35,7 +35,7 @@ class BuiltInStandardEncoderPreset(Preset):
 
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
-        'preset_name': {'key': 'presetName', 'type': 'EncoderNamedPreset'},
+        'preset_name': {'key': 'presetName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

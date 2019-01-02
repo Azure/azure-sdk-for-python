@@ -44,7 +44,7 @@ class AacAudio(Audio):
         'channels': {'key': 'channels', 'type': 'int'},
         'sampling_rate': {'key': 'samplingRate', 'type': 'int'},
         'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'profile': {'key': 'profile', 'type': 'AacAudioProfile'},
+        'profile': {'key': 'profile', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
