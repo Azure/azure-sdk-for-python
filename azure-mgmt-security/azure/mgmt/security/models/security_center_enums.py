@@ -39,6 +39,7 @@ class AutoProvision(str, Enum):
 class SettingKind(str, Enum):
 
     data_export_setting = "DataExportSetting"
+    alert_suppression_setting = "AlertSuppressionSetting"
 
 
 class SecurityFamily(str, Enum):
