@@ -106,7 +106,7 @@ class ManagementLockClient(MultiApiClientMixin, SDKClient):
             from .v2016_09_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def authorization_operations(self):
         """Instance depends on the API version:
