@@ -58,7 +58,7 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
         'primary_verification_key': {'key': 'primaryVerificationKey', 'type': 'ContentKeyPolicyRestrictionTokenKey'},
         'alternate_verification_keys': {'key': 'alternateVerificationKeys', 'type': '[ContentKeyPolicyRestrictionTokenKey]'},
         'required_claims': {'key': 'requiredClaims', 'type': '[ContentKeyPolicyTokenClaim]'},
-        'restriction_token_type': {'key': 'restrictionTokenType', 'type': 'ContentKeyPolicyRestrictionTokenType'},
+        'restriction_token_type': {'key': 'restrictionTokenType', 'type': 'str'},
         'open_id_connect_discovery_document': {'key': 'openIdConnectDiscoveryDocument', 'type': 'str'},
     }
 

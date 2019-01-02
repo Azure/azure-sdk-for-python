@@ -3,6 +3,15 @@
 Release History
 ===============
 
+2.1.0 (2019-02-01)
+++++++++++++++++++
+
+**Features on Policy**
+
+- New API version for Policy 2018-05-01
+- Model PolicyAssignment has a new parameter location
+- Model PolicyAssignment has a new parameter identity
+
 2.0.0 (2018-07-20)
 ++++++++++++++++++
 
