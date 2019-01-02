@@ -18,16 +18,20 @@ from pathlib import Path
 
 from devops_common_tasks import *
 
-DEFAULT_TARGETED_PROJECTS = ['azure-keyvault']
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
-build_packing_script_location = os.path.join(root_dir, 'build_package.py')
+dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
-def devops_build_packages(targeted_packages, distribution_directory):
-    # run the build and distribution
-    for package_name in targeted_packages:
-        print(package_name)
-        run_check_call(['python', build_packing_script_location, '--dest', distribution_directory, package_name], root_dir)
+def devops_run_tests(targeted_packages, python_version):
+#    for package_name in targeted_packages:
+#        print('running test setup for '.format(package_name))
+#        run_check_call([python_version, dev_setup_script_location, '-g', package_name], root_dir)
+
+    print('Setup complete. Running pytest for {}'.format(targeted_packages))
+
+    command_array = ['pytest']
+    command_array.extend(targeted_packages)
+    
+    run_check_call(command_array, root_dir)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Build Azure Packages, Called from DevOps YAML Pipeline')
@@ -36,16 +40,16 @@ if __name__ == '__main__':
         '--glob-string', 
         dest = 'glob_string', 
         default = 'azure-keyvault',
-        help = 'A comma separated list of glob strings that will target the top level directories that contain packages. Examples: All == "azure-*", Single = "azure-keyvault"')
+        help = 'A comma separated list of glob strings that will target the top level directories that contain packages. Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"')
 
     parser.add_argument(
-        '-d',
-        '--distribution-directory',
-        dest = 'distribution_directory',
-        default = './dist',
-        help = 'The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.')
+        '-p',
+        '--python-version',
+        dest = 'python_version',
+        default = 'python',
+        help = 'The name of the python that should run the build. This is for usage in special cases like in /.azure-pipelines/specialcase.test.yml. Defaults to "python"')
 
     args = parser.parse_args()
-
     targeted_packages = process_glob_string(args.glob_string, root_dir)
-    devops_build_packages(targeted_packages, args.distribution_directory)
+
+    devops_run_tests(targeted_packages, args.python_version)
