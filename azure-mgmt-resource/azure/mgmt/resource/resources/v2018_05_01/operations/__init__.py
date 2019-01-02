@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .deployments_operations import DeploymentsOperations
 from .providers_operations import ProvidersOperations
 from .resources_operations import ResourcesOperations
@@ -17,6 +18,7 @@ from .tags_operations import TagsOperations
 from .deployment_operations import DeploymentOperations
 
 __all__ = [
+    'Operations',
     'DeploymentsOperations',
     'ProvidersOperations',
     'ResourcesOperations',

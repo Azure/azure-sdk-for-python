@@ -250,7 +250,7 @@ class JobPreparer(AzureMgmtPreparer):
             account = kwargs[self.batch_account_parameter_name]
             credentials = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchServiceClient(
-                credentials, base_url='https://' + account.account_endpoint)
+                credentials, batch_url='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'

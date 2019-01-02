@@ -28,7 +28,7 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'westcentralus'
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 
 
@@ -54,7 +54,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -62,7 +62,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -239,25 +239,6 @@ class BatchTest(AzureMgmtTestCase):
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
 
-        # Test Create Pool with OSDisk
-        os_disk = models.OSDisk(caching=models.CachingType.read_write)
-        test_osdisk_pool = models.PoolAddParameter(
-            id=self.get_resource_name('batch_osdisk_'),
-            vm_size='Standard_A1',
-            virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher='Canonical',
-                    offer='UbuntuServer',
-                    sku='16.04-LTS'
-                ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
-                os_disk=os_disk)
-        )
-        response = client.pool.add(test_osdisk_pool)
-        self.assertIsNone(response)
-        osdisk_pool = client.pool.get(test_osdisk_pool.id)
-        self.assertEqual(osdisk_pool.virtual_machine_configuration.os_disk.caching, os_disk.caching)
-
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(lun=1, disk_size_gb=50)
         test_disk_pool = models.PoolAddParameter(
@@ -328,7 +309,7 @@ class BatchTest(AzureMgmtTestCase):
             ),
             start_task=models.StartTask(
                 command_line="cmd.exe /c \"echo hello world\"",
-                resource_files=[models.ResourceFile(blob_source='https://blobsource.com', file_path='filename.txt')],
+                resource_files=[models.ResourceFile(http_url='https://blobsource.com', file_path='filename.txt')],
                 environment_settings=[models.EnvironmentSetting(name='ENV_VAR', value='env_value')],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(
@@ -339,14 +320,6 @@ class BatchTest(AzureMgmtTestCase):
         )
         response = client.pool.add(test_paas_pool)
         self.assertIsNone(response)
-
-        # Test Upgrade Pool OS
-        self.assertBatchError(
-            "PoolVersionEqualsUpgradeVersion",
-            client.pool.upgrade_os,
-            test_paas_pool.id,
-            "*"
-        )
 
         # Test Update Pool Parameters
         params = models.PoolUpdatePropertiesParameter(
@@ -418,7 +391,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Pool Resize
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
@@ -431,8 +404,10 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
+        # It looks like there has test framework issue, it couldn't find the correct recording frame
+        # So in live mode, target-decicate is 0, and target low pri is 2
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
 
@@ -898,7 +873,7 @@ class BatchTest(AzureMgmtTestCase):
         resource_files = []
         for i in range(10000):
             resource_file = models.ResourceFile(
-                blob_source="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(str(i)),
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(str(i)),
                 file_path="resourceFile{}".format(str(i)))
             resource_files.append(resource_file)
         task = models.TaskAddParameter(
@@ -918,7 +893,7 @@ class BatchTest(AzureMgmtTestCase):
         resource_files = []
         for i in range(100):
             resource_file = models.ResourceFile(
-                blob_source="https://mystorageaccount.blob.core.windows.net/files/resourceFile" + str(i),
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile" + str(i),
                 file_path="resourceFile"+str(i))
             resource_files.append(resource_file)
         for i in range(733):

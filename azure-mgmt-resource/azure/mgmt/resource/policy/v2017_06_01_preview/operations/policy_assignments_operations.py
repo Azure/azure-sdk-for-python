@@ -71,7 +71,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -80,8 +80,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -139,6 +139,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -151,9 +152,8 @@ class PolicyAssignmentsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyAssignment')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -205,7 +205,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -214,8 +214,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -275,7 +275,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -284,9 +284,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -361,7 +360,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -370,9 +369,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -429,7 +427,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -438,9 +436,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -462,7 +459,7 @@ class PolicyAssignmentsOperations(object):
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -498,7 +495,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -507,8 +504,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -531,7 +528,7 @@ class PolicyAssignmentsOperations(object):
 
         Policy assignments are inherited by child resources. For example, when
         you apply a policy to a resource group that policy is assigned to all
-        resources in the group. When providing a scope for the assigment, use
+        resources in the group. When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -570,6 +567,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -582,9 +580,8 @@ class PolicyAssignmentsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyAssignment')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -605,7 +602,7 @@ class PolicyAssignmentsOperations(object):
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Gets a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -641,7 +638,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -650,8 +647,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
