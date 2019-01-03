@@ -17,15 +17,15 @@ class ProtectionContainer(Model):
     workloads are derived from this class.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupServerContainer, AzureSqlContainer,
-    AzureStorageContainer, AzureWorkloadContainer, DpmContainer,
-    GenericContainer, IaaSVMContainer, MabContainer
+    sub-classes are: AzureSqlContainer, AzureStorageContainer,
+    AzureWorkloadContainer, DpmContainer, GenericContainer, IaaSVMContainer,
+    MabContainer
 
     All required parameters must be populated in order to send to Azure.
 
     :param friendly_name: Friendly name of the container.
     :type friendly_name: str
-    :param backup_management_type: Type of backup management for the
+    :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
@@ -53,7 +53,7 @@ class ProtectionContainer(Model):
     }
 
     _subtype_map = {
-        'container_type': {'AzureBackupServerContainer': 'AzureBackupServerContainer', 'AzureSqlContainer': 'AzureSqlContainer', 'StorageContainer': 'AzureStorageContainer', 'AzureWorkloadBackupRequest': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'Windows': 'MabContainer'}
+        'container_type': {'AzureSqlContainer': 'AzureSqlContainer', 'StorageContainer': 'AzureStorageContainer', 'AzureWorkloadContainer': 'AzureWorkloadContainer', 'DPMContainer': 'DpmContainer', 'GenericContainer': 'GenericContainer', 'IaaSVMContainer': 'IaaSVMContainer', 'Windows': 'MabContainer'}
     }
 
     def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, **kwargs) -> None:

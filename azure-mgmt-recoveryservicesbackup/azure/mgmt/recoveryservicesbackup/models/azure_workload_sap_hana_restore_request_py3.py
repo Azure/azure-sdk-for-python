@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .restore_request_py3 import RestoreRequest
+from .azure_workload_restore_request_py3 import AzureWorkloadRestoreRequest
 
 
-class AzureWorkloadSAPHanaRestoreRequest(RestoreRequest):
+class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SAP Hana-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -22,9 +22,6 @@ class AzureWorkloadSAPHanaRestoreRequest(RestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param target_info: Details of target database
-    :type target_info:
-     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
      values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
      'RestoreDisks'
@@ -35,6 +32,9 @@ class AzureWorkloadSAPHanaRestoreRequest(RestoreRequest):
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     """
 
     _validation = {
@@ -43,20 +43,16 @@ class AzureWorkloadSAPHanaRestoreRequest(RestoreRequest):
 
     _attribute_map = {
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'}
     }
 
-    def __init__(self, *, target_info=None, recovery_type=None, source_resource_id: str=None, property_bag=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(**kwargs)
-        self.target_info = target_info
-        self.recovery_type = recovery_type
-        self.source_resource_id = source_resource_id
-        self.property_bag = property_bag
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaRestoreRequest'

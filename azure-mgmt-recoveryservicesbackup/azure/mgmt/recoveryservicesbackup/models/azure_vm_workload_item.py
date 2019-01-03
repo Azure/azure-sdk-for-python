@@ -16,14 +16,16 @@ class AzureVmWorkloadItem(WorkloadItem):
     """Azure VM workload-specific workload item.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSAPHanaDatabaseWorkloadItem,
+    sub-classes are: AzureVmWorkloadSAPAseDatabaseWorkloadItem,
+    AzureVmWorkloadSAPAseSystemWorkloadItem,
+    AzureVmWorkloadSAPHanaDatabaseWorkloadItem,
     AzureVmWorkloadSAPHanaSystemWorkloadItem,
     AzureVmWorkloadSQLDatabaseWorkloadItem,
     AzureVmWorkloadSQLInstanceWorkloadItem
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup management to backup an
+    :param backup_management_type: Type of backup managemenent to backup an
      item.
     :type backup_management_type: str
     :param workload_type: Type of workload for the backup management
@@ -43,11 +45,11 @@ class AzureVmWorkloadItem(WorkloadItem):
     :type server_name: str
     :param is_auto_protectable: Indicates if workload item is auto-protectable
     :type is_auto_protectable: bool
-    :param subinquireditemcount: For instance or AG, indicates number of DBs
+    :param subinquireditemcount: For instance or AG, indicates number of DB's
      present
     :type subinquireditemcount: int
     :param sub_workload_item_count: For instance or AG, indicates number of
-     DBs to be protected
+     DB's to be protected
     :type sub_workload_item_count: int
     """
 
@@ -69,7 +71,7 @@ class AzureVmWorkloadItem(WorkloadItem):
     }
 
     _subtype_map = {
-        'workload_item_type': {'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseWorkloadItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemWorkloadItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseWorkloadItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceWorkloadItem'}
+        'workload_item_type': {'SAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseWorkloadItem', 'SAPAseSystem': 'AzureVmWorkloadSAPAseSystemWorkloadItem', 'SAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseWorkloadItem', 'SAPHanaSystem': 'AzureVmWorkloadSAPHanaSystemWorkloadItem', 'SQLDataBase': 'AzureVmWorkloadSQLDatabaseWorkloadItem', 'SQLInstance': 'AzureVmWorkloadSQLInstanceWorkloadItem'}
     }
 
     def __init__(self, **kwargs):

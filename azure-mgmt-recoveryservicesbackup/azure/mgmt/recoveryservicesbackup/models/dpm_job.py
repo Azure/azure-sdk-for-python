@@ -13,7 +13,7 @@ from .job import Job
 
 
 class DpmJob(Job):
-    """DPM workload-specific job object.
+    """DPM workload-specifc job object.
 
     All required parameters must be populated in order to send to Azure.
 

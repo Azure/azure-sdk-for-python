@@ -24,7 +24,7 @@ class AzureWorkloadContainer(ProtectionContainer):
 
     :param friendly_name: Friendly name of the container.
     :type friendly_name: str
-    :param backup_management_type: Type of backup management for the
+    :param backup_management_type: Type of backup managemenent for the
      container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
      'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
@@ -48,9 +48,14 @@ class AzureWorkloadContainer(ProtectionContainer):
     :param workload_type: Workload type for which registration was sent.
      Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
      'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
+    :param operation_type: Re-Do Operation. Possible values include:
+     'Invalid', 'Register', 'Reregister'
+    :type operation_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.OperationType
     """
 
     _validation = {
@@ -67,6 +72,7 @@ class AzureWorkloadContainer(ProtectionContainer):
         'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadContainerExtendedInfo'},
         'workload_type': {'key': 'workloadType', 'type': 'str'},
+        'operation_type': {'key': 'operationType', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -79,4 +85,5 @@ class AzureWorkloadContainer(ProtectionContainer):
         self.last_updated_time = kwargs.get('last_updated_time', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.workload_type = kwargs.get('workload_type', None)
-        self.container_type = 'AzureWorkloadBackupRequest'
+        self.operation_type = kwargs.get('operation_type', None)
+        self.container_type = 'AzureWorkloadContainer'

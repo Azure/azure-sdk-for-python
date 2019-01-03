@@ -16,7 +16,8 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     """AzureWorkload-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLRestoreRequest
+    sub-classes are: AzureWorkloadPointInTimeRestoreRequest,
+    AzureWorkloadSAPHanaRestoreRequest, AzureWorkloadSQLRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -32,6 +33,9 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     """
 
     _validation = {
@@ -43,15 +47,17 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
+        'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, **kwargs) -> None:
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, **kwargs) -> None:
         super(AzureWorkloadRestoreRequest, self).__init__(**kwargs)
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
+        self.target_info = target_info
         self.object_type = 'AzureWorkloadRestoreRequest'

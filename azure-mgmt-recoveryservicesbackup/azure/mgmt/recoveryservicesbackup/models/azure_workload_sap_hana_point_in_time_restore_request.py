@@ -20,9 +20,6 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param target_info: Details of target database
-    :type target_info:
-     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
      values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
      'RestoreDisks'
@@ -33,6 +30,9 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -43,10 +43,10 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     _attribute_map = {
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 

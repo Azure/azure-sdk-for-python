@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_workload_sap_hana_recovery_point_py3 import AzureWorkloadSAPHanaRecoveryPoint
+from .azure_workload_point_in_time_recovery_point_py3 import AzureWorkloadPointInTimeRecoveryPoint
 
 
-class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadSAPHanaRecoveryPoint):
+class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecoveryPoint):
     """Recovery point specific to PointInTime in SAPHana.
 
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',
@@ -43,6 +43,5 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadSAPHanaRecoveryP
     }
 
     def __init__(self, *, recovery_point_time_in_utc=None, type=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, **kwargs)
-        self.time_ranges = time_ranges
+        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, time_ranges=time_ranges, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'

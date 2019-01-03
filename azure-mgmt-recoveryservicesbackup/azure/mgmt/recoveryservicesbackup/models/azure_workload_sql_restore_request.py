@@ -32,15 +32,15 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
     :param is_non_recoverable: SQL specific property where user can chose to
      set no-recovery when restore operation is tried
     :type is_non_recoverable: bool
-    :param target_info: Details of target database
-    :type target_info:
-     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param alternate_directory_paths: Data directory details
     :type alternate_directory_paths:
      list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectoryMapping]
@@ -55,9 +55,9 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
         'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
     }
 
@@ -69,6 +69,5 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         super(AzureWorkloadSQLRestoreRequest, self).__init__(**kwargs)
         self.should_use_alternate_target_location = kwargs.get('should_use_alternate_target_location', None)
         self.is_non_recoverable = kwargs.get('is_non_recoverable', None)
-        self.target_info = kwargs.get('target_info', None)
         self.alternate_directory_paths = kwargs.get('alternate_directory_paths', None)
         self.object_type = 'AzureWorkloadSQLRestoreRequest'

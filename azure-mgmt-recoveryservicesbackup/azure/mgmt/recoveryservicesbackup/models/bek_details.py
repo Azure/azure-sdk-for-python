@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class BEKDetails(Model):
-    """BEK is bitlocker encryption key.
+    """BEK is bitlocker encrpytion key.
 
     :param secret_url: Secret is BEK.
     :type secret_url: str

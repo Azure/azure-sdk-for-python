@@ -18,7 +18,7 @@ class RestoreRequest(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileShareRestoreRequest, AzureWorkloadRestoreRequest,
-    AzureWorkloadSAPHanaRestoreRequest, IaasVMRestoreRequest
+    IaasVMRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,7 +35,7 @@ class RestoreRequest(Model):
     }
 
     _subtype_map = {
-        'object_type': {'AzureFileShareRestoreRequest': 'AzureFileShareRestoreRequest', 'AzureWorkloadRestoreRequest': 'AzureWorkloadRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'IaasVMRestoreRequest': 'IaasVMRestoreRequest'}
+        'object_type': {'AzureFileShareRestoreRequest': 'AzureFileShareRestoreRequest', 'AzureWorkloadRestoreRequest': 'AzureWorkloadRestoreRequest', 'IaasVMRestoreRequest': 'IaasVMRestoreRequest'}
     }
 
     def __init__(self, **kwargs) -> None:

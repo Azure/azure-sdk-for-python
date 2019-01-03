@@ -21,8 +21,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup management for the backed up
-     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+    :param backup_management_type: Type of backup managemenent for the backed
+     up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
     :type backup_management_type: str or
@@ -30,7 +30,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container

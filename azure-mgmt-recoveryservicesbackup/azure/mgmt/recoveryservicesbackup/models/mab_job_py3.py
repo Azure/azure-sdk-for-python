@@ -57,7 +57,7 @@ class MabJob(Job):
     :param workload_type: Workload type of backup item. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
      'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
-     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase', 'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param error_details: The errors.

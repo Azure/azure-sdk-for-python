@@ -20,9 +20,6 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param target_info: Details of target database
-    :type target_info:
-     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
      values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
      'RestoreDisks'
@@ -33,6 +30,9 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -43,14 +43,14 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     _attribute_map = {
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, target_info=None, recovery_type=None, source_resource_id: str=None, property_bag=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(target_info=target_info, recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'

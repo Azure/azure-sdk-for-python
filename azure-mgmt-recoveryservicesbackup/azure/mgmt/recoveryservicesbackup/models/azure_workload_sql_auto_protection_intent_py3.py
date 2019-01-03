@@ -17,8 +17,8 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup management for the backed up
-     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+    :param backup_management_type: Type of backup managemenent for the backed
+     up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
     :type backup_management_type: str or
@@ -40,7 +40,8 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
     :type protection_intent_item_type: str
     :param workload_item_type: Workload item type of the item for which intent
      is to be set. Possible values include: 'Invalid', 'SQLInstance',
-     'SQLDataBase', 'SAPHanaSystem', 'SAPHanaDatabase'
+     'SQLDataBase', 'SAPHanaSystem', 'SAPHanaDatabase', 'SAPAseSystem',
+     'SAPAseDatabase'
     :type workload_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadItemType
     """

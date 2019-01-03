@@ -17,14 +17,13 @@ class ProtectedItem(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileshareProtectedItem, AzureIaaSVMProtectedItem,
-    AzureSqlProtectedItem, AzureVmWorkloadProtectedItem,
-    AzureVmWorkloadSQLDatabaseProtectedItem, DPMProtectedItem,
+    AzureSqlProtectedItem, AzureVmWorkloadProtectedItem, DPMProtectedItem,
     GenericProtectedItem, MabFileFolderProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup management for the backed up
-     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+    :param backup_management_type: Type of backup managemenent for the backed
+     up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
     :type backup_management_type: str or
@@ -32,7 +31,8 @@ class ProtectedItem(Model):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -73,7 +73,7 @@ class ProtectedItem(Model):
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
+        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
     def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, **kwargs) -> None:
