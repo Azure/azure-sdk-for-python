@@ -12,31 +12,30 @@
 from msrest.serialization import Model
 
 
-class VirtualNetworkRule(Model):
-    """Virtual network rule.
+class IPRule(Model):
+    """IP rule with specific IP or IP range in CIDR format.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param action: The action of virtual network rule. Possible values
-     include: 'Allow'. Default value: "Allow" .
+    :param action: The action of IP ACL rule. Possible values include:
+     'Allow'. Default value: "Allow" .
     :type action: str or
      ~azure.mgmt.containerregistry.v2017_10_01.models.Action
-    :param virtual_network_resource_id: Required. Resource ID of a subnet, for
-     example:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
-    :type virtual_network_resource_id: str
+    :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
+     format. Only IPV4 address is allowed.
+    :type ip_address_or_range: str
     """
 
     _validation = {
-        'virtual_network_resource_id': {'required': True},
+        'ip_address_or_range': {'required': True},
     }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
-        'virtual_network_resource_id': {'key': 'id', 'type': 'str'},
+        'ip_address_or_range': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_network_resource_id: str, action="Allow", **kwargs) -> None:
-        super(VirtualNetworkRule, self).__init__(**kwargs)
+    def __init__(self, *, ip_address_or_range: str, action="Allow", **kwargs) -> None:
+        super(IPRule, self).__init__(**kwargs)
         self.action = action
-        self.virtual_network_resource_id = virtual_network_resource_id
+        self.ip_address_or_range = ip_address_or_range

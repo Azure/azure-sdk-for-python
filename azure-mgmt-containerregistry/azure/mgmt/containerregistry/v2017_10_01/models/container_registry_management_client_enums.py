@@ -50,6 +50,11 @@ class DefaultAction(str, Enum):
     deny = "Deny"
 
 
+class Action(str, Enum):
+
+    allow = "Allow"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
@@ -84,3 +89,5 @@ class WebhookAction(str, Enum):
     push = "push"
     delete = "delete"
     quarantine = "quarantine"
+    chart_push = "chart_push"
+    chart_delete = "chart_delete"
