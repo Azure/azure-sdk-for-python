@@ -39,6 +39,11 @@ class ServerEndpointCreateParameters(ProxyResource):
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
     :type server_resource_id: str
+    :param offline_data_transfer: Offline data transfer. Possible values
+     include: 'on', 'off'
+    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :param offline_data_transfer_share_name: Offline data transfer share name
+    :type offline_data_transfer_share_name: str
     """
 
     _validation = {
@@ -59,9 +64,11 @@ class ServerEndpointCreateParameters(ProxyResource):
         'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
+        'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
+        'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
     }
 
-    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
         super(ServerEndpointCreateParameters, self).__init__(**kwargs)
         self.server_local_path = server_local_path
         self.cloud_tiering = cloud_tiering
@@ -69,3 +76,5 @@ class ServerEndpointCreateParameters(ProxyResource):
         self.tier_files_older_than_days = tier_files_older_than_days
         self.friendly_name = friendly_name
         self.server_resource_id = server_resource_id
+        self.offline_data_transfer = offline_data_transfer
+        self.offline_data_transfer_share_name = offline_data_transfer_share_name

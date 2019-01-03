@@ -37,7 +37,7 @@ class CloudEndpoint(ProxyResource):
     :param friendly_name: Friendly Name
     :type friendly_name: str
     :ivar backup_enabled: Backup Enabled
-    :vartype backup_enabled: bool
+    :vartype backup_enabled: str
     :param provisioning_state: CloudEndpoint Provisioning State
     :type provisioning_state: str
     :param last_workflow_id: CloudEndpoint lastWorkflowId
@@ -62,7 +62,7 @@ class CloudEndpoint(ProxyResource):
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
         'partnership_id': {'key': 'properties.partnershipId', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'backup_enabled': {'key': 'properties.backupEnabled', 'type': 'bool'},
+        'backup_enabled': {'key': 'properties.backupEnabled', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},

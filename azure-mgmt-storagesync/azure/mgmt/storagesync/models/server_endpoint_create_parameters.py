@@ -39,6 +39,11 @@ class ServerEndpointCreateParameters(ProxyResource):
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
     :type server_resource_id: str
+    :param offline_data_transfer: Offline data transfer. Possible values
+     include: 'on', 'off'
+    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :param offline_data_transfer_share_name: Offline data transfer share name
+    :type offline_data_transfer_share_name: str
     """
 
     _validation = {
@@ -59,6 +64,8 @@ class ServerEndpointCreateParameters(ProxyResource):
         'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'server_resource_id': {'key': 'properties.serverResourceId', 'type': 'str'},
+        'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
+        'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -69,3 +76,5 @@ class ServerEndpointCreateParameters(ProxyResource):
         self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)
+        self.offline_data_transfer = kwargs.get('offline_data_transfer', None)
+        self.offline_data_transfer_share_name = kwargs.get('offline_data_transfer_share_name', None)
