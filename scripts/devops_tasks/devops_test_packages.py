@@ -31,7 +31,7 @@ def prep_and_run_tests(targeted_packages, python_version):
 
     for package_path in targeted_packages:
         print('Checking setup.py for {}'.format(os.path.join(package_path, 'setup.py')))
-        run_check_call(['python', 'setup.py', 'check', '-r', '-s'], package_path)
+        run_check_call([python_version, 'setup.py', 'check', '-r', '-s'], package_path)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
