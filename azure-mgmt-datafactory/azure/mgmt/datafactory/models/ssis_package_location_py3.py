@@ -17,8 +17,9 @@ class SSISPackageLocation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param package_path: Required. The SSIS package path.
-    :type package_path: str
+    :param package_path: Required. The SSIS package path. Type: string (or
+     Expression with resultType string).
+    :type package_path: object
     """
 
     _validation = {
@@ -26,9 +27,9 @@ class SSISPackageLocation(Model):
     }
 
     _attribute_map = {
-        'package_path': {'key': 'packagePath', 'type': 'str'},
+        'package_path': {'key': 'packagePath', 'type': 'object'},
     }
 
-    def __init__(self, *, package_path: str, **kwargs) -> None:
+    def __init__(self, *, package_path, **kwargs) -> None:
         super(SSISPackageLocation, self).__init__(**kwargs)
         self.package_path = package_path

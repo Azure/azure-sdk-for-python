@@ -37,13 +37,16 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param package_location: Required. SSIS package location.
     :type package_location: ~azure.mgmt.datafactory.models.SSISPackageLocation
-    :param runtime: Specifies the runtime to execute SSIS package. Possible
-     values include: 'x64', 'x86'
-    :type runtime: str or ~azure.mgmt.datafactory.models.SSISExecutionRuntime
-    :param logging_level: The logging level of SSIS package execution.
-    :type logging_level: str
+    :param runtime: Specifies the runtime to execute SSIS package. The value
+     should be "x86" or "x64". Type: string (or Expression with resultType
+     string).
+    :type runtime: object
+    :param logging_level: The logging level of SSIS package execution. Type:
+     string (or Expression with resultType string).
+    :type logging_level: object
     :param environment_path: The environment path to execute the SSIS package.
-    :type environment_path: str
+     Type: string (or Expression with resultType string).
+    :type environment_path: object
     :param connect_via: Required. The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -86,9 +89,9 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'package_location': {'key': 'typeProperties.packageLocation', 'type': 'SSISPackageLocation'},
-        'runtime': {'key': 'typeProperties.runtime', 'type': 'str'},
-        'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'str'},
-        'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'str'},
+        'runtime': {'key': 'typeProperties.runtime', 'type': 'object'},
+        'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'object'},
+        'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'object'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
         'project_parameters': {'key': 'typeProperties.projectParameters', 'type': '{SSISExecutionParameter}'},
         'package_parameters': {'key': 'typeProperties.packageParameters', 'type': '{SSISExecutionParameter}'},
