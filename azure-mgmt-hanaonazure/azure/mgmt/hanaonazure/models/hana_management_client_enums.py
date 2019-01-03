@@ -27,6 +27,7 @@ class HanaInstanceSizeNamesEnum(str, Enum):
     s192 = "S192"
     s192m = "S192m"
     s192xm = "S192xm"
+    s96 = "S96"
     s384 = "S384"
     s384m = "S384m"
     s384xm = "S384xm"
