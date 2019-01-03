@@ -22,6 +22,11 @@ class ServerEndpointUpdateParameters(Model):
     :type volume_free_space_percent: int
     :param tier_files_older_than_days: Tier files older than days.
     :type tier_files_older_than_days: int
+    :param offline_data_transfer: Offline data transfer. Possible values
+     include: 'on', 'off'
+    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :param offline_data_transfer_share_name: Offline data transfer share name
+    :type offline_data_transfer_share_name: str
     """
 
     _validation = {
@@ -33,6 +38,8 @@ class ServerEndpointUpdateParameters(Model):
         'cloud_tiering': {'key': 'properties.cloudTiering', 'type': 'str'},
         'volume_free_space_percent': {'key': 'properties.volumeFreeSpacePercent', 'type': 'int'},
         'tier_files_older_than_days': {'key': 'properties.tierFilesOlderThanDays', 'type': 'int'},
+        'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
+        'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -40,3 +47,5 @@ class ServerEndpointUpdateParameters(Model):
         self.cloud_tiering = kwargs.get('cloud_tiering', None)
         self.volume_free_space_percent = kwargs.get('volume_free_space_percent', None)
         self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
+        self.offline_data_transfer = kwargs.get('offline_data_transfer', None)
+        self.offline_data_transfer_share_name = kwargs.get('offline_data_transfer_share_name', None)

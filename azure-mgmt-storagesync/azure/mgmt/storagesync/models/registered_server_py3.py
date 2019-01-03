@@ -32,9 +32,9 @@ class RegisteredServer(ProxyResource):
     :type agent_version: str
     :param server_os_version: Registered Server OS Version
     :type server_os_version: str
-    :param server_managementt_error_code: Registered Server Management Error
+    :param server_management_error_code: Registered Server Management Error
      Code
-    :type server_managementt_error_code: int
+    :type server_management_error_code: int
     :param last_heart_beat: Registered Server last heart beat
     :type last_heart_beat: str
     :param provisioning_state: Registered Server Provisioning State
@@ -80,7 +80,7 @@ class RegisteredServer(ProxyResource):
         'server_certificate': {'key': 'properties.serverCertificate', 'type': 'str'},
         'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
         'server_os_version': {'key': 'properties.serverOSVersion', 'type': 'str'},
-        'server_managementt_error_code': {'key': 'properties.serverManagementtErrorCode', 'type': 'int'},
+        'server_management_error_code': {'key': 'properties.serverManagementErrorCode', 'type': 'int'},
         'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'server_role': {'key': 'properties.serverRole', 'type': 'str'},
@@ -98,12 +98,12 @@ class RegisteredServer(ProxyResource):
         'monitoring_configuration': {'key': 'properties.monitoringConfiguration', 'type': 'str'},
     }
 
-    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_managementt_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, monitoring_configuration: str=None, **kwargs) -> None:
+    def __init__(self, *, server_certificate: str=None, agent_version: str=None, server_os_version: str=None, server_management_error_code: int=None, last_heart_beat: str=None, provisioning_state: str=None, server_role: str=None, cluster_id: str=None, cluster_name: str=None, server_id: str=None, storage_sync_service_uid: str=None, last_workflow_id: str=None, last_operation_name: str=None, discovery_endpoint_uri: str=None, resource_location: str=None, service_location: str=None, friendly_name: str=None, management_endpoint_uri: str=None, monitoring_configuration: str=None, **kwargs) -> None:
         super(RegisteredServer, self).__init__(**kwargs)
         self.server_certificate = server_certificate
         self.agent_version = agent_version
         self.server_os_version = server_os_version
-        self.server_managementt_error_code = server_managementt_error_code
+        self.server_management_error_code = server_management_error_code
         self.last_heart_beat = last_heart_beat
         self.provisioning_state = provisioning_state
         self.server_role = server_role

@@ -32,9 +32,9 @@ class RegisteredServer(ProxyResource):
     :type agent_version: str
     :param server_os_version: Registered Server OS Version
     :type server_os_version: str
-    :param server_managementt_error_code: Registered Server Management Error
+    :param server_management_error_code: Registered Server Management Error
      Code
-    :type server_managementt_error_code: int
+    :type server_management_error_code: int
     :param last_heart_beat: Registered Server last heart beat
     :type last_heart_beat: str
     :param provisioning_state: Registered Server Provisioning State
@@ -80,7 +80,7 @@ class RegisteredServer(ProxyResource):
         'server_certificate': {'key': 'properties.serverCertificate', 'type': 'str'},
         'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
         'server_os_version': {'key': 'properties.serverOSVersion', 'type': 'str'},
-        'server_managementt_error_code': {'key': 'properties.serverManagementtErrorCode', 'type': 'int'},
+        'server_management_error_code': {'key': 'properties.serverManagementErrorCode', 'type': 'int'},
         'last_heart_beat': {'key': 'properties.lastHeartBeat', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'server_role': {'key': 'properties.serverRole', 'type': 'str'},
@@ -103,7 +103,7 @@ class RegisteredServer(ProxyResource):
         self.server_certificate = kwargs.get('server_certificate', None)
         self.agent_version = kwargs.get('agent_version', None)
         self.server_os_version = kwargs.get('server_os_version', None)
-        self.server_managementt_error_code = kwargs.get('server_managementt_error_code', None)
+        self.server_management_error_code = kwargs.get('server_management_error_code', None)
         self.last_heart_beat = kwargs.get('last_heart_beat', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.server_role = kwargs.get('server_role', None)

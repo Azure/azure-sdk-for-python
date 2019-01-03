@@ -45,8 +45,19 @@ class ServerEndpoint(ProxyResource):
     :type last_workflow_id: str
     :param last_operation_name: Resource Last Operation Name
     :type last_operation_name: str
-    :param sync_status: Sync Health Status
-    :type sync_status: object
+    :param sync_status: Server Endpoint properties.
+    :type sync_status: ~azure.mgmt.storagesync.models.ServerEndpointHealth
+    :param offline_data_transfer: Offline data transfer. Possible values
+     include: 'on', 'off'
+    :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
+    :ivar offline_data_transfer_storage_account_resource_id: Offline data
+     transfer storage account resource ID
+    :vartype offline_data_transfer_storage_account_resource_id: str
+    :ivar offline_data_transfer_storage_account_tenant_id: Offline data
+     transfer storage account tenant ID
+    :vartype offline_data_transfer_storage_account_tenant_id: str
+    :param offline_data_transfer_share_name: Offline data transfer share name
+    :type offline_data_transfer_share_name: str
     """
 
     _validation = {
@@ -55,6 +66,8 @@ class ServerEndpoint(ProxyResource):
         'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
         'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
+        'offline_data_transfer_storage_account_resource_id': {'readonly': True},
+        'offline_data_transfer_storage_account_tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,10 +83,14 @@ class ServerEndpoint(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
-        'sync_status': {'key': 'properties.syncStatus', 'type': 'object'},
+        'sync_status': {'key': 'properties.syncStatus', 'type': 'ServerEndpointHealth'},
+        'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
+        'offline_data_transfer_storage_account_resource_id': {'key': 'properties.offlineDataTransferStorageAccountResourceId', 'type': 'str'},
+        'offline_data_transfer_storage_account_tenant_id': {'key': 'properties.offlineDataTransferStorageAccountTenantId', 'type': 'str'},
+        'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
     }
 
-    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, sync_status=None, **kwargs) -> None:
+    def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, sync_status=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
         super(ServerEndpoint, self).__init__(**kwargs)
         self.server_local_path = server_local_path
         self.cloud_tiering = cloud_tiering
@@ -85,3 +102,7 @@ class ServerEndpoint(ProxyResource):
         self.last_workflow_id = last_workflow_id
         self.last_operation_name = last_operation_name
         self.sync_status = sync_status
+        self.offline_data_transfer = offline_data_transfer
+        self.offline_data_transfer_storage_account_resource_id = None
+        self.offline_data_transfer_storage_account_tenant_id = None
+        self.offline_data_transfer_share_name = offline_data_transfer_share_name
