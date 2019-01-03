@@ -18,12 +18,10 @@ from pathlib import Path
 
 from devops_common_tasks import *
 
-DEFAULT_TARGETED_PROJECTS = ['azure-keyvault']
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 build_packing_script_location = os.path.join(root_dir, 'build_package.py')
 
-def devops_build_packages(targeted_packages, distribution_directory):
+def build_packages(targeted_packages, distribution_directory):
     # run the build and distribution
     for package_name in targeted_packages:
         print(package_name)
@@ -48,4 +46,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     targeted_packages = process_glob_string(args.glob_string, root_dir)
-    devops_build_packages(targeted_packages, args.distribution_directory)
+    build_packages(targeted_packages, args.distribution_directory)
