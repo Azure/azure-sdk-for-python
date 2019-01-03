@@ -34,13 +34,9 @@ def prep_and_run_tests(targeted_packages, python_version):
         run_check_call(['python', 'setup.py', 'check', '-r', '-s'], package_path)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
-    command_array = ['pytest']
+    command_array = [python_version, '-m', 'pytest']
     command_array.extend(targeted_packages)
     run_check_call(command_array, root_dir)
-
-
-    print('Check setup.py for targeted packa')
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Build Azure Packages, Called from DevOps YAML Pipeline')
