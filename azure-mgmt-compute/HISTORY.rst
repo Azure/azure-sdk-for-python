@@ -3,6 +3,16 @@
 Release History
 ===============
 
+4.4.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetExtension has a new parameter provision_after_extensions
+- Operation VirtualMachineScaleSetVMsOperations.reimage has a new parameter temp_disk
+- Operation VirtualMachineScaleSetsOperations.reimage has a new parameter temp_disk
+- Added operation VirtualMachinesOperations.reimage
+
 4.3.1 (2018-10-15)
 ++++++++++++++++++
 
