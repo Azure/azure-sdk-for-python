@@ -133,7 +133,7 @@ class ManagedClustersOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -203,7 +203,7 @@ class ManagedClustersOperations(object):
         url = self.get_upgrade_profile.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -272,7 +272,7 @@ class ManagedClustersOperations(object):
         url = self.get_access_profile.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'roleName': self._serialize.url("role_name", role_name, 'str')
         }
@@ -339,7 +339,7 @@ class ManagedClustersOperations(object):
         url = self.list_cluster_admin_credentials.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -405,7 +405,7 @@ class ManagedClustersOperations(object):
         url = self.list_cluster_user_credentials.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -470,7 +470,7 @@ class ManagedClustersOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -517,7 +517,7 @@ class ManagedClustersOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -626,7 +626,7 @@ class ManagedClustersOperations(object):
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -728,7 +728,7 @@ class ManagedClustersOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -811,7 +811,7 @@ class ManagedClustersOperations(object):
         url = self.reset_service_principal_profile.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -919,7 +919,7 @@ class ManagedClustersOperations(object):
         url = self.reset_aad_profile.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
