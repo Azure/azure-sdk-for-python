@@ -57,7 +57,7 @@ class VirtualMachineScaleSet(Resource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param zone_balance: Whether to force stictly even Virtual Machine
+    :param zone_balance: Whether to force strictly even Virtual Machine
      distribution cross x-zones in case there is zone outage.
     :type zone_balance: bool
     :param platform_fault_domain_count: Fault Domain count for each placement
