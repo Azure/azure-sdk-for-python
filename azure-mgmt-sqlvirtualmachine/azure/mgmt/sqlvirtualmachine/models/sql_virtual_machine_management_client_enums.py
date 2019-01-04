@@ -18,13 +18,10 @@ class OperationOrigin(str, Enum):
     system = "system"
 
 
-class SqlImageSku(str, Enum):
+class SqlVmGroupImageSku(str, Enum):
 
     developer = "Developer"
-    express = "Express"
-    standard = "Standard"
     enterprise = "Enterprise"
-    web = "Web"
 
 
 class ScaleType(str, Enum):
@@ -51,6 +48,15 @@ class SqlServerLicenseType(str, Enum):
 
     payg = "PAYG"
     ahub = "AHUB"
+
+
+class SqlImageSku(str, Enum):
+
+    developer = "Developer"
+    express = "Express"
+    standard = "Standard"
+    enterprise = "Enterprise"
+    web = "Web"
 
 
 class DayOfWeek(str, Enum):

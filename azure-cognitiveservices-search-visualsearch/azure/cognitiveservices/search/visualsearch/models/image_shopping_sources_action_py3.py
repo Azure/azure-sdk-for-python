@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_action import ImageAction
+from .image_action_py3 import ImageAction
 
 
 class ImageShoppingSourcesAction(ImageAction):
-    """ImageShoppingSourcesAction.
+    """Defines a shopping sources action.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

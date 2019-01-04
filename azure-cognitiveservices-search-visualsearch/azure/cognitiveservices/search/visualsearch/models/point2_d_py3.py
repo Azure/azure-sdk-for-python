@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .structured_value import StructuredValue
+from .structured_value_py3 import StructuredValue
 
 
 class Point2D(StructuredValue):
-    """Point2D.
+    """Defines a 2D point with X and Y coordinates.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

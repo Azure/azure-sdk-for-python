@@ -3,6 +3,27 @@
 Release History
 ===============
 
+2.0.0 (2019-02-01)
+++++++++++++++++++
+
+**Disclaimer**
+
+Note all preview features of the 2.0.0rc2 were confirmed in this 2.0.0 stable version. In particular, the following features will still be available only in the 2.0.0rc2 for now:
+
+- Domains.
+-	Advanced filters support.
+-	Event subscription expiration date
+-	Input mapping and event delivery schema.
+
+All other features are now considerd stable to use in production. This includes:
+
+-	Deadletter destination.
+-	Storage queue as destination.
+-	Hybrid connection as destination.
+-	Retry policy.
+-	Manual handshake.
+
+
 2.0.0rc2 (2018-10-24)
 +++++++++++++++++++++
 

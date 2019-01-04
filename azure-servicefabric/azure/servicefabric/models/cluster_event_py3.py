@@ -16,10 +16,10 @@ class ClusterEvent(FabricEvent):
     """Represents the base for all Cluster Events.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ClusterHealthReportCreatedEvent,
-    ClusterHealthReportExpiredEvent, ClusterUpgradeCompleteEvent,
-    ClusterUpgradeDomainCompleteEvent, ClusterUpgradeRollbackCompleteEvent,
-    ClusterUpgradeRollbackStartEvent, ClusterUpgradeStartEvent,
+    sub-classes are: ClusterNewHealthReportEvent,
+    ClusterHealthReportExpiredEvent, ClusterUpgradeCompletedEvent,
+    ClusterUpgradeDomainCompletedEvent, ClusterUpgradeRollbackCompletedEvent,
+    ClusterUpgradeRollbackStartedEvent, ClusterUpgradeStartedEvent,
     ChaosStoppedEvent, ChaosStartedEvent
 
     All required parameters must be populated in order to send to Azure.
@@ -27,6 +27,8 @@ class ClusterEvent(FabricEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -44,15 +46,16 @@ class ClusterEvent(FabricEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'kind': {'ClusterHealthReportCreated': 'ClusterHealthReportCreatedEvent', 'ClusterHealthReportExpired': 'ClusterHealthReportExpiredEvent', 'ClusterUpgradeComplete': 'ClusterUpgradeCompleteEvent', 'ClusterUpgradeDomainComplete': 'ClusterUpgradeDomainCompleteEvent', 'ClusterUpgradeRollbackComplete': 'ClusterUpgradeRollbackCompleteEvent', 'ClusterUpgradeRollbackStart': 'ClusterUpgradeRollbackStartEvent', 'ClusterUpgradeStart': 'ClusterUpgradeStartEvent', 'ChaosStopped': 'ChaosStoppedEvent', 'ChaosStarted': 'ChaosStartedEvent'}
+        'kind': {'ClusterNewHealthReport': 'ClusterNewHealthReportEvent', 'ClusterHealthReportExpired': 'ClusterHealthReportExpiredEvent', 'ClusterUpgradeCompleted': 'ClusterUpgradeCompletedEvent', 'ClusterUpgradeDomainCompleted': 'ClusterUpgradeDomainCompletedEvent', 'ClusterUpgradeRollbackCompleted': 'ClusterUpgradeRollbackCompletedEvent', 'ClusterUpgradeRollbackStarted': 'ClusterUpgradeRollbackStartedEvent', 'ClusterUpgradeStarted': 'ClusterUpgradeStartedEvent', 'ChaosStopped': 'ChaosStoppedEvent', 'ChaosStarted': 'ChaosStartedEvent'}
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ClusterEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(ClusterEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
         self.kind = 'ClusterEvent'

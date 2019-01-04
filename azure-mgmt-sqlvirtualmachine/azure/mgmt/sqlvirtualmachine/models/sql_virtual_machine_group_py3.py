@@ -37,9 +37,9 @@ class SqlVirtualMachineGroup(TrackedResource):
      SQL2016-WS2016, SQL2017-WS2016.
     :type sql_image_offer: str
     :param sql_image_sku: SQL image sku. Possible values include: 'Developer',
-     'Express', 'Standard', 'Enterprise', 'Web'
+     'Enterprise'
     :type sql_image_sku: str or
-     ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
+     ~azure.mgmt.sqlvirtualmachine.models.SqlVmGroupImageSku
     :ivar scale_type: Scale type. Possible values include: 'HA'
     :vartype scale_type: str or ~azure.mgmt.sqlvirtualmachine.models.ScaleType
     :ivar cluster_manager_type: Type of cluster manager: Windows Server

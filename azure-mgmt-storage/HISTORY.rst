@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.1.1 (2019-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix #4013 - "use_sub_domain" should be "use_sub_domain_name"
+
 3.1.0 (2018-11-15)
 ++++++++++++++++++
 

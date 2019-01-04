@@ -31,7 +31,7 @@ class WorkflowTriggerRecurrence(Model):
     """
 
     _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
         'interval': {'key': 'interval', 'type': 'int'},
         'start_time': {'key': 'startTime', 'type': 'str'},
         'end_time': {'key': 'endTime', 'type': 'str'},

@@ -3,6 +3,24 @@
 Release History
 ===============
 
+2.6.0 (2019-01-02)
+++++++++++++++++++
+
+**Features**
+
+- Add IP rules
+
+**Bugfixes**
+
+- Rename incorrect "id" to "virtual_network_resource_id"
+
+2.5.0 (2018-12-10)
+++++++++++++++++++
+
+**Features**
+
+- Add network rule set to registry properties
+
 2.4.0 (2018-11-05)
 ++++++++++++++++++
 

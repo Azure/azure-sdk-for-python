@@ -32,6 +32,8 @@ class Cluster(TrackedResource):
     :type etag: str
     :param properties: The properties of the cluster.
     :type properties: ~azure.mgmt.hdinsight.models.ClusterGetProperties
+    :param identity: The identity of the cluster, if configured.
+    :type identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
     _validation = {
@@ -48,9 +50,11 @@ class Cluster(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'ClusterGetProperties'},
+        'identity': {'key': 'identity', 'type': 'ClusterIdentity'},
     }
 
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
         self.properties = kwargs.get('properties', None)
+        self.identity = kwargs.get('identity', None)

@@ -22,8 +22,10 @@ class ResourceGroup(Model):
 
     :ivar id: The ID of the resource group.
     :vartype id: str
-    :param name: The name of the resource group.
-    :type name: str
+    :ivar name: The name of the resource group.
+    :vartype name: str
+    :ivar type: The type of the resource group.
+    :vartype type: str
     :param properties:
     :type properties:
      ~azure.mgmt.resource.resources.v2018_05_01.models.ResourceGroupProperties
@@ -40,22 +42,26 @@ class ResourceGroup(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'ResourceGroupProperties'},
         'location': {'key': 'location', 'type': 'str'},
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str, name: str=None, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, properties=None, managed_by: str=None, tags=None, **kwargs) -> None:
         super(ResourceGroup, self).__init__(**kwargs)
         self.id = None
-        self.name = name
+        self.name = None
+        self.type = None
         self.properties = properties
         self.location = location
         self.managed_by = managed_by

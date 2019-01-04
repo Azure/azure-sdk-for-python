@@ -41,7 +41,11 @@ class VirtualMachineScaleSetVMsOperations(object):
 
 
     def _reimage_initial(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, temp_disk=None, custom_headers=None, raw=False, **operation_config):
+        vm_scale_set_vm_reimage_input = None
+        if temp_disk is not None:
+            vm_scale_set_vm_reimage_input = models.VirtualMachineScaleSetVMReimageParameters(temp_disk=temp_disk)
+
         # Construct URL
         url = self.reimage.metadata['url']
         path_format_arguments = {
@@ -58,6 +62,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -65,8 +70,14 @@ class VirtualMachineScaleSetVMsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if vm_scale_set_vm_reimage_input is not None:
+            body_content = self._serialize.body(vm_scale_set_vm_reimage_input, 'VirtualMachineScaleSetVMReimageParameters')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
@@ -79,7 +90,7 @@ class VirtualMachineScaleSetVMsOperations(object):
             return client_raw_response
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, temp_disk=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) a specific virtual machine in a
         VM scale set.
 
@@ -89,6 +100,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
+        :param temp_disk: Specifies whether to reimage temp disk. Default
+         value: false.
+        :type temp_disk: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -104,6 +118,7 @@ class VirtualMachineScaleSetVMsOperations(object):
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
             instance_id=instance_id,
+            temp_disk=temp_disk,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

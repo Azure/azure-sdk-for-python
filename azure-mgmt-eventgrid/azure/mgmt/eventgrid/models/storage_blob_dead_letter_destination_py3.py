@@ -20,7 +20,8 @@ class StorageBlobDeadLetterDestination(DeadLetterDestination):
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param resource_id: The Azure Resource ID of the storage account that is
-     the destination of the deadletter events
+     the destination of the deadletter events. For example:
+     /subscriptions/{AzureSubscriptionId}/resourceGroups/{ResourceGroupName}/providers/microsoft.Storage/storageAccounts/{StorageAccountName}
     :type resource_id: str
     :param blob_container_name: The name of the Storage blob container that is
      the destination of the deadletter events

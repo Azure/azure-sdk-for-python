@@ -1490,10 +1490,10 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _reimage_initial(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        vm_instance_ids = None
-        if instance_ids is not None:
-            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
+            self, resource_group_name, vm_scale_set_name, temp_disk=None, instance_ids=None, custom_headers=None, raw=False, **operation_config):
+        vm_scale_set_reimage_input = None
+        if temp_disk is not None or instance_ids is not None:
+            vm_scale_set_reimage_input = models.VirtualMachineScaleSetReimageParameters(temp_disk=temp_disk, instance_ids=instance_ids)
 
         # Construct URL
         url = self.reimage.metadata['url']
@@ -1519,8 +1519,8 @@ class VirtualMachineScaleSetsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if vm_instance_ids is not None:
-            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceIDs')
+        if vm_scale_set_reimage_input is not None:
+            body_content = self._serialize.body(vm_scale_set_reimage_input, 'VirtualMachineScaleSetReimageParameters')
         else:
             body_content = None
 
@@ -1538,14 +1538,19 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, temp_disk=None, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) one or more virtual machines in
-        a VM scale set.
+        a VM scale set which don't have a ephemeral OS disk, for virtual
+        machines who have a ephemeral OS disk the virtual machine is reset to
+        initial state.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
+        :param temp_disk: Specifies whether to reimage temp disk. Default
+         value: false.
+        :type temp_disk: bool
         :param instance_ids: The virtual machine scale set instance ids.
          Omitting the virtual machine scale set instance ids will result in the
          operation being performed on all virtual machines in the virtual
@@ -1565,6 +1570,7 @@ class VirtualMachineScaleSetsOperations(object):
         raw_result = self._reimage_initial(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
+            temp_disk=temp_disk,
             instance_ids=instance_ids,
             custom_headers=custom_headers,
             raw=True,

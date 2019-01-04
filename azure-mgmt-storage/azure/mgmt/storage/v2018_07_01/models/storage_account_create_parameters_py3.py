@@ -17,7 +17,7 @@ class StorageAccountCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sku: Required. Required. Gets or sets the sku name.
+    :param sku: Required. Required. Gets or sets the SKU name.
     :type sku: ~azure.mgmt.storage.v2018_07_01.models.Sku
     :param kind: Required. Required. Indicates the type of storage account.
      Possible values include: 'Storage', 'StorageV2', 'BlobStorage',
