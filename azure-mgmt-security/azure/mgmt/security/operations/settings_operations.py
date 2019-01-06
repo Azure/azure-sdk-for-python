@@ -105,8 +105,8 @@ class SettingsOperations(object):
             self, setting_name, custom_headers=None, raw=False, **operation_config):
         """Settings of different configurations in security center.
 
-        :param setting_name: Name of setting. Possible values include: 'MCAS',
-         'WDATP'
+        :param setting_name: Name of setting: (MCAS/WDATP). Possible values
+         include: 'MCAS', 'WDATP'
         :type setting_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -162,14 +162,16 @@ class SettingsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/settings/{settingName}'}
 
     def update(
-            self, setting_name, setting, custom_headers=None, raw=False, **operation_config):
+            self, setting_name, kind, custom_headers=None, raw=False, **operation_config):
         """updating settings about different configurations in security center.
 
-        :param setting_name: Name of setting. Possible values include: 'MCAS',
-         'WDATP'
+        :param setting_name: Name of setting: (MCAS/WDATP). Possible values
+         include: 'MCAS', 'WDATP'
         :type setting_name: str
-        :param setting: Setting object
-        :type setting: ~azure.mgmt.security.models.Setting
+        :param kind: the kind of the settings string (DataExportSetting).
+         Possible values include: 'DataExportSetting',
+         'AlertSuppressionSetting'
+        :type kind: str or ~azure.mgmt.security.models.SettingKind
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -180,6 +182,8 @@ class SettingsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        setting = models.Setting(kind=kind)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

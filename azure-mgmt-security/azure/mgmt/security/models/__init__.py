@@ -21,7 +21,7 @@ try:
     from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
     from .setting_py3 import Setting
     from .data_export_setting_py3 import DataExportSetting
-    from .setting_kind1_py3 import SettingKind1
+    from .setting_resource_py3 import SettingResource
     from .sensitivity_label_py3 import SensitivityLabel
     from .information_protection_keyword_py3 import InformationProtectionKeyword
     from .information_type_py3 import InformationType
@@ -75,7 +75,7 @@ except (SyntaxError, ImportError):
     from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
     from .setting import Setting
     from .data_export_setting import DataExportSetting
-    from .setting_kind1 import SettingKind1
+    from .setting_resource import SettingResource
     from .sensitivity_label import SensitivityLabel
     from .information_protection_keyword import InformationProtectionKeyword
     from .information_type import InformationType
@@ -161,7 +161,7 @@ __all__ = [
     'AdvancedThreatProtectionSetting',
     'Setting',
     'DataExportSetting',
-    'SettingKind1',
+    'SettingResource',
     'SensitivityLabel',
     'InformationProtectionKeyword',
     'InformationType',
