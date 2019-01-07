@@ -11,6 +11,13 @@
 
 try:
     from .domain_py3 import Domain
+    from .image_tag_create_entry_py3 import ImageTagCreateEntry
+    from .image_tag_create_batch_py3 import ImageTagCreateBatch
+    from .image_tag_create_summary_py3 import ImageTagCreateSummary
+    from .image_region_create_entry_py3 import ImageRegionCreateEntry
+    from .image_region_create_batch_py3 import ImageRegionCreateBatch
+    from .image_region_create_result_py3 import ImageRegionCreateResult
+    from .image_region_create_summary_py3 import ImageRegionCreateSummary
     from .image_tag_py3 import ImageTag
     from .image_region_py3 import ImageRegion
     from .image_py3 import Image
@@ -23,33 +30,33 @@ try:
     from .image_url_create_batch_py3 import ImageUrlCreateBatch
     from .image_id_create_entry_py3 import ImageIdCreateEntry
     from .image_id_create_batch_py3 import ImageIdCreateBatch
-    from .image_tag_create_entry_py3 import ImageTagCreateEntry
-    from .image_tag_create_batch_py3 import ImageTagCreateBatch
-    from .image_tag_create_summary_py3 import ImageTagCreateSummary
-    from .image_region_create_entry_py3 import ImageRegionCreateEntry
-    from .image_region_create_batch_py3 import ImageRegionCreateBatch
-    from .image_region_create_result_py3 import ImageRegionCreateResult
-    from .image_region_create_summary_py3 import ImageRegionCreateSummary
     from .bounding_box_py3 import BoundingBox
     from .region_proposal_py3 import RegionProposal
     from .image_region_proposal_py3 import ImageRegionProposal
+    from .image_url_py3 import ImageUrl
+    from .prediction_py3 import Prediction
+    from .image_prediction_py3 import ImagePrediction
     from .prediction_query_tag_py3 import PredictionQueryTag
     from .prediction_query_token_py3 import PredictionQueryToken
-    from .prediction_py3 import Prediction
     from .stored_image_prediction_py3 import StoredImagePrediction
     from .prediction_query_result_py3 import PredictionQueryResult
-    from .image_url_py3 import ImageUrl
-    from .image_prediction_py3 import ImagePrediction
-    from .iteration_py3 import Iteration
-    from .project_settings_py3 import ProjectSettings
-    from .project_py3 import Project
     from .tag_performance_py3 import TagPerformance
     from .iteration_performance_py3 import IterationPerformance
     from .image_performance_py3 import ImagePerformance
+    from .project_settings_py3 import ProjectSettings
+    from .project_py3 import Project
+    from .iteration_py3 import Iteration
     from .export_py3 import Export
     from .tag_py3 import Tag
 except (SyntaxError, ImportError):
     from .domain import Domain
+    from .image_tag_create_entry import ImageTagCreateEntry
+    from .image_tag_create_batch import ImageTagCreateBatch
+    from .image_tag_create_summary import ImageTagCreateSummary
+    from .image_region_create_entry import ImageRegionCreateEntry
+    from .image_region_create_batch import ImageRegionCreateBatch
+    from .image_region_create_result import ImageRegionCreateResult
+    from .image_region_create_summary import ImageRegionCreateSummary
     from .image_tag import ImageTag
     from .image_region import ImageRegion
     from .image import Image
@@ -62,42 +69,44 @@ except (SyntaxError, ImportError):
     from .image_url_create_batch import ImageUrlCreateBatch
     from .image_id_create_entry import ImageIdCreateEntry
     from .image_id_create_batch import ImageIdCreateBatch
-    from .image_tag_create_entry import ImageTagCreateEntry
-    from .image_tag_create_batch import ImageTagCreateBatch
-    from .image_tag_create_summary import ImageTagCreateSummary
-    from .image_region_create_entry import ImageRegionCreateEntry
-    from .image_region_create_batch import ImageRegionCreateBatch
-    from .image_region_create_result import ImageRegionCreateResult
-    from .image_region_create_summary import ImageRegionCreateSummary
     from .bounding_box import BoundingBox
     from .region_proposal import RegionProposal
     from .image_region_proposal import ImageRegionProposal
+    from .image_url import ImageUrl
+    from .prediction import Prediction
+    from .image_prediction import ImagePrediction
     from .prediction_query_tag import PredictionQueryTag
     from .prediction_query_token import PredictionQueryToken
-    from .prediction import Prediction
     from .stored_image_prediction import StoredImagePrediction
     from .prediction_query_result import PredictionQueryResult
-    from .image_url import ImageUrl
-    from .image_prediction import ImagePrediction
-    from .iteration import Iteration
-    from .project_settings import ProjectSettings
-    from .project import Project
     from .tag_performance import TagPerformance
     from .iteration_performance import IterationPerformance
     from .image_performance import ImagePerformance
+    from .project_settings import ProjectSettings
+    from .project import Project
+    from .iteration import Iteration
     from .export import Export
     from .tag import Tag
-from .training_api_enums import (
+from .custom_vision_training_client_enums import (
     DomainType,
-    ImageUploadStatus,
+    ImageCreateStatus,
     OrderBy,
-    ExportPlatform,
+    Classifier,
+    ExportPlatformModel,
     ExportStatusModel,
-    ExportFlavor,
+    ExportFlavorModel,
+    TagType,
 )
 
 __all__ = [
     'Domain',
+    'ImageTagCreateEntry',
+    'ImageTagCreateBatch',
+    'ImageTagCreateSummary',
+    'ImageRegionCreateEntry',
+    'ImageRegionCreateBatch',
+    'ImageRegionCreateResult',
+    'ImageRegionCreateSummary',
     'ImageTag',
     'ImageRegion',
     'Image',
@@ -110,35 +119,30 @@ __all__ = [
     'ImageUrlCreateBatch',
     'ImageIdCreateEntry',
     'ImageIdCreateBatch',
-    'ImageTagCreateEntry',
-    'ImageTagCreateBatch',
-    'ImageTagCreateSummary',
-    'ImageRegionCreateEntry',
-    'ImageRegionCreateBatch',
-    'ImageRegionCreateResult',
-    'ImageRegionCreateSummary',
     'BoundingBox',
     'RegionProposal',
     'ImageRegionProposal',
+    'ImageUrl',
+    'Prediction',
+    'ImagePrediction',
     'PredictionQueryTag',
     'PredictionQueryToken',
-    'Prediction',
     'StoredImagePrediction',
     'PredictionQueryResult',
-    'ImageUrl',
-    'ImagePrediction',
-    'Iteration',
-    'ProjectSettings',
-    'Project',
     'TagPerformance',
     'IterationPerformance',
     'ImagePerformance',
+    'ProjectSettings',
+    'Project',
+    'Iteration',
     'Export',
     'Tag',
     'DomainType',
-    'ImageUploadStatus',
+    'ImageCreateStatus',
     'OrderBy',
-    'ExportPlatform',
+    'Classifier',
+    'ExportPlatformModel',
     'ExportStatusModel',
-    'ExportFlavor',
+    'ExportFlavorModel',
+    'TagType',
 ]

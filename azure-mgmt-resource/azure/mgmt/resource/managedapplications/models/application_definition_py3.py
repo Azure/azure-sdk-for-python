@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .generic_resource import GenericResource
+from .generic_resource_py3 import GenericResource
 
 
 class ApplicationDefinition(GenericResource):

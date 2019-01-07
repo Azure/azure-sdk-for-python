@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-storage"
+package_pprint_name = "Storage Management"
+package_doc_id = "storage"
+is_stable = true

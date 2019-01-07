@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.authorization_operations import AuthorizationOperations
 from .operations.management_locks_operations import ManagementLocksOperations
 from . import models
 
@@ -49,12 +50,14 @@ class ManagementLockClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLockClient(object):
+class ManagementLockClient(SDKClient):
     """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
     :ivar config: Configuration for client.
     :vartype config: ManagementLockClientConfiguration
 
+    :ivar authorization_operations: AuthorizationOperations operations
+    :vartype authorization_operations: azure.mgmt.resource.locks.v2016_09_01.operations.AuthorizationOperations
     :ivar management_locks: ManagementLocks operations
     :vartype management_locks: azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations
 
@@ -70,12 +73,14 @@ class ManagementLockClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ManagementLockClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.authorization_operations = AuthorizationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.management_locks = ManagementLocksOperations(
             self._client, self.config, self._serialize, self._deserialize)

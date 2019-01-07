@@ -18,6 +18,10 @@ class ApplicationUpdateParameters(Model):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param available_to_other_tenants: Whether the application is available to
      other tenants
     :type available_to_other_tenants: bool
@@ -47,6 +51,7 @@ class ApplicationUpdateParameters(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
@@ -58,15 +63,16 @@ class ApplicationUpdateParameters(Model):
         'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
     }
 
-    def __init__(self, additional_properties=None, available_to_other_tenants=None, display_name=None, homepage=None, identifier_uris=None, reply_urls=None, key_credentials=None, password_credentials=None, oauth2_allow_implicit_flow=None, required_resource_access=None):
-        super(ApplicationUpdateParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.available_to_other_tenants = available_to_other_tenants
-        self.display_name = display_name
-        self.homepage = homepage
-        self.identifier_uris = identifier_uris
-        self.reply_urls = reply_urls
-        self.key_credentials = key_credentials
-        self.password_credentials = password_credentials
-        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
-        self.required_resource_access = required_resource_access
+    def __init__(self, **kwargs):
+        super(ApplicationUpdateParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)

@@ -15,30 +15,29 @@ from msrest.serialization import Model
 class NodeStateCounts(Model):
     """Counts of various compute node states on the cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param idle_node_count: Required. Number of compute nodes in idle state.
-    :type idle_node_count: int
-    :param running_node_count: Required. Number of compute nodes which are
-     running jobs.
-    :type running_node_count: int
-    :param preparing_node_count: Required. Number of compute nodes which are
-     being prepared.
-    :type preparing_node_count: int
-    :param unusable_node_count: Required. Number of compute nodes which are
-     unusable.
-    :type unusable_node_count: int
-    :param leaving_node_count: Required. Number of compute nodes which are
-     leaving the cluster.
-    :type leaving_node_count: int
+    :ivar idle_node_count: Number of compute nodes in idle state.
+    :vartype idle_node_count: int
+    :ivar running_node_count: Number of compute nodes which are running jobs.
+    :vartype running_node_count: int
+    :ivar preparing_node_count: Number of compute nodes which are being
+     prepared.
+    :vartype preparing_node_count: int
+    :ivar unusable_node_count: Number of compute nodes which are unusable.
+    :vartype unusable_node_count: int
+    :ivar leaving_node_count: Number of compute nodes which are leaving the
+     cluster.
+    :vartype leaving_node_count: int
     """
 
     _validation = {
-        'idle_node_count': {'required': True},
-        'running_node_count': {'required': True},
-        'preparing_node_count': {'required': True},
-        'unusable_node_count': {'required': True},
-        'leaving_node_count': {'required': True},
+        'idle_node_count': {'readonly': True},
+        'running_node_count': {'readonly': True},
+        'preparing_node_count': {'readonly': True},
+        'unusable_node_count': {'readonly': True},
+        'leaving_node_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -51,8 +50,8 @@ class NodeStateCounts(Model):
 
     def __init__(self, **kwargs):
         super(NodeStateCounts, self).__init__(**kwargs)
-        self.idle_node_count = kwargs.get('idle_node_count', None)
-        self.running_node_count = kwargs.get('running_node_count', None)
-        self.preparing_node_count = kwargs.get('preparing_node_count', None)
-        self.unusable_node_count = kwargs.get('unusable_node_count', None)
-        self.leaving_node_count = kwargs.get('leaving_node_count', None)
+        self.idle_node_count = None
+        self.running_node_count = None
+        self.preparing_node_count = None
+        self.unusable_node_count = None
+        self.leaving_node_count = None

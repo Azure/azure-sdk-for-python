@@ -9,25 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource_py3 import ProxyResource
 
 
-class FileServer(Resource):
+class FileServer(ProxyResource):
     """Contains information about the File Server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource
-    :vartype location: str
-    :ivar tags: The tags of the resource
-    :vartype tags: dict[str, str]
     :param vm_size: The size of the virtual machine of the File Server. For
      information about available VM sizes for File Server from the Virtual
      Machines Marketplace, see Sizes for Virtual Machines (Linux).
@@ -63,8 +59,6 @@ class FileServer(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
         'mount_settings': {'readonly': True},
         'provisioning_state_transition_time': {'readonly': True},
         'creation_time': {'readonly': True},
@@ -75,8 +69,6 @@ class FileServer(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
         'ssh_configuration': {'key': 'properties.sshConfiguration', 'type': 'SshConfiguration'},
         'data_disks': {'key': 'properties.dataDisks', 'type': 'DataDisks'},
@@ -84,7 +76,7 @@ class FileServer(Resource):
         'mount_settings': {'key': 'properties.mountSettings', 'type': 'MountSettings'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, vm_size: str=None, ssh_configuration=None, data_disks=None, subnet=None, **kwargs) -> None:

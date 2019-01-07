@@ -40,14 +40,14 @@ class ApplicationUpgradeProgressInfo(Model):
      'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
     :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
     :param upgrade_description: Describes the parameters for an application
-     upgrade. Please note that upgrade description replaces the existing
-     application description. This means that if the parameters are not
-     specified, the existing parameters on the applications will be overwritten
-     with the empty parameters list. This would results in application using
-     the default value of the parameters from the application manifest. If you
-     do not want to change any existing parameter values, please get the
-     application parameters first using the GetApplicationInfo query and then
-     supply those values as Parameters in this ApplicationUpgradeDescription.
+     upgrade. Note that upgrade description replaces the existing application
+     description. This means that if the parameters are not specified, the
+     existing parameters on the applications will be overwritten with the empty
+     parameters list. This would result in the application using the default
+     value of the parameters from the application manifest. If you do not want
+     to change any existing parameter values, please get the application
+     parameters first using the GetApplicationInfo query and then supply those
+     values as Parameters in this ApplicationUpgradeDescription.
     :type upgrade_description:
      ~azure.servicefabric.models.ApplicationUpgradeDescription
     :param upgrade_duration_in_milliseconds: The estimated total amount of

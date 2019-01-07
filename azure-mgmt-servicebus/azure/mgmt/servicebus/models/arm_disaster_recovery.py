@@ -30,6 +30,9 @@ class ArmDisasterRecovery(Resource):
      'Failed'. Possible values include: 'Accepted', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.servicebus.models.ProvisioningStateDR
+    :ivar pending_replication_operations_count: Number of entities pending to
+     be replicated.
+    :vartype pending_replication_operations_count: long
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub
      namespace name, which is part of GEO DR pairning
     :type partner_namespace: str
@@ -47,6 +50,7 @@ class ArmDisasterRecovery(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
         'role': {'readonly': True},
     }
 
@@ -55,6 +59,7 @@ class ArmDisasterRecovery(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateDR'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
         'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
@@ -63,6 +68,7 @@ class ArmDisasterRecovery(Resource):
     def __init__(self, **kwargs):
         super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.provisioning_state = None
+        self.pending_replication_operations_count = None
         self.partner_namespace = kwargs.get('partner_namespace', None)
         self.alternate_name = kwargs.get('alternate_name', None)
         self.role = None

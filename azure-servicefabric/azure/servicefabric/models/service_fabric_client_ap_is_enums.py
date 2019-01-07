@@ -12,13 +12,6 @@
 from enum import Enum
 
 
-class ApplicationDefinitionKind(str, Enum):
-
-    invalid = "Invalid"  #: Indicates the application definition kind is invalid. All Service Fabric enumerations have the invalid type. The value is 65535.
-    service_fabric_application_description = "ServiceFabricApplicationDescription"  #: Indicates the application is defined by a Service Fabric application description. The value is 0.
-    compose = "Compose"  #: Indicates the application is defined by compose file(s). The value is 1.
-
-
 class HealthState(str, Enum):
 
     invalid = "Invalid"  #: Indicates an invalid health state. All Service Fabric enumerations have the invalid type. The value is zero.
@@ -26,6 +19,101 @@ class HealthState(str, Enum):
     warning = "Warning"  #: Indicates the health state is at a warning level. The value is 2.
     error = "Error"  #: Indicates the health state is at an error level. Error health state should be investigated, as they can impact the correct functionality of the cluster. The value is 3.
     unknown = "Unknown"  #: Indicates an unknown health status. The value is 65535.
+
+
+class FabricErrorCodes(str, Enum):
+
+    fabric_e_invalid_partition_key = "FABRIC_E_INVALID_PARTITION_KEY"
+    fabric_e_imagebuilder_validation_error = "FABRIC_E_IMAGEBUILDER_VALIDATION_ERROR"
+    fabric_e_invalid_address = "FABRIC_E_INVALID_ADDRESS"
+    fabric_e_application_not_upgrading = "FABRIC_E_APPLICATION_NOT_UPGRADING"
+    fabric_e_application_upgrade_validation_error = "FABRIC_E_APPLICATION_UPGRADE_VALIDATION_ERROR"
+    fabric_e_fabric_not_upgrading = "FABRIC_E_FABRIC_NOT_UPGRADING"
+    fabric_e_fabric_upgrade_validation_error = "FABRIC_E_FABRIC_UPGRADE_VALIDATION_ERROR"
+    fabric_e_invalid_configuration = "FABRIC_E_INVALID_CONFIGURATION"
+    fabric_e_invalid_name_uri = "FABRIC_E_INVALID_NAME_URI"
+    fabric_e_path_too_long = "FABRIC_E_PATH_TOO_LONG"
+    fabric_e_key_too_large = "FABRIC_E_KEY_TOO_LARGE"
+    fabric_e_service_affinity_chain_not_supported = "FABRIC_E_SERVICE_AFFINITY_CHAIN_NOT_SUPPORTED"
+    fabric_e_invalid_atomic_group = "FABRIC_E_INVALID_ATOMIC_GROUP"
+    fabric_e_value_empty = "FABRIC_E_VALUE_EMPTY"
+    fabric_e_node_not_found = "FABRIC_E_NODE_NOT_FOUND"
+    fabric_e_application_type_not_found = "FABRIC_E_APPLICATION_TYPE_NOT_FOUND"
+    fabric_e_application_not_found = "FABRIC_E_APPLICATION_NOT_FOUND"
+    fabric_e_service_type_not_found = "FABRIC_E_SERVICE_TYPE_NOT_FOUND"
+    fabric_e_service_does_not_exist = "FABRIC_E_SERVICE_DOES_NOT_EXIST"
+    fabric_e_service_type_template_not_found = "FABRIC_E_SERVICE_TYPE_TEMPLATE_NOT_FOUND"
+    fabric_e_configuration_section_not_found = "FABRIC_E_CONFIGURATION_SECTION_NOT_FOUND"
+    fabric_e_partition_not_found = "FABRIC_E_PARTITION_NOT_FOUND"
+    fabric_e_replica_does_not_exist = "FABRIC_E_REPLICA_DOES_NOT_EXIST"
+    fabric_e_service_group_does_not_exist = "FABRIC_E_SERVICE_GROUP_DOES_NOT_EXIST"
+    fabric_e_configuration_parameter_not_found = "FABRIC_E_CONFIGURATION_PARAMETER_NOT_FOUND"
+    fabric_e_directory_not_found = "FABRIC_E_DIRECTORY_NOT_FOUND"
+    fabric_e_fabric_version_not_found = "FABRIC_E_FABRIC_VERSION_NOT_FOUND"
+    fabric_e_file_not_found = "FABRIC_E_FILE_NOT_FOUND"
+    fabric_e_name_does_not_exist = "FABRIC_E_NAME_DOES_NOT_EXIST"
+    fabric_e_property_does_not_exist = "FABRIC_E_PROPERTY_DOES_NOT_EXIST"
+    fabric_e_enumeration_completed = "FABRIC_E_ENUMERATION_COMPLETED"
+    fabric_e_service_manifest_not_found = "FABRIC_E_SERVICE_MANIFEST_NOT_FOUND"
+    fabric_e_key_not_found = "FABRIC_E_KEY_NOT_FOUND"
+    fabric_e_health_entity_not_found = "FABRIC_E_HEALTH_ENTITY_NOT_FOUND"
+    fabric_e_application_type_already_exists = "FABRIC_E_APPLICATION_TYPE_ALREADY_EXISTS"
+    fabric_e_application_already_exists = "FABRIC_E_APPLICATION_ALREADY_EXISTS"
+    fabric_e_application_already_in_target_version = "FABRIC_E_APPLICATION_ALREADY_IN_TARGET_VERSION"
+    fabric_e_application_type_provision_in_progress = "FABRIC_E_APPLICATION_TYPE_PROVISION_IN_PROGRESS"
+    fabric_e_application_upgrade_in_progress = "FABRIC_E_APPLICATION_UPGRADE_IN_PROGRESS"
+    fabric_e_service_already_exists = "FABRIC_E_SERVICE_ALREADY_EXISTS"
+    fabric_e_service_group_already_exists = "FABRIC_E_SERVICE_GROUP_ALREADY_EXISTS"
+    fabric_e_application_type_in_use = "FABRIC_E_APPLICATION_TYPE_IN_USE"
+    fabric_e_fabric_already_in_target_version = "FABRIC_E_FABRIC_ALREADY_IN_TARGET_VERSION"
+    fabric_e_fabric_version_already_exists = "FABRIC_E_FABRIC_VERSION_ALREADY_EXISTS"
+    fabric_e_fabric_version_in_use = "FABRIC_E_FABRIC_VERSION_IN_USE"
+    fabric_e_fabric_upgrade_in_progress = "FABRIC_E_FABRIC_UPGRADE_IN_PROGRESS"
+    fabric_e_name_already_exists = "FABRIC_E_NAME_ALREADY_EXISTS"
+    fabric_e_name_not_empty = "FABRIC_E_NAME_NOT_EMPTY"
+    fabric_e_property_check_failed = "FABRIC_E_PROPERTY_CHECK_FAILED"
+    fabric_e_service_metadata_mismatch = "FABRIC_E_SERVICE_METADATA_MISMATCH"
+    fabric_e_service_type_mismatch = "FABRIC_E_SERVICE_TYPE_MISMATCH"
+    fabric_e_health_stale_report = "FABRIC_E_HEALTH_STALE_REPORT"
+    fabric_e_sequence_number_check_failed = "FABRIC_E_SEQUENCE_NUMBER_CHECK_FAILED"
+    fabric_e_node_has_not_stopped_yet = "FABRIC_E_NODE_HAS_NOT_STOPPED_YET"
+    fabric_e_instance_id_mismatch = "FABRIC_E_INSTANCE_ID_MISMATCH"
+    fabric_e_value_too_large = "FABRIC_E_VALUE_TOO_LARGE"
+    fabric_e_no_write_quorum = "FABRIC_E_NO_WRITE_QUORUM"
+    fabric_e_not_primary = "FABRIC_E_NOT_PRIMARY"
+    fabric_e_not_ready = "FABRIC_E_NOT_READY"
+    fabric_e_reconfiguration_pending = "FABRIC_E_RECONFIGURATION_PENDING"
+    fabric_e_service_offline = "FABRIC_E_SERVICE_OFFLINE"
+    e_abort = "E_ABORT"
+    fabric_e_communication_error = "FABRIC_E_COMMUNICATION_ERROR"
+    fabric_e_operation_not_complete = "FABRIC_E_OPERATION_NOT_COMPLETE"
+    fabric_e_timeout = "FABRIC_E_TIMEOUT"
+    fabric_e_node_is_up = "FABRIC_E_NODE_IS_UP"
+    e_fail = "E_FAIL"
+    fabric_e_backup_is_enabled = "FABRIC_E_BACKUP_IS_ENABLED"
+    fabric_e_restore_source_target_partition_mismatch = "FABRIC_E_RESTORE_SOURCE_TARGET_PARTITION_MISMATCH"
+    fabric_e_invalid_for_stateless_services = "FABRIC_E_INVALID_FOR_STATELESS_SERVICES"
+    fabric_e_backup_not_enabled = "FABRIC_E_BACKUP_NOT_ENABLED"
+    fabric_e_backup_policy_not_existing = "FABRIC_E_BACKUP_POLICY_NOT_EXISTING"
+    fabric_e_fault_analysis_service_not_existing = "FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING"
+    fabric_e_backup_in_progress = "FABRIC_E_BACKUP_IN_PROGRESS"
+    fabric_e_restore_in_progress = "FABRIC_E_RESTORE_IN_PROGRESS"
+    fabric_e_backup_policy_already_existing = "FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING"
+    fabric_e_invalid_service_scaling_policy = "FABRIC_E_INVALID_SERVICE_SCALING_POLICY"
+    e_invalidarg = "E_INVALIDARG"
+    fabric_e_single_instance_application_already_exists = "FABRIC_E_SINGLE_INSTANCE_APPLICATION_ALREADY_EXISTS"
+    fabric_e_single_instance_application_not_found = "FABRIC_E_SINGLE_INSTANCE_APPLICATION_NOT_FOUND"
+    fabric_e_volume_already_exists = "FABRIC_E_VOLUME_ALREADY_EXISTS"
+    fabric_e_volume_not_found = "FABRIC_E_VOLUME_NOT_FOUND"
+    serialization_error = "SerializationError"
+    fabric_e_imagebuilder_reserved_directory_error = "FABRIC_E_IMAGEBUILDER_RESERVED_DIRECTORY_ERROR"
+
+
+class ApplicationDefinitionKind(str, Enum):
+
+    invalid = "Invalid"  #: Indicates the application definition kind is invalid. All Service Fabric enumerations have the invalid type. The value is 65535.
+    service_fabric_application_description = "ServiceFabricApplicationDescription"  #: Indicates the application is defined by a Service Fabric application description. The value is 0.
+    compose = "Compose"  #: Indicates the application is defined by compose file(s). The value is 1.
 
 
 class ApplicationStatus(str, Enum):
@@ -113,7 +201,7 @@ class NodeUpgradePhase(str, Enum):
 class FailureReason(str, Enum):
 
     none = "None"  #: Indicates the reason is invalid or unknown. All Service Fabric enumerations have the invalid type. The value is zero.
-    interrupted = "Interrupted"  #: There was an external request to rollback the upgrade. The value is 1
+    interrupted = "Interrupted"  #: There was an external request to roll back the upgrade. The value is 1
     health_check = "HealthCheck"  #: The upgrade failed due to health policy violations. The value is 2
     upgrade_domain_timeout = "UpgradeDomainTimeout"  #: An upgrade domain took longer than the allowed upgrade domain timeout to process. The value is 3
     overall_upgrade_timeout = "OverallUpgradeTimeout"  #: The overall upgrade took longer than the allowed upgrade timeout to process. The value is 4
@@ -188,88 +276,6 @@ class EntityKind(str, Enum):
     cluster = "Cluster"  #: Indicates the entity is a Service Fabric cluster. The value is 8.
 
 
-class FabricErrorCodes(str, Enum):
-
-    fabric_e_invalid_partition_key = "FABRIC_E_INVALID_PARTITION_KEY"
-    fabric_e_imagebuilder_validation_error = "FABRIC_E_IMAGEBUILDER_VALIDATION_ERROR"
-    fabric_e_invalid_address = "FABRIC_E_INVALID_ADDRESS"
-    fabric_e_application_not_upgrading = "FABRIC_E_APPLICATION_NOT_UPGRADING"
-    fabric_e_application_upgrade_validation_error = "FABRIC_E_APPLICATION_UPGRADE_VALIDATION_ERROR"
-    fabric_e_fabric_not_upgrading = "FABRIC_E_FABRIC_NOT_UPGRADING"
-    fabric_e_fabric_upgrade_validation_error = "FABRIC_E_FABRIC_UPGRADE_VALIDATION_ERROR"
-    fabric_e_invalid_configuration = "FABRIC_E_INVALID_CONFIGURATION"
-    fabric_e_invalid_name_uri = "FABRIC_E_INVALID_NAME_URI"
-    fabric_e_path_too_long = "FABRIC_E_PATH_TOO_LONG"
-    fabric_e_key_too_large = "FABRIC_E_KEY_TOO_LARGE"
-    fabric_e_service_affinity_chain_not_supported = "FABRIC_E_SERVICE_AFFINITY_CHAIN_NOT_SUPPORTED"
-    fabric_e_invalid_atomic_group = "FABRIC_E_INVALID_ATOMIC_GROUP"
-    fabric_e_value_empty = "FABRIC_E_VALUE_EMPTY"
-    fabric_e_node_not_found = "FABRIC_E_NODE_NOT_FOUND"
-    fabric_e_application_type_not_found = "FABRIC_E_APPLICATION_TYPE_NOT_FOUND"
-    fabric_e_application_not_found = "FABRIC_E_APPLICATION_NOT_FOUND"
-    fabric_e_service_type_not_found = "FABRIC_E_SERVICE_TYPE_NOT_FOUND"
-    fabric_e_service_does_not_exist = "FABRIC_E_SERVICE_DOES_NOT_EXIST"
-    fabric_e_service_type_template_not_found = "FABRIC_E_SERVICE_TYPE_TEMPLATE_NOT_FOUND"
-    fabric_e_configuration_section_not_found = "FABRIC_E_CONFIGURATION_SECTION_NOT_FOUND"
-    fabric_e_partition_not_found = "FABRIC_E_PARTITION_NOT_FOUND"
-    fabric_e_replica_does_not_exist = "FABRIC_E_REPLICA_DOES_NOT_EXIST"
-    fabric_e_service_group_does_not_exist = "FABRIC_E_SERVICE_GROUP_DOES_NOT_EXIST"
-    fabric_e_configuration_parameter_not_found = "FABRIC_E_CONFIGURATION_PARAMETER_NOT_FOUND"
-    fabric_e_directory_not_found = "FABRIC_E_DIRECTORY_NOT_FOUND"
-    fabric_e_fabric_version_not_found = "FABRIC_E_FABRIC_VERSION_NOT_FOUND"
-    fabric_e_file_not_found = "FABRIC_E_FILE_NOT_FOUND"
-    fabric_e_name_does_not_exist = "FABRIC_E_NAME_DOES_NOT_EXIST"
-    fabric_e_property_does_not_exist = "FABRIC_E_PROPERTY_DOES_NOT_EXIST"
-    fabric_e_enumeration_completed = "FABRIC_E_ENUMERATION_COMPLETED"
-    fabric_e_service_manifest_not_found = "FABRIC_E_SERVICE_MANIFEST_NOT_FOUND"
-    fabric_e_key_not_found = "FABRIC_E_KEY_NOT_FOUND"
-    fabric_e_health_entity_not_found = "FABRIC_E_HEALTH_ENTITY_NOT_FOUND"
-    fabric_e_application_type_already_exists = "FABRIC_E_APPLICATION_TYPE_ALREADY_EXISTS"
-    fabric_e_application_already_exists = "FABRIC_E_APPLICATION_ALREADY_EXISTS"
-    fabric_e_application_already_in_target_version = "FABRIC_E_APPLICATION_ALREADY_IN_TARGET_VERSION"
-    fabric_e_application_type_provision_in_progress = "FABRIC_E_APPLICATION_TYPE_PROVISION_IN_PROGRESS"
-    fabric_e_application_upgrade_in_progress = "FABRIC_E_APPLICATION_UPGRADE_IN_PROGRESS"
-    fabric_e_service_already_exists = "FABRIC_E_SERVICE_ALREADY_EXISTS"
-    fabric_e_service_group_already_exists = "FABRIC_E_SERVICE_GROUP_ALREADY_EXISTS"
-    fabric_e_application_type_in_use = "FABRIC_E_APPLICATION_TYPE_IN_USE"
-    fabric_e_fabric_already_in_target_version = "FABRIC_E_FABRIC_ALREADY_IN_TARGET_VERSION"
-    fabric_e_fabric_version_already_exists = "FABRIC_E_FABRIC_VERSION_ALREADY_EXISTS"
-    fabric_e_fabric_version_in_use = "FABRIC_E_FABRIC_VERSION_IN_USE"
-    fabric_e_fabric_upgrade_in_progress = "FABRIC_E_FABRIC_UPGRADE_IN_PROGRESS"
-    fabric_e_name_already_exists = "FABRIC_E_NAME_ALREADY_EXISTS"
-    fabric_e_name_not_empty = "FABRIC_E_NAME_NOT_EMPTY"
-    fabric_e_property_check_failed = "FABRIC_E_PROPERTY_CHECK_FAILED"
-    fabric_e_service_metadata_mismatch = "FABRIC_E_SERVICE_METADATA_MISMATCH"
-    fabric_e_service_type_mismatch = "FABRIC_E_SERVICE_TYPE_MISMATCH"
-    fabric_e_health_stale_report = "FABRIC_E_HEALTH_STALE_REPORT"
-    fabric_e_sequence_number_check_failed = "FABRIC_E_SEQUENCE_NUMBER_CHECK_FAILED"
-    fabric_e_node_has_not_stopped_yet = "FABRIC_E_NODE_HAS_NOT_STOPPED_YET"
-    fabric_e_instance_id_mismatch = "FABRIC_E_INSTANCE_ID_MISMATCH"
-    fabric_e_value_too_large = "FABRIC_E_VALUE_TOO_LARGE"
-    fabric_e_no_write_quorum = "FABRIC_E_NO_WRITE_QUORUM"
-    fabric_e_not_primary = "FABRIC_E_NOT_PRIMARY"
-    fabric_e_not_ready = "FABRIC_E_NOT_READY"
-    fabric_e_reconfiguration_pending = "FABRIC_E_RECONFIGURATION_PENDING"
-    fabric_e_service_offline = "FABRIC_E_SERVICE_OFFLINE"
-    e_abort = "E_ABORT"
-    fabric_e_communication_error = "FABRIC_E_COMMUNICATION_ERROR"
-    fabric_e_operation_not_complete = "FABRIC_E_OPERATION_NOT_COMPLETE"
-    fabric_e_timeout = "FABRIC_E_TIMEOUT"
-    fabric_e_node_is_up = "FABRIC_E_NODE_IS_UP"
-    e_fail = "E_FAIL"
-    fabric_e_backup_is_enabled = "FABRIC_E_BACKUP_IS_ENABLED"
-    fabric_e_restore_source_target_partition_mismatch = "FABRIC_E_RESTORE_SOURCE_TARGET_PARTITION_MISMATCH"
-    fabric_e_invalid_for_stateless_services = "FABRIC_E_INVALID_FOR_STATELESS_SERVICES"
-    fabric_e_backup_not_enabled = "FABRIC_E_BACKUP_NOT_ENABLED"
-    fabric_e_backup_policy_not_existing = "FABRIC_E_BACKUP_POLICY_NOT_EXISTING"
-    fabric_e_fault_analysis_service_not_existing = "FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING"
-    fabric_e_backup_in_progress = "FABRIC_E_BACKUP_IN_PROGRESS"
-    fabric_e_restore_in_progress = "FABRIC_E_RESTORE_IN_PROGRESS"
-    fabric_e_backup_policy_already_existing = "FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING"
-    fabric_e_invalid_service_scaling_policy = "FABRIC_E_INVALID_SERVICE_SCALING_POLICY"
-    e_invalidarg = "E_INVALIDARG"
-
-
 class FabricEventKind(str, Enum):
 
     cluster_event = "ClusterEvent"
@@ -282,64 +288,58 @@ class FabricEventKind(str, Enum):
     partition_analysis_event = "PartitionAnalysisEvent"
     application_created = "ApplicationCreated"
     application_deleted = "ApplicationDeleted"
-    application_health_report_created = "ApplicationHealthReportCreated"
+    application_new_health_report = "ApplicationNewHealthReport"
     application_health_report_expired = "ApplicationHealthReportExpired"
-    application_upgrade_complete = "ApplicationUpgradeComplete"
-    application_upgrade_domain_complete = "ApplicationUpgradeDomainComplete"
-    application_upgrade_rollback_complete = "ApplicationUpgradeRollbackComplete"
-    application_upgrade_rollback_start = "ApplicationUpgradeRollbackStart"
-    application_upgrade_start = "ApplicationUpgradeStart"
-    deployed_application_health_report_created = "DeployedApplicationHealthReportCreated"
+    application_upgrade_completed = "ApplicationUpgradeCompleted"
+    application_upgrade_domain_completed = "ApplicationUpgradeDomainCompleted"
+    application_upgrade_rollback_completed = "ApplicationUpgradeRollbackCompleted"
+    application_upgrade_rollback_started = "ApplicationUpgradeRollbackStarted"
+    application_upgrade_started = "ApplicationUpgradeStarted"
+    deployed_application_new_health_report = "DeployedApplicationNewHealthReport"
     deployed_application_health_report_expired = "DeployedApplicationHealthReportExpired"
-    process_deactivated = "ProcessDeactivated"
-    container_deactivated = "ContainerDeactivated"
+    application_process_exited = "ApplicationProcessExited"
+    application_container_instance_exited = "ApplicationContainerInstanceExited"
     node_aborted = "NodeAborted"
-    node_aborting = "NodeAborting"
-    node_added = "NodeAdded"
-    node_close = "NodeClose"
-    node_closing = "NodeClosing"
-    node_deactivate_complete = "NodeDeactivateComplete"
-    node_deactivate_start = "NodeDeactivateStart"
+    node_added_to_cluster = "NodeAddedToCluster"
+    node_closed = "NodeClosed"
+    node_deactivate_completed = "NodeDeactivateCompleted"
+    node_deactivate_started = "NodeDeactivateStarted"
     node_down = "NodeDown"
-    node_health_report_created = "NodeHealthReportCreated"
+    node_new_health_report = "NodeNewHealthReport"
     node_health_report_expired = "NodeHealthReportExpired"
-    node_opened_success = "NodeOpenedSuccess"
+    node_open_succeeded = "NodeOpenSucceeded"
     node_open_failed = "NodeOpenFailed"
-    node_opening = "NodeOpening"
-    node_removed = "NodeRemoved"
+    node_removed_from_cluster = "NodeRemovedFromCluster"
     node_up = "NodeUp"
-    partition_health_report_created = "PartitionHealthReportCreated"
+    partition_new_health_report = "PartitionNewHealthReport"
     partition_health_report_expired = "PartitionHealthReportExpired"
-    partition_reconfiguration_completed = "PartitionReconfigurationCompleted"
+    partition_reconfigured = "PartitionReconfigured"
     partition_primary_move_analysis = "PartitionPrimaryMoveAnalysis"
     service_created = "ServiceCreated"
     service_deleted = "ServiceDeleted"
-    service_health_report_created = "ServiceHealthReportCreated"
+    service_new_health_report = "ServiceNewHealthReport"
     service_health_report_expired = "ServiceHealthReportExpired"
-    deployed_service_health_report_created = "DeployedServiceHealthReportCreated"
-    deployed_service_health_report_expired = "DeployedServiceHealthReportExpired"
-    stateful_replica_health_report_created = "StatefulReplicaHealthReportCreated"
+    deployed_service_package_new_health_report = "DeployedServicePackageNewHealthReport"
+    deployed_service_package_health_report_expired = "DeployedServicePackageHealthReportExpired"
+    stateful_replica_new_health_report = "StatefulReplicaNewHealthReport"
     stateful_replica_health_report_expired = "StatefulReplicaHealthReportExpired"
-    stateless_replica_health_report_created = "StatelessReplicaHealthReportCreated"
+    stateless_replica_new_health_report = "StatelessReplicaNewHealthReport"
     stateless_replica_health_report_expired = "StatelessReplicaHealthReportExpired"
-    cluster_health_report_created = "ClusterHealthReportCreated"
+    cluster_new_health_report = "ClusterNewHealthReport"
     cluster_health_report_expired = "ClusterHealthReportExpired"
-    cluster_upgrade_complete = "ClusterUpgradeComplete"
-    cluster_upgrade_domain_complete = "ClusterUpgradeDomainComplete"
-    cluster_upgrade_rollback_complete = "ClusterUpgradeRollbackComplete"
-    cluster_upgrade_rollback_start = "ClusterUpgradeRollbackStart"
-    cluster_upgrade_start = "ClusterUpgradeStart"
+    cluster_upgrade_completed = "ClusterUpgradeCompleted"
+    cluster_upgrade_domain_completed = "ClusterUpgradeDomainCompleted"
+    cluster_upgrade_rollback_completed = "ClusterUpgradeRollbackCompleted"
+    cluster_upgrade_rollback_started = "ClusterUpgradeRollbackStarted"
+    cluster_upgrade_started = "ClusterUpgradeStarted"
     chaos_stopped = "ChaosStopped"
     chaos_started = "ChaosStarted"
-    chaos_restart_node_fault_completed = "ChaosRestartNodeFaultCompleted"
-    chaos_restart_code_package_fault_scheduled = "ChaosRestartCodePackageFaultScheduled"
-    chaos_restart_code_package_fault_completed = "ChaosRestartCodePackageFaultCompleted"
-    chaos_remove_replica_fault_scheduled = "ChaosRemoveReplicaFaultScheduled"
-    chaos_remove_replica_fault_completed = "ChaosRemoveReplicaFaultCompleted"
-    chaos_move_secondary_fault_scheduled = "ChaosMoveSecondaryFaultScheduled"
-    chaos_move_primary_fault_scheduled = "ChaosMovePrimaryFaultScheduled"
-    chaos_restart_replica_fault_scheduled = "ChaosRestartReplicaFaultScheduled"
-    chaos_restart_node_fault_scheduled = "ChaosRestartNodeFaultScheduled"
+    chaos_code_package_restart_scheduled = "ChaosCodePackageRestartScheduled"
+    chaos_replica_removal_scheduled = "ChaosReplicaRemovalScheduled"
+    chaos_partition_secondary_move_scheduled = "ChaosPartitionSecondaryMoveScheduled"
+    chaos_partition_primary_move_scheduled = "ChaosPartitionPrimaryMoveScheduled"
+    chaos_replica_restart_scheduled = "ChaosReplicaRestartScheduled"
+    chaos_node_restart_scheduled = "ChaosNodeRestartScheduled"
 
 
 class HealthEvaluationKind(str, Enum):
@@ -726,6 +726,12 @@ class PropertyBatchInfoKind(str, Enum):
     failed = "Failed"  #: The property batch failed.
 
 
+class RetentionPolicyType(str, Enum):
+
+    basic = "Basic"  #: Indicates a basic retention policy type.
+    invalid = "Invalid"  #: Indicates an invalid retention policy type.
+
+
 class BackupStorageKind(str, Enum):
 
     invalid = "Invalid"  #: Indicates an invalid backup storage kind. All Service Fabric enumerations have the invalid type.
@@ -875,9 +881,84 @@ class ScalingMechanismKind(str, Enum):
     add_remove_incremental_named_partition = "AddRemoveIncrementalNamedPartition"  #: Indicates a mechanism for scaling where new named partitions are added or removed from a service. The value is 2.
 
 
+class ResourceStatus(str, Enum):
+
+    unknown = "Unknown"  #: Indicates the resource status is unknown. The value is zero.
+    ready = "Ready"  #: Indicates the resource is ready. The value is 1.
+    upgrading = "Upgrading"  #: Indicates the resource is upgrading. The value is 2.
+    creating = "Creating"  #: Indicates the resource is being created. The value is 3.
+    deleting = "Deleting"  #: Indicates the resource is being deletd. The value is 4.
+    failed = "Failed"  #: Indicates the resource is not functional due to persistent failures. See statusDetails property for more details. The value is 5.
+
+
+class SecretKind(str, Enum):
+
+    inlined_value = "inlinedValue"  #: A simple secret resource whose plaintext value is provided by the user.
+
+
+class VolumeProvider(str, Enum):
+
+    sf_azure_file = "SFAzureFile"  #: Provides volumes that are backed by Azure Files.
+
+
+class SizeTypes(str, Enum):
+
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+
+
+class ApplicationScopedVolumeKind(str, Enum):
+
+    service_fabric_volume_disk = "ServiceFabricVolumeDisk"  #: Provides Service Fabric High Availability Volume Disk
+
+
+class NetworkKind(str, Enum):
+
+    local = "Local"  #: Indicates a container network local to a single Service Fabric cluster. The value is 1.
+
+
+class HeaderMatchType(str, Enum):
+
+    exact = "exact"
+
+
+class OperatingSystemType(str, Enum):
+
+    linux = "Linux"  #: The required operating system is Linux.
+    windows = "Windows"  #: The required operating system is Windows.
+
+
+class DiagnosticsSinkKind(str, Enum):
+
+    invalid = "Invalid"  #: Indicates an invalid sink kind. All Service Fabric enumerations have the invalid type.
+    azure_internal_monitoring_pipeline = "AzureInternalMonitoringPipeline"  #: Diagnostics settings for Geneva.
+
+
+class AutoScalingMechanismKind(str, Enum):
+
+    add_remove_replica = "AddRemoveReplica"  #: Indicates that scaling should be performed by adding or removing replicas.
+
+
+class AutoScalingMetricKind(str, Enum):
+
+    resource = "Resource"  #: Indicates that the metric is one of resources, like cpu or memory.
+
+
+class AutoScalingResourceMetricName(str, Enum):
+
+    cpu = "cpu"  #: Indicates that the resource is CPU cores.
+    memory_in_gb = "memoryInGB"  #: Indicates that the resource is memory in GB.
+
+
+class AutoScalingTriggerKind(str, Enum):
+
+    average_load = "AverageLoad"  #: Indicates that scaling should be performed based on average load of all replicas in the service.
+
+
 class NodeStatusFilter(str, Enum):
 
-    default = "default"  #: This filter value will match all of the nodes excepts the ones with with status as Unknown or Removed.
+    default = "default"  #: This filter value will match all of the nodes excepts the ones with status as Unknown or Removed.
     all = "all"  #: This filter value will match all of the nodes.
     up = "up"  #: This filter value will match nodes that are Up.
     down = "down"  #: This filter value will match nodes that are Down.

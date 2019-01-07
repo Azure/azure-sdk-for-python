@@ -24,9 +24,9 @@ class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutp
     :vartype id: str
     :param result_type: Required. Constant filled by server.
     :type result_type: str
-    :ivar name: AgentJob name.
+    :ivar name: Agent Job name.
     :vartype name: str
-    :ivar is_enabled: The state of the original AgentJob.
+    :ivar is_enabled: The state of the original Agent Job.
     :vartype is_enabled: bool
     :ivar state: Current state of migration. Possible values include: 'None',
      'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'

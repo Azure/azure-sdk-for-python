@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class Job(ProxyResource):
@@ -47,6 +47,9 @@ class Job(ProxyResource):
      priority jobs are processed before lower priority jobs. If not set, the
      default is normal. Possible values include: 'Low', 'Normal', 'High'
     :type priority: str or ~azure.mgmt.media.models.Priority
+    :param correlation_data: Customer provided correlation data that will be
+     returned in Job and JobOutput state events.
+    :type correlation_data: dict[str, str]
     """
 
     _validation = {
@@ -65,15 +68,16 @@ class Job(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'JobState'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'input': {'key': 'properties.input', 'type': 'JobInput'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
-        'priority': {'key': 'properties.priority', 'type': 'Priority'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
     }
 
-    def __init__(self, *, input, outputs, description: str=None, priority=None, **kwargs) -> None:
+    def __init__(self, *, input, outputs, description: str=None, priority=None, correlation_data=None, **kwargs) -> None:
         super(Job, self).__init__(**kwargs)
         self.created = None
         self.state = None
@@ -82,3 +86,4 @@ class Job(ProxyResource):
         self.last_modified = None
         self.outputs = outputs
         self.priority = priority
+        self.correlation_data = correlation_data

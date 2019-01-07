@@ -17,13 +17,15 @@ class ServiceEvent(FabricEvent):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServiceCreatedEvent, ServiceDeletedEvent,
-    ServiceHealthReportCreatedEvent, ServiceHealthReportExpiredEvent
+    ServiceNewHealthReportEvent, ServiceHealthReportExpiredEvent
 
     All required parameters must be populated in order to send to Azure.
 
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -31,7 +33,7 @@ class ServiceEvent(FabricEvent):
     :type has_correlated_events: bool
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param service_id: Required. The identity of the service. This is an
+    :param service_id: Required. The identity of the service. This ID is an
      encoded representation of the service name. This is used in the REST APIs
      to identify the service resource.
      Starting in version 6.0, hierarchical names are delimited with the "\\~"
@@ -50,6 +52,7 @@ class ServiceEvent(FabricEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -57,7 +60,7 @@ class ServiceEvent(FabricEvent):
     }
 
     _subtype_map = {
-        'kind': {'ServiceCreated': 'ServiceCreatedEvent', 'ServiceDeleted': 'ServiceDeletedEvent', 'ServiceHealthReportCreated': 'ServiceHealthReportCreatedEvent', 'ServiceHealthReportExpired': 'ServiceHealthReportExpiredEvent'}
+        'kind': {'ServiceCreated': 'ServiceCreatedEvent', 'ServiceDeleted': 'ServiceDeletedEvent', 'ServiceNewHealthReport': 'ServiceNewHealthReportEvent', 'ServiceHealthReportExpired': 'ServiceHealthReportExpiredEvent'}
     }
 
     def __init__(self, **kwargs):

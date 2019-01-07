@@ -14,11 +14,16 @@ try:
     from .subscription_policies_py3 import SubscriptionPolicies
     from .subscription_py3 import Subscription
     from .tenant_id_description_py3 import TenantIdDescription
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
 except (SyntaxError, ImportError):
     from .location import Location
     from .subscription_policies import SubscriptionPolicies
     from .subscription import Subscription
     from .tenant_id_description import TenantIdDescription
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+from .operation_paged import OperationPaged
 from .location_paged import LocationPaged
 from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged
@@ -32,6 +37,9 @@ __all__ = [
     'SubscriptionPolicies',
     'Subscription',
     'TenantIdDescription',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
     'LocationPaged',
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',

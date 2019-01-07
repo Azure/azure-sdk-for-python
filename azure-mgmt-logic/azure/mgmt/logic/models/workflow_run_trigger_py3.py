@@ -78,7 +78,7 @@ class WorkflowRunTrigger(Model):
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
         'correlation': {'key': 'correlation', 'type': 'Correlation'},
         'code': {'key': 'code', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'WorkflowStatus'},
+        'status': {'key': 'status', 'type': 'str'},
         'error': {'key': 'error', 'type': 'object'},
         'tracked_properties': {'key': 'trackedProperties', 'type': 'object'},
     }

@@ -84,7 +84,7 @@ class WorkflowRunActionRepetitionDefinition(Resource):
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'correlation': {'key': 'properties.correlation', 'type': 'RunActionCorrelation'},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'code': {'key': 'properties.code', 'type': 'str'},
         'error': {'key': 'properties.error', 'type': 'object'},
         'tracking_id': {'key': 'properties.trackingId', 'type': 'str'},

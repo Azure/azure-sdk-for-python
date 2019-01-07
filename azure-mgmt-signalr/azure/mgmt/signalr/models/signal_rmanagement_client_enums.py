@@ -16,6 +16,7 @@ class SignalRSkuTier(str, Enum):
 
     free = "Free"
     basic = "Basic"
+    standard = "Standard"
     premium = "Premium"
 
 

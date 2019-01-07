@@ -34,6 +34,9 @@ class NetworkInterfaceIPConfiguration(SubResource):
      ~azure.mgmt.network.v2015_06_15.models.IPAllocationMethod
     :param subnet:
     :type subnet: ~azure.mgmt.network.v2015_06_15.models.Subnet
+    :param primary: Gets whether this is a primary customer address on the
+     network interface.
+    :type primary: bool
     :param public_ip_address:
     :type public_ip_address:
      ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress
@@ -54,6 +57,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -67,6 +71,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         self.private_ip_address = kwargs.get('private_ip_address', None)
         self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
         self.subnet = kwargs.get('subnet', None)
+        self.primary = kwargs.get('primary', None)
         self.public_ip_address = kwargs.get('public_ip_address', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)

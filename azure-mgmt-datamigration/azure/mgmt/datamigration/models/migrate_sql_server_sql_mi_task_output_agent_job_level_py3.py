@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
+from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
 
 
 class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutput):
@@ -24,9 +24,9 @@ class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutp
     :vartype id: str
     :param result_type: Required. Constant filled by server.
     :type result_type: str
-    :ivar name: AgentJob name.
+    :ivar name: Agent Job name.
     :vartype name: str
-    :ivar is_enabled: The state of the original AgentJob.
+    :ivar is_enabled: The state of the original Agent Job.
     :vartype is_enabled: bool
     :ivar state: Current state of migration. Possible values include: 'None',
      'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'

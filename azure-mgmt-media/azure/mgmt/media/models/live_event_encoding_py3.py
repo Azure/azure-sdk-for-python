@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class LiveEventEncoding(Model):
     """The Live Event encoding.
 
-    :param encoding_type: The encoding type for Live Event. Possible values
-     include: 'None', 'Basic'
+    :param encoding_type: The encoding type for Live Event.  This value is
+     specified at creation time and cannot be updated. Possible values include:
+     'None', 'Basic', 'Standard'
     :type encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
-    :param preset_name: The encoding preset name.
+    :param preset_name: The encoding preset name.  This value is specified at
+     creation time and cannot be updated.
     :type preset_name: str
     """
 

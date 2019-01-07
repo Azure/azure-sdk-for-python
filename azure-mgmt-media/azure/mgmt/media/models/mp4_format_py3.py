@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .multi_bitrate_format import MultiBitrateFormat
+from .multi_bitrate_format_py3 import MultiBitrateFormat
 
 
 class Mp4Format(MultiBitrateFormat):
