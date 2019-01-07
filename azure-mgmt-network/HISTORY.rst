@@ -3,6 +3,17 @@
 Release History
 ===============
 
+2.5.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model PublicIPAddress has a new parameter ddos_settings
+- Added operation ApplicationGatewaysOperations.list_available_request_headers
+- Added operation ApplicationGatewaysOperations.list_available_server_variables
+- Added operation ApplicationGatewaysOperations.list_available_response_headers
+- Added operation ApplicationSecurityGroupsOperations.update_tags
+
 2.4.0 (2018-11-27)
 ++++++++++++++++++
 
