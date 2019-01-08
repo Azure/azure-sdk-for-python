@@ -57,7 +57,6 @@ from .operations.backup_protectable_items_operations import BackupProtectableIte
 from .operations.backup_protection_containers_operations import BackupProtectionContainersOperations
 from .operations.security_pi_ns_operations import SecurityPINsOperations
 from .operations.backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
-from .operations.backup_resource_storage_config_operations import BackupResourceStorageConfigOperations
 from .operations.operations import Operations
 from . import models
 
@@ -188,8 +187,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype security_pi_ns: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
     :ivar backup_resource_storage_configs: BackupResourceStorageConfigs operations
     :vartype backup_resource_storage_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsOperations
-    :ivar backup_resource_storage_config: BackupResourceStorageConfig operations
-    :vartype backup_resource_storage_config: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.recoveryservicesbackup.operations.Operations
 
@@ -298,8 +295,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self.security_pi_ns = SecurityPINsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_resource_storage_config = BackupResourceStorageConfigOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

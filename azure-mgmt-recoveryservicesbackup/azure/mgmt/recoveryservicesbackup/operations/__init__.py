@@ -53,7 +53,6 @@ from .backup_protectable_items_operations import BackupProtectableItemsOperation
 from .backup_protection_containers_operations import BackupProtectionContainersOperations
 from .security_pi_ns_operations import SecurityPINsOperations
 from .backup_resource_storage_configs_operations import BackupResourceStorageConfigsOperations
-from .backup_resource_storage_config_operations import BackupResourceStorageConfigOperations
 from .operations import Operations
 
 __all__ = [
@@ -101,6 +100,5 @@ __all__ = [
     'BackupProtectionContainersOperations',
     'SecurityPINsOperations',
     'BackupResourceStorageConfigsOperations',
-    'BackupResourceStorageConfigOperations',
     'Operations',
 ]
