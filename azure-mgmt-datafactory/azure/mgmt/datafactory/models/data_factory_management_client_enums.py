@@ -346,12 +346,6 @@ class SalesforceSourceReadBehavior(str, Enum):
     query_all = "QueryAll"
 
 
-class SSISExecutionRuntime(str, Enum):
-
-    x64 = "x64"
-    x86 = "x86"
-
-
 class HDInsightActivityDebugInfoOption(str, Enum):
 
     none = "None"

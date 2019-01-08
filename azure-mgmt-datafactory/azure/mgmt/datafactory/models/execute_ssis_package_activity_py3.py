@@ -37,13 +37,16 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param package_location: Required. SSIS package location.
     :type package_location: ~azure.mgmt.datafactory.models.SSISPackageLocation
-    :param runtime: Specifies the runtime to execute SSIS package. Possible
-     values include: 'x64', 'x86'
-    :type runtime: str or ~azure.mgmt.datafactory.models.SSISExecutionRuntime
-    :param logging_level: The logging level of SSIS package execution.
-    :type logging_level: str
+    :param runtime: Specifies the runtime to execute SSIS package. The value
+     should be "x86" or "x64". Type: string (or Expression with resultType
+     string).
+    :type runtime: object
+    :param logging_level: The logging level of SSIS package execution. Type:
+     string (or Expression with resultType string).
+    :type logging_level: object
     :param environment_path: The environment path to execute the SSIS package.
-    :type environment_path: str
+     Type: string (or Expression with resultType string).
+    :type environment_path: object
     :param connect_via: Required. The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -86,9 +89,9 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'package_location': {'key': 'typeProperties.packageLocation', 'type': 'SSISPackageLocation'},
-        'runtime': {'key': 'typeProperties.runtime', 'type': 'str'},
-        'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'str'},
-        'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'str'},
+        'runtime': {'key': 'typeProperties.runtime', 'type': 'object'},
+        'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'object'},
+        'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'object'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
         'project_parameters': {'key': 'typeProperties.projectParameters', 'type': '{SSISExecutionParameter}'},
         'package_parameters': {'key': 'typeProperties.packageParameters', 'type': '{SSISExecutionParameter}'},
@@ -97,7 +100,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
     }
 
-    def __init__(self, *, name: str, package_location, connect_via, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level: str=None, environment_path: str=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, **kwargs) -> None:
+    def __init__(self, *, name: str, package_location, connect_via, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level=None, environment_path=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, **kwargs) -> None:
         super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.package_location = package_location
         self.runtime = runtime
