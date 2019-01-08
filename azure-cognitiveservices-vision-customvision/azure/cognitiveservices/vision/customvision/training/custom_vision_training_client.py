@@ -376,7 +376,7 @@ class CustomVisionTrainingClient(SDKClient):
         :type project_id: str
         :param image_ids: Image ids. Limited to 64 images.
         :type image_ids: list[str]
-        :param tag_ids: Tags to be deleted from the specified images. Limted
+        :param tag_ids: Tags to be deleted from the specified images. Limited
          to 20 tags.
         :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
@@ -848,7 +848,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         :param project_id: The project id.
         :type project_id: str
-        :param image_ids: Ids of the images to be deleted. Limted to 256
+        :param image_ids: Ids of the images to be deleted. Limited to 256
          images per batch.
         :type image_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
