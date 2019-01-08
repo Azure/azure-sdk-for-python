@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.50.0 (2018-01-11)
++++++++++++++++++++
+
+**Breaking changes**
+
+* Preview of new SDK API.
+* Original HTTP-base API still available under azure.servicebus.control_plane
+* For full API changes, please see updated reference documentation.
+
+
 0.21.1 (2017-04-27)
 +++++++++++++++++++
 
