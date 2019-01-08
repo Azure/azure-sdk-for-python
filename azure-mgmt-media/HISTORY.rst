@@ -3,6 +3,16 @@
 Release History
 ===============
 
+1.1.0 (2018-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Operation JobsOperations.list has the correct list of optional parameters
+- Operation TransformsOperations.list has the correct list of optional parameters
+- Operation TransformsOperations.list has the correct list of optional parameters
+- Operation JobsOperations.list has the correct list of optional parameters
+
 1.0.1 (2018-10-16)
 ++++++++++++++++++
 

@@ -22,7 +22,7 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class JobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -77,6 +77,10 @@ class JobOperations(object):
 
         # Construct URL
         url = self.get_all_lifetime_statistics.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -183,6 +187,7 @@ class JobOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -285,6 +290,7 @@ class JobOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -402,6 +408,7 @@ class JobOperations(object):
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -511,6 +518,7 @@ class JobOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -627,6 +635,7 @@ class JobOperations(object):
         # Construct URL
         url = self.disable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -691,8 +700,9 @@ class JobOperations(object):
         enabling state. After the this operation is completed, the job moves to
         the active state, and scheduling of new tasks under the job resumes.
         The Batch service does not allow a task to remain in the active state
-        for more than 7 days. Therefore, if you enable a job containing active
-        tasks which were added more than 7 days ago, those tasks will not run.
+        for more than 180 days. Therefore, if you enable a job containing
+        active tasks which were added more than 180 days ago, those tasks will
+        not run.
 
         :param job_id: The ID of the job to enable.
         :type job_id: str
@@ -736,6 +746,7 @@ class JobOperations(object):
         # Construct URL
         url = self.enable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -848,6 +859,7 @@ class JobOperations(object):
         # Construct URL
         url = self.terminate.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -951,6 +963,10 @@ class JobOperations(object):
 
         # Construct URL
         url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -1043,6 +1059,10 @@ class JobOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -1151,6 +1171,7 @@ class JobOperations(object):
                 # Construct URL
                 url = self.list_from_job_schedule.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -1267,6 +1288,7 @@ class JobOperations(object):
                 # Construct URL
                 url = self.list_preparation_and_release_task_status.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'jobId': self._serialize.url("job_id", job_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -1364,6 +1386,7 @@ class JobOperations(object):
         # Construct URL
         url = self.get_task_counts.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

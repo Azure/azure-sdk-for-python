@@ -72,7 +72,7 @@ class AS2ValidationSettings(Model):
         'interchange_duplicates_validity_days': {'key': 'interchangeDuplicatesValidityDays', 'type': 'int'},
         'check_certificate_revocation_list_on_send': {'key': 'checkCertificateRevocationListOnSend', 'type': 'bool'},
         'check_certificate_revocation_list_on_receive': {'key': 'checkCertificateRevocationListOnReceive', 'type': 'bool'},
-        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'EncryptionAlgorithm'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
         'signing_algorithm': {'key': 'signingAlgorithm', 'type': 'str'},
     }
 

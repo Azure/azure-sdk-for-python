@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class DiffDiskSettings(Model):
-    """Describes the parameters of differencing disk settings that can be be
-    specified for operating system disk. <br><br> NOTE: The differencing disk
-    settings can only be specified for managed disk.
+    """Describes the parameters of ephemeral disk settings that can be specified
+    for operating system disk. <br><br> NOTE: The ephemeral disk settings can
+    only be specified for managed disk.
 
-    :param option: Specifies the differencing disk settings for operating
-     system disk. Possible values include: 'Local'
+    :param option: Specifies the ephemeral disk settings for operating system
+     disk. Possible values include: 'Local'
     :type option: str or
      ~azure.mgmt.compute.v2018_10_01.models.DiffDiskOptions
     """

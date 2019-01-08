@@ -29,7 +29,7 @@ class StreamingLocatorContentKey(Model):
     :param label_reference_in_streaming_policy: Label of Content Key as
      specified in the Streaming Policy
     :type label_reference_in_streaming_policy: str
-    :param value: Value of  of Content Key
+    :param value: Value of Content Key
     :type value: str
     :ivar policy_name: ContentKeyPolicy used by Content Key
     :vartype policy_name: str
@@ -46,7 +46,7 @@ class StreamingLocatorContentKey(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'StreamingLocatorContentKeyType'},
+        'type': {'key': 'type', 'type': 'str'},
         'label_reference_in_streaming_policy': {'key': 'labelReferenceInStreamingPolicy', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
         'policy_name': {'key': 'policyName', 'type': 'str'},

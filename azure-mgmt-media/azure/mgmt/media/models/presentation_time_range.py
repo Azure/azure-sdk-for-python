@@ -16,32 +16,20 @@ class PresentationTimeRange(Model):
     """The presentation time range, this is asset related and not recommended for
     Account Filter.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param start_timestamp: Required. The absolute start time boundary.
+    :param start_timestamp: The absolute start time boundary.
     :type start_timestamp: long
-    :param end_timestamp: Required. The absolute end time boundary.
+    :param end_timestamp: The absolute end time boundary.
     :type end_timestamp: long
-    :param presentation_window_duration: Required. The relative to end sliding
-     window.
+    :param presentation_window_duration: The relative to end sliding window.
     :type presentation_window_duration: long
-    :param live_backoff_duration: Required. The relative to end right edge.
+    :param live_backoff_duration: The relative to end right edge.
     :type live_backoff_duration: long
-    :param timescale: Required. The time scale of time stamps.
+    :param timescale: The time scale of time stamps.
     :type timescale: long
-    :param force_end_timestamp: Required. The indicator of forcing exsiting of
-     end time stamp.
+    :param force_end_timestamp: The indicator of forcing exsiting of end time
+     stamp.
     :type force_end_timestamp: bool
     """
-
-    _validation = {
-        'start_timestamp': {'required': True},
-        'end_timestamp': {'required': True},
-        'presentation_window_duration': {'required': True},
-        'live_backoff_duration': {'required': True},
-        'timescale': {'required': True},
-        'force_end_timestamp': {'required': True},
-    }
 
     _attribute_map = {
         'start_timestamp': {'key': 'startTimestamp', 'type': 'long'},

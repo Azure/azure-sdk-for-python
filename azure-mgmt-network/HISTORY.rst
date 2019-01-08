@@ -3,6 +3,35 @@
 Release History
 ===============
 
+2.5.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model PublicIPAddress has a new parameter ddos_settings
+- Added operation ApplicationGatewaysOperations.list_available_request_headers
+- Added operation ApplicationGatewaysOperations.list_available_server_variables
+- Added operation ApplicationGatewaysOperations.list_available_response_headers
+- Added operation ApplicationSecurityGroupsOperations.update_tags
+
+2.4.0 (2018-11-27)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewaySslCertificate has a new parameter key_vault_secret_id
+- Model ApplicationGatewayRequestRoutingRule has a new parameter rewrite_rule_set
+- Model FlowLogInformation has a new parameter format
+- Model ApplicationGateway has a new parameter identity
+- Model ApplicationGateway has a new parameter rewrite_rule_sets
+- Model TrafficAnalyticsConfigurationProperties has a new parameter traffic_analytics_interval
+- Model ApplicationGatewayPathRule has a new parameter rewrite_rule_set
+- Model ApplicationGatewayUrlPathMap has a new parameter default_rewrite_rule_set
+
+**Breaking changes**
+
+- Model ApplicationGatewayTrustedRootCertificate no longer has parameter keyvault_secret_id (replaced by key_vault_secret_id)
+
 2.3.0 (2018-11-07)
 ++++++++++++++++++
 

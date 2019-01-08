@@ -17,6 +17,7 @@ from .operations.operations import Operations
 from .operations.skus_operations import SkusOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.usages_operations import UsagesOperations
+from .operations.blob_services_operations import BlobServicesOperations
 from .operations.blob_containers_operations import BlobContainersOperations
 from .operations.management_policies_operations import ManagementPoliciesOperations
 from . import models
@@ -68,6 +69,8 @@ class StorageManagementClient(SDKClient):
     :vartype storage_accounts: azure.mgmt.storage.v2018_07_01.operations.StorageAccountsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.storage.v2018_07_01.operations.UsagesOperations
+    :ivar blob_services: BlobServices operations
+    :vartype blob_services: azure.mgmt.storage.v2018_07_01.operations.BlobServicesOperations
     :ivar blob_containers: BlobContainers operations
     :vartype blob_containers: azure.mgmt.storage.v2018_07_01.operations.BlobContainersOperations
     :ivar management_policies: ManagementPolicies operations
@@ -98,6 +101,8 @@ class StorageManagementClient(SDKClient):
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.blob_services = BlobServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.blob_containers = BlobContainersOperations(
             self._client, self.config, self._serialize, self._deserialize)

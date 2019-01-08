@@ -89,6 +89,13 @@ class AccessTier(str, Enum):
     cool = "Cool"
 
 
+class GeoReplicationStatus(str, Enum):
+
+    live = "Live"
+    bootstrap = "Bootstrap"
+    unavailable = "Unavailable"
+
+
 class ProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -198,3 +205,8 @@ class ImmutabilityPolicyUpdateType(str, Enum):
     put = "put"
     lock = "lock"
     extend = "extend"
+
+
+class StorageAccountExpand(str, Enum):
+
+    geo_replication_stats = "geoReplicationStats"

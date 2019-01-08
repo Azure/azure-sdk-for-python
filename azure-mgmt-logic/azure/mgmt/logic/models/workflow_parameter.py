@@ -27,7 +27,7 @@ class WorkflowParameter(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'ParameterType'},
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'object'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'description': {'key': 'description', 'type': 'str'},

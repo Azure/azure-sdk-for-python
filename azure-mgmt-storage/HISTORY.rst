@@ -3,6 +3,24 @@
 Release History
 ===============
 
+3.1.1 (2019-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix #4013 - "use_sub_domain" should be "use_sub_domain_name"
+
+3.1.0 (2018-11-15)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter geo_replication_stats
+- Model StorageAccount has a new parameter failover_in_progress
+- Added operation StorageAccountsOperations.failover
+- Added operation group BlobServicesOperations
+- Operation StorageAccountsOperations.get_properties now support expand parameter
+
 3.0.0 (2018-09-27)
 ++++++++++++++++++
 

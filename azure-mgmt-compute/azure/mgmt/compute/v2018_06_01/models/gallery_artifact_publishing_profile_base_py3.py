@@ -18,7 +18,7 @@ class GalleryArtifactPublishingProfileBase(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param target_regions: The target regions where the Image Version is going
-     to be replicated to. This property is updateable.
+     to be replicated to. This property is updatable.
     :type target_regions:
      list[~azure.mgmt.compute.v2018_06_01.models.TargetRegion]
     :param source: Required.

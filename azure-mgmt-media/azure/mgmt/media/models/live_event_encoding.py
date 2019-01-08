@@ -17,7 +17,7 @@ class LiveEventEncoding(Model):
 
     :param encoding_type: The encoding type for Live Event.  This value is
      specified at creation time and cannot be updated. Possible values include:
-     'None', 'Basic'
+     'None', 'Basic', 'Standard'
     :type encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
     :param preset_name: The encoding preset name.  This value is specified at
      creation time and cannot be updated.

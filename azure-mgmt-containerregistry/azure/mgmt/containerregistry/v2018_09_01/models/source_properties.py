@@ -22,7 +22,7 @@ class SourceProperties(Model):
     :type source_control_type: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.SourceControlType
     :param repository_url: Required. The full URL to the source code
-     respository
+     repository
     :type repository_url: str
     :param branch: The branch name of the source code.
     :type branch: str
