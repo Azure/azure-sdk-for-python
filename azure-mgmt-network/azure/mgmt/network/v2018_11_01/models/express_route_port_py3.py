@@ -44,7 +44,7 @@ class ExpressRoutePort(Resource):
      values include: 'Dot1Q', 'QinQ'
     :type encapsulation: str or
      ~azure.mgmt.network.v2018_11_01.models.ExpressRoutePortsEncapsulation
-    :ivar ether_type: Ethertype of the physical port.
+    :ivar ether_type: Ether type of the physical port.
     :vartype ether_type: str
     :ivar allocation_date: Date of the physical port allocation to be used in
      Letter of Authorization.

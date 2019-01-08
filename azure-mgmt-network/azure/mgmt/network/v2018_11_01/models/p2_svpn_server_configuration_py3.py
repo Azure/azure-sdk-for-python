@@ -52,8 +52,7 @@ class P2SVpnServerConfiguration(SubResource):
      P2SVpnServerConfiguration resource for point to site client connection.
     :type radius_server_address: str
     :param radius_server_secret: The radius secret property of the
-     P2SVpnServerConfiguration resource for for point to site client
-     connection.
+     P2SVpnServerConfiguration resource for point to site client connection.
     :type radius_server_secret: str
     :ivar provisioning_state: The provisioning state of the
      P2SVpnServerConfiguration resource. Possible values are: 'Updating',
