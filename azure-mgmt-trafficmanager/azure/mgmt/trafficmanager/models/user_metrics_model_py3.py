@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource_py3 import ProxyResource
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
+class UserMetricsModel(ProxyResource):
+    """Class representing Traffic Manager User Metrics.
 
     :param id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
@@ -23,16 +23,17 @@ class Resource(Model):
     :param type: The type of the resource. Ex-
      Microsoft.Network/trafficManagerProfiles.
     :type type: str
+    :param key: The key returned by the User Metrics operation.
+    :type key: str
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'key': {'key': 'properties.key', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, key: str=None, **kwargs) -> None:
+        super(UserMetricsModel, self).__init__(id=id, name=name, type=type, **kwargs)
+        self.key = key
