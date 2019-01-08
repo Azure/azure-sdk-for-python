@@ -28,6 +28,7 @@ from .metric_alerts_operations import MetricAlertsOperations
 from .metric_alerts_status_operations import MetricAlertsStatusOperations
 from .scheduled_query_rules_operations import ScheduledQueryRulesOperations
 from .metric_namespaces_operations import MetricNamespacesOperations
+from .vm_insights_operations import VMInsightsOperations
 
 __all__ = [
     'AutoscaleSettingsOperations',
@@ -49,4 +50,5 @@ __all__ = [
     'MetricAlertsStatusOperations',
     'ScheduledQueryRulesOperations',
     'MetricNamespacesOperations',
+    'VMInsightsOperations',
 ]

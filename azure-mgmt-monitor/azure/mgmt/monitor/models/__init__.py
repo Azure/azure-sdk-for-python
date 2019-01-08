@@ -114,6 +114,12 @@ try:
     from .log_to_metric_action_py3 import LogToMetricAction
     from .metric_namespace_name_py3 import MetricNamespaceName
     from .metric_namespace_py3 import MetricNamespace
+    from .proxy_resource_py3 import ProxyResource
+    from .error_py3 import Error
+    from .response_with_error_py3 import ResponseWithError, ResponseWithErrorException
+    from .workspace_info_py3 import WorkspaceInfo
+    from .data_container_py3 import DataContainer
+    from .vm_insights_onboarding_status_py3 import VMInsightsOnboardingStatus
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -219,6 +225,12 @@ except (SyntaxError, ImportError):
     from .log_to_metric_action import LogToMetricAction
     from .metric_namespace_name import MetricNamespaceName
     from .metric_namespace import MetricNamespace
+    from .proxy_resource import ProxyResource
+    from .error import Error
+    from .response_with_error import ResponseWithError, ResponseWithErrorException
+    from .workspace_info import WorkspaceInfo
+    from .data_container import DataContainer
+    from .vm_insights_onboarding_status import VMInsightsOnboardingStatus
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -252,6 +264,8 @@ from .monitor_management_client_enums import (
     ConditionalOperator,
     MetricTriggerType,
     AlertSeverity,
+    OnboardingStatus,
+    DataStatus,
     ResultType,
 )
 
@@ -360,6 +374,12 @@ __all__ = [
     'LogToMetricAction',
     'MetricNamespaceName',
     'MetricNamespace',
+    'ProxyResource',
+    'Error',
+    'ResponseWithError', 'ResponseWithErrorException',
+    'WorkspaceInfo',
+    'DataContainer',
+    'VMInsightsOnboardingStatus',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -392,5 +412,7 @@ __all__ = [
     'ConditionalOperator',
     'MetricTriggerType',
     'AlertSeverity',
+    'OnboardingStatus',
+    'DataStatus',
     'ResultType',
 ]
