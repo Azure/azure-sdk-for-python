@@ -24,7 +24,7 @@ class ManualScaleSettings(Model):
     :param node_deallocation_option: Determines what to do with the job(s)
      running on compute node if the Cluster size is decreasing. The default
      value is requeue. Possible values include: 'requeue', 'terminate',
-     'waitforjobcompletion', 'unknown'. Default value: "requeue" .
+     'waitforjobcompletion'. Default value: "requeue" .
     :type node_deallocation_option: str or
      ~azure.mgmt.batchai.models.DeallocationOption
     """
@@ -35,7 +35,7 @@ class ManualScaleSettings(Model):
 
     _attribute_map = {
         'target_node_count': {'key': 'targetNodeCount', 'type': 'int'},
-        'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'DeallocationOption'},
+        'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'str'},
     }
 
     def __init__(self, *, target_node_count: int=0, node_deallocation_option="requeue", **kwargs) -> None:

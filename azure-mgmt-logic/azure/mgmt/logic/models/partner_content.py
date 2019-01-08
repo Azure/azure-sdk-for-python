@@ -16,13 +16,13 @@ class PartnerContent(Model):
     """The integration account partner content.
 
     :param b2b: The B2B partner content.
-    :type b2b: :class:`B2BPartnerContent
-     <azure.mgmt.logic.models.B2BPartnerContent>`
+    :type b2b: ~azure.mgmt.logic.models.B2BPartnerContent
     """
 
     _attribute_map = {
         'b2b': {'key': 'b2b', 'type': 'B2BPartnerContent'},
     }
 
-    def __init__(self, b2b=None):
-        self.b2b = b2b
+    def __init__(self, **kwargs):
+        super(PartnerContent, self).__init__(**kwargs)
+        self.b2b = kwargs.get('b2b', None)

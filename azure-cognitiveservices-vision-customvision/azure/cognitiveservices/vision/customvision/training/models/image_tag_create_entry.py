@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class ImageTagCreateEntry(Model):
-    """ImageTagCreateEntry.
+    """Entry associating a tag to an image.
 
-    :param image_id:
+    :param image_id: Id of the image.
     :type image_id: str
-    :param tag_id:
+    :param tag_id: Id of the tag.
     :type tag_id: str
     """
 
     _attribute_map = {
-        'image_id': {'key': 'ImageId', 'type': 'str'},
-        'tag_id': {'key': 'TagId', 'type': 'str'},
+        'image_id': {'key': 'imageId', 'type': 'str'},
+        'tag_id': {'key': 'tagId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

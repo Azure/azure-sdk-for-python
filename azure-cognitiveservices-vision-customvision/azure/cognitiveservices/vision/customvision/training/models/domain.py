@@ -22,24 +22,35 @@ class Domain(Model):
     :vartype id: str
     :ivar name:
     :vartype name: str
+    :ivar type: Possible values include: 'Classification', 'ObjectDetection'
+    :vartype type: str or
+     ~azure.cognitiveservices.vision.customvision.training.models.DomainType
     :ivar exportable:
     :vartype exportable: bool
+    :ivar enabled:
+    :vartype enabled: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'exportable': {'readonly': True},
+        'enabled': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'exportable': {'key': 'Exportable', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'exportable': {'key': 'exportable', 'type': 'bool'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(Domain, self).__init__(**kwargs)
         self.id = None
         self.name = None
+        self.type = None
         self.exportable = None
+        self.enabled = None

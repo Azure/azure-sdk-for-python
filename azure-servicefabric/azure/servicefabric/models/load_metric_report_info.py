@@ -17,8 +17,11 @@ class LoadMetricReportInfo(Model):
 
     :param name: The name of the metric.
     :type name: str
-    :param value: The value of the load for the metric..
+    :param value: The value of the load for the metric. In future releases of
+     Service Fabric this parameter will be deprecated in favor of CurrentValue.
     :type value: int
+    :param current_value: The double value of the load for the metric.
+    :type current_value: str
     :param last_reported_utc: The UTC time when the load is reported.
     :type last_reported_utc: datetime
     """
@@ -26,11 +29,13 @@ class LoadMetricReportInfo(Model):
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'value': {'key': 'Value', 'type': 'int'},
+        'current_value': {'key': 'CurrentValue', 'type': 'str'},
         'last_reported_utc': {'key': 'LastReportedUtc', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name=None, value=None, last_reported_utc=None):
-        super(LoadMetricReportInfo, self).__init__()
-        self.name = name
-        self.value = value
-        self.last_reported_utc = last_reported_utc
+    def __init__(self, **kwargs):
+        super(LoadMetricReportInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.last_reported_utc = kwargs.get('last_reported_utc', None)

@@ -23,6 +23,6 @@ class USqlAssemblyDependencyInfo(Model):
         'entity_id': {'key': 'entityId', 'type': 'EntityId'},
     }
 
-    def __init__(self, entity_id=None):
-        super(USqlAssemblyDependencyInfo, self).__init__()
-        self.entity_id = entity_id
+    def __init__(self, **kwargs):
+        super(USqlAssemblyDependencyInfo, self).__init__(**kwargs)
+        self.entity_id = kwargs.get('entity_id', None)

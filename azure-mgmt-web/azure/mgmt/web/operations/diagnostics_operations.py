@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class DiagnosticsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API Version. Constant value: "2016-03-01".
+    :ivar api_version: API Version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -33,9 +32,311 @@ class DiagnosticsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-01"
+        self.api_version = "2018-02-01"
 
         self.config = config
+
+    def list_hosting_environment_detector_responses(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """List Hosting Environment Detector Responses.
+
+        List Hosting Environment Detector Responses.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: Site Name
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DetectorResponse
+        :rtype:
+         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_hosting_environment_detector_responses.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_hosting_environment_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors'}
+
+    def get_hosting_environment_detector_response(
+            self, resource_group_name, name, detector_name, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
+        """Get Hosting Environment Detector Response.
+
+        Get Hosting Environment Detector Response.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param name: App Service Environment Name
+        :type name: str
+        :param detector_name: Detector Resource Name
+        :type detector_name: str
+        :param start_time: Start Time
+        :type start_time: datetime
+        :param end_time: End Time
+        :type end_time: datetime
+        :param time_grain: Time Grain
+        :type time_grain: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DetectorResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_hosting_environment_detector_response.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if start_time is not None:
+            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
+        if end_time is not None:
+            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
+        if time_grain is not None:
+            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DetectorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_hosting_environment_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/detectors/{detectorName}'}
+
+    def list_site_detector_responses(
+            self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
+        """List Site Detector Responses.
+
+        List Site Detector Responses.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param site_name: Site Name
+        :type site_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DetectorResponse
+        :rtype:
+         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_site_detector_responses.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'siteName': self._serialize.url("site_name", site_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_site_detector_responses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors'}
+
+    def get_site_detector_response(
+            self, resource_group_name, site_name, detector_name, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
+        """Get site detector response.
+
+        Get site detector response.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param site_name: Site Name
+        :type site_name: str
+        :param detector_name: Detector Resource Name
+        :type detector_name: str
+        :param start_time: Start Time
+        :type start_time: datetime
+        :param end_time: End Time
+        :type end_time: datetime
+        :param time_grain: Time Grain
+        :type time_grain: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DetectorResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_site_detector_response.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'siteName': self._serialize.url("site_name", site_name, 'str'),
+            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if start_time is not None:
+            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
+        if end_time is not None:
+            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
+        if time_grain is not None:
+            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DetectorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_site_detector_response.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/detectors/{detectorName}'}
 
     def list_site_diagnostic_categories(
             self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
@@ -56,7 +357,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -80,7 +382,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -89,14 +391,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -132,7 +431,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticCategory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category.metadata['url']
@@ -150,7 +450,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -159,13 +459,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -200,7 +498,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -225,7 +524,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -234,14 +533,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -279,7 +575,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis.metadata['url']
@@ -298,7 +595,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -307,13 +604,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -356,7 +651,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis.metadata['url']
@@ -381,7 +677,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -390,13 +686,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -431,7 +725,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -456,7 +751,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -465,14 +760,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -510,7 +802,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -536,7 +829,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -545,14 +838,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -596,7 +886,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector.metadata['url']
@@ -621,7 +912,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -630,13 +921,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -649,6 +938,163 @@ class DiagnosticsOperations(object):
 
         return deserialized
     execute_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}
+
+    def list_site_detector_responses_slot(
+            self, resource_group_name, site_name, slot, custom_headers=None, raw=False, **operation_config):
+        """List Site Detector Responses.
+
+        List Site Detector Responses.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param site_name: Site Name
+        :type site_name: str
+        :param slot: Slot Name
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DetectorResponse
+        :rtype:
+         ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_site_detector_responses_slot.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'siteName': self._serialize.url("site_name", site_name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DetectorResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_site_detector_responses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors'}
+
+    def get_site_detector_response_slot(
+            self, resource_group_name, site_name, detector_name, slot, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
+        """Get site detector response.
+
+        Get site detector response.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param site_name: Site Name
+        :type site_name: str
+        :param detector_name: Detector Resource Name
+        :type detector_name: str
+        :param slot: Slot Name
+        :type slot: str
+        :param start_time: Start Time
+        :type start_time: datetime
+        :param end_time: End Time
+        :type end_time: datetime
+        :param time_grain: Time Grain
+        :type time_grain: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DetectorResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.DetectorResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_site_detector_response_slot.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'siteName': self._serialize.url("site_name", site_name, 'str'),
+            'detectorName': self._serialize.url("detector_name", detector_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if start_time is not None:
+            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'iso-8601')
+        if end_time is not None:
+            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'iso-8601')
+        if time_grain is not None:
+            query_parameters['timeGrain'] = self._serialize.query("time_grain", time_grain, 'str', pattern=r'PT[1-9][0-9]+[SMH]')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DetectorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_site_detector_response_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/detectors/{detectorName}'}
 
     def list_site_diagnostic_categories_slot(
             self, resource_group_name, site_name, slot, custom_headers=None, raw=False, **operation_config):
@@ -671,7 +1117,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DiagnosticCategory
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -696,7 +1143,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -705,14 +1152,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -750,7 +1194,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticCategory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category_slot.metadata['url']
@@ -769,7 +1214,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -778,13 +1223,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -821,7 +1264,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of AnalysisDefinition
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -847,7 +1291,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -856,14 +1300,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -903,7 +1344,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis_slot.metadata['url']
@@ -923,7 +1365,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -932,13 +1374,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -983,7 +1423,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticAnalysis or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis_slot.metadata['url']
@@ -1009,7 +1450,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1018,13 +1459,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1061,7 +1500,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1087,7 +1527,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1096,14 +1536,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1143,7 +1580,8 @@ class DiagnosticsOperations(object):
         :return: An iterator like instance of DetectorDefinition
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1170,7 +1608,7 @@ class DiagnosticsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1179,14 +1617,11 @@ class DiagnosticsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1232,7 +1667,8 @@ class DiagnosticsOperations(object):
         :return: DiagnosticDetectorResponse or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector_slot.metadata['url']
@@ -1258,7 +1694,7 @@ class DiagnosticsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1267,13 +1703,11 @@ class DiagnosticsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

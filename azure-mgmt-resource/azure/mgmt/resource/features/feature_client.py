@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -55,7 +55,7 @@ class FeatureClientConfiguration(AzureConfiguration):
         self.api_version = api_version
 
 
-class FeatureClient(MultiApiClientMixin):
+class FeatureClient(MultiApiClientMixin, SDKClient):
     """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.
 
     :ivar config: Configuration for client.
@@ -83,16 +83,13 @@ class FeatureClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = FeatureClientConfiguration(credentials, subscription_id, api_version, base_url)
         super(FeatureClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = FeatureClientConfiguration(credentials, subscription_id, api_version, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 

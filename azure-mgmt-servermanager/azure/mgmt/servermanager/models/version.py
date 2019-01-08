@@ -38,10 +38,11 @@ class Version(Model):
         'minor_revision': {'key': 'minorRevision', 'type': 'int'},
     }
 
-    def __init__(self, major=None, minor=None, build=None, revision=None, major_revision=None, minor_revision=None):
-        self.major = major
-        self.minor = minor
-        self.build = build
-        self.revision = revision
-        self.major_revision = major_revision
-        self.minor_revision = minor_revision
+    def __init__(self, **kwargs):
+        super(Version, self).__init__(**kwargs)
+        self.major = kwargs.get('major', None)
+        self.minor = kwargs.get('minor', None)
+        self.build = kwargs.get('build', None)
+        self.revision = kwargs.get('revision', None)
+        self.major_revision = kwargs.get('major_revision', None)
+        self.minor_revision = kwargs.get('minor_revision', None)

@@ -19,10 +19,10 @@ class PropertyMetadata(Model):
      Following are the possible values. Possible values include: 'Invalid',
      'Binary', 'Int64', 'Double', 'String', 'Guid'
     :type type_id: str or ~azure.servicefabric.models.PropertyValueKind
-    :param custom_type_id: The property's custom type id.
+    :param custom_type_id: The property's custom type ID.
     :type custom_type_id: str
     :param parent: The name of the parent Service Fabric Name for the
-     property. It could be thought of as the namespace/table under which the
+     property. It could be thought of as the name-space/table under which the
      property exists.
     :type parent: str
     :param size_in_bytes: The length of the serialized property value.
@@ -44,11 +44,11 @@ class PropertyMetadata(Model):
         'sequence_number': {'key': 'SequenceNumber', 'type': 'str'},
     }
 
-    def __init__(self, type_id=None, custom_type_id=None, parent=None, size_in_bytes=None, last_modified_utc_timestamp=None, sequence_number=None):
-        super(PropertyMetadata, self).__init__()
-        self.type_id = type_id
-        self.custom_type_id = custom_type_id
-        self.parent = parent
-        self.size_in_bytes = size_in_bytes
-        self.last_modified_utc_timestamp = last_modified_utc_timestamp
-        self.sequence_number = sequence_number
+    def __init__(self, **kwargs):
+        super(PropertyMetadata, self).__init__(**kwargs)
+        self.type_id = kwargs.get('type_id', None)
+        self.custom_type_id = kwargs.get('custom_type_id', None)
+        self.parent = kwargs.get('parent', None)
+        self.size_in_bytes = kwargs.get('size_in_bytes', None)
+        self.last_modified_utc_timestamp = kwargs.get('last_modified_utc_timestamp', None)
+        self.sequence_number = kwargs.get('sequence_number', None)

@@ -16,17 +16,10 @@ class Filters(Model):
     """A key-value object consisting of filters that may be specified to limit the
     results returned by the API. Current available filters: site.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar site: The URL of the site to return similar images and similar
+    :param site: The URL of the site to return similar images and similar
      products from. (e.g., "www.bing.com", "bing.com").
-    :vartype site: str
+    :type site: str
     """
-
-    _validation = {
-        'site': {'readonly': True},
-    }
 
     _attribute_map = {
         'site': {'key': 'site', 'type': 'str'},
@@ -34,4 +27,4 @@ class Filters(Model):
 
     def __init__(self, **kwargs):
         super(Filters, self).__init__(**kwargs)
-        self.site = None
+        self.site = kwargs.get('site', None)

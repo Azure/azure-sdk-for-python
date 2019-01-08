@@ -16,24 +16,23 @@ class ServiceBusTopicMessage(ServiceBusMessage):
     """ServiceBusTopicMessage.
 
     :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: :class:`ServiceBusAuthentication
-     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
+    :type authentication:
+     ~azure.mgmt.scheduler.models.ServiceBusAuthentication
     :param brokered_message_properties: Gets or sets the brokered message
      properties.
     :type brokered_message_properties:
-     :class:`ServiceBusBrokeredMessageProperties
-     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
+     ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
     :param custom_message_properties: Gets or sets the custom message
      properties.
-    :type custom_message_properties: dict
+    :type custom_message_properties: dict[str, str]
     :param message: Gets or sets the message.
     :type message: str
     :param namespace: Gets or sets the namespace.
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str or :class:`ServiceBusTransportType
-     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
+    :type transport_type: str or
+     ~azure.mgmt.scheduler.models.ServiceBusTransportType
     :param topic_path: Gets or sets the topic path.
     :type topic_path: str
     """
@@ -48,6 +47,6 @@ class ServiceBusTopicMessage(ServiceBusMessage):
         'topic_path': {'key': 'topicPath', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, topic_path=None):
-        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
-        self.topic_path = topic_path
+    def __init__(self, **kwargs):
+        super(ServiceBusTopicMessage, self).__init__(**kwargs)
+        self.topic_path = kwargs.get('topic_path', None)

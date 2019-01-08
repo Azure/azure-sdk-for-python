@@ -16,30 +16,22 @@ class VisualSearchRequest(Model):
     """A JSON object that contains information about the image to get insights of.
     Specify this object only in a knowledgeRequest form data.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar image_info: A JSON object that identities the image to get insights
+    :param image_info: A JSON object that identities the image to get insights
      of.
-    :vartype image_info:
+    :type image_info:
      ~azure.cognitiveservices.search.visualsearch.models.ImageInfo
-    :ivar knowledge_request: A JSON object containing information about the
+    :param knowledge_request: A JSON object containing information about the
      request, such as filters, or a description.
-    :vartype knowledge_request:
+    :type knowledge_request:
      ~azure.cognitiveservices.search.visualsearch.models.KnowledgeRequest
     """
-
-    _validation = {
-        'image_info': {'readonly': True},
-        'knowledge_request': {'readonly': True},
-    }
 
     _attribute_map = {
         'image_info': {'key': 'imageInfo', 'type': 'ImageInfo'},
         'knowledge_request': {'key': 'knowledgeRequest', 'type': 'KnowledgeRequest'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, image_info=None, knowledge_request=None, **kwargs) -> None:
         super(VisualSearchRequest, self).__init__(**kwargs)
-        self.image_info = None
-        self.knowledge_request = None
+        self.image_info = image_info
+        self.knowledge_request = knowledge_request

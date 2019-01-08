@@ -14,20 +14,20 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error reponse indicates Logic service is not able to process the incoming
+    """Error response indicates Logic service is not able to process the incoming
     request. The error property contains the error details.
 
     :param error: The error properties.
-    :type error: :class:`ErrorProperties
-     <azure.mgmt.logic.models.ErrorProperties>`
+    :type error: ~azure.mgmt.logic.models.ErrorProperties
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorProperties'},
     }
 
-    def __init__(self, error=None):
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ErrorResponseException(HttpOperationError):

@@ -31,12 +31,13 @@ class UpdateDataLakeAnalyticsAccountParameters(Model):
     :type compute_policies:
      list[~azure.mgmt.datalake.analytics.account.models.UpdateComputePolicyWithAccountParameters]
     :param firewall_rules: The list of firewall rules associated with this
-     Data Lake Analytics account.
+     account.
     :type firewall_rules:
      list[~azure.mgmt.datalake.analytics.account.models.UpdateFirewallRuleWithAccountParameters]
     :param firewall_state: The current state of the IP address firewall for
-     this Data Lake Analytics account. Possible values include: 'Enabled',
-     'Disabled'
+     this account. Disabling the firewall does not remove existing rules, they
+     will just be ignored until the firewall is re-enabled. Possible values
+     include: 'Enabled', 'Disabled'
     :type firewall_state: str or
      ~azure.mgmt.datalake.analytics.account.models.FirewallState
     :param firewall_allow_azure_ips: The current state of allowing or
@@ -94,18 +95,18 @@ class UpdateDataLakeAnalyticsAccountParameters(Model):
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
     }
 
-    def __init__(self, tags=None, data_lake_store_accounts=None, storage_accounts=None, compute_policies=None, firewall_rules=None, firewall_state=None, firewall_allow_azure_ips=None, new_tier=None, max_job_count=None, max_degree_of_parallelism=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, query_store_retention=None):
-        super(UpdateDataLakeAnalyticsAccountParameters, self).__init__()
-        self.tags = tags
-        self.data_lake_store_accounts = data_lake_store_accounts
-        self.storage_accounts = storage_accounts
-        self.compute_policies = compute_policies
-        self.firewall_rules = firewall_rules
-        self.firewall_state = firewall_state
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips
-        self.new_tier = new_tier
-        self.max_job_count = max_job_count
-        self.max_degree_of_parallelism = max_degree_of_parallelism
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
-        self.query_store_retention = query_store_retention
+    def __init__(self, **kwargs):
+        super(UpdateDataLakeAnalyticsAccountParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.data_lake_store_accounts = kwargs.get('data_lake_store_accounts', None)
+        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.compute_policies = kwargs.get('compute_policies', None)
+        self.firewall_rules = kwargs.get('firewall_rules', None)
+        self.firewall_state = kwargs.get('firewall_state', None)
+        self.firewall_allow_azure_ips = kwargs.get('firewall_allow_azure_ips', None)
+        self.new_tier = kwargs.get('new_tier', None)
+        self.max_job_count = kwargs.get('max_job_count', None)
+        self.max_degree_of_parallelism = kwargs.get('max_degree_of_parallelism', None)
+        self.max_degree_of_parallelism_per_job = kwargs.get('max_degree_of_parallelism_per_job', None)
+        self.min_priority_per_job = kwargs.get('min_priority_per_job', None)
+        self.query_store_retention = kwargs.get('query_store_retention', None)

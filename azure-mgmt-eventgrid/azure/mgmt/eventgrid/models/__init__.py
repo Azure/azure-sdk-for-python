@@ -12,9 +12,14 @@
 try:
     from .event_subscription_destination_py3 import EventSubscriptionDestination
     from .event_subscription_filter_py3 import EventSubscriptionFilter
+    from .retry_policy_py3 import RetryPolicy
+    from .dead_letter_destination_py3 import DeadLetterDestination
     from .resource_py3 import Resource
+    from .storage_blob_dead_letter_destination_py3 import StorageBlobDeadLetterDestination
     from .web_hook_event_subscription_destination_py3 import WebHookEventSubscriptionDestination
     from .event_hub_event_subscription_destination_py3 import EventHubEventSubscriptionDestination
+    from .storage_queue_event_subscription_destination_py3 import StorageQueueEventSubscriptionDestination
+    from .hybrid_connection_event_subscription_destination_py3 import HybridConnectionEventSubscriptionDestination
     from .event_subscription_py3 import EventSubscription
     from .event_subscription_update_parameters_py3 import EventSubscriptionUpdateParameters
     from .event_subscription_full_url_py3 import EventSubscriptionFullUrl
@@ -30,9 +35,14 @@ try:
 except (SyntaxError, ImportError):
     from .event_subscription_destination import EventSubscriptionDestination
     from .event_subscription_filter import EventSubscriptionFilter
+    from .retry_policy import RetryPolicy
+    from .dead_letter_destination import DeadLetterDestination
     from .resource import Resource
+    from .storage_blob_dead_letter_destination import StorageBlobDeadLetterDestination
     from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
     from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
+    from .storage_queue_event_subscription_destination import StorageQueueEventSubscriptionDestination
+    from .hybrid_connection_event_subscription_destination import HybridConnectionEventSubscriptionDestination
     from .event_subscription import EventSubscription
     from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
     from .event_subscription_full_url import EventSubscriptionFullUrl
@@ -60,9 +70,14 @@ from .event_grid_management_client_enums import (
 __all__ = [
     'EventSubscriptionDestination',
     'EventSubscriptionFilter',
+    'RetryPolicy',
+    'DeadLetterDestination',
     'Resource',
+    'StorageBlobDeadLetterDestination',
     'WebHookEventSubscriptionDestination',
     'EventHubEventSubscriptionDestination',
+    'StorageQueueEventSubscriptionDestination',
+    'HybridConnectionEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionUpdateParameters',
     'EventSubscriptionFullUrl',

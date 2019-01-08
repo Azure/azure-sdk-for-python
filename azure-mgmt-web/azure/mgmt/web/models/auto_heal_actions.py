@@ -31,8 +31,8 @@ class AutoHealActions(Model):
         'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
     }
 
-    def __init__(self, action_type=None, custom_action=None, min_process_execution_time=None):
-        super(AutoHealActions, self).__init__()
-        self.action_type = action_type
-        self.custom_action = custom_action
-        self.min_process_execution_time = min_process_execution_time
+    def __init__(self, **kwargs):
+        super(AutoHealActions, self).__init__(**kwargs)
+        self.action_type = kwargs.get('action_type', None)
+        self.custom_action = kwargs.get('custom_action', None)
+        self.min_process_execution_time = kwargs.get('min_process_execution_time', None)

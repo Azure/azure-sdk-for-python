@@ -10,15 +10,21 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .import_source_credentials_py3 import ImportSourceCredentials
     from .import_source_py3 import ImportSource
     from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
     from .registry_name_status_py3 import RegistryNameStatus
     from .operation_display_definition_py3 import OperationDisplayDefinition
+    from .operation_metric_specification_definition_py3 import OperationMetricSpecificationDefinition
+    from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
     from .operation_definition_py3 import OperationDefinition
     from .sku_py3 import Sku
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
+    from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .ip_rule_py3 import IPRule
+    from .network_rule_set_py3 import NetworkRuleSet
     from .registry_py3 import Registry
     from .registry_update_parameters_py3 import RegistryUpdateParameters
     from .registry_password_py3 import RegistryPassword
@@ -26,6 +32,9 @@ try:
     from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
     from .registry_usage_py3 import RegistryUsage
     from .registry_usage_list_result_py3 import RegistryUsageListResult
+    from .quarantine_policy_py3 import QuarantinePolicy
+    from .trust_policy_py3 import TrustPolicy
+    from .registry_policies_py3 import RegistryPolicies
     from .replication_py3 import Replication
     from .replication_update_parameters_py3 import ReplicationUpdateParameters
     from .webhook_py3 import Webhook
@@ -43,15 +52,21 @@ try:
     from .event_py3 import Event
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
+    from .import_source_credentials import ImportSourceCredentials
     from .import_source import ImportSource
     from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
     from .registry_name_status import RegistryNameStatus
     from .operation_display_definition import OperationDisplayDefinition
+    from .operation_metric_specification_definition import OperationMetricSpecificationDefinition
+    from .operation_service_specification_definition import OperationServiceSpecificationDefinition
     from .operation_definition import OperationDefinition
     from .sku import Sku
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
+    from .virtual_network_rule import VirtualNetworkRule
+    from .ip_rule import IPRule
+    from .network_rule_set import NetworkRuleSet
     from .registry import Registry
     from .registry_update_parameters import RegistryUpdateParameters
     from .registry_password import RegistryPassword
@@ -59,6 +74,9 @@ except (SyntaxError, ImportError):
     from .regenerate_credential_parameters import RegenerateCredentialParameters
     from .registry_usage import RegistryUsage
     from .registry_usage_list_result import RegistryUsageListResult
+    from .quarantine_policy import QuarantinePolicy
+    from .trust_policy import TrustPolicy
+    from .registry_policies import RegistryPolicies
     from .replication import Replication
     from .replication_update_parameters import ReplicationUpdateParameters
     from .webhook import Webhook
@@ -85,22 +103,32 @@ from .container_registry_management_client_enums import (
     SkuName,
     SkuTier,
     ProvisioningState,
+    DefaultAction,
+    Action,
     PasswordName,
     RegistryUsageUnit,
+    PolicyStatus,
+    TrustPolicyType,
     WebhookStatus,
     WebhookAction,
 )
 
 __all__ = [
+    'ImportSourceCredentials',
     'ImportSource',
     'ImportImageParameters',
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
     'OperationDisplayDefinition',
+    'OperationMetricSpecificationDefinition',
+    'OperationServiceSpecificationDefinition',
     'OperationDefinition',
     'Sku',
     'Status',
     'StorageAccountProperties',
+    'VirtualNetworkRule',
+    'IPRule',
+    'NetworkRuleSet',
     'Registry',
     'RegistryUpdateParameters',
     'RegistryPassword',
@@ -108,6 +136,9 @@ __all__ = [
     'RegenerateCredentialParameters',
     'RegistryUsage',
     'RegistryUsageListResult',
+    'QuarantinePolicy',
+    'TrustPolicy',
+    'RegistryPolicies',
     'Replication',
     'ReplicationUpdateParameters',
     'Webhook',
@@ -133,8 +164,12 @@ __all__ = [
     'SkuName',
     'SkuTier',
     'ProvisioningState',
+    'DefaultAction',
+    'Action',
     'PasswordName',
     'RegistryUsageUnit',
+    'PolicyStatus',
+    'TrustPolicyType',
     'WebhookStatus',
     'WebhookAction',
 ]

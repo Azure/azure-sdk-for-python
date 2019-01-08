@@ -32,7 +32,7 @@ class Filters(Model):
 
     _attribute_map = {
         'deinterlace': {'key': 'deinterlace', 'type': 'Deinterlace'},
-        'rotation': {'key': 'rotation', 'type': 'Rotation'},
+        'rotation': {'key': 'rotation', 'type': 'str'},
         'crop': {'key': 'crop', 'type': 'Rectangle'},
         'overlays': {'key': 'overlays', 'type': '[Overlay]'},
     }

@@ -3,6 +3,59 @@
 Release History
 ===============
 
+2.6.0 (2019-01-02)
+++++++++++++++++++
+
+**Features**
+
+- Add IP rules
+
+**Bugfixes**
+
+- Rename incorrect "id" to "virtual_network_resource_id"
+
+2.5.0 (2018-12-10)
+++++++++++++++++++
+
+**Features**
+
+- Add network rule set to registry properties
+
+2.4.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add context token to task step
+
+2.3.0 (2018-10-17)
+++++++++++++++++++
+
+- Support context path, source location URL, and pull request based triggers for task/run.
+- Allow specifying credentials for source registry on import image.
+
+2.2.0 (2018-09-11)
+++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.get_build_source_upload_url
+- Added operation RegistriesOperations.schedule_run
+- Added operation group RunsOperations
+- Added operation group TasksOperations
+
+Default API version is now 2018-09-01
+
+2.1.0 (2018-07-26)
+++++++++++++++++++
+
+**Features**
+
+- Model OperationDefinition has a new parameter service_specification
+- Model OperationDefinition has a new parameter origin
+- Added operation RegistriesOperations.list_policies
+- Added operation RegistriesOperations.update_policies
+
 2.0.0 (2018-04-30)
 ++++++++++++++++++
 
@@ -30,7 +83,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

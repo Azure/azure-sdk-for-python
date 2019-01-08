@@ -20,6 +20,7 @@ class EventSubscriptionProvisioningState(str, Enum):
     succeeded = "Succeeded"
     canceled = "Canceled"
     failed = "Failed"
+    awaiting_manual_action = "AwaitingManualAction"
 
 
 class TopicProvisioningState(str, Enum):

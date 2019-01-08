@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -41,7 +41,7 @@ class ComputerVisionAPIConfiguration(Configuration):
             raise ValueError("Parameter 'azure_region' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v1.0'
+        base_url = 'https://{AzureRegion}.api.cognitive.microsoft.com/vision/v2.0'
 
         super(ComputerVisionAPIConfiguration, self).__init__(base_url)
 
@@ -51,7 +51,7 @@ class ComputerVisionAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ComputerVisionAPI(object):
+class ComputerVisionAPI(SDKClient):
     """The Computer Vision API provides state-of-the-art algorithms to process images and return information. For example, it can be used to determine if an image contains mature content, or it can be used to find all the faces in an image.  It also has other features like estimating dominant and accent colors, categorizing the content of images, and describing an image with complete English sentences.  Additionally, it can also intelligently generate images thumbnails for displaying large images effectively.
 
     :ivar config: Configuration for client.
@@ -73,10 +73,10 @@ class ComputerVisionAPI(object):
             self, azure_region, credentials):
 
         self.config = ComputerVisionAPIConfiguration(azure_region, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ComputerVisionAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0'
+        self.api_version = '2.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -103,7 +103,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/models'
+        url = self.list_models.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -135,6 +135,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    list_models.metadata = {'url': '/models'}
 
     def analyze_image(
             self, url, visual_features=None, details=None, language="en", custom_headers=None, raw=False, **operation_config):
@@ -144,7 +145,7 @@ class ComputerVisionAPI(object):
         optional parameter to allow you to choose which features to return.  By
         default, image categories are returned in the response.
 
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
         :param visual_features: A string indicating what visual feature types
          to return. Multiple values should be comma-separated. Valid visual
@@ -166,13 +167,12 @@ class ComputerVisionAPI(object):
          in the image.
         :type details: list[str or
          ~azure.cognitiveservices.vision.computervision.models.Details]
-        :param language: A string indicating which language to return. The
-         service will return recognition results in specified language. If this
+        :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.zh -
-         Simplified Chinese. Possible values include: 'en', 'zh'
-        :type language: str or
-         ~azure.cognitiveservices.vision.computervision.models.Language1
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -188,7 +188,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/analyze'
+        url = self.analyze_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -201,7 +201,7 @@ class ComputerVisionAPI(object):
         if details is not None:
             query_parameters['details'] = self._serialize.query("details", details, '[Details]', div=',')
         if language is not None:
-            query_parameters['language'] = self._serialize.query("language", language, 'Language1')
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -230,6 +230,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image.metadata = {'url': '/analyze'}
 
     def generate_thumbnail(
             self, width, height, url, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -248,7 +249,7 @@ class ComputerVisionAPI(object):
         :param height: Height of the thumbnail. It must be between 1 and 1024.
          Recommended minimum of 50.
         :type height: int
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
         :param smart_cropping: Boolean flag for enabling smart cropping.
         :type smart_cropping: bool
@@ -270,7 +271,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/generateThumbnail'
+        url = self.generate_thumbnail.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -310,6 +311,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    generate_thumbnail.metadata = {'url': '/generateThumbnail'}
 
     def recognize_printed_text(
             self, url, detect_orientation=True, language="unk", custom_headers=None, raw=False, **operation_config):
@@ -326,7 +328,7 @@ class ComputerVisionAPI(object):
          image orientation and correct it before further processing (e.g. if
          it's upside-down).
         :type detect_orientation: bool
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
         :param language: The BCP-47 language code of the text to be detected
          in the image. The default value is 'unk'. Possible values include:
@@ -350,7 +352,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/ocr'
+        url = self.recognize_printed_text.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -389,9 +391,10 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    recognize_printed_text.metadata = {'url': '/ocr'}
 
     def describe_image(
-            self, url, max_candidates="1", custom_headers=None, raw=False, **operation_config):
+            self, url, max_candidates="1", language="en", custom_headers=None, raw=False, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -402,11 +405,17 @@ class ComputerVisionAPI(object):
         returned in JSON.  If the request failed, the response will contain an
         error code and a message to help understand what went wrong.
 
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
         :type max_candidates: str
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -422,7 +431,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/describe'
+        url = self.describe_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -432,6 +441,8 @@ class ComputerVisionAPI(object):
         query_parameters = {}
         if max_candidates is not None:
             query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -460,20 +471,27 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    describe_image.metadata = {'url': '/describe'}
 
     def tag_image(
-            self, url, custom_headers=None, raw=False, **operation_config):
+            self, url, language="en", custom_headers=None, raw=False, **operation_config):
         """This operation generates a list of words, or tags, that are relevant to
         the content of the supplied image. The Computer Vision API can return
         tags based on objects, living beings, scenery or actions found in
         images. Unlike categories, tags are not organized according to a
         hierarchical classification system, but correspond to image content.
         Tags may contain hints to avoid ambiguity or provide context, for
-        example the tag “cello” may be accompanied by the hint “musical
-        instrument”. All tags are in English.
+        example the tag 'cello' may be accompanied by the hint 'musical
+        instrument'. All tags are in English.
 
-        :param url:
+        :param url: Publicly reachable URL of an image
         :type url: str
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -489,7 +507,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/tag'
+        url = self.tag_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -497,6 +515,8 @@ class ComputerVisionAPI(object):
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -525,9 +545,10 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    tag_image.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain(
-            self, model, url, custom_headers=None, raw=False, **operation_config):
+            self, model, url, language="en", custom_headers=None, raw=False, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model.  The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -537,12 +558,16 @@ class ComputerVisionAPI(object):
         returned in JSON.  If the request failed, the response will contain an
         error code and a message to help understand what went wrong.
 
-        :param model: The domain-specific content to recognize. Possible
-         values include: 'Celebrities', 'Landmarks'
-        :type model: str or
-         ~azure.cognitiveservices.vision.computervision.models.DomainModels
-        :param url:
+        :param model: The domain-specific content to recognize.
+        :type model: str
+        :param url: Publicly reachable URL of an image
         :type url: str
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -558,15 +583,17 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/models/{model}/analyze'
+        url = self.analyze_image_by_domain.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
-            'model': self._serialize.url("model", model, 'DomainModels')
+            'model': self._serialize.url("model", model, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -595,20 +622,21 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_by_domain.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text(
-            self, url, detect_handwriting=False, custom_headers=None, raw=False, **operation_config):
+            self, url, mode, custom_headers=None, raw=False, **operation_config):
         """Recognize Text operation. When you use the Recognize Text interface,
-        the response contains a field called “Operation-Location”. The
-        “Operation-Location” field contains the URL that you must use for your
-        Get Handwritten Text Operation Result operation.
+        the response contains a field called 'Operation-Location'. The
+        'Operation-Location' field contains the URL that you must use for your
+        Get Recognize Text Operation Result operation.
 
-        :param url:
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
+        :param url: Publicly reachable URL of an image
         :type url: str
-        :param detect_handwriting: If “true” is specified, handwriting
-         recognition is performed. If this parameter is set to “false” or is
-         not specified, printed text recognition is performed.
-        :type detect_handwriting: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -622,7 +650,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/recognizeText'
+        url = self.recognize_text.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -630,8 +658,7 @@ class ComputerVisionAPI(object):
 
         # Construct parameters
         query_parameters = {}
-        if detect_handwriting is not None:
-            query_parameters['detectHandwriting'] = self._serialize.query("detect_handwriting", detect_handwriting, 'bool')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
@@ -656,6 +683,7 @@ class ComputerVisionAPI(object):
                 'Operation-Location': 'str',
             })
             return client_raw_response
+    recognize_text.metadata = {'url': '/recognizeText'}
 
     def get_text_operation_result(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
@@ -664,7 +692,7 @@ class ComputerVisionAPI(object):
         returned from Recognize Text interface.
 
         :param operation_id: Id of the text operation returned in the response
-         of the 'Recognize Handwritten Text'
+         of the 'Recognize Text'
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -679,7 +707,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/textOperations/{operationId}'
+        url = self.get_text_operation_result.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
@@ -712,6 +740,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    get_text_operation_result.metadata = {'url': '/textOperations/{operationId}'}
 
     def analyze_image_in_stream(
             self, image, visual_features=None, details=None, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
@@ -739,11 +768,11 @@ class ComputerVisionAPI(object):
          feature types include:Celebrities - identifies celebrities if detected
          in the image. Possible values include: 'Celebrities', 'Landmarks'
         :type details: str
-        :param language: A string indicating which language to return. The
-         service will return recognition results in specified language. If this
+        :param language: The desired language for output generation. If this
          parameter is not specified, the default value is
-         &quot;en&quot;.Supported languages:en - English, Default.zh -
-         Simplified Chinese. Possible values include: 'en', 'zh'
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -763,7 +792,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/analyze'
+        url = self.analyze_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -805,6 +834,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_in_stream.metadata = {'url': '/analyze'}
 
     def generate_thumbnail_in_stream(
             self, width, height, image, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -840,10 +870,10 @@ class ComputerVisionAPI(object):
         :return: object or ClientRawResponse if raw=true
         :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/generateThumbnail'
+        url = self.generate_thumbnail_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -871,7 +901,7 @@ class ComputerVisionAPI(object):
             request, header_parameters, body_content, stream=True, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ComputerVisionErrorException(self._deserialize, response)
+            raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
 
@@ -883,6 +913,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    generate_thumbnail_in_stream.metadata = {'url': '/generateThumbnail'}
 
     def recognize_printed_text_in_stream(
             self, image, detect_orientation=True, language="unk", custom_headers=None, raw=False, callback=None, **operation_config):
@@ -926,7 +957,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/ocr'
+        url = self.recognize_printed_text_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -965,9 +996,10 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    recognize_printed_text_in_stream.metadata = {'url': '/ocr'}
 
     def describe_image_in_stream(
-            self, image, max_candidates="1", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, max_candidates="1", language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences.  The description is based on a
         collection of content tags, which are also returned by the operation.
@@ -983,6 +1015,12 @@ class ComputerVisionAPI(object):
         :param max_candidates: Maximum number of candidate descriptions to be
          returned.  The default is 1.
         :type max_candidates: str
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1001,7 +1039,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/describe'
+        url = self.describe_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1011,6 +1049,8 @@ class ComputerVisionAPI(object):
         query_parameters = {}
         if max_candidates is not None:
             query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'str')
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1039,20 +1079,27 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    describe_image_in_stream.metadata = {'url': '/describe'}
 
     def tag_image_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a list of words, or tags, that are relevant to
         the content of the supplied image. The Computer Vision API can return
         tags based on objects, living beings, scenery or actions found in
         images. Unlike categories, tags are not organized according to a
         hierarchical classification system, but correspond to image content.
         Tags may contain hints to avoid ambiguity or provide context, for
-        example the tag “cello” may be accompanied by the hint “musical
-        instrument”. All tags are in English.
+        example the tag 'cello' may be accompanied by the hint 'musical
+        instrument'. All tags are in English.
 
         :param image: An image stream.
         :type image: Generator
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1071,7 +1118,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/tag'
+        url = self.tag_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1079,6 +1126,8 @@ class ComputerVisionAPI(object):
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1107,9 +1156,10 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    tag_image_in_stream.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain_in_stream(
-            self, model, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, model, image, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation recognizes content within an image by applying a
         domain-specific model.  The list of domain-specific models that are
         supported by the Computer Vision API can be retrieved using the /models
@@ -1123,6 +1173,12 @@ class ComputerVisionAPI(object):
         :type model: str
         :param image: An image stream.
         :type image: Generator
+        :param language: The desired language for output generation. If this
+         parameter is not specified, the default value is
+         &quot;en&quot;.Supported languages:en - English, Default. es -
+         Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
+         Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
+        :type language: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1141,7 +1197,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/models/{model}/analyze'
+        url = self.analyze_image_by_domain_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
@@ -1150,6 +1206,8 @@ class ComputerVisionAPI(object):
 
         # Construct parameters
         query_parameters = {}
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1178,20 +1236,21 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_by_domain_in_stream.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text_in_stream(
-            self, image, detect_handwriting=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, mode, custom_headers=None, raw=False, callback=None, **operation_config):
         """Recognize Text operation. When you use the Recognize Text interface,
-        the response contains a field called “Operation-Location”. The
-        “Operation-Location” field contains the URL that you must use for your
-        Get Handwritten Text Operation Result operation.
+        the response contains a field called 'Operation-Location'. The
+        'Operation-Location' field contains the URL that you must use for your
+        Get Recognize Text Operation Result operation.
 
         :param image: An image stream.
         :type image: Generator
-        :param detect_handwriting: If “true” is specified, handwriting
-         recognition is performed. If this parameter is set to “false” or is
-         not specified, printed text recognition is performed.
-        :type detect_handwriting: bool
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1208,7 +1267,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/recognizeText'
+        url = self.recognize_text_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1216,8 +1275,7 @@ class ComputerVisionAPI(object):
 
         # Construct parameters
         query_parameters = {}
-        if detect_handwriting is not None:
-            query_parameters['detectHandwriting'] = self._serialize.query("detect_handwriting", detect_handwriting, 'bool')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
@@ -1242,3 +1300,4 @@ class ComputerVisionAPI(object):
                 'Operation-Location': 'str',
             })
             return client_raw_response
+    recognize_text_in_stream.metadata = {'url': '/recognizeText'}

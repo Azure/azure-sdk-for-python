@@ -26,7 +26,7 @@ class ValidateResponse(Model):
         'error': {'key': 'error', 'type': 'ValidateResponseError'},
     }
 
-    def __init__(self, status=None, error=None):
-        super(ValidateResponse, self).__init__()
-        self.status = status
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ValidateResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)

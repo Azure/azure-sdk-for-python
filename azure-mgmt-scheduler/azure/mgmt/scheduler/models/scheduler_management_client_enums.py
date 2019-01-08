@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class SkuDefinition(Enum):
+class SkuDefinition(str, Enum):
 
     standard = "Standard"
     free = "Free"
@@ -20,7 +20,7 @@ class SkuDefinition(Enum):
     p20_premium = "P20Premium"
 
 
-class JobCollectionState(Enum):
+class JobCollectionState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
@@ -28,7 +28,7 @@ class JobCollectionState(Enum):
     deleted = "Deleted"
 
 
-class RecurrenceFrequency(Enum):
+class RecurrenceFrequency(str, Enum):
 
     minute = "Minute"
     hour = "Hour"
@@ -37,7 +37,7 @@ class RecurrenceFrequency(Enum):
     month = "Month"
 
 
-class JobActionType(Enum):
+class JobActionType(str, Enum):
 
     http = "Http"
     https = "Https"
@@ -46,21 +46,13 @@ class JobActionType(Enum):
     service_bus_topic = "ServiceBusTopic"
 
 
-class HttpAuthenticationType(Enum):
-
-    not_specified = "NotSpecified"
-    client_certificate = "ClientCertificate"
-    active_directory_oauth = "ActiveDirectoryOAuth"
-    basic = "Basic"
-
-
-class RetryType(Enum):
+class RetryType(str, Enum):
 
     none = "None"
     fixed = "Fixed"
 
 
-class DayOfWeek(Enum):
+class DayOfWeek(str, Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -71,7 +63,7 @@ class DayOfWeek(Enum):
     saturday = "Saturday"
 
 
-class JobScheduleDay(Enum):
+class JobScheduleDay(str, Enum):
 
     monday = "Monday"
     tuesday = "Tuesday"
@@ -82,7 +74,7 @@ class JobScheduleDay(Enum):
     sunday = "Sunday"
 
 
-class JobState(Enum):
+class JobState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
@@ -90,26 +82,26 @@ class JobState(Enum):
     completed = "Completed"
 
 
-class JobHistoryActionName(Enum):
+class JobHistoryActionName(str, Enum):
 
     main_action = "MainAction"
     error_action = "ErrorAction"
 
 
-class JobExecutionStatus(Enum):
+class JobExecutionStatus(str, Enum):
 
     completed = "Completed"
     failed = "Failed"
     postponed = "Postponed"
 
 
-class ServiceBusAuthenticationType(Enum):
+class ServiceBusAuthenticationType(str, Enum):
 
     not_specified = "NotSpecified"
     shared_access_key = "SharedAccessKey"
 
 
-class ServiceBusTransportType(Enum):
+class ServiceBusTransportType(str, Enum):
 
     not_specified = "NotSpecified"
     net_messaging = "NetMessaging"

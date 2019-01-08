@@ -18,7 +18,10 @@ class QueryContext(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param original_query: The query string as specified in the request.
+    All required parameters must be populated in order to send to Azure.
+
+    :param original_query: Required. The query string as specified in the
+     request.
     :type original_query: str
     :ivar altered_query: The query string used by Bing to perform the query.
      Bing uses the altered query string if the original query string contained
@@ -53,9 +56,9 @@ class QueryContext(Model):
         'adult_intent': {'key': 'adultIntent', 'type': 'bool'},
     }
 
-    def __init__(self, original_query):
-        super(QueryContext, self).__init__()
-        self.original_query = original_query
+    def __init__(self, **kwargs):
+        super(QueryContext, self).__init__(**kwargs)
+        self.original_query = kwargs.get('original_query', None)
         self.altered_query = None
         self.alteration_override_query = None
         self.adult_intent = None

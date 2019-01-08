@@ -28,7 +28,7 @@ class Accessory(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, type=None, confidence=None):
-        super(Accessory, self).__init__()
-        self.type = type
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(Accessory, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.confidence = kwargs.get('confidence', None)

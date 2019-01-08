@@ -16,7 +16,10 @@ class AddDataLakeStoreWithAccountParameters(Model):
     """The parameters used to add a new Data Lake Store account while creating a
     new Data Lake Analytics account.
 
-    :param name: The unique name of the Data Lake Store account to add.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the Data Lake Store account to
+     add.
     :type name: str
     :param suffix: The optional suffix for the Data Lake Store account.
     :type suffix: str
@@ -31,7 +34,7 @@ class AddDataLakeStoreWithAccountParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, suffix=None):
-        super(AddDataLakeStoreWithAccountParameters, self).__init__()
-        self.name = name
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(AddDataLakeStoreWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.suffix = kwargs.get('suffix', None)

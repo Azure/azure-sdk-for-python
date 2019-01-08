@@ -12,20 +12,20 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     free = "Free"
     basic = "Basic"
     standard = "Standard"
 
 
-class NamespaceType(Enum):
+class NamespaceType(str, Enum):
 
     messaging = "Messaging"
     notification_hub = "NotificationHub"
 
 
-class AccessRights(Enum):
+class AccessRights(str, Enum):
 
     manage = "Manage"
     send = "Send"

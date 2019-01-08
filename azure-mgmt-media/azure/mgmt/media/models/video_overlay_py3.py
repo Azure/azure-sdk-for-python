@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .overlay import Overlay
+from .overlay_py3 import Overlay
 
 
 class VideoOverlay(Overlay):

@@ -15,19 +15,21 @@ from .schedule_policy import SchedulePolicy
 class SimpleSchedulePolicy(SchedulePolicy):
     """Simple policy schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param schedule_policy_type: Required. Constant filled by server.
     :type schedule_policy_type: str
     :param schedule_run_frequency: Frequency of the schedule operation of this
      policy. Possible values include: 'Invalid', 'Daily', 'Weekly'
-    :type schedule_run_frequency: str or :class:`ScheduleRunType
-     <azure.mgmt.recoveryservicesbackup.models.ScheduleRunType>`
+    :type schedule_run_frequency: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ScheduleRunType
     :param schedule_run_days: List of days of week this schedule has to be
      run.
-    :type schedule_run_days: list of str or :class:`DayOfWeek
-     <azure.mgmt.recoveryservicesbackup.models.DayOfWeek>`
+    :type schedule_run_days: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.DayOfWeek]
     :param schedule_run_times: List of times of day this schedule has to be
      run.
-    :type schedule_run_times: list of datetime
+    :type schedule_run_times: list[datetime]
     :param schedule_weekly_frequency: At every number weeks this schedule has
      to be run.
     :type schedule_weekly_frequency: int
@@ -45,10 +47,10 @@ class SimpleSchedulePolicy(SchedulePolicy):
         'schedule_weekly_frequency': {'key': 'scheduleWeeklyFrequency', 'type': 'int'},
     }
 
-    def __init__(self, schedule_run_frequency=None, schedule_run_days=None, schedule_run_times=None, schedule_weekly_frequency=None):
-        super(SimpleSchedulePolicy, self).__init__()
-        self.schedule_run_frequency = schedule_run_frequency
-        self.schedule_run_days = schedule_run_days
-        self.schedule_run_times = schedule_run_times
-        self.schedule_weekly_frequency = schedule_weekly_frequency
+    def __init__(self, **kwargs):
+        super(SimpleSchedulePolicy, self).__init__(**kwargs)
+        self.schedule_run_frequency = kwargs.get('schedule_run_frequency', None)
+        self.schedule_run_days = kwargs.get('schedule_run_days', None)
+        self.schedule_run_times = kwargs.get('schedule_run_times', None)
+        self.schedule_weekly_frequency = kwargs.get('schedule_weekly_frequency', None)
         self.schedule_policy_type = 'SimpleSchedulePolicy'

@@ -15,18 +15,20 @@ from msrest.serialization import Model
 class AS2EnvelopeSettings(Model):
     """The AS2 agreement envelope settings.
 
-    :param message_content_type: The message content type.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_content_type: Required. The message content type.
     :type message_content_type: str
-    :param transmit_file_name_in_mime_header: The value indicating whether to
-     transmit file name in mime header.
+    :param transmit_file_name_in_mime_header: Required. The value indicating
+     whether to transmit file name in mime header.
     :type transmit_file_name_in_mime_header: bool
-    :param file_name_template: The template for file name.
+    :param file_name_template: Required. The template for file name.
     :type file_name_template: str
-    :param suspend_message_on_file_name_generation_error: The value indicating
-     whether to suspend message on file name generation error.
+    :param suspend_message_on_file_name_generation_error: Required. The value
+     indicating whether to suspend message on file name generation error.
     :type suspend_message_on_file_name_generation_error: bool
-    :param autogenerate_file_name: The value indicating whether to auto
-     generate file name.
+    :param autogenerate_file_name: Required. The value indicating whether to
+     auto generate file name.
     :type autogenerate_file_name: bool
     """
 
@@ -46,9 +48,10 @@ class AS2EnvelopeSettings(Model):
         'autogenerate_file_name': {'key': 'autogenerateFileName', 'type': 'bool'},
     }
 
-    def __init__(self, message_content_type, transmit_file_name_in_mime_header, file_name_template, suspend_message_on_file_name_generation_error, autogenerate_file_name):
-        self.message_content_type = message_content_type
-        self.transmit_file_name_in_mime_header = transmit_file_name_in_mime_header
-        self.file_name_template = file_name_template
-        self.suspend_message_on_file_name_generation_error = suspend_message_on_file_name_generation_error
-        self.autogenerate_file_name = autogenerate_file_name
+    def __init__(self, **kwargs):
+        super(AS2EnvelopeSettings, self).__init__(**kwargs)
+        self.message_content_type = kwargs.get('message_content_type', None)
+        self.transmit_file_name_in_mime_header = kwargs.get('transmit_file_name_in_mime_header', None)
+        self.file_name_template = kwargs.get('file_name_template', None)
+        self.suspend_message_on_file_name_generation_error = kwargs.get('suspend_message_on_file_name_generation_error', None)
+        self.autogenerate_file_name = kwargs.get('autogenerate_file_name', None)

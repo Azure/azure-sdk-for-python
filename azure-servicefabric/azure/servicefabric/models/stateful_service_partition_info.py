@@ -15,6 +15,8 @@ from .service_partition_info import ServicePartitionInfo
 class StatefulServicePartitionInfo(ServicePartitionInfo):
     """Information about a partition of a stateful Service Fabric service..
 
+    All required parameters must be populated in order to send to Azure.
+
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
@@ -28,7 +30,7 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
      partitioning scheme and keys supported by it.
     :type partition_information:
      ~azure.servicefabric.models.PartitionInformation
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: long
@@ -39,12 +41,12 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
      returns the duration since it has been in that state. This field is using
      ISO8601 format for specifying the duration.
     :type last_quorum_loss_duration: timedelta
-    :param current_configuration_epoch: An Epoch is a configuration number for
-     the partition as a whole. When the configuration of the replica set
-     changes, for example when the Primary replica changes, the operations that
-     are replicated from the new Primary replica are said to be a new Epoch
-     from the ones which were sent by the old Primary replica.
-    :type current_configuration_epoch: ~azure.servicefabric.models.Epoch
+    :param primary_epoch: An Epoch is a configuration number for the partition
+     as a whole. When the configuration of the replica set changes, for example
+     when the Primary replica changes, the operations that are replicated from
+     the new Primary replica are said to be a new Epoch from the ones which
+     were sent by the old Primary replica.
+    :type primary_epoch: ~azure.servicefabric.models.Epoch
     """
 
     _validation = {
@@ -59,13 +61,13 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
         'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'long'},
         'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'long'},
         'last_quorum_loss_duration': {'key': 'LastQuorumLossDuration', 'type': 'duration'},
-        'current_configuration_epoch': {'key': 'CurrentConfigurationEpoch', 'type': 'Epoch'},
+        'primary_epoch': {'key': 'PrimaryEpoch', 'type': 'Epoch'},
     }
 
-    def __init__(self, health_state=None, partition_status=None, partition_information=None, target_replica_set_size=None, min_replica_set_size=None, last_quorum_loss_duration=None, current_configuration_epoch=None):
-        super(StatefulServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information)
-        self.target_replica_set_size = target_replica_set_size
-        self.min_replica_set_size = min_replica_set_size
-        self.last_quorum_loss_duration = last_quorum_loss_duration
-        self.current_configuration_epoch = current_configuration_epoch
+    def __init__(self, **kwargs):
+        super(StatefulServicePartitionInfo, self).__init__(**kwargs)
+        self.target_replica_set_size = kwargs.get('target_replica_set_size', None)
+        self.min_replica_set_size = kwargs.get('min_replica_set_size', None)
+        self.last_quorum_loss_duration = kwargs.get('last_quorum_loss_duration', None)
+        self.primary_epoch = kwargs.get('primary_epoch', None)
         self.service_kind = 'Stateful'

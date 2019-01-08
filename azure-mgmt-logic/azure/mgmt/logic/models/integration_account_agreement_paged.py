@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class IntegrationAccountAgreementPaged(Paged):
     """
-    A paging container for iterating over a list of IntegrationAccountAgreement object
+    A paging container for iterating over a list of :class:`IntegrationAccountAgreement <azure.mgmt.logic.models.IntegrationAccountAgreement>` object
     """
 
     _attribute_map = {
