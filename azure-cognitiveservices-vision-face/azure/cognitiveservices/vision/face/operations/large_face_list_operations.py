@@ -400,7 +400,7 @@ class LargeFaceListOperations(object):
     def delete_face(
             self, large_face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
         """Delete an existing face from a large face list (given by a
-        persisitedFaceId and a largeFaceListId). Persisted image related to the
+        persistedFaceId and a largeFaceListId). Persisted image related to the
         face will also be deleted.
 
         :param large_face_list_id: Id referencing a particular large face
