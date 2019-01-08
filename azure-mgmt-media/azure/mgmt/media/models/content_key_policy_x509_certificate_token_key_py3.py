@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_key_policy_restriction_token_key import ContentKeyPolicyRestrictionTokenKey
+from .content_key_policy_restriction_token_key_py3 import ContentKeyPolicyRestrictionTokenKey
 
 
 class ContentKeyPolicyX509CertificateTokenKey(ContentKeyPolicyRestrictionTokenKey):

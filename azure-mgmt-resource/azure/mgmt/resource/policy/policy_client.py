@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class PolicyClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class PolicyClient(MultiApiClientMixin):
+class PolicyClient(MultiApiClientMixin, SDKClient):
     """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
     :ivar config: Configuration for client.
@@ -78,16 +78,13 @@ class PolicyClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         super(PolicyClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -104,6 +101,7 @@ class PolicyClient(MultiApiClientMixin):
            * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.resource.policy.v2016_12_01.models>`
            * 2017-06-01-preview: :mod:`v2017_06_01_preview.models<azure.mgmt.resource.policy.v2017_06_01_preview.models>`
            * 2018-03-01: :mod:`v2018_03_01.models<azure.mgmt.resource.policy.v2018_03_01.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.policy.v2018_05_01.models>`
         """
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview import models
@@ -120,8 +118,11 @@ class PolicyClient(MultiApiClientMixin):
         elif api_version == '2018-03-01':
             from .v2018_03_01 import models
             return models
+        elif api_version == '2018-05-01':
+            from .v2018_05_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def policy_assignments(self):
         """Instance depends on the API version:
@@ -131,6 +132,7 @@ class PolicyClient(MultiApiClientMixin):
            * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
            * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
            * 2018-03-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicyAssignmentsOperations>`
+           * 2018-05-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicyAssignmentsOperations>`
         """
         api_version = self._get_api_version('policy_assignments')
         if api_version == '2015-10-01-preview':
@@ -143,6 +145,8 @@ class PolicyClient(MultiApiClientMixin):
             from .v2017_06_01_preview.operations import PolicyAssignmentsOperations as OperationClass
         elif api_version == '2018-03-01':
             from .v2018_03_01.operations import PolicyAssignmentsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -156,6 +160,7 @@ class PolicyClient(MultiApiClientMixin):
            * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
            * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
            * 2018-03-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicyDefinitionsOperations>`
+           * 2018-05-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicyDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_definitions')
         if api_version == '2015-10-01-preview':
@@ -168,6 +173,8 @@ class PolicyClient(MultiApiClientMixin):
             from .v2017_06_01_preview.operations import PolicyDefinitionsOperations as OperationClass
         elif api_version == '2018-03-01':
             from .v2018_03_01.operations import PolicyDefinitionsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import PolicyDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -178,12 +185,15 @@ class PolicyClient(MultiApiClientMixin):
 
            * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
            * 2018-03-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicySetDefinitionsOperations>`
+           * 2018-05-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicySetDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_set_definitions')
         if api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import PolicySetDefinitionsOperations as OperationClass
         elif api_version == '2018-03-01':
             from .v2018_03_01.operations import PolicySetDefinitionsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

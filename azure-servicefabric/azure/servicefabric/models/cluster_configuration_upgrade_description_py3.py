@@ -17,10 +17,14 @@ class ClusterConfigurationUpgradeDescription(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cluster_config: Required. The cluster configuration.
+    :param cluster_config: Required. The cluster configuration as a JSON
+     string. For example, [this
+     file](https://github.com/Azure-Samples/service-fabric-dotnet-standalone-cluster-configuration/blob/master/Samples/ClusterConfig.Unsecure.DevCluster.json)
+     contains JSON describing the [nodes and other properties of the
+     cluster](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-manifest).
     :type cluster_config: str
     :param health_check_retry_timeout: The length of time between attempts to
-     perform a health checks if the application or cluster is not healthy.
+     perform health checks if the application or cluster is not healthy.
      Default value: "PT0H0M0S" .
     :type health_check_retry_timeout: timedelta
     :param health_check_wait_duration_in_seconds: The length of time to wait
@@ -28,8 +32,8 @@ class ClusterConfigurationUpgradeDescription(Model):
      process. Default value: "PT0H0M0S" .
     :type health_check_wait_duration_in_seconds: timedelta
     :param health_check_stable_duration_in_seconds: The length of time that
-     the application or cluster must remain healthy. Default value: "PT0H0M0S"
-     .
+     the application or cluster must remain healthy before the upgrade proceeds
+     to the next upgrade domain. Default value: "PT0H0M0S" .
     :type health_check_stable_duration_in_seconds: timedelta
     :param upgrade_domain_timeout_in_seconds: The timeout for the upgrade
      domain. Default value: "PT0H0M0S" .
@@ -54,6 +58,11 @@ class ClusterConfigurationUpgradeDescription(Model):
      upgrade. Allowed values are integer values from zero to 100. Default
      value: 0 .
     :type max_percent_upgrade_domain_delta_unhealthy_nodes: int
+    :param application_health_policies: Defines the application health policy
+     map used to evaluate the health of an application or one of its children
+     entities.
+    :type application_health_policies:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
     """
 
     _validation = {
@@ -71,9 +80,10 @@ class ClusterConfigurationUpgradeDescription(Model):
         'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
         'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
         'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'MaxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
+        'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
     }
 
-    def __init__(self, *, cluster_config: str, health_check_retry_timeout="PT0H0M0S", health_check_wait_duration_in_seconds="PT0H0M0S", health_check_stable_duration_in_seconds="PT0H0M0S", upgrade_domain_timeout_in_seconds="PT0H0M0S", upgrade_timeout_in_seconds="PT0H0M0S", max_percent_unhealthy_applications: int=0, max_percent_unhealthy_nodes: int=0, max_percent_delta_unhealthy_nodes: int=0, max_percent_upgrade_domain_delta_unhealthy_nodes: int=0, **kwargs) -> None:
+    def __init__(self, *, cluster_config: str, health_check_retry_timeout="PT0H0M0S", health_check_wait_duration_in_seconds="PT0H0M0S", health_check_stable_duration_in_seconds="PT0H0M0S", upgrade_domain_timeout_in_seconds="PT0H0M0S", upgrade_timeout_in_seconds="PT0H0M0S", max_percent_unhealthy_applications: int=0, max_percent_unhealthy_nodes: int=0, max_percent_delta_unhealthy_nodes: int=0, max_percent_upgrade_domain_delta_unhealthy_nodes: int=0, application_health_policies=None, **kwargs) -> None:
         super(ClusterConfigurationUpgradeDescription, self).__init__(**kwargs)
         self.cluster_config = cluster_config
         self.health_check_retry_timeout = health_check_retry_timeout
@@ -85,3 +95,4 @@ class ClusterConfigurationUpgradeDescription(Model):
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
+        self.application_health_policies = application_health_policies

@@ -18,6 +18,21 @@ class ContainerNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class GpuSku(str, Enum):
+
+    k80 = "K80"
+    p100 = "P100"
+    v100 = "V100"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
 class ContainerGroupRestartPolicy(str, Enum):
 
     always = "Always"
@@ -31,10 +46,22 @@ class ContainerGroupNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class ContainerGroupIpAddressType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+
+class LogAnalyticsLogType(str, Enum):
+
+    container_insights = "ContainerInsights"
+    container_instance_logs = "ContainerInstanceLogs"
 
 
 class ContainerInstanceOperationsOrigin(str, Enum):

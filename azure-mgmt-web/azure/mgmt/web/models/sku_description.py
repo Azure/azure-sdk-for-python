@@ -45,13 +45,13 @@ class SkuDescription(Model):
         'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
-        super(SkuDescription, self).__init__()
-        self.name = name
-        self.tier = tier
-        self.size = size
-        self.family = family
-        self.capacity = capacity
-        self.sku_capacity = sku_capacity
-        self.locations = locations
-        self.capabilities = capabilities
+    def __init__(self, **kwargs):
+        super(SkuDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.sku_capacity = kwargs.get('sku_capacity', None)
+        self.locations = kwargs.get('locations', None)
+        self.capabilities = kwargs.get('capabilities', None)

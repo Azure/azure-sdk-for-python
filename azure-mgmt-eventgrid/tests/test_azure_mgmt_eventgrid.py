@@ -7,6 +7,8 @@
 #--------------------------------------------------------------------------
 import unittest
 
+raise unittest.SkipTest("Skipping all tests")
+
 import azure.mgmt.eventgrid.models
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.eventgrid import EventGridManagementClient
@@ -19,6 +21,8 @@ from azure.mgmt.eventgrid.models import (
     InputSchema,
     EventDeliverySchema,
     Topic,
+    Domain,
+    NumberLessThanAdvancedFilter,
     RetryPolicy
 )
 
@@ -35,7 +39,6 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         pass
 
     @ResourceGroupPreparer()
-    @unittest.skip('Not currently enabled for the 2018-05-01-preview API version')
     def test_topic_types(self, resource_group, location):
         # List all topic types
         for result in self.eventgrid_client.topic_types.list():
@@ -85,7 +88,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
         topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, topic)
         topic = topic_result_create.result()
         self.assertEqual(topic.name, topic_name)
-        self.assertEqual(topic.input_schema, "CloudEventV01Schema")        
+        self.assertEqual(topic.input_schema, "CloudEventV01Schema")
 
         # Create a new event subscription to this topic
         # Use this for recording mode
@@ -99,7 +102,7 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         deadletter_destination = StorageBlobDeadLetterDestination(
             resource_id= "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
-            blob_container_name= "dlq"            
+            blob_container_name= "dlq"
         )
 
         filter = EventSubscriptionFilter()
@@ -120,6 +123,42 @@ class MgmtEventGridTest(AzureMgmtTestCase):
 
         # Delete the topic
         self.eventgrid_client.topics.delete(resource_group.name, topic_name).wait()
+
+
+    @ResourceGroupPreparer()
+    def test_domains_and_advanced_filter(self, resource_group, location):
+        domain_name = "kalspythond1"
+        eventsubscription_name = "kalspythonEventSubscription2"
+
+        # Create a new domain and verify that it is created successfully
+        domain_result_create = self.eventgrid_client.domains.create_or_update(resource_group.name, domain_name, Domain(location="westcentralus"))
+        domain = domain_result_create.result()
+        self.assertEqual(domain.name, domain_name)
+
+        # Create a new event subscription to this domain
+        # Use this for recording mode
+        # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/domains/" + domain_name
+        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/domains/" + domain_name
+
+        destination = WebHookEventSubscriptionDestination(
+            # TODO: Before recording tests, replace with a valid Azure function URL
+            endpoint_url="https://kalsfunc1.azurewebsites.net/api/HttpTriggerCSharp1?code=hidden"
+        )
+        filter = EventSubscriptionFilter()
+        advanced_filter = NumberLessThanAdvancedFilter(key="data.key1", value=4.0)
+        filter.advanced_filters = []
+        filter.advanced_filters.append(advanced_filter)
+
+        event_subscription_info = EventSubscription(destination=destination, filter=filter)
+        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
+        event_subscription = es_result_create.result()
+        self.assertEqual(eventsubscription_name, event_subscription.name)
+
+        # Delete the event subscription
+        self.eventgrid_client.event_subscriptions.delete(scope, eventsubscription_name).wait()
+
+        # Delete the domain
+        self.eventgrid_client.domains.delete(resource_group.name, domain_name).wait()
 
 
 #------------------------------------------------------------------------------

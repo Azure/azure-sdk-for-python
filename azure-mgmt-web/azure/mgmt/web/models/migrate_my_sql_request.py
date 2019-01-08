@@ -18,6 +18,8 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,10 +28,11 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param connection_string: Connection string to the remote MySQL database.
+    :param connection_string: Required. Connection string to the remote MySQL
+     database.
     :type connection_string: str
-    :param migration_type: The type of migration operation to be done.
-     Possible values include: 'LocalToRemote', 'RemoteToLocal'
+    :param migration_type: Required. The type of migration operation to be
+     done. Possible values include: 'LocalToRemote', 'RemoteToLocal'
     :type migration_type: str or ~azure.mgmt.web.models.MySqlMigrationType
     """
 
@@ -50,7 +53,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         'migration_type': {'key': 'properties.migrationType', 'type': 'MySqlMigrationType'},
     }
 
-    def __init__(self, connection_string, migration_type, kind=None):
-        super(MigrateMySqlRequest, self).__init__(kind=kind)
-        self.connection_string = connection_string
-        self.migration_type = migration_type
+    def __init__(self, **kwargs):
+        super(MigrateMySqlRequest, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.migration_type = kwargs.get('migration_type', None)

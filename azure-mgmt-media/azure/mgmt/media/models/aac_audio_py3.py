@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .audio import Audio
+from .audio_py3 import Audio
 
 
 class AacAudio(Audio):
@@ -44,7 +44,7 @@ class AacAudio(Audio):
         'channels': {'key': 'channels', 'type': 'int'},
         'sampling_rate': {'key': 'samplingRate', 'type': 'int'},
         'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'profile': {'key': 'profile', 'type': 'AacAudioProfile'},
+        'profile': {'key': 'profile', 'type': 'str'},
     }
 
     def __init__(self, *, label: str=None, channels: int=None, sampling_rate: int=None, bitrate: int=None, profile=None, **kwargs) -> None:

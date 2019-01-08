@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class SignalRResource(TrackedResource):
@@ -54,6 +54,9 @@ class SignalRResource(TrackedResource):
     :ivar server_port: The publicly accessibly port of the SignalR service
      which is designed for customer server side usage.
     :vartype server_port: int
+    :param version: Version of the SignalR resource. Probably you need the
+     same or higher version of client SDKs.
+    :type version: str
     """
 
     _validation = {
@@ -80,9 +83,10 @@ class SignalRResource(TrackedResource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'public_port': {'key': 'properties.publicPort', 'type': 'int'},
         'server_port': {'key': 'properties.serverPort', 'type': 'int'},
+        'version': {'key': 'properties.version', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, version: str=None, **kwargs) -> None:
         super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.host_name_prefix = host_name_prefix
@@ -91,3 +95,4 @@ class SignalRResource(TrackedResource):
         self.host_name = None
         self.public_port = None
         self.server_port = None
+        self.version = version

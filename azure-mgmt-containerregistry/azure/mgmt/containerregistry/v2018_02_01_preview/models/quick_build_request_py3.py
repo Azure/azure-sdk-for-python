@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .queue_build_request import QueueBuildRequest
+from .queue_build_request_py3 import QueueBuildRequest
 
 
 class QuickBuildRequest(QueueBuildRequest):
@@ -24,7 +24,7 @@ class QuickBuildRequest(QueueBuildRequest):
     :type image_names: list[str]
     :param source_location: Required. The URL(absolute or relative) of the
      source that needs to be built. For Docker build, it can be an URL to a tar
-     or github repoistory as supported by Docker.
+     or github repository as supported by Docker.
      If it is relative URL, the relative path should be obtained from calling
      getSourceUploadUrl API.
     :type source_location: str

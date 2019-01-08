@@ -25,10 +25,6 @@ try:
     from .event_subscription_full_url_py3 import EventSubscriptionFullUrl
     from .operation_info_py3 import OperationInfo
     from .operation_py3 import Operation
-    from .input_schema_mapping_py3 import InputSchemaMapping
-    from .json_field_py3 import JsonField
-    from .json_field_with_default_py3 import JsonFieldWithDefault
-    from .json_input_schema_mapping_py3 import JsonInputSchemaMapping
     from .tracked_resource_py3 import TrackedResource
     from .topic_py3 import Topic
     from .topic_update_parameters_py3 import TopicUpdateParameters
@@ -52,10 +48,6 @@ except (SyntaxError, ImportError):
     from .event_subscription_full_url import EventSubscriptionFullUrl
     from .operation_info import OperationInfo
     from .operation import Operation
-    from .input_schema_mapping import InputSchemaMapping
-    from .json_field import JsonField
-    from .json_field_with_default import JsonFieldWithDefault
-    from .json_input_schema_mapping import JsonInputSchemaMapping
     from .tracked_resource import TrackedResource
     from .topic import Topic
     from .topic_update_parameters import TopicUpdateParameters
@@ -70,9 +62,7 @@ from .event_type_paged import EventTypePaged
 from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     EventSubscriptionProvisioningState,
-    EventDeliverySchema,
     TopicProvisioningState,
-    InputSchema,
     ResourceRegionType,
     TopicTypeProvisioningState,
 )
@@ -93,10 +83,6 @@ __all__ = [
     'EventSubscriptionFullUrl',
     'OperationInfo',
     'Operation',
-    'InputSchemaMapping',
-    'JsonField',
-    'JsonFieldWithDefault',
-    'JsonInputSchemaMapping',
     'TrackedResource',
     'Topic',
     'TopicUpdateParameters',
@@ -110,9 +96,7 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'EventSubscriptionProvisioningState',
-    'EventDeliverySchema',
     'TopicProvisioningState',
-    'InputSchema',
     'ResourceRegionType',
     'TopicTypeProvisioningState',
 ]

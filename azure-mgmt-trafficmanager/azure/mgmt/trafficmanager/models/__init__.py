@@ -11,11 +11,13 @@
 
 try:
     from .delete_operation_result_py3 import DeleteOperationResult
+    from .endpoint_properties_subnets_item_py3 import EndpointPropertiesSubnetsItem
     from .endpoint_properties_custom_headers_item_py3 import EndpointPropertiesCustomHeadersItem
     from .heat_map_endpoint_py3 import HeatMapEndpoint
     from .query_experience_py3 import QueryExperience
     from .traffic_flow_py3 import TrafficFlow
     from .heat_map_model_py3 import HeatMapModel
+    from .user_metrics_model_py3 import UserMetricsModel
     from .endpoint_py3 import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config_py3 import DnsConfig
@@ -31,11 +33,13 @@ try:
     from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .delete_operation_result import DeleteOperationResult
+    from .endpoint_properties_subnets_item import EndpointPropertiesSubnetsItem
     from .endpoint_properties_custom_headers_item import EndpointPropertiesCustomHeadersItem
     from .heat_map_endpoint import HeatMapEndpoint
     from .query_experience import QueryExperience
     from .traffic_flow import TrafficFlow
     from .heat_map_model import HeatMapModel
+    from .user_metrics_model import UserMetricsModel
     from .endpoint import Endpoint
     from .check_traffic_manager_relative_dns_name_availability_parameters import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
     from .dns_config import DnsConfig
@@ -62,11 +66,13 @@ from .traffic_manager_management_client_enums import (
 
 __all__ = [
     'DeleteOperationResult',
+    'EndpointPropertiesSubnetsItem',
     'EndpointPropertiesCustomHeadersItem',
     'HeatMapEndpoint',
     'QueryExperience',
     'TrafficFlow',
     'HeatMapModel',
+    'UserMetricsModel',
     'Endpoint',
     'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
     'DnsConfig',

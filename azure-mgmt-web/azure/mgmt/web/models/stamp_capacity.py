@@ -29,7 +29,7 @@ class StampCapacity(Model):
      'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
-     'Default', 'Small', 'Medium', 'Large', 'D1', 'D2', 'D3'
+     'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'Default'
     :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
@@ -45,6 +45,8 @@ class StampCapacity(Model):
     :type is_applicable_for_all_compute_modes: bool
     :param site_mode: Shared or Dedicated.
     :type site_mode: str
+    :param is_linux: Is this a linux stamp capacity
+    :type is_linux: bool
     """
 
     _attribute_map = {
@@ -58,17 +60,19 @@ class StampCapacity(Model):
         'exclude_from_capacity_allocation': {'key': 'excludeFromCapacityAllocation', 'type': 'bool'},
         'is_applicable_for_all_compute_modes': {'key': 'isApplicableForAllComputeModes', 'type': 'bool'},
         'site_mode': {'key': 'siteMode', 'type': 'str'},
+        'is_linux': {'key': 'isLinux', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, available_capacity=None, total_capacity=None, unit=None, compute_mode=None, worker_size=None, worker_size_id=None, exclude_from_capacity_allocation=None, is_applicable_for_all_compute_modes=None, site_mode=None):
-        super(StampCapacity, self).__init__()
-        self.name = name
-        self.available_capacity = available_capacity
-        self.total_capacity = total_capacity
-        self.unit = unit
-        self.compute_mode = compute_mode
-        self.worker_size = worker_size
-        self.worker_size_id = worker_size_id
-        self.exclude_from_capacity_allocation = exclude_from_capacity_allocation
-        self.is_applicable_for_all_compute_modes = is_applicable_for_all_compute_modes
-        self.site_mode = site_mode
+    def __init__(self, **kwargs):
+        super(StampCapacity, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.available_capacity = kwargs.get('available_capacity', None)
+        self.total_capacity = kwargs.get('total_capacity', None)
+        self.unit = kwargs.get('unit', None)
+        self.compute_mode = kwargs.get('compute_mode', None)
+        self.worker_size = kwargs.get('worker_size', None)
+        self.worker_size_id = kwargs.get('worker_size_id', None)
+        self.exclude_from_capacity_allocation = kwargs.get('exclude_from_capacity_allocation', None)
+        self.is_applicable_for_all_compute_modes = kwargs.get('is_applicable_for_all_compute_modes', None)
+        self.site_mode = kwargs.get('site_mode', None)
+        self.is_linux = kwargs.get('is_linux', None)

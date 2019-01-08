@@ -18,7 +18,7 @@ class StorageAccountRegenerateKeyParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param key_name: Required. The name of storage keys that want to be
-     regenerated, possible vaules are key1, key2.
+     regenerated, possible values are key1, key2.
     :type key_name: str
     """
 

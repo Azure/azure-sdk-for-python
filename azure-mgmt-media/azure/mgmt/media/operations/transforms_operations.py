@@ -22,7 +22,7 @@ class TransformsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-03-30-preview".
+    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-07-01".
     """
 
     models = models
@@ -32,12 +32,12 @@ class TransformsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-30-preview"
+        self.api_version = "2018-07-01"
 
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List Transforms.
 
         Lists the Transforms in the account.
@@ -49,14 +49,9 @@ class TransformsOperations(object):
         :type account_name: str
         :param filter: Restricts the set of items returned.
         :type filter: str
-        :param top: Specifies a non-negative integer n that limits the number
-         of items returned from a collection. The service returns the number of
-         available items up to but not greater than the specified value n.
-        :type top: int
-        :param skip: Specifies a non-negative integer n that excludes the
-         first n items of the queried collection from the result. The service
-         returns items starting at position n+1.
-        :type skip: int
+        :param orderby: Specifies the the key by which the result collection
+         should be ordered.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -85,10 +80,8 @@ class TransformsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
@@ -96,7 +89,7 @@ class TransformsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -105,9 +98,8 @@ class TransformsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ApiErrorException(self._deserialize, response)
@@ -165,7 +157,7 @@ class TransformsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -174,8 +166,8 @@ class TransformsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -239,6 +231,7 @@ class TransformsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -251,9 +244,8 @@ class TransformsOperations(object):
         body_content = self._serialize.body(parameters, 'Transform')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -311,7 +303,6 @@ class TransformsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -320,8 +311,8 @@ class TransformsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -378,6 +369,7 @@ class TransformsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -390,9 +382,8 @@ class TransformsOperations(object):
         body_content = self._serialize.body(parameters, 'Transform')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)

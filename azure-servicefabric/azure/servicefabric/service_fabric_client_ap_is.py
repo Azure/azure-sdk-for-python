@@ -13,6 +13,15 @@ from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from .operations.mesh_secret_operations import MeshSecretOperations
+from .operations.mesh_secret_value_operations import MeshSecretValueOperations
+from .operations.mesh_volume_operations import MeshVolumeOperations
+from .operations.mesh_network_operations import MeshNetworkOperations
+from .operations.mesh_application_operations import MeshApplicationOperations
+from .operations.mesh_service_operations import MeshServiceOperations
+from .operations.mesh_code_package_operations import MeshCodePackageOperations
+from .operations.mesh_service_replica_operations import MeshServiceReplicaOperations
+from .operations.mesh_gateway_operations import MeshGatewayOperations
 from . import models
 
 
@@ -48,6 +57,25 @@ class ServiceFabricClientAPIs(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ServiceFabricClientAPIsConfiguration
 
+    :ivar mesh_secret: MeshSecret operations
+    :vartype mesh_secret: azure.servicefabric.operations.MeshSecretOperations
+    :ivar mesh_secret_value: MeshSecretValue operations
+    :vartype mesh_secret_value: azure.servicefabric.operations.MeshSecretValueOperations
+    :ivar mesh_volume: MeshVolume operations
+    :vartype mesh_volume: azure.servicefabric.operations.MeshVolumeOperations
+    :ivar mesh_network: MeshNetwork operations
+    :vartype mesh_network: azure.servicefabric.operations.MeshNetworkOperations
+    :ivar mesh_application: MeshApplication operations
+    :vartype mesh_application: azure.servicefabric.operations.MeshApplicationOperations
+    :ivar mesh_service: MeshService operations
+    :vartype mesh_service: azure.servicefabric.operations.MeshServiceOperations
+    :ivar mesh_code_package: MeshCodePackage operations
+    :vartype mesh_code_package: azure.servicefabric.operations.MeshCodePackageOperations
+    :ivar mesh_service_replica: MeshServiceReplica operations
+    :vartype mesh_service_replica: azure.servicefabric.operations.MeshServiceReplicaOperations
+    :ivar mesh_gateway: MeshGateway operations
+    :vartype mesh_gateway: azure.servicefabric.operations.MeshGatewayOperations
+
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
@@ -61,10 +89,28 @@ class ServiceFabricClientAPIs(SDKClient):
         super(ServiceFabricClientAPIs, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '6.2.0.9'
+        self.api_version = '6.4.0.36'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.mesh_secret = MeshSecretOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_secret_value = MeshSecretValueOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_volume = MeshVolumeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_network = MeshNetworkOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_application = MeshApplicationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_service = MeshServiceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_code_package = MeshCodePackageOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_service_replica = MeshServiceReplicaOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_gateway = MeshGatewayOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def get_cluster_manifest(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -73,12 +119,12 @@ class ServiceFabricClientAPIs(SDKClient):
         Get the Service Fabric cluster manifest. The cluster manifest contains
         properties of the cluster that include different node types on the
         cluster,
-        security configurations, fault and upgrade domain topologies, etc.
+        security configurations, fault, and upgrade domain topologies, etc.
         These properties are specified as part of the ClusterConfig.JSON file
-        while deploying a stand alone cluster. However, most of the information
+        while deploying a stand-alone cluster. However, most of the information
         in the cluster manifest
         is generated internally by service fabric during cluster deployment in
-        other deployment scenarios (e.g. when using azure portal).
+        other deployment scenarios (e.g. when using Azure portal).
         The contents of the cluster manifest are for informational purposes
         only and users are not expected to take a dependency on the format of
         the file contents or its interpretation.
@@ -112,13 +158,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -139,7 +185,6 @@ class ServiceFabricClientAPIs(SDKClient):
             self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster.
 
-        Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
         Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
@@ -153,7 +198,7 @@ class ServiceFabricClientAPIs(SDKClient):
          following health states. Only nodes that match the filter are
          returned. All nodes are used to evaluate the aggregated health state.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
@@ -180,7 +225,7 @@ class ServiceFabricClientAPIs(SDKClient):
          match the filter are returned.
          All applications are used to evaluate the aggregated health state. If
          not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
@@ -204,11 +249,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -278,13 +323,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -305,7 +350,6 @@ class ServiceFabricClientAPIs(SDKClient):
             self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster using the specified policy.
 
-        Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
         Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
@@ -321,7 +365,7 @@ class ServiceFabricClientAPIs(SDKClient):
          following health states. Only nodes that match the filter are
          returned. All nodes are used to evaluate the aggregated health state.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
@@ -348,7 +392,7 @@ class ServiceFabricClientAPIs(SDKClient):
          match the filter are returned.
          All applications are used to evaluate the aggregated health state. If
          not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
@@ -372,11 +416,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -465,6 +509,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -476,9 +521,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -535,13 +579,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -628,6 +672,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -639,9 +684,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -680,7 +724,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -738,9 +782,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -792,13 +835,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -857,13 +900,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -885,7 +928,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the progress of the current cluster upgrade.
 
         Gets the current progress of the ongoing cluster upgrade. If no upgrade
-        is currently in progress, gets the last state of the previous cluster
+        is currently in progress, get the last state of the previous cluster
         upgrade.
 
         :param timeout: The server timeout for performing the operation in
@@ -917,13 +960,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -944,10 +987,9 @@ class ServiceFabricClientAPIs(SDKClient):
             self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the Service Fabric standalone cluster configuration.
 
-        Get the Service Fabric standalone cluster configuration. The cluster
-        configuration contains properties of the cluster that include different
-        node types on the cluster,
-        security configurations, fault and upgrade domain topologies, etc.
+        The cluster configuration contains properties of the cluster that
+        include different node types on the cluster,
+        security configurations, fault, and upgrade domain topologies, etc.
 
         :param configuration_api_version: The API version of the Standalone
          cluster json configuration.
@@ -982,13 +1024,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1044,13 +1086,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1104,13 +1146,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1171,6 +1213,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1179,9 +1222,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(upgrade_orchestration_service_state, 'UpgradeOrchestrationServiceState')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1248,9 +1290,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(provision_fabric_description, 'ProvisionFabricDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1265,9 +1306,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """Unprovision the code or configuration packages of a Service Fabric
         cluster.
 
-        Unprovision the code or configuration packages of a Service Fabric
-        cluster. It is supported to unprovision code and configuration
-        separately.
+        It is supported to unprovision code and configuration separately.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -1311,9 +1350,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(unprovision_fabric_description, 'UnprovisionFabricDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1325,9 +1363,10 @@ class ServiceFabricClientAPIs(SDKClient):
 
     def rollback_cluster_upgrade(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Rollback the upgrade of a Service Fabric cluster.
+        """Roll back the upgrade of a Service Fabric cluster.
 
-        Rollback the code or configuration upgrade of a Service Fabric cluster.
+        Roll back the code or configuration upgrade of a Service Fabric
+        cluster.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -1357,13 +1396,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1421,9 +1459,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(resume_cluster_upgrade_description, 'ResumeClusterUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1482,9 +1519,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1542,9 +1578,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(cluster_configuration_upgrade_description, 'ClusterConfigurationUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1601,9 +1636,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(update_cluster_upgrade_description, 'UpdateClusterUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1653,13 +1687,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1676,20 +1710,78 @@ class ServiceFabricClientAPIs(SDKClient):
         return deserialized
     get_aad_metadata.metadata = {'url': '/$/GetAadMetadata'}
 
+    def get_cluster_version(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the current Service Fabric cluster version.
+
+        If a cluster upgrade is happening, then this API will return the lowest
+        (older) version of the current and target cluster runtime versions.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ClusterVersion or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterVersion or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_cluster_version.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterVersion', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_version.metadata = {'url': '/$/GetClusterVersion'}
+
     def get_node_info_list(
-            self, continuation_token=None, node_status_filter="default", timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, continuation_token=None, node_status_filter="default", max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of nodes in the Service Fabric cluster.
 
-        Gets the list of nodes in the Service Fabric cluster. The response
-        includes the name, status, id, health, uptime, and other details about
-        the node.
+        The response includes the name, status, ID, health, uptime, and other
+        details about the nodes.
 
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param node_status_filter: Allows filtering the nodes based on the
@@ -1699,6 +1791,14 @@ class ServiceFabricClientAPIs(SDKClient):
          'disabling', 'disabled', 'unknown', 'removed'
         :type node_status_filter: str or
          ~azure.servicefabric.models.NodeStatusFilter
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
          willing to wait for the requested operation to complete. The default
@@ -1715,7 +1815,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.3"
 
         # Construct URL
         url = self.get_node_info_list.metadata['url']
@@ -1727,18 +1827,20 @@ class ServiceFabricClientAPIs(SDKClient):
             query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
         if node_status_filter is not None:
             query_parameters['NodeStatusFilter'] = self._serialize.query("node_status_filter", node_status_filter, 'str')
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1760,9 +1862,8 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the information about a specific node in the Service Fabric
         cluster.
 
-        Gets the information about a specific node in the Service Fabric
-        Cluster. The response includes the name, status, id, health, uptime,
-        and other details about the node.
+        The response includes the name, status, ID, health, uptime, and other
+        details about the node.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -1799,13 +1900,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1839,11 +1940,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -1892,13 +1993,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1935,11 +2036,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -1994,6 +2095,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -2005,9 +2107,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2048,7 +2149,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -2110,9 +2211,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2164,13 +2264,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2195,13 +2295,13 @@ class ServiceFabricClientAPIs(SDKClient):
         Deactivate a Service Fabric cluster node with the specified
         deactivation intent. Once the deactivation is in progress, the
         deactivation intent can be increased, but not decreased (for example, a
-        node which is was deactivated with the Pause intent can be deactivated
+        node that is deactivated with the Pause intent can be deactivated
         further with Restart, but not the other way around. Nodes may be
         reactivated using the Activate a node operation any time after they are
-        deactivated. If the deactivation is not complete this will cancel the
-        deactivation. A node which goes down and comes back up while
-        deactivated will still need to be reactivated before services will be
-        placed on that node.
+        deactivated. If the deactivation is not complete, this will cancel the
+        deactivation. A node that goes down and comes back up while deactivated
+        will still need to be reactivated before services will be placed on
+        that node.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2252,9 +2352,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(deactivation_intent_description, 'DeactivationIntentDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2266,9 +2365,9 @@ class ServiceFabricClientAPIs(SDKClient):
 
     def enable_node(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Activate a Service Fabric cluster node which is currently deactivated.
+        """Activate a Service Fabric cluster node that is currently deactivated.
 
-        Activates a Service Fabric cluster node which is currently deactivated.
+        Activates a Service Fabric cluster node that is currently deactivated.
         Once activated, the node will again become a viable target for placing
         new replicas, and any deactivated replicas remaining on the node will
         be reactivated.
@@ -2307,13 +2406,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2328,15 +2426,14 @@ class ServiceFabricClientAPIs(SDKClient):
         """Notifies Service Fabric that the persisted state on a node has been
         permanently removed or lost.
 
-        Notifies Service Fabric that the persisted state on a node has been
-        permanently removed or lost.  This implies that it is not possible to
-        recover the persisted state of that node. This generally happens if a
-        hard disk has been wiped clean, or if a hard disk crashes. The node has
-        to be down for this operation to be successful. This operation lets
-        Service Fabric know that the replicas on that node no longer exist, and
-        that Service Fabric should stop waiting for those replicas to come back
-        up. Do not run this cmdlet if the state on the node has not been
-        removed and the node can comes back up with its state intact.
+        This implies that it is not possible to recover the persisted state of
+        that node. This generally happens if a hard disk has been wiped clean,
+        or if a hard disk crashes. The node has to be down for this operation
+        to be successful. This operation lets Service Fabric know that the
+        replicas on that node no longer exist, and that Service Fabric should
+        stop waiting for those replicas to come back up. Do not run this cmdlet
+        if the state on the node has not been removed and the node can come
+        back up with its state intact.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2372,13 +2469,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2407,7 +2503,7 @@ class ServiceFabricClientAPIs(SDKClient):
          value for this parameter is 60 seconds.
         :type timeout: long
         :param create_fabric_dump: Specify True to create a dump of the fabric
-         node process. This is case sensitive. Possible values include:
+         node process. This is case-sensitive. Possible values include:
          'False', 'True'
         :type create_fabric_dump: str or
          ~azure.servicefabric.models.CreateFabricDump
@@ -2448,9 +2544,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(restart_node_description, 'RestartNodeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2467,13 +2562,13 @@ class ServiceFabricClientAPIs(SDKClient):
         Returns the information about the application types that are
         provisioned or in the process of being provisioned in the Service
         Fabric cluster. Each version of an application type is returned as one
-        application type. The response includes the name, version, status and
+        application type. The response includes the name, version, status, and
         other details about the application type. This is a paged query,
         meaning that if not all of the application types fit in a page, one
-        page of results is returned as well as a continuation token which can
+        page of results is returned as well as a continuation token, which can
         be used to get the next page. For example, if there are 10 application
-        types but a page only fits the first 3 application types, or if max
-        results is set to 3, then 3 is returned. To access the rest of the
+        types but a page only fits the first three application types, or if max
+        results is set to 3, then three is returned. To access the rest of the
         results, retrieve subsequent pages by using the returned continuation
         token in the next query. An empty continuation token is returned if
         there are no subsequent pages.
@@ -2495,11 +2590,11 @@ class ServiceFabricClientAPIs(SDKClient):
          application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -2507,7 +2602,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -2547,13 +2642,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2581,13 +2676,13 @@ class ServiceFabricClientAPIs(SDKClient):
         exactly the one specified as the parameter, and which comply with the
         given query parameters. All versions of the application type matching
         the application type name are returned, with each version returned as
-        one application type. The response includes the name, version, status
+        one application type. The response includes the name, version, status,
         and other details about the application type. This is a paged query,
         meaning that if not all of the application types fit in a page, one
-        page of results is returned as well as a continuation token which can
+        page of results is returned as well as a continuation token, which can
         be used to get the next page. For example, if there are 10 application
-        types but a page only fits the first 3 application types, or if max
-        results is set to 3, then 3 is returned. To access the rest of the
+        types but a page only fits the first three application types, or if max
+        results is set to 3, then three is returned. To access the rest of the
         results, retrieve subsequent pages by using the returned continuation
         token in the next query. An empty continuation token is returned if
         there are no subsequent pages.
@@ -2600,11 +2695,11 @@ class ServiceFabricClientAPIs(SDKClient):
          application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -2612,7 +2707,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -2656,13 +2751,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2733,9 +2828,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(provision_application_type_description_base_required_body_param, 'ProvisionApplicationTypeDescriptionBase')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2750,11 +2844,10 @@ class ServiceFabricClientAPIs(SDKClient):
         """Removes or unregisters a Service Fabric application type from the
         cluster.
 
-        Removes or unregisters a Service Fabric application type from the
-        cluster. This operation can only be performed if all application
-        instances of the application type has been deleted. Once the
-        application type is unregistered, no new application instances can be
-        created for this particular application type.
+        This operation can only be performed if all application instances of
+        the application type have been deleted. Once the application type is
+        unregistered, no new application instances can be created for this
+        particular application type.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
@@ -2770,7 +2863,7 @@ class ServiceFabricClientAPIs(SDKClient):
          should occur asynchronously. When set to true, the unprovision
          operation returns when the request is accepted by the system, and the
          unprovision operation continues without any timeout limit. The default
-         value is false. However, we recommend to set it to true for large
+         value is false. However, we recommend setting it to true for large
          application packages that were provisioned.
         :type async_parameter: bool
         :param dict custom_headers: headers that will be added to the request
@@ -2783,7 +2876,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(application_type_version=application_type_version)
+        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(application_type_version=application_type_version, async_property=async_parameter)
 
         api_version = "6.0"
 
@@ -2810,9 +2903,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(unprovision_application_type_description_info, 'UnprovisionApplicationTypeDescriptionInfo')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2871,13 +2963,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2902,7 +2994,7 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the information about a specific service type that is supported by
         a provisioned application type in a Service Fabric cluster. The
         provided application type must exist. Otherwise, a 404 status is
-        returned. A 204 response is returned if the specificed service type is
+        returned. A 204 response is returned if the specified service type is
         not found in the cluster.
 
         :param application_type_name: The name of the application type.
@@ -2947,13 +3039,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3019,13 +3111,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3105,13 +3197,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3196,13 +3288,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3265,9 +3357,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(application_description, 'ApplicationDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3281,15 +3372,14 @@ class ServiceFabricClientAPIs(SDKClient):
             self, application_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing Service Fabric application.
 
-        Deletes an existing Service Fabric application. An application must be
-        created before it can be deleted. Deleting an application will delete
-        all services that are part of that application. By default, Service
-        Fabric will try to close service replicas in a graceful manner and then
-        delete the service. However, if a service is having issues closing the
-        replica gracefully, the delete operation may take a long time or get
-        stuck. Use the optional ForceRemove flag to skip the graceful close
-        sequence and forcefully delete the application and all of the its
-        services.
+        An application must be created before it can be deleted. Deleting an
+        application will delete all services that are part of that application.
+        By default, Service Fabric will try to close service replicas in a
+        graceful manner and then delete the service. However, if a service is
+        having issues closing the replica gracefully, the delete operation may
+        take a long time or get stuck. Use the optional ForceRemove flag to
+        skip the graceful close sequence and forcefully delete the application
+        and all of its services.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -3340,13 +3430,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3409,13 +3498,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3442,12 +3531,12 @@ class ServiceFabricClientAPIs(SDKClient):
         specified filters. The response includes the name, type, status,
         parameters, and other details about the application. If the
         applications do not fit in a page, one page of results is returned as
-        well as a continuation token which can be used to get the next page.
+        well as a continuation token, which can be used to get the next page.
         Filters ApplicationTypeName and ApplicationDefinitionKindFilter cannot
         be specified at the same time.
 
         :param application_definition_kind_filter: Used to filter on
-         ApplicationDefinitionKind which is the mechanism used to define a
+         ApplicationDefinitionKind, which is the mechanism used to define a
          Service Fabric application.
          - Default - Default value, which performs the same function as
          selecting "All". The value is 0.
@@ -3467,11 +3556,11 @@ class ServiceFabricClientAPIs(SDKClient):
          application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -3479,7 +3568,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -3521,13 +3610,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3551,7 +3640,7 @@ class ServiceFabricClientAPIs(SDKClient):
         Returns the information about the application that was created or in
         the process of being created in the Service Fabric cluster and whose
         name matches the one specified as the parameter. The response includes
-        the name, type, status, parameters and other details about the
+        the name, type, status, parameters, and other details about the
         application.
 
         :param application_id: The identity of the application. This is
@@ -3601,13 +3690,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3647,11 +3736,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -3673,8 +3762,8 @@ class ServiceFabricClientAPIs(SDKClient):
          filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value could be a
+         combination of these values, obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
@@ -3698,8 +3787,9 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values,
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of services with HealthState value of OK
          (2) and Warning (4) will be returned.
@@ -3763,13 +3853,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3812,11 +3902,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -3838,8 +3928,8 @@ class ServiceFabricClientAPIs(SDKClient):
          filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value could be a
+         combination of these values, obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
@@ -3863,8 +3953,9 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values,
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of services with HealthState value of OK
          (2) and Warning (4) will be returned.
@@ -3934,6 +4025,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -3945,9 +4037,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3995,7 +4086,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -4057,9 +4148,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4129,9 +4219,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(application_upgrade_description, 'ApplicationUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4191,13 +4280,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4276,9 +4365,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(application_upgrade_update_description, 'ApplicationUpgradeUpdateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4352,9 +4440,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(resume_application_upgrade_description, 'ResumeApplicationUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4370,7 +4457,7 @@ class ServiceFabricClientAPIs(SDKClient):
         the Service Fabric cluster.
 
         Starts rolling back the current application upgrade to the previous
-        version. This API can only be used to rollback the current in-progress
+        version. This API can only be used to roll back the current in-progress
         upgrade that is rolling forward to new version. If the application is
         not currently being upgraded use StartApplicationUpgrade API to upgrade
         it to desired version, including rolling back to a previous version.
@@ -4416,13 +4503,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4459,11 +4545,11 @@ class ServiceFabricClientAPIs(SDKClient):
          As a result, the query is more expensive and may take a longer time.
         :type include_health_state: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -4471,7 +4557,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param dict custom_headers: headers that will be added to the request
@@ -4509,13 +4595,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4537,13 +4623,12 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the information about an application deployed on a Service Fabric
         node.
 
-        Gets the information about an application deployed on a Service Fabric
-        node.  This query returns system application information if the
-        application ID provided is for system application. Results encompass
-        deployed applications in active, activating, and downloading states.
-        This query requires that the node name corresponds to a node on the
-        cluster. The query fails if the provided node name does not point to
-        any active Service Fabric nodes on the cluster.
+        This query returns system application information if the application ID
+        provided is for system application. Results encompass deployed
+        applications in active, activating, and downloading states. This query
+        requires that the node name corresponds to a node on the cluster. The
+        query fails if the provided node name does not point to any active
+        Service Fabric nodes on the cluster.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4599,13 +4684,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4651,11 +4736,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -4679,8 +4764,8 @@ class ServiceFabricClientAPIs(SDKClient):
          deployed service packages are used to evaluate the aggregated health
          state of the deployed application.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value can be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value can be a
+         combination of these values, obtained using the bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
@@ -4743,13 +4828,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4800,11 +4885,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -4828,8 +4913,8 @@ class ServiceFabricClientAPIs(SDKClient):
          deployed service packages are used to evaluate the aggregated health
          state of the deployed application.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value can be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value can be a
+         combination of these values, obtained using the bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
@@ -4898,6 +4983,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -4909,9 +4995,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4962,7 +5047,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -5025,9 +5110,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5041,8 +5125,7 @@ class ServiceFabricClientAPIs(SDKClient):
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the manifest describing an application type.
 
-        Gets the manifest describing an application type. The response contains
-        the application manifest XML as a string.
+        The response contains the application manifest XML as a string.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
@@ -5082,13 +5165,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5108,10 +5191,10 @@ class ServiceFabricClientAPIs(SDKClient):
     def get_service_info_list(
             self, application_id, service_type_name=None, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about all services belonging to the application
-        specified by the application id.
+        specified by the application ID.
 
         Returns the information about all services belonging to the application
-        specified by the application id.
+        specified by the application ID.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -5126,11 +5209,11 @@ class ServiceFabricClientAPIs(SDKClient):
          services to query for.
         :type service_type_name: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
@@ -5170,13 +5253,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5210,8 +5293,8 @@ class ServiceFabricClientAPIs(SDKClient):
          application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
          previous versions.
         :type application_id: str
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5252,13 +5335,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5283,8 +5366,8 @@ class ServiceFabricClientAPIs(SDKClient):
         FABRIC_E_SERVICE_DOES_NOT_EXIST error is returned if a service with the
         provided service ID does not exist.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5324,13 +5407,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5410,9 +5493,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(service_description, 'ServiceDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5486,9 +5568,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(service_from_template_description, 'ServiceFromTemplateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5502,16 +5583,15 @@ class ServiceFabricClientAPIs(SDKClient):
             self, service_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing Service Fabric service.
 
-        Deletes an existing Service Fabric service. A service must be created
-        before it can be deleted. By default, Service Fabric will try to close
-        service replicas in a graceful manner and then delete the service.
-        However, if the service is having issues closing the replica
-        gracefully, the delete operation may take a long time or get stuck. Use
-        the optional ForceRemove flag to skip the graceful close sequence and
-        forcefully delete the service.
+        A service must be created before it can be deleted. By default, Service
+        Fabric will try to close service replicas in a graceful manner and then
+        delete the service. However, if the service is having issues closing
+        the replica gracefully, the delete operation may take a long time or
+        get stuck. Use the optional ForceRemove flag to skip the graceful close
+        sequence and forcefully delete the service.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5558,13 +5638,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5583,15 +5662,15 @@ class ServiceFabricClientAPIs(SDKClient):
         service. The set of properties that can be updated are a subset of the
         properties that were specified at the time of creating the service. The
         current set of properties can be obtained using `GetServiceDescription`
-        API. Please note that updating the properties of a running service is
+        API. Note that updating the properties of a running service is
         different than upgrading your application using
         `StartApplicationUpgrade` API. The upgrade is a long running background
         operation that involves moving the application from one version to
         another, one upgrade domain at a time, whereas update applies the new
         properties immediately to the service.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5642,9 +5721,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(service_update_description, 'ServiceUpdateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5661,8 +5739,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the description of an existing Service Fabric service. A service
         must be created before its description can be obtained.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5702,13 +5780,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5737,8 +5815,8 @@ class ServiceFabricClientAPIs(SDKClient):
         If you specify a service that does not exist in the health store, this
         request returns an error.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5751,11 +5829,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -5776,8 +5854,9 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only partitions that match the filter are returned. All partitions are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         value
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
@@ -5839,13 +5918,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5880,8 +5959,8 @@ class ServiceFabricClientAPIs(SDKClient):
         If you specify a service that does not exist in the health store, this
         request returns an error.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -5894,11 +5973,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -5919,8 +5998,9 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only partitions that match the filter are returned. All partitions are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         value
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
@@ -5988,6 +6068,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -5999,9 +6080,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6035,8 +6115,8 @@ class ServiceFabricClientAPIs(SDKClient):
         GetServiceHealth and check that the report appears in the HealthEvents
         section.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -6048,7 +6128,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -6110,9 +6190,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6129,8 +6208,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Resolve a Service Fabric service partition to get the endpoints of the
         service replicas.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -6152,10 +6231,16 @@ class ServiceFabricClientAPIs(SDKClient):
         :type partition_key_type: int
         :param partition_key_value: Partition key. This is required if the
          partition scheme for the service is Int64Range or Named.
+         This is not the partition ID, but rather, either the integer key
+         value, or the name of the partition ID.
+         For example, if your service is using ranged partitions from 0 to 10,
+         then they PartitionKeyValue would be an
+         integer in that range. Query service description to see the range or
+         name.
         :type partition_key_value: str
         :param previous_rsp_version: The value in the Version field of the
          response that was received previously. This is required if the user
-         knows that the result that was got previously is stale.
+         knows that the result that was gotten previously is stale.
         :type previous_rsp_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -6196,13 +6281,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6223,13 +6308,12 @@ class ServiceFabricClientAPIs(SDKClient):
             self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of partitions of a Service Fabric service.
 
-        Gets the list of partitions of a Service Fabric service. The response
-        includes the partition ID, partitioning scheme information, keys
-        supported by the partition, status, health, and other details about the
-        partition.
+        The response includes the partition ID, partitioning scheme
+        information, keys supported by the partition, status, health, and other
+        details about the partition.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -6237,11 +6321,11 @@ class ServiceFabricClientAPIs(SDKClient):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
@@ -6261,7 +6345,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_info_list.metadata['url']
@@ -6280,13 +6364,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6347,13 +6431,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6412,13 +6496,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6439,7 +6523,6 @@ class ServiceFabricClientAPIs(SDKClient):
             self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric partition.
 
-        Gets the health information of the specified partition.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the service based on the health state.
         Use ReplicasHealthStateFilter to filter the collection of
@@ -6455,11 +6538,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -6479,8 +6562,8 @@ class ServiceFabricClientAPIs(SDKClient):
          HealthStateFilter. Only replicas that match the filter will be
          returned. All replicas will be used to evaluate the aggregated health
          state. If not specified, all entries will be returned.The state values
-         are flag based enumeration, so the value could be a combination of
-         these value obtained using bitwise 'OR' operator. For example, If the
+         are flag-based enumeration, so the value could be a combination of
+         these values obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) will be returned. The possible values for this
          parameter include integer value of one of the following health states.
@@ -6542,13 +6625,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6593,11 +6676,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -6617,8 +6700,8 @@ class ServiceFabricClientAPIs(SDKClient):
          HealthStateFilter. Only replicas that match the filter will be
          returned. All replicas will be used to evaluate the aggregated health
          state. If not specified, all entries will be returned.The state values
-         are flag based enumeration, so the value could be a combination of
-         these value obtained using bitwise 'OR' operator. For example, If the
+         are flag-based enumeration, so the value could be a combination of
+         these values obtained using bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) will be returned. The possible values for this
          parameter include integer value of one of the following health states.
@@ -6686,6 +6769,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -6697,9 +6781,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6740,7 +6823,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -6802,9 +6885,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6859,13 +6941,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6923,13 +7005,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6942,10 +7023,8 @@ class ServiceFabricClientAPIs(SDKClient):
     def recover_partition(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover a specific partition which is currently stuck in quorum loss.
+        recover a specific partition that is currently stuck in quorum loss.
 
-        Indicates to the Service Fabric cluster that it should attempt to
-        recover a specific partition which is currently stuck in quorum loss.
         This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
@@ -6984,13 +7063,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7003,16 +7081,16 @@ class ServiceFabricClientAPIs(SDKClient):
     def recover_service_partitions(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum loss.
+        recover the specified service that is currently stuck in quorum loss.
 
         Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum loss.
+        recover the specified service that is currently stuck in quorum loss.
         This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -7051,13 +7129,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7070,10 +7147,10 @@ class ServiceFabricClientAPIs(SDKClient):
     def recover_system_partitions(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover the system services which are currently stuck in quorum loss.
+        recover the system services that are currently stuck in quorum loss.
 
         Indicates to the Service Fabric cluster that it should attempt to
-        recover the system services which are currently stuck in quorum loss.
+        recover the system services that are currently stuck in quorum loss.
         This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
@@ -7106,13 +7183,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7128,11 +7204,9 @@ class ServiceFabricClientAPIs(SDKClient):
         recover any services (including system services) which are currently
         stuck in quorum loss.
 
-        Indicates to the Service Fabric cluster that it should attempt to
-        recover any services (including system services) which are currently
-        stuck in quorum loss. This operation should only be performed if it is
-        known that the replicas that are down cannot be recovered. Incorrect
-        use of this API can cause potential data loss.
+        This operation should only be performed if it is known that the
+        replicas that are down cannot be recovered. Incorrect use of this API
+        can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -7162,13 +7236,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7222,6 +7295,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7230,9 +7304,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task, 'RepairTask')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7282,6 +7355,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7290,9 +7364,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task_cancel_description, 'RepairTaskCancelDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7354,9 +7427,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task_delete_description, 'RepairTaskDeleteDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7416,13 +7488,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7477,6 +7549,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7485,9 +7558,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task_approve_description, 'RepairTaskApproveDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7537,6 +7609,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7545,9 +7618,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task_update_health_policy_description, 'RepairTaskUpdateHealthPolicyDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7596,6 +7668,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7604,9 +7677,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(repair_task, 'RepairTask')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7629,17 +7701,17 @@ class ServiceFabricClientAPIs(SDKClient):
         partition.
 
         The GetReplicas endpoint returns information about the replicas of the
-        specified partition. The response includes the id, role, status,
+        specified partition. The response includes the ID, role, status,
         health, node name, uptime, and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
@@ -7677,13 +7749,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7704,7 +7776,7 @@ class ServiceFabricClientAPIs(SDKClient):
             self, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a replica of a Service Fabric partition.
 
-        The response includes the id, role, status, health, node name, uptime,
+        The response includes the ID, role, status, health, node name, uptime,
         and other details about the replica.
 
         :param partition_id: The identity of the partition.
@@ -7745,13 +7817,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7787,11 +7859,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -7841,13 +7913,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7888,11 +7960,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -7948,6 +8020,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7959,9 +8032,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8010,7 +8082,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -8074,9 +8146,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8151,13 +8222,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8179,7 +8250,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the details of replica deployed on a Service Fabric node.
 
         Gets the details of the replica deployed on a Service Fabric node. The
-        information include service kind, service name, current service
+        information includes service kind, service name, current service
         operation, current service operation start date time, partition ID,
         replica/instance ID, reported load, and other information.
 
@@ -8225,13 +8296,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8253,7 +8324,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the details of replica deployed on a Service Fabric node.
 
         Gets the details of the replica deployed on a Service Fabric node. The
-        information include service kind, service name, current service
+        information includes service kind, service name, current service
         operation, current service operation start date time, partition ID,
         replica/instance ID, reported load, and other information.
 
@@ -8296,13 +8367,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8368,13 +8439,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8395,7 +8465,7 @@ class ServiceFabricClientAPIs(SDKClient):
         replica state removal path, and simulates the report fault permanent
         path through client APIs. Warning - There are no safety checks
         performed when this API is used. Incorrect use of this API can lead to
-        data loss for stateful services.In addition, the forceRemove flag
+        data loss for stateful services. In addition, the forceRemove flag
         impacts all other replicas hosted in the same process.
 
         :param node_name: The name of the node.
@@ -8446,13 +8516,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8514,13 +8583,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8595,20 +8664,20 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 204:
+        if response.status_code == 200:
             deserialized = self._deserialize('[DeployedServicePackageInfo]', response)
 
         if raw:
@@ -8620,10 +8689,10 @@ class ServiceFabricClientAPIs(SDKClient):
 
     def get_deployed_service_package_health(
             self, node_name, application_id, service_package_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the information about health of an service package for a specific
+        """Gets the information about health of a service package for a specific
         application deployed for a Service Fabric node and application.
 
-        Gets the information about health of service package for a specific
+        Gets the information about health of a service package for a specific
         application deployed on a Service Fabric node. Use
         EventsHealthStateFilter to optionally filter for the collection of
         HealthEvent objects reported on the deployed service package based on
@@ -8648,11 +8717,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -8703,13 +8772,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8732,7 +8801,7 @@ class ServiceFabricClientAPIs(SDKClient):
         application deployed on a Service Fabric node using the specified
         policy.
 
-        Gets the information about health of an service package for a specific
+        Gets the information about health of a service package for a specific
         application deployed on a Service Fabric node. using the specified
         policy. Use EventsHealthStateFilter to optionally filter for the
         collection of HealthEvent objects reported on the deployed service
@@ -8761,11 +8830,11 @@ class ServiceFabricClientAPIs(SDKClient):
          the following health states.
          Only events that match the filter are returned. All events are used to
          evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
-         obtained using bitwise 'OR' operator. For example, If the provided
-         value is 6 then all of the events with HealthState value of OK (2) and
-         Warning (4) are returned.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) are returned.
          - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
          order to return no results on a given collection of states. The value
@@ -8822,6 +8891,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -8833,9 +8903,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8887,7 +8956,7 @@ class ServiceFabricClientAPIs(SDKClient):
          health reports sent to the health manager.
         :type health_information:
          ~azure.servicefabric.models.HealthInformation
-        :param immediate: A flag which indicates whether the report should be
+        :param immediate: A flag that indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
@@ -8951,9 +9020,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9021,9 +9089,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(deploy_service_package_to_node_description, 'DeployServicePackageToNodeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9096,13 +9163,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9183,9 +9250,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(restart_deployed_code_package_description, 'RestartDeployedCodePackageDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9267,13 +9333,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9359,6 +9425,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -9367,9 +9434,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(container_api_request_body, 'ContainerApiRequestBody')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9393,7 +9459,7 @@ class ServiceFabricClientAPIs(SDKClient):
         Compose is a file format that describes multi-container applications.
         This API allows deploying container based applications defined in
         compose format in a Service Fabric cluster. Once the deployment is
-        created it's status can be tracked via `GetComposeDeploymentStatus`
+        created, its status can be tracked via the `GetComposeDeploymentStatus`
         API.
 
         :param create_compose_deployment_description: Describes the compose
@@ -9436,9 +9502,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(create_compose_deployment_description, 'CreateComposeDeploymentDescription')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9455,7 +9520,7 @@ class ServiceFabricClientAPIs(SDKClient):
         Returns the status of the compose deployment that was created or in the
         process of being created in the Service Fabric cluster and whose name
         matches the one specified as the parameter. The response includes the
-        name, status and other details about the deployment.
+        name, status, and other details about the deployment.
 
         :param deployment_name: The identity of the deployment.
         :type deployment_name: str
@@ -9492,13 +9557,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9522,17 +9587,17 @@ class ServiceFabricClientAPIs(SDKClient):
 
         Gets the status about the compose deployments that were created or in
         the process of being created in the Service Fabric cluster. The
-        response includes the name, status and other details about the compose
+        response includes the name, status, and other details about the compose
         deployments. If the list of deployments do not fit in a page, one page
-        of results is returned as well as a continuation token which can be
+        of results is returned as well as a continuation token, which can be
         used to get the next page.
 
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -9540,7 +9605,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -9578,13 +9643,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9646,13 +9711,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9709,13 +9774,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9778,9 +9842,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(compose_deployment_upgrade_description, 'ComposeDeploymentUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9789,6 +9852,62 @@ class ServiceFabricClientAPIs(SDKClient):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     start_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Upgrade'}
+
+    def start_rollback_compose_deployment_upgrade(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Starts rolling back a compose deployment upgrade in the Service Fabric
+        cluster.
+
+        Rollback a service fabric compose deployment upgrade.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4-preview"
+
+        # Construct URL
+        url = self.start_rollback_compose_deployment_upgrade.metadata['url']
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    start_rollback_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/RollbackUpgrade'}
 
     def get_chaos(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9827,13 +9946,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9858,8 +9977,8 @@ class ServiceFabricClientAPIs(SDKClient):
         the passed in Chaos parameters.
         If Chaos is already running when this call is made, the call fails with
         the error code FABRIC_E_CHAOS_ALREADY_RUNNING.
-        Please refer to the article [Induce controlled Chaos in Service Fabric
-        clusters](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-controlled-chaos)
+        Refer to the article [Induce controlled Chaos in Service Fabric
+        clusters](https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos)
         for more details.
 
         :param chaos_parameters: Describes all the parameters to configure a
@@ -9901,9 +10020,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(chaos_parameters, 'ChaosParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9921,9 +10039,9 @@ class ServiceFabricClientAPIs(SDKClient):
         Stops Chaos from executing new faults. In-flight faults will continue
         to execute until they are complete. The current Chaos Schedule is put
         into a stopped state.
-        Once a schedule is stopped it will stay in the stopped state and not be
-        used to Chaos Schedule new runs of Chaos. A new Chaos Schedule must be
-        set in order to resume scheduling.
+        Once a schedule is stopped, it will stay in the stopped state and not
+        be used to Chaos Schedule new runs of Chaos. A new Chaos Schedule must
+        be set in order to resume scheduling.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -9953,13 +10071,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9985,23 +10102,23 @@ class ServiceFabricClientAPIs(SDKClient):
         with the continuation token.
 
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param start_time_utc: The Windows file time representing the start
          time of the time range for which a Chaos report is to be generated.
-         Please consult [DateTime.ToFileTimeUtc
-         Method](https://msdn.microsoft.com/en-us/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         Consult [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
          for details.
         :type start_time_utc: str
         :param end_time_utc: The Windows file time representing the end time
-         of the time range for which a Chaos report is to be generated. Please
-         consult [DateTime.ToFileTimeUtc
-         Method](https://msdn.microsoft.com/en-us/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         of the time range for which a Chaos report is to be generated. Consult
+         [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
          for details.
         :type end_time_utc: str
         :param max_results: The maximum number of results to be returned as
@@ -10009,7 +10126,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -10049,13 +10166,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10073,12 +10190,17 @@ class ServiceFabricClientAPIs(SDKClient):
     get_chaos_events.metadata = {'url': '/Tools/Chaos/Events'}
 
     def get_chaos_schedule(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the Chaos Schedule defining when and how to run Chaos.
 
         Gets the version of the Chaos Schedule in use and the Chaos Schedule
         that defines when and how to run Chaos.
 
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -10098,16 +10220,18 @@ class ServiceFabricClientAPIs(SDKClient):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10125,21 +10249,23 @@ class ServiceFabricClientAPIs(SDKClient):
     get_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
 
     def post_chaos_schedule(
-            self, version=None, schedule=None, custom_headers=None, raw=False, **operation_config):
+            self, timeout=60, version=None, schedule=None, custom_headers=None, raw=False, **operation_config):
         """Set the schedule used by Chaos.
 
-        Set the Chaos Schedule currently in use by Chaos. Chaos will
-        automatically schedule runs based on the Chaos Schedule.
-        The version in the provided input schedule must match the version of
-        the Chaos Schedule on the server.
-        If the version provided does not match the version on the server, the
-        Chaos Schedule is not updated.
-        If the version provided matches the version on the server, then the
-        Chaos Schedule is updated and the version of the Chaos Schedule on the
-        server is incremented up by one and wraps back to 0 after
-        2,147,483,647.
+        Chaos will automatically schedule runs based on the Chaos Schedule.
+        The Chaos Schedule will be updated if the provided version matches the
+        version on the server.
+        When updating the Chaos Schedule, the version on the server is
+        incremented by 1.
+        The version on the server will wrap back to 0 after reaching a large
+        number.
         If Chaos is running when this call is made, the call will fail.
 
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
         :param version: The version number of the Schedule.
         :type version: int
         :param schedule: Defines the schedule used by Chaos.
@@ -10164,6 +10290,8 @@ class ServiceFabricClientAPIs(SDKClient):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
@@ -10175,9 +10303,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(chaos_schedule, 'ChaosScheduleDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10238,13 +10365,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10259,7 +10385,8 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets the image store content information.
 
         Returns the information about the image store content at the specified
-        contentPath relative to the root of the image store.
+        contentPath. The contentPath is relative to the root of the image
+        store.
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10297,13 +10424,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10325,8 +10452,8 @@ class ServiceFabricClientAPIs(SDKClient):
         """Deletes existing image store content.
 
         Deletes existing image store content being found within the given image
-        store relative path. This can be used to delete uploaded application
-        packages once they are provisioned.
+        store relative path. This command can be used to delete uploaded
+        application packages once they are provisioned.
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10363,13 +10490,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10415,13 +10541,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10485,9 +10611,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(image_store_copy_description, 'ImageStoreCopyDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10537,13 +10662,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10595,13 +10719,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10652,13 +10775,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10719,13 +10842,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10805,14 +10928,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Content-Range'] = self._serialize.header("content_range", content_range, 'str')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10843,7 +10965,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :type command: str
         :param service_id: The identity of the infrastructure service. This is
          the full name of the infrastructure service without the 'fabric:' URI
-         scheme. This parameter required only for the cluster that have more
+         scheme. This parameter required only for the cluster that has more
          than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
@@ -10877,13 +10999,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10920,7 +11042,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :type command: str
         :param service_id: The identity of the infrastructure service. This is
          the full name of the infrastructure service without the 'fabric:' URI
-         scheme. This parameter required only for the cluster that have more
+         scheme. This parameter required only for the cluster that has more
          than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
@@ -10954,13 +11076,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10984,11 +11106,11 @@ class ServiceFabricClientAPIs(SDKClient):
 
         This API will induce data loss for the specified partition. It will
         trigger a call to the OnDataLoss API of the partition.
-        Actual data loss will depend on the specified DataLossMode
-        PartialDataLoss - Only a quorum of replicas are removed and OnDataLoss
-        is triggered for the partition but actual data loss depends on the
-        presence of in-flight replication.
-        FullDataLoss - All replicas are removed hence all data is lost and
+        Actual data loss will depend on the specified DataLossMode.
+        - PartialDataLoss - Only a quorum of replicas are removed and
+        OnDataLoss is triggered for the partition but actual data loss depends
+        on the presence of in-flight replication.
+        - FullDataLoss - All replicas are removed hence all data is lost and
         OnDataLoss is triggered.
         This API should only be called with a stateful service as the target.
         Calling this API with a system service as the target is not advised.
@@ -11000,8 +11122,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Call the GetDataLossProgress API with the same OperationId to return
         information on the operation started with this API.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11052,13 +11174,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11076,8 +11197,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the progress of a data loss operation started with StartDataLoss,
         using the OperationId.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11124,13 +11245,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11151,16 +11272,16 @@ class ServiceFabricClientAPIs(SDKClient):
             self, service_id, partition_id, operation_id, quorum_loss_mode, quorum_loss_duration, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Induces quorum loss for a given stateful service partition.
 
-        Induces quorum loss for a given stateful service partition.  This API
-        is useful for a temporary quorum loss situation on your service.
+        This API is useful for a temporary quorum loss situation on your
+        service.
         Call the GetQuorumLossProgress API with the same OperationId to return
         information on the operation started with this API.
         This can only be called on stateful persisted (HasPersistedState==true)
         services.  Do not use this API on stateless services or stateful
         in-memory only services.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11217,13 +11338,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11241,8 +11361,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the progress of a quorum loss operation started with
         StartQuorumLoss, using the provided OperationId.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11289,13 +11409,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11323,8 +11443,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Call the GetPartitionRestartProgress API using the same OperationId to
         get the progress.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11376,13 +11496,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11400,8 +11519,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the progress of a PartitionRestart started with
         StartPartitionRestart using the provided OperationId.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -11448,13 +11567,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11538,13 +11657,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11600,13 +11718,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11628,26 +11746,26 @@ class ServiceFabricClientAPIs(SDKClient):
         """Gets a list of user-induced fault operations filtered by provided
         input.
 
-        Gets the a list of user-induced fault operations filtered by provided
+        Gets the list of user-induced fault operations filtered by provided
         input.
 
         :param type_filter: Used to filter on OperationType for user-induced
          operations.
-         65535 - select all
-         1     - select PartitionDataLoss.
-         2     - select PartitionQuorumLoss.
-         4     - select PartitionRestart.
-         8     - select NodeTransition.
+         - 65535 - select all
+         - 1 - select PartitionDataLoss.
+         - 2 - select PartitionQuorumLoss.
+         - 4 - select PartitionRestart.
+         - 8 - select NodeTransition.
         :type type_filter: int
         :param state_filter: Used to filter on OperationState's for
          user-induced operations.
-         65535 - select All
-         1     - select Running
-         2     - select RollingBack
-         8     - select Completed
-         16    - select Faulted
-         32    - select Cancelled
-         64    - select ForceCancelled
+         - 65535 - select All
+         - 1 - select Running
+         - 2 - select RollingBack
+         - 8 - select Completed
+         - 16 - select Faulted
+         - 32 - select Cancelled
+         - 64 - select ForceCancelled
         :type state_filter: int
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -11680,13 +11798,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11707,12 +11825,9 @@ class ServiceFabricClientAPIs(SDKClient):
             self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Cancels a user-induced fault operation.
 
-        The following is a list of APIs that start fault operations that may be
-        cancelled using CancelOperation -
-        - StartDataLoss
-        - StartQuorumLoss
-        - StartPartitionRestart
-        - StartNodeTransition
+        The following APIs start fault operations that may be cancelled by
+        using CancelOperation: StartDataLoss, StartQuorumLoss,
+        StartPartitionRestart, StartNodeTransition.
         If force is false, then the specified user-induced operation will be
         gracefully stopped and cleaned up.  If force is true, the command will
         be aborted, and some internal state
@@ -11722,9 +11837,9 @@ class ServiceFabricClientAPIs(SDKClient):
         been called on the same test command with force set to false first, or
         unless the test command already has an OperationState of
         OperationState.RollingBack.
-        Clarification: OperationState.RollingBack means that the system will/is
-        be cleaning up internal system state caused by executing the command.
-        It will not restore data if the
+        Clarification: OperationState.RollingBack means that the system will
+        be/is cleaning up internal system state caused by executing the
+        command.  It will not restore data if the
         test command was to cause data loss.  For example, if you call
         StartDataLoss then call this API, the system will only clean up
         internal state from running the command.
@@ -11736,7 +11851,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param force: Indicates whether to gracefully rollback and clean up
+        :param force: Indicates whether to gracefully roll back and clean up
          internal system state modified by executing the user-induced
          operation.
         :type force: bool
@@ -11770,13 +11885,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11811,7 +11925,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.create_backup_policy.metadata['url']
@@ -11832,9 +11946,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11870,7 +11983,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.delete_backup_policy.metadata['url']
@@ -11887,13 +12000,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11910,11 +12022,11 @@ class ServiceFabricClientAPIs(SDKClient):
         Get a list of all the backup policies configured.
 
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -11922,7 +12034,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -11942,7 +12054,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_backup_policy_list.metadata['url']
@@ -11959,13 +12071,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12006,7 +12118,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_backup_policy_by_name.metadata['url']
@@ -12023,13 +12135,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12056,11 +12168,11 @@ class ServiceFabricClientAPIs(SDKClient):
         :param backup_policy_name: The name of the backup policy.
         :type backup_policy_name: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -12068,7 +12180,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -12087,7 +12199,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_all_entities_backed_up_by_policy.metadata['url']
@@ -12108,13 +12220,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12157,7 +12269,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.update_backup_policy.metadata['url']
@@ -12182,9 +12294,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12234,7 +12345,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """
         enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
 
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.enable_application_backup.metadata['url']
@@ -12259,9 +12370,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12272,7 +12382,7 @@ class ServiceFabricClientAPIs(SDKClient):
     enable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/EnableBackup'}
 
     def disable_application_backup(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Disables periodic backup of Service Fabric application.
 
         Disables periodic backup of Service Fabric application which was
@@ -12287,6 +12397,10 @@ class ServiceFabricClientAPIs(SDKClient):
          application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
          previous versions.
         :type application_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
          willing to wait for the requested operation to complete. The default
@@ -12302,7 +12416,11 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
 
         # Construct URL
         url = self.disable_application_backup.metadata['url']
@@ -12323,9 +12441,15 @@ class ServiceFabricClientAPIs(SDKClient):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12352,11 +12476,11 @@ class ServiceFabricClientAPIs(SDKClient):
          previous versions.
         :type application_id: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -12364,7 +12488,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -12384,7 +12508,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_application_backup_configuration_info.metadata['url']
@@ -12405,13 +12529,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12467,11 +12591,11 @@ class ServiceFabricClientAPIs(SDKClient):
          enumeration is done till the most recent backup.
         :type end_date_time_filter: datetime
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -12479,7 +12603,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param dict custom_headers: headers that will be added to the request
@@ -12493,7 +12617,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_application_backup_list.metadata['url']
@@ -12520,13 +12644,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12577,7 +12701,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.suspend_application_backup.metadata['url']
@@ -12594,13 +12718,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12643,7 +12766,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.resume_application_backup.metadata['url']
@@ -12660,13 +12783,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12691,8 +12813,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Note only C# based Reliable Actor and Reliable Stateful services are
         currently supported for periodic backup.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -12719,7 +12841,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """
         enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
 
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.enable_service_backup.metadata['url']
@@ -12744,9 +12866,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12757,7 +12878,7 @@ class ServiceFabricClientAPIs(SDKClient):
     enable_service_backup.metadata = {'url': '/Services/{serviceId}/$/EnableBackup'}
 
     def disable_service_backup(
-            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Disables periodic backup of Service Fabric service which was previously
         enabled.
 
@@ -12767,14 +12888,18 @@ class ServiceFabricClientAPIs(SDKClient):
         this service is part of, this service would continue to be periodically
         backed up as per the policy mapped at the application level.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
          service identity would be "myapp~app1~svc1" in 6.0+ and
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
          willing to wait for the requested operation to complete. The default
@@ -12790,7 +12915,11 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
 
         # Construct URL
         url = self.disable_service_backup.metadata['url']
@@ -12811,9 +12940,15 @@ class ServiceFabricClientAPIs(SDKClient):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12830,8 +12965,8 @@ class ServiceFabricClientAPIs(SDKClient):
         Gets the Service Fabric backup configuration information for the
         service and the partitions under this service.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -12839,11 +12974,11 @@ class ServiceFabricClientAPIs(SDKClient):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -12851,7 +12986,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
@@ -12871,7 +13006,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_service_backup_configuration_info.metadata['url']
@@ -12892,13 +13027,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -12925,8 +13060,8 @@ class ServiceFabricClientAPIs(SDKClient):
         of the result based on start and end datetime or just fetching the
         latest available backup for every partition.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -12952,11 +13087,11 @@ class ServiceFabricClientAPIs(SDKClient):
          enumeration is done till the most recent backup.
         :type end_date_time_filter: datetime
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -12964,7 +13099,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param dict custom_headers: headers that will be added to the request
@@ -12978,7 +13113,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_service_backup_list.metadata['url']
@@ -13005,13 +13140,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13037,8 +13172,8 @@ class ServiceFabricClientAPIs(SDKClient):
         applies to the entire service's hierarchy. It means all the partitions
         under this service are now suspended for backup.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -13060,7 +13195,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.suspend_service_backup.metadata['url']
@@ -13077,13 +13212,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13101,8 +13235,8 @@ class ServiceFabricClientAPIs(SDKClient):
         The previously suspended Service Fabric service resumes taking periodic
         backup as per the backup policy currently configured for the same.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -13124,7 +13258,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.resume_service_backup.metadata['url']
@@ -13141,13 +13275,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13191,7 +13324,7 @@ class ServiceFabricClientAPIs(SDKClient):
         """
         enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
 
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.enable_partition_backup.metadata['url']
@@ -13216,9 +13349,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13229,7 +13361,7 @@ class ServiceFabricClientAPIs(SDKClient):
     enable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/EnableBackup'}
 
     def disable_partition_backup(
-            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Disables periodic backup of Service Fabric partition which was
         previously enabled.
 
@@ -13242,6 +13374,10 @@ class ServiceFabricClientAPIs(SDKClient):
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
          willing to wait for the requested operation to complete. The default
@@ -13257,7 +13393,11 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
 
         # Construct URL
         url = self.disable_partition_backup.metadata['url']
@@ -13278,9 +13418,15 @@ class ServiceFabricClientAPIs(SDKClient):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13316,7 +13462,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_backup_configuration_info.metadata['url']
@@ -13333,13 +13479,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13397,7 +13543,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_backup_list.metadata['url']
@@ -13420,13 +13566,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13467,7 +13613,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.suspend_partition_backup.metadata['url']
@@ -13484,13 +13630,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13524,7 +13669,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.resume_partition_backup.metadata['url']
@@ -13541,13 +13686,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13603,7 +13747,7 @@ class ServiceFabricClientAPIs(SDKClient):
         if backup_storage is not None:
             backup_partition_description = models.BackupPartitionDescription(backup_storage=backup_storage)
 
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.backup_partition.metadata['url']
@@ -13633,9 +13777,8 @@ class ServiceFabricClientAPIs(SDKClient):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13670,7 +13813,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_backup_progress.metadata['url']
@@ -13687,13 +13830,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13754,7 +13897,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.restore_partition.metadata['url']
@@ -13781,9 +13924,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(restore_partition_description, 'RestorePartitionDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13819,7 +13961,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_restore_progress.metadata['url']
@@ -13836,13 +13978,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13878,11 +14020,11 @@ class ServiceFabricClientAPIs(SDKClient):
          value for this parameter is 60 seconds.
         :type timeout: long
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
@@ -13890,7 +14032,7 @@ class ServiceFabricClientAPIs(SDKClient):
          the number of results returned. The results returned can be less than
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
-         this parameter is zero or not specified, the paged queries includes as
+         this parameter is zero or not specified, the paged query includes as
          many results as possible that fit in the return message.
         :type max_results: long
         :param dict custom_headers: headers that will be added to the request
@@ -13904,7 +14046,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_backups_from_backup_location.metadata['url']
@@ -13921,6 +14063,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -13929,9 +14072,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(get_backup_by_storage_query_description, 'GetBackupByStorageQueryDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -13995,9 +14137,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(name_description, 'NameDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14048,13 +14189,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14107,13 +14247,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14129,7 +14268,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         Enumerates all the Service Fabric names under a given name. If the
         subnames do not fit in a page, one page of results is returned as well
-        as a continuation token which can be used to get the next page.
+        as a continuation token, which can be used to get the next page.
         Querying a name that doesn't exist will fail.
 
         :param name_id: The Service Fabric name, without the 'fabric:' URI
@@ -14139,11 +14278,11 @@ class ServiceFabricClientAPIs(SDKClient):
          be recursive.
         :type recursive: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
@@ -14183,13 +14322,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14210,9 +14349,9 @@ class ServiceFabricClientAPIs(SDKClient):
             self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets information on all Service Fabric properties under a given name.
 
-        A Service Fabric name can have one or more named properties that stores
+        A Service Fabric name can have one or more named properties that store
         custom information. This operation gets the information about these
-        properties in a paged list. The information include name, value and
+        properties in a paged list. The information includes name, value, and
         metadata about each of the properties.
 
         :param name_id: The Service Fabric name, without the 'fabric:' URI
@@ -14223,11 +14362,11 @@ class ServiceFabricClientAPIs(SDKClient):
          metadata; False to return only property metadata.
         :type include_values: bool
         :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
+         obtain next set of results. A continuation token with a non-empty
          value is included in the response of the API when the results from the
          system do not fit in a single response. When this value is passed to
          the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
+         no further results, then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
@@ -14267,13 +14406,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14344,9 +14483,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(property_description, 'PropertyDescription')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14402,13 +14540,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14470,13 +14608,12 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14535,6 +14672,7 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -14543,9 +14681,8 @@ class ServiceFabricClientAPIs(SDKClient):
         body_content = self._serialize.body(property_batch_description_list, 'PropertyBatchDescriptionList')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 409]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14604,7 +14741,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_cluster_event_list.metadata['url']
@@ -14625,13 +14762,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14709,13 +14846,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14774,7 +14911,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_node_event_list.metadata['url']
@@ -14799,13 +14936,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14862,7 +14999,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_nodes_event_list.metadata['url']
@@ -14883,13 +15020,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -14955,7 +15092,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_application_event_list.metadata['url']
@@ -14980,13 +15117,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15043,7 +15180,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_applications_event_list.metadata['url']
@@ -15064,13 +15201,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15093,8 +15230,8 @@ class ServiceFabricClientAPIs(SDKClient):
 
         The response is list of ServiceEvent objects.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
          Starting from version 6.0, hierarchical names are delimited with the
          "~" character.
          For example, if the service name is "fabric:/myapp/app1/svc1", the
@@ -15135,7 +15272,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_service_event_list.metadata['url']
@@ -15160,13 +15297,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15223,7 +15360,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_services_event_list.metadata['url']
@@ -15244,13 +15381,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15309,7 +15446,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_event_list.metadata['url']
@@ -15334,13 +15471,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15397,7 +15534,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partitions_event_list.metadata['url']
@@ -15418,13 +15555,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15485,7 +15622,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_replica_event_list.metadata['url']
@@ -15511,13 +15648,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15576,7 +15713,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_partition_replicas_event_list.metadata['url']
@@ -15601,13 +15738,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -15648,7 +15785,7 @@ class ServiceFabricClientAPIs(SDKClient):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.2-preview"
+        api_version = "6.4"
 
         # Construct URL
         url = self.get_correlated_event_list.metadata['url']
@@ -15665,13 +15802,13 @@ class ServiceFabricClientAPIs(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
