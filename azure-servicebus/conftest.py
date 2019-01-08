@@ -115,8 +115,8 @@ def create_standard_subscription(servicebus_config, topic_name, client=None):
         shared_access_key_name=servicebus_config['key_name'],
         shared_access_key_value=servicebus_config['access_key'])
     if client.create_subscription(
-                topic_name, subscription_name,
-                subscription=sub_value, fail_on_exist=True):
+            topic_name, subscription_name,
+            subscription=sub_value, fail_on_exist=True):
         return (topic_name, subscription_name)
     raise ValueError("Queue creation failed.")
 
@@ -132,8 +132,8 @@ def create_session_subscription(servicebus_config, topic_name, client=None):
         shared_access_key_name=servicebus_config['key_name'],
         shared_access_key_value=servicebus_config['access_key'])
     if client.create_subscription(
-                topic_name, subscription_name,
-                subscription=sub_value, fail_on_exist=True):
+            topic_name, subscription_name,
+            subscription=sub_value, fail_on_exist=True):
         return (topic_name, subscription_name)
     raise ValueError("Queue creation failed.")
 
