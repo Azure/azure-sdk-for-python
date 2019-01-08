@@ -89,9 +89,9 @@ class MgmtSqlTest(AzureMgmtTestCase):
             "123.123.123.123",
             "123.123.123.124"
         )
-        self.assertEquals(firewall_rule.name, firewall_rule_name)
-        self.assertEquals(firewall_rule.start_ip_address, "123.123.123.123")
-        self.assertEquals(firewall_rule.end_ip_address, "123.123.123.124")
+        self.assertEqual(firewall_rule.name, firewall_rule_name)
+        self.assertEqual(firewall_rule.start_ip_address, "123.123.123.123")
+        self.assertEqual(firewall_rule.end_ip_address, "123.123.123.124")
 
         self.client.servers.delete(resource_group.name, server_name, polling=False)
 

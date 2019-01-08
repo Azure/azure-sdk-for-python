@@ -685,7 +685,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             gw_params
         )
         vng = async_create.result()
-        self.assertEquals(vng.name, vng_name)
+        self.assertEqual(vng.name, vng_name)
 
 
 #------------------------------------------------------------------------------

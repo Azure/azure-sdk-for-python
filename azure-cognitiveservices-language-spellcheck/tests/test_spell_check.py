@@ -49,8 +49,8 @@ class SpellCheckTest(ReplayableTest):
         response = text_analytics.spell_checker(
             "cognituve services"
         )
-        self.assertEquals(response.flagged_tokens[0].token, "cognituve")
-        self.assertEquals(response.flagged_tokens[0].suggestions[0].suggestion, "cognitive")
+        self.assertEqual(response.flagged_tokens[0].token, "cognituve")
+        self.assertEqual(response.flagged_tokens[0].suggestions[0].suggestion, "cognitive")
 
 
 

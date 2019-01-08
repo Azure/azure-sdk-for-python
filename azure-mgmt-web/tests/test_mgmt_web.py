@@ -49,7 +49,7 @@ class MgmtAppsTest(AzureMgmtTestCase):
             )
         )
         site = site_async_operation.result()
-        self.assertEquals(site.name, site_name)
+        self.assertEqual(site.name, site_name)
 
         # List Sites by Resource Group
         for site in self.web_client.sites.get_sites(self.group_name):
