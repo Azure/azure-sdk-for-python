@@ -7,7 +7,7 @@
 """
 How To: Create a Queue
 ----------------------
->>> from azure.servicebus.control_plane import *
+>>> from azure.servicebus.control_client import *
 >>> bus_service = ServiceBusService(shared_access_key_name=key_name, shared_access_key_value=key_value, 'owner')
 >>> bus_service.create_queue('taskqueue')
 True

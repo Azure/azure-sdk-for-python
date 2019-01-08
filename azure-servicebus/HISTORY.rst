@@ -9,7 +9,7 @@ Release History
 **Breaking changes**
 
 * Preview of new SDK API.
-* Original HTTP-base API still available under azure.servicebus.control_plane
+* Original HTTP-base API still available under azure.servicebus.control_client
 * For full API changes, please see updated reference documentation.
 
 
