@@ -308,6 +308,17 @@ class JsonFormatFilePattern(str, Enum):
     array_of_objects = "arrayOfObjects"
 
 
+class AzureFunctionActivityMethod(str, Enum):
+
+    get = "GET"
+    post = "POST"
+    put = "PUT"
+    delete = "DELETE"
+    options = "OPTIONS"
+    head = "HEAD"
+    trace = "TRACE"
+
+
 class WebActivityMethod(str, Enum):
 
     get = "GET"
