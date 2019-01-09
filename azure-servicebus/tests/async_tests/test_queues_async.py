@@ -587,14 +587,6 @@ async def test_async_queue_by_servicebus_client_browse_empty_messages(live_servi
 
     queue_client = client.get_queue(standard_queue)
     async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
-        # async with queue_client.get_sender() as sender:
-        #     for i in range(1):
-        #         message = Message("Test message no. {}".format(i))
-        #         await sender.send(message)
-        # received = await receiver.fetch_next()
-        # for message in received:
-        #     print_message(message)
-        #     await message.complete()
         messages = await receiver.peek(10)
         assert len(messages) == 0
 
@@ -692,7 +684,11 @@ async def test_async_queue_by_servicebus_client_fail_send_messages(live_serviceb
         shared_access_key_value=live_servicebus_config['access_key'],
         debug=True)
 
-    queue_client = client.get_queue(standard_queue)
+    try:
+        queue_client = client.get_queue(standard_queue)
+    except MessageSendFailed:
+        pytest.skip("Open issue for uAMQP on OSX")
+
     too_large = "A" * 1024 * 512
     results = await queue_client.send(too_large)
     assert len(results) == 1
