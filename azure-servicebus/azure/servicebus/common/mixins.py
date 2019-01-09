@@ -24,7 +24,6 @@ from azure.servicebus.common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_FILTER)
 from azure.servicebus.common.utils import parse_conn_str, build_uri
-from azure.servicebus.common.message import Message
 from azure.servicebus.common.errors import (
     ServiceBusConnectionError,
     ServiceBusResourceNotFound)
@@ -378,8 +377,6 @@ class SenderMixin(object):
     def _build_schedule_request(self, schedule_time, *messages):
         request_body = {'messages': []}
         for message in messages:
-            if not isinstance(message, Message):
-                message = Message(message)
             message.schedule(schedule_time)
             if self.session_id and not message.properties.group_id:
                 message.properties.group_id = self.session_id
@@ -400,8 +397,6 @@ class SenderMixin(object):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.Message
         """
-        if not isinstance(message, Message):
-            message = Message(message)
         if not self.running:
             self.open()
         if self.session_id and not message.properties.group_id:

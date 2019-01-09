@@ -9,6 +9,7 @@ import time
 import datetime
 import functools
 import uuid
+import collections
 
 import six
 
@@ -37,7 +38,7 @@ from azure.servicebus.common.constants import (
     ReceiveSettleMode)
 
 
-class Receiver(BaseHandler):
+class Receiver(collections.abc.Iterator, BaseHandler):
     """
     Implements a Receiver.
     """
@@ -58,11 +59,8 @@ class Receiver(BaseHandler):
         super(Receiver, self).__init__(
             source, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
 
-    def __iter__(self):
-        self._can_run()
-        return self
-
     def __next__(self):
+        self._can_run()
         while True:
             if self.receiver_shutdown:
                 self.close()
@@ -184,8 +182,11 @@ class Receiver(BaseHandler):
         """
         if not start_from:
             start_from = self.last_received or 1
-        assert count >= 1, "Count must be 1 or greater."
-        assert start_from >= 1, "Count must be 1 or greater."
+        if int(count) < 1:
+            raise ValueError("count must be 1 or greater.")
+        if int(start_from) < 1:
+            raise ValueError("start_from must be 1 or greater.")
+
         self._can_run()
         message = {
             'from-sequence-number': types.AMQPLong(start_from),
@@ -387,8 +388,11 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         """
         if not start_from:
             start_from = self.last_received or 1
-        assert count >= 1, "Count must be 1 or greater."
-        assert start_from >= 1, "Start_from must be 1 or greater."
+        if int(count) < 1:
+            raise ValueError("count must be 1 or greater.")
+        if int(start_from) < 1:
+            raise ValueError("start_from must be 1 or greater.")
+
         self._can_run()
         message = {
             'from-sequence-number': types.AMQPLong(start_from),
@@ -442,7 +446,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type skip: int
         :returns: list[str]
         """
-        assert max_results >= 1, "max_results must be 1 or greater."
+        if int(max_results) < 1:
+            raise ValueError("max_results must be 1 or greater.")
+
         self._can_run()
         message = {
             'last-updated-time': updated_since or datetime.datetime.utcfromtimestamp(0),

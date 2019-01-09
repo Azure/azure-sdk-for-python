@@ -14,7 +14,9 @@ from uamqp import types
 
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.aio.async_base_handler import BaseHandler
-from azure.servicebus.aio import DeferredMessage, Sender, SessionSender, Receiver, SessionReceiver
+from azure.servicebus.aio.async_send_handler import Sender, SessionSender
+from azure.servicebus.aio.async_receive_handler import Receiver, SessionReceiver
+from azure.servicebus.aio.async_message import Message, DeferredMessage
 from azure.servicebus.control_client import ServiceBusService, SERVICE_BUS_HOST_BASE, DEFAULT_HTTP_TIMEOUT
 from azure.servicebus.control_client.models import AzureServiceBusResourceNotFound
 from azure.servicebus.common.utils import parse_conn_str, build_uri, get_running_loop
@@ -237,11 +239,11 @@ class SendClientMixin:
         :raises: ~azure.servicebus.common.errors.MessageSendFailed
         """
         async with self.get_sender(message_timeout=message_timeout, session=session, **kwargs) as sender:
-            if isinstance(messages, list):
+            if isinstance(messages, Message):
+                sender.queue_message(messages)
+            else:
                 for m in messages:
                     sender.queue_message(m)
-            else:
-                sender.queue_message(messages)
             return await sender.send_pending_messages()
 
     def get_sender(self, message_timeout=0, session=None, **kwargs):
@@ -444,7 +446,9 @@ class ReceiveClientMixin:
             raise ValueError("A session cannot be used with a non-sessionful entitiy.")
         if self.entity and self.requires_session and not session:
             raise ValueError("This entity requires a session.")
-        assert prefetch >= 0, "Prefetch must be an integer between 0 and 50000 inclusive."
+        if int(prefetch) < 0 or int(prefetch) > 50000:
+            raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
+
         prefetch += 1
         handler_id = str(uuid.uuid4())
         if session:
@@ -497,7 +501,9 @@ class ReceiveClientMixin:
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
         """
-        assert prefetch >= 0, "Prefetch must be an integer between 0 and 50000 inclusive."
+        if int(prefetch) < 0 or int(prefetch) > 50000:
+            raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
+
         prefetch += 1
         handler_id = str(uuid.uuid4())
         if transfer_deadletter:

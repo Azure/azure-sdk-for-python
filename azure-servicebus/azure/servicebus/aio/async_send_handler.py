@@ -9,7 +9,6 @@ from uamqp import authentication
 from uamqp import constants, types
 
 from azure.servicebus.common.errors import MessageSendFailed
-from azure.servicebus.common.message import Message
 from azure.servicebus.common import mgmt_handlers, mixins
 from azure.servicebus.common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -57,8 +56,6 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send.
         """
-        if not isinstance(message, Message):
-            message = Message(message)
         if not self.running:
             await self.open()
         if self.session_id and not message.properties.group_id:
@@ -152,8 +149,6 @@ class SessionSender(Sender):
          send.
         :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
         """
-        if not isinstance(message, Message):
-            message = Message(message)
         if not self.session_id and not message.properties.group_id:
             raise ValueError("Message must have Session ID.")
         return await super(SessionSender, self).send(message)
@@ -165,8 +160,6 @@ class SessionSender(Sender):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.aio.async_message.Message
         """
-        if not isinstance(message, Message):
-            message = Message(message)
         if not self.session_id and not message.properties.group_id:
             raise ValueError("Message must have Session ID.")
         super(SessionSender, self).queue_message(message)
@@ -182,8 +175,6 @@ class SessionSender(Sender):
         :returns: list[int]
         """
         for message in messages:
-            if not isinstance(message, Message):
-                message = Message(message)
             if not self.session_id and not message.properties.group_id:
                 raise ValueError("Message must have Session ID.")
         return await super(SessionSender, self).schedule(schedule_time, *messages)

@@ -25,7 +25,7 @@ class ServiceBusTestCase(RecordingTestCase):
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
         else:
-            import tests.servicebus_settings_real as real_settings  # pylint: disable=import-error
+            import tests.servicebus_settings_real as real_settings  # pylint: disable=import-error,no-name-in-module
             self.settings = real_settings
 
     def _set_service_options(self, service, settings):  # pylint: disable=no-self-use

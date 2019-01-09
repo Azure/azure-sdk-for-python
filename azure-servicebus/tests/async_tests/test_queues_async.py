@@ -185,6 +185,9 @@ async def test_async_queue_by_servicebus_client_iter_messages_simple(live_servic
                 await message.renew_lock()
             count += 1
 
+        with pytest.raises(InvalidHandlerState):
+            await receiver.__anext__()
+
     assert count == 10
 
 
@@ -690,17 +693,17 @@ async def test_async_queue_by_servicebus_client_fail_send_messages(live_serviceb
         pytest.skip("Open issue for uAMQP on OSX")
 
     too_large = "A" * 1024 * 512
-    results = await queue_client.send(too_large)
+    results = await queue_client.send(Message(too_large))
     assert len(results) == 1
     assert not results[0][0]
     assert isinstance(results[0][1], MessageSendFailed)
 
     async with queue_client.get_sender() as sender:
         with pytest.raises(MessageSendFailed):
-            await sender.send(too_large)
+            await sender.send(Message(too_large))
 
     async with queue_client.get_sender() as sender:
-        sender.queue_message(too_large)
+        sender.queue_message(Message(too_large))
         results = await sender.send_pending_messages()
         assert len(results) == 1
         assert not results[0][0]

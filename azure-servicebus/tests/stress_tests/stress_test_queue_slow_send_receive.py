@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import concurrent
 
 import conftest
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, Message
 from azure.servicebus.common.constants import ReceiveSettleMode
 
 
@@ -24,7 +24,7 @@ def message_send_process(sb_config, queue, endtime):
     queue_client = client.get_queue(queue)
     with queue_client.get_sender() as sender:
         while endtime > datetime.now():
-            sender.send("Slow stress test message")
+            sender.send(Message("Slow stress test message"))
             total += 1
             time.sleep(3600)
     return total
