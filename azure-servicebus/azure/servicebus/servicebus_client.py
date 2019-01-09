@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 import datetime
 import uuid
 import functools
@@ -30,9 +29,6 @@ from azure.servicebus.control_client.models import AzureServiceBusResourceNotFou
 from azure.servicebus.send_handler import Sender, SessionSender
 from azure.servicebus.receive_handler import Receiver, SessionReceiver
 from azure.servicebus.base_handler import BaseHandler
-
-
-log = logging.getLogger(__name__)
 
 
 class ServiceBusClient(mixins.ServiceBusMixin):

@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 import datetime
 import uuid
 import requests
@@ -31,9 +30,6 @@ from azure.servicebus.common.errors import (
     ServiceBusResourceNotFound)
 from azure.servicebus.control_client import ServiceBusService
 from azure.servicebus.control_client.models import AzureServiceBusResourceNotFound, Queue, Subscription, Topic
-
-
-log = logging.getLogger(__name__)
 
 
 class ServiceBusMixin(object):

@@ -31,7 +31,7 @@ from .async_receive_handler import Receiver, SessionReceiver
 from .async_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
 
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 class AutoLockRenew:
@@ -59,20 +59,20 @@ class AutoLockRenew:
         return True
 
     async def _auto_lock_renew(self, renewable, starttime, timeout):
-        log.debug("Running async lock auto-renew for %r seconds", timeout)
+        _log.debug("Running async lock auto-renew for %r seconds", timeout)
         try:
             while self._renewable(renewable):
                 if (datetime.datetime.now() - starttime) >= datetime.timedelta(seconds=timeout):
-                    log.debug("Reached auto lock renew timeout - letting lock expire.")
+                    _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
                 if (renewable.locked_until - datetime.datetime.now()) <= datetime.timedelta(seconds=self.renew_period):
-                    log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
+                    _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     await renewable.renew_lock()
                 await asyncio.sleep(self.sleep_time)
         except AutoLockRenewTimeout as e:
             renewable.auto_renew_error = e
         except Exception as e:  # pylint: disable=broad-except
-            log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
+            _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
                 "Failed to auto-renew lock",
                 inner_exception=e)

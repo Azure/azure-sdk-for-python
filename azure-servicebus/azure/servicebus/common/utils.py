@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 from azure.servicebus.common.errors import AutoLockRenewFailed, AutoLockRenewTimeout
 from azure.servicebus import __version__ as sdk_version
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 def parse_conn_str(conn_str):
@@ -95,20 +95,20 @@ class AutoLockRenew(object):
         return True
 
     def _auto_lock_renew(self, renewable, starttime, timeout):
-        log.debug("Running lock auto-renew thread for %r seconds", timeout)
+        _log.debug("Running lock auto-renew thread for %r seconds", timeout)
         try:
             while self._renewable(renewable):
                 if (datetime.datetime.now() - starttime) >= datetime.timedelta(seconds=timeout):
-                    log.debug("Reached auto lock renew timeout - letting lock expire.")
+                    _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
                 if (renewable.locked_until - datetime.datetime.now()) <= datetime.timedelta(seconds=self.renew_period):
-                    log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
+                    _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     renewable.renew_lock()
                 time.sleep(self.sleep_time)
         except AutoLockRenewTimeout as e:
             renewable.auto_renew_error = e
         except Exception as e:  # pylint: disable=broad-except
-            log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
+            _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
                 "Failed to auto-renew lock",
                 inner_exception=e)

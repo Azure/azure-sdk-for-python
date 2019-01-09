@@ -7,7 +7,6 @@
 import threading
 import time
 import datetime
-import logging
 import functools
 import uuid
 
@@ -36,9 +35,6 @@ from azure.servicebus.common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     ReceiveSettleMode)
-
-
-log = logging.getLogger(__name__)
 
 
 class Receiver(BaseHandler):

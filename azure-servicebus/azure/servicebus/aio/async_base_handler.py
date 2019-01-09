@@ -22,7 +22,7 @@ from azure.servicebus.common.errors import (
     ServiceBusErrorPolicy)
 
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 class BaseHandler:
@@ -94,24 +94,24 @@ class BaseHandler:
     async def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
             if exception.action and exception.action.retry and self.auto_reconnect:
-                log.info("Async handler detached. Attempting reconnect.")
+                _log.info("Async handler detached. Attempting reconnect.")
                 await self.reconnect()
             elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                log.info("Async handler detached. Shutting down.")
+                _log.info("Async handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
                 await self.close(exception=error)
                 raise error
             else:
-                log.info("Async handler detached. Shutting down.")
+                _log.info("Async handler detached. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
                 await self.close(exception=error)
                 raise error
         elif isinstance(exception, errors.MessageHandlerError):
             if self.auto_reconnect:
-                log.info("Async handler error. Attempting reconnect.")
+                _log.info("Async handler error. Attempting reconnect.")
                 await self.reconnect()
             else:
-                log.info("Async handler error. Shutting down.")
+                _log.info("Async handler error. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
                 await self.close(exception=error)
                 raise error
@@ -119,7 +119,7 @@ class BaseHandler:
             message = "Failed to open handler: {}".format(exception)
             raise ServiceBusConnectionError(message, exception)
         else:
-            log.info("Unexpected error occurred (%r). Shutting down.", exception)
+            _log.info("Unexpected error occurred (%r). Shutting down.", exception)
             error = ServiceBusError("Handler failed: {}".format(exception), exception)
             await self.close(exception=error)
             raise error

@@ -25,7 +25,7 @@ from azure.servicebus.common.errors import (
     ServiceBusAuthorizationError)
 
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 class BaseHandler(object):
@@ -95,24 +95,24 @@ class BaseHandler(object):
     def _handle_exception(self, exception):
         if isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
             if exception.action and exception.action.retry and self.auto_reconnect:
-                log.info("Handler detached. Attempting reconnect.")
+                _log.info("Handler detached. Attempting reconnect.")
                 self.reconnect()
             elif exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-                log.info("Handler detached. Shutting down.")
+                _log.info("Handler detached. Shutting down.")
                 error = ServiceBusAuthorizationError(str(exception), exception)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("Handler detached. Shutting down.")
+                _log.info("Handler detached. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
                 self.close(exception=error)
                 raise error
         elif isinstance(exception, errors.MessageHandlerError):
             if self.auto_reconnect:
-                log.info("Handler error. Attempting reconnect.")
+                _log.info("Handler error. Attempting reconnect.")
                 self.reconnect()
             else:
-                log.info("Handler error. Shutting down.")
+                _log.info("Handler error. Shutting down.")
                 error = ServiceBusConnectionError(str(exception), exception)
                 self.close(exception=error)
                 raise error
@@ -120,7 +120,7 @@ class BaseHandler(object):
             message = "Failed to open handler: {}".format(exception)
             raise ServiceBusConnectionError(message, exception)
         else:
-            log.info("Unexpected error occurred (%r). Shutting down.", exception)
+            _log.info("Unexpected error occurred (%r). Shutting down.", exception)
             error = ServiceBusError("Handler failed: {}".format(exception))
             self.close(exception=error)
             raise error

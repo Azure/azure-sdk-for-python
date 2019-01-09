@@ -19,7 +19,7 @@ from azure.servicebus.common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION)
 
 
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 
 class Sender(BaseHandler, mixins.SenderMixin):
@@ -121,7 +121,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             self.open()
         try:
             pending = self._handler._pending_messages[:]  # pylint: disable=protected-access
-            log.debug("Sending %r pending messages", len(pending))
+            _log.debug("Sending %r pending messages", len(pending))
             self._handler.wait()
             results = []
             for m in pending:
