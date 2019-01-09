@@ -32,7 +32,7 @@ class Gallery(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param description: The description of this Shared Image Gallery resource.
-     This property is updateable.
+     This property is updatable.
     :type description: str
     :param identifier:
     :type identifier: ~azure.mgmt.compute.v2018_06_01.models.GalleryIdentifier

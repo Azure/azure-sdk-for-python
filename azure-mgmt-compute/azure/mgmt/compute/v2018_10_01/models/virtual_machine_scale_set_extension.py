@@ -47,6 +47,9 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
+    :param provision_after_extensions: Collection of extension names after
+     which this extension needs to be provisioned.
+    :type provision_after_extensions: list[str]
     """
 
     _validation = {
@@ -65,6 +68,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -78,3 +82,4 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None
+        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
