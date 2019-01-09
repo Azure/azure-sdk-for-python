@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 import sys
 
 import conftest
@@ -12,24 +11,6 @@ import conftest
 from azure.servicebus import ServiceBusClient
 from azure.servicebus import Message
 from azure.servicebus.common.constants import ReceiveSettleMode
-
-
-def get_logger(level):
-    azure_logger = logging.getLogger("azure")
-    if not azure_logger.handlers:
-        azure_logger.setLevel(level)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        azure_logger.addHandler(handler)
-
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        uamqp_logger.setLevel(logging.INFO)
-        uamqp_logger.addHandler(handler)
-    return azure_logger
-
-
-logger = get_logger(logging.DEBUG)
 
 
 def sample_queue_send_receive_batch(sb_config, queue):
@@ -65,10 +46,6 @@ def sample_queue_send_receive_batch(sb_config, queue):
             total += 1
 
     print("Received total {} messages".format(total))
-
-
-def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
-    sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,6 @@
 #--------------------------------------------------------------------------
 
 import asyncio
-import logging
 import sys
 import pytest
 
@@ -15,25 +14,7 @@ from azure.servicebus.aio import ServiceBusClient, Message
 from azure.servicebus.common.constants import ReceiveSettleMode
 
 
-def get_logger(level):
-    azure_logger = logging.getLogger("azure")
-    if not azure_logger.handlers:
-        azure_logger.setLevel(level)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        azure_logger.addHandler(handler)
-
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        uamqp_logger.setLevel(logging.INFO)
-        uamqp_logger.addHandler(handler)
-    return azure_logger
-
-
-logger = get_logger(logging.DEBUG)
-
-
-async def sample_queue_send_receive_batch(sb_config, queue):
+async def sample_queue_send_receive_batch_async(sb_config, queue):
     client = ServiceBusClient(
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
@@ -57,11 +38,6 @@ async def sample_queue_send_receive_batch(sb_config, queue):
             print("Message: {}".format(message))
             print("Sequence number: {}".format(message.sequence_number))
             await message.complete()
-
-
-@pytest.mark.asyncio
-async def test_async_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
-    await sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
 
 
 if __name__ == '__main__':

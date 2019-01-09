@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 import sys
 import uuid
 import concurrent
@@ -14,24 +13,6 @@ import conftest
 from azure.servicebus import ServiceBusClient, Message
 from azure.servicebus.common.constants import NEXT_AVAILABLE
 from azure.servicebus.common.errors import NoActiveSession
-
-
-def get_logger(level):
-    azure_logger = logging.getLogger("azure")
-    if not azure_logger.handlers:
-        azure_logger.setLevel(level)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        azure_logger.addHandler(handler)
-
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        uamqp_logger.setLevel(logging.INFO)
-        uamqp_logger.addHandler(handler)
-    return azure_logger
-
-
-logger = get_logger(logging.INFO)
 
 
 def message_processing(queue_client, messages):
@@ -82,10 +63,6 @@ def sample_session_send_receive_with_pool(sb_config, queue):
         concurrent.futures.wait(futures)
 
     print("Received total {} messages across {} sessions.".format(len(all_messages), 2*concurrent_receivers))
-
-
-def test_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
-    sample_session_send_receive_with_pool(live_servicebus_config, session_queue)
 
 
 if __name__ == '__main__':

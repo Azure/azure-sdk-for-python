@@ -5,7 +5,6 @@
 #--------------------------------------------------------------------------
 
 import asyncio
-import logging
 import sys
 import uuid
 import pytest
@@ -15,32 +14,13 @@ import conftest
 from azure.servicebus.aio import ServiceBusClient, Message
 
 
-def get_logger(level):
-    azure_logger = logging.getLogger("azure")
-    if not azure_logger.handlers:
-        azure_logger.setLevel(level)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        azure_logger.addHandler(handler)
-
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        uamqp_logger.setLevel(logging.INFO)
-        uamqp_logger.addHandler(handler)
-    return azure_logger
-
-
-logger = get_logger(logging.INFO)
-
-
-async def sample_session_send_receive_batch(sb_config, queue):
+async def sample_session_send_receive_batch_async(sb_config, queue):
 
     session_id = str(uuid.uuid4())
     client = ServiceBusClient(
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
-        shared_access_key_value=sb_config['access_key'],
-        debug=True)
+        shared_access_key_value=sb_config['access_key'])
 
     queue_client = client.get_queue(queue)
 
@@ -57,11 +37,6 @@ async def sample_session_send_receive_batch(sb_config, queue):
             if str(message) == "shutdown":
                 await session.set_session_state("END")
                 break
-
-
-@pytest.mark.asyncio
-async def test_async_sample_session_send_receive_batch(live_servicebus_config, session_queue):
-    await sample_session_send_receive_batch(live_servicebus_config, session_queue)
 
 
 if __name__ == '__main__':

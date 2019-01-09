@@ -63,7 +63,7 @@ from ._serialization import (
 class ServiceBusService(object):  # pylint: disable=too-many-public-methods
 
     def __init__(self, service_namespace=None, account_key=None, issuer=None,
-                 api_version=None, host_base=SERVICE_BUS_HOST_BASE,
+                 x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
                  authentication=None, timeout=DEFAULT_HTTP_TIMEOUT,
                  request_session=None):
@@ -82,8 +82,6 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             ACS authentication issuer. If None, the value is set to the
             AZURE_SERVICEBUS_ISSUER env variable.
             Note that if both SAS and ACS settings are specified, SAS is used.
-        api_version:
-            Target service API version. Default is '2017-04'.
         host_base:
             Optional. Live host base url. Defaults to Azure url. Override this
             for on-premise.
@@ -102,6 +100,8 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             Optional. Session object to use for http requests.
         '''
         self.requestid = None
+        x_ms_version = None
+        api_version = x_ms_version  # Waiting is updated API version support
         self.service_namespace = service_namespace
         self.host_base = host_base
 
