@@ -21,6 +21,17 @@ from azure.servicebus import __version__ as sdk_version
 _log = logging.getLogger(__name__)
 
 
+def get_running_loop():
+    try:
+        import asyncio
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.5 / 3.6
+        loop = asyncio._get_running_loop()
+        if loop is None:
+            raise RuntimeError('No running event loop')
+        return loop
+
+
 def parse_conn_str(conn_str):
     endpoint = None
     shared_access_key_name = None

@@ -42,7 +42,7 @@ class Receiver(BaseHandler):
     """
 
     def __init__(
-            self, loop, handler_id, source, auth_config, connection=None,
+            self, handler_id, source, auth_config, *, loop=None, connection=None,
             mode=ReceiveSettleMode.PeekLock, encoding='UTF-8', debug=False, **kwargs):
         """
         Instantiate a receiver.
@@ -55,7 +55,7 @@ class Receiver(BaseHandler):
         self.mode = mode
         self.message_iter = None
         super(Receiver, self).__init__(
-            loop, source, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
+            source, auth_config, loop=loop, connection=connection, encoding=encoding, debug=debug, **kwargs)
 
     def __aiter__(self):
         return self
@@ -282,7 +282,7 @@ class Receiver(BaseHandler):
 class SessionReceiver(Receiver, mixins.SessionMixin):
 
     def __init__(
-            self, loop, handler_id, target, auth_config, session=None,
+            self, handler_id, target, auth_config, *, session=None, loop=None,
             connection=None, encoding='UTF-8', debug=False, **kwargs):
         self.session_id = None
         self.session_filter = session
@@ -291,7 +291,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         self.auto_reconnect = False
         self.auto_renew_error = None
         super(SessionReceiver, self).__init__(
-            loop, handler_id, target, auth_config,
+            handler_id, target, auth_config, loop=loop,
             connection=connection, encoding=encoding, debug=debug, **kwargs)
 
     def _build_handler(self):

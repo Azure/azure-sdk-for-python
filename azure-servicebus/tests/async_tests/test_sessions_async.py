@@ -64,9 +64,7 @@ def print_message(message):
 
 @pytest.mark.asyncio
 async def test_async_session_by_session_client_conn_str_receive_handler_peeklock(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -94,9 +92,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_peeklock
 
 @pytest.mark.asyncio
 async def test_async_session_by_queue_client_conn_str_receive_handler_receiveanddelete(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -130,9 +126,7 @@ async def test_async_session_by_queue_client_conn_str_receive_handler_receiveand
 
 @pytest.mark.asyncio
 async def test_async_session_by_session_client_conn_str_receive_handler_with_stop(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -171,9 +165,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_sto
 
 @pytest.mark.asyncio
 async def test_async_session_by_session_client_conn_str_receive_handler_with_no_session(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -185,9 +177,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_no_
 
 @pytest.mark.asyncio
 async def test_async_session_by_session_client_conn_str_receive_handler_with_inactive_session(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -204,9 +194,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_ina
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -244,9 +232,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -289,9 +275,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -326,9 +310,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_deferred_client(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -361,9 +343,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -401,9 +381,7 @@ async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadl
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_browse_messages_client(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -430,9 +408,7 @@ async def test_async_session_by_servicebus_client_browse_messages_client(live_se
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_browse_messages_with_receiver(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -457,9 +433,7 @@ async def test_async_session_by_servicebus_client_browse_messages_with_receiver(
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_renew_client_locks(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -502,9 +476,7 @@ async def test_async_session_by_servicebus_client_renew_client_locks(live_servic
 @pytest.mark.asyncio
 async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live_servicebus_config, session_queue):
     session_id = str(uuid.uuid4())
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -514,7 +486,7 @@ async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live
             message = Message("{}".format(i))
             await sender.send(message)
 
-    renewer = AutoLockRenew(loop)
+    renewer = AutoLockRenew()
     messages = []
     async with queue_client.get_receiver(session=session_id, idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
         renewer.register(session, timeout=60)
@@ -556,9 +528,7 @@ async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live
 
 @pytest.mark.asyncio
 async def test_async_session_message_connection_closed(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -582,9 +552,7 @@ async def test_async_session_message_connection_closed(live_servicebus_config, s
 
 @pytest.mark.asyncio
 async def test_async_session_message_expiry(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -622,9 +590,7 @@ async def test_async_session_message_expiry(live_servicebus_config, session_queu
 
 @pytest.mark.asyncio
 async def test_async_session_schedule_message(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -642,7 +608,7 @@ async def test_async_session_schedule_message(live_servicebus_config, session_qu
         await sender.send(message)
 
     messages = []
-    renewer = AutoLockRenew(loop)
+    renewer = AutoLockRenew()
     async with queue_client.get_receiver(session=session_id) as receiver:
         renewer.register(receiver, timeout=140)
         messages.extend(await receiver.fetch_next(timeout=120))
@@ -661,9 +627,7 @@ async def test_async_session_schedule_message(live_servicebus_config, session_qu
 
 @pytest.mark.asyncio
 async def test_async_session_schedule_multiple_messages(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -684,7 +648,7 @@ async def test_async_session_schedule_multiple_messages(live_servicebus_config, 
         tokens = await sender.schedule(enqueue_time, message_a, message_b)
         assert len(tokens) == 2
 
-    renewer = AutoLockRenew(loop)
+    renewer = AutoLockRenew()
     async with queue_client.get_receiver(session=session_id, prefetch=20) as receiver:
         renewer.register(receiver, timeout=140)
         messages.extend(await receiver.fetch_next(timeout=120))
@@ -703,9 +667,7 @@ async def test_async_session_schedule_multiple_messages(live_servicebus_config, 
 
 @pytest.mark.asyncio
 async def test_async_session_cancel_scheduled_messages(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -721,7 +683,7 @@ async def test_async_session_cancel_scheduled_messages(live_servicebus_config, s
         assert len(tokens) == 2
         await sender.cancel_scheduled_messages(*tokens)
 
-    renewer = AutoLockRenew(loop)
+    renewer = AutoLockRenew()
     messages = []
     async with queue_client.get_receiver(session=session_id) as receiver:
         renewer.register(receiver, timeout=140)
@@ -739,9 +701,7 @@ async def test_async_session_cancel_scheduled_messages(live_servicebus_config, s
 
 @pytest.mark.asyncio
 async def test_async_session_get_set_state_with_receiver(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     queue_client = QueueClient.from_connection_string(
-        loop,
         live_servicebus_config['conn_str'],
         name=session_queue,
         debug=True)
@@ -767,9 +727,7 @@ async def test_async_session_get_set_state_with_receiver(live_servicebus_config,
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_list_sessions_with_receiver(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -798,9 +756,7 @@ async def test_async_session_by_servicebus_client_list_sessions_with_receiver(li
 
 @pytest.mark.asyncio
 async def test_async_session_by_servicebus_client_list_sessions_with_client(live_servicebus_config, session_queue):
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
@@ -846,9 +802,7 @@ async def test_async_session_by_servicebus_client_session_pool(live_servicebus_c
 
     concurrent_receivers = 5
     sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]
-    loop = asyncio.get_event_loop()
     client = ServiceBusClient(
-        loop,
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],

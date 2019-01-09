@@ -502,7 +502,7 @@ class ReceiveClientMixin(object):
             **kwargs)
 
 
-class QueueClient(mixins.BaseClient, SendClientMixin, ReceiveClientMixin):
+class QueueClient(SendClientMixin, ReceiveClientMixin, mixins.BaseClient):
     """
     The QueueClient class defines a high level interface for sending
     messages to and receiving messages from the Azure ServiceBus service.
@@ -512,7 +512,7 @@ class QueueClient(mixins.BaseClient, SendClientMixin, ReceiveClientMixin):
         return self.mgmt_client.get_queue(self.name)
 
 
-class TopicClient(mixins.BaseClient, SendClientMixin):
+class TopicClient(SendClientMixin, mixins.BaseClient):
     """
     The TopicClient class defines a high level interface for sending
     messages to an Azure ServiceBus Topic.
@@ -522,7 +522,7 @@ class TopicClient(mixins.BaseClient, SendClientMixin):
         return self.mgmt_client.get_topic(self.name)
 
 
-class SubscriptionClient(mixins.BaseClient, ReceiveClientMixin):
+class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
     """
     The SubscriptionClient class defines a high level interface for receiving
     messages from an Azure ServiceBus Subscription.

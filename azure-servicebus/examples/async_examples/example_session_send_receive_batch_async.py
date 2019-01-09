@@ -33,11 +33,10 @@ def get_logger(level):
 logger = get_logger(logging.INFO)
 
 
-async def sample_session_send_receive_batch(event_loop, sb_config, queue):
+async def sample_session_send_receive_batch(sb_config, queue):
 
     session_id = str(uuid.uuid4())
     client = ServiceBusClient(
-        event_loop,
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
@@ -62,15 +61,13 @@ async def sample_session_send_receive_batch(event_loop, sb_config, queue):
 
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_batch(live_servicebus_config, session_queue):
-    event_loop = asyncio.get_event_loop()
-    await sample_session_send_receive_batch(event_loop, live_servicebus_config, session_queue)
+    await sample_session_send_receive_batch(live_servicebus_config, session_queue)
 
 
 if __name__ == '__main__':
     live_config = conftest.get_live_servicebus_config()
     queue_name = conftest.create_session_queue(live_config)
-    loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(sample_session_send_receive_batch(loop, live_config, queue_name))
+        loop.run_until_complete(sample_session_send_receive_batch(live_config, queue_name))
     finally:
         conftest.cleanup_queue(live_config, queue_name)

@@ -13,7 +13,7 @@ from uamqp.message import Message, MessageProperties
 from uamqp import authentication
 from uamqp import constants, errors
 
-from azure.servicebus.common.utils import create_properties
+from azure.servicebus.common.utils import create_properties, get_running_loop
 from azure.servicebus.common.errors import (
     ServiceBusError,
     ServiceBusConnectionError,
@@ -27,8 +27,8 @@ _log = logging.getLogger(__name__)
 
 class BaseHandler:
 
-    def __init__(self, loop, endpoint, auth_config, connection=None, encoding='UTF-8', debug=False, **kwargs):
-        self.loop = loop
+    def __init__(self, endpoint, auth_config, *, loop=None, connection=None, encoding='UTF-8', debug=False, **kwargs):
+        self.loop = loop or get_running_loop()
         self.running = False
         self.error = None
         self.endpoint = endpoint

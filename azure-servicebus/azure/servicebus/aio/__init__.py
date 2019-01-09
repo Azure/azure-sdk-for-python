@@ -24,7 +24,7 @@ from azure.servicebus.common.errors import (
     AutoLockRenewTimeout)
 from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus.common.message import BatchMessage, PeekMessage
-from azure.servicebus.common.utils import renewable_start_time
+from azure.servicebus.common.utils import renewable_start_time, get_running_loop
 from .async_message import Message, DeferredMessage
 from .async_send_handler import Sender, SessionSender
 from .async_receive_handler import Receiver, SessionReceiver
@@ -36,10 +36,10 @@ _log = logging.getLogger(__name__)
 
 class AutoLockRenew:
 
-    def __init__(self, loop):
+    def __init__(self, loop=None):
         self._shutdown = asyncio.Event()
         self._futures = []
-        self.loop = loop
+        self.loop = loop or get_running_loop()
         self.sleep_time = 1
         self.renew_period = 10
 

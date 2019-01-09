@@ -17,7 +17,7 @@ from azure.servicebus.aio.async_base_handler import BaseHandler
 from azure.servicebus.aio import DeferredMessage, Sender, SessionSender, Receiver, SessionReceiver
 from azure.servicebus.control_client import ServiceBusService, SERVICE_BUS_HOST_BASE, DEFAULT_HTTP_TIMEOUT
 from azure.servicebus.control_client.models import AzureServiceBusResourceNotFound
-from azure.servicebus.common.utils import parse_conn_str, build_uri
+from azure.servicebus.common.utils import parse_conn_str, build_uri, get_running_loop
 from azure.servicebus.common.errors import ServiceBusConnectionError, ServiceBusResourceNotFound
 from azure.servicebus.common.constants import (
     REQUEST_RESPONSE_PEEK_OPERATION,
@@ -29,13 +29,12 @@ from azure.servicebus.common.constants import (
 
 class ServiceBusClient(mixins.ServiceBusMixin):
 
-    def __init__(self, loop, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
-                 shared_access_key_name=None, shared_access_key_value=None,
+    def __init__(self, *, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
+                 shared_access_key_name=None, shared_access_key_value=None, loop=None,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
         """Initializes the service bus service for a namespace with the specified
         authentication settings (SAS).
 
-        :param loop: An async event loop.
         :param str service_namespace: Service bus namespace, required for all operations.
         :param str host_base: Optional. Live host base url. Defaults to Azure url.
         :param str shared_access_key_name: SAS authentication key name.
@@ -43,7 +42,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
         :param http_request_session: Optional. Session object to use for http requests.
         """
-        self.loop = loop
+        self.loop = loop or get_running_loop()
         self.service_namespace = service_namespace
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
@@ -58,10 +57,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             request_session=http_request_session)
 
     @classmethod
-    def from_connection_string(cls, loop, conn_str, **kwargs):
+    def from_connection_string(cls, conn_str, *, loop=None, **kwargs):
         """
         Create a QueueClient from a connection string.
-        :param loop: An async event loop.
         :param conn_str: The connection string.
         :type conn_str: str
         :param queue_name: The name of the Queue, if the EntityName is
@@ -71,11 +69,11 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
-            loop,
             namespace,
             shared_access_key_name=policy,
             shared_access_key_value=key,
             host_base='.' + base,
+            loop=loop,
             **kwargs)
 
     def get_queue(self, queue_name):
@@ -94,10 +92,11 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         except AzureServiceBusResourceNotFound:
             raise ServiceBusResourceNotFound("Specificed queue does not exist.")
         return QueueClient.from_entity(
-            self.loop, self._get_host(), queue,
+            self._get_host(), queue,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
             mgmt_client=self.mgmt_client,
+            loop=self.loop,
             debug=self.debug)
 
     def list_queues(self):
@@ -113,10 +112,11 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         queue_clients = []
         for queue in queues:
             queue_clients.append(QueueClient.from_entity(
-                self.loop, self._get_host(), queue,
+                self._get_host(), queue,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
                 mgmt_client=self.mgmt_client,
+                loop=self.loop,
                 debug=self.debug))
         return queue_clients
 
@@ -136,9 +136,10 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         except AzureServiceBusResourceNotFound:
             raise ServiceBusResourceNotFound("Specificed topic does not exist.")
         return TopicClient.from_entity(
-            self.loop, self._get_host(), topic,
+            self._get_host(), topic,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            loop=self.loop,
             debug=self.debug)
 
     def list_topics(self):
@@ -154,9 +155,10 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         topic_clients = []
         for topic in topics:
             topic_clients.append(TopicClient.from_entity(
-                self.loop, self._get_host(), topic,
+                self._get_host(), topic,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                loop=self.loop,
                 debug=self.debug))
         return topic_clients
 
@@ -178,9 +180,10 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         except AzureServiceBusResourceNotFound:
             raise ServiceBusResourceNotFound("Specificed subscription does not exist.")
         return SubscriptionClient.from_entity(
-            self.loop, self._get_host(), topic_name, subscription,
+            self._get_host(), topic_name, subscription,
             shared_access_key_name=self.shared_access_key_name,
             shared_access_key_value=self.shared_access_key_value,
+            loop=self.loop,
             debug=self.debug)
 
     def list_subscriptions(self, topic_name):
@@ -201,9 +204,10 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         sub_clients = []
         for sub in subs:
             sub_clients.append(SubscriptionClient.from_entity(
-                self.loop, self._get_host(), topic_name, sub,
+                self._get_host(), topic_name, sub,
                 shared_access_key_name=self.shared_access_key_name,
                 shared_access_key_value=self.shared_access_key_value,
+                loop=self.loop,
                 debug=self.debug))
         return sub_clients
 
@@ -260,20 +264,20 @@ class SendClientMixin:
         handler_id = str(uuid.uuid4())
         if self.entity and self.requires_session:
             return SessionSender(
-                self.loop,
                 handler_id,
                 self.entity_uri,
                 self.auth_config,
                 session=session,
+                loop=self.loop,
                 debug=self.debug,
                 msg_timeout=message_timeout,
                 **kwargs)
         return Sender(
-            self.loop,
             handler_id,
             self.entity_uri,
             self.auth_config,
             session=session,
+            loop=self.loop,
             debug=self.debug,
             msg_timeout=message_timeout,
             **kwargs)
@@ -307,7 +311,7 @@ class ReceiveClientMixin:
             message['session-id'] = session
 
         async with BaseHandler(
-                self.loop, self.entity_uri, self.auth_config, debug=self.debug, **kwargs) as handler:
+                self.entity_uri, self.auth_config, loop=self.loop, debug=self.debug, **kwargs) as handler:
             return await handler._mgmt_request_response(  # pylint: disable=protected-access
                 REQUEST_RESPONSE_PEEK_OPERATION,
                 message,
@@ -341,7 +345,7 @@ class ReceiveClientMixin:
         mgmt_handler = functools.partial(
             mgmt_handlers.deferred_message_op, mode=receive_mode, message_type=DeferredMessage)
         async with BaseHandler(
-                self.loop, self.entity_uri, self.auth_config, debug=self.debug, **kwargs) as handler:
+                self.entity_uri, self.auth_config, loop=self.loop, debug=self.debug, **kwargs) as handler:
             return await handler._mgmt_request_response(  # pylint: disable=protected-access
                 REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
                 message,
@@ -371,7 +375,7 @@ class ReceiveClientMixin:
             'lock-tokens': types.AMQPArray([m.lock_token for m in messages])}
 
         async with BaseHandler(
-                self.loop, self.entity_uri, self.auth_config, debug=self.debug, **kwargs) as handler:
+                self.entity_uri, self.auth_config, loop=self.loop, debug=self.debug, **kwargs) as handler:
             return await handler._mgmt_request_response(  # pylint: disable=protected-access
                 REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
                 message,
@@ -400,7 +404,7 @@ class ReceiveClientMixin:
             'top': types.AMQPInt(max_results),
         }
         async with BaseHandler(
-                self.loop, self.entity_uri, self.auth_config, debug=self.debug, **kwargs) as handler:
+                self.entity_uri, self.auth_config, loop=self.loop, debug=self.debug, **kwargs) as handler:
             return await handler._mgmt_request_response(  # pylint: disable=protected-access
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
                 message,
@@ -443,21 +447,21 @@ class ReceiveClientMixin:
         handler_id = str(uuid.uuid4())
         if session:
             return SessionReceiver(
-                self.loop,
                 handler_id,
                 self.entity_uri,
                 self.auth_config,
                 session=session,
+                loop=self.loop,
                 debug=self.debug,
                 timeout=int(idle_timeout * 1000),
                 prefetch=prefetch,
                 mode=mode,
                 **kwargs)
         return Receiver(
-            self.loop,
             handler_id,
             self.entity_uri,
             self.auth_config,
+            loop=self.loop,
             debug=self.debug,
             timeout=int(idle_timeout * 1000),
             prefetch=prefetch,
@@ -499,10 +503,10 @@ class ReceiveClientMixin:
         else:
             entity_uri = self.mgmt_client.format_dead_letter_queue_name(self.entity_uri)
         return Receiver(
-            self.loop,
             handler_id,
             entity_uri,
             self.auth_config,
+            loop=self.loop,
             debug=self.debug,
             timeout=int(idle_timeout * 1000),
             prefetch=prefetch,
@@ -512,12 +516,11 @@ class ReceiveClientMixin:
 
 class BaseClient(mixins.BaseClient):
 
-    def __init__(self, loop, address, name, shared_access_key_name=None,
-                 shared_access_key_value=None, debug=False, **kwargs):
+    def __init__(self, address, name, *, shared_access_key_name=None,
+                 shared_access_key_value=None, loop=None, debug=False, **kwargs):
         """
         Constructs a new Client to interact with the named ServiceBus entity.
 
-        :param loop: An async event loop.
         :param address: The full URI of the Service Bus namespace. This can optionally
          include URL-encoded access name and key.
         :type address: str
@@ -532,43 +535,16 @@ class BaseClient(mixins.BaseClient):
         :param debug: Whether to output network trace logs to the logger. Default is `False`.
         :type debug: bool
         """
-        self.loop = loop
+        self.loop = loop or get_running_loop()
         super(BaseClient, self).__init__(
             address, name, shared_access_key_name=shared_access_key_name,
             shared_access_key_value=shared_access_key_value, debug=debug, **kwargs)
-
-    @classmethod
-    def from_entity(cls, loop, address, entity, **kwargs):  # pylint: disable=arguments-differ
-        client = cls(
-            loop,
-            address + "/" + entity.name,
-            entity.name,
-            validated_entity=entity,
-            **kwargs)
-        return client
-
-    @classmethod
-    def from_connection_string(cls, loop, conn_str, name=None, **kwargs):  # pylint: disable=arguments-differ
-        """
-        Create a Client from a ServiceBus connection string.
-
-        :param loop: An async event loop.
-        :param conn_str: The connection string.
-        :type conn_str: str
-        :param name: The name of the entity, if the 'EntityName' property is
-         not included in the connection string.
-        """
-        address, policy, key, entity = parse_conn_str(conn_str)
-        entity = name or entity
-        address = build_uri(address, entity)
-        name = address.split('/')[-1]
-        return cls(loop, address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
 
     def _get_entity(self):
         raise NotImplementedError("Must be implemented by child class.")
 
 
-class QueueClient(BaseClient, SendClientMixin, ReceiveClientMixin):
+class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
     """
     The QueueClient class defines a high level interface for sending
     messages to and receiving messages from the Azure ServiceBus service.
@@ -578,7 +554,7 @@ class QueueClient(BaseClient, SendClientMixin, ReceiveClientMixin):
         return self.mgmt_client.get_queue(self.name)
 
 
-class TopicClient(BaseClient, SendClientMixin):
+class TopicClient(SendClientMixin, BaseClient):
     """
     The TopicClient class defines a high level interface for sending
     messages to an Azure ServiceBus Topic.
@@ -588,18 +564,17 @@ class TopicClient(BaseClient, SendClientMixin):
         return self.mgmt_client.get_topic(self.name)
 
 
-class SubscriptionClient(BaseClient, ReceiveClientMixin):
+class SubscriptionClient(ReceiveClientMixin, BaseClient):
     """
     The SubscriptionClient class defines a high level interface for receiving
     messages from an Azure ServiceBus Subscription.
     """
 
-    def __init__(self, loop, address, name, shared_access_key_name=None,
-                 shared_access_key_value=None, debug=False, **kwargs):
+    def __init__(self, address, name, *, shared_access_key_name=None,
+                 shared_access_key_value=None, loop=None, debug=False, **kwargs):
         """
         Constructs a new Client to interact with the named ServiceBus entity.
 
-        :param loop: An async event loop.
         :param address: The full URI of the Service Bus namespace. This can optionally
          include URL-encoded access name and key.
         :type address: str
@@ -615,17 +590,17 @@ class SubscriptionClient(BaseClient, ReceiveClientMixin):
         :type debug: bool
         """
         super(SubscriptionClient, self).__init__(
-            loop, address, name,
+            address, name,
             shared_access_key_name=shared_access_key_name,
-            shared_access_key_value=shared_access_key_value, debug=debug, **kwargs)
+            shared_access_key_value=shared_access_key_value,
+            loop=loop, debug=debug, **kwargs)
         self.topic_name = self.address.path.split("/")[1]
 
     @classmethod
-    def from_connection_string(cls, loop, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
+    def from_connection_string(cls, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
         """
         Create a QueueClient from a connection string.
 
-        :param loop: An async event loop.
         :param conn_str: The connection string.
         :type conn_str: str
         :param name: The name of the Subscription.
@@ -638,12 +613,11 @@ class SubscriptionClient(BaseClient, ReceiveClientMixin):
         entity = topic or entity
         address = build_uri(address, entity)
         address += "/Subscriptions/" + name
-        return cls(loop, address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
+        return cls(address, name, shared_access_key_name=policy, shared_access_key_value=key, **kwargs)
 
     @classmethod
-    def from_entity(cls, loop, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ
+    def from_entity(cls, address, topic, entity, **kwargs):  # pylint: disable=arguments-differ
         client = cls(
-            loop,
             address + "/" + topic + "/Subscriptions/" + entity.name,
             entity.name,
             validated_entity=entity,

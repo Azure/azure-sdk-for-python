@@ -32,11 +32,11 @@ logger = get_logger(logging.DEBUG)
 connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 
-async def main(event_loop):
-    topic_client = TopicClient.from_connection_string(event_loop, connection_str, name="pytopic", debug=True)
+async def main():
+    topic_client = TopicClient.from_connection_string(connection_str, name="pytopic", debug=True)
     message = Message(b"sample topic message")
     await topic_client.send(message)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(loop))
+    loop.run_until_complete(main())

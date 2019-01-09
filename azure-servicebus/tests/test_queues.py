@@ -71,7 +71,7 @@ def test_queue_by_queue_client_conn_str_receive_handler_peeklock(live_servicebus
             message.enqueue_sequence_number = i
             sender.send(message)
 
-    receiver = queue_client.get_receiver(idle_timeout=1)
+    receiver = queue_client.get_receiver(idle_timeout=5)
     count = 0
     for message in receiver:
         print_message(message)
@@ -177,7 +177,7 @@ def test_queue_by_servicebus_client_iter_messages_simple(live_servicebus_config,
 def test_queue_by_servicebus_conn_str_client_iter_messages_with_abandon(live_servicebus_config, standard_queue):
     client = ServiceBusClient.from_connection_string(live_servicebus_config['conn_str'], debug=True)
     queue_client = client.get_queue(standard_queue)
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         with queue_client.get_sender() as sender:
             for i in range(10):
@@ -214,7 +214,7 @@ def test_queue_by_servicebus_client_iter_messages_with_defer(live_servicebus_con
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         with queue_client.get_sender() as sender:
             for i in range(10):
@@ -248,7 +248,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_client(
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         with queue_client.get_sender() as sender:
             for i in range(10):
@@ -292,7 +292,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receive
     results = queue_client.send(messages, session="test_session")
     assert all(result[0] for result in results)
 
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         for message in receiver:
             deferred_messages.append(message.sequence_number)
@@ -377,7 +377,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receive
         message.defer()
 
     assert count == 10
-    with queue_client.get_receiver(idle_timeout=1) as receiver:
+    with queue_client.get_receiver(idle_timeout=5) as receiver:
         deferred = receiver.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
         assert len(deferred) == 10
         for message in deferred:
@@ -397,7 +397,7 @@ def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_fou
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         with queue_client.get_sender() as sender:
             for i in range(3):
@@ -567,7 +567,7 @@ def test_queue_by_servicebus_client_browse_empty_messages(live_servicebus_config
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
         with queue_client.get_sender() as sender:
             for i in range(1):
                 message = Message("Test message no. {}".format(i))

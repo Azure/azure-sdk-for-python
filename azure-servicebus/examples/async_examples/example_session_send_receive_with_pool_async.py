@@ -58,12 +58,11 @@ async def message_processing(queue_client):
             return
 
 
-async def sample_session_send_receive_with_pool(event_loop, sb_config, queue):
+async def sample_session_send_receive_with_pool(sb_config, queue):
 
     concurrent_receivers = 5
     sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]
     client = ServiceBusClient(
-        event_loop,
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
@@ -81,15 +80,13 @@ async def sample_session_send_receive_with_pool(event_loop, sb_config, queue):
 
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
-    event_loop = asyncio.get_event_loop()
-    await sample_session_send_receive_with_pool(event_loop, live_servicebus_config, session_queue)
+    await sample_session_send_receive_with_pool(live_servicebus_config, session_queue)
 
 
 if __name__ == '__main__':
     live_config = conftest.get_live_servicebus_config()
     queue_name = conftest.create_session_queue(live_config)
-    loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(sample_session_send_receive_with_pool(loop, live_config, queue_name))
+        loop.run_until_complete(sample_session_send_receive_with_pool(live_config, queue_name))
     finally:
         conftest.cleanup_queue(live_config, queue_name)

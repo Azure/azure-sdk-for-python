@@ -9,14 +9,15 @@ import datetime
 import functools
 
 from azure.servicebus.common import message
+from azure.servicebus.common.utils import get_running_loop
 from azure.servicebus.common.errors import MessageSettleFailed
 from azure.servicebus.common.constants import DEADLETTERNAME
 
 
 class Message(message.Message):
 
-    def __init__(self, body, encoding='UTF-8', loop=None, **kwargs):
-        self._loop = loop or asyncio.get_event_loop()
+    def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
+        self._loop = loop or get_running_loop()
         super(Message, self).__init__(body, encoding=encoding, **kwargs)
 
     async def renew_lock(self):
@@ -37,7 +38,7 @@ class Message(message.Message):
     async def complete(self):
         """Complete the message.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -53,7 +54,7 @@ class Message(message.Message):
 
         :param description: Additional details.
         :type description: str
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -68,7 +69,7 @@ class Message(message.Message):
     async def abandon(self):
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -84,7 +85,7 @@ class Message(message.Message):
         """Defer the message. This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.

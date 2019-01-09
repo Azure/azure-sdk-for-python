@@ -23,7 +23,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
     """
 
     def __init__(
-            self, loop, handler_id, target, auth_config, session=None,
+            self, handler_id, target, auth_config, *, session=None, loop=None,
             connection=None, encoding='UTF-8', debug=False, **kwargs):
         """
         Instantiate a Service Bus event Sender client.
@@ -33,7 +33,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         self.name = "SBSender-{}".format(handler_id)
         self.session_id = session
         super(Sender, self).__init__(
-            loop, target, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
+            target, auth_config, loop=loop, connection=connection, encoding=encoding, debug=debug, **kwargs)
 
     def _build_handler(self):
         auth = None if self.connection else authentication.SASTokenAsync.from_shared_access_key(**self.auth_config)
