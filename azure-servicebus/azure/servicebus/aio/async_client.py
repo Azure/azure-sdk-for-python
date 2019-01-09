@@ -69,7 +69,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         parsed_namespace = urlparse(address)
         namespace, _, base = parsed_namespace.hostname.partition('.')
         return cls(
-            namespace,
+            service_namespace=namespace,
             shared_access_key_name=policy,
             shared_access_key_value=key,
             host_base='.' + base,

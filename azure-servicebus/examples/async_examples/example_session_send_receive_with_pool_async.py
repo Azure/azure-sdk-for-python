@@ -86,6 +86,7 @@ async def test_async_sample_session_send_receive_with_pool(live_servicebus_confi
 if __name__ == '__main__':
     live_config = conftest.get_live_servicebus_config()
     queue_name = conftest.create_session_queue(live_config)
+    loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(sample_session_send_receive_with_pool(live_config, queue_name))
     finally:
