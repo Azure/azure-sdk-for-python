@@ -9,23 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from msrest.serialization import Model
 
 
-class DdosCustomPolicy(Resource):
+class DdosCustomPolicy(Model):
     """A DDoS custom policy in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :ivar resource_guid: The resource GUID property of the DDoS custom policy
@@ -50,6 +48,7 @@ class DdosCustomPolicy(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource_guid': {'readonly': True},
@@ -62,7 +61,6 @@ class DdosCustomPolicy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -71,8 +69,12 @@ class DdosCustomPolicy(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, protocol_custom_settings=None, **kwargs) -> None:
-        super(DdosCustomPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
+    def __init__(self, *, tags=None, protocol_custom_settings=None, **kwargs) -> None:
+        super(DdosCustomPolicy, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = tags
         self.resource_guid = None
         self.provisioning_state = None
         self.public_ip_addresses = None

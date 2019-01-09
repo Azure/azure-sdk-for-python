@@ -182,7 +182,9 @@ class DdosCustomPoliciesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, ddos_custom_policy_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, ddos_custom_policy_name, tags=None, protocol_custom_settings=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.DdosCustomPolicy(tags=tags, protocol_custom_settings=protocol_custom_settings)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -233,17 +235,19 @@ class DdosCustomPoliciesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, ddos_custom_policy_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, ddos_custom_policy_name, tags=None, protocol_custom_settings=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a DDoS custom policy.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param ddos_custom_policy_name: The name of the DDoS custom policy.
         :type ddos_custom_policy_name: str
-        :param parameters: Parameters supplied to the create or update
-         operation.
-        :type parameters:
-         ~azure.mgmt.network.v2018_11_01.models.DdosCustomPolicy
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
+        :param protocol_custom_settings: The protocol-specific DDoS policy
+         customization parameters.
+        :type protocol_custom_settings:
+         list[~azure.mgmt.network.v2018_11_01.models.ProtocolCustomSettingsFormat]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -260,7 +264,8 @@ class DdosCustomPoliciesOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             ddos_custom_policy_name=ddos_custom_policy_name,
-            parameters=parameters,
+            tags=tags,
+            protocol_custom_settings=protocol_custom_settings,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
