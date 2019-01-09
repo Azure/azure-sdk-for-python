@@ -6,16 +6,16 @@ Release History
 0.50.0 (2018-01-11)
 +++++++++++++++++++
 
-**Breaking changes**
+**News**
 
-* Preview of new SDK API.
+* Existing API has been deprecated.
 * Original HTTP-base API still available under azure.servicebus.control_client
-* For full API changes, please see updated reference documentation.
 
 **Features**
 
 Introduces a new client that supports AMQP-based operations such as message sending and receiving,
 message settling, lock renewal, deferal and message sessions.
+For full API changes, please see updated reference documentation.
 
 
 
