@@ -42,7 +42,7 @@ def test_subscription_by_subscription_client_conn_str_receive_basic(live_service
         sender.send(message)
 
     sub_client = SubscriptionClient.from_connection_string(live_servicebus_config['conn_str'], subscription_name, topic=topic_name, debug=True)
-    with sub_client.get_receiver(idle_timeout=1) as receiver:
+    with sub_client.get_receiver(idle_timeout=5) as receiver:
         count = 0
         for message in receiver:
             count += 1
@@ -65,7 +65,7 @@ def test_subscription_by_servicebus_client_conn_str_send_basic(live_servicebus_c
         message = Message(b"Sample topic message")
         sender.send(message)
 
-    with sub_client.get_receiver(idle_timeout=1) as receiver:
+    with sub_client.get_receiver(idle_timeout=5) as receiver:
         count = 0
         for message in receiver:
             count += 1

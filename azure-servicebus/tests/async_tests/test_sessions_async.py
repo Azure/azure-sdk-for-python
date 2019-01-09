@@ -77,9 +77,9 @@ async def test_async_session_by_session_client_conn_str_receive_handler_peeklock
             await sender.send(message)
 
     with pytest.raises(ValueError):
-        session = queue_client.get_receiver(idle_timeout=1)
+        session = queue_client.get_receiver(idle_timeout=5)
 
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     count = 0
     async for message in session:
         print_message(message)
@@ -105,7 +105,7 @@ async def test_async_session_by_queue_client_conn_str_receive_handler_receiveand
             await sender.send(message)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     async for message in session:
         messages.append(message)
         assert session_id == session.session_id
@@ -118,7 +118,7 @@ async def test_async_session_by_queue_client_conn_str_receive_handler_receiveand
     time.sleep(30)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     async for message in session:
         messages.append(message)
     assert len(messages) == 0
@@ -138,7 +138,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_sto
             await sender.send(message)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     async for message in session:
         assert session_id == session.session_id
         assert session_id == message.session_id
@@ -170,7 +170,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_no_
         name=session_queue,
         debug=True)
 
-    session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1)
+    session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5)
     with pytest.raises(NoActiveSession):
         await session.open()
 
@@ -184,7 +184,7 @@ async def test_async_session_by_session_client_conn_str_receive_handler_with_ina
 
     session_id = str(uuid.uuid4())
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     async for message in session:
         messages.append(message)
 
@@ -208,7 +208,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     async for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -217,7 +217,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
     assert count == 10
 
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = await session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -246,7 +246,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     async for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -255,7 +255,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
 
     assert count == 10
 
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = await session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -263,7 +263,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
             await message.dead_letter("something")
     
     count = 0
-    async with queue_client.get_deadletter_receiver(idle_timeout=1) as receiver:
+    async with queue_client.get_deadletter_receiver(idle_timeout=5) as receiver:
         async for message in receiver:
             count += 1
             print_message(message)
@@ -289,7 +289,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     async for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -297,7 +297,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         await message.defer()
 
     assert count == 10
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = await session.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
         assert len(deferred) == 10
         for message in deferred:
@@ -324,7 +324,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
             message = Message("Deferred message no. {}".format(i))
             await sender.send(message)
 
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     count = 0
     async for message in session:
         deferred_messages.append(message.sequence_number)
@@ -351,7 +351,7 @@ async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadl
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1, prefetch=10) as receiver:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5, prefetch=10) as receiver:
 
         async with queue_client.get_sender(session=session_id) as sender:
             for i in range(10):
@@ -368,7 +368,7 @@ async def test_async_session_by_servicebus_client_fetch_next_with_retrieve_deadl
             messages = await receiver.fetch_next()
     assert count == 10
 
-    async with queue_client.get_deadletter_receiver(idle_timeout=1) as session:
+    async with queue_client.get_deadletter_receiver(idle_timeout=5) as session:
         count = 0
         async for message in session:
             print_message(message)
@@ -416,7 +416,7 @@ async def test_async_session_by_servicebus_client_browse_messages_with_receiver(
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
-    async with queue_client.get_receiver(idle_timeout=1, session=session_id) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, session=session_id) as receiver:
         async with queue_client.get_sender(session=session_id) as sender:
             for i in range(5):
                 message = Message("Test message no. {}".format(i))
@@ -488,7 +488,7 @@ async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live
 
     renewer = AutoLockRenew()
     messages = []
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
         renewer.register(session, timeout=60)
         print("Registered lock renew thread", session.locked_until, datetime.now())
         for message in await session.fetch_next():
@@ -713,7 +713,7 @@ async def test_async_session_get_set_state_with_receiver(live_servicebus_config,
             message = Message("Handler message no. {}".format(i))
             await sender.send(message)
 
-    async with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    async with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         assert await session.get_session_state() == None
         await session.set_session_state("first_state")
         count = 0
@@ -748,7 +748,7 @@ async def test_async_session_by_servicebus_client_list_sessions_with_receiver(li
         async with queue_client.get_receiver(session=session) as receiver:
             await receiver.set_session_state("SESSION {}".format(session))
 
-    async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         current_sessions = await receiver.list_sessions(updated_since=start_time)
         assert len(current_sessions) == 5
         assert current_sessions == sessions
@@ -789,7 +789,7 @@ async def test_async_session_by_servicebus_client_session_pool(live_servicebus_c
     async def message_processing(queue_client):
         while True:
             try:
-                async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1) as session:
+                async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as session:
                     async for message in session:
                         print("Message: {}".format(message))
                         messages.append(message)

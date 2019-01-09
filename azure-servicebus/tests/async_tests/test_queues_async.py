@@ -81,9 +81,9 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_peeklock(liv
             await sender.send(message)
 
     with pytest.raises(ValueError):
-        queue_client.get_receiver(session="test", idle_timeout=1)
+        queue_client.get_receiver(session="test", idle_timeout=5)
 
-    receiver = queue_client.get_receiver(idle_timeout=1)
+    receiver = queue_client.get_receiver(idle_timeout=5)
     count = 0
     async for message in receiver:
         print_message(message)
@@ -108,7 +108,7 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_receiveandde
             await sender.send(message)
 
     messages = []
-    receiver = queue_client.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    receiver = queue_client.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     async for message in receiver:
         messages.append(message)
         with pytest.raises(MessageAlreadySettled):
@@ -119,7 +119,7 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_receiveandde
     time.sleep(30)
 
     messages = []
-    receiver = queue_client.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    receiver = queue_client.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     async for message in receiver:
         messages.append(message)
     assert len(messages) == 0
@@ -138,7 +138,7 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_with_stop(li
             await sender.send(message)
 
     messages = []
-    receiver = queue_client.get_receiver(idle_timeout=1)
+    receiver = queue_client.get_receiver(idle_timeout=5)
     async for message in receiver:
         messages.append(message)
         await message.complete()
@@ -168,7 +168,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_simple(live_servic
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -193,7 +193,7 @@ async def test_async_queue_by_servicebus_conn_str_client_iter_messages_with_aban
     client = ServiceBusClient.from_connection_string(live_servicebus_config['conn_str'], debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -212,7 +212,7 @@ async def test_async_queue_by_servicebus_conn_str_client_iter_messages_with_aban
 
     assert count == 10
 
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)
@@ -231,7 +231,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_defer(live_se
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -246,7 +246,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_defer(live_se
             await message.defer()
 
     assert count == 10
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)
@@ -265,7 +265,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -309,7 +309,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
     results = await queue_client.send(messages)
     assert all(result[0] for result in results)
 
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             deferred_messages.append(message.sequence_number)
@@ -318,7 +318,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
             await message.defer()
     assert count == 10
 
-    async with queue_client.get_receiver(idle_timeout=1) as session:
+    async with queue_client.get_receiver(idle_timeout=5) as session:
         deferred = await session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -344,7 +344,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
     results = await queue_client.send(messages)
     assert all(result[0] for result in results)
 
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             deferred_messages.append(message.sequence_number)
@@ -354,7 +354,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
 
     assert count == 10
 
-    async with queue_client.get_receiver(idle_timeout=1) as session:
+    async with queue_client.get_receiver(idle_timeout=5) as session:
         deferred = await session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -362,7 +362,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
             await message.dead_letter("something")
     
     count = 0
-    async with queue_client.get_deadletter_receiver(idle_timeout=1) as receiver:
+    async with queue_client.get_deadletter_receiver(idle_timeout=5) as receiver:
         async for message in receiver:
             count += 1
             print_message(message)
@@ -387,7 +387,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
     assert all(result[0] for result in results)
 
     count = 0
-    receiver = queue_client.get_receiver(idle_timeout=1)
+    receiver = queue_client.get_receiver(idle_timeout=5)
     async for message in receiver:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -395,7 +395,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
         await message.defer()
 
     assert count == 10
-    async with queue_client.get_receiver(idle_timeout=1) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5) as receiver:
         deferred = await receiver.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
         assert len(deferred) == 10
         for message in deferred:
@@ -416,7 +416,7 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
 
     queue_client = client.get_queue(standard_queue)
     deferred_messages = []
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(3):
@@ -448,7 +448,7 @@ async def test_async_queue_by_servicebus_client_receive_batch_with_deadletter(li
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -466,7 +466,7 @@ async def test_async_queue_by_servicebus_client_receive_batch_with_deadletter(li
 
     assert count == 10
 
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)
@@ -484,7 +484,7 @@ async def test_async_queue_by_servicebus_client_receive_batch_with_retrieve_dead
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
 
         async with queue_client.get_sender() as sender:
             for i in range(10):
@@ -505,7 +505,7 @@ async def test_async_queue_by_servicebus_client_receive_batch_with_retrieve_dead
 
     assert count == 10
 
-    async with queue_client.get_deadletter_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)
@@ -562,7 +562,7 @@ async def test_async_queue_by_servicebus_client_browse_messages_with_receiver(li
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         async with queue_client.get_sender() as sender:
             for i in range(5):
                 message = Message("Test message no. {}".format(i))
@@ -586,15 +586,15 @@ async def test_async_queue_by_servicebus_client_browse_empty_messages(live_servi
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
-        async with queue_client.get_sender() as sender:
-            for i in range(1):
-                message = Message("Test message no. {}".format(i))
-                await sender.send(message)
-        received = await receiver.fetch_next()
-        for message in received:
-            print_message(message)
-            await message.complete()
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+        # async with queue_client.get_sender() as sender:
+        #     for i in range(1):
+        #         message = Message("Test message no. {}".format(i))
+        #         await sender.send(message)
+        # received = await receiver.fetch_next()
+        # for message in received:
+        #     print_message(message)
+        #     await message.complete()
         messages = await receiver.peek(10)
         assert len(messages) == 0
 
@@ -610,7 +610,7 @@ async def test_async_queue_by_servicebus_client_renew_message_locks(live_service
     queue_client = client.get_queue(standard_queue)
     messages = []
     locks = 3
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
         async with queue_client.get_sender() as sender:
             for i in range(locks):
                 message = Message("Test message no. {}".format(i))
@@ -651,7 +651,7 @@ async def test_async_queue_by_queue_client_conn_str_receive_handler_with_autoloc
 
     renewer = AutoLockRenew()
     messages = []
-    async with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
         async for message in receiver:
             if not messages:
                 messages.append(message)
@@ -764,7 +764,7 @@ async def test_async_queue_message_time_to_live(live_servicebus_config, standard
         messages = await receiver.fetch_next(timeout=10)
     assert not messages
 
-    async with queue_client.get_deadletter_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    async with queue_client.get_deadletter_receiver(idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)
@@ -790,7 +790,7 @@ async def test_async_queue_message_duplicate_detection(live_servicebus_config, d
             message.properties.message_id = message_id
             await sender.send(message)
 
-    async with queue_client.get_receiver(idle_timeout=1) as receiver:
+    async with queue_client.get_receiver(idle_timeout=5) as receiver:
         count = 0
         async for message in receiver:
             print_message(message)

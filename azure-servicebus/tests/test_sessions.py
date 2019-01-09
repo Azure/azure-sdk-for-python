@@ -68,9 +68,9 @@ def test_session_by_session_client_conn_str_receive_handler_peeklock(live_servic
             sender.send(message)
 
     with pytest.raises(ValueError):
-        session = queue_client.get_receiver(idle_timeout=1)
+        session = queue_client.get_receiver(idle_timeout=5)
 
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     count = 0
     for message in session:
         print_message(message)
@@ -95,7 +95,7 @@ def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(live_
             sender.send(message)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     for message in session:
         messages.append(message)
         assert session_id == session.session_id
@@ -108,7 +108,7 @@ def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(live_
     time.sleep(30)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     for message in session:
         messages.append(message)
     assert len(messages) == 0
@@ -127,7 +127,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_stop(live_servi
             sender.send(message)
 
     messages = []
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     for message in session:
         assert session_id == session.session_id
         assert session_id == message.session_id
@@ -158,7 +158,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_no_session(live
         name=session_queue,
         debug=True)
 
-    session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1)
+    session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5)
     with pytest.raises(NoActiveSession):
         session.open()
 
@@ -171,7 +171,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_inactive_sessio
 
     session_id = str(uuid.uuid4())
     messages = []
-    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     for message in session:
         messages.append(message)
 
@@ -194,7 +194,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -203,7 +203,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
 
     assert count == 10
 
-    with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -231,7 +231,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -240,7 +240,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
 
     assert count == 10
 
-    with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = session.receive_deferred_messages(deferred_messages)
         assert len(deferred) == 10
         for message in deferred:
@@ -248,7 +248,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
             message.dead_letter("something")
     
     count = 0
-    with queue_client.get_deadletter_receiver(idle_timeout=1) as receiver:
+    with queue_client.get_deadletter_receiver(idle_timeout=5) as receiver:
         for message in receiver:
             count += 1
             print_message(message)
@@ -273,7 +273,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
     assert all(result[0] for result in results)
 
     count = 0
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     for message in session:
         deferred_messages.append(message.sequence_number)
         print_message(message)
@@ -281,7 +281,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
         message.defer()
 
     assert count == 10
-    with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         deferred = session.receive_deferred_messages(deferred_messages, mode=ReceiveSettleMode.ReceiveAndDelete)
         assert len(deferred) == 10
         for message in deferred:
@@ -307,7 +307,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_clien
             message = Message("Deferred message no. {}".format(i))
             sender.send(message)
 
-    session = queue_client.get_receiver(session=session_id, idle_timeout=1)
+    session = queue_client.get_receiver(session=session_id, idle_timeout=5)
     count = 0
     for message in session:
         deferred_messages.append(message.sequence_number)
@@ -334,7 +334,7 @@ def test_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_s
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
-    with queue_client.get_receiver(session=session_id, idle_timeout=1, prefetch=10) as receiver:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5, prefetch=10) as receiver:
 
         with queue_client.get_sender(session=session_id) as sender:
             for i in range(10):
@@ -351,7 +351,7 @@ def test_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_s
             messages = receiver.fetch_next()
     assert count == 10
 
-    with queue_client.get_deadletter_receiver(idle_timeout=1) as session:
+    with queue_client.get_deadletter_receiver(idle_timeout=5) as session:
         count = 0
         for message in session:
             print_message(message)
@@ -398,7 +398,7 @@ def test_session_by_servicebus_client_browse_messages_with_receiver(live_service
 
     queue_client = client.get_queue(session_queue)
     session_id = str(uuid.uuid4())
-    with queue_client.get_receiver(idle_timeout=1, session=session_id) as receiver:
+    with queue_client.get_receiver(idle_timeout=5, session=session_id) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
             for i in range(5):
                 message = Message("Test message no. {}".format(i))
@@ -468,7 +468,7 @@ def test_session_by_conn_str_receive_handler_with_autolockrenew(live_servicebus_
 
     renewer = AutoLockRenew()
     messages = []
-    with queue_client.get_receiver(session=session_id, idle_timeout=1, mode=ReceiveSettleMode.PeekLock, prefetch=10) as session:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as session:
         renewer.register(session, timeout=60)
         print("Registered lock renew thread", session.locked_until, datetime.now())
         for message in session:
@@ -678,7 +678,7 @@ def test_session_get_set_state_with_receiver(live_servicebus_config, session_que
             message = Message("Handler message no. {}".format(i))
             sender.send(message)
 
-    with queue_client.get_receiver(session=session_id, idle_timeout=1) as session:
+    with queue_client.get_receiver(session=session_id, idle_timeout=5) as session:
         assert session.get_session_state() == None
         session.set_session_state("first_state")
         count = 0
@@ -712,7 +712,7 @@ def test_session_by_servicebus_client_list_sessions_with_receiver(live_servicebu
         with queue_client.get_receiver(session=session) as receiver:
             receiver.set_session_state("SESSION {}".format(session))
 
-    with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1, mode=ReceiveSettleMode.PeekLock) as receiver:
+    with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
         current_sessions = receiver.list_sessions(updated_since=start_time)
         assert len(current_sessions) == 5
         assert current_sessions == sessions
@@ -754,7 +754,7 @@ def test_session_by_servicebus_client_session_pool(live_servicebus_config, sessi
     def message_processing(queue_client):
         while True:
             try:
-                with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=1) as session:
+                with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as session:
                     for message in session:
                         print("Message: {}".format(message))
                         messages.append(message)
