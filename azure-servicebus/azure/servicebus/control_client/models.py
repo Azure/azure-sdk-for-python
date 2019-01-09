@@ -69,6 +69,17 @@ class Topic(WindowsAzureData):
         self.enable_batched_operations = enable_batched_operations
         self.size_in_bytes = size_in_bytes
 
+    @property
+    def max_size_in_mega_bytes(self):
+        import warnings
+        warnings.warn(
+            'This attribute has been changed to max_size_in_megabytes.')
+        return self.max_size_in_megabytes
+
+    @max_size_in_mega_bytes.setter
+    def max_size_in_mega_bytes(self, value):
+        self.max_size_in_megabytes = value
+
 
 class Subscription(WindowsAzureData):
 
