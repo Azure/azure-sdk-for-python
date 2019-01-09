@@ -13,14 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.backup_fabrics_operations import BackupFabricsOperations
-from .operations.scoped_backup_policies_operations import ScopedBackupPoliciesOperations
-from .operations.scoped_protection_policies_operations import ScopedProtectionPoliciesOperations
-from .operations.scoped_protection_policy_operation_results_operations import ScopedProtectionPolicyOperationResultsOperations
-from .operations.scoped_protection_policy_operation_statuses_operations import ScopedProtectionPolicyOperationStatusesOperations
-from .operations.backup_protection_containers_in_fabric_operations import BackupProtectionContainersInFabricOperations
-from .operations.backup_protected_items_in_container_operations import BackupProtectedItemsInContainerOperations
-from .operations.protection_containers_operations import ProtectionContainersOperations
 from .operations.protection_intent_operations import ProtectionIntentOperations
 from .operations.backup_status_operations import BackupStatusOperations
 from .operations.feature_support_operations import FeatureSupportOperations
@@ -37,6 +29,7 @@ from .operations.backup_resource_vault_configs_operations import BackupResourceV
 from .operations.backup_engines_operations import BackupEnginesOperations
 from .operations.protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
 from .operations.protectable_containers_operations import ProtectableContainersOperations
+from .operations.protection_containers_operations import ProtectionContainersOperations
 from .operations.backup_workload_items_operations import BackupWorkloadItemsOperations
 from .operations.protection_container_operation_results_operations import ProtectionContainerOperationResultsOperations
 from .operations.protected_items_operations import ProtectedItemsOperations
@@ -99,22 +92,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
-    :ivar backup_fabrics: BackupFabrics operations
-    :vartype backup_fabrics: azure.mgmt.recoveryservicesbackup.operations.BackupFabricsOperations
-    :ivar scoped_backup_policies: ScopedBackupPolicies operations
-    :vartype scoped_backup_policies: azure.mgmt.recoveryservicesbackup.operations.ScopedBackupPoliciesOperations
-    :ivar scoped_protection_policies: ScopedProtectionPolicies operations
-    :vartype scoped_protection_policies: azure.mgmt.recoveryservicesbackup.operations.ScopedProtectionPoliciesOperations
-    :ivar scoped_protection_policy_operation_results: ScopedProtectionPolicyOperationResults operations
-    :vartype scoped_protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ScopedProtectionPolicyOperationResultsOperations
-    :ivar scoped_protection_policy_operation_statuses: ScopedProtectionPolicyOperationStatuses operations
-    :vartype scoped_protection_policy_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ScopedProtectionPolicyOperationStatusesOperations
-    :ivar backup_protection_containers_in_fabric: BackupProtectionContainersInFabric operations
-    :vartype backup_protection_containers_in_fabric: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionContainersInFabricOperations
-    :ivar backup_protected_items_in_container: BackupProtectedItemsInContainer operations
-    :vartype backup_protected_items_in_container: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsInContainerOperations
-    :ivar protection_containers: ProtectionContainers operations
-    :vartype protection_containers: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainersOperations
     :ivar protection_intent: ProtectionIntent operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatus operations
@@ -147,6 +124,8 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype protection_container_refresh_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerRefreshOperationResultsOperations
     :ivar protectable_containers: ProtectableContainers operations
     :vartype protectable_containers: azure.mgmt.recoveryservicesbackup.operations.ProtectableContainersOperations
+    :ivar protection_containers: ProtectionContainers operations
+    :vartype protection_containers: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainersOperations
     :ivar backup_workload_items: BackupWorkloadItems operations
     :vartype backup_workload_items: azure.mgmt.recoveryservicesbackup.operations.BackupWorkloadItemsOperations
     :ivar protection_container_operation_results: ProtectionContainerOperationResults operations
@@ -208,22 +187,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_fabrics = BackupFabricsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.scoped_backup_policies = ScopedBackupPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.scoped_protection_policies = ScopedProtectionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.scoped_protection_policy_operation_results = ScopedProtectionPolicyOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.scoped_protection_policy_operation_statuses = ScopedProtectionPolicyOperationStatusesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protection_containers_in_fabric = BackupProtectionContainersInFabricOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protected_items_in_container = BackupProtectedItemsInContainerOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_containers = ProtectionContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
@@ -255,6 +218,8 @@ class RecoveryServicesBackupClient(SDKClient):
         self.protection_container_refresh_operation_results = ProtectionContainerRefreshOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protectable_containers = ProtectableContainersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_containers = ProtectionContainersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_workload_items = BackupWorkloadItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)

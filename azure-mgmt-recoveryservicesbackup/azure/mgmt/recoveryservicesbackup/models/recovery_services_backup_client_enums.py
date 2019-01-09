@@ -49,6 +49,37 @@ class WorkloadType(str, Enum):
     sap_ase_database = "SAPAseDatabase"
 
 
+class RecoveryType(str, Enum):
+
+    invalid = "Invalid"
+    original_location = "OriginalLocation"
+    alternate_location = "AlternateLocation"
+    restore_disks = "RestoreDisks"
+
+
+class CopyOptions(str, Enum):
+
+    invalid = "Invalid"
+    create_copy = "CreateCopy"
+    skip = "Skip"
+    overwrite = "Overwrite"
+    fail_on_conflict = "FailOnConflict"
+
+
+class RestoreRequestType(str, Enum):
+
+    invalid = "Invalid"
+    full_share_restore = "FullShareRestore"
+    item_level_restore = "ItemLevelRestore"
+
+
+class JobSupportedAction(str, Enum):
+
+    invalid = "Invalid"
+    cancellable = "Cancellable"
+    retriable = "Retriable"
+
+
 class ProtectedItemState(str, Enum):
 
     invalid = "Invalid"
@@ -57,6 +88,15 @@ class ProtectedItemState(str, Enum):
     protection_error = "ProtectionError"
     protection_stopped = "ProtectionStopped"
     protection_paused = "ProtectionPaused"
+
+
+class SupportStatus(str, Enum):
+
+    invalid = "Invalid"
+    supported = "Supported"
+    default_off = "DefaultOFF"
+    default_on = "DefaultON"
+    not_supported = "NotSupported"
 
 
 class LastBackupStatus(str, Enum):
@@ -85,11 +125,89 @@ class PolicyType(str, Enum):
     copy_only_full = "CopyOnlyFull"
 
 
-class OperationType(str, Enum):
+class OverwriteOptions(str, Enum):
 
     invalid = "Invalid"
-    register = "Register"
-    reregister = "Reregister"
+    fail_on_conflict = "FailOnConflict"
+    overwrite = "Overwrite"
+
+
+class WorkloadItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_data_base = "SQLDataBase"
+    sap_hana_system = "SAPHanaSystem"
+    sap_hana_database = "SAPHanaDatabase"
+    sap_ase_system = "SAPAseSystem"
+    sap_ase_database = "SAPAseDatabase"
+
+
+class SQLDataDirectoryType(str, Enum):
+
+    invalid = "Invalid"
+    data = "Data"
+    log = "Log"
+
+
+class UsagesUnit(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+
+
+class DataSourceType(str, Enum):
+
+    invalid = "Invalid"
+    vm = "VM"
+    file_folder = "FileFolder"
+    azure_sql_db = "AzureSqlDb"
+    sqldb = "SQLDB"
+    exchange = "Exchange"
+    sharepoint = "Sharepoint"
+    vmware_vm = "VMwareVM"
+    system_state = "SystemState"
+    client = "Client"
+    generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
+
+
+class ProtectionStatus(str, Enum):
+
+    invalid = "Invalid"
+    not_protected = "NotProtected"
+    protecting = "Protecting"
+    protected = "Protected"
+    protection_failed = "ProtectionFailed"
+
+
+class FabricName(str, Enum):
+
+    invalid = "Invalid"
+    azure = "Azure"
+
+
+class Type(str, Enum):
+
+    invalid = "Invalid"
+    backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
+    backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
+
+
+class RetentionDurationType(str, Enum):
+
+    invalid = "Invalid"
+    days = "Days"
+    weeks = "Weeks"
+    months = "Months"
+    years = "Years"
 
 
 class BackupManagementType(str, Enum):
@@ -105,32 +223,27 @@ class BackupManagementType(str, Enum):
     default_backup = "DefaultBackup"
 
 
-class ContainerType(str, Enum):
+class JobStatus(str, Enum):
 
     invalid = "Invalid"
-    unknown = "Unknown"
-    iaas_vm_container = "IaasVMContainer"
-    iaas_vm_service_container = "IaasVMServiceContainer"
-    dpm_container = "DPMContainer"
-    azure_backup_server_container = "AzureBackupServerContainer"
-    mab_container = "MABContainer"
-    cluster = "Cluster"
-    azure_sql_container = "AzureSqlContainer"
-    windows = "Windows"
-    vcenter = "VCenter"
-    vm_app_container = "VMAppContainer"
-    sqlag_work_load_container = "SQLAGWorkLoadContainer"
-    storage_container = "StorageContainer"
-    generic_container = "GenericContainer"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+    completed_with_warnings = "CompletedWithWarnings"
+    cancelled = "Cancelled"
+    cancelling = "Cancelling"
 
 
-class RetentionDurationType(str, Enum):
+class JobOperationType(str, Enum):
 
     invalid = "Invalid"
-    days = "Days"
-    weeks = "Weeks"
-    months = "Months"
-    years = "Years"
+    register = "Register"
+    un_register = "UnRegister"
+    configure_backup = "ConfigureBackup"
+    backup = "Backup"
+    restore = "Restore"
+    disable_backup = "DisableBackup"
+    delete_backup_data = "DeleteBackupData"
 
 
 class DayOfWeek(str, Enum):
@@ -176,195 +289,6 @@ class MonthOfYear(str, Enum):
     october = "October"
     november = "November"
     december = "December"
-
-
-class BackupItemType(str, Enum):
-
-    invalid = "Invalid"
-    vm = "VM"
-    file_folder = "FileFolder"
-    azure_sql_db = "AzureSqlDb"
-    sqldb = "SQLDB"
-    exchange = "Exchange"
-    sharepoint = "Sharepoint"
-    vmware_vm = "VMwareVM"
-    system_state = "SystemState"
-    client = "Client"
-    generic_data_source = "GenericDataSource"
-    sql_data_base = "SQLDataBase"
-    azure_file_share = "AzureFileShare"
-    sap_hana_database = "SAPHanaDatabase"
-    sap_ase_database = "SAPAseDatabase"
-
-
-class OperationStatusValues(str, Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-
-
-class DataSourceType(str, Enum):
-
-    invalid = "Invalid"
-    vm = "VM"
-    file_folder = "FileFolder"
-    azure_sql_db = "AzureSqlDb"
-    sqldb = "SQLDB"
-    exchange = "Exchange"
-    sharepoint = "Sharepoint"
-    vmware_vm = "VMwareVM"
-    system_state = "SystemState"
-    client = "Client"
-    generic_data_source = "GenericDataSource"
-    sql_data_base = "SQLDataBase"
-    azure_file_share = "AzureFileShare"
-    sap_hana_database = "SAPHanaDatabase"
-    sap_ase_database = "SAPAseDatabase"
-
-
-class CreateMode(str, Enum):
-
-    invalid = "Invalid"
-    default = "Default"
-    recover = "Recover"
-
-
-class HealthState(str, Enum):
-
-    passed = "Passed"
-    action_required = "ActionRequired"
-    action_suggested = "ActionSuggested"
-    invalid = "Invalid"
-
-
-class ScheduleRunType(str, Enum):
-
-    invalid = "Invalid"
-    daily = "Daily"
-    weekly = "Weekly"
-
-
-class RecoveryType(str, Enum):
-
-    invalid = "Invalid"
-    original_location = "OriginalLocation"
-    alternate_location = "AlternateLocation"
-    restore_disks = "RestoreDisks"
-
-
-class CopyOptions(str, Enum):
-
-    invalid = "Invalid"
-    create_copy = "CreateCopy"
-    skip = "Skip"
-    overwrite = "Overwrite"
-    fail_on_conflict = "FailOnConflict"
-
-
-class RestoreRequestType(str, Enum):
-
-    invalid = "Invalid"
-    full_share_restore = "FullShareRestore"
-    item_level_restore = "ItemLevelRestore"
-
-
-class JobSupportedAction(str, Enum):
-
-    invalid = "Invalid"
-    cancellable = "Cancellable"
-    retriable = "Retriable"
-
-
-class SupportStatus(str, Enum):
-
-    invalid = "Invalid"
-    supported = "Supported"
-    default_off = "DefaultOFF"
-    default_on = "DefaultON"
-    not_supported = "NotSupported"
-
-
-class OverwriteOptions(str, Enum):
-
-    invalid = "Invalid"
-    fail_on_conflict = "FailOnConflict"
-    overwrite = "Overwrite"
-
-
-class WorkloadItemType(str, Enum):
-
-    invalid = "Invalid"
-    sql_instance = "SQLInstance"
-    sql_data_base = "SQLDataBase"
-    sap_hana_system = "SAPHanaSystem"
-    sap_hana_database = "SAPHanaDatabase"
-    sap_ase_system = "SAPAseSystem"
-    sap_ase_database = "SAPAseDatabase"
-
-
-class SQLDataDirectoryType(str, Enum):
-
-    invalid = "Invalid"
-    data = "Data"
-    log = "Log"
-
-
-class UsagesUnit(str, Enum):
-
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    percent = "Percent"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-
-
-class ProtectionStatus(str, Enum):
-
-    invalid = "Invalid"
-    not_protected = "NotProtected"
-    protecting = "Protecting"
-    protected = "Protected"
-    protection_failed = "ProtectionFailed"
-
-
-class FabricName(str, Enum):
-
-    invalid = "Invalid"
-    azure = "Azure"
-
-
-class Type(str, Enum):
-
-    invalid = "Invalid"
-    backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
-    backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
-
-
-class JobStatus(str, Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    completed = "Completed"
-    failed = "Failed"
-    completed_with_warnings = "CompletedWithWarnings"
-    cancelled = "Cancelled"
-    cancelling = "Cancelling"
-
-
-class JobOperationType(str, Enum):
-
-    invalid = "Invalid"
-    register = "Register"
-    un_register = "UnRegister"
-    configure_backup = "ConfigureBackup"
-    backup = "Backup"
-    restore = "Restore"
-    disable_backup = "DisableBackup"
-    delete_backup_data = "DeleteBackupData"
 
 
 class MabServerType(str, Enum):
@@ -444,11 +368,33 @@ class ValidationStatus(str, Enum):
     failed = "Failed"
 
 
+class CreateMode(str, Enum):
+
+    invalid = "Invalid"
+    default = "Default"
+    recover = "Recover"
+
+
+class HealthState(str, Enum):
+
+    passed = "Passed"
+    action_required = "ActionRequired"
+    action_suggested = "ActionSuggested"
+    invalid = "Invalid"
+
+
 class IntentItemType(str, Enum):
 
     invalid = "Invalid"
     sql_instance = "SQLInstance"
     sql_availability_group_container = "SQLAvailabilityGroupContainer"
+
+
+class ScheduleRunType(str, Enum):
+
+    invalid = "Invalid"
+    daily = "Daily"
+    weekly = "Weekly"
 
 
 class AzureFileShareType(str, Enum):
@@ -472,6 +418,13 @@ class BackupType(str, Enum):
     differential = "Differential"
     log = "Log"
     copy_only_full = "CopyOnlyFull"
+
+
+class OperationType(str, Enum):
+
+    invalid = "Invalid"
+    register = "Register"
+    reregister = "Reregister"
 
 
 class RestorePointType(str, Enum):
@@ -503,6 +456,25 @@ class EnhancedSecurityState(str, Enum):
     disabled = "Disabled"
 
 
+class ContainerType(str, Enum):
+
+    invalid = "Invalid"
+    unknown = "Unknown"
+    iaas_vm_container = "IaasVMContainer"
+    iaas_vm_service_container = "IaasVMServiceContainer"
+    dpm_container = "DPMContainer"
+    azure_backup_server_container = "AzureBackupServerContainer"
+    mab_container = "MABContainer"
+    cluster = "Cluster"
+    azure_sql_container = "AzureSqlContainer"
+    windows = "Windows"
+    vcenter = "VCenter"
+    vm_app_container = "VMAppContainer"
+    sqlag_work_load_container = "SQLAGWorkLoadContainer"
+    storage_container = "StorageContainer"
+    generic_container = "GenericContainer"
+
+
 class RestorePointQueryType(str, Enum):
 
     invalid = "Invalid"
@@ -526,3 +498,31 @@ class RecoveryPointTierStatus(str, Enum):
     valid = "Valid"
     disabled = "Disabled"
     deleted = "Deleted"
+
+
+class BackupItemType(str, Enum):
+
+    invalid = "Invalid"
+    vm = "VM"
+    file_folder = "FileFolder"
+    azure_sql_db = "AzureSqlDb"
+    sqldb = "SQLDB"
+    exchange = "Exchange"
+    sharepoint = "Sharepoint"
+    vmware_vm = "VMwareVM"
+    system_state = "SystemState"
+    client = "Client"
+    generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
+    sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
+
+
+class OperationStatusValues(str, Enum):
+
+    invalid = "Invalid"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"

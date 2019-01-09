@@ -9,14 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_fabrics_operations import BackupFabricsOperations
-from .scoped_backup_policies_operations import ScopedBackupPoliciesOperations
-from .scoped_protection_policies_operations import ScopedProtectionPoliciesOperations
-from .scoped_protection_policy_operation_results_operations import ScopedProtectionPolicyOperationResultsOperations
-from .scoped_protection_policy_operation_statuses_operations import ScopedProtectionPolicyOperationStatusesOperations
-from .backup_protection_containers_in_fabric_operations import BackupProtectionContainersInFabricOperations
-from .backup_protected_items_in_container_operations import BackupProtectedItemsInContainerOperations
-from .protection_containers_operations import ProtectionContainersOperations
 from .protection_intent_operations import ProtectionIntentOperations
 from .backup_status_operations import BackupStatusOperations
 from .feature_support_operations import FeatureSupportOperations
@@ -33,6 +25,7 @@ from .backup_resource_vault_configs_operations import BackupResourceVaultConfigs
 from .backup_engines_operations import BackupEnginesOperations
 from .protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
 from .protectable_containers_operations import ProtectableContainersOperations
+from .protection_containers_operations import ProtectionContainersOperations
 from .backup_workload_items_operations import BackupWorkloadItemsOperations
 from .protection_container_operation_results_operations import ProtectionContainerOperationResultsOperations
 from .protected_items_operations import ProtectedItemsOperations
@@ -56,14 +49,6 @@ from .backup_resource_storage_configs_operations import BackupResourceStorageCon
 from .operations import Operations
 
 __all__ = [
-    'BackupFabricsOperations',
-    'ScopedBackupPoliciesOperations',
-    'ScopedProtectionPoliciesOperations',
-    'ScopedProtectionPolicyOperationResultsOperations',
-    'ScopedProtectionPolicyOperationStatusesOperations',
-    'BackupProtectionContainersInFabricOperations',
-    'BackupProtectedItemsInContainerOperations',
-    'ProtectionContainersOperations',
     'ProtectionIntentOperations',
     'BackupStatusOperations',
     'FeatureSupportOperations',
@@ -80,6 +65,7 @@ __all__ = [
     'BackupEnginesOperations',
     'ProtectionContainerRefreshOperationResultsOperations',
     'ProtectableContainersOperations',
+    'ProtectionContainersOperations',
     'BackupWorkloadItemsOperations',
     'ProtectionContainerOperationResultsOperations',
     'ProtectedItemsOperations',
