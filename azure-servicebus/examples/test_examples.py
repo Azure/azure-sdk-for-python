@@ -7,7 +7,7 @@
 import pytest
 
 
-def test_example_create_servicebus_client():
+def test_example_create_servicebus_client(live_servicebus_config):
 
 # Create a new service bus client using SAS credentials
 # [START create_servicebus_client]
