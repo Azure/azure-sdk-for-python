@@ -24,7 +24,6 @@ from azure.servicebus.common.errors import (
 
 
 def test_sb_client_bad_credentials(live_servicebus_config, standard_queue):
-    pytest.skip("Not sure why not working")
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name="invalid",

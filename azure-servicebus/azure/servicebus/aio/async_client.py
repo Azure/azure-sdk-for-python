@@ -39,8 +39,10 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param str host_base: Optional. Live host base url. Defaults to Azure url.
         :param str shared_access_key_name: SAS authentication key name.
         :param str shared_access_key_value: SAS authentication key value.
+        :param loop: An async event loop.
         :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
         :param http_request_session: Optional. Session object to use for http requests.
+        :param bool debug: Whether to output AMQP network trace to the logger.
         """
         self.loop = loop or get_running_loop()
         self.service_namespace = service_namespace

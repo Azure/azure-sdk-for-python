@@ -39,22 +39,25 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         """
         Initializes the service bus service for a namespace with the specified
         authentication settings (SAS).
-        service_namespace:
-            Service bus namespace, required for all operations. If None,
-            the value is set to the AZURE_SERVICEBUS_NAMESPACE env variable.
-        host_base:
-            Optional. Live host base url. Defaults to Azure url. Override this
-            for on-premise.
-        shared_access_key_name:
-            SAS authentication key name.
-            Note that if both SAS and ACS settings are specified, SAS is used.
-        shared_access_key_value:
-            SAS authentication key value.
-            Note that if both SAS and ACS settings are specified, SAS is used.
-        http_request_timeout:
-            Optional. Timeout for the http request, in seconds.
-        http_request_session:
-            Optional. Session object to use for http requests.
+
+        :param str service_namespace: Service bus namespace, required for all operations.
+        :param str host_base: Optional. Live host base url. Defaults to Public Azure.
+        :param str shared_access_key_name: SAS authentication key name.
+        :param str shared_access_key_value: SAS authentication key value.
+        :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
+         Default value is 65 seconds.
+        :param http_request_session: Optional. Session object to use for http requests.
+        :type http_request_session: ~requests.Session
+        :param bool debug: Whether to output AMQP network trace to the logger.
+
+        .. literalinclude:: ../../examples/test_examples.py
+            :start-after: [START create_servicebus_client]
+            :end-before: [END create_servicebus_client]
+            :language: python
+            :dedent: 0
+            :caption: Create a new instance of the ServiceBus client:
+            :name: create_servicebus_client
+
         """
         self.service_namespace = service_namespace
         self.host_base = host_base
