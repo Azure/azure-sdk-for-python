@@ -249,7 +249,7 @@ def standard_queue(live_servicebus_config):  # pylint: disable=redefined-outer-n
 
 
 @pytest.fixture()
-def partitioned_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name
+def partitioned_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name,unused-argument
     pytest.skip("Pending API version update")
 
 
@@ -268,7 +268,7 @@ def session_queue(live_servicebus_config):  # pylint: disable=redefined-outer-na
 
 
 @pytest.fixture()
-def partitioned_session_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name
+def partitioned_session_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name,unused-argument
     pytest.skip("Pending API version update")
 
 
