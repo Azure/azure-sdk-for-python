@@ -32,7 +32,8 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
         """
-        Create a ServiceBus Message
+        Create a ServiceBus Message.
+
         :param body: The data to send in a single message.
         :type body: str, bytes or list
         :param encoding: The encoding for string data. Default is UTF-8.
@@ -90,6 +91,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def annotations(self):
         """
         The annotations of the message.
+
         :rtype: dict
         """
         return self.message.annotations
@@ -98,6 +100,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def annotations(self, value):
         """
         Set the annotations on the message.
+
         :param value: The annotations for the Message.
         :type value: dict
         """
@@ -107,6 +110,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def user_properties(self):
         """
         Application defined properties on the message.
+
         :rtype: dict
         """
         return self.message.application_properties
@@ -115,6 +119,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def user_properties(self, value):
         """
         Application defined properties on the message.
+
         :param value: The application properties for the Message.
         :type value: dict
         """
@@ -244,6 +249,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def body(self):
         """
         The body of the event data object.
+
         :rtype: bytes or generator[bytes]
         """
         return self.message.get_data()
@@ -278,7 +284,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def complete(self):
         """Complete the message.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -294,7 +300,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
         :param description: Additional details.
         :type description: str
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -308,7 +314,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
     def abandon(self):
         """Abandon the message. This message will be returned to the queue to be reprocessed.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
@@ -323,7 +329,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
         """Defer the message. This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
-        :raises ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.

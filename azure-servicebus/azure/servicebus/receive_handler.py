@@ -257,6 +257,7 @@ class Receiver(collections.abc.Iterator, BaseHandler):
     def fetch_next(self, max_batch_size=None, timeout=None):
         """
         Receive messages from ServiceBus entity.
+
         :param max_batch_size: Receive a batch of messages. Batch size will
          be up to the maximum specified, but will return as soon as service
          returns no new messages. If combined with a timeout and no messages are

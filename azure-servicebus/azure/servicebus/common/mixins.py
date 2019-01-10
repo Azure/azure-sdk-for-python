@@ -308,6 +308,7 @@ class BaseClient(object):
     def from_connection_string(cls, conn_str, name=None, **kwargs):
         """
         Create a Client from a ServiceBus connection string.
+
         :param conn_str: The connection string.
         :type conn_str: str
         :param name: The name of the entity, if the 'EntityName' property is

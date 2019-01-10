@@ -33,33 +33,33 @@ from azure.servicebus.base_handler import BaseHandler
 
 
 class ServiceBusClient(mixins.ServiceBusMixin):
+    """
+    Initializes the service bus service for a namespace with the specified
+    authentication settings (SAS).
+
+    :param str service_namespace: Service bus namespace, required for all operations.
+    :param str host_base: Optional. Live host base url. Defaults to Public Azure.
+    :param str shared_access_key_name: SAS authentication key name.
+    :param str shared_access_key_value: SAS authentication key value.
+    :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
+        Default value is 65 seconds.
+    :param http_request_session: Optional. Session object to use for http requests.
+    :type http_request_session: ~requests.Session
+    :param bool debug: Whether to output AMQP network trace to the logger.
+
+    .. literalinclude:: ../examples/test_examples.py
+        :start-after: [START create_servicebus_client]
+        :end-before: [END create_servicebus_client]
+        :language: python
+        :dedent: 0
+        :caption: Create a new instance of the ServiceBus client:
+
+    """
 
     def __init__(self, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
-        """
-        Initializes the service bus service for a namespace with the specified
-        authentication settings (SAS).
 
-        :param str service_namespace: Service bus namespace, required for all operations.
-        :param str host_base: Optional. Live host base url. Defaults to Public Azure.
-        :param str shared_access_key_name: SAS authentication key name.
-        :param str shared_access_key_value: SAS authentication key value.
-        :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
-         Default value is 65 seconds.
-        :param http_request_session: Optional. Session object to use for http requests.
-        :type http_request_session: ~requests.Session
-        :param bool debug: Whether to output AMQP network trace to the logger.
-
-        .. literalinclude:: ../../examples/test_examples.py
-            :start-after: [START create_servicebus_client]
-            :end-before: [END create_servicebus_client]
-            :language: python
-            :dedent: 0
-            :caption: Create a new instance of the ServiceBus client:
-            :name: create_servicebus_client
-
-        """
         self.service_namespace = service_namespace
         self.host_base = host_base
         self.shared_access_key_name = shared_access_key_name
@@ -77,10 +77,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     def from_connection_string(cls, conn_str, **kwargs):
         """
         Create a QueueClient from a connection string.
+
         :param conn_str: The connection string.
         :type conn_str: str
-        :param queue_name: The name of the Queue, if the EntityName is
-         not included in the connection string.
         """
         address, policy, key, _ = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
@@ -572,6 +571,7 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
     def from_connection_string(cls, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
         """
         Create a QueueClient from a connection string.
+
         :param conn_str: The connection string.
         :type conn_str: str
         :param queue_name: The name of the Queue, if the EntityName is

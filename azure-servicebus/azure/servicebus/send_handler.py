@@ -56,10 +56,10 @@ class Sender(BaseHandler, mixins.SenderMixin):
         """
         Sends a message and blocks until acknowledgement is
         received or operation times out.
+
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send.
+        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to send.
         """
         if not isinstance(message, Message):
             raise TypeError("Vale of message must be of type 'Message'.")
@@ -151,6 +151,7 @@ class SessionSender(Sender):
         """
         Sends a message and blocks until acknowledgement is
         received or operation times out.
+
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to

@@ -64,10 +64,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     def from_connection_string(cls, conn_str, *, loop=None, **kwargs):
         """
         Create a QueueClient from a connection string.
+
         :param conn_str: The connection string.
         :type conn_str: str
-        :param queue_name: The name of the Queue, if the EntityName is
-         not included in the connection string.
         """
         address, policy, key, _ = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
