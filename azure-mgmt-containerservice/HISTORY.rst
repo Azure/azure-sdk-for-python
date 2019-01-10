@@ -3,6 +3,14 @@
 Release History
 ===============
 
+4.4.0 (2019-01-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ManagedClustersOperations.reset_service_principal_profile
+- Added operation ManagedClustersOperations.reset_aad_profile
+
 4.3.0 (2018-12-13)
 ++++++++++++++++++
 
