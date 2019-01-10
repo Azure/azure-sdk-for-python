@@ -382,6 +382,8 @@ class SenderMixin(object):
                 message.properties.group_id = self.session_id
             message_data = {}
             message_data['message-id'] = message.properties.message_id
+            if message.properties.group_id:
+                message_data['session-id'] = message.properties.group_id
             if message.partition_key:
                 message_data['partition-key'] = message.partition_key
             if message.via_partition_key:
