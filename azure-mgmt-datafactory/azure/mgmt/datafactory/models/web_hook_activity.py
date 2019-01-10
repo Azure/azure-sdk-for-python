@@ -57,7 +57,7 @@ class WebHookActivity(ControlActivity):
     :param authentication: Authentication method used for calling the
      endpoint.
     :type authentication:
-     ~azure.mgmt.datafactory.models.WebHookActivityAuthentication
+     ~azure.mgmt.datafactory.models.WebActivityAuthentication
     """
 
     _validation = {
@@ -79,7 +79,7 @@ class WebHookActivity(ControlActivity):
         'timeout': {'key': 'typeProperties.timeout', 'type': 'object'},
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
-        'authentication': {'key': 'typeProperties.authentication', 'type': 'WebHookActivityAuthentication'},
+        'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
     }
 
     method = "POST"

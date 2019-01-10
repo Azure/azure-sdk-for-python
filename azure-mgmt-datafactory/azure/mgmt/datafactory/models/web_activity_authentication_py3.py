@@ -18,8 +18,10 @@ class WebActivityAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Web activity authentication
-     (Basic/ClientCertificate/MSI)
-    :type type: str
+     (Basic/ClientCertificate/MSI). Possible values include: 'Basic',
+     'ClientCertificate', 'MSI'
+    :type type: str or
+     ~azure.mgmt.datafactory.models.WebActivityAuthenticationType
     :param pfx: Base64-encoded contents of a PFX file.
     :type pfx: ~azure.mgmt.datafactory.models.SecureString
     :param username: Web activity authentication user name for basic
@@ -44,7 +46,7 @@ class WebActivityAuthentication(Model):
         'resource': {'key': 'resource', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, pfx=None, username: str=None, password=None, resource: str=None, **kwargs) -> None:
+    def __init__(self, *, type, pfx=None, username: str=None, password=None, resource: str=None, **kwargs) -> None:
         super(WebActivityAuthentication, self).__init__(**kwargs)
         self.type = type
         self.pfx = pfx

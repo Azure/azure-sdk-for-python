@@ -308,6 +308,13 @@ class JsonFormatFilePattern(str, Enum):
     array_of_objects = "arrayOfObjects"
 
 
+class WebActivityAuthenticationType(str, Enum):
+
+    basic = "Basic"
+    client_certificate = "ClientCertificate"
+    msi = "MSI"
+
+
 class WebActivityMethod(str, Enum):
 
     get = "GET"

@@ -342,7 +342,6 @@ try:
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
     from .if_condition_activity_py3 import IfConditionActivity
-    from .web_hook_activity_authentication_py3 import WebHookActivityAuthentication
     from .web_hook_activity_py3 import WebHookActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
@@ -704,7 +703,6 @@ except (SyntaxError, ImportError):
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
     from .if_condition_activity import IfConditionActivity
-    from .web_hook_activity_authentication import WebHookActivityAuthentication
     from .web_hook_activity import WebHookActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
@@ -781,6 +779,7 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DatasetCompressionLevel,
     JsonFormatFilePattern,
+    WebActivityAuthenticationType,
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
@@ -1137,7 +1136,6 @@ __all__ = [
     'WaitActivity',
     'ForEachActivity',
     'IfConditionActivity',
-    'WebHookActivityAuthentication',
     'WebHookActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
@@ -1213,6 +1211,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DatasetCompressionLevel',
     'JsonFormatFilePattern',
+    'WebActivityAuthenticationType',
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
