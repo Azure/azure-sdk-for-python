@@ -18,10 +18,8 @@ class WebActivityAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Web activity authentication
-     (Basic/ClientCertificate/MSI). Possible values include: 'Basic',
-     'ClientCertificate', 'MSI'
-    :type type: str or
-     ~azure.mgmt.datafactory.models.WebActivityAuthenticationType
+     (Basic/ClientCertificate/MSI)
+    :type type: str
     :param pfx: Base64-encoded contents of a PFX file.
     :type pfx: ~azure.mgmt.datafactory.models.SecureString
     :param username: Web activity authentication user name for basic
