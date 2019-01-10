@@ -1,4 +1,5 @@
+from .version import VERSION
+from .template_code import main
 
-def main():
-    """Entry point for the application script"""
-    print("Call your main application code here")
+__all__ = ['main']
+__version__ = VERSION
