@@ -4,7 +4,7 @@
 Azure Template Package
 ======================
 
-This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace.
+This template package matches necessary patterns that the development team has established to create a unified sdk functional from Python 2.7 onwards. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
 
 This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
@@ -32,7 +32,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-TODO: Describe and show how to build your code and run the tests. 
+<Describe and show how to build your code and run the tests.>
 
 Provide Feedback
 ================

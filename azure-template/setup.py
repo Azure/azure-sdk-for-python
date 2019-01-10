@@ -124,7 +124,12 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),  # Required
+
+    packages=find_packages(exclude=[
+        'tests'
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure'
+    ]),
 
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
@@ -186,9 +191,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/Azure/azure-sdk-python/issues',
-        'Funding': 'https://donate.pypi.org',
-        'Say Thanks!': 'http://saythanks.io/to/example',
+        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
         'Source': 'https://github.com/Azure/azure-sdk-python',
     },
 )
