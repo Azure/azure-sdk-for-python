@@ -5,9 +5,7 @@
 #--------------------------------------------------------------------------
 
 import asyncio
-import sys
 import uuid
-import pytest
 
 import conftest
 
@@ -44,6 +42,6 @@ if __name__ == '__main__':
     queue_name = conftest.create_session_queue(live_config)
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(sample_session_send_receive_batch(live_config, queue_name))
+        loop.run_until_complete(sample_session_send_receive_batch_async(live_config, queue_name))
     finally:
         conftest.cleanup_queue(live_config, queue_name)

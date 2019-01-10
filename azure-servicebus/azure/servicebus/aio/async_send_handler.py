@@ -10,6 +10,7 @@ from uamqp import constants, types
 
 from azure.servicebus.common.errors import MessageSendFailed
 from azure.servicebus.common import mgmt_handlers, mixins
+from azure.servicebus.common.message import Message
 from azure.servicebus.common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION)
@@ -56,6 +57,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send.
         """
+        if not isinstance(message, Message):
+            raise TypeError("Vale of message must be of type 'Message'.")
         if not self.running:
             await self.open()
         if self.session_id and not message.properties.group_id:
@@ -149,6 +152,8 @@ class SessionSender(Sender):
          send.
         :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
         """
+        if not isinstance(message, Message):
+            raise TypeError("Vale of message must be of type 'Message'.")
         if not self.session_id and not message.properties.group_id:
             raise ValueError("Message must have Session ID.")
         return await super(SessionSender, self).send(message)

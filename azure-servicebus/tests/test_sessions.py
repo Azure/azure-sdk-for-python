@@ -471,36 +471,34 @@ def test_session_by_conn_str_receive_handler_with_autolockrenew(live_servicebus_
     with queue_client.get_receiver(session=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as session:
         renewer.register(session, timeout=60)
         print("Registered lock renew thread", session.locked_until, datetime.now())
-        for message in session:
-            if not messages:
-                time.sleep(45)
-                print("First sleep {}".format(session.locked_until - datetime.now()))
-                assert not session.expired
-                with pytest.raises(TypeError):
-                    message.expired
-                assert message.locked_until is None
-                with pytest.raises(TypeError):
-                    message.renew_lock()
-                assert message.lock_token is None
-                message.complete()
-                messages.append(message)
-
-            elif len(messages) == 1:
-                time.sleep(45)
-                print("Second sleep {}".format(session.locked_until - datetime.now()))
-                assert session.expired
-                assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
-                try:
+        with pytest.raises(SessionLockExpired):
+            for message in session:
+                if not messages:
+                    print("Starting first sleep")
+                    time.sleep(40)
+                    print("First sleep {}".format(session.locked_until - datetime.now()))
+                    assert not session.expired
+                    with pytest.raises(TypeError):
+                        message.expired
+                    assert message.locked_until is None
+                    with pytest.raises(TypeError):
+                        message.renew_lock()
+                    assert message.lock_token is None
                     message.complete()
-                    raise AssertionError("Didn't raise SessionLockExpired")
-                except SessionLockExpired as e:
-                    assert isinstance(e.inner_exception, AutoLockRenewTimeout)
-                messages.append(message)
+                    messages.append(message)
 
-            else:
-                assert session.expired
-                with pytest.raises(SessionLockExpired):
-                    message.complete()
+                elif len(messages) == 1:
+                    print("Starting second sleep")
+                    time.sleep(40)
+                    print("Second sleep {}".format(session.locked_until - datetime.now()))
+                    assert session.expired
+                    assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
+                    try:
+                        message.complete()
+                        raise AssertionError("Didn't raise SessionLockExpired")
+                    except SessionLockExpired as e:
+                        assert isinstance(e.inner_exception, AutoLockRenewTimeout)
+                    messages.append(message)
 
     renewer.shutdown()
     assert len(messages) == 2

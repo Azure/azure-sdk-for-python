@@ -242,8 +242,17 @@ class SendClientMixin:
             if isinstance(messages, Message):
                 sender.queue_message(messages)
             else:
+                try:
+                    messages = list(messages)
+                except TypeError:
+                    raise TypeError(
+                        "Value of messages must be a 'Message' object or a synchronous iterable of 'Message' objects.")
+
                 for m in messages:
+                    if not isinstance(m, Message):
+                        raise TypeError("Item in iterator is not of type 'Message'.")
                     sender.queue_message(m)
+
             return await sender.send_pending_messages()
 
     def get_sender(self, message_timeout=0, session=None, **kwargs):

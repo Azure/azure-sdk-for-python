@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import sys
 import uuid
 import concurrent
 

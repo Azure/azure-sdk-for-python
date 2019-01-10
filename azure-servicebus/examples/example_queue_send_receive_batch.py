@@ -4,8 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import sys
-
 import conftest
 
 from azure.servicebus import ServiceBusClient

@@ -115,6 +115,14 @@ def test_sb_client_writeonly_credentials(servicebus_conn_str_writeonly, standard
             messages = receiver.fetch_next()
 
     client.send([Message("test1"), Message("test2")])
+    with pytest.raises(TypeError):
+        client.send("cat")
+    with pytest.raises(TypeError):
+        client.send(1234)
+    with pytest.raises(TypeError):
+        client.send([1,2,3])
+    with pytest.raises(TypeError):
+        client.send([Message("test1"), "test2"])
 
 
 def test_sb_client_wrong_conn_str(queue_servicebus_conn_str, standard_queue):

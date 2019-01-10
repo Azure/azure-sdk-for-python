@@ -491,36 +491,32 @@ async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(live
     async with queue_client.get_receiver(session=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
         renewer.register(session, timeout=60)
         print("Registered lock renew thread", session.locked_until, datetime.now())
-        for message in await session.fetch_next():
-            if not messages:
-                await asyncio.sleep(45)
-                print("First sleep {}".format(session.locked_until - datetime.now()))
-                assert not session.expired
-                with pytest.raises(TypeError):
-                    message.expired
-                assert message.locked_until is None
-                with pytest.raises(TypeError):
-                    await message.renew_lock()
-                assert message.lock_token is None
-                await message.complete()
-                messages.append(message)
-
-            elif len(messages) == 1:
-                await asyncio.sleep(45)
-                print("Second sleep {}".format(session.locked_until - datetime.now()))
-                assert session.expired
-                assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
-                try:
+        with pytest.raises(SessionLockExpired):
+            async for message in session:
+                if not messages:
+                    await asyncio.sleep(45)
+                    print("First sleep {}".format(session.locked_until - datetime.now()))
+                    assert not session.expired
+                    with pytest.raises(TypeError):
+                        message.expired
+                    assert message.locked_until is None
+                    with pytest.raises(TypeError):
+                        await message.renew_lock()
+                    assert message.lock_token is None
                     await message.complete()
-                    raise AssertionError("Didn't raise SessionLockExpired")
-                except SessionLockExpired as e:
-                    assert isinstance(e.inner_exception, AutoLockRenewTimeout)
-                messages.append(message)
+                    messages.append(message)
 
-            else:
-                assert session.expired
-                with pytest.raises(SessionLockExpired):
-                    await message.complete()
+                elif len(messages) == 1:
+                    await asyncio.sleep(45)
+                    print("Second sleep {}".format(session.locked_until - datetime.now()))
+                    assert session.expired
+                    assert isinstance(session.auto_renew_error, AutoLockRenewTimeout)
+                    try:
+                        await message.complete()
+                        raise AssertionError("Didn't raise SessionLockExpired")
+                    except SessionLockExpired as e:
+                        assert isinstance(e.inner_exception, AutoLockRenewTimeout)
+                    messages.append(message)
 
     await renewer.shutdown()
     assert len(messages) == 2
