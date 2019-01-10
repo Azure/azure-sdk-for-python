@@ -37,27 +37,15 @@ class Pool(ProxyResource):
     :vartype last_modified: datetime
     :ivar creation_time: The creation time of the pool.
     :vartype creation_time: datetime
-    :ivar provisioning_state: The current state of the pool. Values are:
-     Succeeded - The pool is available to run tasks subject to the availability
-     of compute nodes.
-     Deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed. Possible values include: 'Succeeded',
-     'Deleting'
+    :ivar provisioning_state: The current state of the pool. Possible values
+     include: 'Succeeded', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.PoolProvisioningState
     :ivar provisioning_state_transition_time: The time at which the pool
      entered its current state.
     :vartype provisioning_state_transition_time: datetime
-    :ivar allocation_state: Whether the pool is resizing. Values are:
-     Steady - The pool is not resizing. There are no changes to the number of
-     nodes in the pool in progress. A pool enters this state when it is created
-     and when no operations are being performed on the pool to change the
-     number of dedicated nodes.
-     Resizing - The pool is resizing; that is, compute nodes are being added to
-     or removed from the pool.
-     Stopping - The pool was resizing, but the user has requested that the
-     resize be stopped, but the stop request has not yet been completed.
-     Possible values include: 'Steady', 'Resizing', 'Stopping'
+    :ivar allocation_state: Whether the pool is resizing. Possible values
+     include: 'Steady', 'Resizing', 'Stopping'
     :vartype allocation_state: str or ~azure.mgmt.batch.models.AllocationState
     :ivar allocation_state_transition_time: The time at which the pool entered
      its current allocation state.
@@ -202,29 +190,29 @@ class Pool(ProxyResource):
         'resize_operation_status': {'key': 'properties.resizeOperationStatus', 'type': 'ResizeOperationStatus'},
     }
 
-    def __init__(self, display_name=None, vm_size=None, deployment_configuration=None, scale_settings=None, inter_node_communication=None, network_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, start_task=None, certificates=None, application_packages=None, application_licenses=None):
-        super(Pool, self).__init__()
-        self.display_name = display_name
+    def __init__(self, **kwargs):
+        super(Pool, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
         self.last_modified = None
         self.creation_time = None
         self.provisioning_state = None
         self.provisioning_state_transition_time = None
         self.allocation_state = None
         self.allocation_state_transition_time = None
-        self.vm_size = vm_size
-        self.deployment_configuration = deployment_configuration
+        self.vm_size = kwargs.get('vm_size', None)
+        self.deployment_configuration = kwargs.get('deployment_configuration', None)
         self.current_dedicated_nodes = None
         self.current_low_priority_nodes = None
-        self.scale_settings = scale_settings
+        self.scale_settings = kwargs.get('scale_settings', None)
         self.auto_scale_run = None
-        self.inter_node_communication = inter_node_communication
-        self.network_configuration = network_configuration
-        self.max_tasks_per_node = max_tasks_per_node
-        self.task_scheduling_policy = task_scheduling_policy
-        self.user_accounts = user_accounts
-        self.metadata = metadata
-        self.start_task = start_task
-        self.certificates = certificates
-        self.application_packages = application_packages
-        self.application_licenses = application_licenses
+        self.inter_node_communication = kwargs.get('inter_node_communication', None)
+        self.network_configuration = kwargs.get('network_configuration', None)
+        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
+        self.user_accounts = kwargs.get('user_accounts', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.start_task = kwargs.get('start_task', None)
+        self.certificates = kwargs.get('certificates', None)
+        self.application_packages = kwargs.get('application_packages', None)
+        self.application_licenses = kwargs.get('application_licenses', None)
         self.resize_operation_status = None

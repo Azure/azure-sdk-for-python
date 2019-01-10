@@ -31,6 +31,6 @@ class BatchLocationQuota(Model):
         'account_quota': {'key': 'accountQuota', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(BatchLocationQuota, self).__init__()
+    def __init__(self, **kwargs):
+        super(BatchLocationQuota, self).__init__(**kwargs)
         self.account_quota = None

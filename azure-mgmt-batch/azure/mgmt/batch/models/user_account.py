@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class UserAccount(Model):
     """Properties used to create a user on an Azure Batch node.
 
-    :param name: The name of the user account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the user account.
     :type name: str
-    :param password: The password for the user account.
+    :param password: Required. The password for the user account.
     :type password: str
     :param elevation_level: The elevation level of the user account. nonAdmin
      - The auto user is a standard user without elevated access. admin - The
@@ -30,6 +32,12 @@ class UserAccount(Model):
      If not specified, the user is created with the default options.
     :type linux_user_configuration:
      ~azure.mgmt.batch.models.LinuxUserConfiguration
+    :param windows_user_configuration: The Windows-specific user configuration
+     for the user account. This property can only be specified if the user is
+     on a Windows pool. If not specified and on a Windows pool, the user is
+     created with the default options.
+    :type windows_user_configuration:
+     ~azure.mgmt.batch.models.WindowsUserConfiguration
     """
 
     _validation = {
@@ -42,11 +50,13 @@ class UserAccount(Model):
         'password': {'key': 'password', 'type': 'str'},
         'elevation_level': {'key': 'elevationLevel', 'type': 'ElevationLevel'},
         'linux_user_configuration': {'key': 'linuxUserConfiguration', 'type': 'LinuxUserConfiguration'},
+        'windows_user_configuration': {'key': 'windowsUserConfiguration', 'type': 'WindowsUserConfiguration'},
     }
 
-    def __init__(self, name, password, elevation_level=None, linux_user_configuration=None):
-        super(UserAccount, self).__init__()
-        self.name = name
-        self.password = password
-        self.elevation_level = elevation_level
-        self.linux_user_configuration = linux_user_configuration
+    def __init__(self, **kwargs):
+        super(UserAccount, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.password = kwargs.get('password', None)
+        self.elevation_level = kwargs.get('elevation_level', None)
+        self.linux_user_configuration = kwargs.get('linux_user_configuration', None)
+        self.windows_user_configuration = kwargs.get('windows_user_configuration', None)

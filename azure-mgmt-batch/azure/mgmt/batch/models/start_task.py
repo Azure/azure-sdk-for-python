@@ -56,6 +56,13 @@ class StartTask(Model):
      task is still running; and even if the start task fails, new tasks will
      continue to be scheduled on the node. The default is false.
     :type wait_for_success: bool
+    :param container_settings: The settings for the container under which the
+     start task runs. When this is specified, all directories recursively below
+     the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the
+     node) are mapped into the container, all task environment variables are
+     mapped into the container, and the task command line is executed in the
+     container.
+    :type container_settings: ~azure.mgmt.batch.models.TaskContainerSettings
     """
 
     _attribute_map = {
@@ -65,13 +72,15 @@ class StartTask(Model):
         'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
+        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
     }
 
-    def __init__(self, command_line=None, resource_files=None, environment_settings=None, user_identity=None, max_task_retry_count=None, wait_for_success=None):
-        super(StartTask, self).__init__()
-        self.command_line = command_line
-        self.resource_files = resource_files
-        self.environment_settings = environment_settings
-        self.user_identity = user_identity
-        self.max_task_retry_count = max_task_retry_count
-        self.wait_for_success = wait_for_success
+    def __init__(self, **kwargs):
+        super(StartTask, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.max_task_retry_count = kwargs.get('max_task_retry_count', None)
+        self.wait_for_success = kwargs.get('wait_for_success', None)
+        self.container_settings = kwargs.get('container_settings', None)

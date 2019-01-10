@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ActivateApplicationPackageParameters(Model):
     """Parameters for an activating an application package.
 
-    :param format: The format of the application package binary file.
+    All required parameters must be populated in order to send to Azure.
+
+    :param format: Required. The format of the application package binary
+     file.
     :type format: str
     """
 
@@ -27,6 +30,6 @@ class ActivateApplicationPackageParameters(Model):
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, format):
-        super(ActivateApplicationPackageParameters, self).__init__()
-        self.format = format
+    def __init__(self, **kwargs):
+        super(ActivateApplicationPackageParameters, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)

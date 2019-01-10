@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class KeyVaultReference(Model):
     """Identifies the Azure key vault associated with a Batch account.
 
-    :param id: The resource ID of the Azure key vault associated with the
-     Batch account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The resource ID of the Azure key vault associated
+     with the Batch account.
     :type id: str
-    :param url: The URL of the Azure key vault associated with the Batch
-     account.
+    :param url: Required. The URL of the Azure key vault associated with the
+     Batch account.
     :type url: str
     """
 
@@ -33,7 +35,7 @@ class KeyVaultReference(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, id, url):
-        super(KeyVaultReference, self).__init__()
-        self.id = id
-        self.url = url
+    def __init__(self, **kwargs):
+        super(KeyVaultReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.url = kwargs.get('url', None)

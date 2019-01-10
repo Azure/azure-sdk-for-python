@@ -45,9 +45,9 @@ class FixedScaleSettings(Model):
         'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'ComputeNodeDeallocationOption'},
     }
 
-    def __init__(self, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, node_deallocation_option=None):
-        super(FixedScaleSettings, self).__init__()
-        self.resize_timeout = resize_timeout
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.node_deallocation_option = node_deallocation_option
+    def __init__(self, **kwargs):
+        super(FixedScaleSettings, self).__init__(**kwargs)
+        self.resize_timeout = kwargs.get('resize_timeout', None)
+        self.target_dedicated_nodes = kwargs.get('target_dedicated_nodes', None)
+        self.target_low_priority_nodes = kwargs.get('target_low_priority_nodes', None)
+        self.node_deallocation_option = kwargs.get('node_deallocation_option', None)

@@ -22,8 +22,8 @@ class LocationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2018-12-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class LocationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01"
+        self.api_version = "2018-12-01"
 
         self.config = config
 
@@ -56,7 +56,7 @@ class LocationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'
+        url = self.get_quotas.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -69,7 +69,7 @@ class LocationOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -78,8 +78,8 @@ class LocationOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -96,6 +96,7 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    get_quotas.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'}
 
     def check_name_availability(
             self, location_name, name, custom_headers=None, raw=False, **operation_config):
@@ -119,7 +120,7 @@ class LocationOperations(object):
         parameters = models.CheckNameAvailabilityParameters(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -132,6 +133,7 @@ class LocationOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -144,9 +146,8 @@ class LocationOperations(object):
         body_content = self._serialize.body(parameters, 'CheckNameAvailabilityParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -163,3 +164,4 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'}

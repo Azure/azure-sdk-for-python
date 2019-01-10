@@ -53,7 +53,7 @@ class NetworkConfiguration(Model):
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
     }
 
-    def __init__(self, subnet_id=None, endpoint_configuration=None):
-        super(NetworkConfiguration, self).__init__()
-        self.subnet_id = subnet_id
-        self.endpoint_configuration = endpoint_configuration
+    def __init__(self, **kwargs):
+        super(NetworkConfiguration, self).__init__(**kwargs)
+        self.subnet_id = kwargs.get('subnet_id', None)
+        self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
