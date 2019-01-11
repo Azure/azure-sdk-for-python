@@ -1,39 +1,53 @@
-﻿#-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 #--------------------------------------------------------------------------
 
-from .constants import (
-    __author__,
-    __version__,
-    DEFAULT_RULE_NAME,
-    AZURE_SERVICEBUS_NAMESPACE,
-    AZURE_SERVICEBUS_ACCESS_KEY,
-    AZURE_SERVICEBUS_ISSUER,
-    SERVICE_BUS_HOST_BASE,
-    DEFAULT_HTTP_TIMEOUT,
-)
+__version__ = '0.50.0'
 
-from .models import (
-    AzureServiceBusPeekLockError,
-    AzureServiceBusResourceNotFound,
-    Queue,
-    Topic,
-    Subscription,
-    Rule,
-    EventHub,
-    AuthorizationRule,
-    Message,
-)
 
-from .servicebusservice import ServiceBusService
+from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage
+from azure.servicebus.servicebus_client import ServiceBusClient, QueueClient, TopicClient, SubscriptionClient
+from azure.servicebus.common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from azure.servicebus.common.utils import AutoLockRenew
+from azure.servicebus.common.errors import (
+    ServiceBusError,
+    ServiceBusResourceNotFound,
+    ServiceBusConnectionError,
+    ServiceBusAuthorizationError,
+    InvalidHandlerState,
+    NoActiveSession,
+    MessageAlreadySettled,
+    MessageSettleFailed,
+    MessageSendFailed,
+    MessageLockExpired,
+    SessionLockExpired,
+    AutoLockRenewFailed,
+    AutoLockRenewTimeout)
+
+
+__all__ = [
+    'Message',
+    'BatchMessage',
+    'PeekMessage',
+    'DeferredMessage',
+    'ServiceBusClient',
+    'QueueClient',
+    'TopicClient',
+    'SubscriptionClient',
+    'ReceiveSettleMode',
+    'NEXT_AVAILABLE',
+    'ServiceBusError',
+    'ServiceBusResourceNotFound',
+    'ServiceBusConnectionError',
+    'ServiceBusAuthorizationError',
+    'InvalidHandlerState',
+    'NoActiveSession',
+    'MessageAlreadySettled',
+    'MessageSettleFailed',
+    'MessageSendFailed',
+    'MessageLockExpired',
+    'SessionLockExpired',
+    'AutoLockRenewFailed',
+    'AutoLockRenewTimeout']
