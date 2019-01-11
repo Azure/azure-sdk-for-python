@@ -3,8 +3,21 @@
 Release History
 ===============
 
+0.50.0 (2018-01-11)
+-------------------
+
+**Breaking changes**
+
+* Introduces new AMQP-based API.
+* Original HTTP-based API still available under new namespace: azure.servicebus.control_client
+* For full API changes, please see updated reference documentation.
+
+Within the new namesapce, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
+so for those intending to only use HTTP operations - there is no benefit in updating at this time.
+
+
 0.21.1 (2017-04-27)
-+++++++++++++++++++
+-------------------
 
 This wheel package is now built with the azure wheel extension
 
