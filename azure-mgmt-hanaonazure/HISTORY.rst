@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.3.0 (2019-01-03)
+++++++++++++++++++
+
+**Features**
+
+- Added operation HanaInstancesOperations.update
+
 0.2.1 (2018-08-31)
 ++++++++++++++++++
 

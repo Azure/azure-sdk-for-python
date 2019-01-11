@@ -23,6 +23,7 @@ try:
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
     from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .ip_rule_py3 import IPRule
     from .network_rule_set_py3 import NetworkRuleSet
     from .registry_py3 import Registry
     from .registry_update_parameters_py3 import RegistryUpdateParameters
@@ -104,6 +105,7 @@ except (SyntaxError, ImportError):
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
     from .virtual_network_rule import VirtualNetworkRule
+    from .ip_rule import IPRule
     from .network_rule_set import NetworkRuleSet
     from .registry import Registry
     from .registry_update_parameters import RegistryUpdateParameters
@@ -184,6 +186,7 @@ from .container_registry_management_client_enums import (
     SkuTier,
     ProvisioningState,
     DefaultAction,
+    Action,
     PasswordName,
     RegistryUsageUnit,
     PolicyStatus,
@@ -218,6 +221,7 @@ __all__ = [
     'Status',
     'StorageAccountProperties',
     'VirtualNetworkRule',
+    'IPRule',
     'NetworkRuleSet',
     'Registry',
     'RegistryUpdateParameters',
@@ -297,6 +301,7 @@ __all__ = [
     'SkuTier',
     'ProvisioningState',
     'DefaultAction',
+    'Action',
     'PasswordName',
     'RegistryUsageUnit',
     'PolicyStatus',

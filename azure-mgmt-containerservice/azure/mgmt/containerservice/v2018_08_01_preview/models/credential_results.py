@@ -18,7 +18,7 @@ class CredentialResults(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar kubeconfigs:
+    :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
     :vartype kubeconfigs:
      list[~azure.mgmt.containerservice.v2018_08_01_preview.models.CredentialResult]
     """
