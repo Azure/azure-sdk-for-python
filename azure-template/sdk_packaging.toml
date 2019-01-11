@@ -5,5 +5,5 @@ package_pprint_name = "Template Package"
 is_stable = false
 is_arm = false
 
-# Package owners should uncomment set this doc id.
+# Package owners should uncomment and set this doc id.
 # package_doc_id = "<your doc id>" 
