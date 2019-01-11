@@ -1,5 +1,5 @@
 [packaging]
-auto_update = false
+auto_update = true
 package_name = "azure-template"
 package_pprint_name = "Template Package"
 package_doc_id = "<docId>"

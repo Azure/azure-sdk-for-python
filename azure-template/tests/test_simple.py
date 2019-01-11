@@ -1,11 +1,12 @@
-# the inclusion of the tests module is not meant to offer best practices for
-# testing in general, but rather to support the `find_packages` example in
-# setup.py that excludes installing the "tests" package
+# Testing Azure Packages has some additional complication/reading required.
+# Reference https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
+
 from devtools_testutils import AzureMgmtTestCase
+from azure.template import template_main
 
 class TemplateTest(AzureMgmtTestCase):
     def setUp(self):
         super(TemplateTest, self).setUp()
 
     def test_case_default(self):
-        self.assertEqual(True, True)
+        self.assertEqual(template_main(), True)

@@ -11,28 +11,12 @@ This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
-Compatibility
-=============
-
-**IMPORTANT**: If you have an earlier version of the azure package
-(version < 1.0), you should uninstall it before installing this package.
-
-You can check the version using pip:
-
-.. code:: shell
-
-    pip freeze
-
-If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
-
-.. code:: shell
-
-    pip uninstall azure
-
 Usage
 =====
 
 <Describe and show how to build your code and run the tests.>
+
+This readme (with some setup in ops) should eventually be ingested to `docs.microsoft.com <https://docs.microsoft.com/>`_.
 
 Provide Feedback
 ================
