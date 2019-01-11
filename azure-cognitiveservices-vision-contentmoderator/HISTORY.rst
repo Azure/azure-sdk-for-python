@@ -3,13 +3,10 @@
 Release History
 ===============
 
-0.2.0 (2018-XX-XX)
+1.0.0 (2019-01-02)
 ++++++++++++++++++
 
-*Unreleased*
-
-- Models refactoring. More details to come.
-
+* Initial stable release
 
 0.1.0 (2018-02-06)
 ++++++++++++++++++
