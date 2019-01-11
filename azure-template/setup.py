@@ -7,14 +7,9 @@ https://github.com/pypa/sampleproject
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-from os import path
+import os
 from io import open
 import re
-
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
 
 PACKAGE_NAME = "azure-template"
 PACKAGE_PPRINT_NAME = "Template Package"
@@ -45,6 +40,9 @@ with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
                         fd.read(), re.MULTILINE).group(1)
 if not version:
     raise RuntimeError('Cannot find version information')
+
+with open('README.rst', encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name=PACKAGE_NAME,
@@ -82,9 +80,9 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
-    }
-    project_urls={  # Optional
+    },
+    project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
         'Source': 'https://github.com/Azure/azure-sdk-python',
-    },
+    }
 )
