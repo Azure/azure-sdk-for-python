@@ -2,6 +2,8 @@
 auto_update = true
 package_name = "azure-template"
 package_pprint_name = "Template Package"
-package_doc_id = "<docId>"
 is_stable = false
 is_arm = false
+
+# Package owners should uncomment set this doc id.
+# package_doc_id = "<your doc id>" 

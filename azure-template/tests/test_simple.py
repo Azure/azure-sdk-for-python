@@ -1,5 +1,6 @@
 # Testing Azure Packages has some additional complication/reading required.
 # Reference https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
+# Pytest should be leveraged to test your project.
 
 from devtools_testutils import AzureMgmtTestCase
 from azure.template import template_main

@@ -18,18 +18,22 @@ with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+
+    # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     url='https://github.com/Azure/azure-sdk-for-python',
     author='Microsoft Corporation',
     author_email='azuresdkengsysadmins@microsoft.com',
+
     license='MIT License',
+    # ensure that the development status reflects the status of your package
     classifiers=[
         'Development Status :: 3 - Alpha',
 
