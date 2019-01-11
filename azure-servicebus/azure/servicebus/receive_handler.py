@@ -9,7 +9,6 @@ import time
 import datetime
 import functools
 import uuid
-import collections
 
 import six
 
@@ -38,7 +37,7 @@ from azure.servicebus.common.constants import (
     ReceiveSettleMode)
 
 
-class Receiver(collections.abc.Iterator, BaseHandler):
+class Receiver(BaseHandler):
     """
     Implements a Receiver.
     """
@@ -58,6 +57,9 @@ class Receiver(collections.abc.Iterator, BaseHandler):
         self.message_iter = None
         super(Receiver, self).__init__(
             source, auth_config, connection=connection, encoding=encoding, debug=debug, **kwargs)
+
+    def __iter__(self):
+        return self
 
     def __next__(self):
         self._can_run()

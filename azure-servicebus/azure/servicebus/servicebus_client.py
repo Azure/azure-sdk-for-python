@@ -385,7 +385,7 @@ class ReceiveClientMixin(object):
                 message,
                 mgmt_handler)
 
-    def settle_deferred_messages(self, settlement, *messages, **kwargs):
+    def settle_deferred_messages(self, settlement, messages, **kwargs):
         """Settle messages that have been previously deffered.
         This operation is only available on Python 3.5 and above.
 

@@ -338,7 +338,7 @@ async def test_async_session_by_servicebus_client_iter_messages_with_retrieve_de
         deferred = await queue_client.receive_deferred_messages(deferred_messages, session=session_id)
 
     with pytest.raises(ValueError):
-        await queue_client.settle_deferred_messages(message, session=session_id)
+        await queue_client.settle_deferred_messages("completed", [message], session=session_id)
 
 
 @pytest.mark.asyncio

@@ -126,13 +126,30 @@ class BaseHandler:
 
     async def reconnect(self):
         """If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+        a retryable error - attempt to reconnect.
+        This method will be called automatically for most retryable errors.
+        """
         await self._handler.close()
         self._build_handler()
         await self.open()
 
     async def open(self):
-        """Open handler connection and authenticate session."""
+        """Open handler connection and authenticate session.
+        If the handler is already open, this operation will do nothing.
+        A handler opened with this method must be explicitly closed.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+
+        .. note:: This operation is not thread-safe.
+
+        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_sender_directly]
+            :end-before: [END open_close_sender_directly]
+            :language: python
+            :dedent: 4
+            :caption: Explicitly open and close a Sender.
+
+        """
         if self.running:
             return
         self.running = True
@@ -149,13 +166,25 @@ class BaseHandler:
 
     async def close(self, exception=None):
         """
-        Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
+        Close down the handler connection. If the handler has already closed,
+        this operation will do nothing. An optional exception can be passed in to
         indicate that the handler was shutdown due to error.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+
+        .. note:: This operation is not thread-safe.
 
         :param exception: An optional exception if the handler is closing
          due to an error.
-        :type exception: Exception
+        :type exception: ~Exception
+
+        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_sender_directly]
+            :end-before: [END open_close_sender_directly]
+            :language: python
+            :dedent: 4
+            :caption: Explicitly open and close a Sender.
+
         """
         self.running = False
         if self.error:

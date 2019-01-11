@@ -291,9 +291,9 @@ async def test_async_queue_by_servicebus_client_iter_messages_with_retrieve_defe
         with pytest.raises(ValueError):
             await message.complete()
     with pytest.raises(ValueError):
-        await queue_client.settle_deferred_messages('foo', *deferred)
+        await queue_client.settle_deferred_messages('foo', deferred)
     
-    await queue_client.settle_deferred_messages('completed', *deferred)
+    await queue_client.settle_deferred_messages('completed', deferred)
     with pytest.raises(ServiceBusError):
         await queue_client.receive_deferred_messages(deferred_messages)
 

@@ -327,7 +327,7 @@ def test_qsession_by_servicebus_client_iter_messages_with_retrieve_deferred_clie
         deferred = queue_client.receive_deferred_messages(deferred_messages, session=session_id)
 
     with pytest.raises(ValueError):
-        queue_client.settle_deferred_messages(message, session=session_id)
+        queue_client.settle_deferred_messages('completed', [message], session=session_id)
 
 
 def test_qsession_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_servicebus_config, partitioned_session_queue):
