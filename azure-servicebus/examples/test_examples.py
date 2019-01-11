@@ -6,10 +6,6 @@
 
 import pytest
 
-from examples.example_queue_send_receive_batch import sample_queue_send_receive_batch
-from examples.example_session_send_receive_batch import sample_session_send_receive_batch
-from examples.example_session_send_receive_with_pool import sample_session_send_receive_with_pool
-
 
 def test_example_create_servicebus_client(live_servicebus_config):
 
@@ -31,12 +27,24 @@ def test_example_create_servicebus_client(live_servicebus_config):
 
 
 def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
+    try:
+        from examples.example_queue_send_receive_batch import sample_queue_send_receive_batch
+    except ImportError:
+        pytest.skip("")
     sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
 
 
 def test_sample_session_send_receive_batch(live_servicebus_config, session_queue):
+    try:
+        from examples.example_session_send_receive_batch import sample_session_send_receive_batch
+    except ImportError:
+        pytest.skip("")
     sample_session_send_receive_batch(live_servicebus_config, session_queue)
 
 
 def test_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
+    try:
+        from examples.example_session_send_receive_with_pool import sample_session_send_receive_with_pool
+    except ImportError:
+        pytest.skip("")
     sample_session_send_receive_with_pool(live_servicebus_config, session_queue)

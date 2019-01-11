@@ -328,8 +328,14 @@ class SendClientMixin:
         :type session: str or ~uuid.Guid
         :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_send_handler.Sender
-        :raises: If the current Service Bus entity requires sessions, a TypeError will
-         be raised.
+
+        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_sender_context]
+            :end-before: [END open_close_sender_context]
+            :language: python
+            :dedent: 4
+            :caption: Send multiple messages with a Sender.
+
         """
         handler_id = str(uuid.uuid4())
         if self.entity and self.requires_session:
@@ -494,17 +500,16 @@ class ReceiveClientMixin:
 
     def get_receiver(self, session=None, prefetch=0, mode=ReceiveSettleMode.PeekLock, idle_timeout=0, **kwargs):
         """Get a Receiver for the ServiceBus endpoint. A Receiver represents
-        a single open Connection with which multiple receive operations can be made.
-        This operation is only available on Python 3.5 and above.
+        a single open connection with which multiple receive operations can be made.
 
         :param session: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive the next available
          session, set this to NEXT_AVAILABLE.
-        :type session: str or ~azure.servicebus.NEXT_AVAILABLE
+        :type session: str or ~azure.servicebus.common.constants.NEXT_AVAILABLE
         :param prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, i.e. messages will be received from the service and processed
          one at a time. Increasing this value will improve message through-put performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
+         the chance that messages will expire while they are cached if they're not processed fast enough.
         :type prefetch: int
         :param mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -515,10 +520,16 @@ class ReceiveClientMixin:
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, i.e. no timeout.
         :type idle_timeout: int
-        :returns: A Receiver instance with an unopened Connection.
+        :returns: A Receiver instance with an unopened connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
-        :raises: If the current Service Bus entity requires sessions, a TypeError will
-         be raised.
+
+        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_receiver_context]
+            :end-before: [END open_close_receiver_context]
+            :language: python
+            :dedent: 4
+            :caption: Receive messages with a Receiver.
+
         """
         if self.entity and not self.requires_session and session:
             raise ValueError("A session cannot be used with a non-sessionful entitiy.")
@@ -555,9 +566,8 @@ class ReceiveClientMixin:
     def get_deadletter_receiver(
             self, transfer_deadletter=False, prefetch=0,
             mode=ReceiveSettleMode.PeekLock, idle_timeout=0, **kwargs):
-        """Get a Receiver for the deadletter endpoint of the queue. A Receiver represents
-        a single open Connection with which multiple receive operations can be made.
-        This operation is only available on Python 3.5 and above.
+        """Get a Receiver for the deadletter endpoint of the entity. A Receiver represents
+        a single open connection with which multiple receive operations can be made.
 
         :param transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
          deadletter queue. Default is False, i.e. the standard deadletter endpoint.
@@ -578,6 +588,14 @@ class ReceiveClientMixin:
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
+
+        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+            :start-after: [START receiver_deadletter_messages]
+            :end-before: [END receiver_deadletter_messages]
+            :language: python
+            :dedent: 4
+            :caption: Receive dead-lettered messages.
+
         """
         if int(prefetch) < 0 or int(prefetch) > 50000:
             raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
@@ -604,23 +622,7 @@ class BaseClient(mixins.BaseClient):
 
     def __init__(self, address, name, *, shared_access_key_name=None,
                  shared_access_key_value=None, loop=None, debug=False, **kwargs):
-        """
-        A client to interact with the named Service Bus entity.
 
-        :param address: The full URI of the Service Bus namespace. This can optionally
-         include URL-encoded access name and key.
-        :type address: str
-        :param name: The name of the entity to which the Client will connect.
-        :type name: str
-        :param shared_access_key_name: The name of the shared access policy. This must be supplied
-         if not encoded into the address.
-        :type shared_access_key_name: str
-        :param shared_access_key_value: The shared access key. This must be supplied if not encoded
-         into the address.
-        :type shared_access_key_value: str
-        :param debug: Whether to output network trace logs to the logger. Default is `False`.
-        :type debug: bool
-        """
         self.loop = loop or get_running_loop()
         super(BaseClient, self).__init__(
             address, name, shared_access_key_name=shared_access_key_name,
@@ -633,7 +635,36 @@ class BaseClient(mixins.BaseClient):
 class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
     """
     The QueueClient class defines a high level interface for sending
-    messages to and receiving messages from the Azure ServiceBus service.
+    messages to and receiving messages from an Azure Service Bus queue.
+    If you do not wish to perform management operations, a QueueClient can be
+    instantiated directly to perform send and receive operations to a Queue.
+    However if a QueueClient is created directory, a `get_properties` operation will
+    need to be completed in order to retrieve the properties of this queue (for example,
+    whether it is sessionful).
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the queue to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param loop: An async event loop
+    :type loop: ~asyncio.EventLoop
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
+
+    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        :start-after: [START create_queue_client]
+        :end-before: [END create_queue_client]
+        :language: python
+        :dedent: 4
+        :caption: Create a QueueClient.
+
     """
 
     def _get_entity(self):
@@ -643,7 +674,25 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
 class TopicClient(SendClientMixin, BaseClient):
     """
     The TopicClient class defines a high level interface for sending
-    messages to an Azure ServiceBus Topic.
+    messages to an Azure Service Bus Topic.
+    If you do not wish to perform management operations, a TopicClient can be
+    instantiated directly to perform send operations to a Topic.
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the topic to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param loop: An async event loop
+    :type loop: ~asyncio.EventLoop
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
     """
 
     def _get_entity(self):
@@ -653,28 +702,30 @@ class TopicClient(SendClientMixin, BaseClient):
 class SubscriptionClient(ReceiveClientMixin, BaseClient):
     """
     The SubscriptionClient class defines a high level interface for receiving
-    messages from an Azure ServiceBus Subscription.
+    messages to an Azure Service Bus Subscription.
+    If you do not wish to perform management operations, a SubscriptionClient can be
+    instantiated directly to perform receive operations from a Subscription.
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the topic to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param loop: An async event loop
+    :type loop: ~asyncio.EventLoop
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
     """
 
     def __init__(self, address, name, *, shared_access_key_name=None,
                  shared_access_key_value=None, loop=None, debug=False, **kwargs):
-        """
-        Constructs a new Client to interact with the named ServiceBus entity.
 
-        :param address: The full URI of the Service Bus namespace. This can optionally
-         include URL-encoded access name and key.
-        :type address: str
-        :param name: The name of the entity to which the Client will connect.
-        :type name: str
-        :param shared_access_key_name: The name of the shared access policy. This must be supplied
-         if not encoded into the address.
-        :type shared_access_key_name: str
-        :param shared_access_key_value: The shared access key. This must be supplied if not encoded
-         into the address.
-        :type shared_access_key_value: str
-        :param debug: Whether to output network trace logs to the logger. Default is `False`.
-        :type debug: bool
-        """
         super(SubscriptionClient, self).__init__(
             address, name,
             shared_access_key_name=shared_access_key_name,
@@ -685,7 +736,7 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
     @classmethod
     def from_connection_string(cls, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
         """
-        Create a QueueClient from a connection string.
+        Create a SubscriptionClient from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str

@@ -23,6 +23,7 @@ from azure.servicebus.aio import (
 from azure.servicebus.common.message import PeekMessage
 from azure.servicebus.common.constants import ReceiveSettleMode
 from azure.servicebus.common.errors import (
+    ServiceBusResourceNotFound,
     ServiceBusError,
     MessageLockExpired,
     InvalidHandlerState,
@@ -31,10 +32,6 @@ from azure.servicebus.common.errors import (
     MessageSendFailed,
     MessageSettleFailed)
 
-from examples.async_examples.example_queue_send_receive_batch_async import sample_queue_send_receive_batch_async
-from examples.async_examples.example_session_send_receive_batch_async import sample_session_send_receive_batch_async
-from examples.async_examples.example_session_send_receive_with_pool_async import sample_session_send_receive_with_pool_async
-
 
 async def process_message(message):
     print(message)
@@ -42,7 +39,7 @@ async def process_message(message):
 
 @pytest.mark.asyncio
 async def test_async_snippet_queues(live_servicebus_config, standard_queue):
-
+    pytest.skip("")
 # [START create_servicebus_client]
     import os
     from azure.servicebus.aio import ServiceBusClient
@@ -71,12 +68,19 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     except ServiceBusResourceNotFound:
         pass
 # [END get_queue_client]
+    try:
+# [START create_queue_client]
+        import os
+        from azure.servicebus.aio import QueueClient
 
+        connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+        queue_client = QueueClient.from_connection_string(connection_str, name="MyQueue")
+        queue_properties = queue_client.get_properties()
 
-    # queue_client = QueueClient.from_connection_string(
-    #     live_servicebus_config['conn_str'],
-    #     name=standard_queue,
-    #     debug=True)
+# [END create_queue_client]
+    except ServiceBusResourceNotFound:
+        pass
+
     queue_client = client.get_queue(standard_queue)
 
 # [START client_peek_messages]
@@ -136,6 +140,13 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
             await process_message(message)
 # [END open_close_receiver_context]
 
+# [START open_close_sender_context]
+    async with queue_client.get_sender() as sender:
+
+        await sender.send(Message("First"))
+        await sender.send(Message("Second"))
+# [END open_close_sender_context]
+
 # [START receiver_peek_messages]
     async with queue_client.get_receiver() as receiver:
         pending_messages = await receiver.peek(count=5)
@@ -150,6 +161,16 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
 
         message = await receiver.receive_deferred_messages([sequence_no])
 # [END receiver_defer_messages]
+
+# [START receiver_deadletter_messages]
+    async with queue_client.get_receiver() as receiver:
+        async for message in receiver:
+            await message.dead_letter()
+
+    async with queue_client.get_deadletter_receiver() as receiver:
+        async for message in receiver:
+            await message.complete()
+# [END receiver_deadletter_messages]
 
 # [START receiver_fetch_batch]
     async with queue_client.get_receiver(prefetch=100) as receiver:
@@ -188,7 +209,7 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
         current_state = await session.get_session_state()
         if not current_state:
             await session.set_session_state("OPENED")
-# [START set_session_state]
+# [END set_session_state]
 
 # [START receiver_peek_session_messages]
     async with queue_client.get_receiver(session=NEXT_AVAILABLE) as receiver:
@@ -248,18 +269,28 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
 # [END get_subscription_client]
 
 
-
-
 @pytest.mark.asyncio
 async def test_async_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
+    try:
+        from examples.async_examples.example_queue_send_receive_batch_async import sample_queue_send_receive_batch_async
+    except ImportError:
+        pytest.skip("")
     await sample_queue_send_receive_batch_async(live_servicebus_config, standard_queue)
 
 
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_batch(live_servicebus_config, session_queue):
+    try:
+        from examples.async_examples.example_session_send_receive_batch_async import sample_session_send_receive_batch_async
+    except ImportError:
+        pytest.skip("")
     await sample_session_send_receive_batch_async(live_servicebus_config, session_queue)
 
 
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
+    try:
+        from examples.async_examples.example_session_send_receive_with_pool_async import sample_session_send_receive_with_pool_async
+    except ImportError:
+        pytest.skip("")
     await sample_session_send_receive_with_pool_async(live_servicebus_config, session_queue)

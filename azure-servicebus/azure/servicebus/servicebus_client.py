@@ -47,7 +47,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :type http_request_session: ~requests.Session
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    .. literalinclude:: ../examples/test_examples.py
+    .. literalinclude:: ../../examples/test_examples.py
         :start-after: [START create_servicebus_client]
         :end-before: [END create_servicebus_client]
         :language: python

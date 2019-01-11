@@ -176,7 +176,7 @@ class BaseHandler:
 
         :param exception: An optional exception if the handler is closing
          due to an error.
-        :type exception: ~Exception
+        :type exception: Exception
 
         .. literalinclude:: ../../examples/async_examples/test_examples_async.py
             :start-after: [START open_close_sender_directly]
