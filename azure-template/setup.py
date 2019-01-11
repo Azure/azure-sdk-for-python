@@ -1,11 +1,3 @@
-"""A setuptools based setup module.
-
-See:
-https://packaging.python.org/en/latest/distributing.html
-https://github.com/pypa/sampleproject
-"""
-
-# Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 import os
 from io import open
@@ -69,7 +61,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     packages=find_packages(exclude=[
-        'tests'
+        'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure'
     ]),
