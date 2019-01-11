@@ -36,6 +36,11 @@ try:
     from .assignment_lock_settings_py3 import AssignmentLockSettings
     from .assignment_py3 import Assignment
     from .tracked_resource_py3 import TrackedResource
+    from .azure_resource_manager_error_py3 import AzureResourceManagerError
+    from .assignment_job_created_resource_py3 import AssignmentJobCreatedResource
+    from .assignment_deployment_job_result_py3 import AssignmentDeploymentJobResult
+    from .assignment_deployment_job_py3 import AssignmentDeploymentJob
+    from .assignment_operation_py3 import AssignmentOperation
 except (SyntaxError, ImportError):
     from .blueprint import Blueprint
     from .artifact import Artifact
@@ -63,10 +68,16 @@ except (SyntaxError, ImportError):
     from .assignment_lock_settings import AssignmentLockSettings
     from .assignment import Assignment
     from .tracked_resource import TrackedResource
+    from .azure_resource_manager_error import AzureResourceManagerError
+    from .assignment_job_created_resource import AssignmentJobCreatedResource
+    from .assignment_deployment_job_result import AssignmentDeploymentJobResult
+    from .assignment_deployment_job import AssignmentDeploymentJob
+    from .assignment_operation import AssignmentOperation
 from .blueprint_paged import BlueprintPaged
 from .artifact_paged import ArtifactPaged
 from .published_blueprint_paged import PublishedBlueprintPaged
 from .assignment_paged import AssignmentPaged
+from .assignment_operation_paged import AssignmentOperationPaged
 from .blueprint_management_client_enums import (
     BlueprintTargetScope,
     TemplateParameterType,
@@ -102,10 +113,16 @@ __all__ = [
     'AssignmentLockSettings',
     'Assignment',
     'TrackedResource',
+    'AzureResourceManagerError',
+    'AssignmentJobCreatedResource',
+    'AssignmentDeploymentJobResult',
+    'AssignmentDeploymentJob',
+    'AssignmentOperation',
     'BlueprintPaged',
     'ArtifactPaged',
     'PublishedBlueprintPaged',
     'AssignmentPaged',
+    'AssignmentOperationPaged',
     'BlueprintTargetScope',
     'TemplateParameterType',
     'ManagedServiceIdentityType',

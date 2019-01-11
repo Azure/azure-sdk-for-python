@@ -18,6 +18,7 @@ from .operations.artifacts_operations import ArtifactsOperations
 from .operations.published_blueprints_operations import PublishedBlueprintsOperations
 from .operations.published_artifacts_operations import PublishedArtifactsOperations
 from .operations.assignments_operations import AssignmentsOperations
+from .operations.assignment_operations import AssignmentOperations
 from . import models
 
 
@@ -64,6 +65,8 @@ class BlueprintManagementClient(SDKClient):
     :vartype published_artifacts: azure.mgmt.blueprint.operations.PublishedArtifactsOperations
     :ivar assignments: Assignments operations
     :vartype assignments: azure.mgmt.blueprint.operations.AssignmentsOperations
+    :ivar assignment_operations: AssignmentOperations operations
+    :vartype assignment_operations: azure.mgmt.blueprint.operations.AssignmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -91,4 +94,6 @@ class BlueprintManagementClient(SDKClient):
         self.published_artifacts = PublishedArtifactsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assignments = AssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assignment_operations = AssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -14,6 +14,7 @@ from .artifacts_operations import ArtifactsOperations
 from .published_blueprints_operations import PublishedBlueprintsOperations
 from .published_artifacts_operations import PublishedArtifactsOperations
 from .assignments_operations import AssignmentsOperations
+from .assignment_operations import AssignmentOperations
 
 __all__ = [
     'BlueprintsOperations',
@@ -21,4 +22,5 @@ __all__ = [
     'PublishedBlueprintsOperations',
     'PublishedArtifactsOperations',
     'AssignmentsOperations',
+    'AssignmentOperations',
 ]
