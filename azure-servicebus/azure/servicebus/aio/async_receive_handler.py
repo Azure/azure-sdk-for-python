@@ -65,7 +65,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
         :start-after: [START open_close_receiver_context]
         :end-before: [END open_close_receiver_context]
         :language: python
@@ -253,7 +253,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
          due to an error.
         :type exception: Exception
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START open_close_receiver_directly]
             :end-before: [END open_close_receiver_directly]
             :language: python
@@ -279,7 +279,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_peek_messages]
             :end-before: [END receiver_peek_messages]
             :language: python
@@ -316,14 +316,16 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_defer_messages]
             :end-before: [END receiver_defer_messages]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Defer messages, then retrieve them by sequence number.
 
         """
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         await self._can_run()
         try:
             receive_mode = mode.value.value
@@ -361,7 +363,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.aio.async_message.Message]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_fetch_batch]
             :end-before: [END receiver_fetch_batch]
             :language: python
@@ -423,14 +425,14 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
         :start-after: [START open_close_receiver_session_context]
         :end-before: [END open_close_receiver_session_context]
         :language: python
         :dedent: 4
         :caption: Running a session receiver within a context manager.
 
-    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
         :start-after: [START open_close_receiver_session_nextavailable]
         :end-before: [END open_close_receiver_session_nextavailable]
         :language: python
@@ -501,7 +503,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :rtype: str
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START set_session_state]
             :end-before: [END set_session_state]
             :language: python
@@ -525,7 +527,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :param state: The state value.
         :type state: str or bytes or bytearray
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START set_session_state]
             :end-before: [END set_session_state]
             :language: python
@@ -547,7 +549,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         also be performed as an asynchronous background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_renew_session_lock]
             :end-before: [END receiver_renew_session_lock]
             :language: python
@@ -574,11 +576,11 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_peek_session_messages]
             :end-before: [END receiver_peek_session_messages]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Peek messages in the queue.
 
         """
@@ -612,14 +614,16 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_defer_session_messages]
             :end-before: [END receiver_defer_session_messages]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Defer messages, then retrieve them by sequence number.
 
         """
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         await self._can_run()
         try:
             receive_mode = mode.value.value

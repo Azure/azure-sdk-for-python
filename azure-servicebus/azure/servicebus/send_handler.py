@@ -34,6 +34,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
         Instantiate a Service Bus event Sender client.
         :param target: The URI of the Service Bus to send to.
         :type target: str
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_sender_client]
+            :end-before: [END create_sender_client]
+            :language: python
+            :dedent: 0
+            :caption: Create a new instance of the Sender
+
         """
         self.name = "SBSender-{}".format(handler_id)
         self.session_id = session
@@ -60,6 +68,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to send.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_message]
+            :end-before: [END send_message]
+            :language: python
+            :dedent: 0
+            :caption: Send a message and block
+
         """
         if not isinstance(message, Message):
             raise TypeError("Vale of message must be of type 'Message'.")
@@ -81,6 +97,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.common.message.Message
         :returns: list[int]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START scheduling_messages]
+            :end-before: [END scheduling_messages]
+            :language: python
+            :dedent: 0
+            :caption: Schedule a message to be sent in future
+
         """
         if not self.running:
             self.open()
@@ -96,6 +120,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
         :param sequence_numbers: The seqeuence numbers of the scheduled messages.
         :type sequence_numbers: int
+
+         .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START cancel_scheduled_messages]
+            :end-before: [END cancel_scheduled_messages]
+            :language: python
+            :dedent: 0
+            :caption: Cancelling messages scheduled to be sent in future
+
         """
         if not self.running:
             self.open()
@@ -116,6 +148,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_pending_messages]
+            :end-before: [END send_pending_messages]
+            :language: python
+            :dedent: 0
+            :caption: Send the queued messages
+
         """
         if not self.running:
             self.open()
@@ -135,7 +175,16 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
     def reconnect(self):
         """If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+        a retryable error - attempt to reconnect.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START reconnect]
+            :end-before: [END reconnect]
+            :language: python
+            :dedent: 0
+            :caption: Reconnect to the service when connection breaks
+
+        """
         unsent_events = self._handler.pending_messages
         super(Sender, self).reconnect()
         try:
@@ -157,6 +206,14 @@ class SessionSender(Sender):
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send.
         :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_message]
+            :end-before: [END send_message]
+            :language: python
+            :dedent: 0
+            :caption: Send a message and block
+
         """
         if not isinstance(message, Message):
             raise TypeError("Vale of message must be of type 'Message'.")
@@ -170,6 +227,14 @@ class SessionSender(Sender):
         with send_pending_messages.
         :param message: The message to be sent.
         :type message: ~azure.servicebus.Message
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START queue_messages]
+            :end-before: [END queue_messages]
+            :language: python
+            :dedent: 0
+            :caption: Put the message to be sent later in the queue
+
         """
         if not self.session_id and not message.properties.group_id:
             raise ValueError("Message must have Session ID.")
@@ -184,6 +249,14 @@ class SessionSender(Sender):
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.common.message.Message
         :returns: list[int]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START scheduling_messages]
+            :end-before: [END scheduling_messages]
+            :language: python
+            :dedent: 0
+            :caption: Schedule a message to be sent in future
+
         """
         for message in messages:
             if not self.session_id and not message.properties.group_id:

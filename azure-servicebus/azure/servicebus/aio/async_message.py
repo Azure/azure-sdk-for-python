@@ -122,11 +122,26 @@ class DeferredMessage(Message):
         return self._settled
 
     async def complete(self):
+        """Complete the message.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('complete')
         await self._receiver._settle_deferred('completed', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def dead_letter(self, description=None):
+        """Move the message to the Dead Letter queue.
+
+        :param description: Additional details.
+        :type description: str
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('dead-letter')
         details = {
             'deadletter-reason': str(description) if description else "",
@@ -135,9 +150,16 @@ class DeferredMessage(Message):
         self._settled = True
 
     async def abandon(self):
+        """Abandon the message. This message will be returned to the queue to be reprocessed.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('abandon')
         await self._receiver._settle_deferred('abandoned', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def defer(self):
+        """A DeferredMessage cannot be deferred. Raises `ValueError`."""
         raise ValueError("Message is already deferred.")

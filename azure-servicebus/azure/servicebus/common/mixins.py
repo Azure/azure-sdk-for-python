@@ -398,7 +398,15 @@ class SenderMixin(object):
         with send_pending_messages.
 
         :param message: The message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.aio.async_message.Message
+
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            :start-after: [START queue_sender_messages]
+            :end-before: [END queue_sender_messages]
+            :language: python
+            :dedent: 4
+            :caption: Schedule messages.
+
         """
         if not self.running:
             self.open()

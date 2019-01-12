@@ -41,9 +41,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param http_request_session: Optional. Session object to use for http requests.
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
-        :start-after: [START create_servicebus_client]
-        :end-before: [END create_servicebus_client]
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        :start-after: [START create_async_servicebus_client]
+        :end-before: [END create_async_servicebus_client]
         :language: python
         :dedent: 4
         :caption: Create a ServiceBusClient.
@@ -75,9 +75,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :param conn_str: The connection string.
         :type conn_str: str
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
-            :start-after: [START create_servicebus_client_connstr]
-            :end-before: [END create_servicebus_client_connstr]
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            :start-after: [START create_async_servicebus_client_connstr]
+            :end-before: [END create_async_servicebus_client_connstr]
             :language: python
             :dedent: 4
             :caption: Create a ServiceBusClient via a connection string.
@@ -103,7 +103,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START get_queue_client]
             :end-before: [END get_queue_client]
             :language: python
@@ -155,7 +155,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START get_topic_client]
             :end-before: [END get_topic_client]
             :language: python
@@ -207,7 +207,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START get_subscription_client]
             :end-before: [END get_subscription_client]
             :language: python
@@ -263,7 +263,7 @@ class SendClientMixin:
         provided here, or set on each outgoing message.
 
         :param messages: One or more messages to be sent.
-        :type messages: ~azure.servicebus.aio.async_message.Message or 
+        :type messages: ~azure.servicebus.aio.async_message.Message or
          list[~azure.servicebus.aio.async_message.Message]
         :param message_timeout: The period in seconds during which the Message must be
          sent. If the send in not completed in this time it will return a failure result.
@@ -281,14 +281,14 @@ class SendClientMixin:
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START queue_client_send]
             :end-before: [END queue_client_send]
             :language: python
             :dedent: 4
             :caption: Send a single message.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START queue_client_send_multiple]
             :end-before: [END queue_client_send_multiple]
             :language: python
@@ -329,7 +329,7 @@ class SendClientMixin:
         :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_send_handler.Sender
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START open_close_sender_context]
             :end-before: [END open_close_sender_context]
             :language: python
@@ -376,7 +376,7 @@ class ReceiveClientMixin:
         :type session: str
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START client_peek_messages]
             :end-before: [END client_peek_messages]
             :language: python
@@ -411,16 +411,18 @@ class ReceiveClientMixin:
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START client_defer_messages]
             :end-before: [END client_defer_messages]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Defer messages, then retrieve them by sequence number.
 
         """
         if (self.entity and self.requires_session) or kwargs.get('session'):
             raise ValueError("Sessionful deferred messages can only be received within a locked receive session.")
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         try:
             receive_mode = mode.value.value
         except AttributeError:
@@ -447,7 +449,7 @@ class ReceiveClientMixin:
         :param messages: A list of deferred messages to be settled.
         :type messages: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START client_settle_deferred_messages]
             :end-before: [END client_settle_deferred_messages]
             :language: python
@@ -516,14 +518,14 @@ class ReceiveClientMixin:
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, i.e. no timeout.
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START open_close_receiver_context]
             :end-before: [END open_close_receiver_context]
             :language: python
@@ -582,14 +584,14 @@ class ReceiveClientMixin:
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, i.e. no timeout.
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START receiver_deadletter_messages]
             :end-before: [END receiver_deadletter_messages]
             :language: python
@@ -658,11 +660,11 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
 
-    .. literalinclude:: ../../examples/async_examples/test_examples_async.py
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
         :start-after: [START create_queue_client]
         :end-before: [END create_queue_client]
         :language: python
-        :dedent: 4
+        :dedent: 8
         :caption: Create a QueueClient.
 
     """
@@ -693,6 +695,14 @@ class TopicClient(SendClientMixin, BaseClient):
     :type loop: ~asyncio.EventLoop
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
+
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        :start-after: [START create_topic_client]
+        :end-before: [END create_topic_client]
+        :language: python
+        :dedent: 8
+        :caption: Create a TopicClient.
+
     """
 
     def _get_entity(self):
@@ -721,6 +731,14 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
     :type loop: ~asyncio.EventLoop
     :param debug: Whether to output network trace logs to the logger. Default is `False`.
     :type debug: bool
+
+    .. literalinclude:: ../examples/async_examples/test_examples_async.py
+        :start-after: [START create_sub_client]
+        :end-before: [END create_sub_client]
+        :language: python
+        :dedent: 8
+        :caption: Create a SubscriptionClient.
+
     """
 
     def __init__(self, address, name, *, shared_access_key_name=None,

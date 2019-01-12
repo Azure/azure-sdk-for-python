@@ -47,7 +47,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :type http_request_session: ~requests.Session
     :param bool debug: Whether to output AMQP network trace to the logger.
 
-    .. literalinclude:: ../../examples/test_examples.py
+    .. literalinclude:: ../examples/test_examples.py
         :start-after: [START create_servicebus_client]
         :end-before: [END create_servicebus_client]
         :language: python
@@ -102,6 +102,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :returns: ~azure.servicebus.queue_client.QueueClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_queue_client]
+            :end-before: [END get_queue_client]
+            :language: python
+            :dedent: 0
+            :caption: Get the specific queue client from service bus client
+
         """
         try:
             queue = self.mgmt_client.get_queue(queue_name)
@@ -121,6 +129,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :returns: list[~azure.servicebus.queue_client.QueueClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START list_queues]
+            :end-before: [END list_queues]
+            :language: python
+            :dedent: 0
+            :caption: List the queues from service bus client
+
         """
         try:
             queues = self.mgmt_client.list_queues()
@@ -144,6 +160,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :returns: ~azure.servicebus.topic_client.TopicClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_topic_client]
+            :end-before: [END get_topic_client]
+            :language: python
+            :dedent: 0
+            :caption: Get the specific topic client from service bus client
+
         """
         try:
             topic = self.mgmt_client.get_topic(topic_name)
@@ -162,6 +186,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :returns: list[~azure.servicebus.topic_client.TopicClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START list_topics]
+            :end-before: [END list_topics]
+            :language: python
+            :dedent: 0
+            :caption: List the topics from service bus client
+
         """
         try:
             topics = self.mgmt_client.list_topics()
@@ -186,6 +218,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :returns: ~azure.servicebus.subscription_client.SubscriptionClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_subscription_client]
+            :end-before: [END get_subscription_client]
+            :language: python
+            :dedent: 0
+            :caption: Get the specific subscription client from service bus client
+
         """
         try:
             subscription = self.mgmt_client.get_subscription(topic_name, subscription_name)
@@ -207,6 +247,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :returns: list[~azure.servicebus.subscription_client.SubscriptionClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START list_subscriptions]
+            :end-before: [END list_subscriptions]
+            :language: python
+            :dedent: 0
+            :caption: List the subscriptions from service bus client
+
         """
         try:
             subs = self.mgmt_client.list_subscriptions(topic_name)
@@ -244,6 +292,14 @@ class SendClientMixin(object):
          used instead. If no Session ID is supplied here, nor set on an outgoing
          message, a ValueError will be raised.
         :type session: str or ~uuid.Guid
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_message_service_bus]
+            :end-before: [END send_message_service_bus]
+            :language: python
+            :dedent: 0
+            :caption: Send messages to current entity via a single use connection
+
         """
         with self.get_sender(message_timeout=message_timeout, session=session, **kwargs) as sender:
             if isinstance(messages, Message):
@@ -278,6 +334,14 @@ class SendClientMixin(object):
         :rtype: ~azure.servicebus.send_handler.Sender
         :raises: If the current Service Bus entity requires sessions, a TypeError will
          be raised.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_sender]
+            :end-before: [END get_sender]
+            :language: python
+            :dedent: 0
+            :caption: Get sender client from service bus client
+
         """
         handler_id = str(uuid.uuid4())
         if self.entity and self.requires_session:
@@ -316,6 +380,14 @@ class ReceiveClientMixin(object):
          does not require sessions this value will be ignored.
         :type session: str or ~uuid.Guid
         :returns: list[~azure.servicebus.common.message.PeekMessage]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START peek_messages_service_bus]
+            :end-before: [END peek_messages_service_bus]
+            :language: python
+            :dedent: 0
+            :caption: Look at specificied number of messages without removing them from queue
+
         """
         message = {'from-sequence-number': types.AMQPLong(start_from), 'message-count': int(count)}
         if self.entity and self.requires_session:
@@ -341,6 +413,14 @@ class ReceiveClientMixin(object):
         :param skip: The page value to jump to. Default value is 0.
         :type skip: int
         :returns: list[str]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START list_sessions_service_bus]
+            :end-before: [END list_sessions_service_bus]
+            :language: python
+            :dedent: 0
+            :caption: Get the Ids of session which have messages pending in the queue
+
         """
         if self.entity and not self.requires_session:
             raise ValueError("This is not a sessionful entity.")
@@ -366,11 +446,21 @@ class ReceiveClientMixin(object):
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :returns: list[~azure.servicebus.common.message.Message]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START receive_deferred_messages_service_bus]
+            :end-before: [END receive_deferred_messages_service_bus]
+            :language: python
+            :dedent: 0
+            :caption: Get the messages which were deferred using their sequence numbers
+
         """
         if (self.entity and self.requires_session) or kwargs.get('session'):
             raise ValueError("Sessionful deferred messages can only be received within a locked receive session.")
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         try:
             receive_mode = mode.value.value
         except AttributeError:
@@ -397,7 +487,7 @@ class ReceiveClientMixin(object):
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :returns: list[~azure.servicebus.aio.async_message.Message]
         """
         if (self.entity and self.requires_session) or kwargs.get('session'):
@@ -432,7 +522,7 @@ class ReceiveClientMixin(object):
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, i.e. no timeout.
         :type idle_timeout: int
@@ -440,6 +530,14 @@ class ReceiveClientMixin(object):
         :rtype: ~azure.servicebus.receive_handler.Receiver
         :raises: If the current Service Bus entity requires sessions, a TypeError will
          be raised.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_receiver]
+            :end-before: [END get_receiver]
+            :language: python
+            :dedent: 0
+            :caption: Get the receiver client from service bus client
+
         """
         if self.entity and not self.requires_session and session:
             raise ValueError("A session cannot be used with a non-sessionful entitiy.")
@@ -490,12 +588,20 @@ class ReceiveClientMixin(object):
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode or str
+        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, i.e. no timeout.
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.receive_handler.Receiver
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_dead_letter_receiver]
+            :end-before: [END get_dead_letter_receiver]
+            :language: python
+            :dedent: 0
+            :caption: Get the dead lettered messages
+
         """
         if int(prefetch) < 0 or int(prefetch) > 50000:
             raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")

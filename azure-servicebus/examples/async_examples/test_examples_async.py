@@ -39,8 +39,7 @@ async def process_message(message):
 
 @pytest.mark.asyncio
 async def test_async_snippet_queues(live_servicebus_config, standard_queue):
-    pytest.skip("")
-# [START create_servicebus_client]
+# [START create_async_servicebus_client]
     import os
     from azure.servicebus.aio import ServiceBusClient
 
@@ -52,13 +51,13 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         service_namespace=namespace,
         shared_access_key_name=shared_access_policy,
         shared_access_key_value=shared_access_key)
-# [END create_servicebus_client]
+# [END create_async_servicebus_client]
 
-# [START create_servicebus_client_connstr]
+# [START create_async_servicebus_client_connstr]
     connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 
     client = ServiceBusClient.from_connection_string(connection_str)
-# [END create_servicebus_client_connstr]
+# [END create_async_servicebus_client_connstr]
 
 # [START get_queue_client]
     from azure.servicebus import ServiceBusResourceNotFound
@@ -87,23 +86,31 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     peeked_messages = await queue_client.peek(count=5)
 # [END client_peek_messages]
 
+    try:
 # [START client_defer_messages]
-    sequence_numbers = []
-    async with queue_client.get_receiver() as receiver:
-        async for message in receiver:
-            sequence_numbers.append(message.sequence_number)
-            await message.defer()
+        sequence_numbers = []
+        async with queue_client.get_receiver(idle_timeout=5) as receiver:
+            async for message in receiver:
+                sequence_numbers.append(message.sequence_number)
+                await message.defer()
 
-    deferred = await queue_client.receive_deferred_messages(sequence_numbers)
+        deferred = await queue_client.receive_deferred_messages(sequence_numbers)
 # [END client_defer_messages]
+    except ValueError:
+        pass
 
+    try:
 # [START client_settle_deferred_messages]
-    deferred = await queue_client.receive_deferred_messages(sequence_numbers)
+        deferred = await queue_client.receive_deferred_messages(sequence_numbers)
 
-    await queue_client.settle_deferred_messages('completed', deferred)
+        await queue_client.settle_deferred_messages('completed', deferred)
 # [END client_settle_deferred_messages]
+    except ValueError:
+        pass
 
 # [START open_close_sender_directly]
+    from azure.servicebus.aio import Message
+
     sender = queue_client.get_sender()
     try:
         await sender.open()
@@ -116,14 +123,14 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     from azure.servicebus.aio import Message
 
     message = Message("Hello World")
-    queue_client.send(message)
+    await queue_client.send(message)
 # [END queue_client_send]
 
 # [START queue_client_send_multiple]
     from azure.servicebus.aio import Message
 
     messages = [Message("First"), Message("Second")]
-    queue_client.send(messages, message_timeout=30)
+    await queue_client.send(messages, message_timeout=30)
 # [END queue_client_send_multiple]
 
 # [START open_close_receiver_directly]
@@ -139,6 +146,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         async for message in receiver:
             await process_message(message)
 # [END open_close_receiver_context]
+            break
 
 # [START open_close_sender_context]
     async with queue_client.get_sender() as sender:
@@ -147,23 +155,50 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         await sender.send(Message("Second"))
 # [END open_close_sender_context]
 
+# [START queue_sender_messages]
+    async with queue_client.get_sender() as sender:
+
+        sender.queue_message(Message("First"))
+        sender.queue_message(Message("Second"))
+        await sender.send_pending_messages()
+# [END queue_sender_messages]
+
+# [START schedule_messages]
+    async with queue_client.get_sender() as sender:
+
+        enqueue_time = datetime.now() + timedelta(minutes=10)
+        await sender.schedule(enqueue_time, Message("First"), Message("Second"))
+# [END schedule_messages]
+
+# [START cancel_schedule_messages]
+    async with queue_client.get_sender() as sender:
+
+        enqueue_time = datetime.now() + timedelta(minutes=10)
+        sequence_numbers = await sender.schedule(enqueue_time, Message("First"), Message("Second"))
+
+        await sender.cancel_scheduled_messages(*sequence_numbers)
+# [END cancel_schedule_messages]
+
 # [START receiver_peek_messages]
     async with queue_client.get_receiver() as receiver:
         pending_messages = await receiver.peek(count=5)
 # [END receiver_peek_messages]
 
+    try:
 # [START receiver_defer_messages]
-    async with queue_client.get_receiver() as receiver:
-        async for message in receiver:
-            sequence_no = message.sequence_number
-            await message.defer()
-            break
+        async with queue_client.get_receiver() as receiver:
+            async for message in receiver:
+                sequence_no = message.sequence_number
+                await message.defer()
+                break
 
-        message = await receiver.receive_deferred_messages([sequence_no])
+            message = await receiver.receive_deferred_messages([sequence_no])
 # [END receiver_defer_messages]
+    except ServiceBusError:
+        pass
 
 # [START receiver_deadletter_messages]
-    async with queue_client.get_receiver() as receiver:
+    async with queue_client.get_receiver(idle_timeout=5) as receiver:
         async for message in receiver:
             await message.dead_letter()
 
@@ -171,10 +206,11 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         async for message in receiver:
             await message.complete()
 # [END receiver_deadletter_messages]
+            break
 
 # [START receiver_fetch_batch]
-    async with queue_client.get_receiver(prefetch=100) as receiver:
-        messages = await receiver.fetch_batch(timeout=5)
+    async with queue_client.get_receiver(idle_timeout=5, prefetch=100) as receiver:
+        messages = await receiver.fetch_next(timeout=5)
         await asyncio.gather(*[m.complete() for m in messages])
 # [END receiver_fetch_batch]
 
@@ -187,8 +223,32 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
         debug=True)
     queue_client.get_properties()
 
+# [START open_close_session_sender_context]
+    from azure.servicebus.aio import Message
+
+    async with queue_client.get_sender(session="MySession") as sender:
+
+        await sender.send(Message("First"))
+        await sender.send(Message("Second"))
+# [END open_close_session_sender_context]
+
+# [START queue_session_sender_messages]
+    async with queue_client.get_sender(session="MySession") as sender:
+
+        sender.queue_message(Message("First"))
+        sender.queue_message(Message("Second"))
+        await sender.send_pending_messages()
+# [END queue_session_sender_messages]
+
+# [START schedule_session_messages]
+    async with queue_client.get_sender(session="MySession") as sender:
+
+        enqueue_time = datetime.now() + timedelta(minutes=10)
+        await sender.schedule(enqueue_time, Message("First"), Message("Second"))
+# [END schedule_session_messages]
+
 # [START open_close_receiver_session_context]
-    async with queue_client.get_receiver(session="MySession") as session:
+    async with queue_client.get_receiver(session="MySession", idle_timeout=5) as session:
         async for message in session:
             await process_message(message)
 # [END open_close_receiver_session_context]
@@ -197,7 +257,7 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     from azure.servicebus import NEXT_AVAILABLE, NoActiveSession
 
     try:
-        async with queue_client.get_receiver(session=NEXT_AVAILABLE) as receiver:
+        async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as receiver:
             async for message in receiver:
                 await process_message(message)
     except NoActiveSession:
@@ -205,29 +265,36 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
 # [END open_close_receiver_session_nextavailable]
 
 # [START set_session_state]
-    async with queue_client.get_receiver(session="MySession") as session:
+    async with queue_client.get_receiver(session="MySession", idle_timeout=5) as session:
         current_state = await session.get_session_state()
         if not current_state:
             await session.set_session_state("OPENED")
 # [END set_session_state]
 
+    try:
 # [START receiver_peek_session_messages]
-    async with queue_client.get_receiver(session=NEXT_AVAILABLE) as receiver:
-        pending_messages = await receiver.peek(count=5)
+        async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as receiver:
+            pending_messages = await receiver.peek(count=5)
 # [END receiver_peek_session_messages]
+    except NoActiveSession:
+        pass
 
+    try:
 # [START receiver_defer_session_messages]
-    async with queue_client.get_receiver(session="MySession") as receiver:
-        async for message in receiver:
-            sequence_no = message.sequence_number
-            await message.defer()
-            break
+        async with queue_client.get_receiver(session="MySession", idle_timeout=5) as receiver:
+            sequence_numbers = []
+            async for message in receiver:
+                sequence_numbers.append(message.sequence_number)
+                await message.defer()
+                break
 
-        message = await receiver.receive_deferred_messages([sequence_no])
+            message = await receiver.receive_deferred_messages(sequence_numbers)
 # [END receiver_defer_session_messages]
+    except ServiceBusError:
+        pass
 
 # [START receiver_renew_session_lock]
-    async with queue_client.get_receiver(session="MySession") as session:
+    async with queue_client.get_receiver(session="MySession", idle_timeout=5) as session:
         async for message in session:
             await process_message(message)
             await session.renew_lock()
@@ -259,6 +326,18 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
         pass
 # [END get_topic_client]
 
+    try:
+# [START create_topic_client]
+        import os
+        from azure.servicebus.aio import TopicClient
+
+        connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+        topic_client = TopicClient.from_connection_string(connection_str, name="MyTopic")
+        topic_properties = topic_client.get_properties()
+# [END create_topic_client]
+    except ServiceBusResourceNotFound:
+        pass
+
 # [START get_subscription_client]
     from azure.servicebus import ServiceBusResourceNotFound
 
@@ -267,6 +346,18 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
     except ServiceBusResourceNotFound:
         pass
 # [END get_subscription_client]
+
+    try:
+# [START create_sub_client]
+        import os
+        from azure.servicebus.aio import SubscriptionClient
+
+        connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+        subscription_client = SubscriptionClient.from_connection_string(connection_str, name="MySubscription", topic="MyTopic")
+        properties = subscription_client.get_properties()
+# [END create_sub_client]
+    except ServiceBusResourceNotFound:
+        pass
 
 
 @pytest.mark.asyncio
