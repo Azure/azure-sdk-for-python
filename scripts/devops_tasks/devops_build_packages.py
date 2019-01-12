@@ -25,6 +25,7 @@ def build_packages(targeted_packages, distribution_directory):
     # run the build and distribution
     for package_name in targeted_packages:
         print(package_name)
+        print('Generating Package Using Python {}'.format(sys.version))
         run_check_call(['python', build_packing_script_location, '--dest', distribution_directory, package_name], root_dir)
 
 if __name__ == '__main__':
