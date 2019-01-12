@@ -20,10 +20,6 @@ class ControllerConnectionDetails(Model):
 
     :ivar auth_key: Authentication key for communicating with services.
     :vartype auth_key: str
-    :ivar workspace_storage_account_name: Workspace storage account name.
-    :vartype workspace_storage_account_name: str
-    :ivar workspace_storage_sas_token: Workspace storage account SAS token.
-    :vartype workspace_storage_sas_token: str
     :param orchestrator_specific_connection_details:
     :type orchestrator_specific_connection_details:
      ~azure.mgmt.devspaces.models.OrchestratorSpecificConnectionDetails
@@ -31,20 +27,14 @@ class ControllerConnectionDetails(Model):
 
     _validation = {
         'auth_key': {'readonly': True},
-        'workspace_storage_account_name': {'readonly': True},
-        'workspace_storage_sas_token': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_key': {'key': 'authKey', 'type': 'str'},
-        'workspace_storage_account_name': {'key': 'workspaceStorageAccountName', 'type': 'str'},
-        'workspace_storage_sas_token': {'key': 'workspaceStorageSasToken', 'type': 'str'},
         'orchestrator_specific_connection_details': {'key': 'orchestratorSpecificConnectionDetails', 'type': 'OrchestratorSpecificConnectionDetails'},
     }
 
     def __init__(self, **kwargs):
         super(ControllerConnectionDetails, self).__init__(**kwargs)
         self.auth_key = None
-        self.workspace_storage_account_name = None
-        self.workspace_storage_sas_token = None
         self.orchestrator_specific_connection_details = kwargs.get('orchestrator_specific_connection_details', None)

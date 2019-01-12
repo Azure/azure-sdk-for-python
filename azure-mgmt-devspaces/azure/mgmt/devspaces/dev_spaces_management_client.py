@@ -13,8 +13,9 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.controllers_operations import ControllersOperations
+from .operations.container_host_mappings_operations import ContainerHostMappingsOperations
 from .operations.operations import Operations
+from .operations.controllers_operations import ControllersOperations
 from . import models
 
 
@@ -56,10 +57,12 @@ class DevSpacesManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: DevSpacesManagementClientConfiguration
 
-    :ivar controllers: Controllers operations
-    :vartype controllers: azure.mgmt.devspaces.operations.ControllersOperations
+    :ivar container_host_mappings: ContainerHostMappings operations
+    :vartype container_host_mappings: azure.mgmt.devspaces.operations.ContainerHostMappingsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.devspaces.operations.Operations
+    :ivar controllers: Controllers operations
+    :vartype controllers: azure.mgmt.devspaces.operations.ControllersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -76,11 +79,13 @@ class DevSpacesManagementClient(SDKClient):
         super(DevSpacesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01-preview'
+        self.api_version = '2019-01-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.controllers = ControllersOperations(
+        self.container_host_mappings = ContainerHostMappingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.controllers = ControllersOperations(
             self._client, self.config, self._serialize, self._deserialize)

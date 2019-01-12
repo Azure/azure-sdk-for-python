@@ -32,12 +32,12 @@ class Controller(TrackedResource):
     :type location: str
     :ivar provisioning_state: Provisioning state of the Azure Dev Spaces
      Controller. Possible values include: 'Succeeded', 'Failed', 'Canceled',
-     'Updating', 'Creating', 'Deleting'
+     'Updating', 'Creating', 'Deleting', 'Deleted'
     :vartype provisioning_state: str or
      ~azure.mgmt.devspaces.models.ProvisioningState
-    :param host_suffix: Required. DNS suffix for public endpoints running in
-     the Azure Dev Spaces Controller.
-    :type host_suffix: str
+    :ivar host_suffix: DNS suffix for public endpoints running in the Azure
+     Dev Spaces Controller.
+    :vartype host_suffix: str
     :ivar data_plane_fqdn: DNS name for accessing DataPlane services
     :vartype data_plane_fqdn: str
     :param target_container_host_resource_id: Required. Resource ID of the
@@ -55,7 +55,7 @@ class Controller(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'host_suffix': {'required': True},
+        'host_suffix': {'readonly': True},
         'data_plane_fqdn': {'readonly': True},
         'target_container_host_resource_id': {'required': True},
         'target_container_host_credentials_base64': {'required': True},
@@ -79,7 +79,7 @@ class Controller(TrackedResource):
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.host_suffix = kwargs.get('host_suffix', None)
+        self.host_suffix = None
         self.data_plane_fqdn = None
         self.target_container_host_resource_id = kwargs.get('target_container_host_resource_id', None)
         self.target_container_host_credentials_base64 = kwargs.get('target_container_host_credentials_base64', None)

@@ -32,12 +32,12 @@ class Controller(TrackedResource):
     :type location: str
     :ivar provisioning_state: Provisioning state of the Azure Dev Spaces
      Controller. Possible values include: 'Succeeded', 'Failed', 'Canceled',
-     'Updating', 'Creating', 'Deleting'
+     'Updating', 'Creating', 'Deleting', 'Deleted'
     :vartype provisioning_state: str or
      ~azure.mgmt.devspaces.models.ProvisioningState
-    :param host_suffix: Required. DNS suffix for public endpoints running in
-     the Azure Dev Spaces Controller.
-    :type host_suffix: str
+    :ivar host_suffix: DNS suffix for public endpoints running in the Azure
+     Dev Spaces Controller.
+    :vartype host_suffix: str
     :ivar data_plane_fqdn: DNS name for accessing DataPlane services
     :vartype data_plane_fqdn: str
     :param target_container_host_resource_id: Required. Resource ID of the
@@ -55,7 +55,7 @@ class Controller(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'host_suffix': {'required': True},
+        'host_suffix': {'readonly': True},
         'data_plane_fqdn': {'readonly': True},
         'target_container_host_resource_id': {'required': True},
         'target_container_host_credentials_base64': {'required': True},
@@ -76,10 +76,10 @@ class Controller(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, host_suffix: str, target_container_host_resource_id: str, target_container_host_credentials_base64: str, sku, tags=None, location: str=None, **kwargs) -> None:
+    def __init__(self, *, target_container_host_resource_id: str, target_container_host_credentials_base64: str, sku, tags=None, location: str=None, **kwargs) -> None:
         super(Controller, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
-        self.host_suffix = host_suffix
+        self.host_suffix = None
         self.data_plane_fqdn = None
         self.target_container_host_resource_id = target_container_host_resource_id
         self.target_container_host_credentials_base64 = target_container_host_credentials_base64
