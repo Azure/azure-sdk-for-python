@@ -1,0 +1,201 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import ast
+import os
+import re
+import sys
+import textwrap
+
+# packages which are skipped in all cases
+skip_pkgs = [
+    'azure-sdk-for-python',
+    'azure-sdk-tools'
+]
+
+# packages which are not considered when displaying / generating the list of requirements,
+# but which are still considered when looking for requirement version inconsistencies
+meta_pkgs = [
+    'azure-mgmt',
+    'azure'
+]
+
+def locate_libs(base_dir):
+    lib_dirs = []
+    for root, _, files in os.walk(base_dir):
+        parent_dir = os.path.dirname(root)
+        if parent_dir != base_dir:
+            continue
+        lib_dir = os.path.basename(root)
+        if 'setup.py' in files and lib_dir not in skip_pkgs:
+            lib_dirs.append(root)
+    return sorted(lib_dirs)
+
+def parse_setup(setup_filename):
+    mock_setup = textwrap.dedent('''\
+    def setup(*args, **kwargs):
+        __setup_calls__.append((args, kwargs))
+    ''')
+    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+    with open(setup_filename, 'rt') as setup_file:
+        parsed = ast.parse(setup_file.read())
+        for index, node in enumerate(parsed.body[:]):
+            if (
+                not isinstance(node, ast.Expr) or
+                not isinstance(node.value, ast.Call) or
+                not hasattr(node.value.func, 'id') or
+                node.value.func.id != 'setup'
+            ):
+                continue
+            parsed.body[index:index] = parsed_mock_setup.body
+            break
+    
+    fixed = ast.fix_missing_locations(parsed)
+    codeobj = compile(fixed, setup_filename, 'exec')
+    local_vars = {}
+    global_vars = {'__setup_calls__': []}
+    current_dir = os.getcwd()
+    working_dir = os.path.dirname(setup_filename)
+    os.chdir(working_dir)
+    exec(codeobj, global_vars, local_vars)
+    os.chdir(current_dir)
+    _, kwargs = global_vars['__setup_calls__'][0]
+
+    requires = []
+    if 'install_requires' in kwargs:
+        requires += kwargs['install_requires']
+    if 'extras_require' in kwargs:
+        for extra in kwargs['extras_require'].values():
+            requires += extra
+    return requires
+
+def dict_compare(d1, d2):
+    d1_keys = set(d1.keys())
+    d2_keys = set(d2.keys())
+    intersect_keys = d1_keys.intersection(d2_keys)
+    added = d1_keys - d2_keys
+    removed = d2_keys - d1_keys
+    modified = {o : (d1[o], d2[o]) for o in intersect_keys if d1[o] != d2[o]}
+    return added, removed, modified
+
+if __name__ == '__main__':
+    base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    verbose = '--verbose' in sys.argv[1:]
+    freeze = '--freeze' in sys.argv[1:]
+
+    dependencies = {}
+    for lib_dir in locate_libs(base_dir):
+        try:
+            lib_name = os.path.basename(lib_dir)
+            setup_path = os.path.join(lib_dir, 'setup.py')
+            requires = parse_setup(setup_path)
+            for req in requires:
+                req_parts = re.split('([<>~=]+)', req, 1)
+                req_name = req_parts[0]
+                spec = ''.join(req_parts[1:])
+                if not req_name in dependencies:
+                    dependencies[req_name] = {}
+                if not spec in dependencies[req_name]:
+                    dependencies[req_name][spec] = []
+                dependencies[req_name][spec].append(lib_name)
+        except:
+            print('Failed to parse %s' % (setup_path), file=sys.stderr)
+    
+    if verbose:
+        print('Requirements discovered:')
+        for requirement in sorted(dependencies.keys()):
+            specs = dependencies[requirement]
+            libs = []
+            for spec in specs.keys():
+                friendly_spec = ' (%s)' % (spec) if spec != '' else ''
+                for lib in specs[spec]:
+                    if lib in meta_pkgs:
+                        continue
+                    libs.append('  * %s%s' % (lib, friendly_spec))
+            
+            if len(libs) > 0:
+                print('\n%s' % (requirement))
+                for lib in libs:
+                    print(lib)
+    
+    consistent = True
+    for requirement in sorted(dependencies.keys()):
+        specs = dependencies[requirement]
+        num_specs = len(specs)
+        if num_specs == 1:
+            continue
+        consistent = False
+        if not verbose:
+            break
+        
+        print("\n\nRequirement '%s' has %s unique specifiers:" % (requirement, num_specs))
+        for spec in sorted(specs.keys()):
+            libs = specs[spec]
+            friendly_spec = '(none)' if spec == '' else spec
+            print("\n  '%s'" % (friendly_spec))
+            print('  ' + ('-' * (len(friendly_spec) + 2)))
+            for lib in sorted(libs):
+                print('    * %s' % (lib))
+    
+    exitcode = 0
+    if not consistent:
+        print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
+        exitcode = 1
+    else:
+        print('\n\nAll library dependencies verified, no incompatible versions detected')
+    
+    frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
+    if freeze:
+        if exitcode != 0:
+            print('Unable to freeze requirements when incompatible dependency versions exist')
+            sys.exit(exitcode)
+        else:
+            with open(frozen_filename, 'w') as frozen_file:
+                for requirement in sorted(dependencies.keys()):
+                    spec = list(dependencies[requirement].keys())[0]
+                    frozen_file.write(requirement + spec + '\n')
+            print('Current requirements frozen to %s' % (frozen_filename))
+            sys.exit(0)
+    
+    frozen = {}
+    try:
+        with open(frozen_filename, 'r') as frozen_file:
+            for line in frozen_file:
+                req_parts = re.split('([<>~=]+)', line.strip(), 1)
+                req_name = req_parts[0]
+                spec = ''.join(req_parts[1:])
+                frozen[req_name] = [spec]
+    except:
+        print('Unable to open shared_requirements.txt, shared requirements will not be validated')
+        sys.exit(exitcode)
+    
+    flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
+    missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
+    if len(missing_reqs) > 0:
+        print('\nThe following requirements are frozen but do not exist in any current library:')
+        for missing_req in missing_reqs:
+            [spec] = frozen[missing_req]
+            print('  * %s' % (missing_req + spec))
+    if len(new_reqs) > 0:
+        exitcode = 1
+        for new_req in new_reqs:
+            for spec in dependencies[new_req]:
+                libs = dependencies[new_req][spec]
+                print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
+                for lib in libs:
+                    print("  * %s" % (lib))
+    if len(changed_reqs) > 0:
+        exitcode = 1
+        for changed_req in changed_reqs:
+            [frozen_spec] = frozen[changed_req]
+            for current_spec in dependencies[changed_req]:
+                if frozen_spec == current_spec:
+                    continue
+                libs = dependencies[changed_req][current_spec]
+                print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
+                for lib in libs:
+                    print("  * %s" % (lib))
+
+    if exitcode == 0:
+        print('All library dependencies validated against frozen requirements')
+
+    sys.exit(exitcode)
