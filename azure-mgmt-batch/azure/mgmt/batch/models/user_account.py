@@ -30,6 +30,12 @@ class UserAccount(Model):
      If not specified, the user is created with the default options.
     :type linux_user_configuration:
      ~azure.mgmt.batch.models.LinuxUserConfiguration
+    :param windows_user_configuration: The Windows-specific user configuration
+     for the user account. This property can only be specified if the user is
+     on a Windows pool. If not specified and on a Windows pool, the user is
+     created with the default options.
+    :type windows_user_configuration:
+     ~azure.mgmt.batch.models.WindowsUserConfiguration
     """
 
     _validation = {
@@ -42,11 +48,13 @@ class UserAccount(Model):
         'password': {'key': 'password', 'type': 'str'},
         'elevation_level': {'key': 'elevationLevel', 'type': 'ElevationLevel'},
         'linux_user_configuration': {'key': 'linuxUserConfiguration', 'type': 'LinuxUserConfiguration'},
+        'windows_user_configuration': {'key': 'windowsUserConfiguration', 'type': 'WindowsUserConfiguration'},
     }
 
-    def __init__(self, name, password, elevation_level=None, linux_user_configuration=None):
+    def __init__(self, name, password, elevation_level=None, linux_user_configuration=None, windows_user_configuration=None):
         super(UserAccount, self).__init__()
         self.name = name
         self.password = password
         self.elevation_level = elevation_level
         self.linux_user_configuration = linux_user_configuration
+        self.windows_user_configuration = windows_user_configuration

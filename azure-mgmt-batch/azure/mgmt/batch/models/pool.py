@@ -37,27 +37,15 @@ class Pool(ProxyResource):
     :vartype last_modified: datetime
     :ivar creation_time: The creation time of the pool.
     :vartype creation_time: datetime
-    :ivar provisioning_state: The current state of the pool. Values are:
-     Succeeded - The pool is available to run tasks subject to the availability
-     of compute nodes.
-     Deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed. Possible values include: 'Succeeded',
-     'Deleting'
+    :ivar provisioning_state: The current state of the pool. Possible values
+     include: 'Succeeded', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.batch.models.PoolProvisioningState
     :ivar provisioning_state_transition_time: The time at which the pool
      entered its current state.
     :vartype provisioning_state_transition_time: datetime
-    :ivar allocation_state: Whether the pool is resizing. Values are:
-     Steady - The pool is not resizing. There are no changes to the number of
-     nodes in the pool in progress. A pool enters this state when it is created
-     and when no operations are being performed on the pool to change the
-     number of dedicated nodes.
-     Resizing - The pool is resizing; that is, compute nodes are being added to
-     or removed from the pool.
-     Stopping - The pool was resizing, but the user has requested that the
-     resize be stopped, but the stop request has not yet been completed.
-     Possible values include: 'Steady', 'Resizing', 'Stopping'
+    :ivar allocation_state: Whether the pool is resizing. Possible values
+     include: 'Steady', 'Resizing', 'Stopping'
     :vartype allocation_state: str or ~azure.mgmt.batch.models.AllocationState
     :ivar allocation_state_transition_time: The time at which the pool entered
      its current allocation state.

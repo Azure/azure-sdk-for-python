@@ -41,12 +41,7 @@ class CertificateReference(Model):
      any custom store name can also be used. The default value is My.
     :type store_name: str
     :param visibility: Which user accounts on the compute node should have
-     access to the private data of the certificate. Values are:
-     starttask - The user account under which the start task is run.
-     task - The accounts under which job tasks are run.
-     remoteuser - The accounts under which users remotely access the node.
-     You can specify more than one visibility in this collection. The default
-     is all accounts.
+     access to the private data of the certificate.
     :type visibility: list[str or
      ~azure.mgmt.batch.models.CertificateVisibility]
     """

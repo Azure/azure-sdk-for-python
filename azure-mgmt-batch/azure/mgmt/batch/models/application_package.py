@@ -9,22 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class ApplicationPackage(Model):
+class ApplicationPackage(ProxyResource):
     """An application package which represents a particular version of an
     application.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the application.
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar version: The version of the application package.
-    :vartype version: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: The ETag of the resource, used for concurrency statements.
+    :vartype etag: str
     :ivar state: The current state of the application package. Possible values
-     include: 'Pending', 'Active', 'Unmapped'
+     include: 'Pending', 'Active'
     :vartype state: str or ~azure.mgmt.batch.models.PackageState
     :ivar format: The format of the application package, if the package is
      active.
@@ -41,7 +45,9 @@ class ApplicationPackage(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'version': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
         'state': {'readonly': True},
         'format': {'readonly': True},
         'storage_url': {'readonly': True},
@@ -51,18 +57,18 @@ class ApplicationPackage(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'PackageState'},
-        'format': {'key': 'format', 'type': 'str'},
-        'storage_url': {'key': 'storageUrl', 'type': 'str'},
-        'storage_url_expiry': {'key': 'storageUrlExpiry', 'type': 'iso-8601'},
-        'last_activation_time': {'key': 'lastActivationTime', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'PackageState'},
+        'format': {'key': 'properties.format', 'type': 'str'},
+        'storage_url': {'key': 'properties.storageUrl', 'type': 'str'},
+        'storage_url_expiry': {'key': 'properties.storageUrlExpiry', 'type': 'iso-8601'},
+        'last_activation_time': {'key': 'properties.lastActivationTime', 'type': 'iso-8601'},
     }
 
     def __init__(self):
         super(ApplicationPackage, self).__init__()
-        self.id = None
-        self.version = None
         self.state = None
         self.format = None
         self.storage_url = None
