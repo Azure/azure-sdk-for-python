@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .setting_py3 import Setting
+from .resource import Resource
 
 
-class DataExportSetting(Setting):
-    """Represents a data export setting.
+class SettingResource(Resource):
+    """The kind of the security setting.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,8 +30,6 @@ class DataExportSetting(Setting):
      (DataExportSetting). Possible values include: 'DataExportSetting',
      'AlertSuppressionSetting'
     :type kind: str or ~azure.mgmt.security.models.SettingKind
-    :param enabled: Required. Is the data export setting is enabled
-    :type enabled: bool
     """
 
     _validation = {
@@ -39,7 +37,6 @@ class DataExportSetting(Setting):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
-        'enabled': {'required': True},
     }
 
     _attribute_map = {
@@ -47,9 +44,8 @@ class DataExportSetting(Setting):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind, enabled: bool, **kwargs) -> None:
-        super(DataExportSetting, self).__init__(kind=kind, **kwargs)
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(SettingResource, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)

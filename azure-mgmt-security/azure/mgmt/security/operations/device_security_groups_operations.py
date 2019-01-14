@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class IotSecurityGroupsOperations(object):
-    """IotSecurityGroupsOperations operations.
+class DeviceSecurityGroupsOperations(object):
+    """DeviceSecurityGroupsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,8 @@ class IotSecurityGroupsOperations(object):
 
     def list(
             self, resource_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of security groups for the specified IoT hub resource.
+        """Gets the list of device security groups for the specified IoT hub
+        resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
@@ -48,69 +49,77 @@ class IotSecurityGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IotSecurityGroupList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.IotSecurityGroupList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of DeviceSecurityGroup
+        :rtype:
+         ~azure.mgmt.security.models.DeviceSecurityGroupPaged[~azure.mgmt.security.models.DeviceSecurityGroup]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'resourceId': self._serialize.url("resource_id", resource_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('IotSecurityGroupList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeviceSecurityGroupPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeviceSecurityGroupPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/iotSecurityGroups'}
+    list.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups'}
 
     def get(
-            self, resource_id, iot_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the security group for the specified IoT hub resource.
+            self, resource_id, device_security_group_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the device security group for the specified IoT hub resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param iot_security_group_name: The name of the security group. Please
-         notice that the name is case insensitive.
-        :type iot_security_group_name: str
+        :param device_security_group_name: The name of the security group.
+         Please notice that the name is case insensitive.
+        :type device_security_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IotSecurityGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.IotSecurityGroup or
+        :return: DeviceSecurityGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.DeviceSecurityGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -118,7 +127,7 @@ class IotSecurityGroupsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
-            'iotSecurityGroupName': self._serialize.url("iot_security_group_name", iot_security_group_name, 'str')
+            'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -148,33 +157,35 @@ class IotSecurityGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IotSecurityGroup', response)
+            deserialized = self._deserialize('DeviceSecurityGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/iotSecurityGroups/{iotSecurityGroupName}'}
+    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}'}
 
     def create_or_update(
-            self, resource_id, iot_security_group_name, iot_security_group, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the security group on a specified IoT hub resource.
+            self, resource_id, device_security_group_name, device_security_group, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates the device security group on a specified IoT hub
+        resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param iot_security_group_name: The name of the security group. Please
-         notice that the name is case insensitive.
-        :type iot_security_group_name: str
-        :param iot_security_group: Security group object.
-        :type iot_security_group: ~azure.mgmt.security.models.IotSecurityGroup
+        :param device_security_group_name: The name of the security group.
+         Please notice that the name is case insensitive.
+        :type device_security_group_name: str
+        :param device_security_group: Security group object.
+        :type device_security_group:
+         ~azure.mgmt.security.models.DeviceSecurityGroup
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IotSecurityGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.IotSecurityGroup or
+        :return: DeviceSecurityGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.DeviceSecurityGroup or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -182,7 +193,7 @@ class IotSecurityGroupsOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
-            'iotSecurityGroupName': self._serialize.url("iot_security_group_name", iot_security_group_name, 'str')
+            'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -202,7 +213,7 @@ class IotSecurityGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(iot_security_group, 'IotSecurityGroup')
+        body_content = self._serialize.body(device_security_group, 'DeviceSecurityGroup')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -216,26 +227,26 @@ class IotSecurityGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IotSecurityGroup', response)
+            deserialized = self._deserialize('DeviceSecurityGroup', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('IotSecurityGroup', response)
+            deserialized = self._deserialize('DeviceSecurityGroup', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/iotSecurityGroups/{iotSecurityGroupName}'}
+    create_or_update.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}'}
 
     def delete(
-            self, resource_id, iot_security_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, device_security_group_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the security group.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param iot_security_group_name: The name of the security group. Please
-         notice that the name is case insensitive.
-        :type iot_security_group_name: str
+        :param device_security_group_name: The name of the security group.
+         Please notice that the name is case insensitive.
+        :type device_security_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -249,7 +260,7 @@ class IotSecurityGroupsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
-            'iotSecurityGroupName': self._serialize.url("iot_security_group_name", iot_security_group_name, 'str')
+            'deviceSecurityGroupName': self._serialize.url("device_security_group_name", device_security_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -270,7 +281,7 @@ class IotSecurityGroupsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -278,4 +289,4 @@ class IotSecurityGroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/iotSecurityGroups/{iotSecurityGroupName}'}
+    delete.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/deviceSecurityGroups/{deviceSecurityGroupName}'}

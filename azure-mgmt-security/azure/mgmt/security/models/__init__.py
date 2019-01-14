@@ -21,7 +21,7 @@ try:
     from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
     from .setting_py3 import Setting
     from .data_export_setting_py3 import DataExportSetting
-    from .setting_kind1_py3 import SettingKind1
+    from .setting_resource_py3 import SettingResource
     from .sensitivity_label_py3 import SensitivityLabel
     from .information_protection_keyword_py3 import InformationProtectionKeyword
     from .information_type_py3 import InformationType
@@ -30,8 +30,7 @@ try:
     from .time_window_custom_alert_rule_py3 import TimeWindowCustomAlertRule
     from .allowlist_custom_alert_rule_py3 import AllowlistCustomAlertRule
     from .denylist_custom_alert_rule_py3 import DenylistCustomAlertRule
-    from .iot_security_group_py3 import IotSecurityGroup
-    from .iot_security_group_list_py3 import IotSecurityGroupList
+    from .device_security_group_py3 import DeviceSecurityGroup
     from .custom_alert_rule_py3 import CustomAlertRule
     from .location_py3 import Location
     from .operation_display_py3 import OperationDisplay
@@ -82,7 +81,7 @@ except (SyntaxError, ImportError):
     from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
     from .setting import Setting
     from .data_export_setting import DataExportSetting
-    from .setting_kind1 import SettingKind1
+    from .setting_resource import SettingResource
     from .sensitivity_label import SensitivityLabel
     from .information_protection_keyword import InformationProtectionKeyword
     from .information_type import InformationType
@@ -91,8 +90,7 @@ except (SyntaxError, ImportError):
     from .time_window_custom_alert_rule import TimeWindowCustomAlertRule
     from .allowlist_custom_alert_rule import AllowlistCustomAlertRule
     from .denylist_custom_alert_rule import DenylistCustomAlertRule
-    from .iot_security_group import IotSecurityGroup
-    from .iot_security_group_list import IotSecurityGroupList
+    from .device_security_group import DeviceSecurityGroup
     from .custom_alert_rule import CustomAlertRule
     from .location import Location
     from .operation_display import OperationDisplay
@@ -136,6 +134,7 @@ from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
 from .compliance_paged import CompliancePaged
+from .device_security_group_paged import DeviceSecurityGroupPaged
 from .setting_paged import SettingPaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .operation_paged import OperationPaged
@@ -174,7 +173,7 @@ __all__ = [
     'AdvancedThreatProtectionSetting',
     'Setting',
     'DataExportSetting',
-    'SettingKind1',
+    'SettingResource',
     'SensitivityLabel',
     'InformationProtectionKeyword',
     'InformationType',
@@ -183,8 +182,7 @@ __all__ = [
     'TimeWindowCustomAlertRule',
     'AllowlistCustomAlertRule',
     'DenylistCustomAlertRule',
-    'IotSecurityGroup',
-    'IotSecurityGroupList',
+    'DeviceSecurityGroup',
     'CustomAlertRule',
     'Location',
     'OperationDisplay',
@@ -228,6 +226,7 @@ __all__ = [
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',
     'CompliancePaged',
+    'DeviceSecurityGroupPaged',
     'SettingPaged',
     'InformationProtectionPolicyPaged',
     'OperationPaged',

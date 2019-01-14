@@ -15,7 +15,7 @@ from .workspace_settings_operations import WorkspaceSettingsOperations
 from .auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .compliances_operations import CompliancesOperations
 from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
-from .iot_security_groups_operations import IotSecurityGroupsOperations
+from .device_security_groups_operations import DeviceSecurityGroupsOperations
 from .settings_operations import SettingsOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations import Operations
@@ -35,7 +35,7 @@ __all__ = [
     'AutoProvisioningSettingsOperations',
     'CompliancesOperations',
     'AdvancedThreatProtectionOperations',
-    'IotSecurityGroupsOperations',
+    'DeviceSecurityGroupsOperations',
     'SettingsOperations',
     'InformationProtectionPoliciesOperations',
     'Operations',

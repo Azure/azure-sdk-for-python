@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class IotSecurityGroup(Resource):
-    """The IoT security group resource.
+class DeviceSecurityGroup(Resource):
+    """The device security group resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -54,9 +54,9 @@ class IotSecurityGroup(Resource):
         'denylist_rules': {'key': 'properties.denylistRules', 'type': '[DenylistCustomAlertRule]'},
     }
 
-    def __init__(self, *, threshold_rules=None, time_window_rules=None, allowlist_rules=None, denylist_rules=None, **kwargs) -> None:
-        super(IotSecurityGroup, self).__init__(**kwargs)
-        self.threshold_rules = threshold_rules
-        self.time_window_rules = time_window_rules
-        self.allowlist_rules = allowlist_rules
-        self.denylist_rules = denylist_rules
+    def __init__(self, **kwargs):
+        super(DeviceSecurityGroup, self).__init__(**kwargs)
+        self.threshold_rules = kwargs.get('threshold_rules', None)
+        self.time_window_rules = kwargs.get('time_window_rules', None)
+        self.allowlist_rules = kwargs.get('allowlist_rules', None)
+        self.denylist_rules = kwargs.get('denylist_rules', None)
