@@ -21,4 +21,4 @@ if __name__ == '__main__':
     targeted_packages = process_glob_string(args.glob_string, root_dir)
 
     print('This is the sys.version: {}'.format(sys.version))
-    run_check_call([args.python_version, '--version', '.')
+    run_check_call([args.python_version, '--version', os.getcwd())
