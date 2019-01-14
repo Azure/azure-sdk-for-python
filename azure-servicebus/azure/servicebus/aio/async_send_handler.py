@@ -22,7 +22,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
     It operates a single connetion that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
-    `TopicClient` using the `get_receiver()` method.
+    `TopicClient` using the `get_sender()` method.
 
     .. note:: This object is not thread-safe.
 
@@ -68,8 +68,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             **self.handler_kwargs)
 
     async def send(self, message):
-        """
-        Sends a message and blocks until acknowledgement is
+        """Sends a message and blocks until acknowledgement is
         received or the operation fails.
 
         :param message: The message to be sent.
@@ -83,6 +82,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             :language: python
             :dedent: 4
             :caption: Open a Sender and send messages.
+            :name: sender_send_async
 
         """
         if not isinstance(message, Message):
@@ -104,7 +104,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type schedule_time: ~datetime.datetime
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.aio.async_message.Message
-        :returns: list[int]
+        :rtype: list[int]
 
         .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START schedule_messages]
@@ -112,6 +112,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             :language: python
             :dedent: 4
             :caption: Schedule messages.
+            :name: sender_schedule_async
 
         """
         if not self.running:
@@ -135,6 +136,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             :language: python
             :dedent: 4
             :caption: Schedule messages.
+            :name: sender_cancel_async
 
         """
         if not self.running:
@@ -161,6 +163,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             :language: python
             :dedent: 4
             :caption: Schedule messages.
+            :name: sender_pending_async
 
         """
         if not self.running:
@@ -198,7 +201,7 @@ class SessionSender(Sender):
     It operates a single connetion that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
-    `TopicClient` using the `get_receiver()` method.
+    `TopicClient` using the `get_sender()` method.
     An attempt to send a message without a session ID specified either on the Sender or the message
     will raise a `ValueError`.
 
@@ -225,8 +228,7 @@ class SessionSender(Sender):
     """
 
     async def send(self, message):
-        """
-        Sends a message and blocks until acknowledgement is
+        """Sends a message and blocks until acknowledgement is
         received or the operation fails. If neither the Sender or the message
         has a session ID, a `ValueError` will be raised.
 
@@ -241,6 +243,7 @@ class SessionSender(Sender):
             :language: python
             :dedent: 4
             :caption: Open a sessionful Sender and send messages.
+            :name: session_sender_create_async
 
         """
         if not isinstance(message, Message):
@@ -263,6 +266,7 @@ class SessionSender(Sender):
             :language: python
             :dedent: 4
             :caption: Schedule messages.
+            :name: session_sender_queue_async
 
         """
         if not self.session_id and not message.properties.group_id:
@@ -286,6 +290,7 @@ class SessionSender(Sender):
             :language: python
             :dedent: 4
             :caption: Schedule messages.
+            :name: session_sender_schedule_async
 
         """
         for message in messages:

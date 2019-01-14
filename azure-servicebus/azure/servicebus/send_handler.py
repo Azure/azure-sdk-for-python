@@ -23,26 +23,42 @@ _log = logging.getLogger(__name__)
 
 
 class Sender(BaseHandler, mixins.SenderMixin):
-    """
-    Implements a Sender.
+    """This handler if for sending messages to a Service Bus entity.
+    It operates a single connetion that must be opened and closed on completion.
+    The Sender can be run within a context manager to ensure that the connection is closed on exit.
+    The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
+    `TopicClient` using the `get_sender()` method.
+
+    .. note:: This object is not thread-safe.
+
+    :param handler_id: The ID used as the connection name for the Sender.
+    :type handler_id: str
+    :param target: The endpoint to send messages to.
+    :type target: ~uamqp.Target
+    :param auth_config: The SASL auth credentials.
+    :type auth_config: dict[str, str]
+    :param session: An optional session ID. If supplied, all outgoing messages will have this
+     session ID added (unless they already have one specified).
+    :type session: str
+    :param connection: A shared connection [not yet supported].
+    :type connection: ~uamqp.Connection
+    :param encoding: The encoding used for string properties. Default is 'UTF-8'.
+    :type encoding: str
+    :param debug: Whether to enable network trace debug logs.
+    :type debug: bool
+
+    .. literalinclude:: ../examples/test_examples.py
+        :start-after: [START create_sender_client]
+        :end-before: [END create_sender_client]
+        :language: python
+        :dedent: 4
+        :caption: Create a new instance of the Sender
+        :name: sender_create
     """
 
     def __init__(
             self, handler_id, target, auth_config, session=None,
             connection=None, encoding='UTF-8', debug=False, **kwargs):
-        """
-        Instantiate a Service Bus event Sender client.
-        :param target: The URI of the Service Bus to send to.
-        :type target: str
-
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START create_sender_client]
-            :end-before: [END create_sender_client]
-            :language: python
-            :dedent: 0
-            :caption: Create a new instance of the Sender
-
-        """
         self.name = "SBSender-{}".format(handler_id)
         self.session_id = session
         super(Sender, self).__init__(
@@ -61,9 +77,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
             **self.handler_kwargs)
 
     def send(self, message):
-        """
-        Sends a message and blocks until acknowledgement is
-        received or operation times out.
+        """Sends a message and blocks until acknowledgement is
+        received or the operation fails.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
@@ -73,8 +88,9 @@ class Sender(BaseHandler, mixins.SenderMixin):
             :start-after: [START send_message]
             :end-before: [END send_message]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Send a message and block
+            :name: sender_send
 
         """
         if not isinstance(message, Message):
@@ -96,14 +112,15 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type schedule_time: ~datetime.datetime
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.common.message.Message
-        :returns: list[int]
+        :rtype: list[int]
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START scheduling_messages]
             :end-before: [END scheduling_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Schedule a message to be sent in future
+            :name: sender_schedule
 
         """
         if not self.running:
@@ -121,12 +138,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :param sequence_numbers: The seqeuence numbers of the scheduled messages.
         :type sequence_numbers: int
 
-         .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/test_examples.py
             :start-after: [START cancel_scheduled_messages]
             :end-before: [END cancel_scheduled_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Cancelling messages scheduled to be sent in future
+            :name: sender_cancel
 
         """
         if not self.running:
@@ -146,15 +164,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
          if the message sent, or `False` if it failed. The second is an error if the message
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send.
 
         .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START send_pending_messages]
-            :end-before: [END send_pending_messages]
+            :start-after: [START queue_and_send_messages]
+            :end-before: [END queue_and_send_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Send the queued messages
+            :name: sender_pending
 
         """
         if not self.running:
@@ -176,14 +193,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
     def reconnect(self):
         """If the handler was disconnected from the service with
         a retryable error - attempt to reconnect.
-
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START reconnect]
-            :end-before: [END reconnect]
-            :language: python
-            :dedent: 0
-            :caption: Reconnect to the service when connection breaks
-
+        This method will be called automatically for most retryable errors.
+        Also attempts to re-queue any messages that were pending before the reconnect.
         """
         unsent_events = self._handler.pending_messages
         super(Sender, self).reconnect()
@@ -195,24 +206,52 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
 
 class SessionSender(Sender):
+    """This handler if for sending messages to a sessionful Service Bus entity.
+    It operates a single connetion that must be opened and closed on completion.
+    The Sender can be run within a context manager to ensure that the connection is closed on exit.
+    The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
+    `TopicClient` using the `get_sender()` method.
+    An attempt to send a message without a session ID specified either on the Sender or the message
+    will raise a `ValueError`.
+
+    .. note:: This object is not thread-safe.
+
+    :param handler_id: The ID used as the connection name for the Sender.
+    :type handler_id: str
+    :param target: The endpoint to send messages to.
+    :type target: ~uamqp.Target
+    :param auth_config: The SASL auth credentials.
+    :type auth_config: dict[str, str]
+    :param session: An optional session ID. If supplied, all outgoing messages will have this
+     session ID added (unless they already have one specified).
+    :type session: str
+    :param connection: A shared connection [not yet supported].
+    :type connection: ~uamqp.Connection
+    :param encoding: The encoding used for string properties. Default is 'UTF-8'.
+    :type encoding: str
+    :param debug: Whether to enable network trace debug logs.
+    :type debug: bool
+
+    """
 
     def send(self, message):
-        """
-        Sends a message and blocks until acknowledgement is
-        received or operation times out.
+        """Sends a message and blocks until acknowledgement is
+        received or the operation fails. If neither the Sender or the message
+        has a session ID, a `ValueError` will be raised.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
          send.
-        :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
+        :raises: ValueError if there is no session ID specified.
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START send_message]
             :end-before: [END send_message]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Send a message and block
+            :name: session_sender_create
 
         """
         if not isinstance(message, Message):
@@ -222,18 +261,20 @@ class SessionSender(Sender):
         super(SessionSender, self).send(message)
 
     def queue_message(self, message):
-        """
-        Queue a message to be sent later. This operation should be followed up
-        with send_pending_messages.
+        """Queue a message to be sent later. This operation should be followed up
+        with send_pending_messages. If neither the Sender or the message
+        has a session ID, a `ValueError` will be raised.
+
         :param message: The message to be sent.
         :type message: ~azure.servicebus.Message
 
         .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START queue_messages]
-            :end-before: [END queue_messages]
+            :start-after: [START queue_and_send_session_messages]
+            :end-before: [END queue_and_send_session_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Put the message to be sent later in the queue
+            :name: session_sender_queue
 
         """
         if not self.session_id and not message.properties.group_id:
@@ -254,8 +295,9 @@ class SessionSender(Sender):
             :start-after: [START scheduling_messages]
             :end-before: [END scheduling_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Schedule a message to be sent in future
+            :name: session_sender_schedule
 
         """
         for message in messages:

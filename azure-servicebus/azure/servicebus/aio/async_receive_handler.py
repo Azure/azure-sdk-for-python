@@ -345,9 +345,8 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
         return messages
 
     async def fetch_next(self, max_batch_size=None, timeout=None):
-        """
-        Receive a batch of messages at once. This approach it optimal
-        if you wish to process multiple messages simultaneously. Not that the
+        """Receive a batch of messages at once. This approach it optimal
+        if you wish to process multiple messages simultaneously. Note that the
         number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least
@@ -644,7 +643,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         return messages
 
     async def list_sessions(self, updated_since=None, max_results=100, skip=0):
-        """List the IDs of sessions in the queue with pending messages and where the 'State' of the session
+        """List the IDs of sessions in the queue with pending messages and where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
         If the state of a session has never been set, it will not be returned regardless of whether
         there are messages pending.

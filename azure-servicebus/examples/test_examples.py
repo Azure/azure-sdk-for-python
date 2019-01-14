@@ -5,12 +5,13 @@
 #--------------------------------------------------------------------------
 
 import pytest
+import datetime
+import os
 
-from azure.servicebus import ServiceBusResourceNotFound
+from azure.servicebus import ServiceBusResourceNotFound, ServiceBusError
 
-def test_example_create_servicebus_client(live_servicebus_config):
 
-# Create a new service bus client using SAS credentials
+def create_servicebus_client():
 # [START create_servicebus_client]
     import os
     from azure.servicebus import ServiceBusClient
@@ -19,14 +20,26 @@ def test_example_create_servicebus_client(live_servicebus_config):
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
 
+    # Create a new service bus client using SAS credentials
     client = ServiceBusClient(
         service_namespace=namespace,
         shared_access_key_name=shared_access_policy,
         shared_access_key_value=shared_access_key)
 
 # [END create_servicebus_client]
+    return client
+
+
+def process_message(message):
+    print(message)
+
+
+def test_example_create_servicebus_client(live_servicebus_config):
+
+    client = create_servicebus_client()
 
 # [START create_servicebus_client_connstr]
+    from azure.servicebus import ServiceBusClient
     connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 
     client = ServiceBusClient.from_connection_string(connection_str)
@@ -81,26 +94,13 @@ def test_example_create_servicebus_client(live_servicebus_config):
         print(sub_client.name)
 # [END list_subscriptions]
 
-    
-def _create_servicebus_client(sb_config):
-
-    import os
-    from azure.servicebus import ServiceBusClient
-
-    client = ServiceBusClient(
-    service_namespace=sb_config['hostname'],
-    shared_access_key_name=sb_config['key_name'],
-    shared_access_key_value=sb_config['access_key'],
-    debug=True)
-
-    return client
 
 def test_example_send_receive_service_bus(live_servicebus_config, standard_queue, session_queue):
     import os
     from azure.servicebus import ServiceBusClient, ServiceBusResourceNotFound
     from azure.servicebus import Message
 
-    client = _create_servicebus_client(live_servicebus_config)
+    client = create_servicebus_client()
 
     try:
 # [START create_queue_client_directly]
@@ -187,37 +187,31 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     session_ids = session_client.list_sessions(updated_since=yesterday)
  # [END list_sessions_service_bus]
 
-
+    try:
 # [START receive_deferred_messages_service_bus]
-    seq_numbers = []
-    with queue_client.get_receiver() as queue_receiver:
-        for message in queue_receiver:
-            seq_numbers.append(message.sequence_number)
-            message.defer()
+        seq_numbers = []
+        with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
+            for message in queue_receiver:
+                seq_numbers.append(message.sequence_number)
+                message.defer()
 
-    # Receive deferred messages - provide sequence numbers of
-    # messages which were deferred.
-    deferred = queue_client.receive_deferred_messages(sequence_numbers=seq_numbers)
+        # Receive deferred messages - provide sequence numbers of
+        # messages which were deferred.
+        deferred = queue_client.receive_deferred_messages(sequence_numbers=seq_numbers)
 # [END receive_deferred_messages_service_bus]
+    except ServiceBusError:
+        pass
 
+    try:
 # [START settle_deferred_messages_service_bus]
-    queue_client.settle_deferred_messages('completed', deferred)
+        queue_client.settle_deferred_messages('completed', deferred)
 # [END settle_deferred_messages_service_bus]
-
+    except ServiceBusError:
+        pass
 
 # [START get_dead_letter_receiver]
     # Get dead lettered messages
     with queue_client.get_deadletter_receiver(idle_timeout=1) as dead_letter_receiver:
-        # Peek at messages
-        message = dead_letter_receiver.peek()
-    
-        # Receive dead letterted messages in Batch
-        messages_batch = dead_letter_receiver.fetch_next()
-        for message in messages_batch:
-            print(message)
-
-            # Indicate message acceptance
-            message.complete()
 
         # Receive dead lettered message continuously
         for message in dead_letter_receiver:
@@ -226,15 +220,18 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
 # [END get_dead_letter_receiver]
 
 
-def test_example_receiver_client(live_servicebus_config, standard_queue):
+def test_example_receiver_client(live_servicebus_config, standard_queue, session_queue):
     import os
     import datetime
     from azure.servicebus import ServiceBusClient
     from azure.servicebus import Message
     from azure.servicebus.receive_handler import Receiver, SessionReceiver
 
-    sb_client = _create_servicebus_client(live_servicebus_config)
+    sb_client = create_servicebus_client()
     queue_client = sb_client.get_queue(standard_queue)
+    session_client = sb_client.get_queue(session_queue)
+    queue_client.send([Message("a"), Message("b"), Message("c")])
+    session_client.send([Message("a"), Message("b"), Message("c")], session="MySessionID")
 
 # [START open_close_receiver_connection]
     receiver = queue_client.get_receiver()
@@ -253,211 +250,172 @@ def test_example_receiver_client(live_servicebus_config, standard_queue):
 
 # [START queue_size]
 # Get the number of unprocessed messages in queue
-    num_unprocessed_msgs = receiver.queue_size()
+    num_unprocessed_msgs = receiver.queue_size
 # [END queue_size]
 
+# [START peek_messages]
+# Peek at specific number of messages
+    with queue_client.get_receiver() as receiver:
+        receiver.peek(count=5)
+# [END peek_messages]
 
+    try:
+# [START receive_deferred_messages]
+        seq_numbers = []
+        with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
+            for message in queue_receiver:
+                seq_numbers.append(message.sequence_number)
+                message.defer()
+
+        # Receive deferred messages - provide sequence numbers of
+        # messages which were deferred.
+        with queue_client.get_receiver() as queue_receiver:
+            deferred = queue_receiver.receive_deferred_messages(sequence_numbers=seq_numbers)
+# [END receive_deferred_messages]
+    except ValueError:
+        pass
+
+# [START fetch_next_messages]
+    with queue_client.get_receiver(prefetch=200) as queue_receiver:
+        # Receive messages in Batch (specify the amount )
+        messages = queue_receiver.fetch_next(max_batch_size=15, timeout=1)
+        for m in messages:
+            print(m.message)
+# [END fetch_next_messages]
 
 
 # [START create_session_receiver_client]
-
-    handler_id = str(uuid.uuid4())
-    session_id = str(uuid.uuid4())
-    session_receiver_client =  SessionReceiver(
-            handler_id,
-            recv_config['source'],
-            recv_config['auth_config'],
-            debug=recv_config['debug'],
-            session=session_id,
-            timeout=recv_config['timeout'],
-            prefetch=int(recv_config['prefetch']),
-            mode=recv_config['mode'])
-
+    with session_client.get_receiver(session="MySessionID") as session:
+        for message in session:
+            process_message(message)
 # [END create_session_receiver_client]
+            break
 
-# [Session Receivers only operations]
+# [START create_receiver_session_nextavailable]
+    from azure.servicebus import NEXT_AVAILABLE, NoActiveSession
+
+    try:
+        with session_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as receiver:
+            for message in receiver:
+                process_message(message)
+    except NoActiveSession:
+        pass
+# [END create_receiver_session_nextavailable]
 
 # [START set_session_state]
 # Set the session state
-    session_receiver_client.set_session_state('START')
+    with session_client.get_receiver(session="MySessionID") as receiver:
+        receiver.set_session_state('START')
 # [END set_session_state]
 
 # [START get_session_state]
 # Get the session state
-    session_state = session_receiver_client.get_session_state()
+    with session_client.get_receiver(session="MySessionID") as receiver:
+        session_state = receiver.get_session_state()
 # [END get_session_state]
 
 # [START renew_lock]
 # Renew session lock before it expires
-    session_receiver_client.renew_lock()
+    with session_client.get_receiver(session="MySessionID") as session:
+        messages = session.fetch_next(timeout=3)
+        session.renew_lock()
 # [END renew_lock]
 
 # [START list_sessions]
 # List sessions
-    session_ids = session_receiver_client.list_sessions()
+    with session_client.get_receiver(session="MySessionID") as receiver:
+        session_ids = receiver.list_sessions()
 
-# List sessions updated after specific time
-    today = datetime.datetime.today()
-    yesterday = today - datetime.timedelta(days=1)
-    session_ids = session_receiver_client.list_sessions(updated_since=yesterday)
+        # List sessions updated after specific time
+        today = datetime.datetime.today()
+        yesterday = today - datetime.timedelta(days=1)
+        session_ids = receiver.list_sessions(updated_since=yesterday)
 # [END list_sessions]
 
-    
 
-
-def test_example_receiver_message_functions(sb_config,seq_numbers):
-    import os
-    import datetime
-    from azure.servicebus import ServiceBusClient
-    from azure.servicebus import Message
-
-# Create a new service bus client using SAS credentials
-    session_id = str(uuid.uuid4())
-    client = _create_servicebus_client(sb_config)
-    receiver_client = client.get_queue().get_receiver(session_id)
-    #receiver_client = client.get_subscription().get_receiver(session_id)
-
-# [START peek_messages]
-# Peek at specific number of messages
-    receiver_client.peek(count=5)
-# [END peek_messages]
-
-# [START fetch_next_messages]
-# Receive messages in Batch (specify the amount )
-    messages = receiver_client.fetch_next(max_batch_size=15, timeout=1)
-    for m in messages:
-        print(m.message)
-# [END fetch_next_messages]
-
-# [START receive_deferred_messages]
-# Receive deferred messages 
-# Provide sequence numbers of messages which were deferred.
-    receiver_client.receive_deferred_messages(sequence_numbers=seq_numbers)
-# [END receive_deferred_messages]
-    
-
-
-
-def test_example_create_sender_send_message(sb_config, queue_name, sender_config):
+def test_example_create_sender_send_message(live_servicebus_config, standard_queue, session_queue):
     import os
     from azure.servicebus import ServiceBusClient
     from azure.servicebus import Message
     from azure.servicebus.send_handler import Sender, SessionSender
 
-    #[START create_sender_client]
-    handler_id = str(uuid.uuid4())
+    sb_client = create_servicebus_client()
+    queue_client = sb_client.get_queue(standard_queue)
+    session_client = sb_client.get_queue(session_queue)
 
-    sender = Sender(
-                handler_id,
-                sender_config['source'],
-                sender_config['auth_config'],
-                session=sender_config['session'],
-                debug=ender_config['debug'],
-                msg_timeout=mender_config['message_timeout'])
-    #[END create_sender_client]
-
-    #[START create_session_sender_client]
-    session_sender = SessionSender(
-            handler_id,
-            sender_config['source'],
-            sender_config['auth_config'],
-            session=sender_config['session'],
-            debug=ender_config['debug'],
-            msg_timeout=mender_config['message_timeout'])
-
-    # [END create_session_sender_client]
-
-# Create a new service bus client using SAS credentials
-    sb_client = _create_servicebus_client(sb_config)
-# [Alternatively Get the Sender from Service Bus Client]
-# Get the queue client
-    queue_client = sb_client.get_queue(queue_name)
-# Get the sender - a single open Connection with which multiple send operations can be made
-    sender2 = queue_client.get_sender()
-
-# [START send_message]
-# Send the message via sender
-    message = Message("Hello World!")
-    sender.send(message)
-# [END send_message]
-
-# Get the session receiver - A Receiver represents a single open Connection with which multiple receive operations can be made.
-    receiver = queue_client.get_receiver(idle_timeout=1)
-#Process the recevied messages
-    for message in receiver:
-        print(message)
-    # Indicate message acceptance
-        message.complete()
-
-# [START reconnect]
-# Reconnect to the service, if connection error happens.
-    sender.reconnect()
-# [END reconnect]
-
-
-
-def test_example_message_scheduling_descheduling(sb_config, queue_name):
-    import os
-    import datetime
-    from azure.servicebus import ServiceBusClient
+# [START create_sender_client]
     from azure.servicebus import Message
 
-# Create a new service bus client using SAS credentials
-# Create_servicebus_client
-    session_id = str(uuid.uuid4())
-    client = _create_servicebus_client(sb_config)
+    with queue_client.get_sender() as sender:
+        sender.send(Message("Hello World!"))
 
-# Get the queue client
-    queue_client = client.get_queue(queue_name)
+# [END create_sender_client]
+
+# [START create_session_sender_client]
+    from azure.servicebus import Message
+
+    with session_client.get_sender(session="MySessionID") as sender:
+        sender.send(Message("Hello World!"))
+
+    with session_client.get_sender() as sender:
+        message = Message("Hello World!")
+        message.session_id = "MySessionID"
+        sender.send(message)
+# [END create_session_sender_client]
+
+# [START send_message]
+    # Send the message via sender
+    with queue_client.get_sender() as sender:
+        message = Message("Hello World!")
+        sender.send(message)
+# [END send_message]
 
 # [START scheduling_messages]
-# Get the sender - a single open Connection with which multiple send operations can be made
-    sender = queue_client.get_sender(session_id)
-    message = Message("Hello World!")
-    today = datetime.datetime.today()
-# Schedule the message 5 days from today
-    sequence_numbers = sender.schedule(today + datetime.timedelta(days=5),[message])
+    with queue_client.get_sender() as sender:
+        message = Message("Hello World!")
+        today = datetime.datetime.today()
+
+        # Schedule the message 5 days from today
+        sequence_numbers = sender.schedule(today + datetime.timedelta(days=5), message)
 # [END scheduling_messages]
 
 # [START cancel_scheduled_messages]
-# Cancel the scheduled messages
-    sender.cancel_scheduled_messages(sequence_numbers)
+    with queue_client.get_sender() as sender:
+        message = Message("Hello World!")
+        today = datetime.datetime.today()
+
+        # Schedule the message 5 days from today
+        sequence_numbers = sender.schedule(today + datetime.timedelta(days=5), message)
+
+        # Cancel scheduled messages
+        sender.cancel_scheduled_messages(*sequence_numbers)
 # [END cancel_scheduled_messages]
 
+# [START queue_and_send_messages]
+    with queue_client.get_sender() as sender:
+        message1 = Message("Hello World!")
+        message2 = Message("How are you?")
+        sender.queue_message(message1)
+        sender.queue_message(message2)
 
-    
-def test_example_queue_and_send_pending_messages(sb_config, queue_name):
-    import os
-    from azure.servicebus import ServiceBusClient
-    from azure.servicebus import Message
-# Create a new service bus client using SAS credentials
-# Create_servicebus_client
-    session_id = str(uuid.uuid4())
-    client = _create_servicebus_client(sb_config)
+        message_status = sender.send_pending_messages()
+        for status in message_status:
+            if not status[0]:
+                print("Message send failed: {}".format(status[1]))
+# [END queue_and_send_messages]
 
-# Get the queue client
-    queue_client = client.get_queue(queue_name)
-# Get the sender - a single open Connection with which multiple send operations can be made
-    sender = queue_client.get_sender(session_id)
-# Prepare messages to queue
+# [START queue_and_send_session_messages]
+    with queue_client.get_sender(session="MySessionID") as sender:
+        message1 = Message("Hello World!")
+        message2 = Message("How are you?")
+        sender.queue_message(message1)
+        sender.queue_message(message2)
 
-# [START queue_messages]
-    message = Message("Hello World!")
-    message_next = Message("How are you?")
-    sender.queue_message(message)
-    sender.queue_message(message_next)
-# [END queue_messages]
-
-# [START send_pending_messages]
-# Send the pending messages
-    message_send_status = sender.send_pending_messages()
-    i = 0
-    for status in message_send_status:
-        messageSent = status[0]
-        if(not(messageSent)):
-            failureReason = status[1].description
-            print("Message at Index {} was not sent. Reason: {}".format(i,failureReason))
-# [END send_pending_messages]
+        message_status = sender.send_pending_messages()
+        for status in message_status:
+            if not status[0]:
+                print("Message send failed: {}".format(status[1]))
+# [END queue_and_send_session_messages]
 
 
 def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):

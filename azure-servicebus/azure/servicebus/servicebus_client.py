@@ -436,7 +436,7 @@ class ReceiveClientMixin(object):
             :start-after: [START list_sessions_service_bus]
             :end-before: [END list_sessions_service_bus]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the Ids of session which have messages pending in the queue
 
         """
@@ -473,7 +473,7 @@ class ReceiveClientMixin(object):
             :start-after: [START receive_deferred_messages_service_bus]
             :end-before: [END receive_deferred_messages_service_bus]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Get the messages which were deferred using their sequence numbers
 
         """
@@ -508,7 +508,7 @@ class ReceiveClientMixin(object):
             :start-after: [START settle_deferred_messages_service_bus]
             :end-before: [END settle_deferred_messages_service_bus]
             :language: python
-            :dedent: 4
+            :dedent: 8
             :caption: Settle deferred messages.
         """
         if (self.entity and self.requires_session) or kwargs.get('session'):
@@ -620,7 +620,7 @@ class ReceiveClientMixin(object):
             :start-after: [START get_dead_letter_receiver]
             :end-before: [END get_dead_letter_receiver]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the dead lettered messages
 
         """
