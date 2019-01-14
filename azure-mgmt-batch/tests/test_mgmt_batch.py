@@ -78,6 +78,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @KeyVaultPreparer(location=AZURE_LOCATION)
     def test_mgmt_batch_byos_account(self, resource_group, location, keyvault):
+        if self.is_live:
+            keyvault = keyvault.result()
         batch_account = models.BatchAccountCreateParameters(
                 location=location,
                 pool_allocation_mode=models.PoolAllocationMode.user_subscription)
@@ -89,8 +91,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
             creating.result()
 
         keyvault_id = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.KeyVault/vaults/{}".format(
-            self.settings.SUBSCRIPTION_ID, resource_group.name, keyvault.result().name)
-        keyvault_url = "https://{}.vault.azure.net/".format(keyvault.result().name)
+            self.settings.SUBSCRIPTION_ID, resource_group.name, keyvault.name)
+        keyvault_url = "https://{}.vault.azure.net/".format(keyvault.name)
         batch_account = models.BatchAccountCreateParameters(
                 location=location,
                 pool_allocation_mode=models.PoolAllocationMode.user_subscription,
