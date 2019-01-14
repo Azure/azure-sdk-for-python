@@ -18,6 +18,10 @@ jobs:
       versionSpec: 3.6
 
   - script: |
+     python3 ./scripts/analyze_deps.py --verbose > "$(Build.ArtifactStagingDirectory)/dependencies.txt"
+    displayName: 'Analyze dependencies'
+
+  - script: |
      pip install wheel setuptools pathlib
     displayName: 'Prep Environment'
 
@@ -29,6 +33,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
+    condition: succeededOrFailed()
 
 - job: 'Generic_Tests'
   dependsOn:
