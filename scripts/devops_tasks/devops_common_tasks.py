@@ -21,5 +21,5 @@ def run_check_call(command_array, working_directory):
     try:
         check_call(command_array, cwd = working_directory)
     except CalledProcessError as err:
-        print(err, file = sys.stderr)
+        print(err) #, file = sys.stderr
         sys.exit(1)
