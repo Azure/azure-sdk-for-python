@@ -196,7 +196,7 @@ class Receiver(BaseHandler):
             :start-after: [START queue_size]
             :end-before: [END queue_size]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the number of unprocessed messages in the queue
 
         """
@@ -220,7 +220,7 @@ class Receiver(BaseHandler):
             :start-after: [START peek_messages]
             :end-before: [END peek_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Loog at pending messages in the queue
 
         """
@@ -504,7 +504,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             :start-after: [START get_session_state]
             :end-before: [END get_session_state]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the session state of the receiver
 
         """
@@ -528,7 +528,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             :start-after: [START set_session_state]
             :end-before: [END set_session_state]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Set the session state of the receiver
 
         """
@@ -550,7 +550,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             :start-after: [START renew_lock]
             :end-before: [END renew_lock]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Renew the session lock before it expires
 
         """
@@ -577,7 +577,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             :start-after: [START peek_messages]
             :end-before: [END peek_messages]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Look at pending messages in the queue
 
         """
@@ -658,7 +658,7 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             :start-after: [START list_sessions]
             :end-before: [END list_sessions]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: List the ids of sessions with pending messages
 
         """
