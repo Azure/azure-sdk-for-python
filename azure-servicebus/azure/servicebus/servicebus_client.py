@@ -42,7 +42,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
     :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
-        Default value is 65 seconds.
+     Default value is 65 seconds.
     :param http_request_session: Optional. Session object to use for http requests.
     :type http_request_session: ~requests.Session
     :param bool debug: Whether to output AMQP network trace to the logger.
@@ -51,7 +51,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :start-after: [START create_servicebus_client]
         :end-before: [END create_servicebus_client]
         :language: python
-        :dedent: 0
+        :dedent: 4
         :caption: Create a new instance of the ServiceBus client:
 
     """
@@ -75,11 +75,18 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """
-        Create a QueueClient from a connection string.
+        """Create a ServiceBus client from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_servicebus_client_connstr]
+            :end-before: [END create_servicebus_client_connstr]
+            :language: python
+            :dedent: 4
+            :caption: Create a ServiceBusClient via a connection string.
+
         """
         address, policy, key, _ = parse_conn_str(conn_str)
         parsed_namespace = urlparse(address)
@@ -99,7 +106,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param queue_name: The name of the queue.
         :type queue_name: str
-        :returns: ~azure.servicebus.queue_client.QueueClient
+        :returns: ~azure.servicebus.servicebus_client.QueueClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
@@ -107,7 +114,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :start-after: [START get_queue_client]
             :end-before: [END get_queue_client]
             :language: python
-            :dedent: 0
+            :dedent: 8
             :caption: Get the specific queue client from service bus client
 
         """
@@ -125,16 +132,16 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             debug=self.debug)
 
     def list_queues(self):
-        """Get a clients for all queue entities in the namespace.
+        """Get clients for all queue entities in the namespace.
 
-        :returns: list[~azure.servicebus.queue_client.QueueClient]
+        :returns: list[~azure.servicebus.servicebus_client.QueueClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START list_queues]
             :end-before: [END list_queues]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: List the queues from service bus client
 
         """
@@ -157,7 +164,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param topic_name: The name of the topic.
         :type topic_name: str
-        :returns: ~azure.servicebus.topic_client.TopicClient
+        :returns: ~azure.servicebus.servicebus_client.TopicClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
@@ -165,7 +172,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :start-after: [START get_topic_client]
             :end-before: [END get_topic_client]
             :language: python
-            :dedent: 0
+            :dedent: 8
             :caption: Get the specific topic client from service bus client
 
         """
@@ -184,14 +191,14 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     def list_topics(self):
         """Get a client for all topic entities in the namespace.
 
-        :returns: list[~azure.servicebus.topic_client.TopicClient]
+        :returns: list[~azure.servicebus.servicebus_client.TopicClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START list_topics]
             :end-before: [END list_topics]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: List the topics from service bus client
 
         """
@@ -215,7 +222,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :type topic_name: str
         :param subscription_name: The name of the subscription.
         :type subscription_name: str
-        :returns: ~azure.servicebus.subscription_client.SubscriptionClient
+        :returns: ~azure.servicebus.servicebus_client.SubscriptionClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
@@ -223,7 +230,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :start-after: [START get_subscription_client]
             :end-before: [END get_subscription_client]
             :language: python
-            :dedent: 0
+            :dedent: 8
             :caption: Get the specific subscription client from service bus client
 
         """
@@ -244,7 +251,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param topic_name: The topic to list subscriptions for.
         :type topic_name: str
-        :returns: list[~azure.servicebus.subscription_client.SubscriptionClient]
+        :returns: list[~azure.servicebus.servicebus_client.SubscriptionClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
@@ -252,7 +259,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :start-after: [START list_subscriptions]
             :end-before: [END list_subscriptions]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: List the subscriptions from service bus client
 
         """
@@ -277,27 +284,39 @@ class SendClientMixin(object):
     def send(self, messages, message_timeout=0, session=None, **kwargs):
         """Send one or more messages to the current entity. This operation
         will open a single-use connection, send the supplied messages, and close
-        connection. If the entity requires sessions, a Session ID must be set
-        on each outgoing message.
+        connection. If the entity requires sessions, a session ID must be either
+        provided here, or set on each outgoing message.
 
         :param messages: One or more messages to be sent.
         :type messages: ~azure.servicebus.common.message.Message or list[~azure.servicebus.common.message.Message]
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed
         :param message_timeout: The period in seconds during which the Message must be
-         sent. If the send in not completed in this time it will fail.
+         sent. If the send in not completed in this time it will return a failure result.
         :type message_timeout: int
-        :param session: An optional Session ID. If supplied, and the ServiceBus endpoint
-         is sessionful, this Session ID will be applied to every outgoing message sent with
-         this Sender. If an individual message already has a Session ID, that will be
-         used instead. If no Session ID is supplied here, nor set on an outgoing
-         message, a ValueError will be raised.
+        :param session: An optional session ID. If supplied this session ID will be
+         applied to every outgoing message sent with this Sender.
+         If an individual message already has a session ID, that will be
+         used instead. If no session ID is supplied here, nor set on an outgoing
+         message, a ValueError will be raised if the entity is sessionful.
         :type session: str or ~uuid.Guid
+        :raises: ~azure.servicebus.common.errors.MessageSendFailed
+        :returns: A list of the send results of all the messages. Each
+         send result is a tuple with two values. The first is a boolean, indicating `True`
+         if the message sent, or `False` if it failed. The second is an error if the message
+         failed, otherwise it will be `None`.
+        :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START send_message_service_bus]
             :end-before: [END send_message_service_bus]
             :language: python
-            :dedent: 0
+            :dedent: 4
+            :caption: Send a message to current entity via a single use connection
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_message_service_bus_multiple]
+            :end-before: [END send_message_service_bus_multiple]
+            :language: python
+            :dedent: 4
             :caption: Send messages to current entity via a single use connection
 
         """
@@ -318,28 +337,26 @@ class SendClientMixin(object):
             return sender.send_pending_messages()
 
     def get_sender(self, message_timeout=0, session=None, **kwargs):
-        """Get a Sender for the ServiceBus endpoint. A Sender represents
+        """Get a Sender for the Service Bus endpoint. A Sender represents
         a single open Connection with which multiple send operations can be made.
 
-        :param message_timeout: The period in seconds during which the Message must be
-         sent. If the send in not completed in this time it will fail.
+        :param message_timeout: The period in seconds during which messages sent with
+         this Sender must be sent. If the send in not completed in this time it will fail.
         :type message_timeout: int
-        :param session: An optional Session ID. If supplied, and the ServiceBus endpoint
-         is sessionful, this Session ID will be applied to every outgoing message sent with
-         this Sender. If an individual message already has a Session ID, that will be
-         used instead. If no Session ID is supplied here, nor set on an outgoing
-         message, a ValueError will be raised.
+        :param session: An optional session ID. If supplied this session ID will be
+         applied to every outgoing message sent with this Sender.
+         If an individual message already has a session ID, that will be
+         used instead. If no session ID is supplied here, nor set on an outgoing
+         message, a ValueError will be raised if the entity is sessionful.
         :type session: str or ~uuid.Guid
-        :returns: A Sender instance with an unopened Connection.
+        :returns: A Sender instance with an unopened connection.
         :rtype: ~azure.servicebus.send_handler.Sender
-        :raises: If the current Service Bus entity requires sessions, a TypeError will
-         be raised.
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START get_sender]
             :end-before: [END get_sender]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get sender client from service bus client
 
         """
@@ -370,22 +387,22 @@ class ReceiveClientMixin(object):
         are not removed from queue, nor are they locked. The cannot be completed,
         deferred or dead-lettered.
 
-        :param count: Maximum number of messages to attempt to browse. The default
+        :param count: The maximum number of messages to try and peek. The default
          value is 1.
         :type count: int
-        :start_from: The starting message sequence number from which to browse. The
-         default value is 0, i.e. start browsing from the first available message.
+        :param start_from: A message sequence number from which to start browsing messages.
+        :type start_from: int
         :param session: If the entity requires sessions, a session ID must be supplied
          in order that only messages from that session will be browsed. If the entity
          does not require sessions this value will be ignored.
-        :type session: str or ~uuid.Guid
-        :returns: list[~azure.servicebus.common.message.PeekMessage]
+        :type session: str
+        :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START peek_messages_service_bus]
             :end-before: [END peek_messages_service_bus]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Look at specificied number of messages without removing them from queue
 
         """
@@ -402,10 +419,11 @@ class ReceiveClientMixin(object):
                 mgmt_handlers.peek_op)
 
     def list_sessions(self, updated_since=None, max_results=100, skip=0, **kwargs):
-        """List the Session IDs with pending messages in the queue where the 'State' of the session
+        """List the Session IDs with pending messages in the queue where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
-        If the state of a Session has never been set, it will not be returned regardless of whether
+        If the state of a session has never been set, it will not be returned regardless of whether
         there are messages pending.
+
         :param updated_since: The UTC datetime from which to return updated pending Session IDs.
         :type updated_since: datetime.datetime
         :param max_results: The maximum number of Session IDs to return. Default value is 100.
@@ -437,6 +455,8 @@ class ReceiveClientMixin(object):
 
     def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock, **kwargs):
         """Receive messages by sequence number that have been previously deffered.
+        When receiving deferred messages from a partitioned entity, all of the supplied
+        sequence numbers must be messages from the same partition.
 
         :param sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
@@ -447,13 +467,13 @@ class ReceiveClientMixin(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
-        :returns: list[~azure.servicebus.common.message.Message]
+        :rtype: list[~azure.servicebus.common.message.Message]
 
         .. literalinclude:: ../examples/test_examples.py
             :start-after: [START receive_deferred_messages_service_bus]
             :end-before: [END receive_deferred_messages_service_bus]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the messages which were deferred using their sequence numbers
 
         """
@@ -477,18 +497,19 @@ class ReceiveClientMixin(object):
 
     def settle_deferred_messages(self, settlement, messages, **kwargs):
         """Settle messages that have been previously deffered.
-        This operation is only available on Python 3.5 and above.
 
-        :param sequence_numbers: A list of the sequence numbers of messages that have been
-         deferred.
-        :type sequence_numbers: list[str]
-        :param mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
-        :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
-        :returns: list[~azure.servicebus.aio.async_message.Message]
+        :param settlement: How the messages are to be settled. This must be a string
+         of one of the following values: 'completed', 'suspended', 'abandoned'.
+        :type settlement: str
+        :param messages: A list of deferred messages to be settled.
+        :type messages: list[~azure.servicebus.common.message.DeferredMessage]
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START settle_deferred_messages_service_bus]
+            :end-before: [END settle_deferred_messages_service_bus]
+            :language: python
+            :dedent: 4
+            :caption: Settle deferred messages.
         """
         if (self.entity and self.requires_session) or kwargs.get('session'):
             raise ValueError("Sessionful deferred messages can only be settled within a locked receive session.")
@@ -505,13 +526,13 @@ class ReceiveClientMixin(object):
                 mgmt_handlers.default)
 
     def get_receiver(self, session=None, prefetch=0, mode=ReceiveSettleMode.PeekLock, idle_timeout=0, **kwargs):
-        """Get a Receiver for the ServiceBus endpoint. A Receiver represents
+        """Get a Receiver for the Service Bus endpoint. A Receiver represents
         a single open Connection with which multiple receive operations can be made.
 
         :param session: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive the next available
          session, set this to NEXT_AVAILABLE.
-        :type session: str or ~azure.servicebus.NEXT_AVAILABLE
+        :type session: str or ~azure.servicebus.common.constants.NEXT_AVAILABLE
         :param prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, i.e. messages will be received from the service and processed
          one at a time. Increasing this value will improve message through-put performance but increase
@@ -535,7 +556,7 @@ class ReceiveClientMixin(object):
             :start-after: [START get_receiver]
             :end-before: [END get_receiver]
             :language: python
-            :dedent: 0
+            :dedent: 4
             :caption: Get the receiver client from service bus client
 
         """
@@ -624,9 +645,34 @@ class ReceiveClientMixin(object):
 
 
 class QueueClient(SendClientMixin, ReceiveClientMixin, mixins.BaseClient):
-    """
-    The QueueClient class defines a high level interface for sending
-    messages to and receiving messages from the Azure ServiceBus service.
+    """The QueueClient class defines a high level interface for sending
+    messages to and receiving messages from an Azure Service Bus queue.
+    If you do not wish to perform management operations, a QueueClient can be
+    instantiated directly to perform send and receive operations to a Queue.
+    However if a QueueClient is created directly, a `get_properties` operation will
+    need to be completed in order to retrieve the properties of this queue (for example,
+    whether it is sessionful).
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the queue to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
+
+    .. literalinclude:: ../examples/test_examples.py
+        :start-after: [START create_queue_client_directly]
+        :end-before: [END create_queue_client_directly]
+        :language: python
+        :dedent: 8
+        :caption: Create a QueueClient.
     """
 
     def _get_entity(self):
@@ -634,9 +680,32 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, mixins.BaseClient):
 
 
 class TopicClient(SendClientMixin, mixins.BaseClient):
-    """
-    The TopicClient class defines a high level interface for sending
-    messages to an Azure ServiceBus Topic.
+    """The TopicClient class defines a high level interface for sending
+    messages to an Azure Service Bus Topic.
+    If you do not wish to perform management operations, a TopicClient can be
+    instantiated directly to perform send operations to a Topic.
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the topic to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
+
+    .. literalinclude:: ../examples/test_examples.py
+        :start-after: [START create_topic_client_directly]
+        :end-before: [END create_topic_client_directly]
+        :language: python
+        :dedent: 8
+        :caption: Create a TopicClient.
+
     """
 
     def _get_entity(self):
@@ -644,30 +713,37 @@ class TopicClient(SendClientMixin, mixins.BaseClient):
 
 
 class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
-    """
-    The SubscriptionClient class defines a high level interface for receiving
-    messages from an Azure ServiceBus Subscription.
+    """The SubscriptionClient class defines a high level interface for receiving
+    messages to an Azure Service Bus Subscription.
+    If you do not wish to perform management operations, a SubscriptionClient can be
+    instantiated directly to perform receive operations from a Subscription.
+
+    :param address: The full URI of the Service Bus namespace. This can optionally
+        include URL-encoded access name and key.
+    :type address: str
+    :param name: The name of the topic to which the Client will connect.
+    :type name: str
+    :param shared_access_key_name: The name of the shared access policy. This must be supplied
+     if not encoded into the address.
+    :type shared_access_key_name: str
+    :param shared_access_key_value: The shared access key. This must be supplied if not encoded
+     into the address.
+    :type shared_access_key_value: str
+    :param debug: Whether to output network trace logs to the logger. Default is `False`.
+    :type debug: bool
+
+    .. literalinclude:: ../examples/test_examples.py
+        :start-after: [START create_sub_client_directly]
+        :end-before: [END create_sub_client_directly]
+        :language: python
+        :dedent: 8
+        :caption: Create a SubscriptionClient.
+
     """
 
     def __init__(self, address, name, shared_access_key_name=None,
                  shared_access_key_value=None, debug=False, **kwargs):
-        """
-        Constructs a new Client to interact with the named ServiceBus entity.
 
-        :param address: The full URI of the Service Bus namespace. This can optionally
-         include URL-encoded access name and key.
-        :type address: str
-        :param name: The name of the entity to which the Client will connect.
-        :type name: str
-        :param shared_access_key_name: The name of the shared access policy. This must be supplied
-         if not encoded into the address.
-        :type shared_access_key_name: str
-        :param shared_access_key_value: The shared access key. This must be supplied if not encoded
-         into the address.
-        :type shared_access_key_value: str
-        :param debug: Whether to output network trace logs to the logger. Default is `False`.
-        :type debug: bool
-        """
         super(SubscriptionClient, self).__init__(
             address, name, shared_access_key_name=shared_access_key_name,
             shared_access_key_value=shared_access_key_value, debug=debug, **kwargs)
@@ -676,12 +752,15 @@ class SubscriptionClient(ReceiveClientMixin, mixins.BaseClient):
     @classmethod
     def from_connection_string(cls, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
         """
-        Create a QueueClient from a connection string.
+        Create a SubscriptionClient from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
-        :param queue_name: The name of the Queue, if the EntityName is
+        :param name: The name of the Subscription.
+        :type name: str
+        :param topic: The name of the Topic, if the EntityName is
          not included in the connection string.
+        :type topic: str
         """
         address, policy, key, entity = parse_conn_str(conn_str)
         entity = topic or entity

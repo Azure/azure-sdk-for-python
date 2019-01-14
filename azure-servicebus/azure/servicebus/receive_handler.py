@@ -38,8 +38,30 @@ from azure.servicebus.common.constants import (
 
 
 class Receiver(BaseHandler):
-    """
-    Implements a Receiver.
+    """This receive handler acts as an iterable message stream for retrieving
+    messages for a Service Bus entity. It operates a single connetion that must be opened and
+    closed on completion. The service connection will remain open for the entirety of the iterator.
+    If you find yourself only partially iterating the message stream, you should run the receiver
+    in a `with` statement to ensure the connection is closed.
+    The Receiver should not be instantiated directly, and should be accessed from a `QueueClient` or
+    `SubscriptionClient` using the `get_receiver()` method.
+
+    .. note:: This object is not thread-safe.
+
+    :param handler_id: The ID used as the connection name for the Receiver.
+    :type handler_id: str
+    :param source: The endpoint from which to receive messages.
+    :type source: ~uamqp.Source
+    :param auth_config: The SASL auth credentials.
+    :type auth_config: dict[str, str]
+    :param connection: A shared connection [not yet supported].
+    :type connection: ~uamqp.Connection
+    :param mode: The receive connection mode. Value must be either PeekLock or ReceiveAndDelete.
+    :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
+    :param encoding: The encoding used for string properties. Default is 'UTF-8'.
+    :type encoding: str
+    :param debug: Whether to enable network trace debug logs.
+    :type debug: bool
     """
 
     def __init__(
@@ -266,8 +288,8 @@ class Receiver(BaseHandler):
         """Open handler connection.
 
         .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START open_connection]
-            :end-before: [END open_connection]
+            :start-after: [START open_close_receiver_connection]
+            :end-before: [END open_close_receiver_connection]
             :language: python
             :dedent: 0
             :caption: Open the connection to start receiving messages
@@ -295,8 +317,8 @@ class Receiver(BaseHandler):
         """Close handler connection.
 
         .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START close_connection]
-            :end-before: [END close_connection]
+            :start-after: [START open_close_receiver_connection]
+            :end-before: [END open_close_receiver_connection]
             :language: python
             :dedent: 0
             :caption: Close the connection and shutdown the receiver

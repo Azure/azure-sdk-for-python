@@ -59,14 +59,14 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     client = ServiceBusClient.from_connection_string(connection_str)
 # [END create_async_servicebus_client_connstr]
 
-# [START get_queue_client]
+# [START get_async_queue_client]
     from azure.servicebus import ServiceBusResourceNotFound
 
     try:
         queue_client = client.get_queue("MyQueue")
     except ServiceBusResourceNotFound:
         pass
-# [END get_queue_client]
+# [END get_async_queue_client]
     try:
 # [START create_queue_client]
         import os
@@ -317,14 +317,14 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
         shared_access_key_name=shared_access_policy,
         shared_access_key_value=shared_access_key)
 
-# [START get_topic_client]
+# [START get_async_topic_client]
     from azure.servicebus import ServiceBusResourceNotFound
 
     try:
         topic_client = client.get_topic("MyTopic")
     except ServiceBusResourceNotFound:
         pass
-# [END get_topic_client]
+# [END get_async_topic_client]
 
     try:
 # [START create_topic_client]
@@ -338,14 +338,14 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
     except ServiceBusResourceNotFound:
         pass
 
-# [START get_subscription_client]
+# [START get_async_subscription_client]
     from azure.servicebus import ServiceBusResourceNotFound
 
     try:
         subscription_client = client.get_subscription("MyTopic", "MySubscription")
     except ServiceBusResourceNotFound:
         pass
-# [END get_subscription_client]
+# [END get_async_subscription_client]
 
     try:
 # [START create_sub_client]
