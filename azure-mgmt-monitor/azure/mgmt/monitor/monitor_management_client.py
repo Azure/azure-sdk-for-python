@@ -32,6 +32,7 @@ from .operations.metric_alerts_operations import MetricAlertsOperations
 from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
 from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
 from .operations.metric_namespaces_operations import MetricNamespacesOperations
+from .operations.vm_insights_operations import VMInsightsOperations
 from . import models
 
 
@@ -111,6 +112,8 @@ class MonitorManagementClient(SDKClient):
     :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
     :ivar metric_namespaces: MetricNamespaces operations
     :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
+    :ivar vm_insights: VMInsights operations
+    :vartype vm_insights: azure.mgmt.monitor.operations.VMInsightsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -167,4 +170,6 @@ class MonitorManagementClient(SDKClient):
         self.scheduled_query_rules = ScheduledQueryRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_namespaces = MetricNamespacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vm_insights = VMInsightsOperations(
             self._client, self.config, self._serialize, self._deserialize)

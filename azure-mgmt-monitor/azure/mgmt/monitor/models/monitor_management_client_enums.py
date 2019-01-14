@@ -176,6 +176,19 @@ class AlertSeverity(str, Enum):
     four = "4"
 
 
+class OnboardingStatus(str, Enum):
+
+    onboarded = "onboarded"
+    not_onboarded = "notOnboarded"
+    unknown = "unknown"
+
+
+class DataStatus(str, Enum):
+
+    present = "present"
+    not_present = "notPresent"
+
+
 class ResultType(str, Enum):
 
     data = "Data"
