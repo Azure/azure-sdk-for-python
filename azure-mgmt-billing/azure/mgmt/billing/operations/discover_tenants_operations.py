@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TenantPropertiesOperations(object):
-    """TenantPropertiesOperations operations.
+class DiscoverTenantsOperations(object):
+    """DiscoverTenantsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -47,8 +47,8 @@ class TenantPropertiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TenantProperties or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.TenantProperties or
+        :return: DiscoverTenants or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.DiscoverTenants or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -84,7 +84,7 @@ class TenantPropertiesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TenantProperties', response)
+            deserialized = self._deserialize('DiscoverTenants', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

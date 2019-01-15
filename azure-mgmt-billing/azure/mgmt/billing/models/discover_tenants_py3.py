@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class TenantProperties(Model):
+class DiscoverTenants(Model):
     """A Tenant properties Resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -38,8 +38,8 @@ class TenantProperties(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TenantProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(DiscoverTenants, self).__init__(**kwargs)
         self.billing_profile_name = None
         self.billing_account_id = None
         self.tenant_id = None

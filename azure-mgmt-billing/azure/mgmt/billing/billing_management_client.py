@@ -15,7 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
-from .operations.tenant_properties_operations import TenantPropertiesOperations
+from .operations.discover_tenants_operations import DiscoverTenantsOperations
 from .operations.invoices_operations import InvoicesOperations
 from .operations.operations import Operations
 from . import models
@@ -63,8 +63,8 @@ class BillingManagementClient(SDKClient):
     :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
     :ivar billing_periods: BillingPeriods operations
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
-    :ivar tenant_properties: TenantProperties operations
-    :vartype tenant_properties: azure.mgmt.billing.operations.TenantPropertiesOperations
+    :ivar discover_tenants: DiscoverTenants operations
+    :vartype discover_tenants: azure.mgmt.billing.operations.DiscoverTenantsOperations
     :ivar invoices: Invoices operations
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
     :ivar operations: Operations operations
@@ -93,7 +93,7 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.tenant_properties = TenantPropertiesOperations(
+        self.discover_tenants = DiscoverTenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
