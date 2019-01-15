@@ -36,8 +36,8 @@ class ExportRDBParameters(Model):
         'container': {'key': 'container', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, prefix: str, container: str, format: str=None, **kwargs) -> None:
         super(ExportRDBParameters, self).__init__(**kwargs)
-        self.format = kwargs.get('format', None)
-        self.prefix = kwargs.get('prefix', None)
-        self.container = kwargs.get('container', None)
+        self.format = format
+        self.prefix = prefix
+        self.container = container
