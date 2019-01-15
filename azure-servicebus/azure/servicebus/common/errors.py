@@ -59,29 +59,32 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-class ServiceBusErrorPolicy(errors.ErrorPolicy):
+class _ServiceBusErrorPolicy(errors.ErrorPolicy):
 
     def __init__(self, max_retries=3, is_session=False):
         self._is_session = is_session
-        super(ServiceBusErrorPolicy, self).__init__(max_retries=max_retries, on_error=_error_handler)
+        super(_ServiceBusErrorPolicy, self).__init__(max_retries=max_retries, on_error=_error_handler)
 
     def on_unrecognized_error(self, error):
         if self._is_session:
             return errors.ErrorAction(retry=False)
-        return super(ServiceBusErrorPolicy, self).on_unrecognized_error(error)
+        return super(_ServiceBusErrorPolicy, self).on_unrecognized_error(error)
 
     def on_link_error(self, error):
         if self._is_session:
             return errors.ErrorAction(retry=False)
-        return super(ServiceBusErrorPolicy, self).on_link_error(error)
+        return super(_ServiceBusErrorPolicy, self).on_link_error(error)
 
     def on_connection_error(self, error):
         if self._is_session:
             return errors.ErrorAction(retry=False)
-        return super(ServiceBusErrorPolicy, self).on_connection_error(error)
+        return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
 
 class ServiceBusError(Exception):
+    """An error occured. This is the parent of all Service Bus errors and can
+    be used for default error handling.
+    """
 
     def __init__(self, message, inner_exception=None):
         self.inner_exception = inner_exception
@@ -89,31 +92,33 @@ class ServiceBusError(Exception):
 
 
 class ServiceBusResourceNotFound(ServiceBusError):
-    pass
+    """The Service Bus entity could not be reached."""
 
 
 class ServiceBusConnectionError(ServiceBusError):
-    pass
+    """An error occured in the connection."""
 
 
 class ServiceBusAuthorizationError(ServiceBusError):
-    pass
+    """An error occured when authorizing the connection."""
 
 
 class InvalidHandlerState(ServiceBusError):
-    """
-    An attempt to run a handler operation that the handler is not
+    """An attempt to run a handler operation that the handler is not
     in the right state to perform.
     """
 
 
 class NoActiveSession(ServiceBusError):
-    """
-    No active Sessions are available to receive from.
-    """
+    """No active Sessions are available to receive from."""
 
 
 class MessageAlreadySettled(ServiceBusError):
+    """An attempt was made to complete an operation on a message that has already
+    been settled (e.g. completed, abandoned, dead-lettered or deferred).
+    This error will also be raised if an attempt is made to settle a message
+    received via ReceiveAndDelete mode.
+    """
 
     def __init__(self, action):
         message = "Unable to {} message as it has already been settled".format(action)
@@ -121,6 +126,7 @@ class MessageAlreadySettled(ServiceBusError):
 
 
 class MessageSettleFailed(ServiceBusError):
+    """Attempt to settle a message failed."""
 
     def __init__(self, action, inner_exception):
         message = "Failed to {} message. Error: {}".format(action, inner_exception)
@@ -129,6 +135,7 @@ class MessageSettleFailed(ServiceBusError):
 
 
 class MessageSendFailed(ServiceBusError):
+    """A message failed to send to the Service Bus entity."""
 
     def __init__(self, inner_exception):
         message = "Message failed to send. Error: {}".format(inner_exception)
@@ -142,6 +149,9 @@ class MessageSendFailed(ServiceBusError):
 
 
 class MessageLockExpired(ServiceBusError):
+    """The lock on the message has expired and it has been released back to the queue.
+    It will need to be received again in order to settle it.
+    """
 
     def __init__(self, message=None, inner_exception=None):
         message = message or "Message lock expired"
@@ -149,6 +159,9 @@ class MessageLockExpired(ServiceBusError):
 
 
 class SessionLockExpired(ServiceBusError):
+    """The lock on the session has expired, therefore all unsettled messages that have
+    been received can no longer be settled.
+    """
 
     def __init__(self, message=None, inner_exception=None):
         message = message or "Session lock expired"
@@ -156,8 +169,8 @@ class SessionLockExpired(ServiceBusError):
 
 
 class AutoLockRenewFailed(ServiceBusError):
-    pass
+    """An attempt to renew a lock on a message or session in the background has failed."""
 
 
 class AutoLockRenewTimeout(ServiceBusError):
-    pass
+    """The time allocated to renew the message or session lock has elapsed."""

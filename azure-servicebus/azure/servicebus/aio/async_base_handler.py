@@ -15,11 +15,11 @@ from uamqp import constants, errors
 
 from azure.servicebus.common.utils import create_properties, get_running_loop
 from azure.servicebus.common.errors import (
+    _ServiceBusErrorPolicy,
     ServiceBusError,
     ServiceBusConnectionError,
     InvalidHandlerState,
-    ServiceBusAuthorizationError,
-    ServiceBusErrorPolicy)
+    ServiceBusAuthorizationError)
 
 
 _log = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class BaseHandler:
         if not self.error_policy:
             max_retries = kwargs.pop('max_message_retries', 3)
             is_session = hasattr(self, 'session_id')
-            self.error_policy = ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
+            self.error_policy = _ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
         self._handler = None
         self._build_handler()
 
@@ -142,12 +142,13 @@ class BaseHandler:
 
         .. note:: This operation is not thread-safe.
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
-            :start-after: [START open_close_sender_directly]
-            :end-before: [END open_close_sender_directly]
-            :language: python
-            :dedent: 4
-            :caption: Explicitly open and close a Sender.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START open_close_sender_directly]
+                :end-before: [END open_close_sender_directly]
+                :language: python
+                :dedent: 4
+                :caption: Explicitly open and close a Sender.
 
         """
         if self.running:
@@ -178,12 +179,13 @@ class BaseHandler:
          due to an error.
         :type exception: Exception
 
-        .. literalinclude:: ../../examples/async_examples/test_examples_async.py
-            :start-after: [START open_close_sender_directly]
-            :end-before: [END open_close_sender_directly]
-            :language: python
-            :dedent: 4
-            :caption: Explicitly open and close a Sender.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START open_close_sender_directly]
+                :end-before: [END open_close_sender_directly]
+                :language: python
+                :dedent: 4
+                :caption: Explicitly open and close a Sender.
 
         """
         self.running = False

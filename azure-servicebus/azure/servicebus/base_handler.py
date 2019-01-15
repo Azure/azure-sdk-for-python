@@ -18,9 +18,9 @@ from uamqp.message import Message, MessageProperties
 
 from azure.servicebus.common.utils import create_properties
 from azure.servicebus.common.errors import (
+    _ServiceBusErrorPolicy,
     InvalidHandlerState,
     ServiceBusError,
-    ServiceBusErrorPolicy,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError)
 
@@ -47,7 +47,7 @@ class BaseHandler(object):
         if not self.error_policy:
             max_retries = kwargs.pop('max_message_retries', 3)
             is_session = hasattr(self, 'session_id')
-            self.error_policy = ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
+            self.error_policy = _ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
         self._handler = None
         self._build_handler()
 
@@ -127,13 +127,23 @@ class BaseHandler(object):
 
     def reconnect(self):
         """If the handler was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+        a retryable error - attempt to reconnect.
+        This method will be called automatically for most retryable errors.
+        """
         self._handler.close()
         self._build_handler()
         self.open()
 
     def open(self):
-        """Open the handler connection."""
+        """Open handler connection and authenticate session.
+        If the handler is already open, this operation will do nothing.
+        A handler opened with this method must be explicitly closed.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+
+        .. note:: This operation is not thread-safe.
+
+        """
         if self.running:
             return
         self.running = True
@@ -149,10 +159,13 @@ class BaseHandler(object):
                 raise
 
     def close(self, exception=None):
-        """
-        Close down the handler conneciton. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
+        """Close down the handler connection. If the handler has already closed,
+        this operation will do nothing. An optional exception can be passed in to
         indicate that the handler was shutdown due to error.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+
+        .. note:: This operation is not thread-safe.
 
         :param exception: An optional exception if the handler is closing
          due to an error.

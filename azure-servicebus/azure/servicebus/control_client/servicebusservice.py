@@ -1098,9 +1098,12 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             Optional. Event hub properties. Instance of EventHub class.
         hub.message_retention_in_days:
             Number of days to retain the events for this Event Hub.
-        hub.status: Status of the Event Hub (enabled or disabled).
-        hub.user_metadata: User metadata.
-        hub.partition_count: Number of shards on the Event Hub.
+        hub.status:
+            Status of the Event Hub (enabled or disabled).
+        hub.user_metadata:
+            User metadata.
+        hub.partition_count:
+            Number of shards on the Event Hub.
         fail_on_exist:
             Specify whether to throw an exception when the event hub exists.
         '''
