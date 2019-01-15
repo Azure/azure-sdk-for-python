@@ -27,7 +27,7 @@ class IPAddressAvailabilityResult(Model):
         'available_ip_addresses': {'key': 'availableIPAddresses', 'type': '[str]'},
     }
 
-    def __init__(self, available=None, available_ip_addresses=None):
-        super(IPAddressAvailabilityResult, self).__init__()
-        self.available = available
-        self.available_ip_addresses = available_ip_addresses
+    def __init__(self, **kwargs):
+        super(IPAddressAvailabilityResult, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)
+        self.available_ip_addresses = kwargs.get('available_ip_addresses', None)

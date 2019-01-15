@@ -44,6 +44,6 @@ class StringDictionary(ProxyOnlyResource):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, kind=None, properties=None):
-        super(StringDictionary, self).__init__(kind=kind)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(StringDictionary, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

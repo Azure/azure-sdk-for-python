@@ -16,9 +16,11 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(Model):
     """Describes a virtual machines scale sets network configuration's DNS
     settings.
 
-    :param domain_name_label: The Domain name label.The concatenation of the
-     domain name label and vm index will be the domain name labels of the
-     PublicIPAddress resources that will be created
+    All required parameters must be populated in order to send to Azure.
+
+    :param domain_name_label: Required. The Domain name label.The
+     concatenation of the domain name label and vm index will be the domain
+     name labels of the PublicIPAddress resources that will be created
     :type domain_name_label: str
     """
 
@@ -30,6 +32,6 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(Model):
         'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
     }
 
-    def __init__(self, domain_name_label):
-        super(VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings, self).__init__()
-        self.domain_name_label = domain_name_label
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings, self).__init__(**kwargs)
+        self.domain_name_label = kwargs.get('domain_name_label', None)

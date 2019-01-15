@@ -18,9 +18,11 @@ class VpnClientRootCertificate(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
-    :param public_cert_data: The certificate public data.
+    :param public_cert_data: Required. The certificate public data.
     :type public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root
      certificate resource. Possible values are: 'Updating', 'Deleting', and
@@ -47,9 +49,9 @@ class VpnClientRootCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, public_cert_data, id=None, name=None, etag=None):
-        super(VpnClientRootCertificate, self).__init__(id=id)
-        self.public_cert_data = public_cert_data
+    def __init__(self, **kwargs):
+        super(VpnClientRootCertificate, self).__init__(**kwargs)
+        self.public_cert_data = kwargs.get('public_cert_data', None)
         self.provisioning_state = None
-        self.name = name
-        self.etag = etag
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

@@ -27,7 +27,7 @@ class IntegrationAccountCertificate(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -35,8 +35,7 @@ class IntegrationAccountCertificate(Resource):
     :param metadata: The metadata.
     :type metadata: object
     :param key: The key details in the key vault.
-    :type key: :class:`KeyVaultKeyReference
-     <azure.mgmt.logic.models.KeyVaultKeyReference>`
+    :type key: ~azure.mgmt.logic.models.KeyVaultKeyReference
     :param public_certificate: The public certificate.
     :type public_certificate: str
     """
@@ -62,10 +61,10 @@ class IntegrationAccountCertificate(Resource):
         'public_certificate': {'key': 'properties.publicCertificate', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, metadata=None, key=None, public_certificate=None):
-        super(IntegrationAccountCertificate, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(IntegrationAccountCertificate, self).__init__(**kwargs)
         self.created_time = None
         self.changed_time = None
-        self.metadata = metadata
-        self.key = key
-        self.public_certificate = public_certificate
+        self.metadata = kwargs.get('metadata', None)
+        self.key = kwargs.get('key', None)
+        self.public_certificate = kwargs.get('public_certificate', None)

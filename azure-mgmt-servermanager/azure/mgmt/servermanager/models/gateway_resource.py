@@ -27,7 +27,7 @@ class GatewayResource(Resource):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     :param created: UTC date and time when gateway was first added to
@@ -39,13 +39,11 @@ class GatewayResource(Resource):
      gateway to auto upgrade itself. If properties value not specified, then we
      assume upgradeMode = Automatic. Possible values include: 'Manual',
      'Automatic'
-    :type upgrade_mode: str or :class:`UpgradeMode
-     <azure.mgmt.servermanager.models.UpgradeMode>`
+    :type upgrade_mode: str or ~azure.mgmt.servermanager.models.UpgradeMode
     :param desired_version: Latest available MSI version.
     :type desired_version: str
     :param instances: Names of the nodes in the gateway.
-    :type instances: list of :class:`GatewayStatus
-     <azure.mgmt.servermanager.models.GatewayStatus>`
+    :type instances: list[~azure.mgmt.servermanager.models.GatewayStatus]
     :param active_message_count: Number of active messages.
     :type active_message_count: int
     :param latest_published_msi_version: Last published MSI version.
@@ -86,15 +84,15 @@ class GatewayResource(Resource):
         'minimum_version': {'key': 'properties.minimumVersion', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, etag=None, created=None, updated=None, upgrade_mode=None, desired_version=None, instances=None, active_message_count=None, latest_published_msi_version=None, published_time_utc=None):
-        super(GatewayResource, self).__init__(tags=tags, etag=etag)
-        self.created = created
-        self.updated = updated
-        self.upgrade_mode = upgrade_mode
-        self.desired_version = desired_version
-        self.instances = instances
-        self.active_message_count = active_message_count
-        self.latest_published_msi_version = latest_published_msi_version
-        self.published_time_utc = published_time_utc
+    def __init__(self, **kwargs):
+        super(GatewayResource, self).__init__(**kwargs)
+        self.created = kwargs.get('created', None)
+        self.updated = kwargs.get('updated', None)
+        self.upgrade_mode = kwargs.get('upgrade_mode', None)
+        self.desired_version = kwargs.get('desired_version', None)
+        self.instances = kwargs.get('instances', None)
+        self.active_message_count = kwargs.get('active_message_count', None)
+        self.latest_published_msi_version = kwargs.get('latest_published_msi_version', None)
+        self.published_time_utc = kwargs.get('published_time_utc', None)
         self.installer_download = None
         self.minimum_version = None

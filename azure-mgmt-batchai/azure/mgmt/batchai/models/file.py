@@ -13,38 +13,46 @@ from msrest.serialization import Model
 
 
 class File(Model):
-    """Properties of the file.
+    """Properties of the file or directory.
 
-    :param name: file name
-    :type name: str
-    :param download_url: file downloand url, example:
-     https://mystg.blob.core.windows.net/mycontainer/myModel_1.dnn. This will
-     be returned only if the model has been archived. During job run, this
-     won't be returned and customers can use SSH tunneling to download. Users
-     can use Get Remote Login Information API to get the IP address and port
-     information of all the compute nodes running the job.
-    :type download_url: str
-    :param last_modified: The time at which the file was last modified. The
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Name of the file.
+    :vartype name: str
+    :ivar file_type: Contains information about file type. Possible values
+     include: 'file', 'directory'
+    :vartype file_type: str or ~azure.mgmt.batchai.models.FileType
+    :ivar download_url: Will contain an URL to download the corresponding
+     file. The downloadUrl is not returned for directories.
+    :vartype download_url: str
+    :ivar last_modified: The time at which the file was last modified. The
      time at which the file was last modified.
-    :type last_modified: datetime
-    :param content_length: The file size. The file size.
-    :type content_length: long
+    :vartype last_modified: datetime
+    :ivar content_length: The file size. The file size.
+    :vartype content_length: long
     """
 
     _validation = {
-        'name': {'required': True},
-        'download_url': {'required': True},
+        'name': {'readonly': True},
+        'file_type': {'readonly': True},
+        'download_url': {'readonly': True},
+        'last_modified': {'readonly': True},
+        'content_length': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'file_type': {'key': 'fileType', 'type': 'str'},
         'download_url': {'key': 'downloadUrl', 'type': 'str'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'content_length': {'key': 'properties.contentLength', 'type': 'long'},
     }
 
-    def __init__(self, name, download_url, last_modified=None, content_length=None):
-        self.name = name
-        self.download_url = download_url
-        self.last_modified = last_modified
-        self.content_length = content_length
+    def __init__(self, **kwargs):
+        super(File, self).__init__(**kwargs)
+        self.name = None
+        self.file_type = None
+        self.download_url = None
+        self.last_modified = None
+        self.content_length = None

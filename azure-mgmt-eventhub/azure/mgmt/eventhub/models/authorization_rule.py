@@ -18,13 +18,15 @@ class AuthorizationRule(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param rights: The rights associated with the rule.
+    :param rights: Required. The rights associated with the rule.
     :type rights: list[str or ~azure.mgmt.eventhub.models.AccessRights]
     """
 
@@ -42,6 +44,6 @@ class AuthorizationRule(Resource):
         'rights': {'key': 'properties.rights', 'type': '[str]'},
     }
 
-    def __init__(self, rights):
-        super(AuthorizationRule, self).__init__()
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.rights = kwargs.get('rights', None)

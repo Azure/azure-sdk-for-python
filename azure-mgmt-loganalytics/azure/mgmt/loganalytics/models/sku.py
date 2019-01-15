@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class Sku(Model):
     """The SKU (tier) of a workspace.
 
-    :param name: The name of the SKU. Possible values include: 'Free',
-     'Standard', 'Premium', 'Unlimited', 'PerNode', 'Standalone'
-    :type name: str or :class:`SkuNameEnum
-     <azure.mgmt.loganalytics.models.SkuNameEnum>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the SKU. Possible values include:
+     'Free', 'Standard', 'Premium', 'Unlimited', 'PerNode', 'PerGB2018',
+     'Standalone'
+    :type name: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
     """
 
     _validation = {
@@ -29,5 +31,6 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

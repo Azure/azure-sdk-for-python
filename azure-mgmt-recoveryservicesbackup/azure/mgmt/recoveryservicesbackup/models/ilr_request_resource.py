@@ -28,12 +28,11 @@ class ILRRequestResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: ILRRequestResource properties
-    :type properties: :class:`ILRRequest
-     <azure.mgmt.recoveryservicesbackup.models.ILRRequest>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.ILRRequest
     """
 
     _validation = {
@@ -52,6 +51,6 @@ class ILRRequestResource(Resource):
         'properties': {'key': 'properties', 'type': 'ILRRequest'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(ILRRequestResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ILRRequestResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

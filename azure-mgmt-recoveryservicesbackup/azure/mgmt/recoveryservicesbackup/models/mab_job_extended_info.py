@@ -16,10 +16,10 @@ class MabJobExtendedInfo(Model):
     """Additional information for the MAB workload-specific job.
 
     :param tasks_list: List of tasks for this job.
-    :type tasks_list: list of :class:`MabJobTaskDetails
-     <azure.mgmt.recoveryservicesbackup.models.MabJobTaskDetails>`
+    :type tasks_list:
+     list[~azure.mgmt.recoveryservicesbackup.models.MabJobTaskDetails]
     :param property_bag: The job properties.
-    :type property_bag: dict
+    :type property_bag: dict[str, str]
     :param dynamic_error_message: Non localized error message specific to this
      job.
     :type dynamic_error_message: str
@@ -31,7 +31,8 @@ class MabJobExtendedInfo(Model):
         'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
     }
 
-    def __init__(self, tasks_list=None, property_bag=None, dynamic_error_message=None):
-        self.tasks_list = tasks_list
-        self.property_bag = property_bag
-        self.dynamic_error_message = dynamic_error_message
+    def __init__(self, **kwargs):
+        super(MabJobExtendedInfo, self).__init__(**kwargs)
+        self.tasks_list = kwargs.get('tasks_list', None)
+        self.property_bag = kwargs.get('property_bag', None)
+        self.dynamic_error_message = kwargs.get('dynamic_error_message', None)

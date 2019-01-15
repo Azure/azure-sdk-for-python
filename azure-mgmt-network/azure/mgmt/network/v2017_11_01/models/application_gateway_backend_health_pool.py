@@ -30,7 +30,7 @@ class ApplicationGatewayBackendHealthPool(Model):
         'backend_http_settings_collection': {'key': 'backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHealthHttpSettings]'},
     }
 
-    def __init__(self, backend_address_pool=None, backend_http_settings_collection=None):
-        super(ApplicationGatewayBackendHealthPool, self).__init__()
-        self.backend_address_pool = backend_address_pool
-        self.backend_http_settings_collection = backend_http_settings_collection
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHealthPool, self).__init__(**kwargs)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings_collection = kwargs.get('backend_http_settings_collection', None)

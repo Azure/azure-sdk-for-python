@@ -32,8 +32,9 @@ class HttpRequestInfo(Model):
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, client_request_id=None, client_ip_address=None, method=None, uri=None):
-        self.client_request_id = client_request_id
-        self.client_ip_address = client_ip_address
-        self.method = method
-        self.uri = uri
+    def __init__(self, **kwargs):
+        super(HttpRequestInfo, self).__init__(**kwargs)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.client_ip_address = kwargs.get('client_ip_address', None)
+        self.method = kwargs.get('method', None)
+        self.uri = kwargs.get('uri', None)

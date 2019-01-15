@@ -21,7 +21,9 @@ class FoodEstablishment(LocalBusiness):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -84,10 +86,29 @@ class FoodEstablishment(LocalBusiness):
         'tag_line': {'readonly': True},
     }
 
+    _attribute_map = {
+        '_type': {'key': '_type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'contractual_rules': {'key': 'contractualRules', 'type': '[ContractualRulesContractualRule]'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'image': {'key': 'image', 'type': 'ImageObject'},
+        'description': {'key': 'description', 'type': 'str'},
+        'entity_presentation_info': {'key': 'entityPresentationInfo', 'type': 'EntitiesEntityPresentationInfo'},
+        'bing_id': {'key': 'bingId', 'type': 'str'},
+        'address': {'key': 'address', 'type': 'PostalAddress'},
+        'telephone': {'key': 'telephone', 'type': 'str'},
+        'price_range': {'key': 'priceRange', 'type': 'str'},
+        'panoramas': {'key': 'panoramas', 'type': '[ImageObject]'},
+        'is_permanently_closed': {'key': 'isPermanentlyClosed', 'type': 'bool'},
+        'tag_line': {'key': 'tagLine', 'type': 'str'},
+    }
+
     _subtype_map = {
         '_type': {'Restaurant': 'Restaurant'}
     }
 
-    def __init__(self):
-        super(FoodEstablishment, self).__init__()
+    def __init__(self, **kwargs):
+        super(FoodEstablishment, self).__init__(**kwargs)
         self._type = 'FoodEstablishment'

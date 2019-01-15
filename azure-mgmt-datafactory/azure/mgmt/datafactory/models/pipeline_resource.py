@@ -38,6 +38,9 @@ class PipelineResource(SubResource):
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
+    :param annotations: List of tags that can be used for describing the
+     Pipeline.
+    :type annotations: list[object]
     """
 
     _validation = {
@@ -58,12 +61,14 @@ class PipelineResource(SubResource):
         'activities': {'key': 'properties.activities', 'type': '[Activity]'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
+        'annotations': {'key': 'properties.annotations', 'type': '[object]'},
     }
 
-    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, concurrency=None):
+    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, concurrency=None, annotations=None):
         super(PipelineResource, self).__init__()
         self.additional_properties = additional_properties
         self.description = description
         self.activities = activities
         self.parameters = parameters
         self.concurrency = concurrency
+        self.annotations = annotations

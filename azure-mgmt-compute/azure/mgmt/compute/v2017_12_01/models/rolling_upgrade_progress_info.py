@@ -47,8 +47,8 @@ class RollingUpgradeProgressInfo(Model):
         'pending_instance_count': {'key': 'pendingInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(RollingUpgradeProgressInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(RollingUpgradeProgressInfo, self).__init__(**kwargs)
         self.successful_instance_count = None
         self.failed_instance_count = None
         self.in_progress_instance_count = None

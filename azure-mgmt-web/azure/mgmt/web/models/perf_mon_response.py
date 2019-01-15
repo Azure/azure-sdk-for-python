@@ -29,8 +29,8 @@ class PerfMonResponse(Model):
         'data': {'key': 'data', 'type': 'PerfMonSet'},
     }
 
-    def __init__(self, code=None, message=None, data=None):
-        super(PerfMonResponse, self).__init__()
-        self.code = code
-        self.message = message
-        self.data = data
+    def __init__(self, **kwargs):
+        super(PerfMonResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.data = kwargs.get('data', None)

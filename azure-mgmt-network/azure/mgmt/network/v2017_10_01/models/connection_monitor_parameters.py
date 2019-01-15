@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class ConnectionMonitorParameters(Model):
     """Parameters that define the operation to create a connection monitor.
 
-    :param source:
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required.
     :type source:
      ~azure.mgmt.network.v2017_10_01.models.ConnectionMonitorSource
-    :param destination:
+    :param destination: Required.
     :type destination:
      ~azure.mgmt.network.v2017_10_01.models.ConnectionMonitorDestination
     :param auto_start: Determines if the connection monitor will start
@@ -41,9 +43,9 @@ class ConnectionMonitorParameters(Model):
         'monitoring_interval_in_seconds': {'key': 'monitoringIntervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, source, destination, auto_start=True, monitoring_interval_in_seconds=60):
-        super(ConnectionMonitorParameters, self).__init__()
-        self.source = source
-        self.destination = destination
-        self.auto_start = auto_start
-        self.monitoring_interval_in_seconds = monitoring_interval_in_seconds
+    def __init__(self, **kwargs):
+        super(ConnectionMonitorParameters, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.destination = kwargs.get('destination', None)
+        self.auto_start = kwargs.get('auto_start', True)
+        self.monitoring_interval_in_seconds = kwargs.get('monitoring_interval_in_seconds', 60)

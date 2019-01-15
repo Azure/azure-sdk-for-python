@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class WebActivityAuthentication(Model):
     """Web activity authentication properties.
 
-    :param type: Web activity authentication (Basic/ClientCertificate)
+    :param type: Web activity authentication (Basic/ClientCertificate/MSI)
     :type type: str
     :param pfx: Base64-encoded contents of a PFX file.
     :type pfx: ~azure.mgmt.datafactory.models.SecureString
@@ -24,6 +24,9 @@ class WebActivityAuthentication(Model):
     :type username: str
     :param password: Password for the PFX file or basic authentication.
     :type password: ~azure.mgmt.datafactory.models.SecureString
+    :param resource: Resource for which Azure Auth token will be requested
+     when using MSI Authentication.
+    :type resource: str
     """
 
     _validation = {
@@ -35,11 +38,13 @@ class WebActivityAuthentication(Model):
         'pfx': {'key': 'pfx', 'type': 'SecureString'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'SecureString'},
+        'resource': {'key': 'resource', 'type': 'str'},
     }
 
-    def __init__(self, type, pfx=None, username=None, password=None):
+    def __init__(self, type, pfx=None, username=None, password=None, resource=None):
         super(WebActivityAuthentication, self).__init__()
         self.type = type
         self.pfx = pfx
         self.username = username
         self.password = password
+        self.resource = resource

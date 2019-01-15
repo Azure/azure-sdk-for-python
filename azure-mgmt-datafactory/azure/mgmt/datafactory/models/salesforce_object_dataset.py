@@ -29,6 +29,9 @@ class SalesforceObjectDataset(Dataset):
     :param parameters: Parameters for dataset.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param object_api_name: The Salesforce object API name. Type: string (or
@@ -47,11 +50,12 @@ class SalesforceObjectDataset(Dataset):
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'object_api_name': {'key': 'typeProperties.objectApiName', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, object_api_name=None):
-        super(SalesforceObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, object_api_name=None):
+        super(SalesforceObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
         self.object_api_name = object_api_name
         self.type = 'SalesforceObject'

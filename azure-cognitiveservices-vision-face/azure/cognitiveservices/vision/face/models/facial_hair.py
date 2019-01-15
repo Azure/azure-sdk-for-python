@@ -29,8 +29,8 @@ class FacialHair(Model):
         'sideburns': {'key': 'sideburns', 'type': 'float'},
     }
 
-    def __init__(self, moustache=None, beard=None, sideburns=None):
-        super(FacialHair, self).__init__()
-        self.moustache = moustache
-        self.beard = beard
-        self.sideburns = sideburns
+    def __init__(self, **kwargs):
+        super(FacialHair, self).__init__(**kwargs)
+        self.moustache = kwargs.get('moustache', None)
+        self.beard = kwargs.get('beard', None)
+        self.sideburns = kwargs.get('sideburns', None)

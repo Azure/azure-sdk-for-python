@@ -21,21 +21,23 @@ class MetricsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2018-01-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01-preview"
+        self.api_version = "2018-01-01"
 
         self.config = config
 
     def list(
-            self, resource_uri, timespan=None, interval=None, metric=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, timespan=None, interval=None, metricnames=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource.
@@ -45,15 +47,16 @@ class MetricsOperations(object):
         :type timespan: str
         :param interval: The interval (i.e. timegrain) of the query.
         :type interval: timedelta
-        :param metric: The name of the metric to retrieve.
-        :type metric: str
+        :param metricnames: The names of the metrics (comma separated) to
+         retrieve.
+        :type metricnames: str
         :param aggregation: The list of aggregation types (comma separated) to
          retrieve.
         :type aggregation: str
         :param top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
-        :type top: float
+        :type top: int
         :param orderby: The aggregation to use for sorting results and the
          direction of the sort.
          Only one order can be specified.
@@ -74,6 +77,9 @@ class MetricsOperations(object):
          allowed depends on the operation. See the operation's description for
          details. Possible values include: 'Data', 'Metadata'
         :type result_type: str or ~azure.mgmt.monitor.models.ResultType
+        :param metricnamespace: Metric namespace to query metric definitions
+         for.
+        :type metricnamespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -86,7 +92,7 @@ class MetricsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/metrics'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -98,19 +104,21 @@ class MetricsOperations(object):
             query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
         if interval is not None:
             query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if metric is not None:
-            query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
+        if metricnames is not None:
+            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
         if aggregation is not None:
             query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
         if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'float')
+            query_parameters['top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:
-            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+            query_parameters['orderby'] = self._serialize.query("orderby", orderby, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         if result_type is not None:
             query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if metricnamespace is not None:
+            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -124,7 +132,7 @@ class MetricsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -139,3 +147,4 @@ class MetricsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}

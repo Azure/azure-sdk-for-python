@@ -40,6 +40,9 @@ class ArmDisasterRecovery(Resource):
      'PrimaryNotReplicating' or 'Secondary'. Possible values include:
      'Primary', 'PrimaryNotReplicating', 'Secondary'
     :vartype role: str or ~azure.mgmt.eventhub.models.RoleDisasterRecovery
+    :ivar pending_replication_operations_count: Number of entities pending to
+     be replicated.
+    :vartype pending_replication_operations_count: long
     """
 
     _validation = {
@@ -48,6 +51,7 @@ class ArmDisasterRecovery(Resource):
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'role': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,11 +62,13 @@ class ArmDisasterRecovery(Resource):
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
         'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
     }
 
-    def __init__(self, partner_namespace=None, alternate_name=None):
-        super(ArmDisasterRecovery, self).__init__()
+    def __init__(self, **kwargs):
+        super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.partner_namespace = partner_namespace
-        self.alternate_name = alternate_name
+        self.partner_namespace = kwargs.get('partner_namespace', None)
+        self.alternate_name = kwargs.get('alternate_name', None)
         self.role = None
+        self.pending_replication_operations_count = None

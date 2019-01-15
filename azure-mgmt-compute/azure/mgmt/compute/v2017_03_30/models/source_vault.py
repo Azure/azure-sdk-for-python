@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SourceVault(Model):
-    """The vault id is an Azure Resource Manager Resoure id in the form
+    """The vault id is an Azure Resource Manager Resource id in the form
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :param id: Resource Id
@@ -24,6 +24,6 @@ class SourceVault(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(SourceVault, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SourceVault, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

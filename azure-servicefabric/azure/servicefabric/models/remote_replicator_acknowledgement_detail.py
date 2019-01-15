@@ -38,9 +38,9 @@ class RemoteReplicatorAcknowledgementDetail(Model):
         'received_and_not_applied_count': {'key': 'ReceivedAndNotAppliedCount', 'type': 'str'},
     }
 
-    def __init__(self, average_receive_duration=None, average_apply_duration=None, not_received_count=None, received_and_not_applied_count=None):
-        super(RemoteReplicatorAcknowledgementDetail, self).__init__()
-        self.average_receive_duration = average_receive_duration
-        self.average_apply_duration = average_apply_duration
-        self.not_received_count = not_received_count
-        self.received_and_not_applied_count = received_and_not_applied_count
+    def __init__(self, **kwargs):
+        super(RemoteReplicatorAcknowledgementDetail, self).__init__(**kwargs)
+        self.average_receive_duration = kwargs.get('average_receive_duration', None)
+        self.average_apply_duration = kwargs.get('average_apply_duration', None)
+        self.not_received_count = kwargs.get('not_received_count', None)
+        self.received_and_not_applied_count = kwargs.get('received_and_not_applied_count', None)

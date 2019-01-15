@@ -26,7 +26,7 @@ class ResourcesMoveInfo(Model):
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, resources=None, target_resource_group=None):
-        super(ResourcesMoveInfo, self).__init__()
-        self.resources = resources
-        self.target_resource_group = target_resource_group
+    def __init__(self, **kwargs):
+        super(ResourcesMoveInfo, self).__init__(**kwargs)
+        self.resources = kwargs.get('resources', None)
+        self.target_resource_group = kwargs.get('target_resource_group', None)

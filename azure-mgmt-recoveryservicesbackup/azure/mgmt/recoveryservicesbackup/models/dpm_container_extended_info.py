@@ -23,5 +23,6 @@ class DPMContainerExtendedInfo(Model):
         'last_refreshed_at': {'key': 'lastRefreshedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, last_refreshed_at=None):
-        self.last_refreshed_at = last_refreshed_at
+    def __init__(self, **kwargs):
+        super(DPMContainerExtendedInfo, self).__init__(**kwargs)
+        self.last_refreshed_at = kwargs.get('last_refreshed_at', None)

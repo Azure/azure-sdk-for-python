@@ -49,7 +49,8 @@ class JobStatus(Model):
         'next_execution_time': {'key': 'nextExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(JobStatus, self).__init__(**kwargs)
         self.execution_count = None
         self.failure_count = None
         self.faulted_count = None

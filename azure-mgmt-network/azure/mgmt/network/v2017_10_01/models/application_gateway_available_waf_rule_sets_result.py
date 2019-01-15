@@ -24,6 +24,6 @@ class ApplicationGatewayAvailableWafRuleSetsResult(Model):
         'value': {'key': 'value', 'type': '[ApplicationGatewayFirewallRuleSet]'},
     }
 
-    def __init__(self, value=None):
-        super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

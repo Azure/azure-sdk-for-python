@@ -23,6 +23,6 @@ class FeatureProperties(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, state=None):
-        super(FeatureProperties, self).__init__()
-        self.state = state
+    def __init__(self, **kwargs):
+        super(FeatureProperties, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)

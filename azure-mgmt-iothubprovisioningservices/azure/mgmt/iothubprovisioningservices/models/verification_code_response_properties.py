@@ -42,12 +42,12 @@ class VerificationCodeResponseProperties(Model):
         'updated': {'key': 'updated', 'type': 'str'},
     }
 
-    def __init__(self, verification_code=None, subject=None, expiry=None, thumbprint=None, is_verified=None, created=None, updated=None):
-        super(VerificationCodeResponseProperties, self).__init__()
-        self.verification_code = verification_code
-        self.subject = subject
-        self.expiry = expiry
-        self.thumbprint = thumbprint
-        self.is_verified = is_verified
-        self.created = created
-        self.updated = updated
+    def __init__(self, **kwargs):
+        super(VerificationCodeResponseProperties, self).__init__(**kwargs)
+        self.verification_code = kwargs.get('verification_code', None)
+        self.subject = kwargs.get('subject', None)
+        self.expiry = kwargs.get('expiry', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.is_verified = kwargs.get('is_verified', None)
+        self.created = kwargs.get('created', None)
+        self.updated = kwargs.get('updated', None)

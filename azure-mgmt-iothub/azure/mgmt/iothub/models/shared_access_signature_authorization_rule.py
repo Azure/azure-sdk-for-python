@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class SharedAccessSignatureAuthorizationRule(Model):
     """The properties of an IoT hub shared access policy.
 
-    :param key_name: The name of the shared access policy.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The name of the shared access policy.
     :type key_name: str
     :param primary_key: The primary key.
     :type primary_key: str
     :param secondary_key: The secondary key.
     :type secondary_key: str
-    :param rights: The permissions assigned to the shared access policy.
-     Possible values include: 'RegistryRead', 'RegistryWrite',
+    :param rights: Required. The permissions assigned to the shared access
+     policy. Possible values include: 'RegistryRead', 'RegistryWrite',
      'ServiceConnect', 'DeviceConnect', 'RegistryRead, RegistryWrite',
      'RegistryRead, ServiceConnect', 'RegistryRead, DeviceConnect',
      'RegistryWrite, ServiceConnect', 'RegistryWrite, DeviceConnect',
@@ -31,8 +33,7 @@ class SharedAccessSignatureAuthorizationRule(Model):
      'RegistryRead, ServiceConnect, DeviceConnect', 'RegistryWrite,
      ServiceConnect, DeviceConnect', 'RegistryRead, RegistryWrite,
      ServiceConnect, DeviceConnect'
-    :type rights: str or :class:`AccessRights
-     <azure.mgmt.iothub.models.AccessRights>`
+    :type rights: str or ~azure.mgmt.iothub.models.AccessRights
     """
 
     _validation = {
@@ -47,8 +48,9 @@ class SharedAccessSignatureAuthorizationRule(Model):
         'rights': {'key': 'rights', 'type': 'AccessRights'},
     }
 
-    def __init__(self, key_name, rights, primary_key=None, secondary_key=None):
-        self.key_name = key_name
-        self.primary_key = primary_key
-        self.secondary_key = secondary_key
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(SharedAccessSignatureAuthorizationRule, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+        self.rights = kwargs.get('rights', None)

@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class ApplicationProviderAuthorization(Model):
     """The managed application provider authorization.
 
-    :param principal_id: The provider's principal identifier. This is the
-     identity that the provider will use to call ARM to manage the managed
-     application resources.
+    All required parameters must be populated in order to send to Azure.
+
+    :param principal_id: Required. The provider's principal identifier. This
+     is the identity that the provider will use to call ARM to manage the
+     managed application resources.
     :type principal_id: str
-    :param role_definition_id: The provider's role definition identifier. This
-     role will define all the permissions that the provider must have on the
-     managed application's container resource group. This role definition
-     cannot have permission to delete the resource group.
+    :param role_definition_id: Required. The provider's role definition
+     identifier. This role will define all the permissions that the provider
+     must have on the managed application's container resource group. This role
+     definition cannot have permission to delete the resource group.
     :type role_definition_id: str
     """
 
@@ -36,7 +38,7 @@ class ApplicationProviderAuthorization(Model):
         'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
     }
 
-    def __init__(self, principal_id, role_definition_id):
-        super(ApplicationProviderAuthorization, self).__init__()
-        self.principal_id = principal_id
-        self.role_definition_id = role_definition_id
+    def __init__(self, **kwargs):
+        super(ApplicationProviderAuthorization, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.role_definition_id = kwargs.get('role_definition_id', None)

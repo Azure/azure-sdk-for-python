@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AccessRights(Enum):
+class AccessRights(str, Enum):
 
     registry_read = "RegistryRead"
     registry_write = "RegistryWrite"
@@ -31,21 +31,22 @@ class AccessRights(Enum):
     registry_read_registry_write_service_connect_device_connect = "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
 
 
-class IpFilterActionType(Enum):
+class IpFilterActionType(str, Enum):
 
     accept = "Accept"
     reject = "Reject"
 
 
-class RoutingSource(Enum):
+class RoutingSource(str, Enum):
 
+    invalid = "Invalid"
     device_messages = "DeviceMessages"
     twin_change_events = "TwinChangeEvents"
     device_lifecycle_events = "DeviceLifecycleEvents"
     device_job_lifecycle_events = "DeviceJobLifecycleEvents"
 
 
-class OperationMonitoringLevel(Enum):
+class OperationMonitoringLevel(str, Enum):
 
     none = "None"
     error = "Error"
@@ -53,27 +54,39 @@ class OperationMonitoringLevel(Enum):
     error_information = "Error, Information"
 
 
-class Capabilities(Enum):
+class Capabilities(str, Enum):
 
     none = "None"
     device_management = "DeviceManagement"
 
 
-class IotHubSku(Enum):
+class IotHubSku(str, Enum):
 
     f1 = "F1"
     s1 = "S1"
     s2 = "S2"
     s3 = "S3"
+    b1 = "B1"
+    b2 = "B2"
+    b3 = "B3"
 
 
-class IotHubSkuTier(Enum):
+class IotHubSkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
+    basic = "Basic"
 
 
-class JobType(Enum):
+class EndpointHealthStatus(str, Enum):
+
+    unknown = "unknown"
+    healthy = "healthy"
+    unhealthy = "unhealthy"
+    dead = "dead"
+
+
+class JobType(str, Enum):
 
     unknown = "unknown"
     export = "export"
@@ -87,7 +100,7 @@ class JobType(Enum):
     firmware_update = "firmwareUpdate"
 
 
-class JobStatus(Enum):
+class JobStatus(str, Enum):
 
     unknown = "unknown"
     enqueued = "enqueued"
@@ -97,14 +110,27 @@ class JobStatus(Enum):
     cancelled = "cancelled"
 
 
-class IotHubScaleType(Enum):
+class IotHubScaleType(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     none = "None"
 
 
-class IotHubNameUnavailabilityReason(Enum):
+class IotHubNameUnavailabilityReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
+
+
+class TestResultStatus(str, Enum):
+
+    undefined = "undefined"
+    false = "false"
+    true = "true"
+
+
+class RouteErrorSeverity(str, Enum):
+
+    error = "error"
+    warning = "warning"

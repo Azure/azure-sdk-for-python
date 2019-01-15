@@ -30,6 +30,7 @@ class CognitiveServicesAccountUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, sku=None, tags=None):
-        self.sku = sku
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccountUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)

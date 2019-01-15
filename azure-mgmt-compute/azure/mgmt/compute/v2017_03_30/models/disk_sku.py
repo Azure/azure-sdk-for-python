@@ -35,7 +35,7 @@ class DiskSku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(DiskSku, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(DiskSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None

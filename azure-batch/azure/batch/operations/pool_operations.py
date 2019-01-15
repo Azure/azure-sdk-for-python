@@ -21,16 +21,18 @@ class PoolOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-09-01.6.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01.6.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -90,7 +92,11 @@ class PoolOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/poolusagemetrics'
+                url = self.list_usage_metrics.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -112,7 +118,7 @@ class PoolOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -127,9 +133,8 @@ class PoolOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -145,6 +150,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    list_usage_metrics.metadata = {'url': '/poolusagemetrics'}
 
     def get_all_lifetime_statistics(
             self, pool_get_all_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
@@ -153,7 +159,9 @@ class PoolOperations(object):
 
         Statistics are aggregated across all pools that have ever existed in
         the account, from account creation to the last update time of the
-        statistics.
+        statistics. The statistics may not be immediately available. The Batch
+        service performs periodic roll-up of statistics. The typical delay is
+        about 30 minutes.
 
         :param pool_get_all_lifetime_statistics_options: Additional parameters
          for the operation
@@ -184,7 +192,11 @@ class PoolOperations(object):
             ocp_date = pool_get_all_lifetime_statistics_options.ocp_date
 
         # Construct URL
-        url = '/lifetimepoolstats'
+        url = self.get_all_lifetime_statistics.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -194,7 +206,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -209,8 +221,8 @@ class PoolOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -233,6 +245,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_lifetime_statistics.metadata = {'url': '/lifetimepoolstats'}
 
     def add(
             self, pool, pool_add_options=None, custom_headers=None, raw=False, **operation_config):
@@ -270,7 +283,11 @@ class PoolOperations(object):
             ocp_date = pool_add_options.ocp_date
 
         # Construct URL
-        url = '/pools'
+        url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -298,9 +315,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool, 'PoolAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -315,6 +331,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/pools'}
 
     def list(
             self, pool_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -362,7 +379,11 @@ class PoolOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/pools'
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -384,7 +405,7 @@ class PoolOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -399,9 +420,8 @@ class PoolOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -417,6 +437,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/pools'}
 
     def delete(
             self, pool_id, pool_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -476,8 +497,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_delete_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -490,7 +512,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -513,8 +534,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -526,6 +547,7 @@ class PoolOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete.metadata = {'url': '/pools/{poolId}'}
 
     def exists(
             self, pool_id, pool_exists_options=None, custom_headers=None, raw=False, **operation_config):
@@ -571,8 +593,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_exists_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.exists.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -585,7 +608,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -608,8 +630,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -625,6 +647,7 @@ class PoolOperations(object):
                 })
             return client_raw_response
         return deserialized
+    exists.metadata = {'url': '/pools/{poolId}'}
 
     def get(
             self, pool_id, pool_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -677,8 +700,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_get_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -695,7 +719,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -718,8 +742,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -742,6 +766,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/pools/{poolId}'}
 
     def patch(
             self, pool_id, pool_patch_parameter, pool_patch_options=None, custom_headers=None, raw=False, **operation_config):
@@ -794,8 +819,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_patch_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -834,9 +860,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_patch_parameter, 'PoolPatchParameter')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -851,6 +876,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    patch.metadata = {'url': '/pools/{poolId}'}
 
     def disable_auto_scale(
             self, pool_id, pool_disable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
@@ -887,8 +913,9 @@ class PoolOperations(object):
             ocp_date = pool_disable_auto_scale_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/disableautoscale'
+        url = self.disable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -901,7 +928,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -916,8 +942,8 @@ class PoolOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -932,9 +958,10 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    disable_auto_scale.metadata = {'url': '/pools/{poolId}/disableautoscale'}
 
     def enable_auto_scale(
-            self, pool_id, pool_enable_auto_scale_options=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, auto_scale_formula=None, auto_scale_evaluation_interval=None, pool_enable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables automatic scaling for a pool.
 
         You cannot enable automatic scaling on a pool if a resize operation is
@@ -947,10 +974,6 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool on which to enable automatic
          scaling.
         :type pool_id: str
-        :param pool_enable_auto_scale_options: Additional parameters for the
-         operation
-        :type pool_enable_auto_scale_options:
-         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param auto_scale_formula: The formula for the desired number of
          compute nodes in the pool. The formula is checked for validity before
          it is applied to the pool. If the formula is not valid, the Batch
@@ -971,6 +994,10 @@ class PoolOperations(object):
          be started, with its starting time being the time when this request
          was issued.
         :type auto_scale_evaluation_interval: timedelta
+        :param pool_enable_auto_scale_options: Additional parameters for the
+         operation
+        :type pool_enable_auto_scale_options:
+         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1008,8 +1035,9 @@ class PoolOperations(object):
         pool_enable_auto_scale_parameter = models.PoolEnableAutoScaleParameter(auto_scale_formula=auto_scale_formula, auto_scale_evaluation_interval=auto_scale_evaluation_interval)
 
         # Construct URL
-        url = '/pools/{poolId}/enableautoscale'
+        url = self.enable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1048,9 +1076,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_enable_auto_scale_parameter, 'PoolEnableAutoScaleParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1065,6 +1092,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    enable_auto_scale.metadata = {'url': '/pools/{poolId}/enableautoscale'}
 
     def evaluate_auto_scale(
             self, pool_id, auto_scale_formula, pool_evaluate_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1115,8 +1143,9 @@ class PoolOperations(object):
         pool_evaluate_auto_scale_parameter = models.PoolEvaluateAutoScaleParameter(auto_scale_formula=auto_scale_formula)
 
         # Construct URL
-        url = '/pools/{poolId}/evaluateautoscale'
+        url = self.evaluate_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1129,6 +1158,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
@@ -1147,9 +1177,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_evaluate_auto_scale_parameter, 'PoolEvaluateAutoScaleParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1173,6 +1202,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_auto_scale.metadata = {'url': '/pools/{poolId}/evaluateautoscale'}
 
     def resize(
             self, pool_id, pool_resize_parameter, pool_resize_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1229,8 +1259,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_resize_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/resize'
+        url = self.resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1269,9 +1300,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_resize_parameter, 'PoolResizeParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1286,6 +1316,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    resize.metadata = {'url': '/pools/{poolId}/resize'}
 
     def stop_resize(
             self, pool_id, pool_stop_resize_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1342,8 +1373,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_stop_resize_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/stopresize'
+        url = self.stop_resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1356,7 +1388,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1379,8 +1410,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1395,6 +1426,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    stop_resize.metadata = {'url': '/pools/{poolId}/stopresize'}
 
     def update_properties(
             self, pool_id, pool_update_properties_parameter, pool_update_properties_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1439,8 +1471,9 @@ class PoolOperations(object):
             ocp_date = pool_update_properties_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/updateproperties'
+        url = self.update_properties.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1471,9 +1504,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_update_properties_parameter, 'PoolUpdatePropertiesParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1488,133 +1520,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
-
-    def upgrade_os(
-            self, pool_id, target_os_version, pool_upgrade_os_options=None, custom_headers=None, raw=False, **operation_config):
-        """Upgrades the operating system of the specified pool.
-
-        During an upgrade, the Batch service upgrades each compute node in the
-        pool. When a compute node is chosen for upgrade, any tasks running on
-        that node are removed from the node and returned to the queue to be
-        rerun later (or on a different compute node). The node will be
-        unavailable until the upgrade is complete. This operation results in
-        temporarily reduced pool capacity as nodes are taken out of service to
-        be upgraded. Although the Batch service tries to avoid upgrading all
-        compute nodes at the same time, it does not guarantee to do this
-        (particularly on small pools); therefore, the pool may be temporarily
-        unavailable to run tasks. When this operation runs, the pool state
-        changes to upgrading. When all compute nodes have finished upgrading,
-        the pool state returns to active. While the upgrade is in progress, the
-        pool's currentOSVersion reflects the OS version that nodes are
-        upgrading from, and targetOSVersion reflects the OS version that nodes
-        are upgrading to. Once the upgrade is complete, currentOSVersion is
-        updated to reflect the OS version now running on all nodes. This
-        operation can only be invoked on pools created with the
-        cloudServiceConfiguration property.
-
-        :param pool_id: The ID of the pool to upgrade.
-        :type pool_id: str
-        :param target_os_version: The Azure Guest OS version to be installed
-         on the virtual machines in the pool.
-        :type target_os_version: str
-        :param pool_upgrade_os_options: Additional parameters for the
-         operation
-        :type pool_upgrade_os_options:
-         ~azure.batch.models.PoolUpgradeOsOptions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
-        """
-        timeout = None
-        if pool_upgrade_os_options is not None:
-            timeout = pool_upgrade_os_options.timeout
-        client_request_id = None
-        if pool_upgrade_os_options is not None:
-            client_request_id = pool_upgrade_os_options.client_request_id
-        return_client_request_id = None
-        if pool_upgrade_os_options is not None:
-            return_client_request_id = pool_upgrade_os_options.return_client_request_id
-        ocp_date = None
-        if pool_upgrade_os_options is not None:
-            ocp_date = pool_upgrade_os_options.ocp_date
-        if_match = None
-        if pool_upgrade_os_options is not None:
-            if_match = pool_upgrade_os_options.if_match
-        if_none_match = None
-        if pool_upgrade_os_options is not None:
-            if_none_match = pool_upgrade_os_options.if_none_match
-        if_modified_since = None
-        if pool_upgrade_os_options is not None:
-            if_modified_since = pool_upgrade_os_options.if_modified_since
-        if_unmodified_since = None
-        if pool_upgrade_os_options is not None:
-            if_unmodified_since = pool_upgrade_os_options.if_unmodified_since
-        pool_upgrade_os_parameter = models.PoolUpgradeOSParameter(target_os_version=target_os_version)
-
-        # Construct URL
-        url = '/pools/{poolId}/upgradeos'
-        path_format_arguments = {
-            'poolId': self._serialize.url("pool_id", pool_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-        if client_request_id is not None:
-            header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-        if return_client_request_id is not None:
-            header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
-        if ocp_date is not None:
-            header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
-        if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-
-        # Construct body
-        body_content = self._serialize.body(pool_upgrade_os_parameter, 'PoolUpgradeOSParameter')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.BatchErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'client-request-id': 'str',
-                'request-id': 'str',
-                'ETag': 'str',
-                'Last-Modified': 'rfc-1123',
-                'DataServiceId': 'str',
-            })
-            return client_raw_response
+    update_properties.metadata = {'url': '/pools/{poolId}/updateproperties'}
 
     def remove_nodes(
             self, pool_id, node_remove_parameter, pool_remove_nodes_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1669,8 +1575,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_remove_nodes_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/removenodes'
+        url = self.remove_nodes.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1709,9 +1616,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(node_remove_parameter, 'NodeRemoveParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1726,3 +1632,4 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    remove_nodes.metadata = {'url': '/pools/{poolId}/removenodes'}

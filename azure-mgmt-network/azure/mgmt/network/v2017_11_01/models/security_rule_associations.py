@@ -37,9 +37,9 @@ class SecurityRuleAssociations(Model):
         'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
     }
 
-    def __init__(self, network_interface_association=None, subnet_association=None, default_security_rules=None, effective_security_rules=None):
-        super(SecurityRuleAssociations, self).__init__()
-        self.network_interface_association = network_interface_association
-        self.subnet_association = subnet_association
-        self.default_security_rules = default_security_rules
-        self.effective_security_rules = effective_security_rules
+    def __init__(self, **kwargs):
+        super(SecurityRuleAssociations, self).__init__(**kwargs)
+        self.network_interface_association = kwargs.get('network_interface_association', None)
+        self.subnet_association = kwargs.get('subnet_association', None)
+        self.default_security_rules = kwargs.get('default_security_rules', None)
+        self.effective_security_rules = kwargs.get('effective_security_rules', None)

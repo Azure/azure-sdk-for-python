@@ -32,6 +32,6 @@ class ServiceHealthState(EntityHealthState):
         'service_name': {'key': 'ServiceName', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, service_name=None):
-        super(ServiceHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.service_name = service_name
+    def __init__(self, **kwargs):
+        super(ServiceHealthState, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)

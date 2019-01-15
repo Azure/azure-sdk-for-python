@@ -85,7 +85,7 @@ class AccountPreparer(AzureMgmtPreparer):
                     group.name,
                     storage.name
                 )
-                batch_account.auto_storage=models.AutoStorageBaseProperties(storage_resource)
+                batch_account.auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
             account_setup = self.client.batch_account.create(
                 group.name,
                 name,
@@ -168,7 +168,7 @@ class PoolPreparer(AzureMgmtPreparer):
                 azure.mgmt.batch.BatchManagementClient)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
-            user = models.UserAccount('task-user', 'kt#_gahr!@aGERDXA', models.ElevationLevel.admin)
+            user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
             vm_size = 'Standard_A1'
 
             if self.config == 'paas':
@@ -250,7 +250,7 @@ class JobPreparer(AzureMgmtPreparer):
             account = kwargs[self.batch_account_parameter_name]
             credentials = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchServiceClient(
-                credentials, base_url='https://' + account.account_endpoint)
+                credentials, batch_url='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'
@@ -286,7 +286,7 @@ class JobPreparer(AzureMgmtPreparer):
             try:
                 self.client.job.add(self.resource)
             except azure.batch.models.BatchErrorException as e:
-                message = "{}: ".format(e.error.code, e.error.message)
+                message = "{}:{} ".format(e.error.code, e.error.message)
                 for v in e.error.values:
                     message += "\n{}: {}".format(v.key, v.value)
                 raise AzureTestError(message)

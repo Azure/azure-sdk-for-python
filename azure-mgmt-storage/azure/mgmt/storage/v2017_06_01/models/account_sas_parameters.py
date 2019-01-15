@@ -15,21 +15,23 @@ from msrest.serialization import Model
 class AccountSasParameters(Model):
     """The parameters to list SAS credentials of a storage account.
 
-    :param services: The signed services accessible with the account SAS.
-     Possible values include: Blob (b), Queue (q), Table (t), File (f).
+    All required parameters must be populated in order to send to Azure.
+
+    :param services: Required. The signed services accessible with the account
+     SAS. Possible values include: Blob (b), Queue (q), Table (t), File (f).
      Possible values include: 'b', 'q', 't', 'f'
     :type services: str or ~azure.mgmt.storage.v2017_06_01.models.Services
-    :param resource_types: The signed resource types that are accessible with
-     the account SAS. Service (s): Access to service-level APIs; Container (c):
-     Access to container-level APIs; Object (o): Access to object-level APIs
-     for blobs, queue messages, table entities, and files. Possible values
-     include: 's', 'c', 'o'
+    :param resource_types: Required. The signed resource types that are
+     accessible with the account SAS. Service (s): Access to service-level
+     APIs; Container (c): Access to container-level APIs; Object (o): Access to
+     object-level APIs for blobs, queue messages, table entities, and files.
+     Possible values include: 's', 'c', 'o'
     :type resource_types: str or
      ~azure.mgmt.storage.v2017_06_01.models.SignedResourceTypes
-    :param permissions: The signed permissions for the account SAS. Possible
-     values include: Read (r), Write (w), Delete (d), List (l), Add (a), Create
-     (c), Update (u) and Process (p). Possible values include: 'r', 'd', 'w',
-     'l', 'a', 'c', 'u', 'p'
+    :param permissions: Required. The signed permissions for the account SAS.
+     Possible values include: Read (r), Write (w), Delete (d), List (l), Add
+     (a), Create (c), Update (u) and Process (p). Possible values include: 'r',
+     'd', 'w', 'l', 'a', 'c', 'u', 'p'
     :type permissions: str or
      ~azure.mgmt.storage.v2017_06_01.models.Permissions
     :param ip_address_or_range: An IP address or a range of IP addresses from
@@ -41,8 +43,8 @@ class AccountSasParameters(Model):
      ~azure.mgmt.storage.v2017_06_01.models.HttpProtocol
     :param shared_access_start_time: The time at which the SAS becomes valid.
     :type shared_access_start_time: datetime
-    :param shared_access_expiry_time: The time at which the shared access
-     signature becomes invalid.
+    :param shared_access_expiry_time: Required. The time at which the shared
+     access signature becomes invalid.
     :type shared_access_expiry_time: datetime
     :param key_to_sign: The key to sign the account SAS token with.
     :type key_to_sign: str
@@ -66,13 +68,13 @@ class AccountSasParameters(Model):
         'key_to_sign': {'key': 'keyToSign', 'type': 'str'},
     }
 
-    def __init__(self, services, resource_types, permissions, shared_access_expiry_time, ip_address_or_range=None, protocols=None, shared_access_start_time=None, key_to_sign=None):
-        super(AccountSasParameters, self).__init__()
-        self.services = services
-        self.resource_types = resource_types
-        self.permissions = permissions
-        self.ip_address_or_range = ip_address_or_range
-        self.protocols = protocols
-        self.shared_access_start_time = shared_access_start_time
-        self.shared_access_expiry_time = shared_access_expiry_time
-        self.key_to_sign = key_to_sign
+    def __init__(self, **kwargs):
+        super(AccountSasParameters, self).__init__(**kwargs)
+        self.services = kwargs.get('services', None)
+        self.resource_types = kwargs.get('resource_types', None)
+        self.permissions = kwargs.get('permissions', None)
+        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.protocols = kwargs.get('protocols', None)
+        self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
+        self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
+        self.key_to_sign = kwargs.get('key_to_sign', None)

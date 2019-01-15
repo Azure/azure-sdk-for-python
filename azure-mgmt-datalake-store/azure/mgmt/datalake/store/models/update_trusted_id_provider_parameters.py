@@ -23,6 +23,6 @@ class UpdateTrustedIdProviderParameters(Model):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, id_provider=None):
-        super(UpdateTrustedIdProviderParameters, self).__init__()
-        self.id_provider = id_provider
+    def __init__(self, **kwargs):
+        super(UpdateTrustedIdProviderParameters, self).__init__(**kwargs)
+        self.id_provider = kwargs.get('id_provider', None)

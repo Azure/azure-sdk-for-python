@@ -21,25 +21,30 @@ class MetricDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2018-01-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01-preview"
+        self.api_version = "2018-01-01"
 
         self.config = config
 
     def list(
-            self, resource_uri, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
+        :param metricnamespace: Metric namespace to query metric definitions
+         for.
+        :type metricnamespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -55,7 +60,7 @@ class MetricDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{resourceUri}/providers/microsoft.insights/metricDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
                 }
@@ -64,6 +69,8 @@ class MetricDefinitionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if metricnamespace is not None:
+                    query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
 
             else:
                 url = next_link
@@ -82,7 +89,7 @@ class MetricDefinitionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -98,3 +105,4 @@ class MetricDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricDefinitions'}

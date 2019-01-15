@@ -48,7 +48,7 @@ class RecommendedElasticPool(ProxyResource):
     :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
     :vartype max_observed_storage_mb: float
     :ivar databases: The list of databases in this pool. Expanded property
-    :vartype databases: list[~azure.mgmt.sql.models.Database]
+    :vartype databases: list[~azure.mgmt.sql.models.TrackedResource]
     :ivar metrics: The list of databases housed in the server. Expanded
      property
     :vartype metrics:
@@ -81,17 +81,17 @@ class RecommendedElasticPool(ProxyResource):
         'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
         'max_observed_dtu': {'key': 'properties.maxObservedDtu', 'type': 'float'},
         'max_observed_storage_mb': {'key': 'properties.maxObservedStorageMB', 'type': 'float'},
-        'databases': {'key': 'properties.databases', 'type': '[Database]'},
+        'databases': {'key': 'properties.databases', 'type': '[TrackedResource]'},
         'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
     }
 
-    def __init__(self, dtu=None, database_dtu_min=None, database_dtu_max=None, storage_mb=None):
-        super(RecommendedElasticPool, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecommendedElasticPool, self).__init__(**kwargs)
         self.database_edition = None
-        self.dtu = dtu
-        self.database_dtu_min = database_dtu_min
-        self.database_dtu_max = database_dtu_max
-        self.storage_mb = storage_mb
+        self.dtu = kwargs.get('dtu', None)
+        self.database_dtu_min = kwargs.get('database_dtu_min', None)
+        self.database_dtu_max = kwargs.get('database_dtu_max', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
         self.observation_period_start = None
         self.observation_period_end = None
         self.max_observed_dtu = None

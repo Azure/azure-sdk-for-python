@@ -36,9 +36,9 @@ class AdultInfo(Model):
         'racy_score': {'key': 'racyScore', 'type': 'float'},
     }
 
-    def __init__(self, is_adult_content=None, is_racy_content=None, adult_score=None, racy_score=None):
-        super(AdultInfo, self).__init__()
-        self.is_adult_content = is_adult_content
-        self.is_racy_content = is_racy_content
-        self.adult_score = adult_score
-        self.racy_score = racy_score
+    def __init__(self, **kwargs):
+        super(AdultInfo, self).__init__(**kwargs)
+        self.is_adult_content = kwargs.get('is_adult_content', None)
+        self.is_racy_content = kwargs.get('is_racy_content', None)
+        self.adult_score = kwargs.get('adult_score', None)
+        self.racy_score = kwargs.get('racy_score', None)

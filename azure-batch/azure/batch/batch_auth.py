@@ -6,7 +6,6 @@
 #--------------------------------------------------------------------------
 
 import time
-import keyring
 import ast
 import base64
 import hmac
@@ -54,8 +53,6 @@ class SharedKeyAuth(AuthBase):
 
         url = urlparse(request.url)
         uri_path = url.path
-        uri_path = uri_path.replace('%5C', '/')
-        uri_path = uri_path.replace('%2F', '/')
 
         # method to sign
         string_to_sign = request.method + '\n'
@@ -119,9 +116,9 @@ class SharedKeyCredentials(Authentication):
         super(SharedKeyCredentials, self).__init__()
         self.auth = SharedKeyAuth(self.header, account_name, key)
     
-    def signed_session(self):
+    def signed_session(self, session=None):
 
-        session = super(SharedKeyCredentials, self).signed_session()
+        session = super(SharedKeyCredentials, self).signed_session(session=session)
         session.auth = self.auth
 
         return session

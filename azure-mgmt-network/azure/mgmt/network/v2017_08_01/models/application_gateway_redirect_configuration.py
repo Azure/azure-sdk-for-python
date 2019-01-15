@@ -66,16 +66,16 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, redirect_type=None, target_listener=None, target_url=None, include_path=None, include_query_string=None, request_routing_rules=None, url_path_maps=None, path_rules=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayRedirectConfiguration, self).__init__(id=id)
-        self.redirect_type = redirect_type
-        self.target_listener = target_listener
-        self.target_url = target_url
-        self.include_path = include_path
-        self.include_query_string = include_query_string
-        self.request_routing_rules = request_routing_rules
-        self.url_path_maps = url_path_maps
-        self.path_rules = path_rules
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayRedirectConfiguration, self).__init__(**kwargs)
+        self.redirect_type = kwargs.get('redirect_type', None)
+        self.target_listener = kwargs.get('target_listener', None)
+        self.target_url = kwargs.get('target_url', None)
+        self.include_path = kwargs.get('include_path', None)
+        self.include_query_string = kwargs.get('include_query_string', None)
+        self.request_routing_rules = kwargs.get('request_routing_rules', None)
+        self.url_path_maps = kwargs.get('url_path_maps', None)
+        self.path_rules = kwargs.get('path_rules', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

@@ -9,9 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -47,7 +50,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLockClient(object):
+class ManagementLockClient(MultiApiClientMixin, SDKClient):
     """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
     :ivar config: Configuration for client.
@@ -66,16 +69,22 @@ class ManagementLockClient(object):
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
-    DEFAULT_PROFILE = None
+    _PROFILE_TAG = "azure.mgmt.resource.locks.ManagementLockClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
-
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
+        super(ManagementLockClient, self).__init__(
+            credentials,
+            self.config,
+            api_version=api_version,
+            profile=profile
+        )
 
 ############ Generated from here ############
 
@@ -99,13 +108,26 @@ class ManagementLockClient(object):
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
     @property
+    def authorization_operations(self):
+        """Instance depends on the API version:
+
+           * 2016-09-01: :class:`AuthorizationOperations<azure.mgmt.resource.locks.v2016_09_01.operations.AuthorizationOperations>`
+        """
+        api_version = self._get_api_version('authorization_operations')
+        if api_version == '2016-09-01':
+            from .v2016_09_01.operations import AuthorizationOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def management_locks(self):
         """Instance depends on the API version:
 
            * 2015-01-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2015_01_01.operations.ManagementLocksOperations>`
            * 2016-09-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations>`
         """
-        api_version = self.profile.get('management_locks', self.api_version)
+        api_version = self._get_api_version('management_locks')
         if api_version == '2015-01-01':
             from .v2015_01_01.operations import ManagementLocksOperations as OperationClass
         elif api_version == '2016-09-01':

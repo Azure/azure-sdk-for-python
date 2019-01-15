@@ -21,16 +21,18 @@ class JobScheduleOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-09-01.6.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01.6.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -81,8 +83,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_exists_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.exists.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -95,7 +98,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -118,8 +120,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -135,6 +137,7 @@ class JobScheduleOperations(object):
                 })
             return client_raw_response
         return deserialized
+    exists.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def delete(
             self, job_schedule_id, job_schedule_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -189,8 +192,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_delete_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -203,7 +207,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -226,8 +229,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -239,6 +242,7 @@ class JobScheduleOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def get(
             self, job_schedule_id, job_schedule_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -293,8 +297,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_get_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -311,7 +316,7 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -334,8 +339,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -358,6 +363,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def patch(
             self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers=None, raw=False, **operation_config):
@@ -415,8 +421,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_patch_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -455,9 +462,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(job_schedule_patch_parameter, 'JobSchedulePatchParameter')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -472,6 +478,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    patch.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def update(
             self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
@@ -529,8 +536,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_update_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -569,9 +577,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(job_schedule_update_parameter, 'JobScheduleUpdateParameter')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -586,6 +593,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    update.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def disable(
             self, job_schedule_id, job_schedule_disable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -635,8 +643,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_disable_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/disable'
+        url = self.disable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -649,7 +658,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -672,8 +680,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -688,6 +696,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    disable.metadata = {'url': '/jobschedules/{jobScheduleId}/disable'}
 
     def enable(
             self, job_schedule_id, job_schedule_enable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -735,8 +744,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_enable_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/enable'
+        url = self.enable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -749,7 +759,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -772,8 +781,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -788,6 +797,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    enable.metadata = {'url': '/jobschedules/{jobScheduleId}/enable'}
 
     def terminate(
             self, job_schedule_id, job_schedule_terminate_options=None, custom_headers=None, raw=False, **operation_config):
@@ -835,8 +845,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_terminate_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/terminate'
+        url = self.terminate.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -849,7 +860,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -872,8 +882,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -888,6 +898,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    terminate.metadata = {'url': '/jobschedules/{jobScheduleId}/terminate'}
 
     def add(
             self, cloud_job_schedule, job_schedule_add_options=None, custom_headers=None, raw=False, **operation_config):
@@ -923,7 +934,11 @@ class JobScheduleOperations(object):
             ocp_date = job_schedule_add_options.ocp_date
 
         # Construct URL
-        url = '/jobschedules'
+        url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -951,9 +966,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(cloud_job_schedule, 'JobScheduleAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -968,6 +982,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/jobschedules'}
 
     def list(
             self, job_schedule_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1017,7 +1032,11 @@ class JobScheduleOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobschedules'
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -1039,7 +1058,7 @@ class JobScheduleOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1054,9 +1073,8 @@ class JobScheduleOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -1072,3 +1090,4 @@ class JobScheduleOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/jobschedules'}

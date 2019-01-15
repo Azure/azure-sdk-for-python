@@ -24,6 +24,6 @@ class ClusterConfiguration(Model):
         'cluster_configuration': {'key': 'ClusterConfiguration', 'type': 'str'},
     }
 
-    def __init__(self, cluster_configuration=None):
-        super(ClusterConfiguration, self).__init__()
-        self.cluster_configuration = cluster_configuration
+    def __init__(self, **kwargs):
+        super(ClusterConfiguration, self).__init__(**kwargs)
+        self.cluster_configuration = kwargs.get('cluster_configuration', None)

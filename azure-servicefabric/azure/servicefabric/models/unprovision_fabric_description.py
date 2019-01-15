@@ -26,7 +26,7 @@ class UnprovisionFabricDescription(Model):
         'config_version': {'key': 'ConfigVersion', 'type': 'str'},
     }
 
-    def __init__(self, code_version=None, config_version=None):
-        super(UnprovisionFabricDescription, self).__init__()
-        self.code_version = code_version
-        self.config_version = config_version
+    def __init__(self, **kwargs):
+        super(UnprovisionFabricDescription, self).__init__(**kwargs)
+        self.code_version = kwargs.get('code_version', None)
+        self.config_version = kwargs.get('config_version', None)

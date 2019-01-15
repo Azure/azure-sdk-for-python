@@ -38,7 +38,8 @@ class ProxyOnlyResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ProxyOnlyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None

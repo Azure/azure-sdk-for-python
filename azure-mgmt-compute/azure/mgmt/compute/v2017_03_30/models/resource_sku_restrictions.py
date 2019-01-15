@@ -42,8 +42,8 @@ class ResourceSkuRestrictions(Model):
         'reason_code': {'key': 'reasonCode', 'type': 'ResourceSkuRestrictionsReasonCode'},
     }
 
-    def __init__(self):
-        super(ResourceSkuRestrictions, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = None
         self.values = None
         self.reason_code = None

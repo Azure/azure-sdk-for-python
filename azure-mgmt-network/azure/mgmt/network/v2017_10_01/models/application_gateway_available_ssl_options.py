@@ -62,9 +62,9 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         'available_protocols': {'key': 'properties.availableProtocols', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, predefined_policies=None, default_policy=None, available_cipher_suites=None, available_protocols=None):
-        super(ApplicationGatewayAvailableSslOptions, self).__init__(id=id, location=location, tags=tags)
-        self.predefined_policies = predefined_policies
-        self.default_policy = default_policy
-        self.available_cipher_suites = available_cipher_suites
-        self.available_protocols = available_protocols
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayAvailableSslOptions, self).__init__(**kwargs)
+        self.predefined_policies = kwargs.get('predefined_policies', None)
+        self.default_policy = kwargs.get('default_policy', None)
+        self.available_cipher_suites = kwargs.get('available_cipher_suites', None)
+        self.available_protocols = kwargs.get('available_protocols', None)

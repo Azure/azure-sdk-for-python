@@ -31,7 +31,7 @@ class NodeDeactivationTask(Model):
         'node_deactivation_intent': {'key': 'NodeDeactivationIntent', 'type': 'str'},
     }
 
-    def __init__(self, node_deactivation_task_id=None, node_deactivation_intent=None):
-        super(NodeDeactivationTask, self).__init__()
-        self.node_deactivation_task_id = node_deactivation_task_id
-        self.node_deactivation_intent = node_deactivation_intent
+    def __init__(self, **kwargs):
+        super(NodeDeactivationTask, self).__init__(**kwargs)
+        self.node_deactivation_task_id = kwargs.get('node_deactivation_task_id', None)
+        self.node_deactivation_intent = kwargs.get('node_deactivation_intent', None)

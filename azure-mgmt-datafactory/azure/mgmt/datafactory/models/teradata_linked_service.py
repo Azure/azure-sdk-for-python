@@ -23,6 +23,12 @@ class TeradataLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param server: Server name for connection. Type: string (or Expression
@@ -55,6 +61,8 @@ class TeradataLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'schema': {'key': 'typeProperties.schema', 'type': 'object'},
@@ -64,8 +72,8 @@ class TeradataLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, additional_properties=None, connect_via=None, description=None, schema=None, authentication_type=None, username=None, password=None, encrypted_credential=None):
-        super(TeradataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, server, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, schema=None, authentication_type=None, username=None, password=None, encrypted_credential=None):
+        super(TeradataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.server = server
         self.schema = schema
         self.authentication_type = authentication_type

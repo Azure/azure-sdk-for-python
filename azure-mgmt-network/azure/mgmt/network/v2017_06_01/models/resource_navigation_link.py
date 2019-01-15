@@ -49,10 +49,10 @@ class ResourceNavigationLink(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, linked_resource_type=None, link=None, name=None):
-        super(ResourceNavigationLink, self).__init__(id=id)
-        self.linked_resource_type = linked_resource_type
-        self.link = link
+    def __init__(self, **kwargs):
+        super(ResourceNavigationLink, self).__init__(**kwargs)
+        self.linked_resource_type = kwargs.get('linked_resource_type', None)
+        self.link = kwargs.get('link', None)
         self.provisioning_state = None
-        self.name = name
+        self.name = kwargs.get('name', None)
         self.etag = None

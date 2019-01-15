@@ -40,8 +40,8 @@ class ValidateProbeOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ValidateProbeOutput, self).__init__()
+    def __init__(self, **kwargs):
+        super(ValidateProbeOutput, self).__init__(**kwargs)
         self.is_valid = None
         self.error_code = None
         self.message = None

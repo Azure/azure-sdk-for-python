@@ -22,9 +22,11 @@ class CheckSkuAvailabilityOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-18. Constant value: "2017-04-18".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -44,10 +46,11 @@ class CheckSkuAvailabilityOperations(object):
         :param skus: The SKU of the resource.
         :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
         :param kind: The Kind of the resource. Possible values include:
-         'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
-         'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
-         'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
-         'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
+         'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
+         'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision',
+         'ContentModerator', 'CustomSpeech', 'CustomVision.Prediction',
+         'CustomVision.Training', 'Emotion', 'Face', 'LUIS', 'QnAMaker',
+         'SpeakerRecognition', 'SpeechTranslation', 'TextAnalytics',
          'TextTranslation', 'WebLM'
         :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
         :param type: The Type of the resource.
@@ -67,7 +70,7 @@ class CheckSkuAvailabilityOperations(object):
         parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'location': self._serialize.url("location", location, 'str')
@@ -94,7 +97,7 @@ class CheckSkuAvailabilityOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -111,3 +114,4 @@ class CheckSkuAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'}

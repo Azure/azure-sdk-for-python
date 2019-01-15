@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 import uuid
-import warnings
 from msrest.pipeline import ClientRawResponse
 
 from .. import models
@@ -22,7 +21,7 @@ class PolicyAssignmentsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2017-06-01-preview".
     """
 
@@ -59,7 +58,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -72,7 +71,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -81,8 +80,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -97,6 +96,7 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}
 
     def create(
             self, scope, policy_assignment_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -126,7 +126,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -139,6 +139,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -151,9 +152,8 @@ class PolicyAssignmentsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyAssignment')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -168,6 +168,7 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}
 
     def get(
             self, scope, policy_assignment_name, custom_headers=None, raw=False, **operation_config):
@@ -191,7 +192,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
@@ -204,7 +205,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -213,8 +214,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -229,6 +230,7 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'}
 
     def list_for_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -254,7 +256,7 @@ class PolicyAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyAssignments'
+                url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -273,7 +275,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -282,9 +284,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -300,13 +301,11 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyAssignments'}
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets policy assignments for a resource.
-
-        .. warning::
-           This method is deprecated
 
         :param resource_group_name: The name of the resource group containing
          the resource. The name is case insensitive.
@@ -334,12 +333,11 @@ class PolicyAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
-        warnings.warn("Method list_for_resource is deprecated", DeprecationWarning)
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments'
+                url = self.list_for_resource.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -362,7 +360,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -371,9 +369,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -389,6 +386,7 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyAssignments'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -411,7 +409,7 @@ class PolicyAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -429,7 +427,7 @@ class PolicyAssignmentsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -438,9 +436,8 @@ class PolicyAssignmentsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -456,12 +453,13 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyAssignments'}
 
     def delete_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -485,7 +483,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{policyAssignmentId}'
+        url = self.delete_by_id.metadata['url']
         path_format_arguments = {
             'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
@@ -497,7 +495,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -506,8 +504,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -522,6 +520,7 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_by_id.metadata = {'url': '/{policyAssignmentId}'}
 
     def create_by_id(
             self, policy_assignment_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -529,7 +528,7 @@ class PolicyAssignmentsOperations(object):
 
         Policy assignments are inherited by child resources. For example, when
         you apply a policy to a resource group that policy is assigned to all
-        resources in the group. When providing a scope for the assigment, use
+        resources in the group. When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -556,7 +555,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{policyAssignmentId}'
+        url = self.create_by_id.metadata['url']
         path_format_arguments = {
             'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
@@ -568,6 +567,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -580,9 +580,8 @@ class PolicyAssignmentsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyAssignment')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -597,12 +596,13 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_by_id.metadata = {'url': '/{policyAssignmentId}'}
 
     def get_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
         """Gets a policy assignment by ID.
 
-        When providing a scope for the assigment, use
+        When providing a scope for the assignment, use
         '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
         for resource groups, and
@@ -626,7 +626,7 @@ class PolicyAssignmentsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{policyAssignmentId}'
+        url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
@@ -638,7 +638,7 @@ class PolicyAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -647,8 +647,8 @@ class PolicyAssignmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -663,3 +663,4 @@ class PolicyAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_id.metadata = {'url': '/{policyAssignmentId}'}

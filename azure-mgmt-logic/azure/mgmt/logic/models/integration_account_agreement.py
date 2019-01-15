@@ -18,6 +18,8 @@ class IntegrationAccountAgreement(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: Gets the resource name.
@@ -27,32 +29,29 @@ class IntegrationAccountAgreement(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: datetime
     :param metadata: The metadata.
     :type metadata: object
-    :param agreement_type: The agreement type. Possible values include:
-     'NotSpecified', 'AS2', 'X12', 'Edifact'
-    :type agreement_type: str or :class:`AgreementType
-     <azure.mgmt.logic.models.AgreementType>`
-    :param host_partner: The integration account partner that is set as host
-     partner for this agreement.
+    :param agreement_type: Required. The agreement type. Possible values
+     include: 'NotSpecified', 'AS2', 'X12', 'Edifact'
+    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
+    :param host_partner: Required. The integration account partner that is set
+     as host partner for this agreement.
     :type host_partner: str
-    :param guest_partner: The integration account partner that is set as guest
-     partner for this agreement.
+    :param guest_partner: Required. The integration account partner that is
+     set as guest partner for this agreement.
     :type guest_partner: str
-    :param host_identity: The business identity of the host partner.
-    :type host_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param guest_identity: The business identity of the guest partner.
-    :type guest_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
-    :param content: The agreement content.
-    :type content: :class:`AgreementContent
-     <azure.mgmt.logic.models.AgreementContent>`
+    :param host_identity: Required. The business identity of the host partner.
+    :type host_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :param guest_identity: Required. The business identity of the guest
+     partner.
+    :type guest_identity: ~azure.mgmt.logic.models.BusinessIdentity
+    :param content: Required. The agreement content.
+    :type content: ~azure.mgmt.logic.models.AgreementContent
     """
 
     _validation = {
@@ -86,14 +85,14 @@ class IntegrationAccountAgreement(Resource):
         'content': {'key': 'properties.content', 'type': 'AgreementContent'},
     }
 
-    def __init__(self, agreement_type, host_partner, guest_partner, host_identity, guest_identity, content, location=None, tags=None, metadata=None):
-        super(IntegrationAccountAgreement, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(IntegrationAccountAgreement, self).__init__(**kwargs)
         self.created_time = None
         self.changed_time = None
-        self.metadata = metadata
-        self.agreement_type = agreement_type
-        self.host_partner = host_partner
-        self.guest_partner = guest_partner
-        self.host_identity = host_identity
-        self.guest_identity = guest_identity
-        self.content = content
+        self.metadata = kwargs.get('metadata', None)
+        self.agreement_type = kwargs.get('agreement_type', None)
+        self.host_partner = kwargs.get('host_partner', None)
+        self.guest_partner = kwargs.get('guest_partner', None)
+        self.host_identity = kwargs.get('host_identity', None)
+        self.guest_identity = kwargs.get('guest_identity', None)
+        self.content = kwargs.get('content', None)

@@ -26,18 +26,20 @@ class ImageStorageProfile(Model):
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks:
      list[~azure.mgmt.compute.v2017_12_01.models.ImageDataDisk]
+    :param zone_resilient: Specifies whether an image is zone resilient or
+     not. Default is false. Zone resilient images can be created only in
+     regions that provide Zone Redundant Storage (ZRS).
+    :type zone_resilient: bool
     """
-
-    _validation = {
-        'os_disk': {'required': True},
-    }
 
     _attribute_map = {
         'os_disk': {'key': 'osDisk', 'type': 'ImageOSDisk'},
         'data_disks': {'key': 'dataDisks', 'type': '[ImageDataDisk]'},
+        'zone_resilient': {'key': 'zoneResilient', 'type': 'bool'},
     }
 
-    def __init__(self, os_disk, data_disks=None):
-        super(ImageStorageProfile, self).__init__()
-        self.os_disk = os_disk
-        self.data_disks = data_disks
+    def __init__(self, **kwargs):
+        super(ImageStorageProfile, self).__init__(**kwargs)
+        self.os_disk = kwargs.get('os_disk', None)
+        self.data_disks = kwargs.get('data_disks', None)
+        self.zone_resilient = kwargs.get('zone_resilient', None)

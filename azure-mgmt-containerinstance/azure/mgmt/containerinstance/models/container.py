@@ -18,9 +18,12 @@ class Container(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The user-provided name of the container instance.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The user-provided name of the container instance.
     :type name: str
-    :param image: The name of the image used to create the container instance.
+    :param image: Required. The name of the image used to create the container
+     instance.
     :type image: str
     :param command: The commands to execute within the container instance in
      exec form.
@@ -35,12 +38,17 @@ class Container(Model):
      valid in response.
     :vartype instance_view:
      ~azure.mgmt.containerinstance.models.ContainerPropertiesInstanceView
-    :param resources: The resource requirements of the container instance.
+    :param resources: Required. The resource requirements of the container
+     instance.
     :type resources: ~azure.mgmt.containerinstance.models.ResourceRequirements
     :param volume_mounts: The volume mounts available to the container
      instance.
     :type volume_mounts:
      list[~azure.mgmt.containerinstance.models.VolumeMount]
+    :param liveness_probe: The liveness probe.
+    :type liveness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
+    :param readiness_probe: The readiness probe.
+    :type readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
     """
 
     _validation = {
@@ -59,15 +67,19 @@ class Container(Model):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerPropertiesInstanceView'},
         'resources': {'key': 'properties.resources', 'type': 'ResourceRequirements'},
         'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
+        'liveness_probe': {'key': 'properties.livenessProbe', 'type': 'ContainerProbe'},
+        'readiness_probe': {'key': 'properties.readinessProbe', 'type': 'ContainerProbe'},
     }
 
-    def __init__(self, name, image, resources, command=None, ports=None, environment_variables=None, volume_mounts=None):
-        super(Container, self).__init__()
-        self.name = name
-        self.image = image
-        self.command = command
-        self.ports = ports
-        self.environment_variables = environment_variables
+    def __init__(self, **kwargs):
+        super(Container, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.image = kwargs.get('image', None)
+        self.command = kwargs.get('command', None)
+        self.ports = kwargs.get('ports', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
         self.instance_view = None
-        self.resources = resources
-        self.volume_mounts = volume_mounts
+        self.resources = kwargs.get('resources', None)
+        self.volume_mounts = kwargs.get('volume_mounts', None)
+        self.liveness_probe = kwargs.get('liveness_probe', None)
+        self.readiness_probe = kwargs.get('readiness_probe', None)

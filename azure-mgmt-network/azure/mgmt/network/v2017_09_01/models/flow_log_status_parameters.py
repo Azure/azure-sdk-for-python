@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class FlowLogStatusParameters(Model):
     """Parameters that define a resource to query flow log status.
 
-    :param target_resource_id: The target resource where getting the flow
-     logging status.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The target resource where getting the
+     flow logging status.
     :type target_resource_id: str
     """
 
@@ -28,6 +30,6 @@ class FlowLogStatusParameters(Model):
         'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id):
-        super(FlowLogStatusParameters, self).__init__()
-        self.target_resource_id = target_resource_id
+    def __init__(self, **kwargs):
+        super(FlowLogStatusParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)

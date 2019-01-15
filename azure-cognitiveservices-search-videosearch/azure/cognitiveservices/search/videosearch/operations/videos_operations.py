@@ -337,7 +337,7 @@ class VideosOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/search'
+        url = self.search.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -403,6 +403,7 @@ class VideosOperations(object):
             return client_raw_response
 
         return deserialized
+    search.metadata = {'url': '/videos/search'}
 
     def details(
             self, query, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, id=None, modules=None, market=None, resolution=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
@@ -674,7 +675,7 @@ class VideosOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/details'
+        url = self.details.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -732,6 +733,7 @@ class VideosOperations(object):
             return client_raw_response
 
         return deserialized
+    details.metadata = {'url': '/videos/details'}
 
     def trending(
             self, accept_language=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market=None, safe_search=None, set_lang=None, text_decorations=None, text_format=None, custom_headers=None, raw=False, **operation_config):
@@ -967,7 +969,7 @@ class VideosOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.search.videosearch.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/videos/trending'
+        url = self.trending.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1018,3 +1020,4 @@ class VideosOperations(object):
             return client_raw_response
 
         return deserialized
+    trending.metadata = {'url': '/videos/trending'}

@@ -42,8 +42,9 @@ class Resource(Model):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, e_tag=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.e_tag = e_tag
+        self.e_tag = kwargs.get('e_tag', None)

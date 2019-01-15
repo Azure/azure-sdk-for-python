@@ -21,9 +21,11 @@ class TenantActivityLogsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -87,7 +89,7 @@ class TenantActivityLogsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/microsoft.insights/eventtypes/management/values'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -114,7 +116,7 @@ class TenantActivityLogsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -130,3 +132,4 @@ class TenantActivityLogsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/microsoft.insights/eventtypes/management/values'}

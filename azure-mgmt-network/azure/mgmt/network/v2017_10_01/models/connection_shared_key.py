@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ConnectionSharedKey(Model):
     """Response for GetConnectionSharedKey API service call.
 
-    :param value: The virtual network connection shared key value.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The virtual network connection shared key value.
     :type value: str
     """
 
@@ -27,6 +29,6 @@ class ConnectionSharedKey(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value):
-        super(ConnectionSharedKey, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ConnectionSharedKey, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

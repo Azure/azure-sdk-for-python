@@ -12,20 +12,20 @@
 from enum import Enum
 
 
-class StatusLevelTypes(Enum):
+class StatusLevelTypes(str, Enum):
 
     info = "Info"
     warning = "Warning"
     error = "Error"
 
 
-class OperatingSystemTypes(Enum):
+class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
 
 
-class VirtualMachineSizeTypes(Enum):
+class VirtualMachineSizeTypes(str, Enum):
 
     basic_a0 = "Basic_A0"
     basic_a1 = "Basic_A1"
@@ -81,54 +81,54 @@ class VirtualMachineSizeTypes(Enum):
     standard_gs5 = "Standard_GS5"
 
 
-class CachingTypes(Enum):
+class CachingTypes(str, Enum):
 
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
 
-class DiskCreateOptionTypes(Enum):
+class DiskCreateOptionTypes(str, Enum):
 
     from_image = "FromImage"
     empty = "Empty"
     attach = "Attach"
 
 
-class PassNames(Enum):
+class PassNames(str, Enum):
 
     oobe_system = "OobeSystem"
 
 
-class ComponentNames(Enum):
+class ComponentNames(str, Enum):
 
     microsoft_windows_shell_setup = "Microsoft-Windows-Shell-Setup"
 
 
-class SettingNames(Enum):
+class SettingNames(str, Enum):
 
     auto_logon = "AutoLogon"
     first_logon_commands = "FirstLogonCommands"
 
 
-class ProtocolTypes(Enum):
+class ProtocolTypes(str, Enum):
 
     http = "Http"
     https = "Https"
 
 
-class UpgradeMode(Enum):
+class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
 
 
-class VirtualMachineScaleSetSkuScaleType(Enum):
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
 
     automatic = "Automatic"
     none = "None"
 
 
-class InstanceViewTypes(Enum):
+class InstanceViewTypes(str, Enum):
 
     instance_view = "instanceView"

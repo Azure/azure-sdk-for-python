@@ -46,10 +46,10 @@ class NetworkInterfaceDnsSettings(Model):
         'internal_domain_name_suffix': {'key': 'internalDomainNameSuffix', 'type': 'str'},
     }
 
-    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, internal_domain_name_suffix=None):
-        super(NetworkInterfaceDnsSettings, self).__init__()
-        self.dns_servers = dns_servers
-        self.applied_dns_servers = applied_dns_servers
-        self.internal_dns_name_label = internal_dns_name_label
-        self.internal_fqdn = internal_fqdn
-        self.internal_domain_name_suffix = internal_domain_name_suffix
+    def __init__(self, **kwargs):
+        super(NetworkInterfaceDnsSettings, self).__init__(**kwargs)
+        self.dns_servers = kwargs.get('dns_servers', None)
+        self.applied_dns_servers = kwargs.get('applied_dns_servers', None)
+        self.internal_dns_name_label = kwargs.get('internal_dns_name_label', None)
+        self.internal_fqdn = kwargs.get('internal_fqdn', None)
+        self.internal_domain_name_suffix = kwargs.get('internal_domain_name_suffix', None)

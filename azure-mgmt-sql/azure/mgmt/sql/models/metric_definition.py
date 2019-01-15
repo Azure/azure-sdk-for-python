@@ -52,8 +52,8 @@ class MetricDefinition(Model):
         'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
     }
 
-    def __init__(self):
-        super(MetricDefinition, self).__init__()
+    def __init__(self, **kwargs):
+        super(MetricDefinition, self).__init__(**kwargs)
         self.name = None
         self.primary_aggregation_type = None
         self.resource_uri = None

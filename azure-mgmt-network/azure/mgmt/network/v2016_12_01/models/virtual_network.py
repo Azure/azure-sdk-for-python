@@ -70,12 +70,12 @@ class VirtualNetwork(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags)
-        self.address_space = address_space
-        self.dhcp_options = dhcp_options
-        self.subnets = subnets
-        self.virtual_network_peerings = virtual_network_peerings
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VirtualNetwork, self).__init__(**kwargs)
+        self.address_space = kwargs.get('address_space', None)
+        self.dhcp_options = kwargs.get('dhcp_options', None)
+        self.subnets = kwargs.get('subnets', None)
+        self.virtual_network_peerings = kwargs.get('virtual_network_peerings', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

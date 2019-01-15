@@ -109,21 +109,21 @@ class SBTopic(Resource):
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
     }
 
-    def __init__(self, default_message_time_to_live=None, max_size_in_megabytes=None, requires_duplicate_detection=None, duplicate_detection_history_time_window=None, enable_batched_operations=None, status=None, support_ordering=None, auto_delete_on_idle=None, enable_partitioning=None, enable_express=None):
-        super(SBTopic, self).__init__()
+    def __init__(self, **kwargs):
+        super(SBTopic, self).__init__(**kwargs)
         self.size_in_bytes = None
         self.created_at = None
         self.updated_at = None
         self.accessed_at = None
         self.subscription_count = None
         self.count_details = None
-        self.default_message_time_to_live = default_message_time_to_live
-        self.max_size_in_megabytes = max_size_in_megabytes
-        self.requires_duplicate_detection = requires_duplicate_detection
-        self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
-        self.enable_batched_operations = enable_batched_operations
-        self.status = status
-        self.support_ordering = support_ordering
-        self.auto_delete_on_idle = auto_delete_on_idle
-        self.enable_partitioning = enable_partitioning
-        self.enable_express = enable_express
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
+        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.status = kwargs.get('status', None)
+        self.support_ordering = kwargs.get('support_ordering', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.enable_partitioning = kwargs.get('enable_partitioning', None)
+        self.enable_express = kwargs.get('enable_express', None)

@@ -87,21 +87,21 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, authentication_certificates=None, connection_draining=None, host_name=None, pick_host_name_from_backend_address=None, affinity_cookie_name=None, probe_enabled=None, path=None, provisioning_state=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
-        self.port = port
-        self.protocol = protocol
-        self.cookie_based_affinity = cookie_based_affinity
-        self.request_timeout = request_timeout
-        self.probe = probe
-        self.authentication_certificates = authentication_certificates
-        self.connection_draining = connection_draining
-        self.host_name = host_name
-        self.pick_host_name_from_backend_address = pick_host_name_from_backend_address
-        self.affinity_cookie_name = affinity_cookie_name
-        self.probe_enabled = probe_enabled
-        self.path = path
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHttpSettings, self).__init__(**kwargs)
+        self.port = kwargs.get('port', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.cookie_based_affinity = kwargs.get('cookie_based_affinity', None)
+        self.request_timeout = kwargs.get('request_timeout', None)
+        self.probe = kwargs.get('probe', None)
+        self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.connection_draining = kwargs.get('connection_draining', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.pick_host_name_from_backend_address = kwargs.get('pick_host_name_from_backend_address', None)
+        self.affinity_cookie_name = kwargs.get('affinity_cookie_name', None)
+        self.probe_enabled = kwargs.get('probe_enabled', None)
+        self.path = kwargs.get('path', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

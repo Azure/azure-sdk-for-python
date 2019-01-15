@@ -22,7 +22,7 @@ class SubscriptionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-06-01".
     """
 
@@ -61,7 +61,7 @@ class SubscriptionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/locations'
+                url = self.list_locations.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
@@ -88,7 +88,7 @@ class SubscriptionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -106,6 +106,7 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}
 
     def get(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
@@ -124,7 +125,7 @@ class SubscriptionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
@@ -146,7 +147,7 @@ class SubscriptionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -163,6 +164,7 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -182,7 +184,7 @@ class SubscriptionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -205,7 +207,7 @@ class SubscriptionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -223,3 +225,4 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions'}

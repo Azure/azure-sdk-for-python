@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
-from .operations.record_sets_operations import RecordSetsOperations
-from .operations.zones_operations import ZonesOperations
-from . import models
 
 
 class DnsManagementClientConfiguration(AzureConfiguration):
@@ -26,8 +26,7 @@ class DnsManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Specifies the Azure subscription ID, which
-     uniquely identifies the Microsoft Azure subscription.
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -44,45 +43,129 @@ class DnsManagementClientConfiguration(AzureConfiguration):
 
         super(DnsManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('dnsmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-dns/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class DnsManagementClient(object):
+class DnsManagementClient(MultiApiClientMixin, SDKClient):
     """The DNS Management Client.
+
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: DnsManagementClientConfiguration
 
-    :ivar record_sets: RecordSets operations
-    :vartype record_sets: azure.mgmt.dns.operations.RecordSetsOperations
-    :ivar zones: Zones operations
-    :vartype zones: azure.mgmt.dns.operations.ZonesOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Specifies the Azure subscription ID, which
-     uniquely identifies the Microsoft Azure subscription.
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    DEFAULT_API_VERSION = '2018-05-01'
+    _PROFILE_TAG = "azure.mgmt.dns.DnsManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = DnsManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DnsManagementClient, self).__init__(
+            credentials,
+            self.config,
+            api_version=api_version,
+            profile=profile
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+############ Generated from here ############
 
-        self.record_sets = RecordSetsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.zones = ZonesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
+
+           * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.dns.v2016_04_01.models>`
+           * 2018-03-01-preview: :mod:`v2018_03_01_preview.models<azure.mgmt.dns.v2018_03_01_preview.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.dns.v2018_05_01.models>`
+        """
+        if api_version == '2016-04-01':
+            from .v2016_04_01 import models
+            return models
+        elif api_version == '2018-03-01-preview':
+            from .v2018_03_01_preview import models
+            return models
+        elif api_version == '2018-05-01':
+            from .v2018_05_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def dns_resource_reference(self):
+        """Instance depends on the API version:
+
+           * 2018-05-01: :class:`DnsResourceReferenceOperations<azure.mgmt.dns.v2018_05_01.operations.DnsResourceReferenceOperations>`
+        """
+        api_version = self._get_api_version('dns_resource_reference')
+        if api_version == '2018-05-01':
+            from .v2018_05_01.operations import DnsResourceReferenceOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def record_sets(self):
+        """Instance depends on the API version:
+
+           * 2016-04-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2016_04_01.operations.RecordSetsOperations>`
+           * 2018-03-01-preview: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_03_01_preview.operations.RecordSetsOperations>`
+           * 2018-05-01: :class:`RecordSetsOperations<azure.mgmt.dns.v2018_05_01.operations.RecordSetsOperations>`
+        """
+        api_version = self._get_api_version('record_sets')
+        if api_version == '2016-04-01':
+            from .v2016_04_01.operations import RecordSetsOperations as OperationClass
+        elif api_version == '2018-03-01-preview':
+            from .v2018_03_01_preview.operations import RecordSetsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import RecordSetsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def zones(self):
+        """Instance depends on the API version:
+
+           * 2016-04-01: :class:`ZonesOperations<azure.mgmt.dns.v2016_04_01.operations.ZonesOperations>`
+           * 2018-03-01-preview: :class:`ZonesOperations<azure.mgmt.dns.v2018_03_01_preview.operations.ZonesOperations>`
+           * 2018-05-01: :class:`ZonesOperations<azure.mgmt.dns.v2018_05_01.operations.ZonesOperations>`
+        """
+        api_version = self._get_api_version('zones')
+        if api_version == '2016-04-01':
+            from .v2016_04_01.operations import ZonesOperations as OperationClass
+        elif api_version == '2018-03-01-preview':
+            from .v2018_03_01_preview.operations import ZonesOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import ZonesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

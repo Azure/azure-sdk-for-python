@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ConnectionMonitorSource(Model):
     """Describes the source of connection monitor.
 
-    :param resource_id: The ID of the resource used as the source by
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. The ID of the resource used as the source by
      connection monitor.
     :type resource_id: str
     :param port: The source port used by connection monitor.
@@ -31,7 +33,7 @@ class ConnectionMonitorSource(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, resource_id, port=None):
-        super(ConnectionMonitorSource, self).__init__()
-        self.resource_id = resource_id
-        self.port = port
+    def __init__(self, **kwargs):
+        super(ConnectionMonitorSource, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.port = kwargs.get('port', None)

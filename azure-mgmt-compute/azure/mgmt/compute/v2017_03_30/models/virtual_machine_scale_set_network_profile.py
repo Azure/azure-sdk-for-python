@@ -32,7 +32,7 @@ class VirtualMachineScaleSetNetworkProfile(Model):
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
     }
 
-    def __init__(self, health_probe=None, network_interface_configurations=None):
-        super(VirtualMachineScaleSetNetworkProfile, self).__init__()
-        self.health_probe = health_probe
-        self.network_interface_configurations = network_interface_configurations
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetNetworkProfile, self).__init__(**kwargs)
+        self.health_probe = kwargs.get('health_probe', None)
+        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)

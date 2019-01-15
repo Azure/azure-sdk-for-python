@@ -24,21 +24,27 @@ class OperationDisplay(Model):
     :vartype resource: str
     :ivar operation: Name of the operation
     :vartype operation: str
+    :ivar description: Description of the operation
+    :vartype description: str
     """
 
     _validation = {
         'provider': {'readonly': True},
         'resource': {'readonly': True},
         'operation': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
+        self.description = None

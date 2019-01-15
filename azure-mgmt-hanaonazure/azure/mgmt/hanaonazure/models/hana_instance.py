@@ -42,6 +42,10 @@ class HanaInstance(Resource):
     :type network_profile: ~azure.mgmt.hanaonazure.models.NetworkProfile
     :ivar hana_instance_id: Specifies the HANA instance unique ID.
     :vartype hana_instance_id: str
+    :ivar power_state: Resource power state. Possible values include:
+     'starting', 'started', 'stopping', 'stopped', 'restarting', 'unknown'
+    :vartype power_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaInstancePowerStateEnum
     """
 
     _validation = {
@@ -51,6 +55,7 @@ class HanaInstance(Resource):
         'location': {'readonly': True},
         'tags': {'readonly': True},
         'hana_instance_id': {'readonly': True},
+        'power_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -64,12 +69,14 @@ class HanaInstance(Resource):
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
+        'power_state': {'key': 'properties.powerState', 'type': 'str'},
     }
 
-    def __init__(self, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None):
-        super(HanaInstance, self).__init__()
-        self.hardware_profile = hardware_profile
-        self.storage_profile = storage_profile
-        self.os_profile = os_profile
-        self.network_profile = network_profile
+    def __init__(self, **kwargs):
+        super(HanaInstance, self).__init__(**kwargs)
+        self.hardware_profile = kwargs.get('hardware_profile', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.os_profile = kwargs.get('os_profile', None)
+        self.network_profile = kwargs.get('network_profile', None)
         self.hana_instance_id = None
+        self.power_state = None

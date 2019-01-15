@@ -13,19 +13,16 @@ from msrest.serialization import Model
 
 
 class SyncStorageKeysInput(Model):
-    """The request  body for a SyncStorageKeys API.
+    """The input to the sync storage keys request.
 
-    :param id: The id of the storage account resource.
+    :param id: The ID of the storage account resource.
     :type id: str
     """
-
-    _validation = {
-        'id': {'required': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SyncStorageKeysInput, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

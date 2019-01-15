@@ -29,12 +29,12 @@ class WorkloadProtectableItemResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: WorkloadProtectableItemResource properties
-    :type properties: :class:`WorkloadProtectableItem
-     <azure.mgmt.recoveryservicesbackup.models.WorkloadProtectableItem>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadProtectableItem
     """
 
     _validation = {
@@ -53,6 +53,6 @@ class WorkloadProtectableItemResource(Resource):
         'properties': {'key': 'properties', 'type': 'WorkloadProtectableItem'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(WorkloadProtectableItemResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(WorkloadProtectableItemResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

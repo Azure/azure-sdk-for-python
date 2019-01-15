@@ -19,14 +19,16 @@ class ErrorResponse(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :param errors: A list of errors that describe the reasons why the request
-     failed.
+    :param errors: Required. A list of errors that describe the reasons why
+     the request failed.
     :type errors:
      list[~azure.cognitiveservices.search.newssearch.models.Error]
     """
@@ -45,9 +47,9 @@ class ErrorResponse(Response):
         'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    def __init__(self, errors):
-        super(ErrorResponse, self).__init__()
-        self.errors = errors
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.errors = kwargs.get('errors', None)
         self._type = 'ErrorResponse'
 
 

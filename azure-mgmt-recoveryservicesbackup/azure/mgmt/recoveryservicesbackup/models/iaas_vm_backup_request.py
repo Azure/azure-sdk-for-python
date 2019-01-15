@@ -15,7 +15,9 @@ from .backup_request import BackupRequest
 class IaasVMBackupRequest(BackupRequest):
     """IaaS VM workload-specific backup request.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_point_expiry_time_in_utc: Backup copy will expire after
      the time specified (UTC).
@@ -31,7 +33,7 @@ class IaasVMBackupRequest(BackupRequest):
         'recovery_point_expiry_time_in_utc': {'key': 'recoveryPointExpiryTimeInUTC', 'type': 'iso-8601'},
     }
 
-    def __init__(self, recovery_point_expiry_time_in_utc=None):
-        super(IaasVMBackupRequest, self).__init__()
-        self.recovery_point_expiry_time_in_utc = recovery_point_expiry_time_in_utc
+    def __init__(self, **kwargs):
+        super(IaasVMBackupRequest, self).__init__(**kwargs)
+        self.recovery_point_expiry_time_in_utc = kwargs.get('recovery_point_expiry_time_in_utc', None)
         self.object_type = 'IaasVMBackupRequest'

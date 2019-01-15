@@ -53,7 +53,7 @@ class NetworkWatcher(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, etag=None):
-        super(NetworkWatcher, self).__init__(id=id, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(NetworkWatcher, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
         self.provisioning_state = None

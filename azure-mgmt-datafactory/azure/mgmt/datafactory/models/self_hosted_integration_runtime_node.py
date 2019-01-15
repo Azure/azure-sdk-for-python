@@ -18,6 +18,9 @@ class SelfHostedIntegrationRuntimeNode(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar node_name: Name of the integration runtime node.
     :vartype node_name: str
     :ivar machine_name: Machine name of the integration runtime node.
@@ -92,6 +95,7 @@ class SelfHostedIntegrationRuntimeNode(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'node_name': {'key': 'nodeName', 'type': 'str'},
         'machine_name': {'key': 'machineName', 'type': 'str'},
         'host_service_uri': {'key': 'hostServiceUri', 'type': 'str'},
@@ -112,8 +116,9 @@ class SelfHostedIntegrationRuntimeNode(Model):
         'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
         super(SelfHostedIntegrationRuntimeNode, self).__init__()
+        self.additional_properties = additional_properties
         self.node_name = None
         self.machine_name = None
         self.host_service_uri = None

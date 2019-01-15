@@ -15,7 +15,13 @@ from msrest.serialization import Model
 class SchedulePolicy(Model):
     """Base class for backup schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LogSchedulePolicy, LongTermSchedulePolicy,
+    SimpleSchedulePolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param schedule_policy_type: Required. Constant filled by server.
     :type schedule_policy_type: str
     """
 
@@ -28,8 +34,9 @@ class SchedulePolicy(Model):
     }
 
     _subtype_map = {
-        'schedule_policy_type': {'LongTermSchedulePolicy': 'LongTermSchedulePolicy', 'SimpleSchedulePolicy': 'SimpleSchedulePolicy'}
+        'schedule_policy_type': {'LogSchedulePolicy': 'LogSchedulePolicy', 'LongTermSchedulePolicy': 'LongTermSchedulePolicy', 'SimpleSchedulePolicy': 'SimpleSchedulePolicy'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(SchedulePolicy, self).__init__(**kwargs)
         self.schedule_policy_type = None

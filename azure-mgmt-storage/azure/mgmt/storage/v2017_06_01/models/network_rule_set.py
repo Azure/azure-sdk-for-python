@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class NetworkRuleSet(Model):
     """Network rule set.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param bypass: Specifies whether traffic is bypassed for
      Logging/Metrics/AzureServices. Possible values are any combination of
      Logging|Metrics|AzureServices (For example, "Logging, Metrics"), or None
@@ -26,9 +28,9 @@ class NetworkRuleSet(Model):
      list[~azure.mgmt.storage.v2017_06_01.models.VirtualNetworkRule]
     :param ip_rules: Sets the IP ACL rules
     :type ip_rules: list[~azure.mgmt.storage.v2017_06_01.models.IPRule]
-    :param default_action: Specifies the default action of allow or deny when
-     no other rules match. Possible values include: 'Allow', 'Deny'. Default
-     value: "Allow" .
+    :param default_action: Required. Specifies the default action of allow or
+     deny when no other rules match. Possible values include: 'Allow', 'Deny'.
+     Default value: "Allow" .
     :type default_action: str or
      ~azure.mgmt.storage.v2017_06_01.models.DefaultAction
     """
@@ -44,9 +46,9 @@ class NetworkRuleSet(Model):
         'default_action': {'key': 'defaultAction', 'type': 'DefaultAction'},
     }
 
-    def __init__(self, bypass="AzureServices", virtual_network_rules=None, ip_rules=None, default_action="Allow"):
-        super(NetworkRuleSet, self).__init__()
-        self.bypass = bypass
-        self.virtual_network_rules = virtual_network_rules
-        self.ip_rules = ip_rules
-        self.default_action = default_action
+    def __init__(self, **kwargs):
+        super(NetworkRuleSet, self).__init__(**kwargs)
+        self.bypass = kwargs.get('bypass', "AzureServices")
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.ip_rules = kwargs.get('ip_rules', None)
+        self.default_action = kwargs.get('default_action', "Allow")

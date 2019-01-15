@@ -18,20 +18,23 @@ class ServerAzureADAdministrator(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar administrator_type: The type of administrator. Default value:
-     "ActiveDirectory" .
+    :ivar administrator_type: Required. The type of administrator. Default
+     value: "ActiveDirectory" .
     :vartype administrator_type: str
-    :param login: The server administrator login value.
+    :param login: Required. The server administrator login value.
     :type login: str
-    :param sid: The server administrator Sid (Secure ID).
+    :param sid: Required. The server administrator Sid (Secure ID).
     :type sid: str
-    :param tenant_id: The server Active Directory Administrator tenant id.
+    :param tenant_id: Required. The server Active Directory Administrator
+     tenant id.
     :type tenant_id: str
     """
 
@@ -57,8 +60,8 @@ class ServerAzureADAdministrator(ProxyResource):
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, login, sid, tenant_id):
-        super(ServerAzureADAdministrator, self).__init__()
-        self.login = login
-        self.sid = sid
-        self.tenant_id = tenant_id
+    def __init__(self, **kwargs):
+        super(ServerAzureADAdministrator, self).__init__(**kwargs)
+        self.login = kwargs.get('login', None)
+        self.sid = kwargs.get('sid', None)
+        self.tenant_id = kwargs.get('tenant_id', None)

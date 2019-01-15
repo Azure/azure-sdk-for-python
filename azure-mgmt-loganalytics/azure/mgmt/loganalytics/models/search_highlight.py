@@ -26,6 +26,7 @@ class SearchHighlight(Model):
         'post': {'key': 'post', 'type': 'str'},
     }
 
-    def __init__(self, pre=None, post=None):
-        self.pre = pre
-        self.post = post
+    def __init__(self, **kwargs):
+        super(SearchHighlight, self).__init__(**kwargs)
+        self.pre = kwargs.get('pre', None)
+        self.post = kwargs.get('post', None)

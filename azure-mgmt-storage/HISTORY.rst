@@ -3,6 +3,118 @@
 Release History
 ===============
 
+3.1.1 (2019-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix #4013 - "use_sub_domain" should be "use_sub_domain_name"
+
+3.1.0 (2018-11-15)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter geo_replication_stats
+- Model StorageAccount has a new parameter failover_in_progress
+- Added operation StorageAccountsOperations.failover
+- Added operation group BlobServicesOperations
+- Operation StorageAccountsOperations.get_properties now support expand parameter
+
+3.0.0 (2018-09-27)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter enable_azure_files_aad_integration
+- Model StorageAccountCreateParameters has a new parameter enable_azure_files_aad_integration
+- Model StorageAccountUpdateParameters has a new parameter enable_azure_files_aad_integration
+- Added operation group ManagementPoliciesOperations. This is considered preview and breaking changes might happen.
+
+**Breaking changes**
+
+- "usage" has been renamed "usages", and the "list" operation has been replaced by "list_by_location".
+  Ability to make usage requests locally is not available anymore.
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+
+2.0.0 (2018-08-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Set the signed resource as optional instead of required
+
+2.0.0rc4 (2018-06-26)
++++++++++++++++++++++
+
+**Features (2018-02-01/2018-03-01-preview)**
+
+Support HDFS feature and web endpoint in Account properties
+
+- Model StorageAccountCreateParameters has a new parameter is_hns_enabled
+- Model Endpoints has a new parameter web
+- Model Endpoints has a new parameter dfs
+- Model StorageAccount has a new parameter is_hns_enabled
+
+2.0.0rc3 (2018-05-30)
++++++++++++++++++++++
+
+**Features**
+
+- Add preview version of management policy (API 2018-03-01-preview only). This is considered preview and breaking changes might happen
+  if you opt in for that Api Version.
+
+**Bugfixes**
+
+- Correct azure-common dependency
+
+2.0.0rc2 (2018-05-16)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix default "models" import to 2018-02-01
+
+2.0.0rc1 (2018-05-11)
++++++++++++++++++++++
+
+**Features**
+
+- Add blob containers operations, immutability policy
+- Add usage.list_by_location
+- Client now supports Azure profiles.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+
 1.5.0 (2017-12-12)
 ++++++++++++++++++
 

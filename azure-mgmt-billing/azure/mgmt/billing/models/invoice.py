@@ -26,8 +26,7 @@ class Invoice(Resource):
     :vartype type: str
     :param download_url: A secure link to download the PDF version of an
      invoice. The link will cease to work after its expiry time is reached.
-    :type download_url: :class:`DownloadUrl
-     <azure.mgmt.billing.models.DownloadUrl>`
+    :type download_url: ~azure.mgmt.billing.models.DownloadUrl
     :ivar invoice_period_start_date: The start of the date range covered by
      the invoice.
     :vartype invoice_period_start_date: date
@@ -36,7 +35,7 @@ class Invoice(Resource):
     :vartype invoice_period_end_date: date
     :ivar billing_period_ids: Array of billing perdiod ids that the invoice is
      attributed to.
-    :vartype billing_period_ids: list of str
+    :vartype billing_period_ids: list[str]
     """
 
     _validation = {

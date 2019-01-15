@@ -12,12 +12,13 @@
 from enum import Enum
 
 
-class HanaHardwareTypeNamesEnum(Enum):
+class HanaHardwareTypeNamesEnum(str, Enum):
 
     cisco_ucs = "Cisco_UCS"
+    hpe = "HPE"
 
 
-class HanaInstanceSizeNamesEnum(Enum):
+class HanaInstanceSizeNamesEnum(str, Enum):
 
     s72m = "S72m"
     s144m = "S144m"
@@ -25,3 +26,25 @@ class HanaInstanceSizeNamesEnum(Enum):
     s144 = "S144"
     s192 = "S192"
     s192m = "S192m"
+    s192xm = "S192xm"
+    s96 = "S96"
+    s384 = "S384"
+    s384m = "S384m"
+    s384xm = "S384xm"
+    s384xxm = "S384xxm"
+    s576m = "S576m"
+    s576xm = "S576xm"
+    s768 = "S768"
+    s768m = "S768m"
+    s768xm = "S768xm"
+    s960m = "S960m"
+
+
+class HanaInstancePowerStateEnum(str, Enum):
+
+    starting = "starting"
+    started = "started"
+    stopping = "stopping"
+    stopped = "stopped"
+    restarting = "restarting"
+    unknown = "unknown"

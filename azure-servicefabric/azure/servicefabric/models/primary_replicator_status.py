@@ -16,7 +16,9 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
     """Provides statistics about the Service Fabric Replicator, when it is
     functioning in a Primary role.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param replication_queue_status: Details about the replication queue on
      the primary replicator.
@@ -38,8 +40,8 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
         'remote_replicators': {'key': 'RemoteReplicators', 'type': '[RemoteReplicatorStatus]'},
     }
 
-    def __init__(self, replication_queue_status=None, remote_replicators=None):
-        super(PrimaryReplicatorStatus, self).__init__()
-        self.replication_queue_status = replication_queue_status
-        self.remote_replicators = remote_replicators
+    def __init__(self, **kwargs):
+        super(PrimaryReplicatorStatus, self).__init__(**kwargs)
+        self.replication_queue_status = kwargs.get('replication_queue_status', None)
+        self.remote_replicators = kwargs.get('remote_replicators', None)
         self.kind = 'Primary'

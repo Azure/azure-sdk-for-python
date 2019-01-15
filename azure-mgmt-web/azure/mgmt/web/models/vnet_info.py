@@ -66,11 +66,11 @@ class VnetInfo(ProxyOnlyResource):
         'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, vnet_resource_id=None, cert_blob=None, dns_servers=None):
-        super(VnetInfo, self).__init__(kind=kind)
-        self.vnet_resource_id = vnet_resource_id
+    def __init__(self, **kwargs):
+        super(VnetInfo, self).__init__(**kwargs)
+        self.vnet_resource_id = kwargs.get('vnet_resource_id', None)
         self.cert_thumbprint = None
-        self.cert_blob = cert_blob
+        self.cert_blob = kwargs.get('cert_blob', None)
         self.routes = None
         self.resync_required = None
-        self.dns_servers = dns_servers
+        self.dns_servers = kwargs.get('dns_servers', None)

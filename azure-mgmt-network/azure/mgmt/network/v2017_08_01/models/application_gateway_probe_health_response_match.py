@@ -28,7 +28,7 @@ class ApplicationGatewayProbeHealthResponseMatch(Model):
         'status_codes': {'key': 'statusCodes', 'type': '[str]'},
     }
 
-    def __init__(self, body=None, status_codes=None):
-        super(ApplicationGatewayProbeHealthResponseMatch, self).__init__()
-        self.body = body
-        self.status_codes = status_codes
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayProbeHealthResponseMatch, self).__init__(**kwargs)
+        self.body = kwargs.get('body', None)
+        self.status_codes = kwargs.get('status_codes', None)

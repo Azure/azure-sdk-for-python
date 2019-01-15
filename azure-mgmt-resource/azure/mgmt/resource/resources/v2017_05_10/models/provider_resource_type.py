@@ -37,10 +37,10 @@ class ProviderResourceType(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, resource_type=None, locations=None, aliases=None, api_versions=None, properties=None):
-        super(ProviderResourceType, self).__init__()
-        self.resource_type = resource_type
-        self.locations = locations
-        self.aliases = aliases
-        self.api_versions = api_versions
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ProviderResourceType, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.locations = kwargs.get('locations', None)
+        self.aliases = kwargs.get('aliases', None)
+        self.api_versions = kwargs.get('api_versions', None)
+        self.properties = kwargs.get('properties', None)

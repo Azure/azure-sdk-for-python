@@ -15,20 +15,22 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetOSDisk(Model):
     """Describes a virtual machine scale set operating system disk.
 
-    :param name: The disk name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The disk name.
     :type name: str
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2015_06_15.models.CachingTypes
-    :param create_option: Specifies how the virtual machines in the scale set
-     should be created.<br><br> The only allowed value is: **FromImage**
-     \\u2013 This value is used when you are using an image to create the
-     virtual machine. If you are using a platform image, you also use the
-     imageReference element described above. If you are using a marketplace
-     image, you  also use the plan element previously described. Possible
-     values include: 'FromImage', 'Empty', 'Attach'
+    :param create_option: Required. Specifies how the virtual machines in the
+     scale set should be created.<br><br> The only allowed value is:
+     **FromImage** \\u2013 This value is used when you are using an image to
+     create the virtual machine. If you are using a platform image, you also
+     use the imageReference element described above. If you are using a
+     marketplace image, you  also use the plan element previously described.
+     Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2015_06_15.models.DiskCreateOptionTypes
     :param os_type: This property allows you to specify the type of the OS
@@ -59,11 +61,11 @@ class VirtualMachineScaleSetOSDisk(Model):
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
     }
 
-    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None):
-        super(VirtualMachineScaleSetOSDisk, self).__init__()
-        self.name = name
-        self.caching = caching
-        self.create_option = create_option
-        self.os_type = os_type
-        self.image = image
-        self.vhd_containers = vhd_containers
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetOSDisk, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.caching = kwargs.get('caching', None)
+        self.create_option = kwargs.get('create_option', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.image = kwargs.get('image', None)
+        self.vhd_containers = kwargs.get('vhd_containers', None)

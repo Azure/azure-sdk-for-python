@@ -33,9 +33,9 @@ class ManagementGroupDetails(Model):
         'parent': {'key': 'parent', 'type': 'ParentGroupInfo'},
     }
 
-    def __init__(self, version=None, updated_time=None, updated_by=None, parent=None):
-        super(ManagementGroupDetails, self).__init__()
-        self.version = version
-        self.updated_time = updated_time
-        self.updated_by = updated_by
-        self.parent = parent
+    def __init__(self, **kwargs):
+        super(ManagementGroupDetails, self).__init__(**kwargs)
+        self.version = kwargs.get('version', None)
+        self.updated_time = kwargs.get('updated_time', None)
+        self.updated_by = kwargs.get('updated_by', None)
+        self.parent = kwargs.get('parent', None)

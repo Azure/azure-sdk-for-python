@@ -12,7 +12,18 @@
 from enum import Enum
 
 
-class EventSubscriptionProvisioningState(Enum):
+class EventSubscriptionProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+    awaiting_manual_action = "AwaitingManualAction"
+
+
+class TopicProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
@@ -22,23 +33,13 @@ class EventSubscriptionProvisioningState(Enum):
     failed = "Failed"
 
 
-class TopicProvisioningState(Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-
-
-class ResourceRegionType(Enum):
+class ResourceRegionType(str, Enum):
 
     regional_resource = "RegionalResource"
     global_resource = "GlobalResource"
 
 
-class TopicTypeProvisioningState(Enum):
+class TopicTypeProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"

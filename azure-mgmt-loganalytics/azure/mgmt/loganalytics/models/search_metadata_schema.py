@@ -26,6 +26,7 @@ class SearchMetadataSchema(Model):
         'version': {'key': 'version', 'type': 'int'},
     }
 
-    def __init__(self, name=None, version=None):
-        self.name = name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(SearchMetadataSchema, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)

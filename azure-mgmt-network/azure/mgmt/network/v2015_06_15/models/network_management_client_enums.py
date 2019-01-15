@@ -12,50 +12,50 @@
 from enum import Enum
 
 
-class ApplicationGatewaySkuName(Enum):
+class ApplicationGatewaySkuName(str, Enum):
 
     standard_small = "Standard_Small"
     standard_medium = "Standard_Medium"
     standard_large = "Standard_Large"
 
 
-class ApplicationGatewayTier(Enum):
+class ApplicationGatewayTier(str, Enum):
 
     standard = "Standard"
 
 
-class IPAllocationMethod(Enum):
+class IPAllocationMethod(str, Enum):
 
     static = "Static"
     dynamic = "Dynamic"
 
 
-class TransportProtocol(Enum):
+class TransportProtocol(str, Enum):
 
     udp = "Udp"
     tcp = "Tcp"
 
 
-class SecurityRuleProtocol(Enum):
+class SecurityRuleProtocol(str, Enum):
 
     tcp = "Tcp"
     udp = "Udp"
     asterisk = "*"
 
 
-class SecurityRuleAccess(Enum):
+class SecurityRuleAccess(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
 
 
-class SecurityRuleDirection(Enum):
+class SecurityRuleDirection(str, Enum):
 
     inbound = "Inbound"
     outbound = "Outbound"
 
 
-class RouteNextHopType(Enum):
+class RouteNextHopType(str, Enum):
 
     virtual_network_gateway = "VirtualNetworkGateway"
     vnet_local = "VnetLocal"
@@ -64,25 +64,25 @@ class RouteNextHopType(Enum):
     none = "None"
 
 
-class ApplicationGatewayProtocol(Enum):
+class ApplicationGatewayProtocol(str, Enum):
 
     http = "Http"
     https = "Https"
 
 
-class ApplicationGatewayCookieBasedAffinity(Enum):
+class ApplicationGatewayCookieBasedAffinity(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class ApplicationGatewayRequestRoutingRuleType(Enum):
+class ApplicationGatewayRequestRoutingRuleType(str, Enum):
 
     basic = "Basic"
     path_based_routing = "PathBasedRouting"
 
 
-class ApplicationGatewayOperationalState(Enum):
+class ApplicationGatewayOperationalState(str, Enum):
 
     stopped = "Stopped"
     starting = "Starting"
@@ -90,13 +90,13 @@ class ApplicationGatewayOperationalState(Enum):
     stopping = "Stopping"
 
 
-class AuthorizationUseStatus(Enum):
+class AuthorizationUseStatus(str, Enum):
 
     available = "Available"
     in_use = "InUse"
 
 
-class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(Enum):
+class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(str, Enum):
 
     not_configured = "NotConfigured"
     configuring = "Configuring"
@@ -104,32 +104,32 @@ class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(Enum):
     validation_needed = "ValidationNeeded"
 
 
-class ExpressRouteCircuitPeeringType(Enum):
+class ExpressRouteCircuitPeeringType(str, Enum):
 
     azure_public_peering = "AzurePublicPeering"
     azure_private_peering = "AzurePrivatePeering"
     microsoft_peering = "MicrosoftPeering"
 
 
-class ExpressRouteCircuitPeeringState(Enum):
+class ExpressRouteCircuitPeeringState(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
 
 
-class ExpressRouteCircuitSkuTier(Enum):
+class ExpressRouteCircuitSkuTier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
 
 
-class ExpressRouteCircuitSkuFamily(Enum):
+class ExpressRouteCircuitSkuFamily(str, Enum):
 
     unlimited_data = "UnlimitedData"
     metered_data = "MeteredData"
 
 
-class ServiceProviderProvisioningState(Enum):
+class ServiceProviderProvisioningState(str, Enum):
 
     not_provisioned = "NotProvisioned"
     provisioning = "Provisioning"
@@ -137,59 +137,59 @@ class ServiceProviderProvisioningState(Enum):
     deprovisioning = "Deprovisioning"
 
 
-class LoadDistribution(Enum):
+class LoadDistribution(str, Enum):
 
     default = "Default"
     source_ip = "SourceIP"
     source_ip_protocol = "SourceIPProtocol"
 
 
-class ProbeProtocol(Enum):
+class ProbeProtocol(str, Enum):
 
     http = "Http"
     tcp = "Tcp"
 
 
-class NetworkOperationStatus(Enum):
+class NetworkOperationStatus(str, Enum):
 
     in_progress = "InProgress"
     succeeded = "Succeeded"
     failed = "Failed"
 
 
-class VirtualNetworkGatewayType(Enum):
+class VirtualNetworkGatewayType(str, Enum):
 
     vpn = "Vpn"
     express_route = "ExpressRoute"
 
 
-class VpnType(Enum):
+class VpnType(str, Enum):
 
     policy_based = "PolicyBased"
     route_based = "RouteBased"
 
 
-class VirtualNetworkGatewaySkuName(Enum):
+class VirtualNetworkGatewaySkuName(str, Enum):
 
     basic = "Basic"
     high_performance = "HighPerformance"
     standard = "Standard"
 
 
-class VirtualNetworkGatewaySkuTier(Enum):
+class VirtualNetworkGatewaySkuTier(str, Enum):
 
     basic = "Basic"
     high_performance = "HighPerformance"
     standard = "Standard"
 
 
-class ProcessorArchitecture(Enum):
+class ProcessorArchitecture(str, Enum):
 
     amd64 = "Amd64"
     x86 = "X86"
 
 
-class VirtualNetworkGatewayConnectionType(Enum):
+class VirtualNetworkGatewayConnectionType(str, Enum):
 
     ipsec = "IPsec"
     vnet2_vnet = "Vnet2Vnet"
@@ -197,7 +197,7 @@ class VirtualNetworkGatewayConnectionType(Enum):
     vpn_client = "VPNClient"
 
 
-class VirtualNetworkGatewayConnectionStatus(Enum):
+class VirtualNetworkGatewayConnectionStatus(str, Enum):
 
     unknown = "Unknown"
     connecting = "Connecting"

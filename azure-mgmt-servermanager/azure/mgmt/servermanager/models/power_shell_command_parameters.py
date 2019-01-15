@@ -23,5 +23,6 @@ class PowerShellCommandParameters(Model):
         'command': {'key': 'properties.command', 'type': 'str'},
     }
 
-    def __init__(self, command=None):
-        self.command = command
+    def __init__(self, **kwargs):
+        super(PowerShellCommandParameters, self).__init__(**kwargs)
+        self.command = kwargs.get('command', None)

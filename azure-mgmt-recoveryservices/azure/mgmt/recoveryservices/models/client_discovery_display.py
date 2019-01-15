@@ -17,23 +17,25 @@ class ClientDiscoveryDisplay(Model):
 
     :param provider: Name of the provider for display purposes
     :type provider: str
-    :param resource: Name of the resource type for display purposes
+    :param resource: ResourceType for which this Operation can be performed.
     :type resource: str
-    :param operation: Name of the operation for display purposes
+    :param operation: Operations Name itself.
     :type operation: str
-    :param description: Description of the operation for display purposes
+    :param description: Description of the operation having details of what
+     operation is about.
     :type description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'Provider', 'type': 'str'},
-        'resource': {'key': 'Resource', 'type': 'str'},
-        'operation': {'key': 'Operation', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None, description=None):
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)

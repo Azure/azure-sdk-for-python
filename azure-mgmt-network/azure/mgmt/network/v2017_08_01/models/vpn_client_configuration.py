@@ -48,11 +48,11 @@ class VpnClientConfiguration(Model):
         'radius_server_secret': {'key': 'radiusServerSecret', 'type': 'str'},
     }
 
-    def __init__(self, vpn_client_address_pool=None, vpn_client_root_certificates=None, vpn_client_revoked_certificates=None, vpn_client_protocols=None, radius_server_address=None, radius_server_secret=None):
-        super(VpnClientConfiguration, self).__init__()
-        self.vpn_client_address_pool = vpn_client_address_pool
-        self.vpn_client_root_certificates = vpn_client_root_certificates
-        self.vpn_client_revoked_certificates = vpn_client_revoked_certificates
-        self.vpn_client_protocols = vpn_client_protocols
-        self.radius_server_address = radius_server_address
-        self.radius_server_secret = radius_server_secret
+    def __init__(self, **kwargs):
+        super(VpnClientConfiguration, self).__init__(**kwargs)
+        self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
+        self.vpn_client_root_certificates = kwargs.get('vpn_client_root_certificates', None)
+        self.vpn_client_revoked_certificates = kwargs.get('vpn_client_revoked_certificates', None)
+        self.vpn_client_protocols = kwargs.get('vpn_client_protocols', None)
+        self.radius_server_address = kwargs.get('radius_server_address', None)
+        self.radius_server_secret = kwargs.get('radius_server_secret', None)
