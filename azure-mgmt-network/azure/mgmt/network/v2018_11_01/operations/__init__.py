@@ -15,6 +15,7 @@ from .available_delegations_operations import AvailableDelegationsOperations
 from .available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .azure_firewalls_operations import AzureFirewallsOperations
 from .azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
+from .ddos_custom_policies_operations import DdosCustomPoliciesOperations
 from .ddos_protection_plans_operations import DdosProtectionPlansOperations
 from .available_endpoint_services_operations import AvailableEndpointServicesOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
@@ -84,6 +85,7 @@ __all__ = [
     'AvailableResourceGroupDelegationsOperations',
     'AzureFirewallsOperations',
     'AzureFirewallFqdnTagsOperations',
+    'DdosCustomPoliciesOperations',
     'DdosProtectionPlansOperations',
     'AvailableEndpointServicesOperations',
     'ExpressRouteCircuitAuthorizationsOperations',
