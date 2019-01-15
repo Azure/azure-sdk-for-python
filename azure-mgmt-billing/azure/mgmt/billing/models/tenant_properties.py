@@ -33,9 +33,9 @@ class TenantProperties(Model):
     }
 
     _attribute_map = {
-        'billing_profile_name': {'key': 'BillingProfileName', 'type': 'str'},
-        'billing_account_id': {'key': 'BillingAccountId', 'type': 'str'},
-        'tenant_id': {'key': 'TenantId', 'type': 'str'},
+        'billing_profile_name': {'key': 'billingProfileName', 'type': 'str'},
+        'billing_account_id': {'key': 'billingAccountId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
