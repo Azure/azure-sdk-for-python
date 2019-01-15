@@ -39,5 +39,5 @@ jobs:
   - task: PythonScript@0
     displayName: 'Setup and Run Tests'
     inputs:
-      scriptPath: 'scripts/devops_tasks/devops_test_packages.py'
+      scriptPath: 'scripts/devops_tasks/test_packages.py'
       arguments: '-g "$(build_targeting_string)"'

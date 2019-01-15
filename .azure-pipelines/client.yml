@@ -25,7 +25,7 @@ jobs:
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
-      scriptPath: 'scripts/devops_tasks/devops_build_packages.py'
+      scriptPath: 'scripts/devops_tasks/build_packages.py'
       arguments: '-g "$(build_targeting_string)" -d "$(Build.ArtifactStagingDirectory)"'
 
   - task: PublishBuildArtifacts@1
