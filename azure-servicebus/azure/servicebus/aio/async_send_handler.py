@@ -282,7 +282,7 @@ class SessionSender(Sender):
         :type schedule_time: ~datetime.datetime
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.aio.async_message.Message
-        :returns: list[int]
+        :rtype: list[int]
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_async.py

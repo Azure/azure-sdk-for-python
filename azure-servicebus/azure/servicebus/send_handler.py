@@ -290,7 +290,7 @@ class SessionSender(Sender):
         :type schedule_time: ~datetime.datetime
         :param messages: The messages to schedule.
         :type messages: ~azure.servicebus.common.message.Message
-        :returns: list[int]
+        :rtype: list[int]
 
         Example:
             .. literalinclude:: ../examples/test_examples.py

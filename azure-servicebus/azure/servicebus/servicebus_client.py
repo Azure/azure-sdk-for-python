@@ -108,7 +108,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param queue_name: The name of the queue.
         :type queue_name: str
-        :returns: ~azure.servicebus.servicebus_client.QueueClient
+        :rtype: ~azure.servicebus.servicebus_client.QueueClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the queue is not found.
 
@@ -137,7 +137,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     def list_queues(self):
         """Get clients for all queue entities in the namespace.
 
-        :returns: list[~azure.servicebus.servicebus_client.QueueClient]
+        :rtype: list[~azure.servicebus.servicebus_client.QueueClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         Example:
@@ -168,7 +168,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param topic_name: The name of the topic.
         :type topic_name: str
-        :returns: ~azure.servicebus.servicebus_client.TopicClient
+        :rtype: ~azure.servicebus.servicebus_client.TopicClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
@@ -196,7 +196,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     def list_topics(self):
         """Get a client for all topic entities in the namespace.
 
-        :returns: list[~azure.servicebus.servicebus_client.TopicClient]
+        :rtype: list[~azure.servicebus.servicebus_client.TopicClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
 
         Example:
@@ -228,7 +228,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
         :type topic_name: str
         :param subscription_name: The name of the subscription.
         :type subscription_name: str
-        :returns: ~azure.servicebus.servicebus_client.SubscriptionClient
+        :rtype: ~azure.servicebus.servicebus_client.SubscriptionClient
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the subscription is not found.
 
@@ -258,7 +258,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
         :param topic_name: The topic to list subscriptions for.
         :type topic_name: str
-        :returns: list[~azure.servicebus.servicebus_client.SubscriptionClient]
+        :rtype: list[~azure.servicebus.servicebus_client.SubscriptionClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
         :raises: ~azure.servicebus.common.errors.ServiceBusResourceNotFound if the topic is not found.
 
@@ -441,7 +441,7 @@ class ReceiveClientMixin(object):
         :type max_results: int
         :param skip: The page value to jump to. Default value is 0.
         :type skip: int
-        :returns: list[str]
+        :rtype: list[str]
 
         Example:
             .. literalinclude:: ../examples/test_examples.py

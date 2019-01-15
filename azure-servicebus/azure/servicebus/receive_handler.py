@@ -255,7 +255,7 @@ class Receiver(BaseHandler):
         :type sequence_numbers: list[int]
         :param mode: The receive mode, default value is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
-        :returns: list[~azure.servicebus.common.message.DeferredMessage]
+        :rtype: list[~azure.servicebus.common.message.DeferredMessage]
 
         Example:
             .. literalinclude:: ../examples/test_examples.py

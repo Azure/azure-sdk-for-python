@@ -201,7 +201,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
     def queue_size(self):
         """The current size of the unprocessed message queue.
 
-        :returns: int
+        :rtype: int
         """
         # pylint: disable=protected-access
         if self._handler._received_messages:
