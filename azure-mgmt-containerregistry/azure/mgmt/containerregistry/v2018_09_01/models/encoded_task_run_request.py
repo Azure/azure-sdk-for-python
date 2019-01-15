@@ -42,7 +42,7 @@ class EncodedTaskRunRequest(RunRequest):
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
-     context. It can be an URL to a tar or git repoistory.
+     context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
      listBuildSourceUploadUrl API.
     :type source_location: str

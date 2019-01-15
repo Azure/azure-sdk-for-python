@@ -9,9 +9,9 @@ interactions:
           networkmanagementclient/2.4.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2018-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2018-11-01
   response:
-    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 3,\r\n\
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 2,\r\n\
         \      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Virtual Networks\",\r\n        \"value\": \"VirtualNetworks\"\r\n    \
@@ -20,11 +20,11 @@ interactions:
         ,\r\n      \"limit\": 200,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Static Public IP Addresses\",\r\n        \"value\": \"StaticPublicIPAddresses\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 8,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\"\
+        : 5,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\"\
         ,\r\n      \"limit\": 5000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Security Groups\",\r\n        \"value\": \"NetworkSecurityGroups\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 5,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\"\
+        : 3,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Public IP Addresses\",\r\n        \"value\": \"PublicIPAddresses\"\r\n\
         \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -32,7 +32,7 @@ interactions:
         ,\r\n      \"limit\": 2147483647,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Public Ip Prefixes\",\r\n        \"value\": \"PublicIpPrefixes\"\r\n \
         \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 3,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\"\
+        : 2,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\"\
         ,\r\n      \"limit\": 65536,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Interfaces\",\r\n        \"value\": \"NetworkInterfaces\"\r\n\
         \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -40,15 +40,11 @@ interactions:
         ,\r\n      \"limit\": 65536,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Interface Endpoints\",\r\n        \"value\": \"InterfaceEndpoints\"\r\n\
         \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\"\
+        : 1,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Load Balancers\",\r\n        \"value\": \"LoadBalancers\"\r\n      },\r\
         \n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":\
-        \ 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PrivateLinkServices\"\
-        ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
-        : \"Private Link Services\",\r\n        \"value\": \"PrivateLinkServices\"\
-        \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/ApplicationGateways\"\
+        \ 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/ApplicationGateways\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Application Gateways\",\r\n        \"value\": \"ApplicationGateways\"\r\
         \n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -97,7 +93,7 @@ interactions:
         : \"Standard Sku Public IP Addresses\",\r\n        \"value\": \"StandardSkuPublicIpAddresses\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
         : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/DnsServersPerVirtualNetwork\"\
-        ,\r\n      \"limit\": 25,\r\n      \"name\": {\r\n        \"localizedValue\"\
+        ,\r\n      \"limit\": 20,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"DNS servers per Virtual Network\",\r\n        \"value\": \"DnsServersPerVirtualNetwork\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
         : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/SubnetsPerVirtualNetwork\"\
@@ -166,9 +162,9 @@ interactions:
         Count\"\r\n    }\r\n  ]\r\n}"}
     headers:
       cache-control: [no-cache]
-      content-length: ['13401']
+      content-length: ['13056']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 27 Nov 2018 20:20:31 GMT']
+      date: ['Fri, 04 Jan 2019 21:17:20 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]

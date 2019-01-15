@@ -25,7 +25,7 @@ class IotHubResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2018-04-01".
+    :ivar api_version: The version of the API. Constant value: "2018-12-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class IotHubResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-04-01"
+        self.api_version = "2018-12-01-preview"
 
         self.config = config
 
@@ -1327,21 +1327,17 @@ class IotHubResourceOperations(object):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkNameAvailability'}
 
     def test_all_routes(
-            self, iot_hub_name, resource_group_name, routing_source=None, message=None, custom_headers=None, raw=False, **operation_config):
+            self, input, iot_hub_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Test all routes.
 
         Test all routes configured in this Iot Hub.
 
+        :param input: Input for testing all routes
+        :type input: ~azure.mgmt.iothub.models.TestAllRoutesInput
         :param iot_hub_name: IotHub to be tested
         :type iot_hub_name: str
         :param resource_group_name: resource group which Iot Hub belongs to
         :type resource_group_name: str
-        :param routing_source: Routing source. Possible values include:
-         'Invalid', 'DeviceMessages', 'TwinChangeEvents',
-         'DeviceLifecycleEvents', 'DeviceJobLifecycleEvents'
-        :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
-        :param message: Routing message
-        :type message: ~azure.mgmt.iothub.models.RoutingMessage
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1353,8 +1349,6 @@ class IotHubResourceOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
-        input = models.TestAllRoutesInput(routing_source=routing_source, message=message)
-
         # Construct URL
         url = self.test_all_routes.metadata['url']
         path_format_arguments = {
@@ -1402,19 +1396,17 @@ class IotHubResourceOperations(object):
     test_all_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testall'}
 
     def test_route(
-            self, iot_hub_name, resource_group_name, route, message=None, custom_headers=None, raw=False, **operation_config):
+            self, input, iot_hub_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Test the new route.
 
         Test the new route for this Iot Hub.
 
+        :param input: Route that needs to be tested
+        :type input: ~azure.mgmt.iothub.models.TestRouteInput
         :param iot_hub_name: IotHub to be tested
         :type iot_hub_name: str
         :param resource_group_name: resource group which Iot Hub belongs to
         :type resource_group_name: str
-        :param route: Route properties
-        :type route: ~azure.mgmt.iothub.models.RouteProperties
-        :param message: Routing message
-        :type message: ~azure.mgmt.iothub.models.RoutingMessage
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1426,8 +1418,6 @@ class IotHubResourceOperations(object):
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
-        input = models.TestRouteInput(message=message, route=route)
-
         # Construct URL
         url = self.test_route.metadata['url']
         path_format_arguments = {
