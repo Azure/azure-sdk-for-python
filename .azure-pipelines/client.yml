@@ -85,3 +85,45 @@ jobs:
     inputs:
       scriptPath: 'scripts/devops_tasks/test_packages.py'
       arguments: '-g "$(build_targeting_string)"'
+
+- job: Special_Python_Distro_Tests
+  dependsOn:
+  - 'Build_Target_Packages'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: |
+     pip install wheel
+     pip install setuptools
+     pip install pathlib
+    displayName: 'Prep Environment'
+
+  - script: |
+     cd ~/
+     wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
+     tar xf pypy3-v6.0.0-linux64.tar.bz2
+     cd $(Build.SourcesDirectory)
+     
+     PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
+     pypy3 -m ensurepip
+     python ./scripts/devops_tasks/test_packages.py -g "$(build_targeting_string)" -p pypy3
+    displayName: 'Setup and Run Filtered Tests PyPy3'
+    continueOnError: true
+
+  - script: |
+     sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+     cd ~/
+     git clone https://github.com/python/cpython.git
+     cd cpython
+     mkdir debug
+     cd debug
+     ../configure --enable-optimizations --prefix=$HOME
+     make install
+     
+     cd $(Build.SourcesDirectory)
+
+     PATH=/home/vsts/bin:$PATH
+     python3 -m ensurepip
+     python ./scripts/devops_tasks/test_packages.py -g "$(build_targeting_string)" -p python3
+    displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+    continueOnError: true
