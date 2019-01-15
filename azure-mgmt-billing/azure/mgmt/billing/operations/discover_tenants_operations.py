@@ -47,8 +47,8 @@ class DiscoverTenantsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DiscoverTenants or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.DiscoverTenants or
+        :return: DiscoverTenant or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.DiscoverTenant or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -84,7 +84,7 @@ class DiscoverTenantsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DiscoverTenants', response)
+            deserialized = self._deserialize('DiscoverTenant', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -11,7 +11,7 @@
 
 try:
     from .enrollment_account_py3 import EnrollmentAccount
-    from .discover_tenants_py3 import DiscoverTenants
+    from .discover_tenant_py3 import DiscoverTenant
     from .billing_period_py3 import BillingPeriod
     from .download_url_py3 import DownloadUrl
     from .error_details_py3 import ErrorDetails
@@ -22,7 +22,7 @@ try:
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .enrollment_account import EnrollmentAccount
-    from .discover_tenants import DiscoverTenants
+    from .discover_tenant import DiscoverTenant
     from .billing_period import BillingPeriod
     from .download_url import DownloadUrl
     from .error_details import ErrorDetails
@@ -38,7 +38,7 @@ from .operation_paged import OperationPaged
 
 __all__ = [
     'EnrollmentAccount',
-    'DiscoverTenants',
+    'DiscoverTenant',
     'BillingPeriod',
     'DownloadUrl',
     'ErrorDetails',
