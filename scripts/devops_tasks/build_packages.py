@@ -16,7 +16,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from devops_common_tasks import *
+from common_tasks import process_glob_string, run_check_call
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 build_packing_script_location = os.path.join(root_dir, 'build_package.py')

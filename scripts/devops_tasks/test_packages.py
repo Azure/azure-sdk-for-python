@@ -17,12 +17,10 @@ import sys
 from pathlib import Path
 import os
 
-from devops_common_tasks import *
+from common_tasks import process_glob_string, run_check_call
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
-
-DEFAULT_IGNORED_WARNINGS = ['ignore:.*DeprecationWarning: inspect.getargspec().*']
 
 def prep_and_run_tests(targeted_packages, python_version):
     for package_path in targeted_packages:
@@ -33,7 +31,7 @@ def prep_and_run_tests(targeted_packages, python_version):
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(targeted_packages)
     run_check_call(command_array, root_dir)
-    
+
     for package_path in targeted_packages:
         print('Checking setup.py for {}'.format(os.path.join(package_path, 'setup.py')))
         run_check_call([python_version, 'setup.py', 'check', '-r', '-s'], package_path)
