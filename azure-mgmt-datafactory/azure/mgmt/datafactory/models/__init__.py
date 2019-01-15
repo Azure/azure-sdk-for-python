@@ -306,6 +306,7 @@ try:
     from .custom_activity_py3 import CustomActivity
     from .ssis_property_override_py3 import SSISPropertyOverride
     from .ssis_execution_parameter_py3 import SSISExecutionParameter
+    from .ssis_execution_credential_py3 import SSISExecutionCredential
     from .ssis_package_location_py3 import SSISPackageLocation
     from .execute_ssis_package_activity_py3 import ExecuteSSISPackageActivity
     from .hd_insight_spark_activity_py3 import HDInsightSparkActivity
@@ -667,6 +668,7 @@ except (SyntaxError, ImportError):
     from .custom_activity import CustomActivity
     from .ssis_property_override import SSISPropertyOverride
     from .ssis_execution_parameter import SSISExecutionParameter
+    from .ssis_execution_credential import SSISExecutionCredential
     from .ssis_package_location import SSISPackageLocation
     from .execute_ssis_package_activity import ExecuteSSISPackageActivity
     from .hd_insight_spark_activity import HDInsightSparkActivity
@@ -1099,6 +1101,7 @@ __all__ = [
     'CustomActivity',
     'SSISPropertyOverride',
     'SSISExecutionParameter',
+    'SSISExecutionCredential',
     'SSISPackageLocation',
     'ExecuteSSISPackageActivity',
     'HDInsightSparkActivity',
