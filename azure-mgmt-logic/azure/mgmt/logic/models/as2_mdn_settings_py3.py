@@ -56,14 +56,14 @@ class AS2MdnSettings(Model):
     }
 
     _attribute_map = {
-        'need_mdn': {'key': 'needMdn', 'type': 'bool'},
-        'sign_mdn': {'key': 'signMdn', 'type': 'bool'},
-        'send_mdn_asynchronously': {'key': 'sendMdnAsynchronously', 'type': 'bool'},
+        'need_mdn': {'key': 'needMDN', 'type': 'bool'},
+        'sign_mdn': {'key': 'signMDN', 'type': 'bool'},
+        'send_mdn_asynchronously': {'key': 'sendMDNAsynchronously', 'type': 'bool'},
         'receipt_delivery_url': {'key': 'receiptDeliveryUrl', 'type': 'str'},
         'disposition_notification_to': {'key': 'dispositionNotificationTo', 'type': 'str'},
-        'sign_outbound_mdn_if_optional': {'key': 'signOutboundMdnIfOptional', 'type': 'bool'},
+        'sign_outbound_mdn_if_optional': {'key': 'signOutboundMDNIfOptional', 'type': 'bool'},
         'mdn_text': {'key': 'mdnText', 'type': 'str'},
-        'send_inbound_mdn_to_message_box': {'key': 'sendInboundMdnToMessageBox', 'type': 'bool'},
+        'send_inbound_mdn_to_message_box': {'key': 'sendInboundMDNToMessageBox', 'type': 'bool'},
         'mic_hashing_algorithm': {'key': 'micHashingAlgorithm', 'type': 'str'},
     }
 
