@@ -14,6 +14,28 @@ from azure.servicebus.common.constants import DEADLETTERNAME
 
 
 class Message(message.Message):
+    """A Service Bus Message.
+
+    :param body: The data to send in a single message.
+    :type body: str or bytes
+    :param encoding: The encoding for string data. Default is UTF-8.
+    :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_complex_message]
+            :end-before: [END send_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Sending a message with additional properties
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message
+    """
 
     def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
         self._loop = loop or get_running_loop()
@@ -98,6 +120,9 @@ class Message(message.Message):
 
 
 class DeferredMessage(Message):
+    """A message that has been deferred. A deferred message can be completed,
+    abandoned, or dead-lettered, however it cannot be deferred again.
+    """
 
     def __init__(self, deferred, mode):
         self._settled = mode == 0
@@ -122,11 +147,26 @@ class DeferredMessage(Message):
         return self._settled
 
     async def complete(self):
+        """Complete the message.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('complete')
         await self._receiver._settle_deferred('completed', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def dead_letter(self, description=None):
+        """Move the message to the Dead Letter queue.
+
+        :param description: Additional details.
+        :type description: str
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('dead-letter')
         details = {
             'deadletter-reason': str(description) if description else "",
@@ -135,9 +175,16 @@ class DeferredMessage(Message):
         self._settled = True
 
     async def abandon(self):
+        """Abandon the message. This message will be returned to the queue to be reprocessed.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('abandon')
         await self._receiver._settle_deferred('abandoned', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     async def defer(self):
+        """A DeferredMessage cannot be deferred. Raises `ValueError`."""
         raise ValueError("Message is already deferred.")

@@ -368,6 +368,10 @@ class SessionMixin(object):
 
     @property
     def expired(self):
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
         if self.locked_until and self.locked_until <= datetime.datetime.now():
             return True
         return False
@@ -398,7 +402,17 @@ class SenderMixin(object):
         with send_pending_messages.
 
         :param message: The message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.common.message.Message
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_and_send_messages]
+                :end-before: [END queue_and_send_messages]
+                :language: python
+                :dedent: 4
+                :caption: Send the queued messages
+                :name: sender_queue
+
         """
         if not self.running:
             self.open()

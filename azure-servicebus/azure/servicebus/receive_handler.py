@@ -38,18 +38,44 @@ from azure.servicebus.common.constants import (
 
 
 class Receiver(BaseHandler):
-    """
-    Implements a Receiver.
+    """This receive handler acts as an iterable message stream for retrieving
+    messages for a Service Bus entity. It operates a single connetion that must be opened and
+    closed on completion. The service connection will remain open for the entirety of the iterator.
+    If you find yourself only partially iterating the message stream, you should run the receiver
+    in a `with` statement to ensure the connection is closed.
+    The Receiver should not be instantiated directly, and should be accessed from a `QueueClient` or
+    `SubscriptionClient` using the `get_receiver()` method.
+
+    .. note:: This object is not thread-safe.
+
+    :param handler_id: The ID used as the connection name for the Receiver.
+    :type handler_id: str
+    :param source: The endpoint from which to receive messages.
+    :type source: ~uamqp.Source
+    :param auth_config: The SASL auth credentials.
+    :type auth_config: dict[str, str]
+    :param connection: A shared connection [not yet supported].
+    :type connection: ~uamqp.Connection
+    :param mode: The receive connection mode. Value must be either PeekLock or ReceiveAndDelete.
+    :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
+    :param encoding: The encoding used for string properties. Default is 'UTF-8'.
+    :type encoding: str
+    :param debug: Whether to enable network trace debug logs.
+    :type debug: bool
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_receiver]
+            :end-before: [END get_receiver]
+            :language: python
+            :dedent: 4
+            :caption: Get the receiver client from service bus client
+
     """
 
     def __init__(
             self, handler_id, source, auth_config, connection=None,
             mode=ReceiveSettleMode.PeekLock, encoding='UTF-8', debug=False, **kwargs):
-        """
-        Instantiate a receiver.
-        :param source: The source entity from which to receive messages.
-        :type source: ~uamqp.Source
-        """
         self._used = threading.Event()
         self.name = "SBReceiver-{}".format(handler_id)
         self.last_received = None
@@ -165,7 +191,16 @@ class Receiver(BaseHandler):
     def queue_size(self):
         """
         The current size of the unprocessed message queue.
-        :returns: int
+        :rtype: int
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_size]
+                :end-before: [END queue_size]
+                :language: python
+                :dedent: 4
+                :caption: Get the number of unprocessed messages in the queue
+
         """
         # pylint: disable=protected-access
         if self._handler._received_messages:
@@ -176,12 +211,23 @@ class Receiver(BaseHandler):
         """Browse messages pending in the queue. This operation does not remove
         messages from the queue, nor does it lock them.
 
-        :param count: How many message to try and peek.
+        :param count: The maximum number of messages to try and peek. The default
+         value is 1.
         :type count: int
-        :param start_from: An enqueue timestamp from which to peek at messages.
-        :type start_from: ~datetime.datetime
-        :returns: list[~azure.servicebus.common.message.PeekMessage]
+        :param start_from: A message sequence number from which to start browsing messages.
+        :type start_from: int
+        :rtype: list[~azure.servicebus.common.message.PeekMessage]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START peek_messages]
+                :end-before: [END peek_messages]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue
+
         """
+
         if not start_from:
             start_from = self.last_received or 1
         if int(count) < 1:
@@ -201,14 +247,27 @@ class Receiver(BaseHandler):
 
     def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
         """Receive messages that have previously been deferred.
+        When receiving deferred messages from a partitioned entity, all of the supplied
+        sequence numbers must be messages from the same partition.
 
         :param sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
         :type sequence_numbers: list[int]
         :param mode: The receive mode, default value is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
-        :returns: list[~azure.servicebus.Message]
+        :rtype: list[~azure.servicebus.common.message.DeferredMessage]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START receive_deferred_messages]
+                :end-before: [END receive_deferred_messages]
+                :language: python
+                :dedent: 8
+                :caption: Get the messages which were previously deferred
+
         """
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         self._can_run()
         try:
             receive_mode = mode.value.value
@@ -228,7 +287,17 @@ class Receiver(BaseHandler):
         return messages
 
     def open(self):
-        """Open handler connection."""
+        """Open receiver connection and authenticate session.
+        If the receiver is already open, this operation will do nothing.
+        This method will be called automatically when one starts to iterate
+        messages in the receiver, so there should be no need to call it directly.
+        A receiver opened with this method must be explicitly closed.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+
+        .. note:: This operation is not thread-safe.
+
+        """
         if self.running:
             return
         self.running = True
@@ -248,7 +317,30 @@ class Receiver(BaseHandler):
                 raise
 
     def close(self, exception=None):
-        """Close handler connection."""
+        """Close down the receiver connection. If the receiver has already closed,
+        this operation will do nothing. An optional exception can be passed in to
+        indicate that the handler was shutdown due to error.
+        It is recommended to open a handler within a context manager as
+        opposed to calling the method directly.
+        The receiver will be implicitly closed on completion of the message iterator,
+        however this method will need to be called explicitly if the message iterator is not run
+        to completion.
+
+        .. note:: This operation is not thread-safe.
+
+        :param exception: An optional exception if the handler is closing
+         due to an error.
+        :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START open_close_receiver_connection]
+                :end-before: [END open_close_receiver_connection]
+                :language: python
+                :dedent: 4
+                :caption: Close the connection and shutdown the receiver
+
+        """
         if not self.running:
             return
         self.running = False
@@ -257,16 +349,31 @@ class Receiver(BaseHandler):
         super(Receiver, self).close(exception=exception)
 
     def fetch_next(self, max_batch_size=None, timeout=None):
-        """
-        Receive messages from ServiceBus entity.
+        """Receive a batch of messages at once. This approach it optimal
+        if you wish to process multiple messages simultaneously. Note that the
+        number of messages retrieved in a single batch will be dependent on
+        whether `prefetch` was set for the receiver. This call will prioritize returning
+        quickly over meeting a specified batch size, and so will return as soon as at least
+        one message is received and there is a gap in incoming messages regardless
+        of the specified batch size.
 
-        :param max_batch_size: Receive a batch of messages. Batch size will
-         be up to the maximum specified, but will return as soon as service
-         returns no new messages. If combined with a timeout and no messages are
-         retrieve before the time, the result will be empty. If no batch
-         size is supplied, the prefetch size will be the maximum.
+        :param max_batch_size: Maximum number of messages in the batch. Actual number
+         returned will depend on prefetch size and incoming stream rate.
         :type max_batch_size: int
-        :returns: list[~azure.servicebus.Message]
+        :param timeout: The time to wait in seconds for the first message to arrive.
+         If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. If specified, an no messages arrive within the
+         timeout period, an empty list will be returned.
+        :rtype: list[~azure.servicebus.common.message.Message]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START fetch_next_messages]
+                :end-before: [END fetch_next_messages]
+                :language: python
+                :dedent: 4
+                :caption: Get the messages in batch from the receiver
+
         """
         self._can_run()
         wrapped_batch = []
@@ -285,6 +392,55 @@ class Receiver(BaseHandler):
 
 
 class SessionReceiver(Receiver, mixins.SessionMixin):
+    """This receive handler acts as an iterable message stream for retrieving
+    messages for a sessionful Service Bus entity. It operates a single connetion that must be opened and
+    closed on completion. The service connection will remain open for the entirety of the iterator.
+    If you find yourself only partially iterating the message stream, you should run the receiver
+    in a `with` statement to ensure the connection is closed.
+    The Receiver should not be instantiated directly, and should be accessed from a `QueueClient` or
+    `SubscriptionClient` using the `get_receiver()` method.
+    When receiving messages from a session, connection errors that would normally be automatically
+    retried will instead raise an error due to the loss of the lock on a particular session.
+    A specific session can be specified, or the receiver can retrieve any available session using
+    the `NEXT_AVAILABLE` constant.
+
+    .. note:: This object is not thread-safe.
+
+    :param handler_id: The ID used as the connection name for the Receiver.
+    :type handler_id: str
+    :param source: The endpoint from which to receive messages.
+    :type source: ~uamqp.Source
+    :param auth_config: The SASL auth credentials.
+    :type auth_config: dict[str, str]
+    :param session: The ID of the session to receive from.
+    :type session: str or ~azure.servicebus.common.constants.NEXT_AVAILABLE
+    :param loop: An async event loop
+    :type loop: ~asyncio.EventLoop
+    :param connection: A shared connection [not yet supported].
+    :type connection: ~uamqp.Connection
+    :param mode: The receive connection mode. Value must be either PeekLock or ReceiveAndDelete.
+    :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
+    :param encoding: The encoding used for string properties. Default is 'UTF-8'.
+    :type encoding: str
+    :param debug: Whether to enable network trace debug logs.
+    :type debug: bool
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_session_receiver_client]
+            :end-before: [END create_session_receiver_client]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver within a context manager.
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_receiver_session_nextavailable]
+            :end-before: [END create_receiver_session_nextavailable]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver for the next available session.
+
+    """
 
     def __init__(
             self, handler_id, source, auth_config, session=None,
@@ -345,7 +501,16 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         """Get the session state. Returns None if no state
         has been set.
 
-        :returns: str
+        :rtype: str
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START get_session_state]
+                :end-before: [END get_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state of the receiver
+
         """
         self._can_run()
         response = self._mgmt_request_response(
@@ -362,6 +527,15 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :param state: The state value.
         :type state: str, bytes or bytearray
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state of the receiver
+
         """
         self._can_run()
         state = state.encode(self.encoding) if isinstance(state, six.text_type) else state
@@ -371,7 +545,21 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.default)
 
     def renew_lock(self):
-        """Renew session lock."""
+        """Renew the session lock. This operation must be performed periodically
+        in order to retain a lock on the session to continue message processing.
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
+        with an `azure.servicebus.common.utils.AutoLockRenew` instance.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START renew_lock]
+                :end-before: [END renew_lock]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
+
+        """
         self._can_run()
         expiry = self._mgmt_request_response(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
@@ -380,14 +568,25 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         self.locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
 
     def peek(self, count=1, start_from=None):
-        """Browse messages pending in the session. This operation does not remove
+        """Browse messages pending in the queue. This operation does not remove
         messages from the queue, nor does it lock them.
+        This operation will only peek pending messages in the current session.
 
-        :param count: How many message to try and peek.
+        :param count: The maximum number of messages to try and peek. The default
+         value is 1.
         :type count: int
-        :param start_from: An enqueue timestamp from which to peek at messages.
-        :type start_from: ~datetime.datetime
-        :returns: list[~azure.servicebus.common.message.PeekMessage]
+        :param start_from: A message sequence number from which to start browsing messages.
+        :type start_from: int
+        :rtype: list[~azure.servicebus.common.message.PeekMessage]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START peek_messages]
+                :end-before: [END peek_messages]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue
+
         """
         if not start_from:
             start_from = self.last_received or 1
@@ -407,16 +606,29 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.peek_op)
 
     def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
-        """Receive messages that have previously been deferred.
-        Deferred messages must have had same Session ID as the current receiver.
+        """Receive messages that have previously been deferred. This operation can
+        only receive deferred messages from the current session.
+        When receiving deferred messages from a partitioned entity, all of the supplied
+        sequence numbers must be messages from the same partition.
 
         :param sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
         :type sequence_numbers: list[int]
         :param mode: The receive mode, default value is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
-        :returns: list[~azure.servicebus.Message]
+        :rtype: list[~azure.servicebus.common.message.DeferredMessage]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START receive_deferred_messages]
+                :end-before: [END receive_deferred_messages]
+                :language: python
+                :dedent: 4
+                :caption: Get the messages which were previously deferred in the session
+
         """
+        if not sequence_numbers:
+            raise ValueError("At least one sequence number must be specified.")
         self._can_run()
         try:
             receive_mode = mode.value.value
@@ -437,17 +649,27 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         return messages
 
     def list_sessions(self, updated_since=None, max_results=100, skip=0):
-        """List the Session IDs with pending messages in the queue where the 'State' of the session
+        """List the Session IDs with pending messages in the queue where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
         If the state of a Session has never been set, it will not be returned regardless of whether
         there are messages pending.
+
         :param updated_since: The UTC datetime from which to return updated pending Session IDs.
         :type updated_since: datetime.datetime
         :param max_results: The maximum number of Session IDs to return. Default value is 100.
         :type max_results: int
         :param skip: The page value to jump to. Default value is 0.
         :type skip: int
-        :returns: list[str]
+        :rtype: list[str]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START list_sessions]
+                :end-before: [END list_sessions]
+                :language: python
+                :dedent: 4
+                :caption: List the ids of sessions with pending messages
+
         """
         if int(max_results) < 1:
             raise ValueError("max_results must be 1 or greater.")

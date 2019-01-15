@@ -83,6 +83,32 @@ def renewable_start_time(renewable):
 
 
 class AutoLockRenew(object):
+    """Auto renew locks for messages and sessions using a background thread pool.
+
+    :param executor: A user-specified thread pool. This cannot be combined with
+     setting `max_workers`.
+    :type executor: ~concurrent.futures.ThreadPoolExecutor
+    :param max_workers: Specifiy the maximum workers in the thread pool. If not
+     specified the number used will be derived from the core count of the environment.
+     This cannot be combined with `executor`.
+    :type max_workers: int
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START auto_lock_renew_message]
+            :end-before: [END auto_lock_renew_message]
+            :language: python
+            :dedent: 4
+            :caption: Automatically renew a message lock
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START auto_lock_renew_session]
+            :end-before: [END auto_lock_renew_session]
+            :language: python
+            :dedent: 4
+            :caption: Automatically renew a session lock
+
+    """
 
     def __init__(self, executor=None, max_workers=None):
         self.executor = executor or ThreadPoolExecutor(max_workers=max_workers)
@@ -126,8 +152,22 @@ class AutoLockRenew(object):
             renewable.auto_renew_error = error
 
     def register(self, renewable, timeout=300):
+        """Register a renewable entity for automatic lock renewal.
+
+        :param renewable: A locked entity that needs to be renewed.
+        :type renewable: ~azure.servicebus.common.message.Message or
+         ~azure.servicebus.receive_handler.SessionReceiver
+        :param timeout: A time in seconds that the lock should be maintained for.
+         Default value is 300 (5 minutes).
+        :type timeout: int
+        """
         starttime = renewable_start_time(renewable)
         self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout)
 
     def shutdown(self, wait=True):
+        """Shutdown the thread pool to clean up any remaining lock renewal threads.
+
+        :param wait: Whether to block until thread pool has shutdown. Default is `True`.
+        :type wait: bool
+        """
         self.executor.shutdown(wait=wait)

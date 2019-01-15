@@ -19,7 +19,29 @@ from azure.servicebus.common.errors import (
 
 
 class Message(object):  # pylint: disable=too-many-public-methods
+    """
+    A Service Bus Message.
 
+    :param body: The data to send in a single message.
+    :type body: str or bytes
+    :param encoding: The encoding for string data. Default is UTF-8.
+    :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_complex_message]
+            :end-before: [END send_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Sending a message with additional properties
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message
+    """
     _X_OPT_ENQUEUED_TIME = b'x-opt-enqueued-time'
     _X_OPT_SEQUENCE_NUMBER = b'x-opt-sequence-number'
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER = b'x-opt-enqueue-sequence-number'
@@ -31,14 +53,6 @@ class Message(object):  # pylint: disable=too-many-public-methods
     _x_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
-        """
-        Create a ServiceBus Message.
-
-        :param body: The data to send in a single message.
-        :type body: str, bytes or list
-        :param encoding: The encoding for string data. Default is UTF-8.
-        :type encoding: str
-        """
         self.properties = uamqp.message.MessageProperties(encoding=encoding)
         self.header = uamqp.message.MessageHeader()
         self.received_timestamp = None
@@ -85,6 +99,12 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     @property
     def settled(self):
+        """Whether the message has been settled. This will aways be `True`
+        for a message received using ReceiveAndDelete mode, otherwise it
+        will be `False` until the message is completed or otherwise settled.
+
+        :rtype: bool
+        """
         return self.message.settled
 
     @property
@@ -108,8 +128,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     @property
     def user_properties(self):
-        """
-        Application defined properties on the message.
+        """User defined properties on the message.
 
         :rtype: dict
         """
@@ -117,8 +136,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     @user_properties.setter
     def user_properties(self, value):
-        """
-        Application defined properties on the message.
+        """User defined properties on the message.
 
         :param value: The application properties for the Message.
         :type value: dict
@@ -247,8 +265,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     @property
     def body(self):
-        """
-        The body of the event data object.
+        """The body of the Message.
 
         :rtype: bytes or generator[bytes]
         """
@@ -270,9 +287,8 @@ class Message(object):  # pylint: disable=too-many-public-methods
         """Renew the message lock.
         This operation is only available for non-sessionful messages.
 
-        :raises: TypeError is the mesage is sessionful.
+        :raises: TypeError if the mesage is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """
         if hasattr(self._receiver, 'locked_until'):
@@ -341,6 +357,25 @@ class Message(object):  # pylint: disable=too-many-public-methods
             raise MessageSettleFailed("defer", e)
 
 class BatchMessage(Message):
+    """A batch of messages combined into a single message body.
+    The body of the messages in the batch should be supplied by an iterable,
+    such as a generator.
+    If the contents of the iterable exceeds the maximum size of a single message,
+    the data will be broken up across multiple messages.
+
+    :param body: The data to send in each message in the batch.
+    :type body: Iterable
+    :param encoding: The encoding for string data. Default is UTF-8.
+    :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_batch_message]
+            :end-before: [END send_batch_message]
+            :language: python
+            :dedent: 4
+            :caption: Send a batched message.
+    """
 
     def _build_message(self, body):
         if body is None:
@@ -351,6 +386,10 @@ class BatchMessage(Message):
 
 
 class PeekMessage(Message):
+    """A preview message. This message is still on the queue, and unlocked.
+    A peeked message cannot be completed, abandoned, dead-lettered or deferred.
+    It has no lock token or expiry.
+    """
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
@@ -364,22 +403,30 @@ class PeekMessage(Message):
         raise TypeError("Peeked message is not locked.")
 
     def renew_lock(self):
+        """A PeekMessage cannot be renewed. Raises `TypeError`."""
         raise TypeError("Peeked message is not locked.")
 
     def complete(self):
+        """A PeekMessage cannot be completed Raises `TypeError`."""
         raise TypeError("Peeked message cannot be completed.")
 
     def dead_letter(self, description=None):
+        """A PeekMessage cannot be dead-lettered. Raises `TypeError`."""
         raise TypeError("Peeked message cannot be dead-lettered.")
 
     def abandon(self):
+        """A PeekMessage cannot be abandoned. Raises `TypeError`."""
         raise TypeError("Peeked message cannot be abandoned.")
 
     def defer(self):
+        """A PeekMessage cannot be deferred. Raises `TypeError`."""
         raise TypeError("Peeked message cannot be deferred.")
 
 
 class DeferredMessage(Message):
+    """A message that has been deferred. A deferred message can be completed,
+    abandoned, or dead-lettered, however it cannot be deferred again.
+    """
 
     def __init__(self, message, mode):
         self._settled = mode == 0
@@ -404,11 +451,27 @@ class DeferredMessage(Message):
         return self._settled
 
     def complete(self):
+        """Complete the message.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('complete')
         self._receiver._settle_deferred('completed', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     def dead_letter(self, description=None):
+        """Move the message to the Dead Letter queue.
+
+        :param description: Additional details.
+        :type description: str
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('dead-letter')
         details = {
             'deadletter-reason': str(description) if description else "",
@@ -417,9 +480,17 @@ class DeferredMessage(Message):
         self._settled = True
 
     def abandon(self):
+        """Abandon the message. This message will be returned to the queue to be reprocessed.
+
+        :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.common.errors.MessageSettleFailed if message settle operation fails.
+        """
         self._is_live('abandon')
         self._receiver._settle_deferred('abandoned', [self.lock_token])  # pylint: disable=protected-access
         self._settled = True
 
     def defer(self):
+        """A DeferredMessage cannot be deferred. Raises `ValueError`."""
         raise ValueError("Message is already deferred.")
