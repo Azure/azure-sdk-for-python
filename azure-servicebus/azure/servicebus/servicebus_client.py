@@ -530,6 +530,8 @@ class ReceiveClientMixin(object):
             raise ValueError("Sessionful deferred messages can only be settled within a locked receive session.")
         if settlement.lower() not in ['completed', 'suspended', 'abandoned']:
             raise ValueError("Settlement must be one of: 'completed', 'suspended', 'abandoned'")
+        if not messages:
+            raise ValueError("At least one message must be specified.")
         message = {
             'disposition-status': settlement.lower(),
             'lock-tokens': types.AMQPArray([m.lock_token for m in messages])}

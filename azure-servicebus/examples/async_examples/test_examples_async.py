@@ -215,12 +215,12 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     # [END receiver_fetch_batch]
 
     # [START auto_lock_renew_async_message]
-    for azure.servicebus.aio import AutoLockRenew
+    from azure.servicebus.aio import AutoLockRenew
 
     lock_renewal = AutoLockRenew()
     async with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
         async for message in queue_receiver:
-            lock_renewal.register(message)
+            lock_renewal.register(message, timeout=60)
             await process_message(message)
 
             await message.complete()
@@ -231,8 +231,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
 async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
-        name=session_queue,
-        debug=True)
+        name=session_queue)
     queue_client.get_properties()
 
     # [START open_close_session_sender_context]
@@ -313,13 +312,13 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     # [END receiver_renew_session_lock]
 
     # [START auto_lock_renew_async_session]
-    for azure.servicebus.aio import AutoLockRenew
+    from azure.servicebus.aio import AutoLockRenew
 
     lock_renewal = AutoLockRenew()
-    async with session_client.get_receiver(session="MySessionID", idle_timeout=3) as session:
+    async with queue_client.get_receiver(session="MySessionID", idle_timeout=3) as session:
         lock_renewal.register(session)
 
-        async for message in queue_receiver:
+        async for message in session:
             await process_message(message)
             await message.complete()
     # [END auto_lock_renew_async_session]

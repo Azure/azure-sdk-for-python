@@ -18,9 +18,9 @@ from uamqp.message import Message, MessageProperties
 
 from azure.servicebus.common.utils import create_properties
 from azure.servicebus.common.errors import (
+    _ServiceBusErrorPolicy,
     InvalidHandlerState,
     ServiceBusError,
-    _ServiceBusErrorPolicy,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError)
 

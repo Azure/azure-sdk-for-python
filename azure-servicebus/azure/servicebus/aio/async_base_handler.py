@@ -15,11 +15,11 @@ from uamqp import constants, errors
 
 from azure.servicebus.common.utils import create_properties, get_running_loop
 from azure.servicebus.common.errors import (
+    _ServiceBusErrorPolicy,
     ServiceBusError,
     ServiceBusConnectionError,
     InvalidHandlerState,
-    ServiceBusAuthorizationError,
-    _ServiceBusErrorPolicy)
+    ServiceBusAuthorizationError)
 
 
 _log = logging.getLogger(__name__)

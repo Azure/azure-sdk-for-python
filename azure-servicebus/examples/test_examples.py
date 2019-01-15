@@ -97,6 +97,7 @@ def test_example_create_servicebus_client(live_servicebus_config):
 
 def test_example_send_receive_service_bus(live_servicebus_config, standard_queue, session_queue):
     import os
+    import datetime
     from azure.servicebus import ServiceBusClient, ServiceBusResourceNotFound
     from azure.servicebus import Message
 
@@ -199,7 +200,7 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     # [END peek_messages_service_bus]
 
     # [START auto_lock_renew_message]
-    for azure.servicebus import AutoLockRenew
+    from azure.servicebus import AutoLockRenew
 
     lock_renewal = AutoLockRenew(max_workers=4)
     with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
@@ -212,14 +213,14 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     # [END auto_lock_renew_message]
 
     # [START auto_lock_renew_session]
-    for azure.servicebus import AutoLockRenew
+    from azure.servicebus import AutoLockRenew
 
     lock_renewal = AutoLockRenew(max_workers=4)
     with session_client.get_receiver(session="MySessionID", idle_timeout=3) as session:
         # Auto renew session lock for 2 minutes
         lock_renewal.register(session, timeout=120)
 
-        for message in queue_receiver:
+        for message in session:
             process_message(message)
             message.complete()
     # [END auto_lock_renew_session]
@@ -245,14 +246,14 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
         # messages which were deferred.
         deferred = queue_client.receive_deferred_messages(sequence_numbers=seq_numbers)
         # [END receive_deferred_messages_service_bus]
-    except ServiceBusError:
+    except ValueError:
         pass
-
+    deferred = []
     try:
         # [START settle_deferred_messages_service_bus]
         queue_client.settle_deferred_messages('completed', deferred)
         # [END settle_deferred_messages_service_bus]
-    except ServiceBusError:
+    except ValueError:
         pass
 
     # [START get_dead_letter_receiver]
@@ -276,8 +277,8 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
     sb_client = create_servicebus_client()
     queue_client = sb_client.get_queue(standard_queue)
     session_client = sb_client.get_queue(session_queue)
-    queue_client.send([Message("a"), Message("b"), Message("c")])
-    session_client.send([Message("a"), Message("b"), Message("c")], session="MySessionID")
+    queue_client.send([Message("a"), Message("b"), Message("c"),  Message("d"),  Message("e"),  Message("f")])
+    session_client.send([Message("a"), Message("b"), Message("c"),  Message("d"),  Message("e"),  Message("f")], session="MySessionID")
 
     # [START open_close_receiver_connection]
     receiver = queue_client.get_receiver()
@@ -306,7 +307,7 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
     # [END peek_messages]
 
     # [START receive_complex_message]
-    with queue_client.get_receiver() as receiver:
+    with queue_client.get_receiver(idle_timeout=3) as receiver:
         for message in receiver:
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))

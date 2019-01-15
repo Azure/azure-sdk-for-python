@@ -31,6 +31,7 @@ __all__ = [
     'Message',
     'BatchMessage',
     'PeekMessage',
+    'AutoLockRenew',
     'DeferredMessage',
     'ServiceBusClient',
     'QueueClient',
