@@ -65,12 +65,13 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../examples/async_examples/test_examples_async.py
-        :start-after: [START open_close_receiver_context]
-        :end-before: [END open_close_receiver_context]
-        :language: python
-        :dedent: 4
-        :caption: Running a queue receiver within a context manager.
+    Example:
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_receiver_context]
+            :end-before: [END open_close_receiver_context]
+            :language: python
+            :dedent: 4
+            :caption: Running a queue receiver within a context manager.
 
     """
 
@@ -253,12 +254,13 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
          due to an error.
         :type exception: Exception
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START open_close_receiver_directly]
-            :end-before: [END open_close_receiver_directly]
-            :language: python
-            :dedent: 4
-            :caption: Iterate then explicitly close a Receiver.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START open_close_receiver_directly]
+                :end-before: [END open_close_receiver_directly]
+                :language: python
+                :dedent: 4
+                :caption: Iterate then explicitly close a Receiver.
 
         """
         if not self.running:
@@ -279,12 +281,13 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_peek_messages]
-            :end-before: [END receiver_peek_messages]
-            :language: python
-            :dedent: 4
-            :caption: Peek messages in the queue.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_peek_messages]
+                :end-before: [END receiver_peek_messages]
+                :language: python
+                :dedent: 4
+                :caption: Peek messages in the queue.
 
         """
         await self._can_run()
@@ -316,12 +319,13 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_defer_messages]
-            :end-before: [END receiver_defer_messages]
-            :language: python
-            :dedent: 8
-            :caption: Defer messages, then retrieve them by sequence number.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_defer_messages]
+                :end-before: [END receiver_defer_messages]
+                :language: python
+                :dedent: 8
+                :caption: Defer messages, then retrieve them by sequence number.
 
         """
         if not sequence_numbers:
@@ -362,12 +366,13 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.aio.async_message.Message]
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_fetch_batch]
-            :end-before: [END receiver_fetch_batch]
-            :language: python
-            :dedent: 4
-            :caption: Fetch a batch of messages.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_fetch_batch]
+                :end-before: [END receiver_fetch_batch]
+                :language: python
+                :dedent: 4
+                :caption: Fetch a batch of messages.
 
         """
         await self._can_run()
@@ -424,19 +429,20 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../examples/async_examples/test_examples_async.py
-        :start-after: [START open_close_receiver_session_context]
-        :end-before: [END open_close_receiver_session_context]
-        :language: python
-        :dedent: 4
-        :caption: Running a session receiver within a context manager.
+    Example:
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_receiver_session_context]
+            :end-before: [END open_close_receiver_session_context]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver within a context manager.
 
-    .. literalinclude:: ../examples/async_examples/test_examples_async.py
-        :start-after: [START open_close_receiver_session_nextavailable]
-        :end-before: [END open_close_receiver_session_nextavailable]
-        :language: python
-        :dedent: 4
-        :caption: Running a session receiver for the next available session.
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
+            :start-after: [START open_close_receiver_session_nextavailable]
+            :end-before: [END open_close_receiver_session_nextavailable]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver for the next available session.
 
     """
 
@@ -502,12 +508,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :rtype: str
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START set_session_state]
-            :end-before: [END set_session_state]
-            :language: python
-            :dedent: 4
-            :caption: Getting and setting the state of a session.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Getting and setting the state of a session.
 
         """
         await self._can_run()
@@ -526,12 +533,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :param state: The state value.
         :type state: str or bytes or bytearray
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START set_session_state]
-            :end-before: [END set_session_state]
-            :language: python
-            :dedent: 4
-            :caption: Getting and setting the state of a session.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Getting and setting the state of a session.
 
         """
         await self._can_run()
@@ -548,12 +556,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         also be performed as an asynchronous background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_renew_session_lock]
-            :end-before: [END receiver_renew_session_lock]
-            :language: python
-            :dedent: 4
-            :caption: Renew the sesison lock.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_renew_session_lock]
+                :end-before: [END receiver_renew_session_lock]
+                :language: python
+                :dedent: 4
+                :caption: Renew the sesison lock.
 
         """
         await self._can_run()
@@ -575,12 +584,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_peek_session_messages]
-            :end-before: [END receiver_peek_session_messages]
-            :language: python
-            :dedent: 8
-            :caption: Peek messages in the queue.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_peek_session_messages]
+                :end-before: [END receiver_peek_session_messages]
+                :language: python
+                :dedent: 8
+                :caption: Peek messages in the queue.
 
         """
         if not start_from:
@@ -613,12 +623,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.aio.async_message.DeferredMessage]
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START receiver_defer_session_messages]
-            :end-before: [END receiver_defer_session_messages]
-            :language: python
-            :dedent: 8
-            :caption: Defer messages, then retrieve them by sequence number.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START receiver_defer_session_messages]
+                :end-before: [END receiver_defer_session_messages]
+                :language: python
+                :dedent: 8
+                :caption: Defer messages, then retrieve them by sequence number.
 
         """
         if not sequence_numbers:

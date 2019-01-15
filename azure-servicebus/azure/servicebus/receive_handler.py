@@ -63,12 +63,13 @@ class Receiver(BaseHandler):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../examples/test_examples.py
-        :start-after: [START get_receiver]
-        :end-before: [END get_receiver]
-        :language: python
-        :dedent: 4
-        :caption: Get the receiver client from service bus client
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START get_receiver]
+            :end-before: [END get_receiver]
+            :language: python
+            :dedent: 4
+            :caption: Get the receiver client from service bus client
 
     """
 
@@ -192,12 +193,13 @@ class Receiver(BaseHandler):
         The current size of the unprocessed message queue.
         :rtype: int
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START queue_size]
-            :end-before: [END queue_size]
-            :language: python
-            :dedent: 4
-            :caption: Get the number of unprocessed messages in the queue
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_size]
+                :end-before: [END queue_size]
+                :language: python
+                :dedent: 4
+                :caption: Get the number of unprocessed messages in the queue
 
         """
         # pylint: disable=protected-access
@@ -216,12 +218,13 @@ class Receiver(BaseHandler):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START peek_messages]
-            :end-before: [END peek_messages]
-            :language: python
-            :dedent: 4
-            :caption: Loog at pending messages in the queue
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START peek_messages]
+                :end-before: [END peek_messages]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue
 
         """
 
@@ -254,12 +257,13 @@ class Receiver(BaseHandler):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :returns: list[~azure.servicebus.common.message.DeferredMessage]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START receive_deferred_messages]
-            :end-before: [END receive_deferred_messages]
-            :language: python
-            :dedent: 8
-            :caption: Get the messages which were previously deferred
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START receive_deferred_messages]
+                :end-before: [END receive_deferred_messages]
+                :language: python
+                :dedent: 8
+                :caption: Get the messages which were previously deferred
 
         """
         if not sequence_numbers:
@@ -328,12 +332,13 @@ class Receiver(BaseHandler):
          due to an error.
         :type exception: Exception
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START open_close_receiver_connection]
-            :end-before: [END open_close_receiver_connection]
-            :language: python
-            :dedent: 4
-            :caption: Close the connection and shutdown the receiver
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START open_close_receiver_connection]
+                :end-before: [END open_close_receiver_connection]
+                :language: python
+                :dedent: 4
+                :caption: Close the connection and shutdown the receiver
 
         """
         if not self.running:
@@ -361,12 +366,13 @@ class Receiver(BaseHandler):
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.common.message.Message]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START fetch_next_messages]
-            :end-before: [END fetch_next_messages]
-            :language: python
-            :dedent: 4
-            :caption: Get the messages in batch from the receiver
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START fetch_next_messages]
+                :end-before: [END fetch_next_messages]
+                :language: python
+                :dedent: 4
+                :caption: Get the messages in batch from the receiver
 
         """
         self._can_run()
@@ -549,12 +555,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         also be performed as a threaded background task by registering the session
         with an `azure.servicebus.common.utils.AutoLockRenew` instance.
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START renew_lock]
-            :end-before: [END renew_lock]
-            :language: python
-            :dedent: 4
-            :caption: Renew the session lock before it expires
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START renew_lock]
+                :end-before: [END renew_lock]
+                :language: python
+                :dedent: 4
+                :caption: Renew the session lock before it expires
 
         """
         self._can_run()
@@ -576,12 +583,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type start_from: int
         :rtype: list[~azure.servicebus.common.message.PeekMessage]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START peek_messages]
-            :end-before: [END peek_messages]
-            :language: python
-            :dedent: 4
-            :caption: Look at pending messages in the queue
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START peek_messages]
+                :end-before: [END peek_messages]
+                :language: python
+                :dedent: 4
+                :caption: Look at pending messages in the queue
 
         """
         if not start_from:
@@ -614,12 +622,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :rtype: list[~azure.servicebus.common.message.DeferredMessage]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START receive_deferred_messages]
-            :end-before: [END receive_deferred_messages]
-            :language: python
-            :dedent: 4
-            :caption: Get the messages which were previously deferred in the session
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START receive_deferred_messages]
+                :end-before: [END receive_deferred_messages]
+                :language: python
+                :dedent: 4
+                :caption: Get the messages which were previously deferred in the session
 
         """
         if not sequence_numbers:
@@ -657,12 +666,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :type skip: int
         :rtype: list[str]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START list_sessions]
-            :end-before: [END list_sessions]
-            :language: python
-            :dedent: 4
-            :caption: List the ids of sessions with pending messages
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START list_sessions]
+                :end-before: [END list_sessions]
+                :language: python
+                :dedent: 4
+                :caption: List the ids of sessions with pending messages
 
         """
         if int(max_results) < 1:

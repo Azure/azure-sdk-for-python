@@ -46,12 +46,12 @@ def test_example_create_servicebus_client(live_servicebus_config):
     # [END create_servicebus_client_connstr]
 
     try:
-    # [START get_queue_client]
+        # [START get_queue_client]
         # Queue Client can be used to send and receive messages
         # from an Azure ServiceBus Service
         queue_name = 'MyQueue'
         queue_client = client.get_queue(queue_name)
-    # [END get_queue_client]
+        # [END get_queue_client]
     except ServiceBusResourceNotFound:
         pass
 
@@ -63,11 +63,11 @@ def test_example_create_servicebus_client(live_servicebus_config):
     # [END list_queues]
 
     try:
-    # [START get_topic_client]
+        # [START get_topic_client]
         # Topic Client can be used to send messages to an Azure ServiceBus Service
         topic_name = 'MyTopic'
         topic_client = client.get_topic(topic_name)
-    # [END get_topic_client]
+        # [END get_topic_client]
     except ServiceBusResourceNotFound:
         pass
 
@@ -79,11 +79,11 @@ def test_example_create_servicebus_client(live_servicebus_config):
     # [END list_topics]
 
     try:
-    # [START get_subscription_client]
+        # [START get_subscription_client]
         # Subscription client can receivce messages from Azure Service Bus subscription
         subscription_name = 'MySubscription'
         subscription_client = client.get_subscription(topic_name, subscription_name)
-    # [END get_subscription_client]
+        # [END get_subscription_client]
     except ServiceBusResourceNotFound:
         pass
 
@@ -103,7 +103,7 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     client = create_servicebus_client()
 
     try:
-    # [START create_queue_client_directly]
+        # [START create_queue_client_directly]
         import os
         from azure.servicebus import QueueClient
 
@@ -111,12 +111,12 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
         queue_client = QueueClient.from_connection_string(connection_str, name="MyQueue")
         queue_properties = queue_client.get_properties()
 
-    # [END create_queue_client_directly]
+        # [END create_queue_client_directly]
     except ServiceBusResourceNotFound:
         pass
 
     try:
-    # [START create_topic_client_directly]
+        # [START create_topic_client_directly]
         import os
         from azure.servicebus import TopicClient
 
@@ -124,12 +124,12 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
         topic_client = TopicClient.from_connection_string(connection_str, name="MyTopic")
         properties = topic_client.get_properties()
 
-    # [END create_topic_client_directly]
+        # [END create_topic_client_directly]
     except ServiceBusResourceNotFound:
         pass
 
     try:
-    # [START create_sub_client_directly]
+        # [START create_sub_client_directly]
         import os
         from azure.servicebus import SubscriptionClient
 
@@ -138,7 +138,7 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
             connection_str, name="MySub", topic="MyTopic")
         properties = subscription_client.get_properties()
 
-    # [END create_sub_client_directly]
+        # [END create_sub_client_directly]
     except ServiceBusResourceNotFound:
         pass
 
@@ -177,6 +177,31 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     pending_messages = queue_client.peek(count=5)
     # [END peek_messages_service_bus]
 
+    # [START auto_lock_renew_message]
+    for azure.servicebus import AutoLockRenew
+
+    lock_renewal = AutoLockRenew(max_workers=4)
+    with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
+        for message in queue_receiver:
+            # Auto renew message for 1 minute.
+            lock_renewal.register(message, timeout=60)
+            process_message(message)
+
+            message.complete()
+    # [END auto_lock_renew_message]
+
+    # [START auto_lock_renew_session]
+    for azure.servicebus import AutoLockRenew
+
+    lock_renewal = AutoLockRenew(max_workers=4)
+    with session_client.get_receiver(session="MySessionID", idle_timeout=3) as session:
+        # Auto renew session lock for 2 minutes
+        lock_renewal.register(session, timeout=120)
+
+        for message in queue_receiver:
+            process_message(message)
+            message.complete()
+    # [END auto_lock_renew_session]
 
     # [START list_sessions_service_bus]
     session_ids = session_client.list_sessions()

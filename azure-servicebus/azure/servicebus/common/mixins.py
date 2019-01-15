@@ -400,13 +400,14 @@ class SenderMixin(object):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START queue_and_send_messages]
-            :end-before: [END queue_and_send_messages]
-            :language: python
-            :dedent: 4
-            :caption: Send the queued messages
-            :name: sender_queue
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_and_send_messages]
+                :end-before: [END queue_and_send_messages]
+                :language: python
+                :dedent: 4
+                :caption: Send the queued messages
+                :name: sender_queue
 
         """
         if not self.running:

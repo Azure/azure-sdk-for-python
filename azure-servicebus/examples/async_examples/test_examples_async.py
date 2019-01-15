@@ -214,6 +214,18 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         await asyncio.gather(*[m.complete() for m in messages])
     # [END receiver_fetch_batch]
 
+    # [START auto_lock_renew_async_message]
+    for azure.servicebus.aio import AutoLockRenew
+
+    lock_renewal = AutoLockRenew()
+    async with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
+        async for message in queue_receiver:
+            lock_renewal.register(message)
+            await process_message(message)
+
+            await message.complete()
+    # [END auto_lock_renew_async_message]
+
 
 @pytest.mark.asyncio
 async def test_async_snippet_sessions(live_servicebus_config, session_queue):
@@ -299,6 +311,18 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
             await process_message(message)
             await session.renew_lock()
     # [END receiver_renew_session_lock]
+
+    # [START auto_lock_renew_async_session]
+    for azure.servicebus.aio import AutoLockRenew
+
+    lock_renewal = AutoLockRenew()
+    async with session_client.get_receiver(session="MySessionID", idle_timeout=3) as session:
+        lock_renewal.register(session)
+
+        async for message in queue_receiver:
+            await process_message(message)
+            await message.complete()
+    # [END auto_lock_renew_async_session]
 
 
 @pytest.mark.asyncio

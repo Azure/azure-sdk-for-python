@@ -142,12 +142,13 @@ class BaseHandler:
 
         .. note:: This operation is not thread-safe.
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START open_close_sender_directly]
-            :end-before: [END open_close_sender_directly]
-            :language: python
-            :dedent: 4
-            :caption: Explicitly open and close a Sender.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START open_close_sender_directly]
+                :end-before: [END open_close_sender_directly]
+                :language: python
+                :dedent: 4
+                :caption: Explicitly open and close a Sender.
 
         """
         if self.running:
@@ -178,12 +179,13 @@ class BaseHandler:
          due to an error.
         :type exception: Exception
 
-        .. literalinclude:: ../examples/async_examples/test_examples_async.py
-            :start-after: [START open_close_sender_directly]
-            :end-before: [END open_close_sender_directly]
-            :language: python
-            :dedent: 4
-            :caption: Explicitly open and close a Sender.
+        Example:
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
+                :start-after: [START open_close_sender_directly]
+                :end-before: [END open_close_sender_directly]
+                :language: python
+                :dedent: 4
+                :caption: Explicitly open and close a Sender.
 
         """
         self.running = False

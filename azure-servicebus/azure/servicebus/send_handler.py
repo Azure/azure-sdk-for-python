@@ -47,13 +47,14 @@ class Sender(BaseHandler, mixins.SenderMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../examples/test_examples.py
-        :start-after: [START create_sender_client]
-        :end-before: [END create_sender_client]
-        :language: python
-        :dedent: 4
-        :caption: Create a new instance of the Sender
-        :name: sender_create
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_sender_client]
+            :end-before: [END create_sender_client]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Sender
+
     """
 
     def __init__(
@@ -84,13 +85,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type message: ~azure.servicebus.common.message.Message
         :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to send.
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START send_message]
-            :end-before: [END send_message]
-            :language: python
-            :dedent: 4
-            :caption: Send a message and block
-            :name: sender_send
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START send_message]
+                :end-before: [END send_message]
+                :language: python
+                :dedent: 4
+                :caption: Send a message and block
 
         """
         if not isinstance(message, Message):
@@ -114,13 +115,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :type messages: ~azure.servicebus.common.message.Message
         :rtype: list[int]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START scheduling_messages]
-            :end-before: [END scheduling_messages]
-            :language: python
-            :dedent: 4
-            :caption: Schedule a message to be sent in future
-            :name: sender_schedule
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START scheduling_messages]
+                :end-before: [END scheduling_messages]
+                :language: python
+                :dedent: 4
+                :caption: Schedule a message to be sent in future
 
         """
         if not self.running:
@@ -138,13 +139,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
         :param sequence_numbers: The seqeuence numbers of the scheduled messages.
         :type sequence_numbers: int
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START cancel_scheduled_messages]
-            :end-before: [END cancel_scheduled_messages]
-            :language: python
-            :dedent: 4
-            :caption: Cancelling messages scheduled to be sent in future
-            :name: sender_cancel
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START cancel_scheduled_messages]
+                :end-before: [END cancel_scheduled_messages]
+                :language: python
+                :dedent: 4
+                :caption: Cancelling messages scheduled to be sent in future
 
         """
         if not self.running:
@@ -165,13 +166,13 @@ class Sender(BaseHandler, mixins.SenderMixin):
          failed, otherwise it will be `None`.
         :rtype: list[tuple[bool, ~azure.servicebus.common.errors.MessageSendFailed]]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START queue_and_send_messages]
-            :end-before: [END queue_and_send_messages]
-            :language: python
-            :dedent: 4
-            :caption: Send the queued messages
-            :name: sender_pending
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_and_send_messages]
+                :end-before: [END queue_and_send_messages]
+                :language: python
+                :dedent: 4
+                :caption: Send the queued messages
 
         """
         if not self.running:
@@ -245,13 +246,13 @@ class SessionSender(Sender):
          send.
         :raises: ValueError if there is no session ID specified.
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START send_message]
-            :end-before: [END send_message]
-            :language: python
-            :dedent: 4
-            :caption: Send a message and block
-            :name: session_sender_create
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START send_message]
+                :end-before: [END send_message]
+                :language: python
+                :dedent: 4
+                :caption: Send a message and block
 
         """
         if not isinstance(message, Message):
@@ -268,13 +269,13 @@ class SessionSender(Sender):
         :param message: The message to be sent.
         :type message: ~azure.servicebus.Message
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START queue_and_send_session_messages]
-            :end-before: [END queue_and_send_session_messages]
-            :language: python
-            :dedent: 4
-            :caption: Put the message to be sent later in the queue
-            :name: session_sender_queue
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START queue_and_send_session_messages]
+                :end-before: [END queue_and_send_session_messages]
+                :language: python
+                :dedent: 4
+                :caption: Put the message to be sent later in the queue
 
         """
         if not self.session_id and not message.properties.group_id:
@@ -291,13 +292,13 @@ class SessionSender(Sender):
         :type messages: ~azure.servicebus.common.message.Message
         :returns: list[int]
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START scheduling_messages]
-            :end-before: [END scheduling_messages]
-            :language: python
-            :dedent: 4
-            :caption: Schedule a message to be sent in future
-            :name: session_sender_schedule
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START scheduling_messages]
+                :end-before: [END scheduling_messages]
+                :language: python
+                :dedent: 4
+                :caption: Schedule a message to be sent in future
 
         """
         for message in messages:
