@@ -34,6 +34,9 @@ class IntegrationRuntimeComputeProperties(Model):
     :param v_net_properties: VNet properties for managed integration runtime.
     :type v_net_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
+    :param virtual_network: VNet properties for managed integration runtime.
+    :type virtual_network:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeVirtualNetworkProperties
     """
 
     _validation = {
@@ -48,9 +51,10 @@ class IntegrationRuntimeComputeProperties(Model):
         'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
         'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
+        'virtual_network': {'key': 'virtualNetwork', 'type': 'IntegrationRuntimeVirtualNetworkProperties'},
     }
 
-    def __init__(self, *, additional_properties=None, location: str=None, node_size: str=None, number_of_nodes: int=None, max_parallel_executions_per_node: int=None, v_net_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, location: str=None, node_size: str=None, number_of_nodes: int=None, max_parallel_executions_per_node: int=None, v_net_properties=None, virtual_network=None, **kwargs) -> None:
         super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.location = location
@@ -58,3 +62,4 @@ class IntegrationRuntimeComputeProperties(Model):
         self.number_of_nodes = number_of_nodes
         self.max_parallel_executions_per_node = max_parallel_executions_per_node
         self.v_net_properties = v_net_properties
+        self.virtual_network = virtual_network

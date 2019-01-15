@@ -30,6 +30,7 @@ try:
     from .update_integration_runtime_node_request_py3 import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request_py3 import LinkedIntegrationRuntimeRequest
     from .create_linked_integration_runtime_request_py3 import CreateLinkedIntegrationRuntimeRequest
+    from .enable_interactive_query_for_integration_runtime_request_py3 import EnableInteractiveQueryForIntegrationRuntimeRequest
     from .parameter_specification_py3 import ParameterSpecification
     from .linked_service_py3 import LinkedService
     from .linked_service_resource_py3 import LinkedServiceResource
@@ -360,6 +361,7 @@ try:
     from .integration_runtime_custom_setup_script_properties_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info_py3 import IntegrationRuntimeSsisCatalogInfo
     from .integration_runtime_ssis_properties_py3 import IntegrationRuntimeSsisProperties
+    from .integration_runtime_virtual_network_properties_py3 import IntegrationRuntimeVirtualNetworkProperties
     from .integration_runtime_vnet_properties_py3 import IntegrationRuntimeVNetProperties
     from .integration_runtime_compute_properties_py3 import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime_py3 import ManagedIntegrationRuntime
@@ -392,6 +394,7 @@ except (SyntaxError, ImportError):
     from .update_integration_runtime_node_request import UpdateIntegrationRuntimeNodeRequest
     from .linked_integration_runtime_request import LinkedIntegrationRuntimeRequest
     from .create_linked_integration_runtime_request import CreateLinkedIntegrationRuntimeRequest
+    from .enable_interactive_query_for_integration_runtime_request import EnableInteractiveQueryForIntegrationRuntimeRequest
     from .parameter_specification import ParameterSpecification
     from .linked_service import LinkedService
     from .linked_service_resource import LinkedServiceResource
@@ -722,6 +725,7 @@ except (SyntaxError, ImportError):
     from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
     from .integration_runtime_ssis_properties import IntegrationRuntimeSsisProperties
+    from .integration_runtime_virtual_network_properties import IntegrationRuntimeVirtualNetworkProperties
     from .integration_runtime_vnet_properties import IntegrationRuntimeVNetProperties
     from .integration_runtime_compute_properties import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime import ManagedIntegrationRuntime
@@ -825,6 +829,7 @@ __all__ = [
     'UpdateIntegrationRuntimeNodeRequest',
     'LinkedIntegrationRuntimeRequest',
     'CreateLinkedIntegrationRuntimeRequest',
+    'EnableInteractiveQueryForIntegrationRuntimeRequest',
     'ParameterSpecification',
     'LinkedService',
     'LinkedServiceResource',
@@ -1155,6 +1160,7 @@ __all__ = [
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',
     'IntegrationRuntimeSsisProperties',
+    'IntegrationRuntimeVirtualNetworkProperties',
     'IntegrationRuntimeVNetProperties',
     'IntegrationRuntimeComputeProperties',
     'ManagedIntegrationRuntime',
