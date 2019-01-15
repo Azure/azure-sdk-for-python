@@ -72,6 +72,6 @@ if __name__ == '__main__':
     parser.add_argument('name', help='The package name')
     parser.add_argument('--dest', '-d', default=DEFAULT_DEST_FOLDER,
                         help='Destination folder. Relative to the package dir. [default: %(default)s]')
-
     args = parser.parse_args()
+
     create_package(args.name, args.dest)

@@ -31,19 +31,57 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
 
-- template: generic.test.yml
-  parameters:
-    name: Linux
-    vmImage: 'ubuntu-16.04'
+- job: 'Test'
+  dependsOn:
+    - 'Build_Target_Packages'
+  strategy:
+    matrix:
+      Linux_Python27:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '2.7'
+      Linux_Python34:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.4'
+      Linux_Python35:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.5'
+      Linux_Python36:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.6'
+      Linux_Python37:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.7'
+      Windows_Python35:
+        os.name: 'Windows'
+        os.vmImage: 'vs2017-win2016'
+        python.version: '3.5'
+      MacOS_Python27:
+        os.name: 'MacOS'
+        os.vmImage: 'macOS-10.13'
+        python.version: '2.7'
+  pool:
+    vmImage: '$(os.vmImage)'
 
-- template: generic.test.yml
-  parameters:
-    name: macOS
-    vmImage: 'macOS-10.13'
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(python.version)'
+    inputs:
+      versionSpec: '$(python.version)'
 
-- template: generic.test.yml
-  parameters:
-    name: Windows
-    vmImage: 'vs2017-win2016'
+  - script: |
+     pip install wheel
+     pip install setuptools
+     pip install pathlib
+     pip install twine
+    displayName: 'Prep Environment'
 
-# - template: specialcase.test.yml
+  - task: PythonScript@0
+    displayName: 'Setup and Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/test_packages.py'
+      arguments: '-g "$(build_targeting_string)"'
