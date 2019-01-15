@@ -7,12 +7,12 @@ Release History
 ++++++++++++++++++
 
 - **[Breaking]** ResourceFile improvements
-  - Added the ability specify an entire Azure Storage container in `ResourceFile`.
-  - A new property `HttpUrl` replaces `BlobSource`. This can be any HTTP URL. Previously, this had to be an Azure Blob Storage URL.
-  - When constructing a `ResourceFile` you can now choose from one of the following options:
-    - `HttpUrl`: Specify an HTTP URL pointing to a specific file to download.
-    - `StorageContainerUrl`: Specify an Azure Storage container URL. All blobs matching the `BlobPrefix` in the Storage container will be downloaded.
-    - `AutoStorageContainerName`: Specify the name of a container in the Batch registered auto-storage account. All blobs matching the `BlobPrefix` in the Storage container will be downloaded.
+    - Added the ability specify an entire Azure Storage container in `ResourceFile`.
+    - A new property `HttpUrl` replaces `BlobSource`. This can be any HTTP URL. Previously, this had to be an Azure Blob Storage URL.
+    - When constructing a `ResourceFile` you can now choose from one of the following options:
+        - `HttpUrl`: Specify an HTTP URL pointing to a specific file to download.
+        - `StorageContainerUrl`: Specify an Azure Storage container URL. All blobs matching the `BlobPrefix` in the Storage container will be downloaded.
+        - `AutoStorageContainerName`: Specify the name of a container in the Batch registered auto-storage account. All blobs matching the `BlobPrefix` in the Storage container will be downloaded.
 - **[Breaking]** Removed `OSDisk` property from `VirtualMachineConfiguration`. This property is no longer supported.
 - **[Breaking]** `Application` no longer has a `Packages` property, instead the packages can be retrieved via the new  `ApplicationPackage.List` API.
 - **[Breaking]** `TargetOsVersion` is now `OsVersion`, and `CurrentOsVersion` is no longer supported on `CloudServiceConfiguration`.
