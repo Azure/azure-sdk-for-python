@@ -83,7 +83,7 @@ class ContainerServiceMasterProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
+    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet
      identifier.
     :type vnet_subnet_id: str
     :param first_consecutive_static_ip: FirstConsecutiveStaticIP used to
@@ -95,7 +95,7 @@ class ContainerServiceMasterProfile(Model):
      'StorageAccount', 'ManagedDisks'
     :type storage_profile: str or
      ~azure.mgmt.containerservice.v2018_08_01_preview.models.ContainerServiceStorageProfileTypes
-    :ivar fqdn: FDQN for the master pool.
+    :ivar fqdn: FQDN for the master pool.
     :vartype fqdn: str
     """
 
