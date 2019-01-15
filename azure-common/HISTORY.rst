@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.17 (2019-01-15)
++++++++++++++++++++
+
+- Fix KeyVaultClient creation with get_client_from_cli_profile
+
+Thanks to patrikn for the contribution
+
 1.1.16 (2018-09-26)
 +++++++++++++++++++
 
