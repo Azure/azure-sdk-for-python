@@ -17,9 +17,11 @@ jobs:
     inputs:
       versionSpec: 3.6
 
-  - script: |
-     python3 ./scripts/analyze_deps.py --verbose > "$(Build.ArtifactStagingDirectory)/dependencies.txt"
+  - task: PythonScript@0
     displayName: 'Analyze dependencies'
+    inputs:
+      scriptPath: 'scripts/analyze_deps.py'
+      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.txt"'
 
   - script: |
      pip install wheel setuptools pathlib

@@ -77,11 +77,26 @@ def dict_compare(d1, d2):
     modified = {o : (d1[o], d2[o]) for o in intersect_keys if d1[o] != d2[o]}
     return added, removed, modified
 
+class Logger(object):
+    def __init__(self, path):
+        self.terminal = sys.stdout
+        self.log = open(path, 'a')
+    
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+    
+    def flush(self):
+        pass
+
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     verbose = '--verbose' in sys.argv[1:]
     freeze = '--freeze' in sys.argv[1:]
-
+    if '--out' in sys.argv[1:]:
+        out_filepath = sys.argv[sys.argv[1:].index('--out') + 2]
+        sys.stdout = Logger(out_filepath)
+    
     dependencies = {}
     for lib_dir in locate_libs(base_dir):
         try:
@@ -98,7 +113,7 @@ if __name__ == '__main__':
                     dependencies[req_name][spec] = []
                 dependencies[req_name][spec].append(lib_name)
         except:
-            print('Failed to parse %s' % (setup_path), file=sys.stderr)
+            print('Failed to parse %s' % (setup_path))
     
     if verbose:
         print('Requirements discovered:')
