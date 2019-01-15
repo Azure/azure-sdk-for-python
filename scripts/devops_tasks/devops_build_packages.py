@@ -34,15 +34,16 @@ if __name__ == '__main__':
         '-g', 
         '--glob-string', 
         dest = 'glob_string', 
-        default = 'azure-keyvault',
-        help = 'A comma separated list of glob strings that will target the top level directories that contain packages. Examples: All == "azure-*", Single = "azure-keyvault"')
+        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+                'Examples: All == "azure-*", Single = "azure-keyvault"'),
+        required = True)
 
     parser.add_argument(
         '-d',
         '--distribution-directory',
         dest = 'distribution_directory',
-        default = './dist',
-        help = 'The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.')
+        help = 'The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.',
+        required = True)
 
     args = parser.parse_args()
 

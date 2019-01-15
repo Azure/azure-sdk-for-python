@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 
 # Assumptions when running this script:
-#  You are running in the root directory of azure-sdk-for-python repo
+#  Execution of this script begins in the root directory of azure-sdk-for-python repo
 
 # Normally, this module will be executed as referenced as part of the devops build definitions.
 # An enterprising user can easily glance over this and leverage for their own purposes.
@@ -29,23 +29,25 @@ def prep_and_run_tests(targeted_packages, python_version):
         print('running test setup for {}'.format(os.path.basename(package_path)))
         run_check_call([python_version, dev_setup_script_location, '-g', os.path.basename(package_path)], root_dir)
 
-    for package_path in targeted_packages:
-        print('Checking setup.py for {}'.format(os.path.join(package_path, 'setup.py')))
-        run_check_call([python_version, 'setup.py', 'check', '-r', '-s'], package_path)
-
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(targeted_packages)
     run_check_call(command_array, root_dir)
+    
+    for package_path in targeted_packages:
+        print('Checking setup.py for {}'.format(os.path.join(package_path, 'setup.py')))
+        run_check_call([python_version, 'setup.py', 'check', '-r', '-s'], package_path)
+
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'Build Azure Packages, Called from DevOps YAML Pipeline')
+    parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
     parser.add_argument(
         '-g', 
         '--glob-string', 
         dest = 'glob_string', 
-        default = 'azure-keyvault',
-        help = 'A comma separated list of glob strings that will target the top level directories that contain packages. Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"')
+        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+                'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'),
+        required = True)
 
     parser.add_argument(
         '-p',

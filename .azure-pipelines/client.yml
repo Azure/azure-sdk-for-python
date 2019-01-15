@@ -18,28 +18,15 @@ jobs:
 
   - script: |
      pip install wheel
+     pip install setuptools
+     pip install pathlib
+    displayName: 'Prep Environment'
 
-    displayName: 'Prep Environment, Install Packages'
-
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
-     
-     if ($inputFilterSet -eq "")
-     {
-         $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in $inputFilterSet.split(","))
-     {
-       $foldersToIterate = gci -Filter "$inputFilter"
-     
-       foreach ($folder in $foldersToIterate)
-       {
-         python3 ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
-       }
-     }
-     
+  - task: PythonScript@0
     displayName: 'Generate Packages'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/devops_build_packages.py'
+      arguments: '-g "$(build_targeting_string)" -d "$(Build.ArtifactStagingDirectory)"'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
@@ -59,4 +46,4 @@ jobs:
     name: Windows
     vmImage: 'vs2017-win2016'
 
-- template: specialcase.test.yml
+# - template: specialcase.test.yml

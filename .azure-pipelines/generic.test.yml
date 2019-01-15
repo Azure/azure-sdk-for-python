@@ -29,35 +29,15 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
 
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
-     
-     if ($inputFilterSet -eq "")
-     {
-        $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in $inputFilterSet.split(","))
-     {
-        python scripts/dev_setup.py -g $inputFilter
-     }
-    displayName: 'Test Setup'
-
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
-     
-     if ($inputFilterSet -eq "")
-     {
-        $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in $inputFilterSet.split(","))
-     {
-        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
-        pytest $folderCombination
-     }
-    displayName: 'Run Test Subset'
-
   - script: |
-     python ./setup.py check -r -s
-    displayName: 'Check Setup.py Files'
+     pip install wheel
+     pip install setuptools
+     pip install pathlib
+     pip install twine
+    displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Setup and Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/devops_test_packages.py'
+      arguments: '-g "$(build_targeting_string)"'
