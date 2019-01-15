@@ -24,7 +24,7 @@ from .alerts_operations import AlertsOperations
 from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from .north_south_hardenings_operations import NorthSouthHardeningsOperations
+from .adaptive_network_controls_operations import AdaptiveNetworkControlsOperations
 from .topology_operations import TopologyOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
 
@@ -44,7 +44,7 @@ __all__ = [
     'DiscoveredSecuritySolutionsOperations',
     'JitNetworkAccessPoliciesOperations',
     'ExternalSecuritySolutionsOperations',
-    'NorthSouthHardeningsOperations',
+    'AdaptiveNetworkControlsOperations',
     'TopologyOperations',
     'AllowedConnectionsOperations',
 ]

@@ -12,24 +12,25 @@
 from msrest.serialization import Model
 
 
-class TrafficHardeningRule(Model):
-    """A north-south traffic hardening rule.
+class AdaptiveNetworkControlsRule(Model):
+    """Describes remote addresses that is recommended to communicate with the
+    Azure resource on some (Protocol, Port, Direction). All other remote
+    addresses are recommended to be blocked.
 
     :param name: The name of the rule
     :type name: str
-    :param direction: The rule;s traffic direction. Possible values include:
+    :param direction: The rule's direction. Possible values include:
      'Inbound', 'Outbound'
-    :type direction: str or
-     ~azure.mgmt.security.models.NorthSouthTrafficDirection
+    :type direction: str or ~azure.mgmt.security.models.Direction
     :param destination_port: The rule's destination port
     :type destination_port: int
-    :param protocols: The rule's transport protocol
+    :param protocols: The rule's transport protocols
     :type protocols: list[str or
-     ~azure.mgmt.security.models.NorthSouthProtocol]
-    :param allow_remote_addresses: The remote addresses that should be able to
+     ~azure.mgmt.security.models.TransportProtocol]
+    :param ip_addresses: The remote IP addresses that should be able to
      communicate with the Azure resource on the rule's destination port and
      protocol
-    :type allow_remote_addresses: list[str]
+    :type ip_addresses: list[str]
     """
 
     _attribute_map = {
@@ -37,13 +38,13 @@ class TrafficHardeningRule(Model):
         'direction': {'key': 'direction', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'protocols': {'key': 'protocols', 'type': '[str]'},
-        'allow_remote_addresses': {'key': 'allowRemoteAddresses', 'type': '[str]'},
+        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, direction=None, destination_port: int=None, protocols=None, allow_remote_addresses=None, **kwargs) -> None:
-        super(TrafficHardeningRule, self).__init__(**kwargs)
+    def __init__(self, *, name: str=None, direction=None, destination_port: int=None, protocols=None, ip_addresses=None, **kwargs) -> None:
+        super(AdaptiveNetworkControlsRule, self).__init__(**kwargs)
         self.name = name
         self.direction = direction
         self.destination_port = destination_port
         self.protocols = protocols
-        self.allow_remote_addresses = allow_remote_addresses
+        self.ip_addresses = ip_addresses

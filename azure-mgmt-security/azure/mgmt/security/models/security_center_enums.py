@@ -39,6 +39,7 @@ class AutoProvision(str, Enum):
 class SettingKind(str, Enum):
 
     data_export_setting = "DataExportSetting"
+    alert_suppression_setting = "AlertSuppressionSetting"
 
 
 class SecurityFamily(str, Enum):
@@ -83,16 +84,16 @@ class ExternalSecuritySolutionKind(str, Enum):
     aad = "AAD"
 
 
-class NorthSouthProtocol(str, Enum):
-
-    tcp = "TCP"
-    udp = "UDP"
-
-
-class NorthSouthTrafficDirection(str, Enum):
+class Direction(str, Enum):
 
     inbound = "Inbound"
     outbound = "Outbound"
+
+
+class TransportProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
 
 
 class ConnectionType(str, Enum):

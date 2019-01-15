@@ -12,19 +12,21 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
 
-class NorthSouthHardeningsOperations(object):
-    """NorthSouthHardeningsOperations operations.
+class AdaptiveNetworkControlsOperations(object):
+    """AdaptiveNetworkControlsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: API version for the operation. Constant value: "2015-06-01-preview".
-    :ivar traffic_hardenings_rules_enforce_action: Enforces the given collections of traffic hardenings rule's on the VM's NSG. Constant value: "enforce".
+    :ivar adaptive_network_controls_enforce_action: Enforces the given rules on the NSG(s) listed in the request. Constant value: "enforce".
     """
 
     models = models
@@ -35,145 +37,14 @@ class NorthSouthHardeningsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2015-06-01-preview"
-        self.traffic_hardenings_rules_enforce_action = "enforce"
+        self.adaptive_network_controls_enforce_action = "enforce"
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of north-south hardening resources for the subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of NorthSouthHardenings
-        :rtype:
-         ~azure.mgmt.security.models.NorthSouthHardeningsPaged[~azure.mgmt.security.models.NorthSouthHardenings]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.NorthSouthHardeningsPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.NorthSouthHardeningsPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/northSouthHardenings'}
-
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of north-south hardening resources for the resource group.
-
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of NorthSouthHardenings
-        :rtype:
-         ~azure.mgmt.security.models.NorthSouthHardeningsPaged[~azure.mgmt.security.models.NorthSouthHardenings]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.NorthSouthHardeningsPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.NorthSouthHardeningsPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/northSouthHardenings'}
-
-    def get(
-            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, north_south_resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the north-south traffic hardening for the specified resource.
+    def list_by_extended_resource(
+            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Adaptive Network Controls resources in scope of the
+        given extended resource.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -185,15 +56,95 @@ class NorthSouthHardeningsOperations(object):
         :type extended_resource_type: str
         :param extended_resource_name: The name of the base resource
         :type extended_resource_name: str
-        :param north_south_resource_name: Name of a north-south resource.
-        :type north_south_resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NorthSouthHardenings or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.NorthSouthHardenings or
+        :return: An iterator like instance of AdaptiveNetworkControls
+        :rtype:
+         ~azure.mgmt.security.models.AdaptiveNetworkControlsPaged[~azure.mgmt.security.models.AdaptiveNetworkControls]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_extended_resource.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'extendedResourceProvider': self._serialize.url("extended_resource_provider", extended_resource_provider, 'str'),
+                    'extendedResourceType': self._serialize.url("extended_resource_type", extended_resource_type, 'str'),
+                    'extendedResourceName': self._serialize.url("extended_resource_name", extended_resource_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AdaptiveNetworkControlsPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.AdaptiveNetworkControlsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_extended_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extendedResourceProvider}/{extendedResourceType}/{extendedResourceName}/providers/Microsoft.Security/adaptiveNetworkControls'}
+
+    def get(
+            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, adaptive_network_controls_resource_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Adaptive Network Controls resource matching the given resource
+        ID.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param extended_resource_provider: Resource provider name of the base
+         resource
+        :type extended_resource_provider: str
+        :param extended_resource_type: Type of the base resource
+        :type extended_resource_type: str
+        :param extended_resource_name: The name of the base resource
+        :type extended_resource_name: str
+        :param adaptive_network_controls_resource_name: The name of the
+         Adaptive Network Controls resource.
+        :type adaptive_network_controls_resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AdaptiveNetworkControls or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.AdaptiveNetworkControls or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -205,7 +156,7 @@ class NorthSouthHardeningsOperations(object):
             'extendedResourceProvider': self._serialize.url("extended_resource_provider", extended_resource_provider, 'str'),
             'extendedResourceType': self._serialize.url("extended_resource_type", extended_resource_type, 'str'),
             'extendedResourceName': self._serialize.url("extended_resource_name", extended_resource_name, 'str'),
-            'northSouthResourceName': self._serialize.url("north_south_resource_name", north_south_resource_name, 'str')
+            'adaptiveNetworkControlsResourceName': self._serialize.url("adaptive_network_controls_resource_name", adaptive_network_controls_resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -235,41 +186,18 @@ class NorthSouthHardeningsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('NorthSouthHardenings', response)
+            deserialized = self._deserialize('AdaptiveNetworkControls', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extendedResourceProvider}/{extendedResourceType}/{extendedResourceName}/providers/Microsoft.Security/northSouthHardenings/{northSouthResourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extendedResourceProvider}/{extendedResourceType}/{extendedResourceName}/providers/Microsoft.Security/adaptiveNetworkControls/{adaptiveNetworkControlsResourceName}'}
 
-    def enforce(
-            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, north_south_resource_name, custom_headers=None, raw=False, **operation_config):
-        """Enforces the given collections of traffic hardenings rule's on the VM's
-        NSG.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param extended_resource_provider: Resource provider name of the base
-         resource
-        :type extended_resource_provider: str
-        :param extended_resource_type: Type of the base resource
-        :type extended_resource_type: str
-        :param extended_resource_name: The name of the base resource
-        :type extended_resource_name: str
-        :param north_south_resource_name: Name of a north-south resource.
-        :type north_south_resource_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _enforce_initial(
+            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, adaptive_network_controls_resource_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.enforce.metadata['url']
         path_format_arguments = {
@@ -278,8 +206,8 @@ class NorthSouthHardeningsOperations(object):
             'extendedResourceProvider': self._serialize.url("extended_resource_provider", extended_resource_provider, 'str'),
             'extendedResourceType': self._serialize.url("extended_resource_type", extended_resource_type, 'str'),
             'extendedResourceName': self._serialize.url("extended_resource_name", extended_resource_name, 'str'),
-            'northSouthResourceName': self._serialize.url("north_south_resource_name", north_south_resource_name, 'str'),
-            'trafficHardeningsRulesEnforceAction': self._serialize.url("self.traffic_hardenings_rules_enforce_action", self.traffic_hardenings_rules_enforce_action, 'str')
+            'adaptiveNetworkControlsResourceName': self._serialize.url("adaptive_network_controls_resource_name", adaptive_network_controls_resource_name, 'str'),
+            'adaptiveNetworkControlsEnforceAction': self._serialize.url("self.adaptive_network_controls_enforce_action", self.adaptive_network_controls_enforce_action, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -300,7 +228,7 @@ class NorthSouthHardeningsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -308,4 +236,56 @@ class NorthSouthHardeningsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    enforce.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extendedResourceProvider}/{extendedResourceType}/{extendedResourceName}/providers/Microsoft.Security/northSouthHardenings/{northSouthResourceName}/{trafficHardeningsRulesEnforceAction}'}
+
+    def enforce(
+            self, resource_group_name, extended_resource_provider, extended_resource_type, extended_resource_name, adaptive_network_controls_resource_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Enforces the given rules on the NSG(s) listed in the request.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param extended_resource_provider: Resource provider name of the base
+         resource
+        :type extended_resource_provider: str
+        :param extended_resource_type: Type of the base resource
+        :type extended_resource_type: str
+        :param extended_resource_name: The name of the base resource
+        :type extended_resource_name: str
+        :param adaptive_network_controls_resource_name: The name of the
+         Adaptive Network Controls resource.
+        :type adaptive_network_controls_resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._enforce_initial(
+            resource_group_name=resource_group_name,
+            extended_resource_provider=extended_resource_provider,
+            extended_resource_type=extended_resource_type,
+            extended_resource_name=extended_resource_name,
+            adaptive_network_controls_resource_name=adaptive_network_controls_resource_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    enforce.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{extendedResourceProvider}/{extendedResourceType}/{extendedResourceName}/providers/Microsoft.Security/adaptiveNetworkControls/{adaptiveNetworkControlsResourceName}/{adaptiveNetworkControlsEnforceAction}'}

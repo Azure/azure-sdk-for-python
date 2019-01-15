@@ -21,7 +21,7 @@ try:
     from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
     from .setting_py3 import Setting
     from .data_export_setting_py3 import DataExportSetting
-    from .setting_kind1_py3 import SettingKind1
+    from .setting_resource_py3 import SettingResource
     from .sensitivity_label_py3 import SensitivityLabel
     from .information_protection_keyword_py3 import InformationProtectionKeyword
     from .information_type_py3 import InformationType
@@ -60,10 +60,9 @@ try:
     from .external_security_solution_kind1_py3 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties_py3 import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1_py3 import AadConnectivityState1
-    from .traffic_hardening_rule_py3 import TrafficHardeningRule
-    from .traffic_alert_traffic_item_py3 import TrafficAlertTrafficItem
-    from .traffic_alert_py3 import TrafficAlert
-    from .north_south_hardenings_py3 import NorthSouthHardenings
+    from .adaptive_network_controls_rule_py3 import AdaptiveNetworkControlsRule
+    from .adaptive_network_controls_effective_network_security_groups_py3 import AdaptiveNetworkControlsEffectiveNetworkSecurityGroups
+    from .adaptive_network_controls_py3 import AdaptiveNetworkControls
     from .connected_resource_py3 import ConnectedResource
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
@@ -79,7 +78,7 @@ except (SyntaxError, ImportError):
     from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
     from .setting import Setting
     from .data_export_setting import DataExportSetting
-    from .setting_kind1 import SettingKind1
+    from .setting_resource import SettingResource
     from .sensitivity_label import SensitivityLabel
     from .information_protection_keyword import InformationProtectionKeyword
     from .information_type import InformationType
@@ -118,10 +117,9 @@ except (SyntaxError, ImportError):
     from .external_security_solution_kind1 import ExternalSecuritySolutionKind1
     from .external_security_solution_properties import ExternalSecuritySolutionProperties
     from .aad_connectivity_state1 import AadConnectivityState1
-    from .traffic_hardening_rule import TrafficHardeningRule
-    from .traffic_alert_traffic_item import TrafficAlertTrafficItem
-    from .traffic_alert import TrafficAlert
-    from .north_south_hardenings import NorthSouthHardenings
+    from .adaptive_network_controls_rule import AdaptiveNetworkControlsRule
+    from .adaptive_network_controls_effective_network_security_groups import AdaptiveNetworkControlsEffectiveNetworkSecurityGroups
+    from .adaptive_network_controls import AdaptiveNetworkControls
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
@@ -139,7 +137,7 @@ from .alert_paged import AlertPaged
 from .discovered_security_solution_paged import DiscoveredSecuritySolutionPaged
 from .jit_network_access_policy_paged import JitNetworkAccessPolicyPaged
 from .external_security_solution_paged import ExternalSecuritySolutionPaged
-from .north_south_hardenings_paged import NorthSouthHardeningsPaged
+from .adaptive_network_controls_paged import AdaptiveNetworkControlsPaged
 from .topology_resource_paged import TopologyResourcePaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .security_center_enums import (
@@ -154,8 +152,8 @@ from .security_center_enums import (
     StatusReason,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
-    NorthSouthProtocol,
-    NorthSouthTrafficDirection,
+    Direction,
+    TransportProtocol,
     ConnectionType,
 )
 
@@ -171,7 +169,7 @@ __all__ = [
     'AdvancedThreatProtectionSetting',
     'Setting',
     'DataExportSetting',
-    'SettingKind1',
+    'SettingResource',
     'SensitivityLabel',
     'InformationProtectionKeyword',
     'InformationType',
@@ -210,10 +208,9 @@ __all__ = [
     'ExternalSecuritySolutionKind1',
     'ExternalSecuritySolutionProperties',
     'AadConnectivityState1',
-    'TrafficHardeningRule',
-    'TrafficAlertTrafficItem',
-    'TrafficAlert',
-    'NorthSouthHardenings',
+    'AdaptiveNetworkControlsRule',
+    'AdaptiveNetworkControlsEffectiveNetworkSecurityGroups',
+    'AdaptiveNetworkControls',
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
@@ -231,7 +228,7 @@ __all__ = [
     'DiscoveredSecuritySolutionPaged',
     'JitNetworkAccessPolicyPaged',
     'ExternalSecuritySolutionPaged',
-    'NorthSouthHardeningsPaged',
+    'AdaptiveNetworkControlsPaged',
     'TopologyResourcePaged',
     'AllowedConnectionsResourcePaged',
     'AlertNotifications',
@@ -245,7 +242,7 @@ __all__ = [
     'StatusReason',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
-    'NorthSouthProtocol',
-    'NorthSouthTrafficDirection',
+    'Direction',
+    'TransportProtocol',
     'ConnectionType',
 ]

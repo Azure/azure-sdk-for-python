@@ -12,9 +12,9 @@
 from .resource import Resource
 
 
-class NorthSouthHardenings(Resource):
-    """The resource whose properties describes the North-south hardening settings
-    for some Azure resource.
+class AdaptiveNetworkControls(Resource):
+    """The resource whose properties describes the Adaptive Network Controls
+    settings for some Azure resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,16 +25,16 @@ class NorthSouthHardenings(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param traffic_hardening_rules: The set of North-south traffic hardening
-     rules
-    :type traffic_hardening_rules:
-     list[~azure.mgmt.security.models.TrafficHardeningRule]
-    :param traffic_alerts: The set of North-south hardening alerts associated
-     with the Azure resource
-    :type traffic_alerts: list[~azure.mgmt.security.models.TrafficAlert]
-    :param rules_calculation_time: The UTC time on which the traffic hardening
-     rules were calculated
+    :param rules: The security rules which are recommended to be effective on
+     the VM
+    :type rules: list[~azure.mgmt.security.models.AdaptiveNetworkControlsRule]
+    :param rules_calculation_time: The UTC time on which the rules were
+     calculated
     :type rules_calculation_time: datetime
+    :param effective_network_security_groups: The Network Security Groups
+     effective on the network interfaces of the protected resource
+    :type effective_network_security_groups:
+     list[~azure.mgmt.security.models.AdaptiveNetworkControlsEffectiveNetworkSecurityGroups]
     """
 
     _validation = {
@@ -47,13 +47,13 @@ class NorthSouthHardenings(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'traffic_hardening_rules': {'key': 'properties.trafficHardeningRules', 'type': '[TrafficHardeningRule]'},
-        'traffic_alerts': {'key': 'properties.trafficAlerts', 'type': '[TrafficAlert]'},
+        'rules': {'key': 'properties.rules', 'type': '[AdaptiveNetworkControlsRule]'},
         'rules_calculation_time': {'key': 'properties.rulesCalculationTime', 'type': 'iso-8601'},
+        'effective_network_security_groups': {'key': 'properties.effectiveNetworkSecurityGroups', 'type': '[AdaptiveNetworkControlsEffectiveNetworkSecurityGroups]'},
     }
 
     def __init__(self, **kwargs):
-        super(NorthSouthHardenings, self).__init__(**kwargs)
-        self.traffic_hardening_rules = kwargs.get('traffic_hardening_rules', None)
-        self.traffic_alerts = kwargs.get('traffic_alerts', None)
+        super(AdaptiveNetworkControls, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
         self.rules_calculation_time = kwargs.get('rules_calculation_time', None)
+        self.effective_network_security_groups = kwargs.get('effective_network_security_groups', None)

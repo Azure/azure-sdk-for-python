@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SettingKind1(Model):
-    """The kind of the security setting.
-
-    :param kind: the kind of the settings string. Possible values include:
-     'DataExportSetting'
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
+class AdaptiveNetworkControlsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AdaptiveNetworkControls <azure.mgmt.security.models.AdaptiveNetworkControls>` object
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AdaptiveNetworkControls]'}
     }
 
-    def __init__(self, *, kind=None, **kwargs) -> None:
-        super(SettingKind1, self).__init__(**kwargs)
-        self.kind = kind
+    def __init__(self, *args, **kwargs):
+
+        super(AdaptiveNetworkControlsPaged, self).__init__(*args, **kwargs)

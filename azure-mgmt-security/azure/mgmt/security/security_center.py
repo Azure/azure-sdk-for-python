@@ -28,7 +28,7 @@ from .operations.alerts_operations import AlertsOperations
 from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from .operations.north_south_hardenings_operations import NorthSouthHardeningsOperations
+from .operations.adaptive_network_controls_operations import AdaptiveNetworkControlsOperations
 from .operations.topology_operations import TopologyOperations
 from .operations.allowed_connections_operations import AllowedConnectionsOperations
 from . import models
@@ -108,8 +108,8 @@ class SecurityCenter(SDKClient):
     :vartype jit_network_access_policies: azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
     :ivar external_security_solutions: ExternalSecuritySolutions operations
     :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
-    :ivar north_south_hardenings: NorthSouthHardenings operations
-    :vartype north_south_hardenings: azure.mgmt.security.operations.NorthSouthHardeningsOperations
+    :ivar adaptive_network_controls: AdaptiveNetworkControls operations
+    :vartype adaptive_network_controls: azure.mgmt.security.operations.AdaptiveNetworkControlsOperations
     :ivar topology: Topology operations
     :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar allowed_connections: AllowedConnections operations
@@ -166,7 +166,7 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.north_south_hardenings = NorthSouthHardeningsOperations(
+        self.adaptive_network_controls = AdaptiveNetworkControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topology = TopologyOperations(
             self._client, self.config, self._serialize, self._deserialize)
