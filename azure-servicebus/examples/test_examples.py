@@ -188,7 +188,7 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     # [END list_sessions_service_bus]
 
     try:
-    # [START receive_deferred_messages_service_bus]
+        # [START receive_deferred_messages_service_bus]
         seq_numbers = []
         with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
             for message in queue_receiver:
@@ -198,14 +198,14 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
         # Receive deferred messages - provide sequence numbers of
         # messages which were deferred.
         deferred = queue_client.receive_deferred_messages(sequence_numbers=seq_numbers)
-    # [END receive_deferred_messages_service_bus]
+        # [END receive_deferred_messages_service_bus]
     except ServiceBusError:
         pass
 
     try:
-    # [START settle_deferred_messages_service_bus]
+        # [START settle_deferred_messages_service_bus]
         queue_client.settle_deferred_messages('completed', deferred)
-    # [END settle_deferred_messages_service_bus]
+        # [END settle_deferred_messages_service_bus]
     except ServiceBusError:
         pass
 
@@ -260,7 +260,7 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
     # [END peek_messages]
 
     try:
-    # [START receive_deferred_messages]
+        # [START receive_deferred_messages]
         seq_numbers = []
         with queue_client.get_receiver(idle_timeout=3) as queue_receiver:
             for message in queue_receiver:
@@ -271,7 +271,7 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
         # messages which were deferred.
         with queue_client.get_receiver() as queue_receiver:
             deferred = queue_receiver.receive_deferred_messages(sequence_numbers=seq_numbers)
-    # [END receive_deferred_messages]
+        # [END receive_deferred_messages]
     except ValueError:
         pass
 

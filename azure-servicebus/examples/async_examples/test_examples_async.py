@@ -68,7 +68,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         pass
     # [END get_async_queue_client]
     try:
-    # [START create_queue_client]
+        # [START create_queue_client]
         import os
         from azure.servicebus.aio import QueueClient
 
@@ -76,7 +76,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
         queue_client = QueueClient.from_connection_string(connection_str, name="MyQueue")
         queue_properties = queue_client.get_properties()
 
-    # [END create_queue_client]
+        # [END create_queue_client]
     except ServiceBusResourceNotFound:
         pass
 
@@ -87,7 +87,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     # [END client_peek_messages]
 
     try:
-    # [START client_defer_messages]
+        # [START client_defer_messages]
         sequence_numbers = []
         async with queue_client.get_receiver(idle_timeout=5) as receiver:
             async for message in receiver:
@@ -95,16 +95,16 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
                 await message.defer()
 
         deferred = await queue_client.receive_deferred_messages(sequence_numbers)
-    # [END client_defer_messages]
+        # [END client_defer_messages]
     except ValueError:
         pass
 
     try:
-    # [START client_settle_deferred_messages]
+        # [START client_settle_deferred_messages]
         deferred = await queue_client.receive_deferred_messages(sequence_numbers)
 
         await queue_client.settle_deferred_messages('completed', deferred)
-    # [END client_settle_deferred_messages]
+        # [END client_settle_deferred_messages]
     except ValueError:
         pass
 
@@ -185,7 +185,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     # [END receiver_peek_messages]
 
     try:
-    # [START receiver_defer_messages]
+        # [START receiver_defer_messages]
         async with queue_client.get_receiver() as receiver:
             async for message in receiver:
                 sequence_no = message.sequence_number
@@ -193,7 +193,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
                 break
 
             message = await receiver.receive_deferred_messages([sequence_no])
-    # [END receiver_defer_messages]
+        # [END receiver_defer_messages]
     except ServiceBusError:
         pass
 
@@ -272,15 +272,15 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     # [END set_session_state]
 
     try:
-    # [START receiver_peek_session_messages]
+        # [START receiver_peek_session_messages]
         async with queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5) as receiver:
             pending_messages = await receiver.peek(count=5)
-    # [END receiver_peek_session_messages]
+        # [END receiver_peek_session_messages]
     except NoActiveSession:
         pass
 
     try:
-    # [START receiver_defer_session_messages]
+        # [START receiver_defer_session_messages]
         async with queue_client.get_receiver(session="MySession", idle_timeout=5) as receiver:
             sequence_numbers = []
             async for message in receiver:
@@ -289,7 +289,7 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
                 break
 
             message = await receiver.receive_deferred_messages(sequence_numbers)
-    # [END receiver_defer_session_messages]
+        # [END receiver_defer_session_messages]
     except ServiceBusError:
         pass
 
@@ -327,14 +327,14 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
     # [END get_async_topic_client]
 
     try:
-    # [START create_topic_client]
+        # [START create_topic_client]
         import os
         from azure.servicebus.aio import TopicClient
 
         connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
         topic_client = TopicClient.from_connection_string(connection_str, name="MyTopic")
         topic_properties = topic_client.get_properties()
-    # [END create_topic_client]
+        # [END create_topic_client]
     except ServiceBusResourceNotFound:
         pass
 
@@ -348,14 +348,14 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
     # [END get_async_subscription_client]
 
     try:
-    # [START create_sub_client]
+        # [START create_sub_client]
         import os
         from azure.servicebus.aio import SubscriptionClient
 
         connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
         subscription_client = SubscriptionClient.from_connection_string(connection_str, name="MySubscription", topic="MyTopic")
         properties = subscription_client.get_properties()
-    # [END create_sub_client]
+        # [END create_sub_client]
     except ServiceBusResourceNotFound:
         pass
 

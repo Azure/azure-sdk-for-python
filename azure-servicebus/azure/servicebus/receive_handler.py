@@ -423,19 +423,20 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
     :param debug: Whether to enable network trace debug logs.
     :type debug: bool
 
-    .. literalinclude:: ../examples/test_examples.py
-        :start-after: [START create_session_receiver_client]
-        :end-before: [END create_session_receiver_client]
-        :language: python
-        :dedent: 4
-        :caption: Running a session receiver within a context manager.
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_session_receiver_client]
+            :end-before: [END create_session_receiver_client]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver within a context manager.
 
-    .. literalinclude:: ../examples/test_examples.py
-        :start-after: [START create_receiver_session_nextavailable]
-        :end-before: [END create_receiver_session_nextavailable]
-        :language: python
-        :dedent: 4
-        :caption: Running a session receiver for the next available session.
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_receiver_session_nextavailable]
+            :end-before: [END create_receiver_session_nextavailable]
+            :language: python
+            :dedent: 4
+            :caption: Running a session receiver for the next available session.
 
     """
 
@@ -500,12 +501,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
         :rtype: str
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START get_session_state]
-            :end-before: [END get_session_state]
-            :language: python
-            :dedent: 4
-            :caption: Get the session state of the receiver
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START get_session_state]
+                :end-before: [END get_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Get the session state of the receiver
 
         """
         self._can_run()
@@ -524,12 +526,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         :param state: The state value.
         :type state: str, bytes or bytearray
 
-        .. literalinclude:: ../examples/test_examples.py
-            :start-after: [START set_session_state]
-            :end-before: [END set_session_state]
-            :language: python
-            :dedent: 4
-            :caption: Set the session state of the receiver
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START set_session_state]
+                :end-before: [END set_session_state]
+                :language: python
+                :dedent: 4
+                :caption: Set the session state of the receiver
 
         """
         self._can_run()
