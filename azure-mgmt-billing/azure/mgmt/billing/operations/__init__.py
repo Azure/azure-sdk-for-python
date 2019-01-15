@@ -11,12 +11,14 @@
 
 from .enrollment_accounts_operations import EnrollmentAccountsOperations
 from .billing_periods_operations import BillingPeriodsOperations
+from .tenant_properties_operations import TenantPropertiesOperations
 from .invoices_operations import InvoicesOperations
 from .operations import Operations
 
 __all__ = [
     'EnrollmentAccountsOperations',
     'BillingPeriodsOperations',
+    'TenantPropertiesOperations',
     'InvoicesOperations',
     'Operations',
 ]
