@@ -230,6 +230,21 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     icmp = "ICMP"
 
 
+class DdosCustomPolicyProtocol(str, Enum):
+
+    tcp = "Tcp"
+    udp = "Udp"
+    syn = "Syn"
+
+
+class DdosCustomPolicyTriggerSensitivityOverride(str, Enum):
+
+    relaxed = "Relaxed"
+    low = "Low"
+    default = "Default"
+    high = "High"
+
+
 class AuthorizationUseStatus(str, Enum):
 
     available = "Available"
