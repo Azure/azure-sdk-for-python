@@ -14,6 +14,28 @@ from azure.servicebus.common.constants import DEADLETTERNAME
 
 
 class Message(message.Message):
+    """A Service Bus Message.
+
+    :param body: The data to send in a single message.
+    :type body: str or bytes
+    :param encoding: The encoding for string data. Default is UTF-8.
+    :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_complex_message]
+            :end-before: [END send_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Sending a message with additional properties
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message
+    """
 
     def __init__(self, body, *, encoding='UTF-8', loop=None, **kwargs):
         self._loop = loop or get_running_loop()
@@ -98,6 +120,9 @@ class Message(message.Message):
 
 
 class DeferredMessage(Message):
+    """A message that has been deferred. A deferred message can be completed,
+    abandoned, or dead-lettered, however it cannot be deferred again.
+    """
 
     def __init__(self, deferred, mode):
         self._settled = mode == 0

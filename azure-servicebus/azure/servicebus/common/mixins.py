@@ -368,6 +368,10 @@ class SessionMixin(object):
 
     @property
     def expired(self):
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
         if self.locked_until and self.locked_until <= datetime.datetime.now():
             return True
         return False

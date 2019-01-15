@@ -406,10 +406,6 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
 
     .. note:: This object is not thread-safe.
 
-    :ivar expired: Whether the receivers lock on a particular session has expired.
-    :vartype expired: bool
-    :ivar locked_until: The UTC timestamp that the current session lock will expire.
-    :vartype locked_until: ~datetime.datetime
     :param handler_id: The ID used as the connection name for the Receiver.
     :type handler_id: str
     :param source: The endpoint from which to receive messages.

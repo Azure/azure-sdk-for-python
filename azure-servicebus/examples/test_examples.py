@@ -160,6 +160,27 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
     queue_client.send([message1, message2])
     # [END send_message_service_bus_multiple]
 
+    # [START send_complex_message]
+    message = Message("Hello World!")
+    message.session_id = "MySessionID"
+    message.partition_key = "UsingSpecificPartition"
+    message.user_properties = {'data': 'custom_data'}
+    message.time_to_live = datetime.timedelta(seconds=30)
+
+    queue_client.send(message)
+    # [END send_complex_message]
+
+    # [START send_batch_message]
+    from azure.servicebus import BatchMessage
+
+    def batched_data():
+        for i in range(100):
+            yield "Batched Message no. {}".format(i)
+
+    message = BatchMessage(batched_data())
+    results = queue_client.send(message)
+    # [END send_batch_message]
+
     # [START send_message_service_bus]
     from azure.servicebus import Message
 
@@ -283,6 +304,24 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
     with queue_client.get_receiver() as receiver:
         receiver.peek(count=5)
     # [END peek_messages]
+
+    # [START receive_complex_message]
+    with queue_client.get_receiver() as receiver:
+        for message in receiver:
+            print("Receiving: {}".format(message))
+            print("Time to live: {}".format(message.time_to_live))
+            print("Sequence number: {}".format(message.sequence_number))
+            print("Enqueue Sequence numger: {}".format(message.enqueue_sequence_number))
+            print("Partition ID: {}".format(message.partition_id))
+            print("Partition Key: {}".format(message.partition_key))
+            print("User Properties: {}".format(message.user_properties))
+            print("Annotations: {}".format(message.annotations))
+            print("Delivery count: {}".format(message.header.delivery_count))
+            print("Message ID: {}".format(message.properties.message_id))
+            print("Locked until: {}".format(message.locked_until))
+            print("Lock Token: {}".format(message.lock_token))
+            print("Enqueued time: {}".format(message.enqueued_time))
+    # [END receive_complex_message]
 
     try:
         # [START receive_deferred_messages]

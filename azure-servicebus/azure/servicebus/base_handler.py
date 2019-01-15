@@ -20,7 +20,7 @@ from azure.servicebus.common.utils import create_properties
 from azure.servicebus.common.errors import (
     InvalidHandlerState,
     ServiceBusError,
-    ServiceBusErrorPolicy,
+    _ServiceBusErrorPolicy,
     ServiceBusConnectionError,
     ServiceBusAuthorizationError)
 
@@ -47,7 +47,7 @@ class BaseHandler(object):
         if not self.error_policy:
             max_retries = kwargs.pop('max_message_retries', 3)
             is_session = hasattr(self, 'session_id')
-            self.error_policy = ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
+            self.error_policy = _ServiceBusErrorPolicy(max_retries=max_retries, is_session=is_session)
         self._handler = None
         self._build_handler()
 

@@ -26,6 +26,21 @@ class Message(object):  # pylint: disable=too-many-public-methods
     :type body: str or bytes
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_complex_message]
+            :end-before: [END send_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Sending a message with additional properties
+
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message
     """
     _X_OPT_ENQUEUED_TIME = b'x-opt-enqueued-time'
     _X_OPT_SEQUENCE_NUMBER = b'x-opt-sequence-number'
@@ -84,6 +99,12 @@ class Message(object):  # pylint: disable=too-many-public-methods
 
     @property
     def settled(self):
+        """Whether the message has been settled. This will aways be `True`
+        for a message received using ReceiveAndDelete mode, otherwise it
+        will be `False` until the message is completed or otherwise settled.
+
+        :rtype: bool
+        """
         return self.message.settled
 
     @property
@@ -336,6 +357,25 @@ class Message(object):  # pylint: disable=too-many-public-methods
             raise MessageSettleFailed("defer", e)
 
 class BatchMessage(Message):
+    """A batch of messages combined into a single message body.
+    The body of the messages in the batch should be supplied by an iterable,
+    such as a generator.
+    If the contents of the iterable exceeds the maximum size of a single message,
+    the data will be broken up across multiple messages.
+
+    :param body: The data to send in each message in the batch.
+    :type body: Iterable
+    :param encoding: The encoding for string data. Default is UTF-8.
+    :type encoding: str
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START send_batch_message]
+            :end-before: [END send_batch_message]
+            :language: python
+            :dedent: 4
+            :caption: Send a batched message.
+    """
 
     def _build_message(self, body):
         if body is None:
@@ -346,6 +386,10 @@ class BatchMessage(Message):
 
 
 class PeekMessage(Message):
+    """A preview message. This message is still on the queue, and unlocked.
+    A peeked message cannot be completed, abandoned, dead-lettered or deferred.
+    It has no lock token or expiry.
+    """
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
@@ -380,6 +424,9 @@ class PeekMessage(Message):
 
 
 class DeferredMessage(Message):
+    """A message that has been deferred. A deferred message can be completed,
+    abandoned, or dead-lettered, however it cannot be deferred again.
+    """
 
     def __init__(self, message, mode):
         self._settled = mode == 0
