@@ -1333,10 +1333,10 @@ class ResourceFile(Model):
      httpUrl properties are mutually exclusive and one of them must be
      specified. This URL must be readable and listable using anonymous access;
      that is, the Batch service does not present any credentials when
-     downloading the blob. There are two ways to get such a URL for a blob in
-     Azure storage: include a Shared Access Signature (SAS) granting read
-     permissions on the blob, or set the ACL for the blob or its container to
-     allow public access.
+     downloading blobs from the container. There are two ways to get such a URL
+     for a container in Azure storage: include a Shared Access Signature (SAS)
+     granting read and list permissions on the container, or set the ACL for
+     the container to allow public access.
     :type storage_container_url: str
     :param http_url: The URL of the file to download. The
      autoStorageContainerName, storageContainerUrl and httpUrl properties are
