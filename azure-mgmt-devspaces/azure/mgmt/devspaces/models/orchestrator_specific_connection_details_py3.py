@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class OrchestratorSpecificConnectionDetails(Model):
-    """OrchestratorSpecificConnectionDetails.
+    """Base class for types that supply values used to connect to container
+    orchestrators.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: KubernetesConnectionDetails
