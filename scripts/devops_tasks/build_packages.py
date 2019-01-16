@@ -28,18 +28,20 @@ def build_packages(targeted_packages, distribution_directory):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Build Azure Packages, Called from DevOps YAML Pipeline')
     parser.add_argument(
-        '-g', 
-        '--glob-string', 
-        dest = 'glob_string', 
-        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
-                'Examples: All == "azure-*", Single = "azure-keyvault"'))
-
-    parser.add_argument(
         '-d',
         '--distribution-directory',
         dest = 'distribution_directory',
         help = 'The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.',
         required = True)
+
+    parser.add_argument(
+        '-g', 
+        '--glob-string', 
+        default = '',
+        dest = 'glob_string', 
+        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+                'Examples: All == "azure-*", Single = "azure-keyvault"'))
+
 
     args = parser.parse_args()
 
