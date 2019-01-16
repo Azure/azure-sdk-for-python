@@ -21,15 +21,8 @@ meta_pkgs = [
 ]
 
 def locate_libs(base_dir):
-    lib_dirs = []
-    for root, _, files in os.walk(base_dir):
-        parent_dir = os.path.dirname(root)
-        if parent_dir != base_dir:
-            continue
-        lib_dir = os.path.basename(root)
-        if 'setup.py' in files and lib_dir not in skip_pkgs:
-            lib_dirs.append(root)
-    return sorted(lib_dirs)
+    packages = [os.path.dirname(p) for p in glob.glob(os.path.join(base_dir, 'azure*', 'setup.py'))]
+    return sorted([p for p in packages if os.path.basename(p) not in skip_pkgs])
 
 def locate_wheels(base_dir):
     wheels = glob.glob(os.path.join(base_dir, '*.whl'))
@@ -164,8 +157,6 @@ if __name__ == '__main__':
             for spec in specs.keys():
                 friendly_spec = ' (%s)' % (spec) if spec != '' else ''
                 for lib in specs[spec]:
-                    if lib in meta_pkgs:
-                        continue
                     libs.append('  * %s%s' % (lib, friendly_spec))
             
             if len(libs) > 0:
@@ -194,7 +185,10 @@ if __name__ == '__main__':
     
     exitcode = 0
     if not consistent:
-        print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
+        if not verbose:
+            print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
+        else:
+            print('\n')
         exitcode = 1
     else:
         print('\n\nAll library dependencies verified, no incompatible versions detected')
@@ -202,7 +196,7 @@ if __name__ == '__main__':
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
     if freeze:
         if exitcode != 0:
-            print('Unable to freeze requirements when incompatible dependency versions exist')
+            print('Unable to freeze requirements due to incompatible dependency versions')
             sys.exit(exitcode)
         else:
             with open(frozen_filename, 'w') as frozen_file:
