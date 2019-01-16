@@ -78,6 +78,8 @@ try:
     from .operation_py3 import Operation
     from .get_ssis_object_metadata_request_py3 import GetSsisObjectMetadataRequest
     from .ssis_object_metadata_status_response_py3 import SsisObjectMetadataStatusResponse
+    from .exposure_control_request_py3 import ExposureControlRequest
+    from .exposure_control_response_py3 import ExposureControlResponse
     from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference_py3 import TriggerReference
     from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
@@ -339,6 +341,7 @@ try:
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
+    from .validation_activity_py3 import ValidationActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
@@ -440,6 +443,8 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .get_ssis_object_metadata_request import GetSsisObjectMetadataRequest
     from .ssis_object_metadata_status_response import SsisObjectMetadataStatusResponse
+    from .exposure_control_request import ExposureControlRequest
+    from .exposure_control_response import ExposureControlResponse
     from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference import TriggerReference
     from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
@@ -701,6 +706,7 @@ except (SyntaxError, ImportError):
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
+    from .validation_activity import ValidationActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
@@ -873,6 +879,8 @@ __all__ = [
     'Operation',
     'GetSsisObjectMetadataRequest',
     'SsisObjectMetadataStatusResponse',
+    'ExposureControlRequest',
+    'ExposureControlResponse',
     'SelfDependencyTumblingWindowTriggerReference',
     'TriggerReference',
     'TumblingWindowTriggerDependencyReference',
@@ -1134,6 +1142,7 @@ __all__ = [
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
+    'ValidationActivity',
     'UntilActivity',
     'WaitActivity',
     'ForEachActivity',
