@@ -384,6 +384,11 @@ class SapCloudForCustomerSinkWriteBehavior(str, Enum):
     update = "Update"
 
 
+class WebHookActivityMethod(str, Enum):
+
+    post = "POST"
+
+
 class IntegrationRuntimeType(str, Enum):
 
     managed = "Managed"

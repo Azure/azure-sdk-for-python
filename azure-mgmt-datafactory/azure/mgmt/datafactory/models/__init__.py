@@ -308,6 +308,7 @@ try:
     from .custom_activity_py3 import CustomActivity
     from .ssis_property_override_py3 import SSISPropertyOverride
     from .ssis_execution_parameter_py3 import SSISExecutionParameter
+    from .ssis_execution_credential_py3 import SSISExecutionCredential
     from .ssis_package_location_py3 import SSISPackageLocation
     from .execute_ssis_package_activity_py3 import ExecuteSSISPackageActivity
     from .hd_insight_spark_activity_py3 import HDInsightSparkActivity
@@ -340,10 +341,12 @@ try:
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
+    from .validation_activity_py3 import ValidationActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
     from .if_condition_activity_py3 import IfConditionActivity
+    from .web_hook_activity_py3 import WebHookActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
     from .linked_integration_runtime_py3 import LinkedIntegrationRuntime
@@ -670,6 +673,7 @@ except (SyntaxError, ImportError):
     from .custom_activity import CustomActivity
     from .ssis_property_override import SSISPropertyOverride
     from .ssis_execution_parameter import SSISExecutionParameter
+    from .ssis_execution_credential import SSISExecutionCredential
     from .ssis_package_location import SSISPackageLocation
     from .execute_ssis_package_activity import ExecuteSSISPackageActivity
     from .hd_insight_spark_activity import HDInsightSparkActivity
@@ -702,10 +706,12 @@ except (SyntaxError, ImportError):
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
+    from .validation_activity import ValidationActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
     from .if_condition_activity import IfConditionActivity
+    from .web_hook_activity import WebHookActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
     from .linked_integration_runtime import LinkedIntegrationRuntime
@@ -791,6 +797,7 @@ from .data_factory_management_client_enums import (
     CopyBehaviorType,
     PolybaseSettingsRejectType,
     SapCloudForCustomerSinkWriteBehavior,
+    WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
@@ -1102,6 +1109,7 @@ __all__ = [
     'CustomActivity',
     'SSISPropertyOverride',
     'SSISExecutionParameter',
+    'SSISExecutionCredential',
     'SSISPackageLocation',
     'ExecuteSSISPackageActivity',
     'HDInsightSparkActivity',
@@ -1134,10 +1142,12 @@ __all__ = [
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
+    'ValidationActivity',
     'UntilActivity',
     'WaitActivity',
     'ForEachActivity',
     'IfConditionActivity',
+    'WebHookActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
     'LinkedIntegrationRuntime',
@@ -1222,6 +1232,7 @@ __all__ = [
     'CopyBehaviorType',
     'PolybaseSettingsRejectType',
     'SapCloudForCustomerSinkWriteBehavior',
+    'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',
