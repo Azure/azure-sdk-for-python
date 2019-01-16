@@ -517,7 +517,7 @@ class RecommendationsOperations(object):
         :param update_seen: Specify <code>true</code> to update the last-seen
          timestamp of the recommendation object.
         :type update_seen: bool
-        :param recommendation_id: The GUID of the recommedation object if you
+        :param recommendation_id: The GUID of the recommendation object if you
          query an expired one. You don't need to specify it to query an active
          entry.
         :type recommendation_id: str
