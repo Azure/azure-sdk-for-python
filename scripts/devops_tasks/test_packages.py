@@ -20,7 +20,6 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
 def prep_and_run_tests(targeted_packages, python_version):
     print('running test setup for {}'.format(targeted_packages))
-    
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
