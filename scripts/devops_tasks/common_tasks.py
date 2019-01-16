@@ -1,10 +1,28 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# Below are common methods for the devops build steps. This is the common location that will be updated with 
+# package targeting during release.
+
 import glob
 from pathlib import Path
 from subprocess import check_call, CalledProcessError
 import os
 
+DEFAULT_BUILD_PACKAGES = ['azure-keyvault', 'azure-servicebus'] 
+
+# this function is where a glob string gets translated to a list of packages
+# It is called by both BUILD (package) and TEST. In the future, this function will be the central location 
+# for handling targeting of release packages
 def process_glob_string(glob_string, target_root_dir):
-    individual_globs = glob_string.split(',')
+    if glob_string:
+        individual_globs = glob_string.split(',')
+    else:
+        individual_globs = DEFAULT_BUILD_PACKAGES
     collected_top_level_directories = []
 
     for glob_string in individual_globs:

@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-#--------------------------------------------------------------------------
-
-# Assumptions when running this script:
-#  You are running in the root directory of azure-sdk-for-python repo
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
 
 # Normally, this module will be executed as referenced as part of the devops build definitions.
 # An enterprising user can easily glance over this and leverage for their own purposes.
@@ -36,8 +32,7 @@ if __name__ == '__main__':
         '--glob-string', 
         dest = 'glob_string', 
         help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
-                'Examples: All == "azure-*", Single = "azure-keyvault"'),
-        required = True)
+                'Examples: All == "azure-*", Single = "azure-keyvault"'))
 
     parser.add_argument(
         '-d',

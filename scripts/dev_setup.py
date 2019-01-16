@@ -28,7 +28,7 @@ def pip_command(command, additionalDir='.', error_ok=False):
 
 # optional argument in a situation where we want to build a variable subset of packages
 parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
-parser.add_argument('--packageList', '-g', 
+parser.add_argument('--packageList', '-p', 
     dest='packageList', 
     default='', 
     help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
@@ -38,7 +38,7 @@ packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
 if not args.packageList:
-    [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+    targeted_packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 else:
     targeted_packages = [x.strip() for x in args.packageList.split(',')]
 

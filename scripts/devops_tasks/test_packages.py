@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-#--------------------------------------------------------------------------
-
-# Assumptions when running this script:
-#  Execution of this script begins in the root directory of azure-sdk-for-python repo
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
 
 # Normally, this module will be executed as referenced as part of the devops build definitions.
 # An enterprising user can easily glance over this and leverage for their own purposes.
@@ -25,7 +21,7 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 def prep_and_run_tests(targeted_packages, python_version):
     print('running test setup for {}'.format(targeted_packages))
     
-    run_check_call([python_version, dev_setup_script_location, '-g', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
+    run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
@@ -44,15 +40,14 @@ if __name__ == '__main__':
         '--glob-string', 
         dest = 'glob_string', 
         help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
-                'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'),
-        required = True)
+                'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'))
 
     parser.add_argument(
         '-p',
         '--python-version',
         dest = 'python_version',
         default = 'python',
-        help = 'The name of the python that should run the build. This is for usage in special cases like in /.azure-pipelines/specialcase.test.yml. Defaults to "python"')
+        help = 'The name of the python that should run the build. This is for usage in special cases like the "Special_Python_Distro_Tests" Job in /.azure-pipelines/client.yml. Defaults to "python"')
 
     args = parser.parse_args()
     targeted_packages = process_glob_string(args.glob_string, root_dir)
