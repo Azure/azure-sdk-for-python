@@ -26,15 +26,21 @@ def pip_command(command, additionalDir='.', error_ok=False):
         if not error_ok:
             sys.exit(1)
 
-# optional argument in a situation where we want to build a single package
+# optional argument in a situation where we want to build a variable subset of packages
 parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
-parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
+parser.add_argument('--packageList', '-g', 
+    dest='packageList', 
+    default='', 
+    help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
 args = parser.parse_args()
 
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
-targeted_packages = [os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))]
+if not args.packageList:
+    [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+else:
+    targeted_packages = [x.strip() for x in args.packageList.split(',')]
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if 'nspkg' in p]
