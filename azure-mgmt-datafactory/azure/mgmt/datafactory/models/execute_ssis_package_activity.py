@@ -48,8 +48,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
      Type: string (or Expression with resultType string).
     :type environment_path: object
     :param execution_credential: The package execution credential.
-    :type execution_credential: dict[str,
-     ~azure.mgmt.datafactory.models.SSISExecutionCredential]
+    :type execution_credential:
+     ~azure.mgmt.datafactory.models.SSISExecutionCredential
     :param connect_via: Required. The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
@@ -95,7 +95,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'runtime': {'key': 'typeProperties.runtime', 'type': 'object'},
         'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'object'},
         'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'object'},
-        'execution_credential': {'key': 'typeProperties.executionCredential', 'type': '{SSISExecutionCredential}'},
+        'execution_credential': {'key': 'typeProperties.executionCredential', 'type': 'SSISExecutionCredential'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
         'project_parameters': {'key': 'typeProperties.projectParameters', 'type': '{SSISExecutionParameter}'},
         'package_parameters': {'key': 'typeProperties.packageParameters', 'type': '{SSISExecutionParameter}'},
