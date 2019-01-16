@@ -6,6 +6,7 @@
 import inspect
 import threading
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 import requests
 from azure.keyvault import http_bearer_challenge_cache as ChallengeCache
@@ -219,13 +220,36 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
                 if self._credentials.resource != resource:
                     self._credentials.resource = resource
                     self._credentials.set_token()
-                token = self._credentials.token
+                
+                token = self._try_get_valid_token()
                 return AccessToken(scheme=token['token_type'], token=token['access_token'], key=None)
 
             authorization_callback = auth_callback
 
         self.auth = KeyVaultAuthBase(authorization_callback)
         self._callback = authorization_callback
+
+    def _try_get_valid_token(self):
+        token = self._credentials.token
+
+        if isinstance(token, dict):
+            expiration_time = token.get('expires_on', None)
+
+            # Check if token needs refreshing
+            if expiration_time is not None:
+                try:
+                    expiration_time = datetime.fromtimestamp(float(expiration_time))
+                    
+                    # Refresh token 5-minutes before expiration to avoid clock skew issues
+                    eager_expiration_margin_in_minutes = 5
+                    if datetime.now() + timedelta(minutes=eager_expiration_margin_in_minutes) >= expiration_time:
+                        self._credentials.set_token()
+                        token = self._credentials.token
+                except Exception as e:
+                    # Best effort refreshing
+                    pass
+        
+        return token
         
     def signed_session(self, session=None):
         session = session or requests.Session()
