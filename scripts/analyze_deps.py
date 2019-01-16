@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import ast
+import glob
 import os
 import re
 import sys
@@ -29,6 +30,56 @@ def locate_libs(base_dir):
         if 'setup.py' in files and lib_dir not in skip_pkgs:
             lib_dirs.append(root)
     return sorted(lib_dirs)
+
+def locate_wheels(base_dir):
+    wheels = glob.glob(os.path.join(base_dir, '*.whl'))
+    return sorted(wheels)
+
+def get_lib_deps(base_dir):
+    dependencies = {}
+    for lib_dir in locate_libs(base_dir):
+        try:
+            lib_name = os.path.basename(lib_dir)
+            setup_path = os.path.join(lib_dir, 'setup.py')
+            requires = parse_setup(setup_path)
+            for req in requires:
+                req_parts = re.split('([<>~=]+)', req, 1)
+                req_name = req_parts[0]
+                spec = ''.join(req_parts[1:])
+                spec = ','.join(sorted(spec.split(',')))
+                if not req_name in dependencies:
+                    dependencies[req_name] = {}
+                if not spec in dependencies[req_name]:
+                    dependencies[req_name][spec] = []
+                dependencies[req_name][spec].append(lib_name)
+        except:
+            print('Failed to parse %s' % (setup_path))
+    return dependencies
+
+def get_wheel_deps(wheel_dir):
+    from wheel.pkginfo import read_pkg_info_bytes
+    from wheel.wheelfile import WheelFile
+    
+    requires_dist_re = re.compile(r"""^(?P<name>\S+)(\s\((?P<spec>.+)\))?$""")
+    dependencies = {}
+    for whl_path in locate_wheels(wheel_dir):
+        try:
+            with WheelFile(whl_path) as whl:
+                pkg_info = read_pkg_info_bytes(whl.read(whl.dist_info_path + '/METADATA'))
+                lib_name = pkg_info.get('Name')
+                requires = pkg_info.get_all('Requires-Dist')
+                for req in requires:
+                    parsed = requires_dist_re.match(req.split(';')[0].strip())
+                    req_name, spec = parsed.group('name', 'spec')
+                    spec = ','.join(sorted(spec.split(','))) if spec else ''
+                    if not req_name in dependencies:
+                        dependencies[req_name] = {}
+                    if not spec in dependencies[req_name]:
+                        dependencies[req_name][spec] = []
+                    dependencies[req_name][spec].append(lib_name)
+        except:
+            print('Failed to parse METADATA from %s' % (whl_path))
+    return dependencies
 
 def parse_setup(setup_filename):
     mock_setup = textwrap.dedent('''\
@@ -91,29 +142,19 @@ class Logger(object):
 
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    wheel_dir = None
     verbose = '--verbose' in sys.argv[1:]
     freeze = '--freeze' in sys.argv[1:]
     if '--out' in sys.argv[1:]:
         out_filepath = sys.argv[sys.argv[1:].index('--out') + 2]
         sys.stdout = Logger(out_filepath)
+    if '--wheeldir' in sys.argv[1:]:
+        wheel_dir = sys.argv[sys.argv[1:].index('--wheeldir') + 2]
     
-    dependencies = {}
-    for lib_dir in locate_libs(base_dir):
-        try:
-            lib_name = os.path.basename(lib_dir)
-            setup_path = os.path.join(lib_dir, 'setup.py')
-            requires = parse_setup(setup_path)
-            for req in requires:
-                req_parts = re.split('([<>~=]+)', req, 1)
-                req_name = req_parts[0]
-                spec = ''.join(req_parts[1:])
-                if not req_name in dependencies:
-                    dependencies[req_name] = {}
-                if not spec in dependencies[req_name]:
-                    dependencies[req_name][spec] = []
-                dependencies[req_name][spec].append(lib_name)
-        except:
-            print('Failed to parse %s' % (setup_path))
+    if wheel_dir:
+        dependencies = get_wheel_deps(wheel_dir)
+    else:
+        dependencies = get_lib_deps(base_dir)
     
     if verbose:
         print('Requirements discovered:')
@@ -185,7 +226,7 @@ if __name__ == '__main__':
     
     flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
     missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
-    if len(missing_reqs) > 0:
+    if verbose and len(missing_reqs) > 0:
         print('\nThe following requirements are frozen but do not exist in any current library:')
         for missing_req in missing_reqs:
             [spec] = frozen[missing_req]
