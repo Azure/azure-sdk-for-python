@@ -9,147 +9,204 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .auto_storage_base_properties import AutoStorageBaseProperties
-from .key_vault_reference import KeyVaultReference
-from .batch_account_create_parameters import BatchAccountCreateParameters
-from .auto_storage_properties import AutoStorageProperties
-from .batch_account import BatchAccount
-from .batch_account_update_parameters import BatchAccountUpdateParameters
-from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyParameters
-from .batch_account_keys import BatchAccountKeys
-from .activate_application_package_parameters import ActivateApplicationPackageParameters
-from .application import Application
-from .application_package import ApplicationPackage
-from .batch_location_quota import BatchLocationQuota
-from .resource import Resource
-from .proxy_resource import ProxyResource
-from .certificate_base_properties import CertificateBaseProperties
-from .delete_certificate_error import DeleteCertificateError
-from .certificate import Certificate
-from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
-from .cloud_service_configuration import CloudServiceConfiguration
-from .image_reference import ImageReference
-from .windows_configuration import WindowsConfiguration
-from .data_disk import DataDisk
-from .container_registry import ContainerRegistry
-from .container_configuration import ContainerConfiguration
-from .virtual_machine_configuration import VirtualMachineConfiguration
-from .deployment_configuration import DeploymentConfiguration
-from .fixed_scale_settings import FixedScaleSettings
-from .auto_scale_settings import AutoScaleSettings
-from .scale_settings import ScaleSettings
-from .auto_scale_run_error import AutoScaleRunError
-from .auto_scale_run import AutoScaleRun
-from .network_security_group_rule import NetworkSecurityGroupRule
-from .inbound_nat_pool import InboundNatPool
-from .pool_endpoint_configuration import PoolEndpointConfiguration
-from .network_configuration import NetworkConfiguration
-from .task_scheduling_policy import TaskSchedulingPolicy
-from .linux_user_configuration import LinuxUserConfiguration
-from .windows_user_configuration import WindowsUserConfiguration
-from .user_account import UserAccount
-from .metadata_item import MetadataItem
-from .resource_file import ResourceFile
-from .environment_setting import EnvironmentSetting
-from .auto_user_specification import AutoUserSpecification
-from .user_identity import UserIdentity
-from .task_container_settings import TaskContainerSettings
-from .start_task import StartTask
-from .certificate_reference import CertificateReference
-from .application_package_reference import ApplicationPackageReference
-from .resize_error import ResizeError
-from .resize_operation_status import ResizeOperationStatus
-from .pool import Pool
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .check_name_availability_parameters import CheckNameAvailabilityParameters
-from .check_name_availability_result import CheckNameAvailabilityResult
-from .batch_account_paged import BatchAccountPaged
-from .application_package_paged import ApplicationPackagePaged
-from .application_paged import ApplicationPaged
-from .operation_paged import OperationPaged
-from .certificate_paged import CertificatePaged
-from .pool_paged import PoolPaged
-from .batch_management_client_enums import (
-    PoolAllocationMode,
-    ProvisioningState,
-    AccountKeyType,
-    PackageState,
-    CertificateFormat,
-    CertificateProvisioningState,
-    PoolProvisioningState,
-    AllocationState,
-    CachingType,
-    StorageAccountType,
-    ComputeNodeDeallocationOption,
-    InterNodeCommunicationState,
-    InboundEndpointProtocol,
-    NetworkSecurityGroupRuleAccess,
-    ComputeNodeFillType,
-    ElevationLevel,
-    LoginMode,
-    AutoUserScope,
-    CertificateStoreLocation,
-    CertificateVisibility,
-    NameAvailabilityReason,
-)
 
-__all__ = [
-    'AutoStorageBaseProperties',
-    'KeyVaultReference',
-    'BatchAccountCreateParameters',
-    'AutoStorageProperties',
-    'BatchAccount',
-    'BatchAccountUpdateParameters',
-    'BatchAccountRegenerateKeyParameters',
-    'BatchAccountKeys',
+try:
+    from ._models_py3 import ActivateApplicationPackageParameters
+    from ._models_py3 import ApplicationPackageReference
+    from ._models_py3 import AutoScaleRun
+    from ._models_py3 import AutoScaleRunError
+    from ._models_py3 import AutoScaleSettings
+    from ._models_py3 import AutoStorageBaseProperties
+    from ._models_py3 import AutoUserSpecification
+    from ._models_py3 import BatchAccountCreateParameters
+    from ._models_py3 import BatchAccountKeys
+    from ._models_py3 import BatchAccountRegenerateKeyParameters
+    from ._models_py3 import BatchAccountUpdateParameters
+    from ._models_py3 import BatchLocationQuota
+    from ._models_py3 import CertificateBaseProperties
+    from ._models_py3 import CertificateReference
+    from ._models_py3 import CheckNameAvailabilityParameters
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CloudServiceConfiguration
+    from ._models_py3 import ContainerConfiguration
+    from ._models_py3 import ContainerRegistry
+    from ._models_py3 import DataDisk
+    from ._models_py3 import DeleteCertificateError
+    from ._models_py3 import DeploymentConfiguration
+    from ._models_py3 import EnvironmentSetting
+    from ._models_py3 import FixedScaleSettings
+    from ._models_py3 import ImageReference
+    from ._models_py3 import InboundNatPool
+    from ._models_py3 import KeyVaultReference
+    from ._models_py3 import LinuxUserConfiguration
+    from ._models_py3 import MetadataItem
+    from ._models_py3 import NetworkConfiguration
+    from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PoolEndpointConfiguration
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import ResizeError
+    from ._models_py3 import ResizeOperationStatus
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceFile
+    from ._models_py3 import ScaleSettings
+    from ._models_py3 import StartTask
+    from ._models_py3 import TaskContainerSettings
+    from ._models_py3 import TaskSchedulingPolicy
+    from ._models_py3 import UserAccount
+    from ._models_py3 import UserIdentity
+    from ._models_py3 import VirtualMachineConfiguration
+    from ._models_py3 import WindowsConfiguration
+    from ._models_py3 import WindowsUserConfiguration
+    from ._models_py3 import Application
+    from ._models_py3 import ApplicationPackage
+    from ._models_py3 import AutoStorageProperties
+    from ._models_py3 import BatchAccount
+    from ._models_py3 import Certificate
+    from ._models_py3 import CertificateCreateOrUpdateParameters
+    from ._models_py3 import Pool
+except (SyntaxError, ImportError):
+    from ._models import ActivateApplicationPackageParameters
+    from ._models import ApplicationPackageReference
+    from ._models import AutoScaleRun
+    from ._models import AutoScaleRunError
+    from ._models import AutoScaleSettings
+    from ._models import AutoStorageBaseProperties
+    from ._models import AutoUserSpecification
+    from ._models import BatchAccountCreateParameters
+    from ._models import BatchAccountKeys
+    from ._models import BatchAccountRegenerateKeyParameters
+    from ._models import BatchAccountUpdateParameters
+    from ._models import BatchLocationQuota
+    from ._models import CertificateBaseProperties
+    from ._models import CertificateReference
+    from ._models import CheckNameAvailabilityParameters
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CloudServiceConfiguration
+    from ._models import ContainerConfiguration
+    from ._models import ContainerRegistry
+    from ._models import DataDisk
+    from ._models import DeleteCertificateError
+    from ._models import DeploymentConfiguration
+    from ._models import EnvironmentSetting
+    from ._models import FixedScaleSettings
+    from ._models import ImageReference
+    from ._models import InboundNatPool
+    from ._models import KeyVaultReference
+    from ._models import LinuxUserConfiguration
+    from ._models import MetadataItem
+    from ._models import NetworkConfiguration
+    from ._models import NetworkSecurityGroupRule
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PoolEndpointConfiguration
+    from ._models import ProxyResource
+    from ._models import ResizeError
+    from ._models import ResizeOperationStatus
+    from ._models import Resource
+    from ._models import ResourceFile
+    from ._models import ScaleSettings
+    from ._models import StartTask
+    from ._models import TaskContainerSettings
+    from ._models import TaskSchedulingPolicy
+    from ._models import UserAccount
+    from ._models import UserIdentity
+    from ._models import VirtualMachineConfiguration
+    from ._models import WindowsConfiguration
+    from ._models import WindowsUserConfiguration
+    from ._models import Application
+    from ._models import ApplicationPackage
+    from ._models import AutoStorageProperties
+    from ._models import BatchAccount
+    from ._models import Certificate
+    from ._models import CertificateCreateOrUpdateParameters
+    from ._models import Pool
+from ._paged_models import BatchAccountPaged
+from ._paged_models import ApplicationPackagePaged
+from ._paged_models import ApplicationPaged
+from ._paged_models import OperationPaged
+from ._paged_models import CertificatePaged
+from ._paged_models import PoolPaged
+from ._batch_management_client_enums import PoolAllocationMode
+from ._batch_management_client_enums import ProvisioningState
+from ._batch_management_client_enums import AccountKeyType
+from ._batch_management_client_enums import PackageState
+from ._batch_management_client_enums import CertificateFormat
+from ._batch_management_client_enums import CertificateProvisioningState
+from ._batch_management_client_enums import PoolProvisioningState
+from ._batch_management_client_enums import AllocationState
+from ._batch_management_client_enums import CachingType
+from ._batch_management_client_enums import StorageAccountType
+from ._batch_management_client_enums import ComputeNodeDeallocationOption
+from ._batch_management_client_enums import InterNodeCommunicationState
+from ._batch_management_client_enums import InboundEndpointProtocol
+from ._batch_management_client_enums import NetworkSecurityGroupRuleAccess
+from ._batch_management_client_enums import ComputeNodeFillType
+from ._batch_management_client_enums import ElevationLevel
+from ._batch_management_client_enums import LoginMode
+from ._batch_management_client_enums import AutoUserScope
+from ._batch_management_client_enums import CertificateStoreLocation
+from ._batch_management_client_enums import CertificateVisibility
+from ._batch_management_client_enums import NameAvailabilityReason
+
+
+__all__=[
     'ActivateApplicationPackageParameters',
-    'Application',
-    'ApplicationPackage',
-    'BatchLocationQuota',
-    'Resource',
-    'ProxyResource',
-    'CertificateBaseProperties',
-    'DeleteCertificateError',
-    'Certificate',
-    'CertificateCreateOrUpdateParameters',
-    'CloudServiceConfiguration',
-    'ImageReference',
-    'WindowsConfiguration',
-    'DataDisk',
-    'ContainerRegistry',
-    'ContainerConfiguration',
-    'VirtualMachineConfiguration',
-    'DeploymentConfiguration',
-    'FixedScaleSettings',
-    'AutoScaleSettings',
-    'ScaleSettings',
-    'AutoScaleRunError',
-    'AutoScaleRun',
-    'NetworkSecurityGroupRule',
-    'InboundNatPool',
-    'PoolEndpointConfiguration',
-    'NetworkConfiguration',
-    'TaskSchedulingPolicy',
-    'LinuxUserConfiguration',
-    'WindowsUserConfiguration',
-    'UserAccount',
-    'MetadataItem',
-    'ResourceFile',
-    'EnvironmentSetting',
-    'AutoUserSpecification',
-    'UserIdentity',
-    'TaskContainerSettings',
-    'StartTask',
-    'CertificateReference',
     'ApplicationPackageReference',
-    'ResizeError',
-    'ResizeOperationStatus',
-    'Pool',
-    'OperationDisplay',
-    'Operation',
+    'AutoScaleRun',
+    'AutoScaleRunError',
+    'AutoScaleSettings',
+    'AutoStorageBaseProperties',
+    'AutoUserSpecification',
+    'BatchAccountCreateParameters',
+    'BatchAccountKeys',
+    'BatchAccountRegenerateKeyParameters',
+    'BatchAccountUpdateParameters',
+    'BatchLocationQuota',
+    'CertificateBaseProperties',
+    'CertificateReference',
     'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
+    'CloudServiceConfiguration',
+    'ContainerConfiguration',
+    'ContainerRegistry',
+    'DataDisk',
+    'DeleteCertificateError',
+    'DeploymentConfiguration',
+    'EnvironmentSetting',
+    'FixedScaleSettings',
+    'ImageReference',
+    'InboundNatPool',
+    'KeyVaultReference',
+    'LinuxUserConfiguration',
+    'MetadataItem',
+    'NetworkConfiguration',
+    'NetworkSecurityGroupRule',
+    'Operation',
+    'OperationDisplay',
+    'PoolEndpointConfiguration',
+    'ProxyResource',
+    'ResizeError',
+    'ResizeOperationStatus',
+    'Resource',
+    'ResourceFile',
+    'ScaleSettings',
+    'StartTask',
+    'TaskContainerSettings',
+    'TaskSchedulingPolicy',
+    'UserAccount',
+    'UserIdentity',
+    'VirtualMachineConfiguration',
+    'WindowsConfiguration',
+    'WindowsUserConfiguration',
+    'Application',
+    'ApplicationPackage',
+    'AutoStorageProperties',
+    'BatchAccount',
+    'Certificate',
+    'CertificateCreateOrUpdateParameters',
+    'Pool',
     'BatchAccountPaged',
     'ApplicationPackagePaged',
     'ApplicationPaged',
