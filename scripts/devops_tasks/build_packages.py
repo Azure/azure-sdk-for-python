@@ -35,8 +35,8 @@ if __name__ == '__main__':
         required = True)
 
     parser.add_argument(
-        'glob_string',  
-        dest = 'glob_string', 
+        'glob_string',
+        nargs='?',
         help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
                 'Examples: All == "azure-*", Single = "azure-keyvault"'))
 

@@ -43,8 +43,8 @@ if __name__ == '__main__':
         help = 'The name of the python that should run the build. This is for usage in special cases like the "Special_Python_Distro_Tests" Job in /.azure-pipelines/client.yml. Defaults to "python"')
 
     parser.add_argument(
-        'glob_string',  
-        dest = 'glob_string', 
+        'glob_string',
+        nargs='?',
         help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
                 'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'))
 
