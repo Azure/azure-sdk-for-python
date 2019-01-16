@@ -83,7 +83,7 @@ jobs:
   - task: PythonScript@0
     displayName: 'Setup and Run Tests'
     inputs:
-      scriptPath: 'scripts/devops_tasks/test_packages.py'
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: '"$(build_targeting_string)"'
 
 - job: Special_Python_Distro_Tests
@@ -107,7 +107,7 @@ jobs:
      
      PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
      pypy3 -m ensurepip
-     python ./scripts/devops_tasks/test_packages.py -p pypy3 "$(build_targeting_string)" 
+     python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -125,6 +125,6 @@ jobs:
 
      PATH=/home/vsts/bin:$PATH
      python3 -m ensurepip
-     python ./scripts/devops_tasks/test_packages.py -p python3 "$(build_targeting_string)"
+     python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true
