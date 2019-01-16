@@ -22,7 +22,7 @@
 import unittest
 import time
 
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
 import test.test_config as test_config
@@ -68,7 +68,7 @@ class Test_ttl_tests(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, 
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, 
                                                 {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_ttl_tests.testDbName + '\'')
         it = iter(query_iterable)
@@ -78,7 +78,7 @@ class Test_ttl_tests(unittest.TestCase):
             client.DeleteDatabase(test_db['_self'])
 
     def test_collection_and_document_ttl_values(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
@@ -152,7 +152,7 @@ class Test_ttl_tests(unittest.TestCase):
             document_definition)
 
     def test_document_ttl_with_positive_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
@@ -217,7 +217,7 @@ class Test_ttl_tests(unittest.TestCase):
             created_document['_self'])
 
     def test_document_ttl_with_negative_one_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
@@ -259,7 +259,7 @@ class Test_ttl_tests(unittest.TestCase):
         self.assertEqual(created_document2['id'], read_document['id'])
 
     def test_document_ttl_with_no_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
@@ -281,7 +281,7 @@ class Test_ttl_tests(unittest.TestCase):
         self.assertEqual(created_document['id'], read_document['id'])
 
     def test_document_ttl_misc(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         

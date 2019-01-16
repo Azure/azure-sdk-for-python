@@ -21,7 +21,7 @@
 
 import unittest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 from azure.cosmos import query_iterable
 import azure.cosmos.base as base
 import test.test_config as test_config
@@ -47,7 +47,7 @@ class RuPerMinTests(unittest.TestCase):
     
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -68,7 +68,7 @@ class RuPerMinTests(unittest.TestCase):
             
         RuPerMinTests.cleanUpTestDatabase()
         
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })
         
     @classmethod

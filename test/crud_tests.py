@@ -39,7 +39,7 @@ import uuid
 import azure.cosmos.base as base
 import azure.cosmos.consistent_hash_ring as consistent_hash_ring
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.errors as errors
 import azure.cosmos.hash_partition_resolver as hash_partition_resolver
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -83,7 +83,7 @@ class CRUDTests(unittest.TestCase):
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, 
+        client = cosmos_client_connection.CosmosClientConnection(cls.host, 
                                                 {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
@@ -115,7 +115,7 @@ class CRUDTests(unittest.TestCase):
         self._test_database_crud(True)
 
     def _test_database_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # read databases.
         databases = list(client.ReadDatabases())
@@ -150,7 +150,7 @@ class CRUDTests(unittest.TestCase):
                                            self.GetDatabaseLink(created_db, is_name_based))
 
     def test_sql_query_crud(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create two databases.
         db1 = client.CreateDatabase({ 'id': 'database 1' })
         db2 = client.CreateDatabase({ 'id': 'database 2' })
@@ -183,7 +183,7 @@ class CRUDTests(unittest.TestCase):
         self._test_collection_crud(True)
 
     def _test_collection_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -233,7 +233,7 @@ class CRUDTests(unittest.TestCase):
 
     
     def test_partitioned_collection(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -265,7 +265,7 @@ class CRUDTests(unittest.TestCase):
 
 
     def test_partitioned_collection_quota(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -292,7 +292,7 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(client.last_response_headers.get("x-ms-resource-usage") != None)
 
     def test_partitioned_collection_partition_key_extraction(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -377,7 +377,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection2))
 
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -447,7 +447,7 @@ class CRUDTests(unittest.TestCase):
         
 
     def test_partitioned_collection_document_crud_and_query(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy, documents.ConsistencyLevel.Session)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy, documents.ConsistencyLevel.Session)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -568,7 +568,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection))
 
     def test_partitioned_collection_permissions(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -615,7 +615,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[all_collection['_rid']] = (all_permission['_token'])
         resource_tokens[read_collection['_rid']] = (read_permission['_token'])
         
-        restricted_client = cosmos_client.CosmosClient(
+        restricted_client = cosmos_client_connection.CosmosClientConnection(
             CRUDTests.host, {'resourceTokens': resource_tokens}, CRUDTests.connectionPolicy)
 
         document_definition = {'id': 'document1',
@@ -670,7 +670,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteContainer(self.GetDocumentCollectionLink(created_db, read_collection))
 
     def test_partitioned_collection_execute_stored_procedure(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -753,7 +753,7 @@ class CRUDTests(unittest.TestCase):
                 return sum([len(chunk) for chunk in self._chunks])
 
 
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -948,7 +948,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteContainer(self.GetDocumentCollectionLink(db, collection))
 
     def test_partitioned_collection_partition_key_value_types(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -1019,7 +1019,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection))
 
     def test_partitioned_collection_conflict_crud_and_query(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -1111,7 +1111,7 @@ class CRUDTests(unittest.TestCase):
         self._test_document_crud(True)
         
     def _test_document_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -1238,7 +1238,7 @@ class CRUDTests(unittest.TestCase):
                                            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
 
     def test_partitioning(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create test database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -1373,7 +1373,7 @@ class CRUDTests(unittest.TestCase):
     
     # Partitioning test(with paging)
     def test_partition_paging(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create test database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -1669,7 +1669,7 @@ class CRUDTests(unittest.TestCase):
         self._test_document_upsert(True)
         
     def _test_document_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
@@ -1778,7 +1778,7 @@ class CRUDTests(unittest.TestCase):
         self._test_spatial_index(True)
         
     def _test_spatial_index(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # partial policy specified
         collection = client.CreateContainer(
@@ -1871,7 +1871,7 @@ class CRUDTests(unittest.TestCase):
         # Should do attachment CRUD operations successfully
         connection_policy = CRUDTests.connectionPolicy
         connection_policy.MediaReadMode = documents.MediaReadMode.Buffered
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, connection_policy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2039,7 +2039,7 @@ class CRUDTests(unittest.TestCase):
                 """
                 return sum([len(chunk) for chunk in self._chunks])
 
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -2175,7 +2175,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_user_crud(self, is_name_based):
         # Should do User CRUD operations successfully.
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2229,7 +2229,7 @@ class CRUDTests(unittest.TestCase):
         self._test_user_upsert(True)
         
     def _test_user_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -2290,7 +2290,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_permission_crud(self, is_name_based):
         # Should do Permission CRUD operations successfully
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2353,7 +2353,7 @@ class CRUDTests(unittest.TestCase):
         self._test_permission_upsert(True)
         
     def _test_permission_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -2439,7 +2439,7 @@ class CRUDTests(unittest.TestCase):
             """Sets up entities for this test.
 
             :Parameters:
-                - `client`: cosmos_client.CosmosClient
+                - `client`: cosmos_client_connection.CosmosClient
 
             :Returns:
                 dict
@@ -2522,12 +2522,12 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = cosmos_client.CosmosClient(CRUDTests.host, {}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {}, CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
                                            client.ReadDatabases())
         # Client with master key.
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
@@ -2536,7 +2536,7 @@ class CRUDTests(unittest.TestCase):
             entities['permissionOnColl1']['_token'])
         resource_tokens[entities['doc1']['_rid']] = (
             entities['permissionOnColl1']['_token'])
-        col1_client = cosmos_client.CosmosClient(
+        col1_client = cosmos_client_connection.CosmosClientConnection(
             CRUDTests.host, {'resourceTokens': resource_tokens}, CRUDTests.connectionPolicy)
         # 1. Success-- Use Col1 Permission to Read
         success_coll1 = col1_client.ReadContainer(
@@ -2560,7 +2560,7 @@ class CRUDTests(unittest.TestCase):
             success_doc['id'],
             entities['doc1']['id'],
             'Expected to read children using parent permissions')
-        col2_client = cosmos_client.CosmosClient(
+        col2_client = cosmos_client_connection.CosmosClientConnection(
             CRUDTests.host,
             { 'permissionFeed': [ entities['permissionOnColl2'] ] }, CRUDTests.connectionPolicy)
         doc = {
@@ -2582,7 +2582,7 @@ class CRUDTests(unittest.TestCase):
         self._test_trigger_crud(True)
         
     def _test_trigger_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2661,7 +2661,7 @@ class CRUDTests(unittest.TestCase):
         self._test_trigger_upsert(True)
         
     def _test_trigger_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -2752,7 +2752,7 @@ class CRUDTests(unittest.TestCase):
         self._test_udf_crud(True)
         
     def _test_udf_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2820,7 +2820,7 @@ class CRUDTests(unittest.TestCase):
         self._test_udf_upsert(True)
         
     def _test_udf_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -2908,7 +2908,7 @@ class CRUDTests(unittest.TestCase):
         self._test_sproc_crud(True)
         
     def _test_sproc_crud(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -2983,7 +2983,7 @@ class CRUDTests(unittest.TestCase):
         self._test_sproc_upsert(True)
         
     def _test_sproc_upsert(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         
         # create database
@@ -3067,7 +3067,7 @@ class CRUDTests(unittest.TestCase):
                          'delete should keep the number of sprocs same')
 
     def test_scipt_logging_execute_stored_procedure(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -3120,7 +3120,7 @@ class CRUDTests(unittest.TestCase):
         self._test_collection_indexing_policy(True)
 
     def _test_collection_indexing_policy(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -3197,7 +3197,7 @@ class CRUDTests(unittest.TestCase):
         self._test_create_default_indexing_policy(True)
         
     def _test_create_default_indexing_policy(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -3296,7 +3296,7 @@ class CRUDTests(unittest.TestCase):
         connection_policy.RequestTimeout = 1
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host,
+            cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey},
                                                 connection_policy)
 
@@ -3305,7 +3305,7 @@ class CRUDTests(unittest.TestCase):
             """Creates resources for this test.
 
             :Parameters:
-                - `client`: cosmos_client.CosmosClient
+                - `client`: cosmos_client_connection.CosmosClient
 
             :Returns:
                 dict
@@ -3333,7 +3333,7 @@ class CRUDTests(unittest.TestCase):
             return resources
 
         # Validate QueryIterable by converting it to a list.
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         resources = __CreateResources(client)
         results = client.ReadItems(resources['coll']['_self'],
@@ -3460,7 +3460,7 @@ class CRUDTests(unittest.TestCase):
             """Creates triggers.
 
             :Parameters:
-                - `client`: cosmos_client.CosmosClient
+                - `client`: cosmos_client_connection.CosmosClient
                 - `collection`: dict
 
             """
@@ -3473,7 +3473,7 @@ class CRUDTests(unittest.TestCase):
                         trigger_i[property],
                         'property {property} should match'.format(property=property))
 
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -3538,7 +3538,7 @@ class CRUDTests(unittest.TestCase):
         self._test_stored_procedure_functionality(True)
         
     def _test_stored_procedure_functionality(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # create database
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -3602,7 +3602,7 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(expected_offer_type, offer.get('offerType'))
 
     def test_offer_read_and_query(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # Create database.
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
@@ -3656,7 +3656,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(initial_count, len(offers))
 
     def test_offer_replace(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         # Create database.
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # Create collection.
@@ -3694,7 +3694,7 @@ class CRUDTests(unittest.TestCase):
             StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_null_ids['_self'], offer_to_replace_null_ids)
 
     def test_collection_with_offer_type(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -3723,7 +3723,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_database_account_functionality(self):
         # Validate database account functionality.
-        client = cosmos_client.CosmosClient(CRUDTests.host,
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
                                                 { 'masterKey':
                                                   CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         database_account = client.GetDatabaseAccount()
@@ -3753,7 +3753,7 @@ class CRUDTests(unittest.TestCase):
         self._test_index_progress_headers(True)
         
     def _test_index_progress_headers(self, is_name_based):
-        client = cosmos_client.CosmosClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, { 'masterKey': CRUDTests.masterKey }, CRUDTests.connectionPolicy)
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         consistent_coll = client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll ' + str(uuid.uuid4()) })
         client.ReadContainer(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
@@ -3783,12 +3783,12 @@ class CRUDTests(unittest.TestCase):
     #     connection_policy = documents.ConnectionPolicy()
     #     connection_policy.SSLConfiguration = documents.SSLConfiguration()
     #     connection_policy.SSLConfiguration.SSLCaCerts = './cacert.pem'
-    #     client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, connection_policy)
+    #     client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, connection_policy)
     #     # Read databases after creation.
     #     databases = list(client.ReadDatabases())
 
     def test_id_validation(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # Id shouldn't end with space.
         database_definition = { 'id': 'id_with_space ' }
@@ -3834,7 +3834,7 @@ class CRUDTests(unittest.TestCase):
         client.DeleteDatabase(db['_self'])
 
     def test_id_case_validation(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
@@ -3867,7 +3867,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition2['id'], created_collection2['id'])
 
     def test_id_unicode_validation(self):
-        client = cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, CRUDTests.connectionPolicy)
 
         # create database
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })

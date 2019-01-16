@@ -1,5 +1,5 @@
 import unittest
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from requests.exceptions import ConnectionError
@@ -32,10 +32,10 @@ class TestStreamingFailover(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
         connection_policy.DisableSSLVerification = True
-        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_get_database_account
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_get_database_account
 
-        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, connection_policy, documents.ConsistencyLevel.Eventual)
+        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, connection_policy, documents.ConsistencyLevel.Eventual)
 
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
@@ -58,7 +58,7 @@ class TestStreamingFailover(unittest.TestCase):
             else:
                 self.assertEqual(self.endpoint_sequence[i], self.WRITE_ENDPOINT2)
 
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def mock_get_database_account(self, url_connection = None):
@@ -83,7 +83,7 @@ class TestStreamingFailover(unittest.TestCase):
             raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Request is not permitted in this region", {HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
 
     def test_retry_policy_does_not_mark_null_locations_unavailable(self):
-        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, None, documents.ConsistencyLevel.Eventual)
+        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, None, documents.ConsistencyLevel.Eventual)
         endpoint_manager = global_endpoint_manager._GlobalEndpointManager(client)
 
         self.original_mark_endpoint_unavailable_for_read_function = endpoint_manager.mark_endpoint_unavailable_for_read

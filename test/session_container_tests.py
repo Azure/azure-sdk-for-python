@@ -23,7 +23,7 @@ import unittest
 import time
 # from types import *
 
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.base as base
@@ -39,7 +39,7 @@ class Test_session_container(unittest.TestCase):
     connectionPolicy = test_config._test_config.connectionPolicy
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterkey}, self.connectionPolicy)
+        self.client = cosmos_client_connection.CosmosClientConnection(self.host, {'masterKey': self.masterkey}, self.connectionPolicy)
         self.session = self.client.Session
 
     def tearDown(self):

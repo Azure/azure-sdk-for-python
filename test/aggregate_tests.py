@@ -27,7 +27,7 @@ import uuid
 from six import with_metaclass
 from six.moves import xrange
 
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import test.test_config as test_config
 from azure.cosmos.errors import HTTPFailure
@@ -49,7 +49,7 @@ class _config:
 class _helper:
     @classmethod
     def clean_up_database(cls):
-        client = cosmos_client.CosmosClient(_config.host,
+        client = cosmos_client_connection.CosmosClientConnection(_config.host,
                                                 {'masterKey': _config.master_key}, _config.connection_policy)
         query_iterable = client.QueryDatabases(
             'SELECT * FROM root r WHERE r.id=\'{}\''.format(_config.TEST_DATABASE_NAME))
@@ -77,7 +77,7 @@ class AggregateQueryTestSequenceMeta(type):
 
             _helper.clean_up_database()
 
-            mcs.client = cosmos_client.CosmosClient(_config.host,
+            mcs.client = cosmos_client_connection.CosmosClientConnection(_config.host,
                                                         {'masterKey': _config.master_key}, _config.connection_policy)
             created_db = mcs.client.CreateDatabase({'id': _config.TEST_DATABASE_NAME})
             created_collection = _create_collection(mcs.client, created_db)

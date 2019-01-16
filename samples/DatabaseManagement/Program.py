@@ -1,5 +1,5 @@
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.errors as errors
 
 import samples.Shared.config as cfg
@@ -126,7 +126,7 @@ class DatabaseManagement:
                 raise errors.HTTPFailure(e.status_code)
 
 def run_sample():     
-    with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
+    with IDisposable(cosmos_client_connection.CosmosClientConnection(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
             # query for a database
             DatabaseManagement.find_database(client, DATABASE_ID)

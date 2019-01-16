@@ -39,7 +39,7 @@ import six
 from six.moves.urllib.parse import quote as urllib_quote
 from six.moves import xrange
 
-def GetHeaders(cosmos_client,
+def GetHeaders(cosmos_client_connection,
                default_headers,
                verb,
                path,
@@ -49,7 +49,7 @@ def GetHeaders(cosmos_client,
                partition_key_range_id = None):
     """Gets HTTP request headers.
 
-    :param cosmos_client.CosmosClient cosmos_client:
+    :param cosmos_client_connection.CosmosClient cosmos_client:
     :param dict default_headers:
     :param str verb:
     :param str path:
@@ -65,7 +65,7 @@ def GetHeaders(cosmos_client,
     headers = dict(default_headers)
     options = options or {}
 
-    if cosmos_client._useMultipleWriteLocations:
+    if cosmos_client_connection._useMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
     pre_trigger_include = options.get('preTriggerInclude')
@@ -124,7 +124,7 @@ def GetHeaders(cosmos_client,
             if default_client_consistency_level == documents.ConsistencyLevel.Session:
                 # populate session token from the client's session container
                 headers[http_constants.HttpHeaders.SessionToken] = (
-                    cosmos_client.session.get_session_token(path))
+                    cosmos_client_connection.session.get_session_token(path))
            
     if options.get('enableScanInQuery'):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = (
@@ -154,12 +154,12 @@ def GetHeaders(cosmos_client,
     if options.get('populateQueryMetrics'):
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options['populateQueryMetrics']
 
-    if cosmos_client.master_key:
+    if cosmos_client_connection.master_key:
         headers[http_constants.HttpHeaders.XDate] = (
             datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
-    if cosmos_client.master_key or cosmos_client.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(cosmos_client,
+    if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+        authorization = auth.GetAuthorizationHeader(cosmos_client_connection,
                                         verb,
                                         path,
                                         resource_id,

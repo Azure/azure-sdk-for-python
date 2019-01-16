@@ -21,7 +21,7 @@
 
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.retry_options as retry_options
@@ -71,7 +71,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        client = cosmos_client.CosmosClient(cls.host, 
+        client = cosmos_client_connection.CosmosClientConnection(cls.host, 
                                                 {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
         it = iter(query_iterable)
@@ -81,7 +81,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             client.DeleteDatabase(test_db['_self'])
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, Test_retry_policy_tests.connectionPolicy)
+        self.client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, Test_retry_policy_tests.connectionPolicy)
 
         # Create the test database only when it's not already present
         query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_db_name + '\'')
@@ -105,7 +105,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
@@ -127,7 +127,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
 
         
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
@@ -150,7 +150,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
 
         
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
@@ -172,7 +172,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
         
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
@@ -202,7 +202,7 @@ class Test_retry_policy_tests(unittest.TestCase):
     def test_default_retry_policy_for_query(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
 
         document_definition_1 = { 'id': 'doc1',
                                   'name': 'sample document',
@@ -233,7 +233,7 @@ class Test_retry_policy_tests(unittest.TestCase):
     def test_default_retry_policy_for_read(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
         
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
@@ -256,7 +256,7 @@ class Test_retry_policy_tests(unittest.TestCase):
     def test_default_retry_policy_for_create(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
         
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',

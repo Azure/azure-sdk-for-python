@@ -28,7 +28,7 @@ import azure.cosmos.http_constants as http_constants
 import six
 import base64
 
-def GetAuthorizationHeader(cosmos_client,
+def GetAuthorizationHeader(cosmos_client_connection,
                            verb,
                            path,
                            resource_id_or_fullname,
@@ -37,7 +37,7 @@ def GetAuthorizationHeader(cosmos_client,
                            headers):
     """Gets the authorization header.
 
-    :param cosmos_client.CosmosClient cosmos_client:
+    :param cosmos_client_connection.CosmosClient cosmos_client:
     :param str verb:
     :param str path:
     :param str resource_id_or_fullname:
@@ -53,15 +53,15 @@ def GetAuthorizationHeader(cosmos_client,
     if resource_id_or_fullname is not None and not is_name_based:
         resource_id_or_fullname = resource_id_or_fullname.lower()
 
-    if cosmos_client.master_key:
+    if cosmos_client_connection.master_key:
         return __GetAuthorizationTokenUsingMasterKey(verb,
                                                     resource_id_or_fullname,
                                                     resource_type,
                                                     headers,
-                                                    cosmos_client.master_key)
-    elif cosmos_client.resource_tokens:
+                                                    cosmos_client_connection.master_key)
+    elif cosmos_client_connection.resource_tokens:
         return __GetAuthorizationTokenUsingResourceTokens(
-            cosmos_client.resource_tokens, path, resource_id_or_fullname)
+            cosmos_client_connection.resource_tokens, path, resource_id_or_fullname)
 
 
 

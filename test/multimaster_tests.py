@@ -2,7 +2,7 @@ import json
 import os.path
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.base as base
@@ -25,7 +25,7 @@ class MultiMasterTests(unittest.TestCase):
     @classmethod
     def cleanUpTestDatabase(cls):
         global client
-        client = cosmos_client.CosmosClient(cls.host,
+        client = cosmos_client_connection.CosmosClientConnection(cls.host,
                                                 {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
         it = iter(query_iterable)
@@ -62,7 +62,7 @@ class MultiMasterTests(unittest.TestCase):
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, connectionPolicy)
 
         document_definition = { 'id': 'doc',
                                 'pk': 'pk',

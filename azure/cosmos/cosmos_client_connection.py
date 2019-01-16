@@ -38,7 +38,7 @@ import azure.cosmos.routing.routing_map_provider as routing_map_provider
 import azure.cosmos.session as session
 import azure.cosmos.utils as utils
 
-class CosmosClient(object):
+class CosmosClientConnection(object):
     """Represents a document client.
 
     Provides a client-side logical representation of the Azure Cosmos
@@ -145,7 +145,7 @@ class CosmosClient(object):
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
-        self._query_compatibility_mode = CosmosClient._QueryCompatibilityMode.Default
+        self._query_compatibility_mode = CosmosClientConnection._QueryCompatibilityMode.Default
 
         # Routing map provider
         self._routing_map_provider = routing_map_provider._SmartRoutingMapProvider(self)
@@ -228,7 +228,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(database)
+        CosmosClientConnection.__ValidateResource(database)
         path = '/dbs'
         return self.Create(database, path, 'dbs', None, None, options)
 
@@ -358,7 +358,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(collection)
+        CosmosClientConnection.__ValidateResource(collection)
         path = base.GetPathFromLink(database_link, 'colls')
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Create(collection,
@@ -387,7 +387,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(collection)
+        CosmosClientConnection.__ValidateResource(collection)
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Replace(collection,
@@ -475,7 +475,7 @@ class CosmosClient(object):
                            options)
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):
-        CosmosClient.__ValidateResource(user)
+        CosmosClientConnection.__ValidateResource(user)
         path = base.GetPathFromLink(database_link, 'users')
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
@@ -630,7 +630,7 @@ class CosmosClient(object):
                             options)
 
     def _GetUserIdWithPathForPermission(self, permission, user_link):
-        CosmosClient.__ValidateResource(permission)
+        CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(user_link, 'permissions')
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return path, user_id
@@ -728,7 +728,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(user)
+        CosmosClientConnection.__ValidateResource(user)
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Replace(user,
@@ -781,7 +781,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(permission)
+        CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Replace(permission,
@@ -1071,7 +1071,7 @@ class CosmosClient(object):
         if document is None:
             raise ValueError("document is None.")
 
-        CosmosClient.__ValidateResource(document)
+        CosmosClientConnection.__ValidateResource(document)
         document = document.copy()
         if (not document.get('id') and
             not options.get('disableAutomaticIdGeneration')):
@@ -1085,7 +1085,7 @@ class CosmosClient(object):
             if(partition_resolver != None):
                 collection_link = partition_resolver.ResolveForCreate(document)
             else:
-                raise ValueError(CosmosClient.PartitionResolverErrorMessage)
+                raise ValueError(CosmosClientConnection.PartitionResolverErrorMessage)
         
         path = base.GetPathFromLink(collection_link, 'docs')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
@@ -1218,7 +1218,7 @@ class CosmosClient(object):
                            options)
 
     def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):
-        CosmosClient.__ValidateResource(trigger)
+        CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if  trigger.get('serverScript'):
             trigger['body'] = str(trigger.pop('serverScript', ''))
@@ -1353,7 +1353,7 @@ class CosmosClient(object):
                            options)
 
     def _GetContainerIdWithPathForUDF(self, collection_link, udf):
-        CosmosClient.__ValidateResource(udf)
+        CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get('serverScript'):
             udf['body'] = str(udf.pop('serverScript', ''))
@@ -1488,7 +1488,7 @@ class CosmosClient(object):
                            options)
 
     def _GetContainerIdWithPathForSproc(self, collection_link, sproc):
-        CosmosClient.__ValidateResource(sproc)
+        CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get('serverScript'):
             sproc['body'] = str(sproc.pop('serverScript', ''))
@@ -1632,7 +1632,7 @@ class CosmosClient(object):
             dict
 
         """
-        CosmosClient.__ValidateResource(new_document)
+        CosmosClientConnection.__ValidateResource(new_document)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         
@@ -1734,7 +1734,7 @@ class CosmosClient(object):
                            options)
 
     def _GetItemIdWithPathForAttachment(self, attachment, document_link):
-        CosmosClient.__ValidateResource(attachment)
+        CosmosClientConnection.__ValidateResource(attachment)
         path = base.GetPathFromLink(document_link, 'attachments')
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return document_id, path
@@ -1998,7 +1998,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(attachment)
+        CosmosClientConnection.__ValidateResource(attachment)
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.Replace(attachment,
@@ -2051,7 +2051,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(trigger)
+        CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get('serverScript'):
             trigger['body'] = str(trigger['serverScript'])
@@ -2110,7 +2110,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(udf)
+        CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get('serverScript'):
             udf['body'] = str(udf['serverScript'])
@@ -2215,7 +2215,7 @@ class CosmosClient(object):
         if options is None:
             options = {}
 
-        CosmosClient.__ValidateResource(sproc)
+        CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get('serverScript'):
             sproc['body'] = str(sproc['serverScript'])
@@ -2294,7 +2294,7 @@ class CosmosClient(object):
             dict
 
         """
-        CosmosClient.__ValidateResource(offer)
+        CosmosClientConnection.__ValidateResource(offer)
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Replace(offer, path, 'offers', offer_id, None, None)
@@ -2789,10 +2789,10 @@ class CosmosClient(object):
             query = self.__CheckAndUnifyQueryFormat(query)
 
             initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
-            if (self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.Default or
-                    self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.Query):
+            if (self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default or
+                    self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query):
                 initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
-            elif self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.SqlQuery:
+            elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
                 initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
             else:
                 raise SystemError('Unexpected query compatibility mode.')
@@ -2827,15 +2827,15 @@ class CosmosClient(object):
         :rtype:
             dict or string
         """
-        if (self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.Default or
-               self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.Query):
+        if (self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default or
+               self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query):
             if not isinstance(query_body, dict) and not isinstance(query_body, six.string_types):
                 raise TypeError('query body must be a dict or string.')
             if isinstance(query_body, dict) and not query_body.get('query'):
                 raise ValueError('query body must have valid query text with key "query".')
             if isinstance(query_body, six.string_types):
                 return {'query': query_body}
-        elif (self._query_compatibility_mode == CosmosClient._QueryCompatibilityMode.SqlQuery and
+        elif (self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery and
               not isinstance(query_body, six.string_types)):
             raise TypeError('query body must be a string.')
         else:

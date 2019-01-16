@@ -23,7 +23,7 @@ import unittest
 import uuid
 from six.moves import xrange
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 from azure.cosmos.execution_context import base_execution_context as base_execution_context
 import azure.cosmos.base as base
 import test.test_config as test_config
@@ -47,7 +47,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -71,7 +71,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
     def setUp(self):
         QueryExecutionContextEndToEndTests.cleanUpTestDatabase()
         
-        self.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
+        self.client = cosmos_client_connection.CosmosClientConnection(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)

@@ -21,7 +21,7 @@
 
 import unittest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 from azure.cosmos.routing import routing_range as routing_range
 import test.test_config as test_config
@@ -45,7 +45,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
 
     @classmethod
     def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
         query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
         it = iter(query_iterable)
         
@@ -69,7 +69,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     def setUp(self):
         RoutingMapEndToEndTests.cleanUpTestDatabase()
         
-        self.client = cosmos_client.CosmosClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
+        self.client = cosmos_client_connection.CosmosClientConnection(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
         self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
         self.created_collection = self.create_collection(self.client, self.created_db)
         self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)

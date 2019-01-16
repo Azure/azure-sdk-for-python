@@ -316,7 +316,7 @@ class ProxyConfiguration(object):
 
 
 class ConnectionPolicy(object):
-    """Represents the Connection policy assocated with a CosmosClient.
+    """Represents the Connection policy assocated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
