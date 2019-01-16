@@ -13,8 +13,8 @@ from .recovery_point import RecoveryPoint
 
 
 class AzureWorkloadRecoveryPoint(RecoveryPoint):
-    """Workload specific recoverypoint, specifcally encaspulates full/diff
-    recoverypoint.
+    """Workload specific recovery point, specifically encapsulates full/diff
+    recovery point.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadPointInTimeRecoveryPoint,

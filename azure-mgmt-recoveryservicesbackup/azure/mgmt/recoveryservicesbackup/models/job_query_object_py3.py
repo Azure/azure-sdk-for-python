@@ -19,7 +19,7 @@ class JobQueryObject(Model):
      'InProgress', 'Completed', 'Failed', 'CompletedWithWarnings', 'Cancelled',
      'Cancelling'
     :type status: str or ~azure.mgmt.recoveryservicesbackup.models.JobStatus
-    :param backup_management_type: Type of backup managmenent for the job.
+    :param backup_management_type: Type of backup management for the job.
      Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'

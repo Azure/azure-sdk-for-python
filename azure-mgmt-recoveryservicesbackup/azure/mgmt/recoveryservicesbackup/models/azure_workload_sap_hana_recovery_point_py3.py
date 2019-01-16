@@ -13,7 +13,7 @@ from .azure_workload_recovery_point_py3 import AzureWorkloadRecoveryPoint
 
 
 class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SAPHana specific recoverypoint, specifcally encaspulates full/diff
+    """SAPHana specific recoverypoint, specifically encapsulates full/diff
     recoverypoints.
 
     All required parameters must be populated in order to send to Azure.

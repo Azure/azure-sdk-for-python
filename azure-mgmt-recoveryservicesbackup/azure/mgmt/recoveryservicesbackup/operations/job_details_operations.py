@@ -39,7 +39,7 @@ class JobDetailsOperations(object):
 
     def get(
             self, vault_name, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
-        """Gets exteded information associated with the job.
+        """Gets extended information associated with the job.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str

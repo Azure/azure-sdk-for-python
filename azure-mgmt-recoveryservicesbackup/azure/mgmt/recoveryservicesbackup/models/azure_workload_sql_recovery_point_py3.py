@@ -13,7 +13,7 @@ from .azure_workload_recovery_point_py3 import AzureWorkloadRecoveryPoint
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SQL specific recoverypoint, specifcally encaspulates full/diff
+    """SQL specific recoverypoint, specifically encapsulates full/diff
     recoverypoint alongwith extended info.
 
     You probably want to use the sub-classes and not this class directly. Known

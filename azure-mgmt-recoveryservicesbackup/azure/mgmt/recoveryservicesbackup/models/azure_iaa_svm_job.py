@@ -13,7 +13,7 @@ from .job import Job
 
 
 class AzureIaaSVMJob(Job):
-    """Azure IaaS VM workload-specifc job object.
+    """Azure IaaS VM workload-specific job object.
 
     All required parameters must be populated in order to send to Azure.
 

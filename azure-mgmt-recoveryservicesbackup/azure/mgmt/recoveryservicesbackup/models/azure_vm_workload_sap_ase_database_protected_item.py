@@ -17,8 +17,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_management_type: Type of backup managemenent for the backed
-     up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+    :param backup_management_type: Type of backup management for the backed up
+     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
      'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
      'DefaultBackup'
     :type backup_management_type: str or
