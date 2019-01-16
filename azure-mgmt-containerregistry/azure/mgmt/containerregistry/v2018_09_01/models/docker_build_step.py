@@ -43,6 +43,9 @@ class DockerBuildStep(TaskStepProperties):
     :param docker_file_path: Required. The Docker file path relative to the
      source context.
     :type docker_file_path: str
+    :param target: Gets or sets the name of the target build stage for the
+     docker build.
+    :type target: str
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
@@ -64,6 +67,7 @@ class DockerBuildStep(TaskStepProperties):
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
     }
 
@@ -73,5 +77,6 @@ class DockerBuildStep(TaskStepProperties):
         self.is_push_enabled = kwargs.get('is_push_enabled', True)
         self.no_cache = kwargs.get('no_cache', False)
         self.docker_file_path = kwargs.get('docker_file_path', None)
+        self.target = kwargs.get('target', None)
         self.arguments = kwargs.get('arguments', None)
         self.type = 'Docker'

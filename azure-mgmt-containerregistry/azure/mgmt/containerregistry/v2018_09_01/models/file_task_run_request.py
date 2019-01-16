@@ -42,10 +42,14 @@ class FileTaskRunRequest(RunRequest):
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
-     context. It can be an URL to a tar or git repository.
+     context. It can be an URL to a tar or git repoistory.
      If it is relative URL, the relative path should be obtained from calling
      listBuildSourceUploadUrl API.
     :type source_location: str
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -65,6 +69,7 @@ class FileTaskRunRequest(RunRequest):
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
         'source_location': {'key': 'sourceLocation', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
     def __init__(self, **kwargs):
@@ -76,4 +81,5 @@ class FileTaskRunRequest(RunRequest):
         self.platform = kwargs.get('platform', None)
         self.agent_configuration = kwargs.get('agent_configuration', None)
         self.source_location = kwargs.get('source_location', None)
+        self.credentials = kwargs.get('credentials', None)
         self.type = 'FileTaskRunRequest'

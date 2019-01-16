@@ -41,6 +41,9 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
+    :param target: Gets or sets the name of the target build stage for the
+     docker build.
+    :type target: str
     """
 
     _validation = {
@@ -56,6 +59,7 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -65,4 +69,5 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         self.no_cache = kwargs.get('no_cache', None)
         self.docker_file_path = kwargs.get('docker_file_path', None)
         self.arguments = kwargs.get('arguments', None)
+        self.target = kwargs.get('target', None)
         self.type = 'Docker'

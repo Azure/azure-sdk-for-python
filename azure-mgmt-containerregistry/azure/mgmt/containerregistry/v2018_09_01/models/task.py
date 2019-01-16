@@ -14,7 +14,7 @@ from .resource import Resource
 
 class Task(Resource):
     """The task that has the ARM resource and task properties.
-    The task will have all information to schedule a run against it.
+    The  task will have all information to schedule a run against it.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -58,6 +58,10 @@ class Task(Resource):
     :param trigger: The properties that describe all triggers for the task.
     :type trigger:
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerProperties
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -86,6 +90,7 @@ class Task(Resource):
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'step': {'key': 'properties.step', 'type': 'TaskStepProperties'},
         'trigger': {'key': 'properties.trigger', 'type': 'TriggerProperties'},
+        'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
     }
 
     def __init__(self, **kwargs):
@@ -98,3 +103,4 @@ class Task(Resource):
         self.timeout = kwargs.get('timeout', 3600)
         self.step = kwargs.get('step', None)
         self.trigger = kwargs.get('trigger', None)
+        self.credentials = kwargs.get('credentials', None)
