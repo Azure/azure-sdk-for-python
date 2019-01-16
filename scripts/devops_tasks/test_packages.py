@@ -23,9 +23,9 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
 def prep_and_run_tests(targeted_packages, python_version):
-    for package_path in targeted_packages:
-        print('running test setup for {}'.format(os.path.basename(package_path)))
-        run_check_call([python_version, dev_setup_script_location, '-g', os.path.basename(package_path)], root_dir)
+    print('running test setup for {}'.format(targeted_packages))
+    
+    run_check_call([python_version, dev_setup_script_location, '-g', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
