@@ -36,19 +36,17 @@ def prep_and_run_tests(targeted_packages, python_version):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
     parser.add_argument(
-        '-g', 
-        '--glob-string', 
-        dest = 'glob_string', 
-        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
-                'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'),
-        required = True)
-
-    parser.add_argument(
         '-p',
         '--python-version',
         dest = 'python_version',
         default = 'python',
         help = 'The name of the python that should run the build. This is for usage in special cases like the "Special_Python_Distro_Tests" Job in /.azure-pipelines/client.yml. Defaults to "python"')
+
+    parser.add_argument(
+        'glob_string',  
+        dest = 'glob_string', 
+        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+                'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'))
 
     args = parser.parse_args()
     targeted_packages = process_glob_string(args.glob_string, root_dir)

@@ -26,7 +26,7 @@ jobs:
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-g "$(build_targeting_string)" -d "$(Build.ArtifactStagingDirectory)"'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
@@ -84,7 +84,7 @@ jobs:
     displayName: 'Setup and Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/test_packages.py'
-      arguments: '-g "$(build_targeting_string)"'
+      arguments: '"$(build_targeting_string)"'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
@@ -107,7 +107,7 @@ jobs:
      
      PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
      pypy3 -m ensurepip
-     python ./scripts/devops_tasks/test_packages.py -g "$(build_targeting_string)" -p pypy3
+     python ./scripts/devops_tasks/test_packages.py -p pypy3 "$(build_targeting_string)" 
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -125,6 +125,6 @@ jobs:
 
      PATH=/home/vsts/bin:$PATH
      python3 -m ensurepip
-     python ./scripts/devops_tasks/test_packages.py -g "$(build_targeting_string)" -p python3
+     python ./scripts/devops_tasks/test_packages.py -p python3 "$(build_targeting_string)"
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true
