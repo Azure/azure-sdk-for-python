@@ -7,6 +7,9 @@ import re
 # with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect 
 # your package.
 
+# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way 
+# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+
 PACKAGE_NAME = "azure-template"
 PACKAGE_PPRINT_NAME = "Template Package"
 
