@@ -111,9 +111,9 @@ if __name__ == '__main__':
     live_config['key_name'] = os.environ['SERVICE_BUS_SAS_POLICY']
     live_config['access_key'] = os.environ['SERVICE_BUS_SAS_KEY']
     try:
-        queue_name = create_standard_queue(live_config)
-        print("Created queue {}".format(queue_name))
-        stress_test_queue_peeklock_send_receive(live_config, queue_name)
+        test_queue = create_standard_queue(live_config)
+        print("Created queue {}".format(test_queue))
+        stress_test_queue_peeklock_send_receive(live_config, test_queue)
     finally:
-        print("Cleaning up queue {}".format(queue_name))
-        cleanup_queue(live_config, queue_name)
+        print("Cleaning up queue {}".format(test_queue))
+        cleanup_queue(live_config, test_queue)
