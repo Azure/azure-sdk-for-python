@@ -58,6 +58,10 @@ class Task(Resource):
     :param trigger: The properties that describe all triggers for the task.
     :type trigger:
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerProperties
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -86,9 +90,10 @@ class Task(Resource):
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'step': {'key': 'properties.step', 'type': 'TaskStepProperties'},
         'trigger': {'key': 'properties.trigger', 'type': 'TriggerProperties'},
+        'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, location: str, platform, step, tags=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, **kwargs) -> None:
+    def __init__(self, *, location: str, platform, step, tags=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
         super(Task, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.creation_date = None
@@ -98,3 +103,4 @@ class Task(Resource):
         self.timeout = timeout
         self.step = step
         self.trigger = trigger
+        self.credentials = credentials
