@@ -91,4 +91,4 @@ class DiscoverTenantsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/discoverTenants'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingProfiles/{billingProfileId}/discoverTenants'}
