@@ -69,7 +69,7 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
             :end-before: [END get_receiver]
             :language: python
             :dedent: 4
-            :caption: Get the receiver client from service bus client
+            :caption: Get the receiver client from Service Bus client
 
     """
 

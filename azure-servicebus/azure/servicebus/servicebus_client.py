@@ -34,10 +34,10 @@ from azure.servicebus.base_handler import BaseHandler
 
 class ServiceBusClient(mixins.ServiceBusMixin):
     """
-    Initializes the service bus service for a namespace with the specified
+    Initializes the Service Bus service for a namespace with the specified
     authentication settings (SAS).
 
-    :param str service_namespace: Service bus namespace, required for all operations.
+    :param str service_namespace: Service Bus namespace, required for all operations.
     :param str host_base: Optional. Live host base url. Defaults to Public Azure.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
@@ -53,7 +53,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :end-before: [END create_servicebus_client]
             :language: python
             :dedent: 4
-            :caption: Create a new instance of the ServiceBus client
+            :caption: Create a new instance of the Service Bus client
 
     """
 
@@ -76,7 +76,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """Create a ServiceBus client from a connection string.
+        """Create a Service Bus client from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
@@ -118,7 +118,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END get_queue_client]
                 :language: python
                 :dedent: 8
-                :caption: Get the specific queue client from service bus client
+                :caption: Get the specific queue client from Service Bus client
 
         """
         try:
@@ -146,7 +146,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END list_queues]
                 :language: python
                 :dedent: 4
-                :caption: List the queues from service bus client
+                :caption: List the queues from Service Bus client
 
         """
         try:
@@ -178,7 +178,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END get_topic_client]
                 :language: python
                 :dedent: 8
-                :caption: Get the specific topic client from service bus client
+                :caption: Get the specific topic client from Service Bus client
 
         """
         try:
@@ -205,7 +205,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END list_topics]
                 :language: python
                 :dedent: 4
-                :caption: List the topics from service bus client
+                :caption: List the topics from Service Bus client
 
         """
         try:
@@ -238,7 +238,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END get_subscription_client]
                 :language: python
                 :dedent: 8
-                :caption: Get the specific subscription client from service bus client
+                :caption: Get the specific subscription client from Service Bus client
 
         """
         try:
@@ -268,7 +268,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
                 :end-before: [END list_subscriptions]
                 :language: python
                 :dedent: 4
-                :caption: List the subscriptions from service bus client
+                :caption: List the subscriptions from Service Bus client
 
         """
         try:
@@ -367,7 +367,7 @@ class SendClientMixin(object):
                 :end-before: [END get_sender]
                 :language: python
                 :dedent: 4
-                :caption: Get sender client from service bus client
+                :caption: Get sender client from Service Bus client
 
         """
         handler_id = str(uuid.uuid4())
@@ -575,7 +575,7 @@ class ReceiveClientMixin(object):
                 :end-before: [END get_receiver]
                 :language: python
                 :dedent: 4
-                :caption: Get the receiver client from service bus client
+                :caption: Get the receiver client from Service Bus client
 
         """
         if self.entity and not self.requires_session and session:

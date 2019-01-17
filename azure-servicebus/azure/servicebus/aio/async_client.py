@@ -32,7 +32,7 @@ from azure.servicebus.common.constants import (
 class ServiceBusClient(mixins.ServiceBusMixin):
     """A Service Bus client for a namespace with the specified authentication settings (SAS).
 
-    :param str service_namespace: Service bus namespace, required for all operations.
+    :param str service_namespace: Service Bus namespace, required for all operations.
     :param str host_base: Optional. Live host base url. Defaults to Azure url.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
@@ -71,7 +71,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
     @classmethod
     def from_connection_string(cls, conn_str, *, loop=None, **kwargs):
         """
-        Create a ServiceBus client from a connection string.
+        Create a Service Bus client from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str

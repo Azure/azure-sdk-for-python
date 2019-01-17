@@ -42,9 +42,9 @@ def _create_message(response, service_instance):
     ''' Create message from response.
 
     response:
-        response from service bus cloud server.
+        response from Service Bus cloud server.
     service_instance:
-        the service bus client.
+        the Service Bus client.
     '''
     respbody = response.body
     custom_properties = {}
@@ -565,5 +565,5 @@ def _convert_event_hub_to_xml(hub):
 
 
 def _service_bus_error_handler(http_error):
-    ''' Simple error handler for service bus service. '''
+    ''' Simple error handler for Service Bus service. '''
     return _general_error_handler(http_error)

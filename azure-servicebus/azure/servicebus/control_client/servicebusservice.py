@@ -68,11 +68,11 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
                  authentication=None, timeout=DEFAULT_HTTP_TIMEOUT,
                  request_session=None):
         '''
-        Initializes the service bus service for a namespace with the specified
+        Initializes the Service Bus service for a namespace with the specified
         authentication settings (SAS or ACS).
 
         service_namespace:
-            Service bus namespace, required for all operations. If None,
+            Service Bus namespace, required for all operations. If None,
             the value is set to the AZURE_SERVICEBUS_NAMESPACE env variable.
         account_key:
             ACS authentication account key. If None, the value is set to the
@@ -1229,7 +1229,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         return resp
 
     def _update_service_bus_header(self, request):
-        ''' Add additional headers for service bus. '''
+        ''' Add additional headers for Service Bus. '''
 
         if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
             request.headers.append(('Content-Length', str(len(request.body))))
@@ -1285,9 +1285,9 @@ class ServiceBusWrapTokenAuthentication:
         Returns token for the request.
 
         host:
-            the service bus service request.
+            the Service Bus service request.
         path:
-            the service bus service request.
+            the Service Bus service request.
         '''
         wrap_scope = 'http://' + host + path + self.issuer + self.account_key
 

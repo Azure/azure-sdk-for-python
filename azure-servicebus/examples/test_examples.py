@@ -20,7 +20,7 @@ def create_servicebus_client():
     shared_access_policy = os.environ['SERVICE_BUS_SAS_POLICY']
     shared_access_key = os.environ['SERVICE_BUS_SAS_KEY']
 
-    # Create a new service bus client using SAS credentials
+    # Create a new Service Bus client using SAS credentials
     client = ServiceBusClient(
         service_namespace=namespace,
         shared_access_key_name=shared_access_policy,

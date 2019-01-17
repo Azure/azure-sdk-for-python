@@ -1,7 +1,7 @@
 Microsoft Azure Service Bus SDK for Python
 ==========================================
 
-This is the Microsoft Azure ServiceBus Client Library.
+This is the Microsoft Azure Service Bus Client Library.
 This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 Microsoft Azure Service Bus supports a set of cloud-based, message-oriented middleware technologies including reliable message queuing and durable publish/subscribe messaging.
@@ -61,7 +61,7 @@ Code written against v0.21.0 can be ported to version 0.50.0 by simply changing 
     from azure.servicebus.control_client import ServiceBusService
 
     key_name = 'RootManageSharedAccessKey' # SharedAccessKeyName from Azure portal
-    key_value = '' # SharedAccessKey from Azure portal
+    key_value = ''  # SharedAccessKey from Azure portal
     sbs = ServiceBusService(service_namespace,
                             shared_access_key_name=key_name,
                             shared_access_key_value=key_value)
@@ -70,7 +70,7 @@ Code written against v0.21.0 can be ported to version 0.50.0 by simply changing 
 Usage
 =====
 
-For reference documentation and code snippets see `ServiceBus
+For reference documentation and code snippets see `Service Bus
 <https://docs.microsoft.com/python/api/overview/azure/servicebus>`__
 on docs.microsoft.com.
 
