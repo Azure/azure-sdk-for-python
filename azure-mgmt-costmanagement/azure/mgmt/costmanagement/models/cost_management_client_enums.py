@@ -12,25 +12,6 @@
 from enum import Enum
 
 
-class StatusType(str, Enum):
-
-    active = "Active"
-    inactive = "Inactive"
-
-
-class RecurrenceType(str, Enum):
-
-    daily = "Daily"
-    weekly = "Weekly"
-    monthly = "Monthly"
-    annually = "Annually"
-
-
-class FormatType(str, Enum):
-
-    csv = "Csv"
-
-
 class TimeframeType(str, Enum):
 
     week_to_date = "WeekToDate"
@@ -42,9 +23,31 @@ class TimeframeType(str, Enum):
 class GranularityType(str, Enum):
 
     daily = "Daily"
+    monthly = "Monthly"
 
 
 class ReportConfigColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
+
+
+class OperatorType(str, Enum):
+
+    in_enum = "In"
+    contains = "Contains"
+
+
+class ConnectorStatus(str, Enum):
+
+    active = "active"
+    error = "error"
+    suspended = "suspended"
+
+
+class ConnectorBillingModel(str, Enum):
+
+    trial = "trial"
+    auto_upgrade = "autoUpgrade"
+    premium = "premium"
+    expired = "expired"

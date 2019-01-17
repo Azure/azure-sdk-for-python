@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountDimensionsOperations(object):
-    """BillingAccountDimensionsOperations operations.
+class EntitiesOperations(object):
+    """EntitiesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2018-05-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-03-01-preview. Constant value: "2019-03-01-preview".
     """
 
     models = models
@@ -32,40 +32,31 @@ class BillingAccountDimensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-05-31"
+        self.api_version = "2019-03-01-preview"
 
         self.config = config
 
-    def list(
-            self, billing_account_id, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the dimensions by billingAccount Id.
+    def list_by_management_group(
+            self, management_group_id, view=None, custom_headers=None, raw=False, **operation_config):
+        """List all entities (Management Groups, Subscriptions,
+        ExternalSubscriptions, etc.) focusing on a particular group for the
+        authenticated user.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param filter: May be used to filter dimensions by
-         properties/category, properties/usageStart, properties/usageEnd.
-         Supported operators are 'eq','lt', 'gt', 'le', 'ge'.
-        :type filter: str
-        :param expand: May be used to expand the properties/data within a
-         dimension category. By default, data is not included when listing
-         dimensions.
-        :type expand: str
-        :param skiptoken: Skiptoken is only used if a previous operation
-         returned a partial result. If a previous response contains a nextLink
-         element, the value of the nextLink element will include a skiptoken
-         parameter that specifies a starting point to use for subsequent calls.
-        :type skiptoken: str
-        :param top: May be used to limit the number of results to the most
-         recent N dimension data.
-        :type top: int
+        :param management_group_id: ManagementGroup ID
+        :type management_group_id: str
+        :param view: The view parameter allows clients to filter the type of
+         data that is returned by the getEntities call. Possible values
+         include: 'FullHierarchy', 'GroupsOnly', 'SubscriptionsOnly',
+         'ExternalSubscriptionsOnly', 'Audit'
+        :type view: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Dimension
+        :return: An iterator like instance of EntityInfo
         :rtype:
-         ~azure.mgmt.costmanagement.models.DimensionPaged[~azure.mgmt.costmanagement.models.Dimension]
+         ~azure.mgmt.costmanagement.models.EntityInfoPaged[~azure.mgmt.costmanagement.models.EntityInfo]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
         """
@@ -73,23 +64,17 @@ class BillingAccountDimensionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_management_group.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                    'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                if view is not None:
+                    query_parameters['$view'] = self._serialize.query("view", view, 'str')
 
             else:
                 url = next_link
@@ -106,7 +91,7 @@ class BillingAccountDimensionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self._client.post(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -115,12 +100,12 @@ class BillingAccountDimensionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DimensionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DimensionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.CostManagement/dimensions'}
+    list_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.CostManagement/getEntities'}
