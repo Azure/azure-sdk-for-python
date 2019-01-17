@@ -30,6 +30,7 @@ try:
     from .resource_group_value_py3 import ResourceGroupValue
     from .azure_resource_base_py3 import AzureResourceBase
     from .blueprint_resource_status_base_py3 import BlueprintResourceStatusBase
+    from .user_assigned_identity_py3 import UserAssignedIdentity
     from .managed_service_identity_py3 import ManagedServiceIdentity
     from .assignment_status_py3 import AssignmentStatus
     from .assignment_lock_settings_py3 import AssignmentLockSettings
@@ -61,6 +62,7 @@ except (SyntaxError, ImportError):
     from .resource_group_value import ResourceGroupValue
     from .azure_resource_base import AzureResourceBase
     from .blueprint_resource_status_base import BlueprintResourceStatusBase
+    from .user_assigned_identity import UserAssignedIdentity
     from .managed_service_identity import ManagedServiceIdentity
     from .assignment_status import AssignmentStatus
     from .assignment_lock_settings import AssignmentLockSettings
@@ -105,6 +107,7 @@ __all__ = [
     'ResourceGroupValue',
     'AzureResourceBase',
     'BlueprintResourceStatusBase',
+    'UserAssignedIdentity',
     'ManagedServiceIdentity',
     'AssignmentStatus',
     'AssignmentLockSettings',

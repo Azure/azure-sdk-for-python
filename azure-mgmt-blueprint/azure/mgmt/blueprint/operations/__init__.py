@@ -13,7 +13,6 @@ from .blueprints_operations import BlueprintsOperations
 from .artifacts_operations import ArtifactsOperations
 from .published_blueprints_operations import PublishedBlueprintsOperations
 from .published_artifacts_operations import PublishedArtifactsOperations
-from .operations import Operations
 from .assignments_operations import AssignmentsOperations
 from .assignment_operations import AssignmentOperations
 
@@ -22,7 +21,6 @@ __all__ = [
     'ArtifactsOperations',
     'PublishedBlueprintsOperations',
     'PublishedArtifactsOperations',
-    'Operations',
     'AssignmentsOperations',
     'AssignmentOperations',
 ]
