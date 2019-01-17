@@ -197,8 +197,8 @@ class DeferredMessage(Message):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        await self._receiver._settle_deferred(
-            'suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
+        await self._receiver._settle_deferred(  # pylint: disable=protected-access
+            'suspended', [self.lock_token], dead_letter_details=details)
         self._settled = True
 
     async def abandon(self):
