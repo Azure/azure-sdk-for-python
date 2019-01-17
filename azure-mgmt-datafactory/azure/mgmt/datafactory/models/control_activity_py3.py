@@ -17,9 +17,8 @@ class ControlActivity(Activity):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AppendVariableActivity, SetVariableActivity,
-    FilterActivity, ValidationActivity, UntilActivity, WaitActivity,
-    ForEachActivity, IfConditionActivity, WebHookActivity,
-    ExecutePipelineActivity
+    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
+    IfConditionActivity, WebHookActivity, ExecutePipelineActivity
 
     All required parameters must be populated in order to send to Azure.
 
@@ -53,7 +52,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'WebHook': 'WebHookActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'WebHook': 'WebHookActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, **kwargs) -> None:

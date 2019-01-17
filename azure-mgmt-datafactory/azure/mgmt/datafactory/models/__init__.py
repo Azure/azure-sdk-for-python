@@ -341,7 +341,6 @@ try:
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
-    from .validation_activity_py3 import ValidationActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
@@ -706,7 +705,6 @@ except (SyntaxError, ImportError):
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
-    from .validation_activity import ValidationActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
@@ -1142,7 +1140,6 @@ __all__ = [
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
-    'ValidationActivity',
     'UntilActivity',
     'WaitActivity',
     'ForEachActivity',
