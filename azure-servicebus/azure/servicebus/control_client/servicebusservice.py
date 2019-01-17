@@ -4,7 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-few-public-methods
 
 import os
 import time

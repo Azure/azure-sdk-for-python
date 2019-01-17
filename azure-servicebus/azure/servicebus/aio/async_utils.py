@@ -94,12 +94,8 @@ class AutoLockRenew:
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout), loop=self.loop)
         self._futures.append(renew_future)
 
-    async def shutdown(self, wait=True):
+    async def shutdown(self):
         """Cancel remaining open lock renewal futures.
-
-        :param wait: Whether to block until futures are done. Default is `True`.
-        :type wait: bool
         """
         self._shutdown.set()
-        if wait:
-            await asyncio.wait(self._futures)
+        await asyncio.wait(self._futures)

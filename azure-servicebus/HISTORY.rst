@@ -3,7 +3,7 @@
 Release History
 ===============
 
-0.50.0 (2018-01-11)
+0.50.0 (2019-01-17)
 -------------------
 
 **Breaking changes**
@@ -12,8 +12,15 @@ Release History
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
 * For full API changes, please see updated reference documentation.
 
-Within the new namesapce, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
-so for those intending to only use HTTP operations - there is no benefit in updating at this time.
+Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
+so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.
+
+**Features**
+
+* New API supports message send and receive via AMQP with improved performance and stability.
+* New asynchronous APIs (using `asyncio`) for send, receive and message handling.
+* Support for message and session auto lock renewal via background thread or async operation.
+* Now supports scheduled message cancellation.
 
 
 0.21.1 (2017-04-27)

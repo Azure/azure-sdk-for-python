@@ -37,7 +37,7 @@ from azure.servicebus.common.constants import (
     ReceiveSettleMode)
 
 
-class Receiver(collections.abc.AsyncIterator, BaseHandler):
+class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=too-many-instance-attributes
     """This receive handler acts as an iterable message stream for retrieving
     messages for a Service Bus entity. It operates a single connetion that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.

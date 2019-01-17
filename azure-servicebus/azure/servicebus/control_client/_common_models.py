@@ -4,6 +4,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
+# pylint: disable=too-few-public-methods
+
 
 class WindowsAzureData(object):
 

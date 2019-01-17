@@ -18,7 +18,7 @@ from azure.servicebus.common.errors import (
     SessionLockExpired)
 
 
-class Message(object):  # pylint: disable=too-many-public-methods
+class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """
     A Service Bus Message.
 
@@ -287,7 +287,7 @@ class Message(object):  # pylint: disable=too-many-public-methods
         """Renew the message lock.
         This operation is only available for non-sessionful messages.
 
-        :raises: TypeError if the mesage is sessionful.
+        :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
         """

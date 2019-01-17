@@ -33,7 +33,7 @@ The new package offers a new AMQP-based API for improved message passing reliabi
 How do I migrate my code to the new version?
 --------------------------------------------
 
-Code written against v0.21.0 can be ported to version 0.50.0 by simple chaning the import namespace:
+Code written against v0.21.0 can be ported to version 0.50.0 by simple changing the import namespace:
 
 .. code:: python
 
@@ -44,29 +44,6 @@ Code written against v0.21.0 can be ported to version 0.50.0 by simple chaning t
     sbs = ServiceBusService(service_namespace,
                             shared_access_key_name=key_name,
                             shared_access_key_value=key_value)
-
-For more information on the new API, please see `ServiceBus
-<https://docs.microsoft.com/python/api/overview/azure/servicebus>`__
-on docs.microsoft.com.
-
-
-Compatibility
-=============
-
-**IMPORTANT**: If you have an earlier version of the azure package
-(version < 1.0), you should uninstall it before installing this package.
-
-You can check the version using pip:
-
-.. code:: shell
-
-    pip freeze
-
-If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
-
-.. code:: shell
-
-    pip uninstall azure
 
 
 Usage

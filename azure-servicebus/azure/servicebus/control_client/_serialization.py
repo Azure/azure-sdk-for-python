@@ -29,7 +29,7 @@ from ._common_error import (
     _general_error_handler)
 
 
-class _XmlSchemas:
+class _XmlSchemas:  # pylint: disable=too-few-public-methods
     SchemaInstance = 'http://www.w3.org/2001/XMLSchema-instance'
     SerializationArrays = 'http://schemas.microsoft.com/2003/10/Serialization/Arrays'
     ServiceBus = 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'

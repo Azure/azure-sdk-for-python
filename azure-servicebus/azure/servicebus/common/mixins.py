@@ -245,7 +245,7 @@ class ServiceBusMixin(object):
             raise ServiceBusResourceNotFound("Specificed queue does not exist.")
 
 
-class BaseClient(object):
+class BaseClient(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, address, name, shared_access_key_name=None,
                  shared_access_key_value=None, debug=False, **kwargs):
@@ -348,7 +348,7 @@ class BaseClient(object):
             raise ServiceBusConnectionError("Namespace not found", e)
 
 
-class SessionMixin(object):
+class SessionMixin(object):  # pylint: disable=too-few-public-methods
 
     def _get_source(self):
         source = Source(self.endpoint)
@@ -377,7 +377,7 @@ class SessionMixin(object):
         return False
 
 
-class SenderMixin(object):
+class SenderMixin(object):  # pylint: disable=too-few-public-methods
 
     def _build_schedule_request(self, schedule_time, *messages):
         request_body = {'messages': []}

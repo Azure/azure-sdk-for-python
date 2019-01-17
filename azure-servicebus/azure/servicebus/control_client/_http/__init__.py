@@ -4,6 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
+ # pylint: disable=too-few-public-methods
+
+
 class HTTPError(Exception):
 
     ''' HTTP Exception when response status code >= 300 '''

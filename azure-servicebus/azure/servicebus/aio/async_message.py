@@ -45,7 +45,7 @@ class Message(message.Message):
         """Renew the message lock.
         This operation is only available for non-sessionful messages.
 
-        :raises: TypeError is the mesage is sessionful.
+        :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.

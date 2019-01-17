@@ -26,7 +26,7 @@ DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
 
 
-class _HTTPClient(object):
+class _HTTPClient(object):  # pylint: disable=too-many-instance-attributes
 
     '''
     Takes the request and sends it to cloud service and returns the response.

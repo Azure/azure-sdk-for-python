@@ -4,6 +4,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
+# pylint: disable=too-few-public-methods,too-many-instance-attributes
+
 import sys
 import json
 from datetime import datetime
@@ -146,7 +148,7 @@ class AuthorizationRule(WindowsAzureData):
 
 class Message(WindowsAzureData):
 
-    ''' Message class that used in send message/get mesage apis. '''
+    ''' Message class that used in send message/get message apis. '''
 
     def __init__(self, body=None, service_bus_service=None, location=None,
                  custom_properties=None,

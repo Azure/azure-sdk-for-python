@@ -28,7 +28,7 @@ from azure.servicebus.common.errors import (
 _log = logging.getLogger(__name__)
 
 
-class BaseHandler(object):
+class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, endpoint, auth_config, connection=None, encoding='UTF-8', debug=False, **kwargs):
         self.running = False
