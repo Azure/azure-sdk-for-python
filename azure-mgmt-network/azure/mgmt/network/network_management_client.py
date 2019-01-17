@@ -581,6 +581,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def ddos_custom_policies(self):
+        """Instance depends on the API version:
+
+           * 2018-11-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2018_11_01.operations.DdosCustomPoliciesOperations>`
+        """
+        api_version = self._get_api_version('ddos_custom_policies')
+        if api_version == '2018-11-01':
+            from .v2018_11_01.operations import DdosCustomPoliciesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def ddos_protection_plans(self):
         """Instance depends on the API version:
 
