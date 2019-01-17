@@ -5,6 +5,8 @@
 from devtools_testutils import AzureMgmtTestCase
 from azure.template import template_main
 
+# this test case highlights that there are some additional Test capabilities present in devtools_testutils
+# as a package owner you are not required to use these. Standard PyTest implementation will work.
 class TemplateTest(AzureMgmtTestCase):
     def setUp(self):
         super(TemplateTest, self).setUp()
