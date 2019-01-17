@@ -25,6 +25,10 @@ class ManagedServiceIdentity(Model):
     :type principal_id: str
     :param tenant_id: ID of the Azure Active Directory.
     :type tenant_id: str
+    :param user_assigned_identities: The list of user identities associated
+     with the resource, key will be Azure resource Id of the ManagedIdentity.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.blueprint.models.UserAssignedIdentity]
     """
 
     _validation = {
@@ -35,10 +39,12 @@ class ManagedServiceIdentity(Model):
         'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
-    def __init__(self, *, type, principal_id: str=None, tenant_id: str=None, **kwargs) -> None:
+    def __init__(self, *, type, principal_id: str=None, tenant_id: str=None, user_assigned_identities=None, **kwargs) -> None:
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = type
         self.principal_id = principal_id
         self.tenant_id = tenant_id
+        self.user_assigned_identities = user_assigned_identities

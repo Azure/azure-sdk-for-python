@@ -17,7 +17,6 @@ from .operations.blueprints_operations import BlueprintsOperations
 from .operations.artifacts_operations import ArtifactsOperations
 from .operations.published_blueprints_operations import PublishedBlueprintsOperations
 from .operations.published_artifacts_operations import PublishedArtifactsOperations
-from .operations.operations import Operations
 from .operations.assignments_operations import AssignmentsOperations
 from .operations.assignment_operations import AssignmentOperations
 from . import models
@@ -64,8 +63,6 @@ class BlueprintManagementClient(SDKClient):
     :vartype published_blueprints: azure.mgmt.blueprint.operations.PublishedBlueprintsOperations
     :ivar published_artifacts: PublishedArtifacts operations
     :vartype published_artifacts: azure.mgmt.blueprint.operations.PublishedArtifactsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.blueprint.operations.Operations
     :ivar assignments: Assignments operations
     :vartype assignments: azure.mgmt.blueprint.operations.AssignmentsOperations
     :ivar assignment_operations: AssignmentOperations operations
@@ -84,6 +81,7 @@ class BlueprintManagementClient(SDKClient):
         super(BlueprintManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-11-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -94,8 +92,6 @@ class BlueprintManagementClient(SDKClient):
         self.published_blueprints = PublishedBlueprintsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.published_artifacts = PublishedArtifactsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assignments = AssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -23,7 +23,7 @@ class PublishedArtifactsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-11-11-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -33,16 +33,19 @@ class PublishedArtifactsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-11-preview"
+        self.api_version = "2018-11-01-preview"
 
         self.config = config
 
     def get(
-            self, management_group_name, blueprint_name, version_id, artifact_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, artifact_name, custom_headers=None, raw=False, **operation_config):
         """Get an artifact for a published Blueprint.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param version_id: version of the published blueprint.
@@ -62,7 +65,7 @@ class PublishedArtifactsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'artifactName': self._serialize.url("artifact_name", artifact_name, 'str')
@@ -102,14 +105,17 @@ class PublishedArtifactsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}/artifacts/{artifactName}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}/artifacts/{artifactName}'}
 
     def list(
-            self, management_group_name, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
         """List artifacts for a published Blueprint.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param version_id: version of the published blueprint.
@@ -130,7 +136,7 @@ class PublishedArtifactsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
                     'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str'),
                     'versionId': self._serialize.url("version_id", version_id, 'str')
                 }
@@ -174,4 +180,4 @@ class PublishedArtifactsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}/artifacts'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}/artifacts'}

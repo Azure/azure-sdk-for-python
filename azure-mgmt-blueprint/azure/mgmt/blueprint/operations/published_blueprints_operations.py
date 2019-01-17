@@ -23,7 +23,7 @@ class PublishedBlueprintsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-11-11-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -33,17 +33,20 @@ class PublishedBlueprintsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-11-preview"
+        self.api_version = "2018-11-01-preview"
 
         self.config = config
 
     def create(
-            self, management_group_name, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
         """Publish a new version of the Blueprint with the latest artifacts.
         Published Blueprints are immutable.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param version_id: version of the published blueprint.
@@ -61,7 +64,7 @@ class PublishedBlueprintsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -100,14 +103,17 @@ class PublishedBlueprintsOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
+    create.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
 
     def get(
-            self, management_group_name, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
         """Get a published Blueprint.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param version_id: version of the published blueprint.
@@ -125,7 +131,7 @@ class PublishedBlueprintsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -164,14 +170,17 @@ class PublishedBlueprintsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
 
     def delete(
-            self, management_group_name, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
         """Delete a published Blueprint.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param version_id: version of the published blueprint.
@@ -189,7 +198,7 @@ class PublishedBlueprintsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -228,14 +237,17 @@ class PublishedBlueprintsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions/{versionId}'}
 
     def list(
-            self, management_group_name, blueprint_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, blueprint_name, custom_headers=None, raw=False, **operation_config):
         """List published versions of given Blueprint.
 
-        :param management_group_name: ManagementGroup where blueprint stores.
-        :type management_group_name: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param blueprint_name: name of the blueprint.
         :type blueprint_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -254,7 +266,7 @@ class PublishedBlueprintsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'managementGroupName': self._serialize.url("management_group_name", management_group_name, 'str'),
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
                     'blueprintName': self._serialize.url("blueprint_name", blueprint_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -297,4 +309,4 @@ class PublishedBlueprintsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupName}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprints/{blueprintName}/versions'}

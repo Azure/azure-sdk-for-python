@@ -23,7 +23,7 @@ class AssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-11-11-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -33,17 +33,19 @@ class AssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-11-preview"
+        self.api_version = "2018-11-01-preview"
 
         self.config = config
 
     def create_or_update(
-            self, subscription_id, assignment_name, assignment, custom_headers=None, raw=False, **operation_config):
+            self, scope, assignment_name, assignment, custom_headers=None, raw=False, **operation_config):
         """Create or update a Blueprint assignment.
 
-        :param subscription_id: azure subscriptionId, which we assign the
-         blueprint to.
-        :type subscription_id: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param assignment_name: name of the assignment.
         :type assignment_name: str
         :param assignment: assignment object to save.
@@ -61,7 +63,7 @@ class AssignmentsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'assignmentName': self._serialize.url("assignment_name", assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -103,15 +105,17 @@ class AssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
 
     def get(
-            self, subscription_id, assignment_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get a Blueprint assignment.
 
-        :param subscription_id: azure subscriptionId, which we assign the
-         blueprint to.
-        :type subscription_id: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param assignment_name: name of the assignment.
         :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -127,7 +131,7 @@ class AssignmentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'assignmentName': self._serialize.url("assignment_name", assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -165,15 +169,17 @@ class AssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
 
     def delete(
-            self, subscription_id, assignment_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete a Blueprint assignment.
 
-        :param subscription_id: azure subscriptionId, which we assign the
-         blueprint to.
-        :type subscription_id: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param assignment_name: name of the assignment.
         :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -189,7 +195,7 @@ class AssignmentsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'assignmentName': self._serialize.url("assignment_name", assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -227,15 +233,17 @@ class AssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
 
     def list(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, scope, custom_headers=None, raw=False, **operation_config):
         """List Blueprint assignments within a subscription.
 
-        :param subscription_id: azure subscriptionId, which we assign the
-         blueprint to.
-        :type subscription_id: str
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -252,7 +260,7 @@ class AssignmentsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -294,4 +302,4 @@ class AssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Blueprint/blueprintAssignments'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments'}
