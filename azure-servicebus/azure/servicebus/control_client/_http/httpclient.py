@@ -41,13 +41,13 @@ class _HTTPClient(object):  # pylint: disable=too-many-instance-attributes
             certificate file name/location. This is only used in hosted
             service management.
         protocol:
-            http or https.
+            HTTP or HTTPS.
         request_session:
             session object created with requests library (or compatible).
         timeout:
-            timeout for the http request, in seconds.
+            timeout for the HTTP request, in seconds.
         user_agent:
-            user agent string to set in http header.
+            user agent string to set in HTTP header.
         '''
         self.service_instance = service_instance
         self.cert_file = cert_file

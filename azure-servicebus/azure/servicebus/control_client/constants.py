@@ -21,5 +21,5 @@ AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
 # Live ServiceClient URLs
 SERVICE_BUS_HOST_BASE = '.servicebus.windows.net'
 
-# Default timeout for http requests (in secs)
+# Default timeout for HTTP requests (in secs)
 DEFAULT_HTTP_TIMEOUT = 65

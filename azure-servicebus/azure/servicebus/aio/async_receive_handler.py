@@ -39,7 +39,7 @@ from azure.servicebus.common.constants import (
 
 class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=too-many-instance-attributes
     """This receive handler acts as an iterable message stream for retrieving
-    messages for a Service Bus entity. It operates a single connetion that must be opened and
+    messages for a Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
     in a `with` statement to ensure the connection is closed.
@@ -271,8 +271,9 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
         await super(Receiver, self).close(exception=exception)
 
     async def peek(self, count=1, start_from=0):
-        """Browse messages pending in the queue. This operation does not remove
-        messages from the queue, nor does it lock them.
+        """Browse messages currently pending in the queue. Peeked messages
+        are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
 
         :param count: The maximum number of messages to try and peek. The default
          value is 1.
@@ -393,7 +394,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
 
 class SessionReceiver(Receiver, mixins.SessionMixin):
     """This receive handler acts as an iterable message stream for retrieving
-    messages for a sessionful Service Bus entity. It operates a single connetion that must be opened and
+    messages for a sessionful Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
     in a `with` statement to ensure the connection is closed.
@@ -569,8 +570,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         self.locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
 
     async def peek(self, count=1, start_from=0):
-        """Browse messages pending in the queue. This operation does not remove
-        messages from the queue, nor does it lock them.
+        """Browse messages currently pending in the queue. Peeked messages
+        are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
         This operation will only peek pending messages in the current session.
 
         :param count: The maximum number of messages to try and peek. The default

@@ -23,8 +23,8 @@ _log = logging.getLogger(__name__)
 
 
 class Sender(BaseHandler, mixins.SenderMixin):
-    """This handler if for sending messages to a Service Bus entity.
-    It operates a single connetion that must be opened and closed on completion.
+    """This handler is for sending messages to a Service Bus entity.
+    It operates a single connection that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
     `TopicClient` using the `get_sender()` method.
@@ -95,7 +95,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
         """
         if not isinstance(message, Message):
-            raise TypeError("Vale of message must be of type 'Message'.")
+            raise TypeError("Value of message must be of type 'Message'.")
         if not self.running:
             self.open()
         if self.session_id and not message.properties.group_id:
@@ -207,8 +207,8 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
 
 class SessionSender(Sender):
-    """This handler if for sending messages to a sessionful Service Bus entity.
-    It operates a single connetion that must be opened and closed on completion.
+    """This handler is for sending messages to a sessionful Service Bus entity.
+    It operates a single connection that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
     `TopicClient` using the `get_sender()` method.
@@ -237,7 +237,7 @@ class SessionSender(Sender):
 
     def send(self, message):
         """Sends a message and blocks until acknowledgement is
-        received or the operation fails. If neither the Sender or the message
+        received or the operation fails. If neither the Sender nor the message
         has a session ID, a `ValueError` will be raised.
 
         :param message: The message to be sent.
@@ -256,14 +256,14 @@ class SessionSender(Sender):
 
         """
         if not isinstance(message, Message):
-            raise TypeError("Vale of message must be of type 'Message'.")
+            raise TypeError("Value of message must be of type 'Message'.")
         if not self.session_id and not message.properties.group_id:
             raise ValueError("Message must have Session ID.")
         super(SessionSender, self).send(message)
 
     def queue_message(self, message):
         """Queue a message to be sent later. This operation should be followed up
-        with send_pending_messages. If neither the Sender or the message
+        with send_pending_messages. If neither the Sender nor the message
         has a session ID, a `ValueError` will be raised.
 
         :param message: The message to be sent.

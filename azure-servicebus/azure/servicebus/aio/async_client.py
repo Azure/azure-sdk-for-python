@@ -30,15 +30,15 @@ from azure.servicebus.common.constants import (
 
 
 class ServiceBusClient(mixins.ServiceBusMixin):
-    """A Service Bus client for a namespace with the specified authentication settings (SAS).
+    """A Service Bus client for a namespace with the specified SAS authentication settings.
 
     :param str service_namespace: Service Bus namespace, required for all operations.
-    :param str host_base: Optional. Live host base url. Defaults to Azure url.
+    :param str host_base: Optional. Live host base URL. Defaults to Azure URL.
     :param str shared_access_key_name: SAS authentication key name.
     :param str shared_access_key_value: SAS authentication key value.
     :param loop: An async event loop.
-    :param int http_request_timeout: Optional. Timeout for the http request, in seconds.
-    :param http_request_session: Optional. Session object to use for http requests.
+    :param int http_request_timeout: Optional. Timeout for the HTTP request, in seconds.
+    :param http_request_session: Optional. Session object to use for HTTP requests.
     :param bool debug: Whether to output AMQP network trace to the logger.
 
     Example:
@@ -271,7 +271,7 @@ class SendClientMixin:
         :type messages: ~azure.servicebus.aio.async_message.Message or
          list[~azure.servicebus.aio.async_message.Message]
         :param message_timeout: The period in seconds during which the Message must be
-         sent. If the send in not completed in this time it will return a failure result.
+         sent. If the send is not completed in this time it will return a failure result.
         :type message_timeout: int
         :param session: An optional session ID. If supplied this session ID will be
          applied to every outgoing message sent with this Sender.
@@ -324,7 +324,7 @@ class SendClientMixin:
         a single open connection within which multiple send operations can be made.
 
         :param message_timeout: The period in seconds during which messages sent with
-         this Sender must be sent. If the send in not completed in this time it will fail.
+         this Sender must be sent. If the send is not completed in this time it will fail.
         :type message_timeout: int
         :param session: An optional session ID. If supplied this session ID will be
          applied to every outgoing message sent with this Sender.
@@ -369,8 +369,9 @@ class SendClientMixin:
 class ReceiveClientMixin:
 
     async def peek(self, count=1, start_from=0, session=None, **kwargs):
-        """Browse messages pending in the queue. This operation does not remove
-        messages from the queue, nor does it lock them.
+        """Browse messages currently pending in the queue. Peeked messages
+        are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
 
         :param count: The maximum number of messages to try and peek. The default
          value is 1.
@@ -454,7 +455,7 @@ class ReceiveClientMixin:
                 mgmt_handler)
 
     async def settle_deferred_messages(self, settlement, messages, **kwargs):
-        """Settle messages that have been previously deffered.
+        """Settle messages that have been previously deferred.
 
         :param settlement: How the messages are to be settled. This must be a string
          of one of the following values: 'completed', 'suspended', 'abandoned'.
@@ -525,8 +526,8 @@ class ReceiveClientMixin:
          session, set this to NEXT_AVAILABLE.
         :type session: str or ~azure.servicebus.common.constants.NEXT_AVAILABLE
         :param prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, i.e. messages will be received from the service and processed
-         one at a time. Increasing this value will improve message through-put performance but increase
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
          the chance that messages will expire while they are cached if they're not processed fast enough.
         :type prefetch: int
         :param mode: The mode with which messages will be retrieved from the entity. The two options
@@ -536,7 +537,7 @@ class ReceiveClientMixin:
          the client fails to process the message. The default mode is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, i.e. no timeout.
+         automatically shutdown. The default value is 0, meaning no timeout.
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver
@@ -589,11 +590,11 @@ class ReceiveClientMixin:
         a single open connection with which multiple receive operations can be made.
 
         :param transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
-         deadletter queue. Default is False, i.e. the standard deadletter endpoint.
+         deadletter queue. Default is False, using the standard deadletter endpoint.
         :type transfer_deadletter: bool
         :param prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, i.e. messages will be received from the service and processed
-         one at a time. Increasing this value will improve message through-put performance but increase
+         The default value is 0, meaning messages will be received from the service and processed
+         one at a time. Increasing this value will improve message throughput performance but increase
          the change that messages will expire while they are cached if they're not processed fast enough.
         :type prefetch: int
         :param mode: The mode with which messages will be retrieved from the entity. The two options
@@ -603,7 +604,7 @@ class ReceiveClientMixin:
          the client fails to process the message. The default mode is PeekLock.
         :type mode: ~azure.servicebus.common.constants.ReceiveSettleMode
         :param idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, i.e. no timeout.
+         automatically shutdown. The default value is 0, meaning no timeout.
         :type idle_timeout: int
         :returns: A Receiver instance with an unopened Connection.
         :rtype: ~azure.servicebus.aio.async_receive_handler.Receiver

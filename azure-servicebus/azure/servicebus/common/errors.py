@@ -115,7 +115,7 @@ class NoActiveSession(ServiceBusError):
 
 class MessageAlreadySettled(ServiceBusError):
     """An attempt was made to complete an operation on a message that has already
-    been settled (e.g. completed, abandoned, dead-lettered or deferred).
+    been settled (completed, abandoned, dead-lettered or deferred).
     This error will also be raised if an attempt is made to settle a message
     received via ReceiveAndDelete mode.
     """

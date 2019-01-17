@@ -607,7 +607,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         try:
             received_msg = self.sbs.receive_queue_message(
                 self.queue_name, True, 50)
-            self.assertTrue(False, 'Failed to trigger an http timeout')
+            self.assertTrue(False, 'Failed to trigger an HTTP timeout')
         except:
             pass
 

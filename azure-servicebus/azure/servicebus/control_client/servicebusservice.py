@@ -83,7 +83,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             AZURE_SERVICEBUS_ISSUER env variable.
             Note that if both SAS and ACS settings are specified, SAS is used.
         host_base:
-            Optional. Live host base url. Defaults to Azure url. Override this
+            Optional. Live host base URL. Defaults to Azure URL. Override this
             for on-premise.
         shared_access_key_name:
             SAS authentication key name.
@@ -95,9 +95,9 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             Instance of authentication class. If this is specified, then
             ACS and SAS parameters are ignored.
         timeout:
-            Optional. Timeout for the http request, in seconds.
+            Optional. Timeout for the HTTP request, in seconds.
         request_session:
-            Optional. Session object to use for http requests.
+            Optional. Session object to use for HTTP requests.
         '''
         self.requestid = None
         x_ms_version = None
