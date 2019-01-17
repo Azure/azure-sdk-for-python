@@ -8,6 +8,7 @@ Microsoft Azure Service Bus supports a set of cloud-based, message-oriented midd
 
 * `SDK source code <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-servicebus>`__
 * `SDK reference documentation <https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python>`__
+* `Service Bus documentation <https://docs.microsoft.com/azure/service-bus-messaging/>`__
 
 
 What's new in v0.50.0?
@@ -29,6 +30,9 @@ Prerequisites
 * Azure subscription - `Create a free account <https://azure.microsoft.com/free/>`__
 * Azure Service Bus `namespace and management credentials <https://docs.microsoft.com/azure/service-bus-messaging/service-bus-create-namespace-portal>`__
 
+
+Installation
+------------
 
 .. code:: shell
 
