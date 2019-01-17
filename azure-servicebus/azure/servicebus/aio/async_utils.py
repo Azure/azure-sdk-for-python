@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import asyncio
 import logging
@@ -16,7 +16,9 @@ _log = logging.getLogger(__name__)
 
 
 class AutoLockRenew:
-    """An asynchronous AutoLockRenew handler for renewing the lock
+    """Auto lock renew.
+
+    An asynchronous AutoLockRenew handler for renewing the lock
     tokens of messages and/or sessions in the background.
 
     :param loop: An async event loop.
@@ -36,6 +38,7 @@ class AutoLockRenew:
             :language: python
             :dedent: 4
             :caption: Automatically renew a session lock
+
     """
 
     def __init__(self, loop=None):
@@ -94,12 +97,7 @@ class AutoLockRenew:
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout), loop=self.loop)
         self._futures.append(renew_future)
 
-    async def shutdown(self, wait=True):
-        """Cancel remaining open lock renewal futures.
-
-        :param wait: Whether to block until futures are done. Default is `True`.
-        :type wait: bool
-        """
+    async def shutdown(self):
+        """Cancel remaining open lock renewal futures."""
         self._shutdown.set()
-        if wait:
-            await asyncio.wait(self._futures)
+        await asyncio.wait(self._futures)

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import re
 import os.path
@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-servicebus"
-PACKAGE_PPRINT_NAME = "ServiceBus"
+PACKAGE_PPRINT_NAME = "Service Bus"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -78,7 +78,6 @@ setup(
     ]),
     install_requires=[
         'uamqp~=1.1.0',
-        'msrest>=0.5.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],

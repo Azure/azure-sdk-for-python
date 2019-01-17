@@ -1,10 +1,10 @@
-﻿#-------------------------------------------------------------------------
+﻿# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-few-public-methods
 
 import os
 import time
@@ -68,11 +68,11 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
                  authentication=None, timeout=DEFAULT_HTTP_TIMEOUT,
                  request_session=None):
         '''
-        Initializes the service bus service for a namespace with the specified
+        Initializes the Service Bus service for a namespace with the specified
         authentication settings (SAS or ACS).
 
         service_namespace:
-            Service bus namespace, required for all operations. If None,
+            Service Bus namespace, required for all operations. If None,
             the value is set to the AZURE_SERVICEBUS_NAMESPACE env variable.
         account_key:
             ACS authentication account key. If None, the value is set to the
@@ -83,7 +83,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             AZURE_SERVICEBUS_ISSUER env variable.
             Note that if both SAS and ACS settings are specified, SAS is used.
         host_base:
-            Optional. Live host base url. Defaults to Azure url. Override this
+            Optional. Live host base URL. Defaults to Azure URL. Override this
             for on-premise.
         shared_access_key_name:
             SAS authentication key name.
@@ -95,9 +95,9 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             Instance of authentication class. If this is specified, then
             ACS and SAS parameters are ignored.
         timeout:
-            Optional. Timeout for the http request, in seconds.
+            Optional. Timeout for the HTTP request, in seconds.
         request_session:
-            Optional. Session object to use for http requests.
+            Optional. Session object to use for HTTP requests.
         '''
         self.requestid = None
         x_ms_version = None
@@ -1229,7 +1229,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         return resp
 
     def _update_service_bus_header(self, request):
-        ''' Add additional headers for service bus. '''
+        ''' Add additional headers for Service Bus. '''
 
         if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
             request.headers.append(('Content-Length', str(len(request.body))))
@@ -1285,9 +1285,9 @@ class ServiceBusWrapTokenAuthentication:
         Returns token for the request.
 
         host:
-            the service bus service request.
+            the Service Bus service request.
         path:
-            the service bus service request.
+            the Service Bus service request.
         '''
         wrap_scope = 'http://' + host + path + self.issuer + self.account_key
 

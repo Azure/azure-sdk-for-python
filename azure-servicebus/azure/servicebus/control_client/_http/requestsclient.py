@@ -1,8 +1,8 @@
-﻿#-------------------------------------------------------------------------
+﻿# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 
 class _Response(object):
@@ -30,7 +30,7 @@ class _Response(object):
         return self.respbody
 
 
-class _RequestsConnection(object):
+class _RequestsConnection(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, host, protocol, session, timeout):
         self.host = host

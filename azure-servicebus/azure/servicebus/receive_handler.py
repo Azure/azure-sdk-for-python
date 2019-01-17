@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import threading
 import time
@@ -37,9 +37,11 @@ from azure.servicebus.common.constants import (
     ReceiveSettleMode)
 
 
-class Receiver(BaseHandler):
-    """This receive handler acts as an iterable message stream for retrieving
-    messages for a Service Bus entity. It operates a single connetion that must be opened and
+class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
+    """A message receiver.
+
+    This receive handler acts as an iterable message stream for retrieving
+    messages for a Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
     in a `with` statement to ensure the connection is closed.
@@ -69,7 +71,7 @@ class Receiver(BaseHandler):
             :end-before: [END get_receiver]
             :language: python
             :dedent: 4
-            :caption: Get the receiver client from service bus client
+            :caption: Get the receiver client from Service Bus client
 
     """
 
@@ -150,7 +152,7 @@ class Receiver(BaseHandler):
             mgmt_handlers.default)
 
     def _build_receiver(self):
-        """This is a temporary patch pending a fix in uAMQP"""
+        """This is a temporary patch pending a fix in uAMQP."""
         # pylint: disable=protected-access
         self._handler.message_handler = self._handler.receiver_type(
             self._handler._session,
@@ -170,7 +172,6 @@ class Receiver(BaseHandler):
             self._handler.message_handler._settle_mode = constants.ReceiverSettleMode.ReceiveAndDelete
         self._handler.message_handler.open()
 
-
     def next(self):
         return self.__next__()
 
@@ -189,8 +190,8 @@ class Receiver(BaseHandler):
 
     @property
     def queue_size(self):
-        """
-        The current size of the unprocessed message queue.
+        """The current size of the unprocessed message queue.
+
         :rtype: int
 
         Example:
@@ -208,8 +209,10 @@ class Receiver(BaseHandler):
         return 0
 
     def peek(self, count=1, start_from=None):
-        """Browse messages pending in the queue. This operation does not remove
-        messages from the queue, nor does it lock them.
+        """Browse messages currently pending in the queue.
+
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
 
         :param count: The maximum number of messages to try and peek. The default
          value is 1.
@@ -227,7 +230,6 @@ class Receiver(BaseHandler):
                 :caption: Look at pending messages in the queue
 
         """
-
         if not start_from:
             start_from = self.last_received or 1
         if int(count) < 1:
@@ -247,6 +249,7 @@ class Receiver(BaseHandler):
 
     def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
         """Receive messages that have previously been deferred.
+
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
@@ -288,6 +291,7 @@ class Receiver(BaseHandler):
 
     def open(self):
         """Open receiver connection and authenticate session.
+
         If the receiver is already open, this operation will do nothing.
         This method will be called automatically when one starts to iterate
         messages in the receiver, so there should be no need to call it directly.
@@ -317,8 +321,9 @@ class Receiver(BaseHandler):
                 raise
 
     def close(self, exception=None):
-        """Close down the receiver connection. If the receiver has already closed,
-        this operation will do nothing. An optional exception can be passed in to
+        """Close down the receiver connection.
+
+        If the receiver has already closed, this operation will do nothing. An optional exception can be passed in to
         indicate that the handler was shutdown due to error.
         It is recommended to open a handler within a context manager as
         opposed to calling the method directly.
@@ -349,8 +354,9 @@ class Receiver(BaseHandler):
         super(Receiver, self).close(exception=exception)
 
     def fetch_next(self, max_batch_size=None, timeout=None):
-        """Receive a batch of messages at once. This approach it optimal
-        if you wish to process multiple messages simultaneously. Note that the
+        """Receive a batch of messages at once.
+
+        This approach it optimal if you wish to process multiple messages simultaneously. Note that the
         number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least
@@ -392,8 +398,10 @@ class Receiver(BaseHandler):
 
 
 class SessionReceiver(Receiver, mixins.SessionMixin):
-    """This receive handler acts as an iterable message stream for retrieving
-    messages for a sessionful Service Bus entity. It operates a single connetion that must be opened and
+    """A session message receiver.
+
+    This receive handler acts as an iterable message stream for retrieving
+    messages for a sessionful Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
     in a `with` statement to ensure the connection is closed.
@@ -498,8 +506,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.default)
 
     def get_session_state(self):
-        """Get the session state. Returns None if no state
-        has been set.
+        """Get the session state.
+
+        Returns None if no state has been set.
 
         :rtype: str
 
@@ -545,11 +554,13 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.default)
 
     def renew_lock(self):
-        """Renew the session lock. This operation must be performed periodically
-        in order to retain a lock on the session to continue message processing.
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the
+        session to continue message processing.
         Once the lock is lost the connection will be closed. This operation can
         also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.common.utils.AutoLockRenew` instance.
+        with an `azure.servicebus.AutoLockRenew` instance.
 
         Example:
             .. literalinclude:: ../examples/test_examples.py
@@ -568,8 +579,10 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         self.locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
 
     def peek(self, count=1, start_from=None):
-        """Browse messages pending in the queue. This operation does not remove
-        messages from the queue, nor does it lock them.
+        """Browse messages currently pending in the queue.
+
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
+        deferred or dead-lettered.
         This operation will only peek pending messages in the current session.
 
         :param count: The maximum number of messages to try and peek. The default
@@ -606,8 +619,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.peek_op)
 
     def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
-        """Receive messages that have previously been deferred. This operation can
-        only receive deferred messages from the current session.
+        """Receive messages that have previously been deferred.
+
+        This operation can only receive deferred messages from the current session.
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
@@ -649,7 +663,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         return messages
 
     def list_sessions(self, updated_since=None, max_results=100, skip=0):
-        """List the Session IDs with pending messages in the queue where the state of the session
+        """List session IDs.
+
+        List the Session IDs with pending messages in the queue where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
         If the state of a Session has never been set, it will not be returned regardless of whether
         there are messages pending.

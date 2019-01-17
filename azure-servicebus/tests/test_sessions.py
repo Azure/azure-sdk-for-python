@@ -624,8 +624,9 @@ def test_session_schedule_multiple_messages(live_servicebus_config, session_queu
         messages = []
         count = 0
         while len(messages) < 2 and count < 12:
-            messages = receiver.fetch_next(timeout=10)
             receiver.renew_lock()
+            messages = receiver.fetch_next(timeout=15)
+            time.sleep(5)
             count += 1
 
         data = str(messages[0])

@@ -1,8 +1,8 @@
-﻿#-------------------------------------------------------------------------
+﻿# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import json
 from datetime import datetime
@@ -29,7 +29,7 @@ from ._common_error import (
     _general_error_handler)
 
 
-class _XmlSchemas:
+class _XmlSchemas:  # pylint: disable=too-few-public-methods
     SchemaInstance = 'http://www.w3.org/2001/XMLSchema-instance'
     SerializationArrays = 'http://schemas.microsoft.com/2003/10/Serialization/Arrays'
     ServiceBus = 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -42,9 +42,9 @@ def _create_message(response, service_instance):
     ''' Create message from response.
 
     response:
-        response from service bus cloud server.
+        response from Service Bus cloud server.
     service_instance:
-        the service bus client.
+        the Service Bus client.
     '''
     respbody = response.body
     custom_properties = {}
@@ -565,5 +565,5 @@ def _convert_event_hub_to_xml(hub):
 
 
 def _service_bus_error_handler(http_error):
-    ''' Simple error handler for service bus service. '''
+    ''' Simple error handler for Service Bus service. '''
     return _general_error_handler(http_error)

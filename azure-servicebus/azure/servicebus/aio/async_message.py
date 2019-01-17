@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import datetime
 import functools
@@ -16,7 +16,7 @@ from azure.servicebus.common.constants import DEADLETTERNAME
 class Message(message.Message):
     """A Service Bus Message.
 
-    :param body: The data to send in a single message.
+    :param body: The data to send in a single message. The maximum size per message is 256 kB.
     :type body: str or bytes
     :param encoding: The encoding for string data. Default is UTF-8.
     :type encoding: str
@@ -43,9 +43,15 @@ class Message(message.Message):
 
     async def renew_lock(self):
         """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
+        it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
+        the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
+        locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
+        background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
-        :raises: TypeError is the mesage is sessionful.
+        :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled is message has already been settled.
@@ -57,7 +63,7 @@ class Message(message.Message):
         self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
 
     async def complete(self):
-        """Complete the message.
+        """Complete the message. This removes the message from the queue.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -73,7 +79,13 @@ class Message(message.Message):
     async def dead_letter(self, description=None):
         """Move the message to the Dead Letter queue.
 
-        :param description: Additional details.
+        The Dead Letter queue is a sub-queue that can be
+        used to store messages that failed to process correctly, or otherwise require further inspection
+        or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
+        To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
+        `SubscriptionClient.get_deadletter_receiver()`.
+
+        :param description: The reason for dead-lettering the message.
         :type description: str
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -88,7 +100,9 @@ class Message(message.Message):
             raise MessageSettleFailed("reject", e)
 
     async def abandon(self):
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Abandon the message.
+
+        This message will be returned to the queue to be reprocessed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -103,7 +117,9 @@ class Message(message.Message):
             raise MessageSettleFailed("abandon", e)
 
     async def defer(self):
-        """Defer the message. This message will remain in the queue but must be received
+        """Defer the message.
+
+        This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
@@ -120,7 +136,9 @@ class Message(message.Message):
 
 
 class DeferredMessage(Message):
-    """A message that has been deferred. A deferred message can be completed,
+    """A message that has been deferred.
+
+    A deferred message can be completed,
     abandoned, or dead-lettered, however it cannot be deferred again.
     """
 
@@ -149,6 +167,8 @@ class DeferredMessage(Message):
     async def complete(self):
         """Complete the message.
 
+        This removes the message from the queue.
+
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.common.errors.SessionLockExpired if session lock has already expired.
@@ -161,7 +181,13 @@ class DeferredMessage(Message):
     async def dead_letter(self, description=None):
         """Move the message to the Dead Letter queue.
 
-        :param description: Additional details.
+        The Dead Letter queue is a sub-queue that can be
+        used to store messages that failed to process correctly, or otherwise require further inspection
+        or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
+        To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
+        `SubscriptionClient.get_deadletter_receiver()`.
+
+        :param description: The reason for dead-lettering the message.
         :type description: str
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -171,7 +197,8 @@ class DeferredMessage(Message):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        await self._receiver._settle_deferred('suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
+        await self._receiver._settle_deferred(  # pylint: disable=protected-access
+            'suspended', [self.lock_token], dead_letter_details=details)
         self._settled = True
 
     async def abandon(self):

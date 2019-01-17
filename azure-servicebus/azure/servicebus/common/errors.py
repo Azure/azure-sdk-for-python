@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 from uamqp import errors, constants
 
@@ -36,7 +36,8 @@ _NO_RETRY_ERRORS = (
 
 
 def _error_handler(error):
-    """
+    """Handle connection and service errors.
+
     Called internally when an event has failed to send so we
     can parse the error to determine whether we should attempt
     to retry sending the event again.
@@ -82,8 +83,11 @@ class _ServiceBusErrorPolicy(errors.ErrorPolicy):
 
 
 class ServiceBusError(Exception):
-    """An error occured. This is the parent of all Service Bus errors and can
+    """An error occured.
+
+    This is the parent of all Service Bus errors and can
     be used for default error handling.
+
     """
 
     def __init__(self, message, inner_exception=None):
@@ -104,9 +108,7 @@ class ServiceBusAuthorizationError(ServiceBusError):
 
 
 class InvalidHandlerState(ServiceBusError):
-    """An attempt to run a handler operation that the handler is not
-    in the right state to perform.
-    """
+    """An attempt to run a handler operation that the handler is not in the right state to perform."""
 
 
 class NoActiveSession(ServiceBusError):
@@ -114,10 +116,13 @@ class NoActiveSession(ServiceBusError):
 
 
 class MessageAlreadySettled(ServiceBusError):
-    """An attempt was made to complete an operation on a message that has already
-    been settled (e.g. completed, abandoned, dead-lettered or deferred).
+    """Failed to settle the message.
+
+    An attempt was made to complete an operation on a message that has already
+    been settled (completed, abandoned, dead-lettered or deferred).
     This error will also be raised if an attempt is made to settle a message
     received via ReceiveAndDelete mode.
+
     """
 
     def __init__(self, action):
@@ -150,7 +155,9 @@ class MessageSendFailed(ServiceBusError):
 
 class MessageLockExpired(ServiceBusError):
     """The lock on the message has expired and it has been released back to the queue.
+
     It will need to be received again in order to settle it.
+
     """
 
     def __init__(self, message=None, inner_exception=None):
@@ -159,8 +166,10 @@ class MessageLockExpired(ServiceBusError):
 
 
 class SessionLockExpired(ServiceBusError):
-    """The lock on the session has expired, therefore all unsettled messages that have
-    been received can no longer be settled.
+    """The lock on the session has expired.
+
+    All unsettled messages that have been received can no longer be settled.
+
     """
 
     def __init__(self, message=None, inner_exception=None):

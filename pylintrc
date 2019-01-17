@@ -6,14 +6,15 @@ reports=no
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
 # locally-disabled: Warning locally suppressed using disable-msg
 # cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
-disable=useless-object-inheritance,raising-bad-type,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,logging-format-interpolation,too-many-instance-attributes,too-few-public-methods
+# too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code
 
 [FORMAT]
 max-line-length=120
 
 [VARIABLES]
 # Tells whether we should check for unused import in __init__ files.
-init-import=no
+init-import=yes
 
 [DESIGN]
 # Maximum number of locals for function / method body
@@ -41,5 +42,3 @@ function-name-hint=lower_case_with_underscores
 argument-name-hint=lower_case_with_underscores
 variable-name-hint=lower_case_with_underscores
 inlinevar-name-hint=lower_case_with_underscores (short is OK)
-
-extension-pkg-whitelist=c_uamqp

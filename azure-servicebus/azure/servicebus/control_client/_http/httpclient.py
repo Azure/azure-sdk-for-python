@@ -1,8 +1,8 @@
-﻿#-------------------------------------------------------------------------
+﻿# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 import base64
 try:
@@ -26,7 +26,7 @@ DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
 
 
-class _HTTPClient(object):
+class _HTTPClient(object):  # pylint: disable=too-many-instance-attributes
 
     '''
     Takes the request and sends it to cloud service and returns the response.
@@ -41,13 +41,13 @@ class _HTTPClient(object):
             certificate file name/location. This is only used in hosted
             service management.
         protocol:
-            http or https.
+            HTTP or HTTPS.
         request_session:
             session object created with requests library (or compatible).
         timeout:
-            timeout for the http request, in seconds.
+            timeout for the HTTP request, in seconds.
         user_agent:
-            user agent string to set in http header.
+            user agent string to set in HTTP header.
         '''
         self.service_instance = service_instance
         self.cert_file = cert_file
