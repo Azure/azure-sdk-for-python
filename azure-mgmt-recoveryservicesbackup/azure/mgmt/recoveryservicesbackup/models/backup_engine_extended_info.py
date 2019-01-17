@@ -25,9 +25,9 @@ class BackupEngineExtendedInfo(Model):
     :type protected_servers_count: int
     :param disk_count: Number of disks in the backup engine.
     :type disk_count: int
-    :param used_disk_space: Disk space used in the backup engine.
+    :param used_disk_space: Diskspace used in the backup engine.
     :type used_disk_space: float
-    :param available_disk_space: Disk space currently available in the backup
+    :param available_disk_space: Diskspace currently available in the backup
      engine.
     :type available_disk_space: float
     :param refreshed_at: Last refresh time in the backup engine.

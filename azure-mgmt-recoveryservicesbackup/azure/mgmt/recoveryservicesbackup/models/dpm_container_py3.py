@@ -15,6 +15,9 @@ from .protection_container_py3 import ProtectionContainer
 class DpmContainer(ProtectionContainer):
     """DPM workload-specific protection container.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureBackupServerContainer
+
     All required parameters must be populated in order to send to Azure.
 
     :param friendly_name: Friendly name of the container.
@@ -69,6 +72,10 @@ class DpmContainer(ProtectionContainer):
         'upgrade_available': {'key': 'upgradeAvailable', 'type': 'bool'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMContainerExtendedInfo'},
+    }
+
+    _subtype_map = {
+        'container_type': {'AzureBackupServerContainer': 'AzureBackupServerContainer'}
     }
 
     def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, can_re_register: bool=None, container_id: str=None, protected_item_count: int=None, dpm_agent_version: str=None, dpm_servers=None, upgrade_available: bool=None, protection_status: str=None, extended_info=None, **kwargs) -> None:

@@ -30,7 +30,7 @@ class AzureIaaSVMJobTaskDetails(Model):
     :param progress_percentage: Progress of the task.
     :type progress_percentage: float
     :param task_execution_details: Details about execution of the task.
-     eg: number of bytes transferred etc
+     eg: number of bytes transfered etc
     :type task_execution_details: str
     """
 

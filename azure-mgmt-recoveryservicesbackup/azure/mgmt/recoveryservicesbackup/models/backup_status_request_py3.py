@@ -18,7 +18,8 @@ class BackupStatusRequest(Model):
     :param resource_type: Container Type - VM, SQLPaaS, DPM, AzureFileShare.
      Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
      'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type resource_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param resource_id: Entire ARM resource id of the resource

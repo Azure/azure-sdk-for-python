@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .protection_container_py3 import ProtectionContainer
+from .dpm_container_py3 import DpmContainer
 
 
-class AzureBackupServerContainer(ProtectionContainer):
+class AzureBackupServerContainer(DpmContainer):
     """AzureBackupServer (DPMVenus) workload-specific protection container.
 
     All required parameters must be populated in order to send to Azure.
@@ -72,13 +72,5 @@ class AzureBackupServerContainer(ProtectionContainer):
     }
 
     def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, can_re_register: bool=None, container_id: str=None, protected_item_count: int=None, dpm_agent_version: str=None, dpm_servers=None, upgrade_available: bool=None, protection_status: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureBackupServerContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, **kwargs)
-        self.can_re_register = can_re_register
-        self.container_id = container_id
-        self.protected_item_count = protected_item_count
-        self.dpm_agent_version = dpm_agent_version
-        self.dpm_servers = dpm_servers
-        self.upgrade_available = upgrade_available
-        self.protection_status = protection_status
-        self.extended_info = extended_info
+        super(AzureBackupServerContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, can_re_register=can_re_register, container_id=container_id, protected_item_count=protected_item_count, dpm_agent_version=dpm_agent_version, dpm_servers=dpm_servers, upgrade_available=upgrade_available, protection_status=protection_status, extended_info=extended_info, **kwargs)
         self.container_type = 'AzureBackupServerContainer'

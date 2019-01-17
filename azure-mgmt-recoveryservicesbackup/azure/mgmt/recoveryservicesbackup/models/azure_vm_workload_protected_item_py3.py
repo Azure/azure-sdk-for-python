@@ -16,7 +16,9 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     """Azure VM workload-specific protected item.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSAPHanaDatabaseProtectedItem
+    sub-classes are: AzureVmWorkloadSAPAseDatabaseProtectedItem,
+    AzureVmWorkloadSAPHanaDatabaseProtectedItem,
+    AzureVmWorkloadSQLDatabaseProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
@@ -29,7 +31,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -121,7 +124,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem'}
+        'protected_item_type': {'AzureVmWorkloadSAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectedItem', 'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem'}
     }
 
     def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:

@@ -37,11 +37,11 @@ class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem):
     :type server_name: str
     :param is_auto_protectable: Indicates if workload item is auto-protectable
     :type is_auto_protectable: bool
-    :param subinquireditemcount: For instance or AG, indicates number of DBs
+    :param subinquireditemcount: For instance or AG, indicates number of DB's
      present
     :type subinquireditemcount: int
     :param sub_workload_item_count: For instance or AG, indicates number of
-     DBs to be protected
+     DB's to be protected
     :type sub_workload_item_count: int
     """
 

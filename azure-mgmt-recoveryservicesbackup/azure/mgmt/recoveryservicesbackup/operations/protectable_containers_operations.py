@@ -46,7 +46,7 @@ class ProtectableContainersOperations(object):
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param fabric_name: Fabric name associated with the container.
+        :param fabric_name:
         :type fabric_name: str
         :param filter: OData filter options.
         :type filter: str

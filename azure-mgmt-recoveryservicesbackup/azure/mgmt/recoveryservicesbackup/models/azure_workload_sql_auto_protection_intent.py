@@ -40,7 +40,8 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
     :type protection_intent_item_type: str
     :param workload_item_type: Workload item type of the item for which intent
      is to be set. Possible values include: 'Invalid', 'SQLInstance',
-     'SQLDataBase', 'SAPHanaSystem', 'SAPHanaDatabase'
+     'SQLDataBase', 'SAPHanaSystem', 'SAPHanaDatabase', 'SAPAseSystem',
+     'SAPAseDatabase'
     :type workload_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadItemType
     """

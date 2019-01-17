@@ -24,7 +24,7 @@ class BMSContainersInquiryQueryObject(Model):
     :param workload_type: Workload type for this container. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
      'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
-     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase', 'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """

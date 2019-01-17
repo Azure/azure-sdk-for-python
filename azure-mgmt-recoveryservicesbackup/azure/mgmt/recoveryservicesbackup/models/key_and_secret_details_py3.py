@@ -19,7 +19,7 @@ class KeyAndSecretDetails(Model):
     1. Secret(BEK) - Url + Backup Data + vaultId.
     2. Key(KEK) - Url + Backup Data + vaultId.
     3. EncryptionMechanism
-    BEK and KEK can potentially have different vault ids.
+    BEK and KEK can potentiallty have different vault ids.
 
     :param kek_details: KEK is encryption key for BEK.
     :type kek_details: ~azure.mgmt.recoveryservicesbackup.models.KEKDetails

@@ -24,7 +24,8 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
     :param work_load_type: Type of workload for the backup management.
      Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
      'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type work_load_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param schedule_policy: Backup schedule specified as part of backup

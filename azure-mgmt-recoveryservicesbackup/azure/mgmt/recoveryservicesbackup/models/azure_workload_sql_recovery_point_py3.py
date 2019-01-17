@@ -13,8 +13,8 @@ from .azure_workload_recovery_point_py3 import AzureWorkloadRecoveryPoint
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SQL specific recovery point, specifically encapsulates full/diff recovery
-    point along with extended info.
+    """SQL specific recoverypoint, specifically encapsulates full/diff
+    recoverypoint alongwith extended info.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSQLPointInTimeRecoveryPoint
@@ -23,7 +23,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',

@@ -46,6 +46,7 @@ class WorkloadType(str, Enum):
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
     sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
 
 
 class RecoveryType(str, Enum):
@@ -138,6 +139,8 @@ class WorkloadItemType(str, Enum):
     sql_data_base = "SQLDataBase"
     sap_hana_system = "SAPHanaSystem"
     sap_hana_database = "SAPHanaDatabase"
+    sap_ase_system = "SAPAseSystem"
+    sap_ase_database = "SAPAseDatabase"
 
 
 class SQLDataDirectoryType(str, Enum):
@@ -173,6 +176,7 @@ class DataSourceType(str, Enum):
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
     sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
 
 
 class ProtectionStatus(str, Enum):
@@ -416,6 +420,13 @@ class BackupType(str, Enum):
     copy_only_full = "CopyOnlyFull"
 
 
+class OperationType(str, Enum):
+
+    invalid = "Invalid"
+    register = "Register"
+    reregister = "Reregister"
+
+
 class RestorePointType(str, Enum):
 
     invalid = "Invalid"
@@ -505,6 +516,7 @@ class BackupItemType(str, Enum):
     sql_data_base = "SQLDataBase"
     azure_file_share = "AzureFileShare"
     sap_hana_database = "SAPHanaDatabase"
+    sap_ase_database = "SAPAseDatabase"
 
 
 class OperationStatusValues(str, Enum):

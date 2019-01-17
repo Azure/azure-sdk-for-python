@@ -26,7 +26,8 @@ class DPMProtectedItem(ProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -53,7 +54,7 @@ class DPMProtectedItem(ProtectedItem):
     :param backup_engine_name: Backup Management server protecting this backup
      item
     :type backup_engine_name: str
-    :param protection_state: Protection state of the backup engine. Possible
+    :param protection_state: Protection state of the backupengine. Possible
      values include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or

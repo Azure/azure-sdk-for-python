@@ -28,7 +28,7 @@ class ProtectedItemQueryObject(Model):
     :param item_type: Type of workload this item represents. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
      'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
-     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase', 'SAPAseDatabase'
     :type item_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param policy_name: Backup policy name associated with the backup item.

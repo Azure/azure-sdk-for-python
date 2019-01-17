@@ -48,7 +48,7 @@ class DpmBackupEngine(BackupEngineBase):
     :param is_dpm_upgrade_available: To check if backup engine upgrade
      available
     :type is_dpm_upgrade_available: bool
-    :param extended_info: Extended info of the backup engine
+    :param extended_info: Extended info of the backupengine
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.BackupEngineExtendedInfo
     :param backup_engine_type: Required. Constant filled by server.

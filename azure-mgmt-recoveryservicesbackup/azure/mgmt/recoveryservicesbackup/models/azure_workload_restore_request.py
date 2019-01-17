@@ -16,7 +16,8 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     """AzureWorkload-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLRestoreRequest
+    sub-classes are: AzureWorkloadPointInTimeRestoreRequest,
+    AzureWorkloadSAPHanaRestoreRequest, AzureWorkloadSQLRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -32,6 +33,9 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :type source_resource_id: str
     :param property_bag: Workload specific property bag.
     :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
     """
 
     _validation = {
@@ -43,10 +47,11 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         'recovery_type': {'key': 'recoveryType', 'type': 'str'},
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
+        'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
     }
 
     def __init__(self, **kwargs):
@@ -54,4 +59,5 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         self.recovery_type = kwargs.get('recovery_type', None)
         self.source_resource_id = kwargs.get('source_resource_id', None)
         self.property_bag = kwargs.get('property_bag', None)
+        self.target_info = kwargs.get('target_info', None)
         self.object_type = 'AzureWorkloadRestoreRequest'

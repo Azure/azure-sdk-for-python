@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .protection_container import ProtectionContainer
+from .dpm_container import DpmContainer
 
 
-class AzureBackupServerContainer(ProtectionContainer):
+class AzureBackupServerContainer(DpmContainer):
     """AzureBackupServer (DPMVenus) workload-specific protection container.
 
     All required parameters must be populated in order to send to Azure.
@@ -73,12 +73,4 @@ class AzureBackupServerContainer(ProtectionContainer):
 
     def __init__(self, **kwargs):
         super(AzureBackupServerContainer, self).__init__(**kwargs)
-        self.can_re_register = kwargs.get('can_re_register', None)
-        self.container_id = kwargs.get('container_id', None)
-        self.protected_item_count = kwargs.get('protected_item_count', None)
-        self.dpm_agent_version = kwargs.get('dpm_agent_version', None)
-        self.dpm_servers = kwargs.get('dpm_servers', None)
-        self.upgrade_available = kwargs.get('upgrade_available', None)
-        self.protection_status = kwargs.get('protection_status', None)
-        self.extended_info = kwargs.get('extended_info', None)
         self.container_type = 'AzureBackupServerContainer'

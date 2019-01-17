@@ -9,21 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .recovery_point import RecoveryPoint
+from .azure_workload_recovery_point import AzureWorkloadRecoveryPoint
 
 
-class AzureWorkloadSAPHanaRecoveryPoint(RecoveryPoint):
-    """SAPHana specific recovery point, specifically encapsulates full/diff
-    recovery points.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSAPHanaPointInTimeRecoveryPoint
+class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
+    """SAPHana specific recoverypoint, specifically encapsulates full/diff
+    recoverypoints.
 
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',
@@ -42,12 +39,6 @@ class AzureWorkloadSAPHanaRecoveryPoint(RecoveryPoint):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'object_type': {'AzureWorkloadSAPHanaPointInTimeRecoveryPoint': 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'}
-    }
-
     def __init__(self, **kwargs):
         super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_time_in_utc = kwargs.get('recovery_point_time_in_utc', None)
-        self.type = kwargs.get('type', None)
         self.object_type = 'AzureWorkloadSAPHanaRecoveryPoint'

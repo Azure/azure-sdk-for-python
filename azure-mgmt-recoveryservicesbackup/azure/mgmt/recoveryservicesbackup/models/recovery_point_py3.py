@@ -18,8 +18,7 @@ class RecoveryPoint(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint,
-    AzureWorkloadSAPHanaRecoveryPoint, GenericRecoveryPoint,
-    IaasVMRecoveryPoint
+    GenericRecoveryPoint, IaasVMRecoveryPoint
 
     All required parameters must be populated in order to send to Azure.
 
@@ -36,7 +35,7 @@ class RecoveryPoint(Model):
     }
 
     _subtype_map = {
-        'object_type': {'AzureFileShareRecoveryPoint': 'AzureFileShareRecoveryPoint', 'AzureWorkloadRecoveryPoint': 'AzureWorkloadRecoveryPoint', 'AzureWorkloadSAPHanaRecoveryPoint': 'AzureWorkloadSAPHanaRecoveryPoint', 'GenericRecoveryPoint': 'GenericRecoveryPoint', 'IaasVMRecoveryPoint': 'IaasVMRecoveryPoint'}
+        'object_type': {'AzureFileShareRecoveryPoint': 'AzureFileShareRecoveryPoint', 'AzureWorkloadRecoveryPoint': 'AzureWorkloadRecoveryPoint', 'GenericRecoveryPoint': 'GenericRecoveryPoint', 'IaasVMRecoveryPoint': 'IaasVMRecoveryPoint'}
     }
 
     def __init__(self, **kwargs) -> None:

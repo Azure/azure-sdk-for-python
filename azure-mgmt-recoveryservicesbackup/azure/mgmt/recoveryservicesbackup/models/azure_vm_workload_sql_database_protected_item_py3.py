@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .protected_item_py3 import ProtectedItem
+from .azure_vm_workload_protected_item_py3 import AzureVmWorkloadProtectedItem
 
 
-class AzureVmWorkloadSQLDatabaseProtectedItem(ProtectedItem):
+class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     """Azure VM workload-specific protected item representing SQL Database.
 
     All required parameters must be populated in order to send to Azure.
@@ -26,7 +26,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(ProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
+     'SAPAseDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -56,7 +57,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(ProtectedItem):
     :param parent_name: Parent name of the DB such as Instance or Availability
      Group.
     :type parent_name: str
-    :param parent_type: Parent type of DB, SQLAG or StandAlone
+    :param parent_type: Parent type of protected item, example: for a DB,
+     standalone server or distributed
     :type parent_type: str
     :param protection_status: Backup status of this backup item.
     :type protection_status: str
@@ -117,17 +119,5 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(ProtectedItem):
     }
 
     def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, friendly_name: str=None, server_name: str=None, parent_name: str=None, parent_type: str=None, protection_status: str=None, protection_state=None, last_backup_status=None, last_backup_time=None, last_backup_error_detail=None, protected_item_data_source_id: str=None, protected_item_health_status=None, extended_info=None, **kwargs) -> None:
-        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, **kwargs)
-        self.friendly_name = friendly_name
-        self.server_name = server_name
-        self.parent_name = parent_name
-        self.parent_type = parent_type
-        self.protection_status = protection_status
-        self.protection_state = protection_state
-        self.last_backup_status = last_backup_status
-        self.last_backup_time = last_backup_time
-        self.last_backup_error_detail = last_backup_error_detail
-        self.protected_item_data_source_id = protected_item_data_source_id
-        self.protected_item_health_status = protected_item_health_status
-        self.extended_info = extended_info
+        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, **kwargs)
         self.protected_item_type = 'AzureVmWorkloadSQLDatabase'

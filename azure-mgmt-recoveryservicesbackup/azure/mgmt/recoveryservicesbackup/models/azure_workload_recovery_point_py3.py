@@ -17,13 +17,14 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
     recovery point.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLRecoveryPoint
+    sub-classes are: AzureWorkloadPointInTimeRecoveryPoint,
+    AzureWorkloadSAPHanaRecoveryPoint, AzureWorkloadSQLRecoveryPoint
 
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',
@@ -43,7 +44,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLRecoveryPoint': 'AzureWorkloadSQLRecoveryPoint'}
+        'object_type': {'AzureWorkloadPointInTimeRecoveryPoint': 'AzureWorkloadPointInTimeRecoveryPoint', 'AzureWorkloadSAPHanaRecoveryPoint': 'AzureWorkloadSAPHanaRecoveryPoint', 'AzureWorkloadSQLRecoveryPoint': 'AzureWorkloadSQLRecoveryPoint'}
     }
 
     def __init__(self, *, recovery_point_time_in_utc=None, type=None, **kwargs) -> None:
