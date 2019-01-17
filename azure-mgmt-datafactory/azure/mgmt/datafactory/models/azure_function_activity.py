@@ -40,7 +40,8 @@ class AzureFunctionActivity(ExecutionActivity):
     :type method: str or
      ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
     :param function_name: Required. Name of the Function that the Azure
-     Function Activity will call.
+     Function Activity will call. Type: string (or Expression with resultType
+     string)
     :type function_name: object
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
