@@ -3,6 +3,10 @@ import os
 from io import open
 import re
 
+# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named 
+# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect 
+# your package.
+
 PACKAGE_NAME = "azure-template"
 PACKAGE_PPRINT_NAME = "Template Package"
 
