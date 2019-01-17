@@ -41,8 +41,7 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
-    :param target: Gets or sets the name of the target build stage for the
-     docker build.
+    :param target: The name of the target build stage for the docker build.
     :type target: str
     """
 

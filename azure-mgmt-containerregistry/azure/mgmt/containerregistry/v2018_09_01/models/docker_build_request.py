@@ -34,8 +34,7 @@ class DockerBuildRequest(RunRequest):
     :param docker_file_path: Required. The Docker file path relative to the
      source location.
     :type docker_file_path: str
-    :param target: Gets or sets the name of the target build stage for the
-     docker build.
+    :param target: The name of the target build stage for the docker build.
     :type target: str
     :param arguments: The collection of override arguments to be used when
      executing the run.
