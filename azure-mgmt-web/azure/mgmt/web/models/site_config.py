@@ -100,7 +100,7 @@ class SiteConfig(Model):
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
     :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
-    :param experiments: This is work around for polymophic types.
+    :param experiments: This is work around for polymorphic types.
     :type experiments: ~azure.mgmt.web.models.Experiments
     :param limits: Site limits.
     :type limits: ~azure.mgmt.web.models.SiteLimits

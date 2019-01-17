@@ -90,18 +90,6 @@ class AppServicePlan(Resource):
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.web.models.ProvisioningState
-    :ivar app_service_plan_kind: Kind of resource.
-    :vartype app_service_plan_kind: str
-    :ivar mdm_id: MDM ID of the App Service plan.
-    :vartype mdm_id: str
-    :ivar current_number_of_workers: Current worker count.
-    :vartype current_number_of_workers: int
-    :ivar current_worker_size: Current worker size.
-    :vartype current_worker_size: str
-    :ivar number_of_workers: Worker count.
-    :vartype number_of_workers: int
-    :ivar worker_size: Worker size.
-    :vartype worker_size: str
     :param sku:
     :type sku: ~azure.mgmt.web.models.SkuDescription
     """
@@ -118,12 +106,6 @@ class AppServicePlan(Resource):
         'number_of_sites': {'readonly': True},
         'resource_group': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'app_service_plan_kind': {'readonly': True},
-        'mdm_id': {'readonly': True},
-        'current_number_of_workers': {'readonly': True},
-        'current_worker_size': {'readonly': True},
-        'number_of_workers': {'readonly': True},
-        'worker_size': {'readonly': True},
     }
 
     _attribute_map = {
@@ -153,12 +135,6 @@ class AppServicePlan(Resource):
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
-        'app_service_plan_kind': {'key': 'properties.kind', 'type': 'str'},
-        'mdm_id': {'key': 'properties.mdmId', 'type': 'str'},
-        'current_number_of_workers': {'key': 'properties.currentNumberOfWorkers', 'type': 'int'},
-        'current_worker_size': {'key': 'properties.currentWorkerSize', 'type': 'str'},
-        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
-        'worker_size': {'key': 'properties.workerSize', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
@@ -184,10 +160,4 @@ class AppServicePlan(Resource):
         self.target_worker_count = kwargs.get('target_worker_count', None)
         self.target_worker_size_id = kwargs.get('target_worker_size_id', None)
         self.provisioning_state = None
-        self.app_service_plan_kind = None
-        self.mdm_id = None
-        self.current_number_of_workers = None
-        self.current_worker_size = None
-        self.number_of_workers = None
-        self.worker_size = None
         self.sku = kwargs.get('sku', None)
