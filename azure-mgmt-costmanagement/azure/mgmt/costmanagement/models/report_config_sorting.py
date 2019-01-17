@@ -12,28 +12,28 @@
 from msrest.serialization import Model
 
 
-class ReportConfigRecurrencePeriod(Model):
-    """The start and end date for recurrence schedule.
+class ReportConfigSorting(Model):
+    """The order by expression to be used in the report.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required. The start date of recurrence.
-    :type from_property: datetime
-    :param to: The end date of recurrence. If not provided, we default this to
-     10 years from the start date.
-    :type to: datetime
+    :param direction: Direction of sort. Possible values include: 'Ascending',
+     'Descending'
+    :type direction: str or ~azure.mgmt.costmanagement.models.enum
+    :param name: Required. The name of the column to sort.
+    :type name: str
     """
 
     _validation = {
-        'from_property': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'iso-8601'},
-        'to': {'key': 'to', 'type': 'iso-8601'},
+        'direction': {'key': 'direction', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ReportConfigRecurrencePeriod, self).__init__(**kwargs)
-        self.from_property = kwargs.get('from_property', None)
-        self.to = kwargs.get('to', None)
+        super(ReportConfigSorting, self).__init__(**kwargs)
+        self.direction = kwargs.get('direction', None)
+        self.name = kwargs.get('name', None)

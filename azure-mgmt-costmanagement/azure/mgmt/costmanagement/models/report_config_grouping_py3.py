@@ -17,25 +17,26 @@ class ReportConfigGrouping(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param column_type: Required. Has type of the column to group. Possible
-     values include: 'Tag', 'Dimension'
-    :type column_type: str or
+    :param type: Required. Has type of the column to group. Possible values
+     include: 'Tag', 'Dimension'
+    :type type: str or
      ~azure.mgmt.costmanagement.models.ReportConfigColumnType
-    :param name: Required. The name of the column to group.
+    :param name: Required. The name of the column to group. This version
+     supports subscription lowest possible grain.
     :type name: str
     """
 
     _validation = {
-        'column_type': {'required': True},
+        'type': {'required': True},
         'name': {'required': True},
     }
 
     _attribute_map = {
-        'column_type': {'key': 'columnType', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, column_type, name: str, **kwargs) -> None:
+    def __init__(self, *, type, name: str, **kwargs) -> None:
         super(ReportConfigGrouping, self).__init__(**kwargs)
-        self.column_type = column_type
+        self.type = type
         self.name = name

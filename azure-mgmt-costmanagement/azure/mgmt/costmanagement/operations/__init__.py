@@ -9,16 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .report_config_operations import ReportConfigOperations
-from .billing_account_dimensions_operations import BillingAccountDimensionsOperations
-from .subscription_dimensions_operations import SubscriptionDimensionsOperations
-from .resource_group_dimensions_operations import ResourceGroupDimensionsOperations
+from .dimensions_operations import DimensionsOperations
+from .query_operations import QueryOperations
+from .forecast_operations import ForecastOperations
+from .cloud_connector_operations import CloudConnectorOperations
+from .external_billing_account_operations import ExternalBillingAccountOperations
+from .external_subscription_operations import ExternalSubscriptionOperations
+from .entities_operations import EntitiesOperations
 from .operations import Operations
 
 __all__ = [
-    'ReportConfigOperations',
-    'BillingAccountDimensionsOperations',
-    'SubscriptionDimensionsOperations',
-    'ResourceGroupDimensionsOperations',
+    'DimensionsOperations',
+    'QueryOperations',
+    'ForecastOperations',
+    'CloudConnectorOperations',
+    'ExternalBillingAccountOperations',
+    'ExternalSubscriptionOperations',
+    'EntitiesOperations',
     'Operations',
 ]

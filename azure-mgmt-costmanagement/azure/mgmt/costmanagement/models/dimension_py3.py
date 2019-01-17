@@ -26,6 +26,12 @@ class Dimension(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :param description:
+    :type description: str
+    :param filter_enabled:
+    :type filter_enabled: bool
+    :param grouping_enabled:
+    :type grouping_enabled: bool
     :param data:
     :type data: list[str]
     :param total:
@@ -52,6 +58,9 @@ class Dimension(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'filter_enabled': {'key': 'properties.filterEnabled', 'type': 'bool'},
+        'grouping_enabled': {'key': 'properties.groupingEnabled', 'type': 'bool'},
         'data': {'key': 'properties.data', 'type': '[str]'},
         'total': {'key': 'properties.total', 'type': 'int'},
         'category': {'key': 'properties.category', 'type': 'str'},
@@ -60,8 +69,11 @@ class Dimension(Resource):
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, data=None, total: int=None, category: str=None, usage_start=None, usage_end=None, next_link: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str=None, filter_enabled: bool=None, grouping_enabled: bool=None, data=None, total: int=None, category: str=None, usage_start=None, usage_end=None, next_link: str=None, **kwargs) -> None:
         super(Dimension, self).__init__(**kwargs)
+        self.description = description
+        self.filter_enabled = filter_enabled
+        self.grouping_enabled = grouping_enabled
         self.data = data
         self.total = total
         self.category = category
