@@ -111,7 +111,7 @@ class ServiceBusMixin(object):
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
         except azure.common.AzureMissingResourceHttpError as e:
-            raise ServiceBusResourceNotFound("Specificed queue '{}' does not exist.".format(queue_name))
+            raise ServiceBusResourceNotFound("Specificed queue '{}' does not exist.".format(queue_name), e)
 
     def create_topic(
             self, topic_name,
@@ -169,7 +169,7 @@ class ServiceBusMixin(object):
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
         except azure.common.AzureMissingResourceHttpError as e:
-            raise ServiceBusResourceNotFound("Specificed queue does not exist.")
+            raise ServiceBusResourceNotFound("Specificed queue does not exist.", e)
 
     def create_subscription(
             self, topic_name, subscription_name,
@@ -242,15 +242,14 @@ class ServiceBusMixin(object):
         except requests.exceptions.ConnectionError as e:
             raise ServiceBusConnectionError("Namespace: {} not found".format(self.service_namespace), e)
         except azure.common.AzureMissingResourceHttpError as e:
-            raise ServiceBusResourceNotFound("Specificed queue does not exist.")
+            raise ServiceBusResourceNotFound("Specificed queue does not exist.", e)
 
 
 class BaseClient(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, address, name, shared_access_key_name=None,
                  shared_access_key_value=None, debug=False, **kwargs):
-        """
-        Constructs a new Client to interact with the named Service Bus entity.
+        """Construct a new Client to interact with the named Service Bus entity.
 
         :param address: The full URI of the Service Bus namespace. This can optionally
          include URL-encoded access name and key.
@@ -306,8 +305,7 @@ class BaseClient(object):  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def from_connection_string(cls, conn_str, name=None, **kwargs):
-        """
-        Create a Client from a Service Bus connection string.
+        """Create a Client from a Service Bus connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
@@ -398,8 +396,9 @@ class SenderMixin(object):  # pylint: disable=too-few-public-methods
         return request_body
 
     def queue_message(self, message):
-        """Queue a message to be sent later. This operation should be followed up
-        with send_pending_messages.
+        """Queue a message to be sent later.
+
+        This operation should be followed up with send_pending_messages.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.common.message.Message

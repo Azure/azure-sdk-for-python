@@ -19,6 +19,7 @@ from azure.servicebus.aio.async_base_handler import BaseHandler
 
 class Sender(BaseHandler, mixins.SenderMixin):
     """This handler is for sending messages to a Service Bus entity.
+
     It operates a single connection that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
@@ -68,8 +69,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             **self.handler_kwargs)
 
     async def send(self, message):
-        """Sends a message and blocks until acknowledgement is
-        received or the operation fails.
+        """Send a message and blocks until acknowledgement is received or the operation fails.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.aio.async_message.Message
@@ -98,6 +98,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
     async def schedule(self, schedule_time, *messages):
         """Send one or more messages to be enqueued at a specific time.
+
         Returns a list of the sequence numbers of the enqueued messages.
 
         :param schedule_time: The date and time to enqueue the messages.
@@ -124,8 +125,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
             mgmt_handlers.schedule_op)
 
     async def cancel_scheduled_messages(self, *sequence_numbers):
-        """Cancel one or more messages that have previsouly been scheduled and are
-        still pending.
+        """Cancel one or more messages that have previsouly been scheduled and are still pending.
 
         :param sequence_numbers: The seqeuence numbers of the scheduled messages.
         :type sequence_numbers: int
@@ -182,7 +182,9 @@ class Sender(BaseHandler, mixins.SenderMixin):
             raise MessageSendFailed(e)
 
     async def reconnect(self):
-        """If the handler was disconnected from the service with
+        """Reconnect the handler.
+
+        If the handler was disconnected from the service with
         a retryable error - attempt to reconnect.
         This method will be called automatically for most retryable errors.
         Also attempts to re-queue any messages that were pending before the reconnect.
@@ -198,6 +200,7 @@ class Sender(BaseHandler, mixins.SenderMixin):
 
 class SessionSender(Sender):
     """This handler is for sending messages to a sessionful Service Bus entity.
+
     It operates a single connection that must be opened and closed on completion.
     The Sender can be run within a context manager to ensure that the connection is closed on exit.
     The Sender should not be instantiated directly, and should be accessed from a `QueueClient` or
@@ -228,9 +231,9 @@ class SessionSender(Sender):
     """
 
     async def send(self, message):
-        """Sends a message and blocks until acknowledgement is
-        received or the operation fails. If neither the Sender nor the message
-        has a session ID, a `ValueError` will be raised.
+        """Send a message and blocks until acknowledgement is received or the operation fails.
+
+        If neither the Sender nor the message has a session ID, a `ValueError` will be raised.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.aio.async_message.Message
@@ -253,9 +256,10 @@ class SessionSender(Sender):
         return await super(SessionSender, self).send(message)
 
     def queue_message(self, message):
-        """Queue a message to be sent later. This operation should be followed up
-        with send_pending_messages. If neither the Sender nor the message
-        has a session ID, a `ValueError` will be raised.
+        """Queue a message to be sent later.
+
+        This operation should be followed up with send_pending_messages. If neither the
+        Sender nor the message has a session ID, a `ValueError` will be raised.
 
         :param message: The message to be sent.
         :type message: ~azure.servicebus.aio.async_message.Message
@@ -275,6 +279,7 @@ class SessionSender(Sender):
 
     async def schedule_messages(self, schedule_time, *messages):
         """Send one or more messages to be enqueued at a specific time.
+
         Returns a list of the sequence numbers of the enqueued messages.
         If neither the Sender nor the message has a session ID, a `ValueError` will be raised.
 

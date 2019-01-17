@@ -125,7 +125,9 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
             raise error
 
     async def reconnect(self):
-        """If the handler was disconnected from the service with
+        """Reconnect the handler.
+
+        If the handler was disconnected from the service with
         a retryable error - attempt to reconnect.
         This method will be called automatically for most retryable errors.
         """
@@ -135,6 +137,7 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
 
     async def open(self):
         """Open handler connection and authenticate session.
+
         If the handler is already open, this operation will do nothing.
         A handler opened with this method must be explicitly closed.
         It is recommended to open a handler within a context manager as
@@ -166,8 +169,9 @@ class BaseHandler:  # pylint: disable=too-many-instance-attributes
                 raise
 
     async def close(self, exception=None):
-        """
-        Close down the handler connection. If the handler has already closed,
+        """Close down the handler connection.
+
+        If the handler has already closed,
         this operation will do nothing. An optional exception can be passed in to
         indicate that the handler was shutdown due to error.
         It is recommended to open a handler within a context manager as

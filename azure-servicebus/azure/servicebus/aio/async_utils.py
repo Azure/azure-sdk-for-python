@@ -16,7 +16,9 @@ _log = logging.getLogger(__name__)
 
 
 class AutoLockRenew:
-    """An asynchronous AutoLockRenew handler for renewing the lock
+    """Auto lock renew.
+
+    An asynchronous AutoLockRenew handler for renewing the lock
     tokens of messages and/or sessions in the background.
 
     :param loop: An async event loop.
@@ -36,6 +38,7 @@ class AutoLockRenew:
             :language: python
             :dedent: 4
             :caption: Automatically renew a session lock
+
     """
 
     def __init__(self, loop=None):
@@ -95,7 +98,6 @@ class AutoLockRenew:
         self._futures.append(renew_future)
 
     async def shutdown(self):
-        """Cancel remaining open lock renewal futures.
-        """
+        """Cancel remaining open lock renewal futures."""
         self._shutdown.set()
         await asyncio.wait(self._futures)

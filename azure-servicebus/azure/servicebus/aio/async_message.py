@@ -42,7 +42,9 @@ class Message(message.Message):
         super(Message, self).__init__(body, encoding=encoding, **kwargs)
 
     async def renew_lock(self):
-        """Renew the message lock. This will maintain the lock on the message to ensure
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
         it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
         the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
         locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
@@ -75,7 +77,9 @@ class Message(message.Message):
             raise MessageSettleFailed("accept", e)
 
     async def dead_letter(self, description=None):
-        """Move the message to the Dead Letter queue. The Dead Letter queue is a sub-queue that can be
+        """Move the message to the Dead Letter queue.
+
+        The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
@@ -96,7 +100,9 @@ class Message(message.Message):
             raise MessageSettleFailed("reject", e)
 
     async def abandon(self):
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Abandon the message.
+
+        This message will be returned to the queue to be reprocessed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -111,7 +117,9 @@ class Message(message.Message):
             raise MessageSettleFailed("abandon", e)
 
     async def defer(self):
-        """Defer the message. This message will remain in the queue but must be received
+        """Defer the message.
+
+        This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
@@ -128,7 +136,9 @@ class Message(message.Message):
 
 
 class DeferredMessage(Message):
-    """A message that has been deferred. A deferred message can be completed,
+    """A message that has been deferred.
+
+    A deferred message can be completed,
     abandoned, or dead-lettered, however it cannot be deferred again.
     """
 
@@ -155,7 +165,9 @@ class DeferredMessage(Message):
         return self._settled
 
     async def complete(self):
-        """Complete the message. This removes the message from the queue.
+        """Complete the message.
+
+        This removes the message from the queue.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -167,7 +179,9 @@ class DeferredMessage(Message):
         self._settled = True
 
     async def dead_letter(self, description=None):
-        """Move the message to the Dead Letter queue. The Dead Letter queue is a sub-queue that can be
+        """Move the message to the Dead Letter queue.
+
+        The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
@@ -183,7 +197,8 @@ class DeferredMessage(Message):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        await self._receiver._settle_deferred('suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
+        await self._receiver._settle_deferred(
+            'suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
         self._settled = True
 
     async def abandon(self):

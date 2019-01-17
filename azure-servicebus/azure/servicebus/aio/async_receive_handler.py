@@ -38,7 +38,9 @@ from azure.servicebus.common.constants import (
 
 
 class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=too-many-instance-attributes
-    """This receive handler acts as an iterable message stream for retrieving
+    """A message receiver.
+
+    This receive handler acts as an iterable message stream for retrieving
     messages for a Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
@@ -117,7 +119,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
             **self.handler_kwargs)
 
     async def _build_receiver(self):
-        """This is a temporary patch pending a fix in uAMQP"""
+        """This is a temporary patch pending a fix in uAMQP."""
         # pylint: disable=protected-access
         self._handler.message_handler = self._handler.receiver_type(
             self._handler._session,
@@ -174,6 +176,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
     @property
     def receiver_shutdown(self):
         """Whether the receiver connection has been marked for shutdown.
+
         If this value is `True` - it does not indicate that the connection
         has yet been closed.
         This property is used internally and should not be relied upon to asses
@@ -187,8 +190,9 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
 
     @receiver_shutdown.setter
     def receiver_shutdown(self, value):
-        """Mark the connection as ready for shutdown. This property is used internally
-        and should not be set in normal usage.
+        """Mark the connection as ready for shutdown.
+
+        This property is used internally and should not be set in normal usage.
 
         :param bool value: Whether to shutdown the connection.
         """
@@ -210,6 +214,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
 
     async def open(self):
         """Open receiver connection and authenticate session.
+
         If the receiver is already open, this operation will do nothing.
         This method will be called automatically when one starts to iterate
         messages in the receiver, so there should be no need to call it directly.
@@ -239,9 +244,10 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
                 raise
 
     async def close(self, exception=None):
-        """Close down the receiver connection. If the receiver has already closed,
-        this operation will do nothing. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
+        """Close down the receiver connection.
+
+        If the receiver has already closed, this operation will do nothing. An optional
+        exception can be passed in to indicate that the handler was shutdown due to error.
         It is recommended to open a handler within a context manager as
         opposed to calling the method directly.
         The receiver will be implicitly closed on completion of the message iterator,
@@ -271,8 +277,9 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
         await super(Receiver, self).close(exception=exception)
 
     async def peek(self, count=1, start_from=0):
-        """Browse messages currently pending in the queue. Peeked messages
-        are not removed from queue, nor are they locked. They cannot be completed,
+        """Browse messages currently pending in the queue.
+
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
 
         :param count: The maximum number of messages to try and peek. The default
@@ -310,6 +317,7 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
 
     async def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
         """Receive messages that have previously been deferred.
+
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
@@ -350,9 +358,10 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
         return messages
 
     async def fetch_next(self, max_batch_size=None, timeout=None):
-        """Receive a batch of messages at once. This approach it optimal
-        if you wish to process multiple messages simultaneously. Note that the
-        number of messages retrieved in a single batch will be dependent on
+        """Receive a batch of messages at once.
+
+        This approach it optimal if you wish to process multiple messages simultaneously.
+        Note that the number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least
         one message is received and there is a gap in incoming messages regardless
@@ -393,7 +402,9 @@ class Receiver(collections.abc.AsyncIterator, BaseHandler):  # pylint: disable=t
 
 
 class SessionReceiver(Receiver, mixins.SessionMixin):
-    """This receive handler acts as an iterable message stream for retrieving
+    """A session message receiver.
+
+    This receive handler acts as an iterable message stream for retrieving
     messages for a sessionful Service Bus entity. It operates a single connection that must be opened and
     closed on completion. The service connection will remain open for the entirety of the iterator.
     If you find yourself only partially iterating the message stream, you should run the receiver
@@ -500,8 +511,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.default)
 
     async def get_session_state(self):
-        """Get the session state. Returns None if no state
-        has been set.
+        """Get the session state.
+
+        Returns None if no state has been set.
 
         :rtype: str
 
@@ -547,10 +559,11 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.default)
 
     async def renew_lock(self):
-        """Renew the session lock. This operation must be performed periodically
-        in order to retain a lock on the session to continue message processing.
-        Once the lock is lost the connection will be closed. This operation can
-        also be performed as an asynchronous background task by registering the session
+        """Renew the session lock.
+
+        This operation must be performed periodically in order to retain a lock on the session
+        to continue message processing. Once the lock is lost the connection will be closed.
+        This operation can also be performed as an asynchronous background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
         Example:
@@ -570,9 +583,10 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         self.locked_until = datetime.datetime.fromtimestamp(expiry[b'expiration']/1000.0)
 
     async def peek(self, count=1, start_from=0):
-        """Browse messages currently pending in the queue. Peeked messages
-        are not removed from queue, nor are they locked. They cannot be completed,
-        deferred or dead-lettered.
+        """Browse messages currently pending in the queue.
+
+        Peeked messages are not removed from queue, nor are they locked.
+        They cannot be completed, deferred or dead-lettered.
         This operation will only peek pending messages in the current session.
 
         :param count: The maximum number of messages to try and peek. The default
@@ -609,8 +623,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
             mgmt_handlers.peek_op)
 
     async def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock):
-        """Receive messages that have previously been deferred. This operation can
-        only receive deferred messages from the current session.
+        """Receive messages that have previously been deferred.
+
+        This operation can only receive deferred messages from the current session.
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
@@ -652,7 +667,9 @@ class SessionReceiver(Receiver, mixins.SessionMixin):
         return messages
 
     async def list_sessions(self, updated_since=None, max_results=100, skip=0):
-        """List the IDs of sessions in the queue with pending messages and where the state of the session
+        """List session IDs.
+
+        List the IDs of sessions in the queue with pending messages and where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
         If the state of a session has never been set, it will not be returned regardless of whether
         there are messages pending.

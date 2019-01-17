@@ -19,8 +19,7 @@ from azure.servicebus.common.errors import (
 
 
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-    """
-    A Service Bus Message.
+    """A Service Bus Message.
 
     :param body: The data to send in a single message. The maximum size per message is 256 kB.
     :type body: str or bytes
@@ -41,7 +40,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             :language: python
             :dedent: 4
             :caption: Checking the properties on a received message
+
     """
+
     _X_OPT_ENQUEUED_TIME = b'x-opt-enqueued-time'
     _X_OPT_SEQUENCE_NUMBER = b'x-opt-sequence-number'
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER = b'x-opt-enqueue-sequence-number'
@@ -99,9 +100,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def settled(self):
-        """Whether the message has been settled. This will aways be `True`
-        for a message received using ReceiveAndDelete mode, otherwise it
-        will be `False` until the message is completed or otherwise settled.
+        """Whether the message has been settled.
+
+        This will aways be `True` for a message received using ReceiveAndDelete mode,
+        otherwise it will be `False` until the message is completed or otherwise settled.
 
         :rtype: bool
         """
@@ -109,8 +111,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @property
     def annotations(self):
-        """
-        The annotations of the message.
+        """The annotations of the message.
 
         :rtype: dict
         """
@@ -118,8 +119,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @annotations.setter
     def annotations(self, value):
-        """
-        Set the annotations on the message.
+        """Set the annotations on the message.
 
         :param value: The annotations for the Message.
         :type value: dict
@@ -284,7 +284,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self.message.annotations[types.AMQPSymbol(self._x_OPT_SCHEDULED_ENQUEUE_TIME)] = schedule_time
 
     def renew_lock(self):
-        """Renew the message lock. This will maintain the lock on the message to ensure
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure
         it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
         the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
         locked, and therefore cannot be renewed. This operation can also be performed as a threaded
@@ -302,7 +304,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
 
     def complete(self):
-        """Complete the message. This removes the message from the queue.
+        """Complete the message.
+
+        This removes the message from the queue.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -316,7 +320,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             raise MessageSettleFailed("complete", e)
 
     def dead_letter(self, description=None):
-        """Move the message to the Dead Letter queue. The Dead Letter queue is a sub-queue that can be
+        """Move the message to the Dead Letter queue.
+
+        The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
@@ -336,7 +342,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             raise MessageSettleFailed("reject", e)
 
     def abandon(self):
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Abandon the message.
+
+        This message will be returned to the queue to be reprocessed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -350,7 +358,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             raise MessageSettleFailed("abandon", e)
 
     def defer(self):
-        """Defer the message. This message will remain in the queue but must be received
+        """Defer the message.
+
+        This message will remain in the queue but must be received
         specifically by its sequence number in order to be processed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
@@ -364,8 +374,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         except Exception as e:
             raise MessageSettleFailed("defer", e)
 
+
 class BatchMessage(Message):
     """A batch of messages combined into a single message body.
+
     The body of the messages in the batch should be supplied by an iterable,
     such as a generator.
     If the contents of the iterable exceeds the maximum size of a single message (256 kB),
@@ -384,6 +396,7 @@ class BatchMessage(Message):
             :language: python
             :dedent: 4
             :caption: Send a batched message.
+
     """
 
     def _build_message(self, body):
@@ -395,9 +408,12 @@ class BatchMessage(Message):
 
 
 class PeekMessage(Message):
-    """A preview message. This message is still on the queue, and unlocked.
+    """A preview message.
+
+    This message is still on the queue, and unlocked.
     A peeked message cannot be completed, abandoned, dead-lettered or deferred.
     It has no lock token or expiry.
+
     """
 
     def __init__(self, message):
@@ -433,8 +449,11 @@ class PeekMessage(Message):
 
 
 class DeferredMessage(Message):
-    """A message that has been deferred. A deferred message can be completed,
+    """A message that has been deferred.
+
+    A deferred message can be completed,
     abandoned, or dead-lettered, however it cannot be deferred again.
+
     """
 
     def __init__(self, message, mode):
@@ -460,7 +479,9 @@ class DeferredMessage(Message):
         return self._settled
 
     def complete(self):
-        """Complete the message. This removes the message from the queue.
+        """Complete the message.
+
+        This removes the message from the queue.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.
@@ -472,7 +493,9 @@ class DeferredMessage(Message):
         self._settled = True
 
     def dead_letter(self, description=None):
-        """Move the message to the Dead Letter queue. The Dead Letter queue is a sub-queue that can be
+        """Move the message to the Dead Letter queue.
+
+        The Dead Letter queue is a sub-queue that can be
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
         To receive dead-lettered messages, use `QueueClient.get_deadletter_receiver()` or
@@ -489,11 +512,14 @@ class DeferredMessage(Message):
         details = {
             'deadletter-reason': str(description) if description else "",
             'deadletter-description': str(description) if description else ""}
-        self._receiver._settle_deferred('suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
+        self._receiver._settle_deferred(
+            'suspended', [self.lock_token], dead_letter_details=details)  # pylint: disable=protected-access
         self._settled = True
 
     def abandon(self):
-        """Abandon the message. This message will be returned to the queue to be reprocessed.
+        """Abandon the message.
+
+        This message will be returned to the queue to be reprocessed.
 
         :raises: ~azure.servicebus.common.errors.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.common.errors.MessageLockExpired if message lock has already expired.

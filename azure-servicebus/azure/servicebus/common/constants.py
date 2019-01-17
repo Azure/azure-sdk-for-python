@@ -46,7 +46,9 @@ class ReceiveSettleMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
     ReceiveAndDelete = constants.ReceiverSettleMode.ReceiveAndDelete
 
+
 class SessionFilter(Enum):
     NextAvailable = 0
+
 
 NEXT_AVAILABLE = SessionFilter.NextAvailable

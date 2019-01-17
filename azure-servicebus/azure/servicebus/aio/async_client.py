@@ -50,6 +50,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             :caption: Create a ServiceBusClient.
 
     """
+
     def __init__(self, *, service_namespace=None, host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None, loop=None,
                  http_request_timeout=DEFAULT_HTTP_TIMEOUT, http_request_session=None, debug=False):
@@ -70,8 +71,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 
     @classmethod
     def from_connection_string(cls, conn_str, *, loop=None, **kwargs):
-        """
-        Create a Service Bus client from a connection string.
+        """Create a Service Bus client from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
@@ -129,7 +129,7 @@ class ServiceBusClient(mixins.ServiceBusMixin):
             debug=self.debug)
 
     def list_queues(self):
-        """Get clients for all queue entities in the namespace.
+        """Get async clients for all queue entities in the namespace.
 
         :rtype: list[~azure.servicebus.aio.async_client.QueueClient]
         :raises: ~azure.servicebus.common.errors.ServiceBusConnectionError if the namespace is not found.
@@ -262,8 +262,9 @@ class ServiceBusClient(mixins.ServiceBusMixin):
 class SendClientMixin:
 
     async def send(self, messages, message_timeout=0, session=None, **kwargs):
-        """Send one or more messages to the current entity. This operation
-        will open a single-use connection, send the supplied messages, and close
+        """Send one or more messages to the current entity.
+
+        This operation will open a single-use connection, send the supplied messages, and close
         connection. If the entity requires sessions, a session ID must be either
         provided here, or set on each outgoing message.
 
@@ -320,8 +321,9 @@ class SendClientMixin:
             return await sender.send_pending_messages()
 
     def get_sender(self, message_timeout=0, session=None, **kwargs):
-        """Get a Sender for the Service Bus endpoint. A Sender represents
-        a single open connection within which multiple send operations can be made.
+        """Get a Sender for the Service Bus endpoint.
+
+        A Sender represents a single open connection within which multiple send operations can be made.
 
         :param message_timeout: The period in seconds during which messages sent with
          this Sender must be sent. If the send is not completed in this time it will fail.
@@ -369,8 +371,9 @@ class SendClientMixin:
 class ReceiveClientMixin:
 
     async def peek(self, count=1, start_from=0, session=None, **kwargs):
-        """Browse messages currently pending in the queue. Peeked messages
-        are not removed from queue, nor are they locked. They cannot be completed,
+        """Browse messages currently pending in the queue.
+
+        Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
 
         :param count: The maximum number of messages to try and peek. The default
@@ -410,6 +413,7 @@ class ReceiveClientMixin:
 
     async def receive_deferred_messages(self, sequence_numbers, mode=ReceiveSettleMode.PeekLock, **kwargs):
         """Receive messages that have previously been deferred.
+
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
@@ -490,7 +494,9 @@ class ReceiveClientMixin:
                 mgmt_handlers.default)
 
     async def list_sessions(self, updated_since=None, max_results=100, skip=0, **kwargs):
-        """List the IDs of sessions in the queue with pending messages and where the state of the session
+        """List session IDs.
+
+        List the IDs of sessions in the queue with pending messages and where the state of the session
         has been updated since the timestamp provided. If no timestamp is provided, all will be returned.
         If the state of a session has never been set, it will not be returned regardless of whether
         there are messages pending.
@@ -518,8 +524,9 @@ class ReceiveClientMixin:
                 mgmt_handlers.list_sessions_op)
 
     def get_receiver(self, session=None, prefetch=0, mode=ReceiveSettleMode.PeekLock, idle_timeout=0, **kwargs):
-        """Get a Receiver for the Service Bus endpoint. A Receiver represents
-        a single open connection with which multiple receive operations can be made.
+        """Get a Receiver for the Service Bus endpoint.
+
+        A Receiver represents a single open connection with which multiple receive operations can be made.
 
         :param session: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive the next available
@@ -586,8 +593,9 @@ class ReceiveClientMixin:
     def get_deadletter_receiver(
             self, transfer_deadletter=False, prefetch=0,
             mode=ReceiveSettleMode.PeekLock, idle_timeout=0, **kwargs):
-        """Get a Receiver for the deadletter endpoint of the entity. A Receiver represents
-        a single open connection with which multiple receive operations can be made.
+        """Get a Receiver for the deadletter endpoint of the entity.
+
+        A Receiver represents a single open connection with which multiple receive operations can be made.
 
         :param transfer_deadletter: Whether to connect to the transfer deadletter queue, or the standard
          deadletter queue. Default is False, using the standard deadletter endpoint.
@@ -654,7 +662,8 @@ class BaseClient(mixins.BaseClient):
 
 
 class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
-    """
+    """A queue client.
+
     The QueueClient class defines a high level interface for sending
     messages to and receiving messages from an Azure Service Bus queue.
     If you do not wish to perform management operations, a QueueClient can be
@@ -694,7 +703,8 @@ class QueueClient(SendClientMixin, ReceiveClientMixin, BaseClient):
 
 
 class TopicClient(SendClientMixin, BaseClient):
-    """
+    """A topic client.
+
     The TopicClient class defines a high level interface for sending
     messages to an Azure Service Bus Topic.
     If you do not wish to perform management operations, a TopicClient can be
@@ -731,7 +741,8 @@ class TopicClient(SendClientMixin, BaseClient):
 
 
 class SubscriptionClient(ReceiveClientMixin, BaseClient):
-    """
+    """A subscription client.
+
     The SubscriptionClient class defines a high level interface for receiving
     messages to an Azure Service Bus Subscription.
     If you do not wish to perform management operations, a SubscriptionClient can be
@@ -775,8 +786,7 @@ class SubscriptionClient(ReceiveClientMixin, BaseClient):
 
     @classmethod
     def from_connection_string(cls, conn_str, name, topic=None, **kwargs):  # pylint: disable=arguments-differ
-        """
-        Create a SubscriptionClient from a connection string.
+        """Create a SubscriptionClient from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
