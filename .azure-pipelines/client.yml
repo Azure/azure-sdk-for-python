@@ -72,7 +72,7 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install wheel setuptools pathlib twine
+     pip install pathlib twine
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -93,7 +93,7 @@ jobs:
       versionSpec: '3.7'
 
   - script: |
-     pip install wheel setuptools pathlib
+     pip install pathlib twine
     displayName: 'Prep Environment'
 
   - script: |
