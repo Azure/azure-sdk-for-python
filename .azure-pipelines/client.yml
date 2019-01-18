@@ -87,8 +87,12 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7 For Build Tools'
+    inputs:
+      versionSpec: '3.7'
+
   - script: |
-     pip install --upgrade pip
      pip install wheel setuptools pathlib
     displayName: 'Prep Environment'
 
