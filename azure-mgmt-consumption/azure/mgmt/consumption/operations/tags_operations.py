@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class DiscoverTenantsOperations(object):
-    """DiscoverTenantsOperations operations.
+class TagsOperations(object):
+    """TagsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-10-01. Constant value: "2018-10-01".
     """
 
     models = models
@@ -32,31 +32,31 @@ class DiscoverTenantsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2018-10-01"
 
         self.config = config
 
     def get(
-            self, billing_profile_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a Tenant Properties.
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
+        """Get all available tag keys for a billing account.
 
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DiscoverTenant or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.DiscoverTenant or
+        :return: TagsResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.TagsResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -84,11 +84,11 @@ class DiscoverTenantsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DiscoverTenant', response)
+            deserialized = self._deserialize('TagsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingProfiles/{billingProfileId}/discoverTenants'}
+    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/tags'}

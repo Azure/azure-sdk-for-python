@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ReservationDetailsPaged(Paged):
+class ReservationSummaryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ReservationDetails <azure.mgmt.consumption.models.ReservationDetails>` object
+    A paging container for iterating over a list of :class:`ReservationSummary <azure.mgmt.consumption.models.ReservationSummary>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ReservationDetails]'}
+        'current_page': {'key': 'value', 'type': '[ReservationSummary]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ReservationDetailsPaged, self).__init__(*args, **kwargs)
+        super(ReservationSummaryPaged, self).__init__(*args, **kwargs)

@@ -24,7 +24,7 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
+    :param e_tag: eTag of the resource. To handle concurrent update scenario,
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
@@ -43,9 +43,9 @@ class ProxyResource(Model):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, e_tag=None):
-        super(ProxyResource, self).__init__()
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.e_tag = e_tag
+        self.e_tag = kwargs.get('e_tag', None)

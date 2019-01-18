@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class BudgetTimePeriod(Model):
     """The start and end date for a budget.
 
-    :param start_date: The start date for the budget.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_date: Required. The start date for the budget.
     :type start_date: datetime
     :param end_date: The end date for the budget. If not provided, we default
      this to 10 years from the start date.
@@ -31,7 +33,7 @@ class BudgetTimePeriod(Model):
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, start_date, end_date=None):
-        super(BudgetTimePeriod, self).__init__()
-        self.start_date = start_date
-        self.end_date = end_date
+    def __init__(self, **kwargs):
+        super(BudgetTimePeriod, self).__init__(**kwargs)
+        self.start_date = kwargs.get('start_date', None)
+        self.end_date = kwargs.get('end_date', None)

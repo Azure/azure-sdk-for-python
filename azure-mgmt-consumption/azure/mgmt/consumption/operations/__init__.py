@@ -11,18 +11,32 @@
 
 from .usage_details_operations import UsageDetailsOperations
 from .marketplaces_operations import MarketplacesOperations
+from .balances_operations import BalancesOperations
 from .reservations_summaries_operations import ReservationsSummariesOperations
 from .reservations_details_operations import ReservationsDetailsOperations
+from .reservation_recommendations_operations import ReservationRecommendationsOperations
 from .budgets_operations import BudgetsOperations
-from .operations import Operations
 from .price_sheet_operations import PriceSheetOperations
+from .tags_operations import TagsOperations
+from .forecasts_operations import ForecastsOperations
+from .operations import Operations
+from .aggregated_cost_operations import AggregatedCostOperations
+from .charges_operations import ChargesOperations
+from .discover_tenants_operations import DiscoverTenantsOperations
 
 __all__ = [
     'UsageDetailsOperations',
     'MarketplacesOperations',
+    'BalancesOperations',
     'ReservationsSummariesOperations',
     'ReservationsDetailsOperations',
+    'ReservationRecommendationsOperations',
     'BudgetsOperations',
-    'Operations',
     'PriceSheetOperations',
+    'TagsOperations',
+    'ForecastsOperations',
+    'Operations',
+    'AggregatedCostOperations',
+    'ChargesOperations',
+    'DiscoverTenantsOperations',
 ]
