@@ -26,4 +26,5 @@
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
+/azure-servicebus/ @annatisch
 /azure-servicefabric/ @samedder
