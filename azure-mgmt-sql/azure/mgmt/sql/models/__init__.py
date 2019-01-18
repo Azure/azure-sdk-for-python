@@ -113,6 +113,7 @@ try:
     from .server_dns_alias_py3 import ServerDnsAlias
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
     from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
+    from .restorable_dropped_managed_database_py3 import RestorableDroppedManagedDatabase
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
@@ -261,6 +262,7 @@ except (SyntaxError, ImportError):
     from .server_dns_alias import ServerDnsAlias
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
     from .server_security_alert_policy import ServerSecurityAlertPolicy
+    from .restorable_dropped_managed_database import RestorableDroppedManagedDatabase
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
@@ -353,6 +355,7 @@ from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_backup_short_term_retention_policy_paged import ManagedBackupShortTermRetentionPolicyPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
+from .restorable_dropped_managed_database_paged import RestorableDroppedManagedDatabasePaged
 from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
@@ -547,6 +550,7 @@ __all__ = [
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerSecurityAlertPolicy',
+    'RestorableDroppedManagedDatabase',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
     'ManagedDatabaseSecurityAlertPolicy',
@@ -639,6 +643,7 @@ __all__ = [
     'ManagedBackupShortTermRetentionPolicyPaged',
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
+    'RestorableDroppedManagedDatabasePaged',
     'RestorePointPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',

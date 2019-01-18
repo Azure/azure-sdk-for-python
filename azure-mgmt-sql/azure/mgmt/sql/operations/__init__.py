@@ -62,9 +62,11 @@ from .long_term_retention_backups_operations import LongTermRetentionBackupsOper
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .managed_databases_operations import ManagedDatabasesOperations
+from .managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from .restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from .restore_points_operations import RestorePointsOperations
 from .managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from .managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
@@ -139,9 +141,11 @@ __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedBackupShortTermRetentionPoliciesOperations',
     'ManagedDatabasesOperations',
+    'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'ServerSecurityAlertPoliciesOperations',
+    'RestorableDroppedManagedDatabasesOperations',
     'RestorePointsOperations',
     'ManagedDatabaseSecurityAlertPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
