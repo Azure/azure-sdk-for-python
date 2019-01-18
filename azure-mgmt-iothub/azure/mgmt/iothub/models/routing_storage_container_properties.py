@@ -48,8 +48,9 @@ class RoutingStorageContainerProperties(Model):
      524288000(500MB). Default value is 314572800(300MB).
     :type max_chunk_size_in_bytes: int
     :param encoding: Encoding that is used to serialize messages to blobs.
-     Supported values are 'avro' and 'avrodeflate'. Default value is 'avro'.
-    :type encoding: str
+     Supported values are 'avro', 'avrodeflate', and 'JSON'. Default value is
+     'avro'. Possible values include: 'Avro', 'AvroDeflate', 'JSON'
+    :type encoding: str or ~azure.mgmt.iothub.models.enum
     """
 
     _validation = {
