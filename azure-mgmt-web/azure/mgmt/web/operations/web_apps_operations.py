@@ -2592,7 +2592,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/virtualNetwork'}
+    get_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkConfig/virtualNetwork'}
 
     def create_or_update_swift_virtual_network_connection(
             self, resource_group_name, name, connection_envelope, custom_headers=None, raw=False, **operation_config):
@@ -2669,7 +2669,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/virtualNetwork'}
+    create_or_update_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkConfig/virtualNetwork'}
 
     def delete_swift_virtual_network(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -2727,7 +2727,7 @@ class WebAppsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_swift_virtual_network.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/virtualNetwork'}
+    delete_swift_virtual_network.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkConfig/virtualNetwork'}
 
     def update_swift_virtual_network_connection(
             self, resource_group_name, name, connection_envelope, custom_headers=None, raw=False, **operation_config):
@@ -2804,7 +2804,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    update_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/config/virtualNetwork'}
+    update_swift_virtual_network_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkConfig/virtualNetwork'}
 
     def get_configuration(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -13049,7 +13049,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/virtualNetwork'}
+    get_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkConfig/virtualNetwork'}
 
     def create_or_update_swift_virtual_network_connection_slot(
             self, resource_group_name, name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
@@ -13130,7 +13130,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/virtualNetwork'}
+    create_or_update_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkConfig/virtualNetwork'}
 
     def delete_swift_virtual_network_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
@@ -13192,7 +13192,7 @@ class WebAppsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_swift_virtual_network_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/virtualNetwork'}
+    delete_swift_virtual_network_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkConfig/virtualNetwork'}
 
     def update_swift_virtual_network_connection_slot(
             self, resource_group_name, name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
@@ -13273,7 +13273,7 @@ class WebAppsOperations(object):
             return client_raw_response
 
         return deserialized
-    update_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/config/virtualNetwork'}
+    update_swift_virtual_network_connection_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/networkConfig/virtualNetwork'}
 
     def get_configuration_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
