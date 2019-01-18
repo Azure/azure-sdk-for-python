@@ -88,7 +88,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-     python -m pip install --upgrade pip
+     pip install --upgrade pip
      pip install wheel setuptools pathlib
     displayName: 'Prep Environment'
 
