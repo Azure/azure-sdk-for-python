@@ -343,12 +343,10 @@ try:
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
-    from .validation_activity_py3 import ValidationActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
     from .if_condition_activity_py3 import IfConditionActivity
-    from .web_hook_activity_py3 import WebHookActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
     from .linked_integration_runtime_py3 import LinkedIntegrationRuntime
@@ -710,12 +708,10 @@ except (SyntaxError, ImportError):
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
-    from .validation_activity import ValidationActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
     from .if_condition_activity import IfConditionActivity
-    from .web_hook_activity import WebHookActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
     from .linked_integration_runtime import LinkedIntegrationRuntime
@@ -802,7 +798,6 @@ from .data_factory_management_client_enums import (
     CopyBehaviorType,
     PolybaseSettingsRejectType,
     SapCloudForCustomerSinkWriteBehavior,
-    WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
@@ -1149,12 +1144,10 @@ __all__ = [
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
-    'ValidationActivity',
     'UntilActivity',
     'WaitActivity',
     'ForEachActivity',
     'IfConditionActivity',
-    'WebHookActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
     'LinkedIntegrationRuntime',
@@ -1240,7 +1233,6 @@ __all__ = [
     'CopyBehaviorType',
     'PolybaseSettingsRejectType',
     'SapCloudForCustomerSinkWriteBehavior',
-    'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',

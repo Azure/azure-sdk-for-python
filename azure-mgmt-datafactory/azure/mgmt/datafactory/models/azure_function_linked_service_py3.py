@@ -37,7 +37,7 @@ class AzureFunctionLinkedService(LinkedService):
      URL will be in the format https://<accountName>.azurewebsites.net.
     :type function_app_url: object
     :param function_key: Function or Host key for Azure Function App.
-    :type function_key: object
+    :type function_key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -57,7 +57,7 @@ class AzureFunctionLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'function_app_url': {'key': 'typeProperties.functionAppUrl', 'type': 'object'},
-        'function_key': {'key': 'typeProperties.functionKey', 'type': 'object'},
+        'function_key': {'key': 'typeProperties.functionKey', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
