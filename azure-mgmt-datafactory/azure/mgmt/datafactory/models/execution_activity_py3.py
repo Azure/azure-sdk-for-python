@@ -16,12 +16,12 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatabricksSparkPythonActivity, DatabricksSparkJarActivity,
-    DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
-    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
-    GetMetadataActivity, WebActivity, LookupActivity, DeleteActivity,
-    SqlServerStoredProcedureActivity, CustomActivity,
-    ExecuteSSISPackageActivity, HDInsightSparkActivity,
+    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
+    DatabricksSparkJarActivity, DatabricksNotebookActivity,
+    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
+    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
+    LookupActivity, DeleteActivity, SqlServerStoredProcedureActivity,
+    CustomActivity, ExecuteSSISPackageActivity, HDInsightSparkActivity,
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
     HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
 
@@ -64,7 +64,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
     def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, **kwargs) -> None:

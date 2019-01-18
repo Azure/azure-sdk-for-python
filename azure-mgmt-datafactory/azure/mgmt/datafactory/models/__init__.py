@@ -94,6 +94,7 @@ try:
     from .schedule_trigger_recurrence_py3 import ScheduleTriggerRecurrence
     from .schedule_trigger_py3 import ScheduleTrigger
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
+    from .azure_function_linked_service_py3 import AzureFunctionLinkedService
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
@@ -236,6 +237,7 @@ try:
     from .azure_blob_dataset_py3 import AzureBlobDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .activity_policy_py3 import ActivityPolicy
+    from .azure_function_activity_py3 import AzureFunctionActivity
     from .databricks_spark_python_activity_py3 import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity_py3 import DatabricksSparkJarActivity
     from .databricks_notebook_activity_py3 import DatabricksNotebookActivity
@@ -458,6 +460,7 @@ except (SyntaxError, ImportError):
     from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
     from .schedule_trigger import ScheduleTrigger
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
+    from .azure_function_linked_service import AzureFunctionLinkedService
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
@@ -600,6 +603,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_dataset import AzureBlobDataset
     from .amazon_s3_dataset import AmazonS3Dataset
     from .activity_policy import ActivityPolicy
+    from .azure_function_activity import AzureFunctionActivity
     from .databricks_spark_python_activity import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity import DatabricksSparkJarActivity
     from .databricks_notebook_activity import DatabricksNotebookActivity
@@ -785,6 +789,7 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DatasetCompressionLevel,
     JsonFormatFilePattern,
+    AzureFunctionActivityMethod,
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
@@ -892,6 +897,7 @@ __all__ = [
     'ScheduleTriggerRecurrence',
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
+    'AzureFunctionLinkedService',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
@@ -1034,6 +1040,7 @@ __all__ = [
     'AzureBlobDataset',
     'AmazonS3Dataset',
     'ActivityPolicy',
+    'AzureFunctionActivity',
     'DatabricksSparkPythonActivity',
     'DatabricksSparkJarActivity',
     'DatabricksNotebookActivity',
@@ -1218,6 +1225,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DatasetCompressionLevel',
     'JsonFormatFilePattern',
+    'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',

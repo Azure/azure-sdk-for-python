@@ -9,21 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .execution_activity import ExecutionActivity
 
 
-class ExecutionActivity(Activity):
-    """Base class for all execution activities.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
-    DatabricksSparkJarActivity, DatabricksNotebookActivity,
-    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
-    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
-    LookupActivity, DeleteActivity, SqlServerStoredProcedureActivity,
-    CustomActivity, ExecuteSSISPackageActivity, HDInsightSparkActivity,
-    HDInsightStreamingActivity, HDInsightMapReduceActivity,
-    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+class AzureFunctionActivity(ExecutionActivity):
+    """Azure Function activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -45,11 +35,30 @@ class ExecutionActivity(Activity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param method: Required. Rest API method for target endpoint. Possible
+     values include: 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE'
+    :type method: str or
+     ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
+    :param function_name: Required. Name of the Function that the Azure
+     Function Activity will call. Type: string (or Expression with resultType
+     string)
+    :type function_name: object
+    :param headers: Represents the headers that will be sent to the request.
+     For example, to set the language and type on a request: "headers" : {
+     "Accept-Language": "en-us", "Content-Type": "application/json" }. Type:
+     string (or Expression with resultType string).
+    :type headers: object
+    :param body: Represents the payload that will be sent to the endpoint.
+     Required for POST/PUT method, not allowed for GET method Type: string (or
+     Expression with resultType string).
+    :type body: object
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'method': {'required': True},
+        'function_name': {'required': True},
     }
 
     _attribute_map = {
@@ -61,14 +70,16 @@ class ExecutionActivity(Activity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
-    }
-
-    _subtype_map = {
-        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'method': {'key': 'typeProperties.method', 'type': 'str'},
+        'function_name': {'key': 'typeProperties.functionName', 'type': 'object'},
+        'headers': {'key': 'typeProperties.headers', 'type': 'object'},
+        'body': {'key': 'typeProperties.body', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(ExecutionActivity, self).__init__(**kwargs)
-        self.linked_service_name = kwargs.get('linked_service_name', None)
-        self.policy = kwargs.get('policy', None)
-        self.type = 'Execution'
+        super(AzureFunctionActivity, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.function_name = kwargs.get('function_name', None)
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs.get('body', None)
+        self.type = 'AzureFunctionActivity'
