@@ -54,7 +54,7 @@ class DPMProtectedItem(ProtectedItem):
     :param backup_engine_name: Backup Management server protecting this backup
      item
     :type backup_engine_name: str
-    :param protection_state: Protection state of the backupengine. Possible
+    :param protection_state: Protection state of the backup engine. Possible
      values include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or

@@ -19,7 +19,7 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
+    :param recovery_point_time_in_utc: UTC time at which recovery point was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',

@@ -13,14 +13,14 @@ from .azure_workload_recovery_point_py3 import AzureWorkloadRecoveryPoint
 
 
 class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SAPHana specific recoverypoint, specifically encapsulates full/diff
-    recoverypoints.
+    """SAPHana specific recovery point, specifically encapsulates full/diff
+    recovery points.
 
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recoverypoint was
+    :param recovery_point_time_in_utc: UTC time at which recovery point was
      created
     :type recovery_point_time_in_utc: datetime
     :param type: Type of restore point. Possible values include: 'Invalid',
