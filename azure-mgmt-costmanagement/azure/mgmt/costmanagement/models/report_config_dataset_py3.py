@@ -16,7 +16,7 @@ class ReportConfigDataset(Model):
     """The definition of data present in the report.
 
     :param granularity: The granularity of rows in the report. Possible values
-     include: 'Daily'
+     include: 'Daily', 'Monthly'
     :type granularity: str or
      ~azure.mgmt.costmanagement.models.GranularityType
     :param configuration: Has configuration information for the data in the
@@ -33,6 +33,8 @@ class ReportConfigDataset(Model):
      can have up to 2 group by clauses.
     :type grouping:
      list[~azure.mgmt.costmanagement.models.ReportConfigGrouping]
+    :param sorting: Array of order by expression to use in the report.
+    :type sorting: list[~azure.mgmt.costmanagement.models.ReportConfigSorting]
     :param filter: Has filter expression to use in the report.
     :type filter: ~azure.mgmt.costmanagement.models.ReportConfigFilter
     """
@@ -46,13 +48,15 @@ class ReportConfigDataset(Model):
         'configuration': {'key': 'configuration', 'type': 'ReportConfigDatasetConfiguration'},
         'aggregation': {'key': 'aggregation', 'type': '{ReportConfigAggregation}'},
         'grouping': {'key': 'grouping', 'type': '[ReportConfigGrouping]'},
+        'sorting': {'key': 'sorting', 'type': '[ReportConfigSorting]'},
         'filter': {'key': 'filter', 'type': 'ReportConfigFilter'},
     }
 
-    def __init__(self, *, granularity=None, configuration=None, aggregation=None, grouping=None, filter=None, **kwargs) -> None:
+    def __init__(self, *, granularity=None, configuration=None, aggregation=None, grouping=None, sorting=None, filter=None, **kwargs) -> None:
         super(ReportConfigDataset, self).__init__(**kwargs)
         self.granularity = granularity
         self.configuration = configuration
         self.aggregation = aggregation
         self.grouping = grouping
+        self.sorting = sorting
         self.filter = filter

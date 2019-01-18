@@ -12,25 +12,35 @@
 from msrest.serialization import Model
 
 
-class ReportConfigListResult(Model):
-    """Result of listing report configs. It contains a list of available report
-    configurations in the scope provided.
+class ErrorBase(Model):
+    """The details of the error.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of report configs.
-    :vartype value: list[~azure.mgmt.costmanagement.models.ReportConfig]
+    :ivar code: A machine readable error code.
+    :vartype code: str
+    :ivar message: A human readable error message.
+    :vartype message: str
+    :ivar target: Indicates which property in the request is responsible for
+     the error.
+    :vartype target: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReportConfig]'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ReportConfigListResult, self).__init__(**kwargs)
-        self.value = None
+        super(ErrorBase, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None

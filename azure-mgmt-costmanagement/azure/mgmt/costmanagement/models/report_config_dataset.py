@@ -16,7 +16,7 @@ class ReportConfigDataset(Model):
     """The definition of data present in the report.
 
     :param granularity: The granularity of rows in the report. Possible values
-     include: 'Daily'
+     include: 'Daily', 'Monthly'
     :type granularity: str or
      ~azure.mgmt.costmanagement.models.GranularityType
     :param configuration: Has configuration information for the data in the
@@ -33,6 +33,8 @@ class ReportConfigDataset(Model):
      can have up to 2 group by clauses.
     :type grouping:
      list[~azure.mgmt.costmanagement.models.ReportConfigGrouping]
+    :param sorting: Array of order by expression to use in the report.
+    :type sorting: list[~azure.mgmt.costmanagement.models.ReportConfigSorting]
     :param filter: Has filter expression to use in the report.
     :type filter: ~azure.mgmt.costmanagement.models.ReportConfigFilter
     """
@@ -46,6 +48,7 @@ class ReportConfigDataset(Model):
         'configuration': {'key': 'configuration', 'type': 'ReportConfigDatasetConfiguration'},
         'aggregation': {'key': 'aggregation', 'type': '{ReportConfigAggregation}'},
         'grouping': {'key': 'grouping', 'type': '[ReportConfigGrouping]'},
+        'sorting': {'key': 'sorting', 'type': '[ReportConfigSorting]'},
         'filter': {'key': 'filter', 'type': 'ReportConfigFilter'},
     }
 
@@ -55,4 +58,5 @@ class ReportConfigDataset(Model):
         self.configuration = kwargs.get('configuration', None)
         self.aggregation = kwargs.get('aggregation', None)
         self.grouping = kwargs.get('grouping', None)
+        self.sorting = kwargs.get('sorting', None)
         self.filter = kwargs.get('filter', None)

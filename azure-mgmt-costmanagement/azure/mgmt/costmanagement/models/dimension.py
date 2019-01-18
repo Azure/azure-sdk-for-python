@@ -26,6 +26,12 @@ class Dimension(Resource):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :param description:
+    :type description: str
+    :param filter_enabled:
+    :type filter_enabled: bool
+    :param grouping_enabled:
+    :type grouping_enabled: bool
     :param data:
     :type data: list[str]
     :param total:
@@ -52,6 +58,9 @@ class Dimension(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'filter_enabled': {'key': 'properties.filterEnabled', 'type': 'bool'},
+        'grouping_enabled': {'key': 'properties.groupingEnabled', 'type': 'bool'},
         'data': {'key': 'properties.data', 'type': '[str]'},
         'total': {'key': 'properties.total', 'type': 'int'},
         'category': {'key': 'properties.category', 'type': 'str'},
@@ -62,6 +71,9 @@ class Dimension(Resource):
 
     def __init__(self, **kwargs):
         super(Dimension, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.filter_enabled = kwargs.get('filter_enabled', None)
+        self.grouping_enabled = kwargs.get('grouping_enabled', None)
         self.data = kwargs.get('data', None)
         self.total = kwargs.get('total', None)
         self.category = kwargs.get('category', None)
