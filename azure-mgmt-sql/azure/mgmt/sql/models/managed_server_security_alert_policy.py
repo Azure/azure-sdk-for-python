@@ -28,7 +28,7 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):
     :vartype type: str
     :param state: Required. Specifies the state of the policy, whether it is
      enabled or disabled or a policy has not been applied yet on the specific
-     resource. Possible values include: 'New', 'Enabled', 'Disabled'
+     database. Possible values include: 'New', 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
