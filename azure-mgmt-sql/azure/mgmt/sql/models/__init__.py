@@ -353,8 +353,11 @@ from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_backup_short_term_retention_policy_paged import ManagedBackupShortTermRetentionPolicyPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
+from .server_security_alert_policy_paged import ServerSecurityAlertPolicyPaged
 from .restorable_dropped_managed_database_paged import RestorableDroppedManagedDatabasePaged
 from .restore_point_paged import RestorePointPaged
+from .managed_database_security_alert_policy_paged import ManagedDatabaseSecurityAlertPolicyPaged
+from .managed_server_security_alert_policy_paged import ManagedServerSecurityAlertPolicyPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -639,8 +642,11 @@ __all__ = [
     'ManagedBackupShortTermRetentionPolicyPaged',
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
+    'ServerSecurityAlertPolicyPaged',
     'RestorableDroppedManagedDatabasePaged',
     'RestorePointPaged',
+    'ManagedDatabaseSecurityAlertPolicyPaged',
+    'ManagedServerSecurityAlertPolicyPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
