@@ -42,7 +42,7 @@ class NamespacesOperations(object):
             self, name, custom_headers=None, raw=False, **operation_config):
         """Check the give namespace name availability.
 
-        :param name: The Name to check the namespce name availability and The
+        :param name: The Name to check the namespace name availability and The
          namespace name can contain only letters, numbers, and hyphens. The
          namespace must start with a letter, and it must end with a letter or
          number.
@@ -631,7 +631,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
         :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
@@ -704,7 +704,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -760,7 +760,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -825,7 +825,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -891,7 +891,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
