@@ -31,7 +31,7 @@ parser = argparse.ArgumentParser(description='Set up the dev environment for sel
 parser.add_argument('--packageList', '-p', 
     dest='packageList', 
     default='', 
-    help='Defaulted to "azure*", used to limit the number of packages that dependencies will be installed for. ')
+    help='Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.')
 args = parser.parse_args()
 
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
