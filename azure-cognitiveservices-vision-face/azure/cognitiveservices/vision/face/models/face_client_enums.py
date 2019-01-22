@@ -81,6 +81,27 @@ class TrainingStatusType(str, Enum):
     failed = "failed"
 
 
+class SnapshotApplyMode(str, Enum):
+
+    create_new = "CreateNew"
+
+
+class SnapshotObjectType(str, Enum):
+
+    face_list = "FaceList"
+    large_face_list = "LargeFaceList"
+    large_person_group = "LargePersonGroup"
+    person_group = "PersonGroup"
+
+
+class OperationStatusType(str, Enum):
+
+    notstarted = "notstarted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+
+
 class FaceAttributeType(str, Enum):
 
     age = "age"
