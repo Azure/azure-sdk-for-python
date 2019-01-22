@@ -155,6 +155,7 @@ try:
     from .tde_certificate_py3 import TdeCertificate
     from .managed_instance_key_py3 import ManagedInstanceKey
     from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
+    from .recoverable_managed_database_py3 import RecoverableManagedDatabase
     from .managed_instance_vulnerability_assessment_py3 import ManagedInstanceVulnerabilityAssessment
     from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
 except (SyntaxError, ImportError):
@@ -303,6 +304,7 @@ except (SyntaxError, ImportError):
     from .tde_certificate import TdeCertificate
     from .managed_instance_key import ManagedInstanceKey
     from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
+    from .recoverable_managed_database import RecoverableManagedDatabase
     from .managed_instance_vulnerability_assessment import ManagedInstanceVulnerabilityAssessment
     from .server_vulnerability_assessment import ServerVulnerabilityAssessment
 from .recoverable_database_paged import RecoverableDatabasePaged
@@ -362,6 +364,7 @@ from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
 from .managed_instance_key_paged import ManagedInstanceKeyPaged
 from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
+from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
 from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
 from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
 from .sql_management_client_enums import (
@@ -589,6 +592,7 @@ __all__ = [
     'TdeCertificate',
     'ManagedInstanceKey',
     'ManagedInstanceEncryptionProtector',
+    'RecoverableManagedDatabase',
     'ManagedInstanceVulnerabilityAssessment',
     'ServerVulnerabilityAssessment',
     'RecoverableDatabasePaged',
@@ -648,6 +652,7 @@ __all__ = [
     'BackupShortTermRetentionPolicyPaged',
     'ManagedInstanceKeyPaged',
     'ManagedInstanceEncryptionProtectorPaged',
+    'RecoverableManagedDatabasePaged',
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
     'CheckNameAvailabilityReason',

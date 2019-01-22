@@ -87,6 +87,7 @@ from .operations.tde_certificates_operations import TdeCertificatesOperations
 from .operations.managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .operations.managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .operations.managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .operations.recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
 from .operations.managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations.server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from . import models
@@ -279,6 +280,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instance_keys: azure.mgmt.sql.operations.ManagedInstanceKeysOperations
     :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectors operations
     :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
+    :ivar recoverable_managed_databases: RecoverableManagedDatabases operations
+    :vartype recoverable_managed_databases: azure.mgmt.sql.operations.RecoverableManagedDatabasesOperations
     :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessments operations
     :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
     :ivar server_vulnerability_assessments: ServerVulnerabilityAssessments operations
@@ -450,6 +453,8 @@ class SqlManagementClient(SDKClient):
         self.managed_instance_keys = ManagedInstanceKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

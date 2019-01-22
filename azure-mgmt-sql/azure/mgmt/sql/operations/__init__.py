@@ -83,6 +83,7 @@ from .tde_certificates_operations import TdeCertificatesOperations
 from .managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
 from .managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 
@@ -161,6 +162,7 @@ __all__ = [
     'ManagedInstanceTdeCertificatesOperations',
     'ManagedInstanceKeysOperations',
     'ManagedInstanceEncryptionProtectorsOperations',
+    'RecoverableManagedDatabasesOperations',
     'ManagedInstanceVulnerabilityAssessmentsOperations',
     'ServerVulnerabilityAssessmentsOperations',
 ]
