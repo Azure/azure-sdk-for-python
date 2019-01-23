@@ -17,46 +17,112 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel
+     pip install wheel setuptools pathlib
+    displayName: 'Prep Environment'
 
-    displayName: 'Prep Environment, Install Packages'
-
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
-     
-     if ($inputFilterSet -eq "")
-     {
-         $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in $inputFilterSet.split(","))
-     {
-       $foldersToIterate = gci -Filter "$inputFilter"
-     
-       foreach ($folder in $foldersToIterate)
-       {
-         python3 ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
-       }
-     }
-     
+  - task: PythonScript@0
     displayName: 'Generate Packages'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/build_packages.py'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
 
-- template: generic.test.yml
-  parameters:
-    name: Linux
+- job: 'Generic_Tests'
+  dependsOn:
+    - 'Build_Target_Packages'
+  strategy:
+    matrix:
+      Linux_Python27:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '2.7'
+      Linux_Python34:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.4'
+      Linux_Python35:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.5'
+      Linux_Python36:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.6'
+      Linux_Python37:
+        os.name: 'Linux'
+        os.vmImage: 'ubuntu-16.04'
+        python.version: '3.7'
+      Windows_Python35:
+        os.name: 'Windows'
+        os.vmImage: 'vs2017-win2016'
+        python.version: '3.5'
+      MacOS_Python27:
+        os.name: 'MacOS'
+        os.vmImage: 'macOS-10.13'
+        python.version: '2.7'
+  pool:
+    vmImage: '$(os.vmImage)'
+
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(python.version)'
+    inputs:
+      versionSpec: '$(python.version)'
+
+  - script: |
+     pip install pathlib twine
+    displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Setup and Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: '"$(build_targeting_string)"'
+
+- job: Special_Python_Distro_Tests
+  dependsOn:
+  - 'Build_Target_Packages'
+  pool:
     vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7 For Build Tools'
+    inputs:
+      versionSpec: '3.7'
 
-- template: generic.test.yml
-  parameters:
-    name: macOS
-    vmImage: 'macOS-10.13'
+  - script: |
+     pip install pathlib twine
+    displayName: 'Prep Environment'
 
-- template: generic.test.yml
-  parameters:
-    name: Windows
-    vmImage: 'vs2017-win2016'
+  - script: |
+     cd ~/
+     wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
+     tar xf pypy3-v6.0.0-linux64.tar.bz2
+     
+     cd $(Build.SourcesDirectory)
+     
+     PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
+     pypy3 -m ensurepip
+     python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
+    displayName: 'Setup and Run Filtered Tests PyPy3'
+    continueOnError: true
 
-- template: specialcase.test.yml
+  - script: |
+     sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+     cd ~/
+     git clone https://github.com/python/cpython.git
+     cd cpython
+     mkdir debug
+     cd debug
+     ../configure --enable-optimizations --prefix=$HOME
+     make install
+     
+     cd $(Build.SourcesDirectory)
+
+     PATH=/home/vsts/bin:$PATH
+     python3 -m ensurepip
+     python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
+    displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+    continueOnError: true
