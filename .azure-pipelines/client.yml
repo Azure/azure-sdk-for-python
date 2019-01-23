@@ -81,7 +81,7 @@ jobs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: '"$(build_targeting_string)"'
 
-- job: Special_Python_Distro_Tests
+- job: Special_Test_PyPy
   dependsOn:
   - 'Build_Target_Packages'
   pool:
@@ -108,6 +108,21 @@ jobs:
      python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
+
+- job: Special_Test_NightlyPython
+  dependsOn:
+  - 'Build_Target_Packages'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7 For Build Tools'
+    inputs:
+      versionSpec: '3.7'
+
+  - script: |
+     pip install pathlib twine
+    displayName: 'Prep Environment'
 
   - script: |
      sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
