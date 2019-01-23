@@ -38,7 +38,6 @@ class PackageState(Enum):
 
     pending = "Pending"
     active = "Active"
-    unmapped = "Unmapped"
 
 
 class CertificateFormat(Enum):
@@ -116,6 +115,12 @@ class ElevationLevel(Enum):
 
     non_admin = "NonAdmin"
     admin = "Admin"
+
+
+class LoginMode(Enum):
+
+    batch = "Batch"
+    interactive = "Interactive"
 
 
 class AutoUserScope(Enum):
