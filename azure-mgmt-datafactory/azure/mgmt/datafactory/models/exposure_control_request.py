@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class EnableInteractiveQueryForIntegrationRuntimeRequest(Model):
-    """the request of enable interactive query for an integration runtime.
+class ExposureControlRequest(Model):
+    """The exposure control request.
 
-    :param auto_termination_minutes: the number of minutes that the resource
-     will be reserved.
-    :type auto_termination_minutes: long
+    :param feature_name: The feature name.
+    :type feature_name: str
+    :param feature_type: The feature type.
+    :type feature_type: str
     """
 
     _attribute_map = {
-        'auto_termination_minutes': {'key': 'autoTerminationMinutes', 'type': 'long'},
+        'feature_name': {'key': 'featureName', 'type': 'str'},
+        'feature_type': {'key': 'featureType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(EnableInteractiveQueryForIntegrationRuntimeRequest, self).__init__(**kwargs)
-        self.auto_termination_minutes = kwargs.get('auto_termination_minutes', None)
+        super(ExposureControlRequest, self).__init__(**kwargs)
+        self.feature_name = kwargs.get('feature_name', None)
+        self.feature_type = kwargs.get('feature_type', None)

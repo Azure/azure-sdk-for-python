@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .control_activity import ControlActivity
+from .execution_activity import ExecutionActivity
 
 
-class WebHookActivity(ControlActivity):
-    """WebHook activity.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class AzureFunctionActivity(ExecutionActivity):
+    """Azure Function activity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,18 +30,19 @@ class WebHookActivity(ControlActivity):
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
     :param type: Required. Constant filled by server.
     :type type: str
-    :ivar method: Required. Rest API method for target endpoint. Default
-     value: "POST" .
-    :vartype method: str
-    :param url: Required. WebHook activity target endpoint and path. Type:
-     string (or Expression with resultType string).
-    :type url: object
-    :param timeout: Specifies the timeout within which the webhook should be
-     called back. If there is no value specified, it takes the value of
-     TimeSpan.FromMinutes(10) which is 10 minutes as default. Type: string (or
-     Expression with resultType string), pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type timeout: object
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param method: Required. Rest API method for target endpoint. Possible
+     values include: 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE'
+    :type method: str or
+     ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
+    :param function_name: Required. Name of the Function that the Azure
+     Function Activity will call. Type: string (or Expression with resultType
+     string)
+    :type function_name: object
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
      "Accept-Language": "en-us", "Content-Type": "application/json" }. Type:
@@ -54,17 +52,13 @@ class WebHookActivity(ControlActivity):
      Required for POST/PUT method, not allowed for GET method Type: string (or
      Expression with resultType string).
     :type body: object
-    :param authentication: Authentication method used for calling the
-     endpoint.
-    :type authentication:
-     ~azure.mgmt.datafactory.models.WebActivityAuthentication
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'method': {'required': True, 'constant': True},
-        'url': {'required': True},
+        'method': {'required': True},
+        'function_name': {'required': True},
     }
 
     _attribute_map = {
@@ -74,21 +68,18 @@ class WebHookActivity(ControlActivity):
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'method': {'key': 'typeProperties.method', 'type': 'str'},
-        'url': {'key': 'typeProperties.url', 'type': 'object'},
-        'timeout': {'key': 'typeProperties.timeout', 'type': 'object'},
+        'function_name': {'key': 'typeProperties.functionName', 'type': 'object'},
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
-        'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
     }
 
-    method = "POST"
-
     def __init__(self, **kwargs):
-        super(WebHookActivity, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
-        self.timeout = kwargs.get('timeout', None)
+        super(AzureFunctionActivity, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.function_name = kwargs.get('function_name', None)
         self.headers = kwargs.get('headers', None)
         self.body = kwargs.get('body', None)
-        self.authentication = kwargs.get('authentication', None)
-        self.type = 'WebHook'
+        self.type = 'AzureFunctionActivity'

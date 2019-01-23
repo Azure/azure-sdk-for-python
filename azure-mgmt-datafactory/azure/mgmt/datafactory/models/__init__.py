@@ -79,6 +79,8 @@ try:
     from .operation_py3 import Operation
     from .get_ssis_object_metadata_request_py3 import GetSsisObjectMetadataRequest
     from .ssis_object_metadata_status_response_py3 import SsisObjectMetadataStatusResponse
+    from .exposure_control_request_py3 import ExposureControlRequest
+    from .exposure_control_response_py3 import ExposureControlResponse
     from .self_dependency_tumbling_window_trigger_reference_py3 import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference_py3 import TriggerReference
     from .tumbling_window_trigger_dependency_reference_py3 import TumblingWindowTriggerDependencyReference
@@ -93,6 +95,7 @@ try:
     from .schedule_trigger_recurrence_py3 import ScheduleTriggerRecurrence
     from .schedule_trigger_py3 import ScheduleTrigger
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
+    from .azure_function_linked_service_py3 import AzureFunctionLinkedService
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
@@ -235,6 +238,7 @@ try:
     from .azure_blob_dataset_py3 import AzureBlobDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .activity_policy_py3 import ActivityPolicy
+    from .azure_function_activity_py3 import AzureFunctionActivity
     from .databricks_spark_python_activity_py3 import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity_py3 import DatabricksSparkJarActivity
     from .databricks_notebook_activity_py3 import DatabricksNotebookActivity
@@ -344,7 +348,6 @@ try:
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
     from .if_condition_activity_py3 import IfConditionActivity
-    from .web_hook_activity_py3 import WebHookActivity
     from .execute_pipeline_activity_py3 import ExecutePipelineActivity
     from .control_activity_py3 import ControlActivity
     from .linked_integration_runtime_py3 import LinkedIntegrationRuntime
@@ -443,6 +446,8 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .get_ssis_object_metadata_request import GetSsisObjectMetadataRequest
     from .ssis_object_metadata_status_response import SsisObjectMetadataStatusResponse
+    from .exposure_control_request import ExposureControlRequest
+    from .exposure_control_response import ExposureControlResponse
     from .self_dependency_tumbling_window_trigger_reference import SelfDependencyTumblingWindowTriggerReference
     from .trigger_reference import TriggerReference
     from .tumbling_window_trigger_dependency_reference import TumblingWindowTriggerDependencyReference
@@ -457,6 +462,7 @@ except (SyntaxError, ImportError):
     from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
     from .schedule_trigger import ScheduleTrigger
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
+    from .azure_function_linked_service import AzureFunctionLinkedService
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
@@ -599,6 +605,7 @@ except (SyntaxError, ImportError):
     from .azure_blob_dataset import AzureBlobDataset
     from .amazon_s3_dataset import AmazonS3Dataset
     from .activity_policy import ActivityPolicy
+    from .azure_function_activity import AzureFunctionActivity
     from .databricks_spark_python_activity import DatabricksSparkPythonActivity
     from .databricks_spark_jar_activity import DatabricksSparkJarActivity
     from .databricks_notebook_activity import DatabricksNotebookActivity
@@ -708,7 +715,6 @@ except (SyntaxError, ImportError):
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
     from .if_condition_activity import IfConditionActivity
-    from .web_hook_activity import WebHookActivity
     from .execute_pipeline_activity import ExecutePipelineActivity
     from .control_activity import ControlActivity
     from .linked_integration_runtime import LinkedIntegrationRuntime
@@ -785,6 +791,7 @@ from .data_factory_management_client_enums import (
     SybaseAuthenticationType,
     DatasetCompressionLevel,
     JsonFormatFilePattern,
+    AzureFunctionActivityMethod,
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
@@ -795,7 +802,6 @@ from .data_factory_management_client_enums import (
     CopyBehaviorType,
     PolybaseSettingsRejectType,
     SapCloudForCustomerSinkWriteBehavior,
-    WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
@@ -878,6 +884,8 @@ __all__ = [
     'Operation',
     'GetSsisObjectMetadataRequest',
     'SsisObjectMetadataStatusResponse',
+    'ExposureControlRequest',
+    'ExposureControlResponse',
     'SelfDependencyTumblingWindowTriggerReference',
     'TriggerReference',
     'TumblingWindowTriggerDependencyReference',
@@ -892,6 +900,7 @@ __all__ = [
     'ScheduleTriggerRecurrence',
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
+    'AzureFunctionLinkedService',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
@@ -1034,6 +1043,7 @@ __all__ = [
     'AzureBlobDataset',
     'AmazonS3Dataset',
     'ActivityPolicy',
+    'AzureFunctionActivity',
     'DatabricksSparkPythonActivity',
     'DatabricksSparkJarActivity',
     'DatabricksNotebookActivity',
@@ -1143,7 +1153,6 @@ __all__ = [
     'WaitActivity',
     'ForEachActivity',
     'IfConditionActivity',
-    'WebHookActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
     'LinkedIntegrationRuntime',
@@ -1219,6 +1228,7 @@ __all__ = [
     'SybaseAuthenticationType',
     'DatasetCompressionLevel',
     'JsonFormatFilePattern',
+    'AzureFunctionActivityMethod',
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
@@ -1229,7 +1239,6 @@ __all__ = [
     'CopyBehaviorType',
     'PolybaseSettingsRejectType',
     'SapCloudForCustomerSinkWriteBehavior',
-    'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',

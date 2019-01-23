@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.factories_operations import FactoriesOperations
+from .operations.exposure_control_operations import ExposureControlOperations
 from .operations.integration_runtimes_operations import IntegrationRuntimesOperations
 from .operations.integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
 from .operations.integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
@@ -71,6 +72,8 @@ class DataFactoryManagementClient(SDKClient):
     :vartype operations: azure.mgmt.datafactory.operations.Operations
     :ivar factories: Factories operations
     :vartype factories: azure.mgmt.datafactory.operations.FactoriesOperations
+    :ivar exposure_control: ExposureControl operations
+    :vartype exposure_control: azure.mgmt.datafactory.operations.ExposureControlOperations
     :ivar integration_runtimes: IntegrationRuntimes operations
     :vartype integration_runtimes: azure.mgmt.datafactory.operations.IntegrationRuntimesOperations
     :ivar integration_runtime_object_metadata: IntegrationRuntimeObjectMetadata operations
@@ -116,6 +119,8 @@ class DataFactoryManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.factories = FactoriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.exposure_control = ExposureControlOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self.config, self._serialize, self._deserialize)

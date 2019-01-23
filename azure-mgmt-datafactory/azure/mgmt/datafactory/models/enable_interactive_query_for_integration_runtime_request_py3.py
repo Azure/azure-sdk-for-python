@@ -21,7 +21,7 @@ class EnableInteractiveQueryForIntegrationRuntimeRequest(Model):
     """
 
     _attribute_map = {
-        'auto_termination_minutes': {'key': 'AutoTerminationMinutes', 'type': 'long'},
+        'auto_termination_minutes': {'key': 'autoTerminationMinutes', 'type': 'long'},
     }
 
     def __init__(self, *, auto_termination_minutes: int=None, **kwargs) -> None:

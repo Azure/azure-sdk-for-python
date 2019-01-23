@@ -1180,28 +1180,9 @@ class IntegrationRuntimesOperations(object):
         return deserialized
     create_linked_integration_runtime.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/linkedIntegrationRuntime'}
 
-    def enable_integration_runtime_interactive_query(
-            self, resource_group_name, factory_name, integration_runtime_name, auto_termination_minutes=None, custom_headers=None, raw=False, **operation_config):
-        """Enable interactive query for an Auzre-VNet integration runtime.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param factory_name: The factory name.
-        :type factory_name: str
-        :param integration_runtime_name: The integration runtime name.
-        :type integration_runtime_name: str
-        :param auto_termination_minutes: the number of minutes that the
-         resource will be reserved.
-        :type auto_termination_minutes: long
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _enable_integration_runtime_interactive_query_initial(
+            self, resource_group_name, factory_name, integration_runtime_name, auto_termination_minutes=None, custom_headers=None, raw=False, **operation_config):
         enable_interactive_query_for_integration_runtime_request = models.EnableInteractiveQueryForIntegrationRuntimeRequest(auto_termination_minutes=auto_termination_minutes)
 
         # Construct URL
@@ -1243,6 +1224,53 @@ class IntegrationRuntimesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def enable_integration_runtime_interactive_query(
+            self, resource_group_name, factory_name, integration_runtime_name, auto_termination_minutes=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Enable interactive query for an Azure-VNet integration runtime.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param integration_runtime_name: The integration runtime name.
+        :type integration_runtime_name: str
+        :param auto_termination_minutes: the number of minutes that the
+         resource will be reserved.
+        :type auto_termination_minutes: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._enable_integration_runtime_interactive_query_initial(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            integration_runtime_name=integration_runtime_name,
+            auto_termination_minutes=auto_termination_minutes,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     enable_integration_runtime_interactive_query.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/enableInteractiveQuery'}
 
     def disable_integration_runtime_interactive_query(
