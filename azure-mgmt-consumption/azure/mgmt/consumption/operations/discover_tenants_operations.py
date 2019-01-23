@@ -37,9 +37,11 @@ class DiscoverTenantsOperations(object):
         self.config = config
 
     def get(
-            self, billing_profile_id, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
         """Gets a Tenant Properties.
 
+        :param billing_account_id: Billing Account Id.
+        :type billing_account_id: str
         :param billing_profile_id: Billing Profile Id.
         :type billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -56,6 +58,7 @@ class DiscoverTenantsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
             'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -91,4 +94,4 @@ class DiscoverTenantsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Consumption/billingProfiles/{billingProfileId}/discoverTenants'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/providers/Microsoft.Consumption/discoverTenants'}
