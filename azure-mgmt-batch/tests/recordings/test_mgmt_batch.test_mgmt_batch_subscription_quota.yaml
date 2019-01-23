@@ -6,18 +6,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus2/quotas?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/quotas?api-version=2018-12-01
   response:
-    body: {string: '{"accountQuota":1}'}
+    body: {string: '{"accountQuota":3}'}
     headers:
       cache-control: [no-cache]
       content-length: ['18']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 15:41:43 GMT']
+      date: ['Sun, 13 Jan 2019 22:12:28 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]

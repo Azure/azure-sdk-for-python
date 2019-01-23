@@ -8303,8 +8303,8 @@ class ResourceFile(Model):
      that is, the Batch service does not present any credentials when
      downloading blobs from the container. There are two ways to get such a URL
      for a container in Azure storage: include a Shared Access Signature (SAS)
-     granting read permissions on the container, or set the ACL for the
-     container to allow public access.
+     granting read and list permissions on the container, or set the ACL for
+     the container to allow public access.
     :type storage_container_url: str
     :param http_url: The URL of the file to download. The
      autoStorageContainerName, storageContainerUrl and httpUrl properties are
