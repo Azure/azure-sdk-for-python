@@ -15,6 +15,9 @@ from .managed_cluster_agent_pool_profile_properties import ManagedClusterAgentPo
 class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """Profile for the container service agent pool.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param count: Required. Number of agents (VMs) to host docker containers.
@@ -98,6 +101,12 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.AgentPoolType
+    :param kubernetes_version: Version of Kubernetes specified when creating
+     the managed cluster.
+    :type kubernetes_version: str
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response.
+    :vartype provisioning_state: str
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
@@ -106,6 +115,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     _validation = {
         'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
+        'provisioning_state': {'readonly': True},
         'name': {'required': True},
     }
 
@@ -120,6 +130,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 

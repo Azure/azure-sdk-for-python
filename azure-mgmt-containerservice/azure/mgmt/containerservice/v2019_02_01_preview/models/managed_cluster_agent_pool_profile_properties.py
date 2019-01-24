@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class ManagedClusterAgentPoolProfileProperties(Model):
     """Properties for the container service agent pool profile.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param count: Required. Number of agents (VMs) to host docker containers.
@@ -98,11 +101,18 @@ class ManagedClusterAgentPoolProfileProperties(Model):
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.AgentPoolType
+    :param kubernetes_version: Version of Kubernetes specified when creating
+     the managed cluster.
+    :type kubernetes_version: str
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response.
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -116,6 +126,8 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -130,3 +142,5 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
         self.type = kwargs.get('type', None)
+        self.kubernetes_version = kwargs.get('kubernetes_version', None)
+        self.provisioning_state = None

@@ -108,12 +108,12 @@ class AgentPool(SubResource):
      Possible values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type agent_pool_type: str or
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.AgentPoolType
-    :ivar provisioning_state: The current deployment or provisioning state,
-     which only appears in the response.
-    :vartype provisioning_state: str
     :param kubernetes_version: Version of Kubernetes specified when creating
      the managed cluster.
     :type kubernetes_version: str
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -139,8 +139,8 @@ class AgentPool(SubResource):
         'min_count': {'key': 'properties.minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'properties.enableAutoScaling', 'type': 'bool'},
         'agent_pool_type': {'key': 'properties.type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -155,5 +155,5 @@ class AgentPool(SubResource):
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
         self.agent_pool_type = kwargs.get('agent_pool_type', None)
-        self.provisioning_state = None
         self.kubernetes_version = kwargs.get('kubernetes_version', None)
+        self.provisioning_state = None
