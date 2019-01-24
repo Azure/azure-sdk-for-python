@@ -8,22 +8,18 @@ import re
 import sys
 import textwrap
 
-# packages which are skipped in all cases
-skip_pkgs = [
-    'azure-sdk-for-python',
-    'azure-sdk-tools'
-]
-
-# packages which are not considered when displaying / generating the list of requirements,
-# but which are still considered when looking for requirement version inconsistencies
-meta_pkgs = [
-    'azure-mgmt',
-    'azure'
-]
+def should_skip_lib(lib_name):
+    skip_pkgs = [
+        'azure-mgmt-documentdb',         # deprecated
+        'azure-sdk-for-python',          # top-level package
+        'azure-sdk-tools',               # internal tooling for automation
+        'azure-servicemanagement-legacy' # legacy (not officially deprecated)
+    ]
+    return lib_name in skip_pkgs or lib_name.endswith('-nspkg')
 
 def locate_libs(base_dir):
     packages = [os.path.dirname(p) for p in glob.glob(os.path.join(base_dir, 'azure*', 'setup.py'))]
-    return sorted([p for p in packages if os.path.basename(p) not in skip_pkgs])
+    return sorted(packages)
 
 def locate_wheels(base_dir):
     wheels = glob.glob(os.path.join(base_dir, '*.whl'))
@@ -34,6 +30,8 @@ def get_lib_deps(base_dir):
     for lib_dir in locate_libs(base_dir):
         try:
             lib_name = os.path.basename(lib_dir)
+            if should_skip_lib(lib_name):
+                continue
             setup_path = os.path.join(lib_dir, 'setup.py')
             requires = parse_setup(setup_path)
             for req in requires:
@@ -61,6 +59,8 @@ def get_wheel_deps(wheel_dir):
             with WheelFile(whl_path) as whl:
                 pkg_info = read_pkg_info_bytes(whl.read(whl.dist_info_path + '/METADATA'))
                 lib_name = pkg_info.get('Name')
+                if should_skip_lib(lib_name):
+                    continue
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
                     parsed = requires_dist_re.match(req.split(';')[0].strip())
