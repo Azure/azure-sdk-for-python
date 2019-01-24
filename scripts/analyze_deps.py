@@ -213,6 +213,8 @@ if __name__ == '__main__':
             with open(frozen_filename, 'w') as frozen_file:
                 for requirement in sorted(dependencies.keys()):
                     spec = list(dependencies[requirement].keys())[0]
+                    if spec == '':
+                        print("Requirement '%s' being frozen with no version spec" % requirement)
                     frozen_file.write(requirement + spec + '\n')
             print('Current requirements frozen to %s' % (frozen_filename))
             sys.exit(0)
@@ -238,25 +240,29 @@ if __name__ == '__main__':
             print('  * %s' % (missing_req + spec))
     if len(new_reqs) > 0:
         exitcode = 1
-        for new_req in new_reqs:
-            for spec in dependencies[new_req]:
-                libs = dependencies[new_req][spec]
-                print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
-                for lib in libs:
-                    print("  * %s" % (lib))
+        if args.verbose:
+            for new_req in new_reqs:
+                for spec in dependencies[new_req]:
+                    libs = dependencies[new_req][spec]
+                    print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
+                    for lib in libs:
+                        print("  * %s" % (lib))
     if len(changed_reqs) > 0:
         exitcode = 1
-        for changed_req in changed_reqs:
-            [frozen_spec] = frozen[changed_req]
-            for current_spec in dependencies[changed_req]:
-                if frozen_spec == current_spec:
-                    continue
-                libs = dependencies[changed_req][current_spec]
-                print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
-                for lib in libs:
-                    print("  * %s" % (lib))
+        if args.verbose:
+            for changed_req in changed_reqs:
+                [frozen_spec] = frozen[changed_req]
+                for current_spec in dependencies[changed_req]:
+                    if frozen_spec == current_spec:
+                        continue
+                    libs = dependencies[changed_req][current_spec]
+                    print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
+                    for lib in libs:
+                        print("  * %s" % (lib))
 
     if exitcode == 0:
         print('All library dependencies validated against frozen requirements')
+    elif not args.verbose:
+        print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
 
     sys.exit(exitcode)
