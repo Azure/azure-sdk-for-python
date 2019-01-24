@@ -457,7 +457,7 @@ class ConnectionStatus(str, Enum):
 
 class ConnectionMonitorSourceStatus(str, Enum):
 
-    uknown = "Uknown"
+    unknown = "Unknown"
     active = "Active"
     inactive = "Inactive"
 
