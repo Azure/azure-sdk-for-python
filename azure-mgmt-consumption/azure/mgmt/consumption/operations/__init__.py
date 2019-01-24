@@ -22,7 +22,7 @@ from .forecasts_operations import ForecastsOperations
 from .operations import Operations
 from .aggregated_cost_operations import AggregatedCostOperations
 from .charges_operations import ChargesOperations
-from .discover_tenants_operations import DiscoverTenantsOperations
+from .tenants_operations import TenantsOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -38,5 +38,5 @@ __all__ = [
     'Operations',
     'AggregatedCostOperations',
     'ChargesOperations',
-    'DiscoverTenantsOperations',
+    'TenantsOperations',
 ]

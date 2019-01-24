@@ -13,7 +13,8 @@ try:
     from .meter_details_py3 import MeterDetails
     from .usage_detail_py3 import UsageDetail
     from .marketplace_py3 import Marketplace
-    from .discover_tenant_py3 import DiscoverTenant
+    from .tenant_py3 import Tenant
+    from .tenant_list_result_py3 import TenantListResult
     from .balance_properties_new_purchases_details_item_py3 import BalancePropertiesNewPurchasesDetailsItem
     from .balance_properties_adjustment_details_item_py3 import BalancePropertiesAdjustmentDetailsItem
     from .balance_py3 import Balance
@@ -46,7 +47,8 @@ except (SyntaxError, ImportError):
     from .meter_details import MeterDetails
     from .usage_detail import UsageDetail
     from .marketplace import Marketplace
-    from .discover_tenant import DiscoverTenant
+    from .tenant import Tenant
+    from .tenant_list_result import TenantListResult
     from .balance_properties_new_purchases_details_item import BalancePropertiesNewPurchasesDetailsItem
     from .balance_properties_adjustment_details_item import BalancePropertiesAdjustmentDetailsItem
     from .balance import Balance
@@ -98,7 +100,8 @@ __all__ = [
     'MeterDetails',
     'UsageDetail',
     'Marketplace',
-    'DiscoverTenant',
+    'Tenant',
+    'TenantListResult',
     'BalancePropertiesNewPurchasesDetailsItem',
     'BalancePropertiesAdjustmentDetailsItem',
     'Balance',

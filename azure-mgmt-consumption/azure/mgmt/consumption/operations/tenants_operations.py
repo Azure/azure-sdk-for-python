@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class DiscoverTenantsOperations(object):
-    """DiscoverTenantsOperations operations.
+class TenantsOperations(object):
+    """TenantsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -49,8 +49,8 @@ class DiscoverTenantsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DiscoverTenant or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.DiscoverTenant or
+        :return: TenantListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.TenantListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -87,11 +87,11 @@ class DiscoverTenantsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DiscoverTenant', response)
+            deserialized = self._deserialize('TenantListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/providers/Microsoft.Consumption/discoverTenants'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/providers/Microsoft.Consumption/tenants'}

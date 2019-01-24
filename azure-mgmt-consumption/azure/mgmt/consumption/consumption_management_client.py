@@ -26,7 +26,7 @@ from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from .operations.aggregated_cost_operations import AggregatedCostOperations
 from .operations.charges_operations import ChargesOperations
-from .operations.discover_tenants_operations import DiscoverTenantsOperations
+from .operations.tenants_operations import TenantsOperations
 from . import models
 
 
@@ -94,8 +94,8 @@ class ConsumptionManagementClient(SDKClient):
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
     :ivar charges: Charges operations
     :vartype charges: azure.mgmt.consumption.operations.ChargesOperations
-    :ivar discover_tenants: DiscoverTenants operations
-    :vartype discover_tenants: azure.mgmt.consumption.operations.DiscoverTenantsOperations
+    :ivar tenants: Tenants operations
+    :vartype tenants: azure.mgmt.consumption.operations.TenantsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -142,5 +142,5 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.charges = ChargesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.discover_tenants = DiscoverTenantsOperations(
+        self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
