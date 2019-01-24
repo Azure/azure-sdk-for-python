@@ -118,7 +118,7 @@ class ResourceManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_05_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def deployment_operations(self):
         """Instance depends on the API version:
