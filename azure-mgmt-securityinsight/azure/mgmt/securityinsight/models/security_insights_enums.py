@@ -22,7 +22,7 @@ class Severity(str, Enum):
 
 class AlertTriggerOperator(str, Enum):
 
-    gt = "gt"
-    lt = "lt"
-    ne = "ne"
-    eq = "eq"
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+    not_equal = "NotEqual"

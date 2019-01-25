@@ -41,26 +41,26 @@ class ScheduledAlertRule(Resource):
     :type enabled: bool
     :param query: Required. The query that creates alerts for this rule.
     :type query: str
-    :param query_frequency: Required. TimeSpan format represents the frequncy
-     for this alert rule to run.
-    :type query_frequency: str
-    :param query_period: Required. TimeSpan format represents the period that
-     this alert rule looks at.
-    :type query_period: str
+    :param query_frequency: Required. The frequency (in ISO 8601 duration
+     format) for this alert rule to run.
+    :type query_frequency: timedelta
+    :param query_period: Required. The period (in ISO 8601 duration format)
+     that this alert rule looks at.
+    :type query_period: timedelta
     :param alert_trigger_operator: Required. The operation against the
-     threahold that triggers alert rule. Possible values include: 'gt', 'lt',
-     'ne', 'eq'
+     threshold that triggers alert rule. Possible values include:
+     'GreaterThan', 'LessThan', 'Equal', 'NotEqual'
     :type alert_trigger_operator: str or
      ~azure.mgmt.securityinsight.models.AlertTriggerOperator
-    :param alert_trigger_threshold: Required. The threahold triggers this
+    :param alert_trigger_threshold: Required. The threshold triggers this
      alert rule.
     :type alert_trigger_threshold: int
     :param suppression_enabled: Required. Determines whether the suppression
      for this alert rule is enabled or disabled.
     :type suppression_enabled: bool
-    :param suppression_duration: Required. TimeSpan format represents the
-     suppression to wait since last time this alert rule been triggered.
-    :type suppression_duration: str
+    :param suppression_duration: Required. The suppression (in ISO 8601
+     duration format) to wait since last time this alert rule been triggered.
+    :type suppression_duration: timedelta
     :ivar last_modified_utc: The last time that this alert has been modified.
     :vartype last_modified_utc: str
     """
@@ -74,12 +74,12 @@ class ScheduledAlertRule(Resource):
         'severity': {'required': True},
         'enabled': {'required': True},
         'query': {'required': True},
-        'query_frequency': {'required': True, 'pattern': r'^(\d+\.)?\d{2}\:\d{2}\:\d{2}$'},
-        'query_period': {'required': True, 'pattern': r'^(\d+\.)?\d{2}\:\d{2}\:\d{2}$'},
+        'query_frequency': {'required': True},
+        'query_period': {'required': True},
         'alert_trigger_operator': {'required': True},
         'alert_trigger_threshold': {'required': True},
         'suppression_enabled': {'required': True},
-        'suppression_duration': {'required': True, 'pattern': r'^(\d+\.)?\d{2}\:\d{2}\:\d{2}$'},
+        'suppression_duration': {'required': True},
         'last_modified_utc': {'readonly': True},
     }
 
@@ -93,12 +93,12 @@ class ScheduledAlertRule(Resource):
         'severity': {'key': 'properties.severity', 'type': 'Severity'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'query': {'key': 'properties.query', 'type': 'str'},
-        'query_frequency': {'key': 'properties.queryFrequency', 'type': 'str'},
-        'query_period': {'key': 'properties.queryPeriod', 'type': 'str'},
+        'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},
+        'query_period': {'key': 'properties.queryPeriod', 'type': 'duration'},
         'alert_trigger_operator': {'key': 'properties.alertTriggerOperator', 'type': 'AlertTriggerOperator'},
         'alert_trigger_threshold': {'key': 'properties.alertTriggerThreshold', 'type': 'int'},
         'suppression_enabled': {'key': 'properties.suppressionEnabled', 'type': 'bool'},
-        'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'str'},
+        'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'duration'},
         'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
     }
 

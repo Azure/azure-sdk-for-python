@@ -183,7 +183,7 @@ class ScheduledAlertRulesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/scheduledAlertRules/{ruleId}'}
 
     def create(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, alert_scheduledt_rule, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, scheduled_alert_rule, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the alert rule.
 
         :param resource_group_name: The name of the resource group within the
@@ -196,8 +196,8 @@ class ScheduledAlertRulesOperations(object):
         :type workspace_name: str
         :param rule_id: Alert rule ID
         :type rule_id: str
-        :param alert_scheduledt_rule: The alert rule
-        :type alert_scheduledt_rule:
+        :param scheduled_alert_rule: The alert rule
+        :type scheduled_alert_rule:
          ~azure.mgmt.securityinsight.models.ScheduledAlertRule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -236,7 +236,7 @@ class ScheduledAlertRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(alert_scheduledt_rule, 'ScheduledAlertRule')
+        body_content = self._serialize.body(scheduled_alert_rule, 'ScheduledAlertRule')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -312,7 +312,7 @@ class ScheduledAlertRulesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
