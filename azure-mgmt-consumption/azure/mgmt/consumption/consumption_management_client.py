@@ -26,6 +26,10 @@ from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from .operations.aggregated_cost_operations import AggregatedCostOperations
 from .operations.charges_operations import ChargesOperations
+from .operations.reservations_usage_details_operations import ReservationsUsageDetailsOperations
+from .operations.reservations_usage_summaries_operations import ReservationsUsageSummariesOperations
+from .operations.reservation_recommendations_shared_operations import ReservationRecommendationsSharedOperations
+from .operations.reservation_recommendations_single_operations import ReservationRecommendationsSingleOperations
 from . import models
 
 
@@ -39,16 +43,29 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param start_date: The start of the date time range.
+    :type start_date: datetime
+    :param end_date: The start of the date time range.
+    :type end_date: datetime
+    :param look_back_period: The number of days of usage data to look back
+     into.
+    :type look_back_period: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, start_date, end_date, look_back_period, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if start_date is None:
+            raise ValueError("Parameter 'start_date' must not be None.")
+        if end_date is None:
+            raise ValueError("Parameter 'end_date' must not be None.")
+        if look_back_period is None:
+            raise ValueError("Parameter 'look_back_period' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,6 +76,9 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.start_date = start_date
+        self.end_date = end_date
+        self.look_back_period = look_back_period
 
 
 class ConsumptionManagementClient(SDKClient):
@@ -93,19 +113,34 @@ class ConsumptionManagementClient(SDKClient):
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
     :ivar charges: Charges operations
     :vartype charges: azure.mgmt.consumption.operations.ChargesOperations
+    :ivar reservations_usage_details: ReservationsUsageDetails operations
+    :vartype reservations_usage_details: azure.mgmt.consumption.operations.ReservationsUsageDetailsOperations
+    :ivar reservations_usage_summaries: ReservationsUsageSummaries operations
+    :vartype reservations_usage_summaries: azure.mgmt.consumption.operations.ReservationsUsageSummariesOperations
+    :ivar reservation_recommendations_shared: ReservationRecommendationsShared operations
+    :vartype reservation_recommendations_shared: azure.mgmt.consumption.operations.ReservationRecommendationsSharedOperations
+    :ivar reservation_recommendations_single: ReservationRecommendationsSingle operations
+    :vartype reservation_recommendations_single: azure.mgmt.consumption.operations.ReservationRecommendationsSingleOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param start_date: The start of the date time range.
+    :type start_date: datetime
+    :param end_date: The start of the date time range.
+    :type end_date: datetime
+    :param look_back_period: The number of days of usage data to look back
+     into.
+    :type look_back_period: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, start_date, end_date, look_back_period, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, start_date, end_date, look_back_period, base_url)
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -138,4 +173,12 @@ class ConsumptionManagementClient(SDKClient):
         self.aggregated_cost = AggregatedCostOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.charges = ChargesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_usage_details = ReservationsUsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservations_usage_summaries = ReservationsUsageSummariesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_recommendations_shared = ReservationRecommendationsSharedOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_recommendations_single = ReservationRecommendationsSingleOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -22,6 +22,10 @@ from .forecasts_operations import ForecastsOperations
 from .operations import Operations
 from .aggregated_cost_operations import AggregatedCostOperations
 from .charges_operations import ChargesOperations
+from .reservations_usage_details_operations import ReservationsUsageDetailsOperations
+from .reservations_usage_summaries_operations import ReservationsUsageSummariesOperations
+from .reservation_recommendations_shared_operations import ReservationRecommendationsSharedOperations
+from .reservation_recommendations_single_operations import ReservationRecommendationsSingleOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -37,4 +41,8 @@ __all__ = [
     'Operations',
     'AggregatedCostOperations',
     'ChargesOperations',
+    'ReservationsUsageDetailsOperations',
+    'ReservationsUsageSummariesOperations',
+    'ReservationRecommendationsSharedOperations',
+    'ReservationRecommendationsSingleOperations',
 ]
