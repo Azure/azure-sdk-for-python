@@ -27,6 +27,9 @@ try:
     from .regenerate_key_parameters_py3 import RegenerateKeyParameters
     from .signal_rcreate_parameters_py3 import SignalRCreateParameters
     from .signal_rupdate_parameters_py3 import SignalRUpdateParameters
+    from .signal_rfeature_py3 import SignalRFeature
+    from .signal_rfeatures_parameters_py3 import SignalRFeaturesParameters
+    from .signal_rfeature_list_py3 import SignalRFeatureList
     from .signal_rusage_name_py3 import SignalRUsageName
     from .signal_rusage_py3 import SignalRUsage
 except (SyntaxError, ImportError):
@@ -47,6 +50,9 @@ except (SyntaxError, ImportError):
     from .regenerate_key_parameters import RegenerateKeyParameters
     from .signal_rcreate_parameters import SignalRCreateParameters
     from .signal_rupdate_parameters import SignalRUpdateParameters
+    from .signal_rfeature import SignalRFeature
+    from .signal_rfeatures_parameters import SignalRFeaturesParameters
+    from .signal_rfeature_list import SignalRFeatureList
     from .signal_rusage_name import SignalRUsageName
     from .signal_rusage import SignalRUsage
 from .operation_paged import OperationPaged
@@ -76,6 +82,9 @@ __all__ = [
     'RegenerateKeyParameters',
     'SignalRCreateParameters',
     'SignalRUpdateParameters',
+    'SignalRFeature',
+    'SignalRFeaturesParameters',
+    'SignalRFeatureList',
     'SignalRUsageName',
     'SignalRUsage',
     'OperationPaged',
