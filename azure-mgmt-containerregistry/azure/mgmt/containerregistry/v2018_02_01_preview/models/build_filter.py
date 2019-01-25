@@ -30,9 +30,9 @@ class BuildFilter(Model):
     :type create_time: datetime
     :param finish_time: The time the build finished.
     :type finish_time: datetime
-    :param output_image_names: The list of all images that were generated from
-     the build.
-    :type output_image_names: list[str]
+    :param output_image_manifests: The list of comma-separated image manifests
+     that were generated from the build.
+    :type output_image_manifests: str
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not.
     :type is_archive_enabled: bool
@@ -47,7 +47,7 @@ class BuildFilter(Model):
         'status': {'key': 'status', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'output_image_names': {'key': 'outputImageNames', 'type': '[str]'},
+        'output_image_manifests': {'key': 'outputImageManifests', 'type': 'str'},
         'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
         'build_task_name': {'key': 'buildTaskName', 'type': 'str'},
     }
@@ -59,6 +59,6 @@ class BuildFilter(Model):
         self.status = kwargs.get('status', None)
         self.create_time = kwargs.get('create_time', None)
         self.finish_time = kwargs.get('finish_time', None)
-        self.output_image_names = kwargs.get('output_image_names', None)
+        self.output_image_manifests = kwargs.get('output_image_manifests', None)
         self.is_archive_enabled = kwargs.get('is_archive_enabled', None)
         self.build_task_name = kwargs.get('build_task_name', None)

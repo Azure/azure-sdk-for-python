@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .codec import Codec
+from .codec_py3 import Codec
 
 
 class CopyVideo(Codec):

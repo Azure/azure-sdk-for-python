@@ -1,6 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-datafactory"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Data Factory Management"
+package_doc_id = "datafactory"
 is_stable = false
 is_arm = true

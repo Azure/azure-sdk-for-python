@@ -35,10 +35,10 @@ class PerfMonSet(Model):
         'values': {'key': 'values', 'type': '[PerfMonSample]'},
     }
 
-    def __init__(self, name=None, start_time=None, end_time=None, time_grain=None, values=None):
-        super(PerfMonSet, self).__init__()
-        self.name = name
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_grain = time_grain
-        self.values = values
+    def __init__(self, **kwargs):
+        super(PerfMonSet, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.values = kwargs.get('values', None)

@@ -45,7 +45,7 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name,
             parameters = Bot(
                 location= self.location,
-                sku = sku.Sku(self.sku_name),
+                sku = sku.Sku(name=self.sku_name),
                 kind= self.kind,
                 properties= BotProperties(
                     display_name = self.display_name,

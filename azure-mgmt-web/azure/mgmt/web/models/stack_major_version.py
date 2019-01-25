@@ -33,9 +33,9 @@ class StackMajorVersion(Model):
         'minor_versions': {'key': 'minorVersions', 'type': '[StackMinorVersion]'},
     }
 
-    def __init__(self, display_version=None, runtime_version=None, is_default=None, minor_versions=None):
-        super(StackMajorVersion, self).__init__()
-        self.display_version = display_version
-        self.runtime_version = runtime_version
-        self.is_default = is_default
-        self.minor_versions = minor_versions
+    def __init__(self, **kwargs):
+        super(StackMajorVersion, self).__init__(**kwargs)
+        self.display_version = kwargs.get('display_version', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.is_default = kwargs.get('is_default', None)
+        self.minor_versions = kwargs.get('minor_versions', None)

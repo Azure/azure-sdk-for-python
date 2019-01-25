@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SourceVault(Model):
-    """The vault id is an Azure Resource Manager Resoure id in the form
+    """The vault id is an Azure Resource Manager Resource id in the form
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :param id: Resource Id

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .log_analytics_input_base import LogAnalyticsInputBase
+from .log_analytics_input_base_py3 import LogAnalyticsInputBase
 
 
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
@@ -27,7 +27,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :param group_by_throttle_policy: Group query result by Throttle Policy
      applied.
     :type group_by_throttle_policy: bool
-    :param group_by_operation_name: Group query result by  by Operation Name.
+    :param group_by_operation_name: Group query result by Operation Name.
     :type group_by_operation_name: bool
     :param group_by_resource_name: Group query result by Resource Name.
     :type group_by_resource_name: bool

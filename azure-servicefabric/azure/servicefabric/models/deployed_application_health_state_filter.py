@@ -44,7 +44,7 @@ class DeployedApplicationHealthStateFilter(Model):
      If not specified, default value is None, unless the node name is
      specified. If the filter has default value and node name is specified, the
      matching deployed application is returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches deployed applications
      with HealthState value of OK (2) and Warning (4).

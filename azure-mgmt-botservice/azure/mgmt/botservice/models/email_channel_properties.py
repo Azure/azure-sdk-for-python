@@ -15,11 +15,14 @@ from msrest.serialization import Model
 class EmailChannelProperties(Model):
     """The parameters to provide for the Email channel.
 
-    :param email_address: The email address
+    All required parameters must be populated in order to send to Azure.
+
+    :param email_address: Required. The email address
     :type email_address: str
-    :param password: The password for the email address
+    :param password: Required. The password for the email address. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type password: str
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -35,7 +38,8 @@ class EmailChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, email_address, password, is_enabled):
-        self.email_address = email_address
-        self.password = password
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(EmailChannelProperties, self).__init__(**kwargs)
+        self.email_address = kwargs.get('email_address', None)
+        self.password = kwargs.get('password', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

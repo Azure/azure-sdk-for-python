@@ -3,6 +3,35 @@
 Release History
 ===============
 
+0.5.3 (2018-10-29)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 0.5.2. No code change.
+
+0.5.2 (2018-09-28)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationConfigProperties has a new parameter migration_state
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+0.5.1 (2018-07-09)
+++++++++++++++++++
+
+**Features**
+
+- Add pending_replication_operations_count
+
+**Bugfixes**
+
+- Fix some Py3 import models
+
 0.5.0 (2018-04-26)
 ++++++++++++++++++
 
@@ -24,7 +53,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

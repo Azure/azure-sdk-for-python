@@ -63,7 +63,7 @@ class VirtualMachine(Resource):
      availability. For more information about availability sets, see [Manage
      the availability of virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-     <br><br> For more information on Azure planned maintainance, see [Planned
+     <br><br> For more information on Azure planned maintenance, see [Planned
      maintenance for virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation

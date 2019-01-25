@@ -33,8 +33,8 @@ class DomainAvailablilityCheckResult(Model):
         'domain_type': {'key': 'domainType', 'type': 'DomainType'},
     }
 
-    def __init__(self, name=None, available=None, domain_type=None):
-        super(DomainAvailablilityCheckResult, self).__init__()
-        self.name = name
-        self.available = available
-        self.domain_type = domain_type
+    def __init__(self, **kwargs):
+        super(DomainAvailablilityCheckResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.available = kwargs.get('available', None)
+        self.domain_type = kwargs.get('domain_type', None)

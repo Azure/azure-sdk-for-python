@@ -20,6 +20,8 @@ class ServiceCreatedEvent(ServiceEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -27,7 +29,7 @@ class ServiceCreatedEvent(ServiceEvent):
     :type has_correlated_events: bool
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param service_id: Required. The identity of the service. This is an
+    :param service_id: Required. The identity of the service. This ID is an
      encoded representation of the service name. This is used in the REST APIs
      to identify the service resource.
      Starting in version 6.0, hierarchical names are delimited with the "\\~"
@@ -80,6 +82,7 @@ class ServiceCreatedEvent(ServiceEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
