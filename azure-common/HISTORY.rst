@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.18 (2019-01-25)
++++++++++++++++++++
+
+- Update dependency 'msrestazure' for the 'autorest' extra
+
 1.1.17 (2019-01-15)
 +++++++++++++++++++
 

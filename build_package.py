@@ -19,7 +19,11 @@ except ImportError: # Should not happen, but at worst in most case this is the s
     from pip._vendor.packaging.version import parse as Version, InvalidVersion
 
 DEFAULT_DEST_FOLDER = "./dist"
-OMITTED_RELEASE_PACKAGES = ['azure-keyvault', 'azure-servicebus']
+OMITTED_RELEASE_PACKAGES = [
+    'azure-common',
+    'azure-keyvault',
+    'azure-servicebus',
+]
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     absdirpath = os.path.abspath(name)
