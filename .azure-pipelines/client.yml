@@ -1,5 +1,6 @@
 # Variables: 
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'codecov-python-repository-token' Is the codecov.io repository token.
 
 trigger:
 - master
@@ -72,7 +73,7 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install pathlib twine
+     pip install pathlib twine codecov beautifulsoup4
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -80,6 +81,28 @@ jobs:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: '"$(build_targeting_string)"'
+
+  - script: |
+     coverage xml
+     coverage html
+    displayName: 'Generate Coverage XML'
+
+  - script: |
+     codecov -t $(codecov-python-repository-token)
+    displayName: 'Publish Code Cov'
+    condition: ne(variables['codecov-python-repository-token'], '')
+
+  - task: PythonScript@0
+    displayName: 'Inline CSS for Cobertura'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
