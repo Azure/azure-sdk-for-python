@@ -108,7 +108,7 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
            * 2018-03-31: :mod:`v2018_03_31.models<azure.mgmt.containerservice.v2018_03_31.models>`
            * 2018-08-01-preview: :mod:`v2018_08_01_preview.models<azure.mgmt.containerservice.v2018_08_01_preview.models>`
            * 2018-09-30-preview: :mod:`v2018_09_30_preview.models<azure.mgmt.containerservice.v2018_09_30_preview.models>`
-           * 2018-08-01-preview: :mod:`v2019_02_01_preview.models<azure.mgmt.containerservice.v2019_02_01_preview.models>`
+           * 2019-02-01-preview: :mod:`v2019_02_01_preview.models<azure.mgmt.containerservice.v2019_02_01_preview.models>`
         """
         if api_version == '2017-07-01':
             from .v2017_07_01 import models
@@ -122,7 +122,7 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-09-30-preview':
             from .v2018_09_30_preview import models
             return models
-        elif api_version == '2018-08-01-preview':
+        elif api_version == '2019-02-01-preview':
             from .v2019_02_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -131,10 +131,10 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
     def agent_pools(self):
         """Instance depends on the API version:
 
-           * 2018-08-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_02_01_preview.operations.AgentPoolsOperations>`
+           * 2019-02-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_02_01_preview.operations.AgentPoolsOperations>`
         """
         api_version = self._get_api_version('agent_pools')
-        if api_version == '2018-08-01-preview':
+        if api_version == '2019-02-01-preview':
             from .v2019_02_01_preview.operations import AgentPoolsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -159,14 +159,14 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
 
            * 2018-03-31: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_03_31.operations.ManagedClustersOperations>`
            * 2018-08-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_08_01_preview.operations.ManagedClustersOperations>`
-           * 2018-08-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_02_01_preview.operations.ManagedClustersOperations>`
+           * 2019-02-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_02_01_preview.operations.ManagedClustersOperations>`
         """
         api_version = self._get_api_version('managed_clusters')
         if api_version == '2018-03-31':
             from .v2018_03_31.operations import ManagedClustersOperations as OperationClass
         elif api_version == '2018-08-01-preview':
             from .v2018_08_01_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2018-08-01-preview':
+        elif api_version == '2019-02-01-preview':
             from .v2019_02_01_preview.operations import ManagedClustersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -191,14 +191,14 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
 
            * 2018-03-31: :class:`Operations<azure.mgmt.containerservice.v2018_03_31.operations.Operations>`
            * 2018-08-01-preview: :class:`Operations<azure.mgmt.containerservice.v2018_08_01_preview.operations.Operations>`
-           * 2018-08-01-preview: :class:`Operations<azure.mgmt.containerservice.v2019_02_01_preview.operations.Operations>`
+           * 2019-02-01-preview: :class:`Operations<azure.mgmt.containerservice.v2019_02_01_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2018-03-31':
             from .v2018_03_31.operations import Operations as OperationClass
         elif api_version == '2018-08-01-preview':
             from .v2018_08_01_preview.operations import Operations as OperationClass
-        elif api_version == '2018-08-01-preview':
+        elif api_version == '2019-02-01-preview':
             from .v2019_02_01_preview.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
