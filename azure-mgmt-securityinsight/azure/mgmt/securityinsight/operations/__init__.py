@@ -10,9 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .scheduled_alert_rules_operations import ScheduledAlertRulesOperations
+from .alert_rules_operations import AlertRulesOperations
 
 __all__ = [
     'Operations',
-    'ScheduledAlertRulesOperations',
+    'AlertRulesOperations',
 ]

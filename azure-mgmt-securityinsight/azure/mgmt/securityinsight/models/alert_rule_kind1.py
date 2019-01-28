@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ScheduledAlertRulePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ScheduledAlertRule <azure.mgmt.securityinsight.models.ScheduledAlertRule>` object
+class AlertRuleKind1(Model):
+    """Describes an Azure resource with kind.
+
+    :param kind: The kind of the alert rule. Possible values include:
+     'Scheduled'
+    :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ScheduledAlertRule]'}
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ScheduledAlertRulePaged, self).__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super(AlertRuleKind1, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)

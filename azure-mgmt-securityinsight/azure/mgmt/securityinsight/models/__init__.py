@@ -12,27 +12,35 @@
 try:
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
+    from .alert_rule_py3 import AlertRule
+    from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
+    from .alert_rule import AlertRule
+    from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
     from .resource import Resource
 from .operation_paged import OperationPaged
-from .scheduled_alert_rule_paged import ScheduledAlertRulePaged
+from .alert_rule_paged import AlertRulePaged
 from .security_insights_enums import (
+    AlertRuleKind,
     Severity,
-    AlertTriggerOperator,
+    TriggerOperator,
 )
 
 __all__ = [
     'OperationDisplay',
     'Operation',
+    'AlertRule',
+    'AlertRuleKind1',
     'ScheduledAlertRule',
     'Resource',
     'OperationPaged',
-    'ScheduledAlertRulePaged',
+    'AlertRulePaged',
+    'AlertRuleKind',
     'Severity',
-    'AlertTriggerOperator',
+    'TriggerOperator',
 ]

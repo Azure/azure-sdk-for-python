@@ -9,25 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.paging import Paged
 
 
-class AlertRuleKind(str, Enum):
+class AlertRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AlertRule <azure.mgmt.securityinsight.models.AlertRule>` object
+    """
 
-    scheduled = "Scheduled"
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertRule]'}
+    }
 
+    def __init__(self, *args, **kwargs):
 
-class Severity(str, Enum):
-
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-    informational = "Informational"
-
-
-class TriggerOperator(str, Enum):
-
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
-    not_equal = "NotEqual"
+        super(AlertRulePaged, self).__init__(*args, **kwargs)

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .alert_rule import AlertRule
 
 
-class ScheduledAlertRule(Resource):
-    """Alert rule.
+class ScheduledAlertRule(AlertRule):
+    """Represents scheduled alert rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,6 +26,9 @@ class ScheduledAlertRule(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param kind: The kind of the alert rule. Possible values include:
+     'Scheduled'
+    :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
     :param etag: Etag of the alert rule.
     :type etag: str
     :param rule_name: Required. The name for alerts created by this alert
@@ -47,14 +50,14 @@ class ScheduledAlertRule(Resource):
     :param query_period: Required. The period (in ISO 8601 duration format)
      that this alert rule looks at.
     :type query_period: timedelta
-    :param alert_trigger_operator: Required. The operation against the
-     threshold that triggers alert rule. Possible values include:
-     'GreaterThan', 'LessThan', 'Equal', 'NotEqual'
-    :type alert_trigger_operator: str or
-     ~azure.mgmt.securityinsight.models.AlertTriggerOperator
-    :param alert_trigger_threshold: Required. The threshold triggers this
-     alert rule.
-    :type alert_trigger_threshold: int
+    :param trigger_operator: Required. The operation against the threshold
+     that triggers alert rule. Possible values include: 'GreaterThan',
+     'LessThan', 'Equal', 'NotEqual'
+    :type trigger_operator: str or
+     ~azure.mgmt.securityinsight.models.TriggerOperator
+    :param trigger_threshold: Required. The threshold triggers this alert
+     rule.
+    :type trigger_threshold: int
     :param suppression_enabled: Required. Determines whether the suppression
      for this alert rule is enabled or disabled.
     :type suppression_enabled: bool
@@ -76,8 +79,8 @@ class ScheduledAlertRule(Resource):
         'query': {'required': True},
         'query_frequency': {'required': True},
         'query_period': {'required': True},
-        'alert_trigger_operator': {'required': True},
-        'alert_trigger_threshold': {'required': True},
+        'trigger_operator': {'required': True},
+        'trigger_threshold': {'required': True},
         'suppression_enabled': {'required': True},
         'suppression_duration': {'required': True},
         'last_modified_utc': {'readonly': True},
@@ -87,6 +90,7 @@ class ScheduledAlertRule(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'rule_name': {'key': 'properties.ruleName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -95,8 +99,8 @@ class ScheduledAlertRule(Resource):
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},
         'query_period': {'key': 'properties.queryPeriod', 'type': 'duration'},
-        'alert_trigger_operator': {'key': 'properties.alertTriggerOperator', 'type': 'AlertTriggerOperator'},
-        'alert_trigger_threshold': {'key': 'properties.alertTriggerThreshold', 'type': 'int'},
+        'trigger_operator': {'key': 'properties.triggerOperator', 'type': 'TriggerOperator'},
+        'trigger_threshold': {'key': 'properties.triggerThreshold', 'type': 'int'},
         'suppression_enabled': {'key': 'properties.suppressionEnabled', 'type': 'bool'},
         'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'duration'},
         'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
@@ -104,7 +108,6 @@ class ScheduledAlertRule(Resource):
 
     def __init__(self, **kwargs):
         super(ScheduledAlertRule, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
         self.rule_name = kwargs.get('rule_name', None)
         self.description = kwargs.get('description', None)
         self.severity = kwargs.get('severity', None)
@@ -112,8 +115,8 @@ class ScheduledAlertRule(Resource):
         self.query = kwargs.get('query', None)
         self.query_frequency = kwargs.get('query_frequency', None)
         self.query_period = kwargs.get('query_period', None)
-        self.alert_trigger_operator = kwargs.get('alert_trigger_operator', None)
-        self.alert_trigger_threshold = kwargs.get('alert_trigger_threshold', None)
+        self.trigger_operator = kwargs.get('trigger_operator', None)
+        self.trigger_threshold = kwargs.get('trigger_threshold', None)
         self.suppression_enabled = kwargs.get('suppression_enabled', None)
         self.suppression_duration = kwargs.get('suppression_duration', None)
         self.last_modified_utc = None

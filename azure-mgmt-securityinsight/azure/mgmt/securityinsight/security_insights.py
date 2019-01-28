@@ -14,7 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
-from .operations.scheduled_alert_rules_operations import ScheduledAlertRulesOperations
+from .operations.alert_rules_operations import AlertRulesOperations
 from . import models
 
 
@@ -58,8 +58,8 @@ class SecurityInsights(SDKClient):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.securityinsight.operations.Operations
-    :ivar scheduled_alert_rules: ScheduledAlertRules operations
-    :vartype scheduled_alert_rules: azure.mgmt.securityinsight.operations.ScheduledAlertRulesOperations
+    :ivar alert_rules: AlertRules operations
+    :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,5 +82,5 @@ class SecurityInsights(SDKClient):
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.scheduled_alert_rules = ScheduledAlertRulesOperations(
+        self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
