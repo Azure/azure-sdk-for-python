@@ -66,6 +66,9 @@ class ManagedCluster(Resource):
     :param aad_profile: Profile of Azure Active Directory configuration.
     :type aad_profile:
      ~azure.mgmt.containerservice.v2018_08_01_preview.models.ManagedClusterAADProfile
+    :param api_server_authorized_ip_ranges: Authorized IP Ranges to kubernetes
+     API server.
+    :type api_server_authorized_ip_ranges: list[str]
     """
 
     _validation = {
@@ -96,9 +99,10 @@ class ManagedCluster(Resource):
         'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
+        'api_server_authorized_ip_ranges': {'key': 'properties.apiServerAuthorizedIPRanges', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, kubernetes_version: str=None, dns_prefix: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, addon_profiles=None, enable_rbac: bool=None, network_profile=None, aad_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, kubernetes_version: str=None, dns_prefix: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, addon_profiles=None, enable_rbac: bool=None, network_profile=None, aad_profile=None, api_server_authorized_ip_ranges=None, **kwargs) -> None:
         super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.kubernetes_version = kubernetes_version
@@ -112,3 +116,4 @@ class ManagedCluster(Resource):
         self.enable_rbac = enable_rbac
         self.network_profile = network_profile
         self.aad_profile = aad_profile
+        self.api_server_authorized_ip_ranges = api_server_authorized_ip_ranges
