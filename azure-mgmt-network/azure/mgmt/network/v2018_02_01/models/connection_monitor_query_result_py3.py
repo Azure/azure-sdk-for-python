@@ -16,7 +16,7 @@ class ConnectionMonitorQueryResult(Model):
     """List of connection states snaphots.
 
     :param source_status: Status of connection monitor source. Possible values
-     include: 'Unknown', 'Active', 'Inactive'
+     include: 'Uknown', 'Active', 'Inactive'
     :type source_status: str or
      ~azure.mgmt.network.v2018_02_01.models.ConnectionMonitorSourceStatus
     :param states: Information about connection states.
