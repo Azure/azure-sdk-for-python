@@ -14,6 +14,7 @@ try:
     from .operation_py3 import Operation
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
+    from .scheduled_alert_rule_properties_py3 import ScheduledAlertRuleProperties
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
@@ -21,6 +22,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
+    from .scheduled_alert_rule_properties import ScheduledAlertRuleProperties
     from .scheduled_alert_rule import ScheduledAlertRule
     from .resource import Resource
 from .operation_paged import OperationPaged
@@ -36,6 +38,7 @@ __all__ = [
     'Operation',
     'AlertRule',
     'AlertRuleKind1',
+    'ScheduledAlertRuleProperties',
     'ScheduledAlertRule',
     'Resource',
     'OperationPaged',
