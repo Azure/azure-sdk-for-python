@@ -164,8 +164,24 @@ except HTTPFailure as e:
 Retrieve an existing container from the database:
 
 ```Python
-database = client.get_database(database_name)
-container = database.get_container(container_name)
+from PIL import Image
+import io
+
+width=50
+height=50
+url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
+
+try:
+    thumbnail = client.generate_thumbnail(width, height, url)
+
+    for x in thumbnail:
+        image = Image.open(io.BytesIO(x))
+    image.save('thumbnail.jpg')
+
+
+except HTTPFailure as e:
+    if e.status_code != 409:
+        raise
 ```
 
 ### Get subject domain list
