@@ -2,6 +2,7 @@
 from __future__ import print_function
 import argparse
 import ast
+from datetime import datetime
 import glob
 import io
 import os
@@ -160,7 +161,7 @@ if __name__ == '__main__':
     ''')
     parser.add_argument('--verbose', help='verbose output', action='store_true')
     parser.add_argument('--freeze', help='freeze dependencies after analyzing (otherwise, validate dependencies against frozen list)', action='store_true')
-    parser.add_argument('--out', metavar='FILE', help='write log output to FILE in addition to stdout')
+    parser.add_argument('--out', metavar='FILE', help='write HTML-formatted report to FILE')
     parser.add_argument('--wheeldir', metavar='DIR', help='analyze wheels in DIR rather than source packages in this repository')
     args = parser.parse_args()
 
@@ -281,13 +282,15 @@ if __name__ == '__main__':
     if args.out:
         render_report(args.out, {
             'changed_reqs': changed_reqs,
+            'curtime': datetime.utcnow(),
             'dependencies': dependencies,
+            'env': os.environ,
             'frozen': frozen,
             'inconsistent': inconsistent,
             'missing_reqs': missing_reqs,
             'new_reqs': new_reqs,
             'packages': packages,
-            'repo_name': 'azure-sdk-for-python',
+            'repo_name': 'azure-sdk-for-python'
         })
 
     if exitcode == 0:

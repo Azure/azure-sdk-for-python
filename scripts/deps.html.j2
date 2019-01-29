@@ -1,3 +1,11 @@
+{% set branch    = env.get('SYSTEM_PULLREQUEST_SOURCEBRANCH') if env.get('SYSTEM_PULLREQUEST_SOURCEBRANCH') else env.get('BUILD_SOURCEBRANCHNAME') %}
+{% set build     = env.get('BUILD_BUILDNUMBER') %}
+{% set build_url = '%s%s/_build/results?buildId=%s' % (env.get('SYSTEM_TEAMFOUNDATIONCOLLECTIONURI'), env.get('SYSTEM_TEAMPROJECT'), env.get('BUILD_BUILDID')) %}
+{% set commit    = env.get('BUILD_SOURCEVERSION') %}
+{% set isfork    = env.get('SYSTEM_PULLREQUEST_ISFORK') == 'True' %}
+{% set rel_url   = env.get('RELEASE_RELEASEWEBURL') %}
+{% set release   = env.get('RELEASE_RELEASENAME') %}
+{% set repo      = env.get('BUILD_REPOSITORY_NAME') if isfork else ('Azure/' + repo_name) %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -93,6 +101,23 @@
   <body>
     <center>
       <h1>{{ repo_name|capitalize }} Dependency Report</h1>
+      <h3>
+        Generated at {{ curtime.replace(microsecond=0).isoformat() }}Z
+        {% if release %}
+        for release <a href="{{ rel_url }}">{{ release }}</a>
+        {% elif build %}
+        for build <a href="{{ build_url }}">{{ build }}</a>
+        {% if branch %}
+        <br/>from branch <a href="https://github.com/{{ repo }}/tree/{{ branch }}">{{ branch }}</a>
+        {% if isfork %}
+        in repo <a href="https://github.com/{{ repo }}">{{ repo }}</a>
+        {% endif %}
+        {% endif %}
+        {% if commit %}
+        (<a href="https://github.com/{{ repo }}/commit/{{ commit }}">{{ commit[:7] }}</a>)
+        {% endif %}
+        {% endif %}
+      </h3>
       <p>This report scanned the <a href="#packages">packages</a> listed in the first table below.<br/>
          Package <a href="#dependencies">dependencies</a> have been analyzed to determine if any packages declare inconsistent dependency versions.<br/>
          Declared dependencies have then been validated against those in the <a href="#lockfile">lockfile</a> (if present).</p>
