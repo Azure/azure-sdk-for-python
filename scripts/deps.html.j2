@@ -140,6 +140,7 @@
     <br/><br/><hr/><br/><br/>
     <a name="dependencies"/>
     {% for dep_name, requirements in dependencies|dictsort %}
+    <a name="dep_{{ dep_name }}"/>
     <table>
       <thead>
         {% if loop.index == 1 %}
@@ -179,7 +180,7 @@
       <tbody>
       {% for name, versions in frozen|dictsort %}
       <tr>
-        <td>{{ name }}</td>
+        <td><a href="#dep_{{ name }}">{{ name }}</a></td>
         <td>{{ versions[0] if versions[0] else '(any)' }}</td>
         {% if name in missing_reqs %}
         <td>⚠️ No packages reference this dependency</td>
@@ -215,7 +216,7 @@
         {% if loop.index == 1 %}
         <tr><th colspan="2" class="inconsistent"><strong>Dependencies Missing from Lockfile</strong></th></tr>
         {% endif %}
-        <tr><th colspan="2" class="inconsistent"><strong>Missing Dependency:</strong> {{ name }}</th></tr>
+        <tr><th colspan="2" class="inconsistent"><strong>Missing Dependency:</strong> <a href="#dep_{{ name }}">{{ name }}</a></th></tr>
       </thead>
       <tbody>
       {% for requirement, packages in dependencies[name]|dictsort %}
