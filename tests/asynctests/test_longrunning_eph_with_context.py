@@ -56,6 +56,7 @@ class EventProcessor(AbstractEventProcessor):
         Init Event processor
         """
         super().__init__(params)
+        self._params = params
         self._msg_counter = 0
 
     async def open_async(self, context):
@@ -63,7 +64,6 @@ class EventProcessor(AbstractEventProcessor):
         Called by processor host to initialize the event processor.
         """
         assert hasattr(context, 'event_processor_context')
-        assert context.event_processor_context is None
         logger.info("Connection established {}. State {}".format(
             context.partition_id, context.event_processor_context))
 
@@ -89,13 +89,18 @@ class EventProcessor(AbstractEventProcessor):
         :param messages: The events to be processed.
         :type messages: list[~azure.eventhub.common.EventData]
         """
-        assert context.event_processor_context is None
         print("Processing id {}, offset {}, sq_number {}, state {})".format(
             context.partition_id,
             context.offset,
             context.sequence_number,
             context.event_processor_context))
-        await context.checkpoint_async()
+        assert hasattr(context, 'event_processor_context')
+        if self._msg_counter > 1:
+            assert context.event_processor_context == json.dumps(
+                {"Sequence": self._msg_counter, "Data": self._params})
+        self._msg_counter += 1
+        await context.checkpoint_async(
+            json.dumps({"Sequence": self._msg_counter, "Data": self._params}))
 
     async def process_error_async(self, context, error):
         """
@@ -135,12 +140,12 @@ async def pump(pid, sender, duration):
     print("{}: Final Sent total {}".format(pid, total))
 
 
-def test_long_running_eph(live_eventhub):
+def test_long_running_context_eph(live_eventhub):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--storage-account", help="Storage account name", default=os.environ.get('AZURE_STORAGE_ACCOUNT'))
     parser.add_argument("--storage-key", help="Storage account access key", default=os.environ.get('AZURE_STORAGE_ACCESS_KEY'))
-    parser.add_argument("--container", help="Lease container name", default="nocontextleases")
+    parser.add_argument("--container", help="Lease container name", default="contextleases")
     parser.add_argument("--eventhub", help="Name of EventHub", default=live_eventhub['event_hub'])
     parser.add_argument("--namespace", help="Namespace of EventHub", default=live_eventhub['namespace'])
     parser.add_argument("--suffix", help="Namespace of EventHub", default="servicebus.windows.net")

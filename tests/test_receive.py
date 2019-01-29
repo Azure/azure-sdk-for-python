@@ -12,7 +12,8 @@ from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
 
 
-def test_receive_end_of_stream(connection_str, senders):
+def test_receive_end_of_stream(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:
@@ -32,7 +33,8 @@ def test_receive_end_of_stream(connection_str, senders):
         client.stop()
 
 
-def test_receive_with_offset_sync(connection_str, senders):
+def test_receive_with_offset_sync(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     partitions = client.get_eventhub_info()
     assert partitions["partition_ids"] == ["0", "1"]
@@ -65,7 +67,8 @@ def test_receive_with_offset_sync(connection_str, senders):
         client.stop()
 
 
-def test_receive_with_inclusive_offset(connection_str, senders):
+def test_receive_with_inclusive_offset(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:
@@ -92,7 +95,8 @@ def test_receive_with_inclusive_offset(connection_str, senders):
         client.stop()
 
 
-def test_receive_with_datetime(connection_str, senders):
+def test_receive_with_datetime(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     partitions = client.get_eventhub_info()
     assert partitions["partition_ids"] == ["0", "1"]
@@ -124,7 +128,8 @@ def test_receive_with_datetime(connection_str, senders):
         client.stop()
 
 
-def test_receive_with_sequence_no(connection_str, senders):
+def test_receive_with_sequence_no(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:
@@ -152,7 +157,8 @@ def test_receive_with_sequence_no(connection_str, senders):
         client.stop()
 
 
-def test_receive_with_inclusive_sequence_no(connection_str, senders):
+def test_receive_with_inclusive_sequence_no(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:
@@ -175,7 +181,8 @@ def test_receive_with_inclusive_sequence_no(connection_str, senders):
         client.stop()
 
 
-def test_receive_batch(connection_str, senders):
+def test_receive_batch(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", prefetch=500, offset=Offset('@latest'))
     try:

@@ -10,7 +10,6 @@ import logging
 import concurrent.futures
 import functools
 import asyncio
-
 import requests
 
 from azure.storage.blob import BlockBlobService
@@ -269,11 +268,12 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         try:
             return_lease = AzureBlobLease()
             return_lease.partition_id = partition_id
-            json_lease = json.dumps(return_lease.serializable())
+            serializable_lease = return_lease.serializable()
+            json_lease = json.dumps(serializable_lease)
             _logger.info("Creating Lease %r %r %r",
                          self.lease_container_name,
                          partition_id,
-                         json_lease)
+                         json.dumps({k:v for k, v in serializable_lease.items() if k != 'event_processor_context'}))
             await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(

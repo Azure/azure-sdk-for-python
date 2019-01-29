@@ -17,6 +17,7 @@ from uamqp import (
     SendClientAsync,
     ReceiveClientAsync)
 
+from azure.eventhub.common import parse_sas_token
 from azure.eventhub import (
     Sender,
     Receiver,
@@ -37,18 +38,28 @@ class EventHubClientAsync(EventHubClient):
     sending events to and receiving events from the Azure Event Hubs service.
     """
 
-    def _create_auth(self, username=None, password=None):  # pylint: disable=no-self-use
+    def _create_auth(self, username=None, password=None):
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
 
-        :param auth_uri: The URI to authenticate against.
-        :type auth_uri: str
         :param username: The name of the shared access policy.
         :type username: str
         :param password: The shared access key.
         :type password: str
         """
+        if self.sas_token:
+            token = self.sas_token() if callable(self.sas_token) else self.sas_token
+            try:
+                expiry = int(parse_sas_token(token)['se'])
+            except (KeyError, TypeError, IndexError):
+                raise ValueError("Supplied SAS token has no valid expiry value.")
+            return authentication.SASTokenAsync(
+                self.auth_uri, self.auth_uri, token,
+                expires_at=expiry,
+                timeout=self.auth_timeout,
+                http_proxy=self.http_proxy)
+
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:

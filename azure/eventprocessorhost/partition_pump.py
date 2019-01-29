@@ -48,6 +48,7 @@ class PartitionPump():
         """
         if self.partition_context:
             self.partition_context.lease = new_lease
+            self.partition_context.event_processor_context = new_lease.event_processor_context
 
     async def open_async(self):
         """
@@ -59,6 +60,7 @@ class PartitionPump():
                                                   self.host.eh_config.consumer_group,
                                                   self.loop)
         self.partition_context.lease = self.lease
+        self.partition_context.event_processor_context = self.lease.event_processor_context
         self.processor = self.host.event_processor(self.host.event_processor_params)
         try:
             await self.processor.open_async(self.partition_context)

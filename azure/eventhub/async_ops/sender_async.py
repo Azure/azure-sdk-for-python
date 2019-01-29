@@ -119,6 +119,11 @@ class AsyncSender(Sender):
             await self._handler.open_async()
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
+        except errors.TokenExpired as shutdown:
+            log.info("AsyncSender disconnected due to token expiry. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
@@ -134,6 +139,15 @@ class AsyncSender(Sender):
                 await self.reconnect_async()
             else:
                 log.info("AsyncSender reconnect failed. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+        except errors.AMQPConnectionError as shutdown:
+            if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
+                log.info("AsyncSender couldn't authenticate. Attempting reconnect.")
+                await self.reconnect_async()
+            else:
+                log.info("AsyncSender connection error (%r). Shutting down.", e)
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close_async(exception=error)
                 raise error
@@ -211,6 +225,9 @@ class AsyncSender(Sender):
             await self._handler.send_message_async(event_data.message)
             if self._outcome != constants.MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("AsyncSender disconnected due to token error. Attempting reconnect.")
+            await self.reconnect_async()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
@@ -247,6 +264,9 @@ class AsyncSender(Sender):
             raise ValueError("Unable to send until client has been started.")
         try:
             await self._handler.wait_async()
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("AsyncSender disconnected due to token error. Attempting reconnect.")
+            await self.reconnect_async()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")

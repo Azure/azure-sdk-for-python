@@ -3,14 +3,28 @@
 Release History
 ===============
 
-1.2.0
-+++++
+1.3.0 (2019-01-29)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Added support for auto reconnect on token expiration and other auth errors (issue #89).
+
+**Features**
+
+- Added ability to create ServiceBusClient from an existing SAS auth token, including
+  provding a function to auto-renew that token on expiry.
+- Added support for storing a custom EPH context value in checkpoint (PR #84, thanks @konstantinmiller)
+
+
+1.2.0 (2018-11-29)
+++++++++++++++++++
 
 - Support for Python 2.7 in azure.eventhub module (azure.eventprocessorhost will not support Python 2.7).
 - Parse EventData.enqueued_time as a UTC timestamp (issue #72, thanks @vjrantal)
 
 
-1.1.1 (2019-10-03)
+1.1.1 (2018-10-03)
 ++++++++++++++++++
 
 - Fixed bug in Azure namespace package.

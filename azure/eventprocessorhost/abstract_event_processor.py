@@ -5,6 +5,7 @@
 
 from abc import ABC, abstractmethod
 
+
 class AbstractEventProcessor(ABC):
     """
     Abstract that must be extended by event processor classes.

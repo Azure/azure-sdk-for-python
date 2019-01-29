@@ -18,8 +18,8 @@ from azure.eventhub import (
 
 
 @pytest.mark.asyncio
-async def test_send_with_long_interval_async(connection_str, receivers):
-    #pytest.skip("long running")
+async def test_send_with_long_interval_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
     sender = client.add_async_sender()
     try:
@@ -48,8 +48,8 @@ def pump(receiver):
     return messages
 
 @pytest.mark.asyncio
-async def test_send_with_forced_conn_close_async(connection_str, receivers):
-    #pytest.skip("long running")
+async def test_send_with_forced_conn_close_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
     sender = client.add_async_sender()
     try:
@@ -73,7 +73,8 @@ async def test_send_with_forced_conn_close_async(connection_str, receivers):
     assert list(received[0].body)[0] == b"A single event"
 
 
-# def test_send_with_forced_link_detach(connection_str, receivers):
+# def test_send_with_forced_link_detach(connstr_receivers):
+#     connection_str, receivers = connstr_receivers
 #     client = EventHubClient.from_connection_string(connection_str, debug=True)
 #     sender = client.add_sender()
 #     size = 20 * 1024

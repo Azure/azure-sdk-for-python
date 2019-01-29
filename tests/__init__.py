@@ -9,7 +9,7 @@ from logging.handlers import RotatingFileHandler
 
 
 def get_logger(filename, level=logging.INFO):
-    azure_logger = logging.getLogger("azure")
+    azure_logger = logging.getLogger("azure.eventhub")
     azure_logger.setLevel(level)
     uamqp_logger = logging.getLogger("uamqp")
     uamqp_logger.setLevel(logging.INFO)
@@ -17,8 +17,10 @@ def get_logger(filename, level=logging.INFO):
     formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     console_handler = logging.StreamHandler(stream=sys.stdout)
     console_handler.setFormatter(formatter)
-    azure_logger.addHandler(console_handler)
-    uamqp_logger.addHandler(console_handler)
+    if not azure_logger.handlers:
+        azure_logger.addHandler(console_handler)
+    if not uamqp_logger.handlers:
+        uamqp_logger.addHandler(console_handler)
 
     if filename:
         file_handler = RotatingFileHandler(filename, maxBytes=5*1024*1024, backupCount=2)

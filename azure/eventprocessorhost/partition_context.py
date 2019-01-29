@@ -23,6 +23,7 @@ class PartitionContext:
         self.offset = "-1"
         self.sequence_number = 0
         self.lease = None
+        self.event_processor_context = None
         self.pump_loop = pump_loop or asyncio.get_event_loop()
 
     def set_offset_and_sequence_number(self, event_data):
@@ -59,21 +60,30 @@ class PartitionContext:
                      self.host.guid, self.partition_id, self.offset, self.sequence_number)
         return self.offset
 
-    async def checkpoint_async(self):
+    async def checkpoint_async(self, event_processor_context=None):
         """
         Generates a checkpoint for the partition using the curren offset and sequenceNumber for
         and persists to the checkpoint manager.
+
+        :param event_processor_context An optional custom state value for the Event Processor.
+         This data must be in a JSON serializable format.
+        :type event_processor_context: str or dict
         """
         captured_checkpoint = Checkpoint(self.partition_id, self.offset, self.sequence_number)
-        await self.persist_checkpoint_async(captured_checkpoint)
+        await self.persist_checkpoint_async(captured_checkpoint, event_processor_context)
+        self.event_processor_context = event_processor_context
 
-    async def checkpoint_async_event_data(self, event_data):
+    async def checkpoint_async_event_data(self, event_data, event_processor_context=None):
         """
         Stores the offset and sequenceNumber from the provided received EventData instance,
         then writes those values to the checkpoint store via the checkpoint manager.
+        Optionally stores the state of the Event Processor along the checkpoint.
 
         :param event_data: A received EventData with valid offset and sequenceNumber.
         :type event_data: ~azure.eventhub.common.EventData
+        :param event_processor_context An optional custom state value for the Event Processor.
+         This data must be in a JSON serializable format.
+        :type event_processor_context: str or dict
         :raises: ValueError if suplied event_data is None.
         :raises: ValueError if the sequenceNumber is less than the last checkpointed value.
         """
@@ -85,7 +95,9 @@ class PartitionContext:
 
         await self.persist_checkpoint_async(Checkpoint(self.partition_id,
                                                        event_data.offset.value,
-                                                       event_data.sequence_number))
+                                                       event_data.sequence_number),
+                                            event_processor_context)
+        self.event_processor_context = event_processor_context
 
     def to_string(self):
         """
@@ -99,12 +111,15 @@ class PartitionContext:
                                                    self.partition_id,
                                                    self.sequence_number)
 
-    async def persist_checkpoint_async(self, checkpoint):
+    async def persist_checkpoint_async(self, checkpoint, event_processor_context=None):
         """
-        Persists the checkpoint.
+        Persists the checkpoint, and - optionally - the state of the Event Processor.
 
         :param checkpoint: The checkpoint to persist.
         :type checkpoint: ~azure.eventprocessorhost.checkpoint.Checkpoint
+        :param event_processor_context An optional custom state value for the Event Processor.
+         This data must be in a JSON serializable format.
+        :type event_processor_context: str or dict
         """
         _logger.debug("PartitionPumpCheckpointStart %r %r %r %r",
                       self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number)
@@ -115,6 +130,7 @@ class PartitionContext:
                     _logger.info("persisting checkpoint %r", checkpoint.__dict__)
                     await self.host.storage_manager.create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
+                self.lease.event_processor_context = event_processor_context
                 if not await self.host.storage_manager.update_checkpoint_async(self.lease, checkpoint):
                     _logger.error("Failed to persist checkpoint for partition: %r", self.partition_id)
                     raise Exception("failed to persist checkpoint")

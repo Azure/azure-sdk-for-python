@@ -8,6 +8,7 @@ import os
 import pytest
 import logging
 import sys
+import uuid
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -32,6 +33,29 @@ from azure.eventhub import EventHubClient, Receiver, Offset
 
 log = get_logger(None, logging.DEBUG)
 
+
+def create_eventhub(eventhub_config, client=None):
+    from azure.servicebus.control_client import ServiceBusService, EventHub
+    hub_name = str(uuid.uuid4())
+    hub_value = EventHub(partition_count=2)
+    client = client or ServiceBusService(
+        service_namespace=eventhub_config['namespace'],
+        shared_access_key_name=eventhub_config['key_name'],
+        shared_access_key_value=eventhub_config['access_key'])
+    if client.create_event_hub(hub_name, hub=hub_value, fail_on_exist=True):
+        return hub_name
+    raise ValueError("EventHub creation failed.")
+
+
+def cleanup_eventhub(servicebus_config, hub_name, client=None):
+    from azure.servicebus.control_client import ServiceBusService
+    client = client or ServiceBusService(
+        service_namespace=eventhub_config['namespace'],
+        shared_access_key_name=eventhub_config['key_name'],
+        shared_access_key_value=eventhub_config['access_key'])
+    client.delete_event_hub(hub_name)
+
+
 @pytest.fixture()
 def live_eventhub_config():
     try:
@@ -40,6 +64,7 @@ def live_eventhub_config():
         config['event_hub'] = os.environ['EVENT_HUB_NAME']
         config['key_name'] = os.environ['EVENT_HUB_SAS_POLICY']
         config['access_key'] = os.environ['EVENT_HUB_SAS_KEY']
+        config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
         config['consumer_group'] = "$Default"
         config['partition'] = "0"
     except KeyError:
@@ -49,38 +74,53 @@ def live_eventhub_config():
 
 
 @pytest.fixture()
-def connection_str():
+def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
+    from azure.servicebus.control_client import ServiceBusService
+    client = ServiceBusService(
+        service_namespace=live_eventhub_config['namespace'],
+        shared_access_key_name=live_eventhub_config['key_name'],
+        shared_access_key_value=live_eventhub_config['access_key'])
     try:
-        return os.environ['EVENT_HUB_CONNECTION_STR']
-    except KeyError:
-        pytest.skip("No EventHub connection string found.")
+        hub_name = create_eventhub(live_eventhub_config, client=client)
+        print("Created EventHub {}".format(hub_name))
+        live_eventhub_config['event_hub'] = hub_name
+        yield live_eventhub_config
+    finally:
+        cleanup_eventhub(live_eventhub_config, hub_name, client=client)
+        print("Deleted EventHub {}".format(hub_name))
 
 
 @pytest.fixture()
-def invalid_hostname():
-    try:
-        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
-        return conn_str.replace("Endpoint=sb://", "Endpoint=sb://invalid.")
-    except KeyError:
-        pytest.skip("No EventHub connection string found.")
+def connection_str(live_eventhub):
+    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+        live_eventhub['hostname'],
+        live_eventhub['key_name'],
+        live_eventhub['access_key'],
+        live_eventhub['event_hub'])
 
 
 @pytest.fixture()
-def invalid_key():
-    try:
-        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
-        return conn_str.replace("SharedAccessKey=", "SharedAccessKey=invalid")
-    except KeyError:
-        pytest.skip("No EventHub connection string found.")
+def invalid_hostname(live_eventhub_config):
+    return "Endpoint=sb://invalid123.servicebus.windows.net/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+        live_eventhub_config['key_name'],
+        live_eventhub_config['access_key'],
+        live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
-def invalid_policy():
-    try:
-        conn_str = os.environ['EVENT_HUB_CONNECTION_STR']
-        return conn_str.replace("SharedAccessKeyName=", "SharedAccessKeyName=invalid")
-    except KeyError:
-        pytest.skip("No EventHub connection string found.")
+def invalid_key(live_eventhub_config):
+    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey=invalid;EntityPath={}".format(
+        live_eventhub_config['hostname'],
+        live_eventhub_config['key_name'],
+        live_eventhub_config['event_hub'])
+
+
+@pytest.fixture()
+def invalid_policy(live_eventhub_config):
+    return "Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey={};EntityPath={}".format(
+        live_eventhub_config['hostname'],
+        live_eventhub_config['access_key'],
+        live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
@@ -100,7 +140,7 @@ def device_id():
 
 
 @pytest.fixture()
-def receivers(connection_str):
+def connstr_receivers(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
@@ -114,13 +154,13 @@ def receivers(connection_str):
 
     for r in receivers:
         r.receive(timeout=1)
-    yield receivers
+    yield connection_str, receivers
 
     client.stop()
 
 
 @pytest.fixture()
-def senders(connection_str):
+def connstr_senders(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=True)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
@@ -130,20 +170,26 @@ def senders(connection_str):
         senders.append(client.add_sender(partition=p))
 
     client.run()
-    yield senders
+    yield connection_str, senders
     client.stop()
 
 
 @pytest.fixture()
-def storage_clm():
+def storage_clm(eph):
     try:
+        container = str(uuid.uuid4())
         storage_clm = AzureStorageCheckpointLeaseManager(
             os.environ['AZURE_STORAGE_ACCOUNT'],
             os.environ['AZURE_STORAGE_ACCESS_KEY'],
-            "lease")
-        return storage_clm
+            container)
     except KeyError:
         pytest.skip("Live Storage configuration not found.")
+    try:
+        storage_clm.initialize(eph)
+        storage_clm.storage_client.create_container(container)
+        yield storage_clm
+    finally:
+        storage_clm.storage_client.delete_container(container)
 
 
 @pytest.fixture()

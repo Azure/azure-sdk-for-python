@@ -22,7 +22,7 @@ from azure.eventhub import EventHubClientAsync
 
 
 def get_logger(filename, level=logging.INFO):
-    azure_logger = logging.getLogger("azure")
+    azure_logger = logging.getLogger("azure.eventhub")
     azure_logger.setLevel(level)
     uamqp_logger = logging.getLogger("uamqp")
     uamqp_logger.setLevel(logging.INFO)
@@ -30,8 +30,10 @@ def get_logger(filename, level=logging.INFO):
     formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     console_handler = logging.StreamHandler(stream=sys.stdout)
     console_handler.setFormatter(formatter)
-    azure_logger.addHandler(console_handler)
-    uamqp_logger.addHandler(console_handler)
+    if not azure_logger.handlers:
+        azure_logger.addHandler(console_handler)
+    if not uamqp_logger.handlers:
+        uamqp_logger.addHandler(console_handler)
 
     if filename:
         file_handler = RotatingFileHandler(filename, maxBytes=20*1024*1024, backupCount=3)
@@ -79,13 +81,13 @@ async def pump(_pid, receiver, _args, _dl):
         raise
 
 
-def test_long_running_receive_async():
+def test_long_running_receive_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--consumer", help="Consumer group name", default="$default")
     parser.add_argument("--partitions", help="Comma seperated partition IDs")
     parser.add_argument("--offset", help="Starting offset", default="-1")
-    parser.add_argument("--conn-str", help="EventHub connection string", default=os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    parser.add_argument("--conn-str", help="EventHub connection string", default=connection_str)
     parser.add_argument("--eventhub", help="Name of EventHub")
     parser.add_argument("--address", help="Address URI to the EventHub entity")
     parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
@@ -130,4 +132,4 @@ def test_long_running_receive_async():
 
 
 if __name__ == '__main__':
-    test_long_running_receive_async()
+    test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR'))

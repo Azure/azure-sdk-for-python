@@ -24,7 +24,8 @@ from uamqp import constants
 from azure.eventhub import __version__
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
-from azure.eventhub.common import EventHubError
+from azure.eventhub.common import EventHubError, parse_sas_token
+
 
 log = logging.getLogger(__name__)
 
@@ -90,7 +91,9 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
     """
 
-    def __init__(self, address, username=None, password=None, debug=False, http_proxy=None, auth_timeout=60):
+    def __init__(
+            self, address, username=None, password=None, debug=False,
+            http_proxy=None, auth_timeout=60, sas_token=None):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -113,8 +116,13 @@ class EventHubClient(object):
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
+        :param sas_token: A SAS token or function that returns a SAS token. If a function is supplied,
+         it will be used to retrieve subsequent tokens in the case of token expiry. The function should
+         take no arguments.
+        :type sas_token: str or callable
         """
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
+        self.sas_token = sas_token
         self.address = urlparse(address)
         self.eh_name = self.address.path.lstrip('/')
         self.http_proxy = http_proxy
@@ -123,8 +131,8 @@ class EventHubClient(object):
         username = username or url_username
         url_password = unquote_plus(self.address.password) if self.address.password else None
         password = password or url_password
-        if not username or not password:
-            raise ValueError("Missing username and/or password.")
+        if (not username or not password) and not sas_token:
+            raise ValueError("Please supply either username and password, or a SAS token")
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self._auth_config = {'username': username, 'password': password}
         self.get_auth = functools.partial(self._create_auth)
@@ -136,9 +144,34 @@ class EventHubClient(object):
         log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
-    def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
+    def from_sas_token(cls, address, sas_token, eventhub=None, **kwargs):
+        """Create an EventHubClient from an existing auth token or token generator.
+
+        :param address: The Event Hub address URL
+        :type address: str
+        :param sas_token: A SAS token or function that returns a SAS token. If a function is supplied,
+         it will be used to retrieve subsequent tokens in the case of token expiry. The function should
+         take no arguments.
+        :type sas_token: str or callable
+        :param eventhub: The name of the EventHub, if not already included in the address URL.
+        :type eventhub: str
+        :param debug: Whether to output network trace logs to the logger. Default
+         is `False`.
+        :type debug: bool
+        :param http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present: 'username', 'password'.
+        :type http_proxy: dict[str, Any]
+        :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :type auth_timeout: int
         """
-        Create an EventHubClient from a connection string.
+        address = _build_uri(address, eventhub)
+        return cls(address, sas_token=sas_token, **kwargs)
+
+    @classmethod
+    def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
+        """Create an EventHubClient from a connection string.
 
         :param conn_str: The connection string.
         :type conn_str: str
@@ -196,13 +229,23 @@ class EventHubClient(object):
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
 
-        :param auth_uri: The URI to authenticate against.
-        :type auth_uri: str
         :param username: The name of the shared access policy.
         :type username: str
         :param password: The shared access key.
         :type password: str
         """
+        if self.sas_token:
+            token = self.sas_token() if callable(self.sas_token) else self.sas_token
+            try:
+                expiry = int(parse_sas_token(token)['se'])
+            except (KeyError, TypeError, IndexError):
+                raise ValueError("Supplied SAS token has no valid expiry value.")
+            return authentication.SASTokenAuth(
+                self.auth_uri, self.auth_uri, token,
+                expires_at=expiry,
+                timeout=self.auth_timeout,
+                http_proxy=self.http_proxy)
+
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:

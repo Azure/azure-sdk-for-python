@@ -112,21 +112,40 @@ class Sender(object):
             self._handler.open()
             self._handler.queue_message(*unsent_events)
             self._handler.wait()
+        except errors.TokenExpired as shutdown:
+            log.info("Sender disconnected due to token expiry. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender reconnect failed. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender reconnect failed. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+        except errors.AMQPConnectionError as shutdown:
+            if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
+                log.info("Sender couldn't authenticate. Attempting reconnect.")
+                self.reconnect()
+            else:
+                log.info("Sender connection error (%r). Shutting down.", e)
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Sender Reconnect failed: {}".format(e))
             self.close(exception=error)
             raise error
@@ -213,21 +232,29 @@ class Sender(object):
             error = EventHubError(str(failed), failed)
             self.close(exception=error)
             raise error
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("Sender disconnected due to token error. Attempting reconnect.")
+            self.reconnect()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Send failed: {}".format(e))
             self.close(exception=error)
             raise error
@@ -264,21 +291,29 @@ class Sender(object):
             raise ValueError("Unable to send until client has been started.")
         try:
             self._handler.wait()
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("Sender disconnected due to token error. Attempting reconnect.")
+            self.reconnect()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
                 self.reconnect()
             else:
+                log.info("Sender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except Exception as e:
+            log.info("Unexpected error occurred (%r).", e)
             raise EventHubError("Send failed: {}".format(e))
 
     def _on_outcome(self, outcome, condition):

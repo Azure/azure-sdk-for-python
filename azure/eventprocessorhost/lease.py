@@ -15,6 +15,7 @@ class Lease:
         self.owner = None
         self.token = None
         self.epoch = 0
+        self.event_processor_context = None
 
     def with_partition_id(self, partition_id):
         """
@@ -27,6 +28,7 @@ class Lease:
         self.owner = None
         self.token = None
         self.epoch = 0
+        self.event_processor_context = None
 
     def with_source(self, lease):
         """
@@ -39,6 +41,7 @@ class Lease:
         self.epoch = lease.epoch
         self.owner = lease.owner
         self.token = lease.token
+        self.event_processor_context = lease.event_processor_context
 
     async def is_expired(self):
         """

@@ -7,6 +7,7 @@
 import os
 import pytest
 import time
+import sys
 
 from azure import eventhub
 from azure.eventhub import (
@@ -16,7 +17,8 @@ from azure.eventhub import (
     EventHubClient)
 
 
-def test_send_with_invalid_hostname(invalid_hostname, receivers):
+def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
+    _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_hostname, debug=False)
     sender = client.add_sender()
     with pytest.raises(EventHubError):
@@ -30,7 +32,8 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
         client.run()
 
 
-def test_send_with_invalid_key(invalid_key, receivers):
+def test_send_with_invalid_key(invalid_key, connstr_receivers):
+    _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_key, debug=False)
     sender = client.add_sender()
     with pytest.raises(EventHubError):
@@ -44,7 +47,8 @@ def test_receive_with_invalid_key_sync(invalid_key):
         client.run()
 
 
-def test_send_with_invalid_policy(invalid_policy, receivers):
+def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
+    _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_policy, debug=False)
     sender = client.add_sender()
     with pytest.raises(EventHubError):
@@ -111,6 +115,8 @@ def test_send_to_invalid_partitions(connection_str):
 
 
 def test_send_too_large_message(connection_str):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - open issue regarding message size")
     client = EventHubClient.from_connection_string(connection_str, debug=True)
     sender = client.add_sender()
     try:
@@ -135,7 +141,8 @@ def test_send_null_body(connection_str):
         client.stop()
 
 
-def test_message_body_types(connection_str, senders):
+def test_message_body_types(connstr_senders):
+    connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
     try:

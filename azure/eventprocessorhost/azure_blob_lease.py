@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-import json
 import asyncio
+import json
 
 from azure.eventprocessorhost.lease import Lease
 
@@ -48,6 +48,7 @@ class AzureBlobLease(Lease):
         self.epoch = content["epoch"]
         self.offset = content["offset"]
         self.sequence_number = content["sequence_number"]
+        self.event_processor_context = content.get("event_processor_context")
 
     def with_source(self, lease):
         """
