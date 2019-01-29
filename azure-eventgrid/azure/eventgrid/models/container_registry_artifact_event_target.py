@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class ContainerRegistryArtifactEventTarget(Model):
     """The target of the event.
 
-    :param media_type: The MIME type of the referenced object.
+    :param media_type: The MIME type of the artifact.
     :type media_type: str
-    :param size: The number of bytes of the content.
+    :param size: The size in bytes of the artifact.
     :type size: long
-    :param digest: The digest of the helm chart.
+    :param digest: The digest of the artifact.
     :type digest: str
-    :param repository: The repository name.
+    :param repository: The repository name of the artifact.
     :type repository: str
-    :param tag: The tag name.
+    :param tag: The tag of the artifact.
     :type tag: str
-    :param name: The name of the helm chart.
+    :param name: The name of the artifact.
     :type name: str
-    :param version: The version of the helm chart.
+    :param version: The version of the artifact.
     :type version: str
     """
 
