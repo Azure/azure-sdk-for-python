@@ -40,11 +40,15 @@ try:
     from .device_connection_state_event_properties_py3 import DeviceConnectionStateEventProperties
     from .container_registry_image_pushed_event_data_py3 import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data_py3 import ContainerRegistryImageDeletedEventData
+    from .container_registry_chart_pushed_event_data_py3 import ContainerRegistryChartPushedEventData
+    from .container_registry_chart_deleted_event_data_py3 import ContainerRegistryChartDeletedEventData
     from .container_registry_event_target_py3 import ContainerRegistryEventTarget
     from .container_registry_event_request_py3 import ContainerRegistryEventRequest
     from .container_registry_event_actor_py3 import ContainerRegistryEventActor
     from .container_registry_event_source_py3 import ContainerRegistryEventSource
     from .container_registry_event_data_py3 import ContainerRegistryEventData
+    from .container_registry_artifact_event_target_py3 import ContainerRegistryArtifactEventTarget
+    from .container_registry_artifact_event_data_py3 import ContainerRegistryArtifactEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
@@ -106,11 +110,15 @@ except (SyntaxError, ImportError):
     from .device_connection_state_event_properties import DeviceConnectionStateEventProperties
     from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
+    from .container_registry_chart_pushed_event_data import ContainerRegistryChartPushedEventData
+    from .container_registry_chart_deleted_event_data import ContainerRegistryChartDeletedEventData
     from .container_registry_event_target import ContainerRegistryEventTarget
     from .container_registry_event_request import ContainerRegistryEventRequest
     from .container_registry_event_actor import ContainerRegistryEventActor
     from .container_registry_event_source import ContainerRegistryEventSource
     from .container_registry_event_data import ContainerRegistryEventData
+    from .container_registry_artifact_event_target import ContainerRegistryArtifactEventTarget
+    from .container_registry_artifact_event_data import ContainerRegistryArtifactEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data import MediaJobStateChangeEventData
@@ -179,11 +187,15 @@ __all__ = [
     'DeviceConnectionStateEventProperties',
     'ContainerRegistryImagePushedEventData',
     'ContainerRegistryImageDeletedEventData',
+    'ContainerRegistryChartPushedEventData',
+    'ContainerRegistryChartDeletedEventData',
     'ContainerRegistryEventTarget',
     'ContainerRegistryEventRequest',
     'ContainerRegistryEventActor',
     'ContainerRegistryEventSource',
     'ContainerRegistryEventData',
+    'ContainerRegistryArtifactEventTarget',
+    'ContainerRegistryArtifactEventData',
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'MediaJobStateChangeEventData',
