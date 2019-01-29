@@ -183,7 +183,7 @@ class AlertRulesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}'}
 
     def create(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, kind=None, etag=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, alert_rule, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the alert rule.
 
         :param resource_group_name: The name of the resource group within the
@@ -196,11 +196,8 @@ class AlertRulesOperations(object):
         :type workspace_name: str
         :param rule_id: Alert rule ID
         :type rule_id: str
-        :param kind: The kind of the alert rule. Possible values include:
-         'Scheduled'
-        :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
-        :param etag: Etag of the alert rule.
-        :type etag: str
+        :param alert_rule: The alert rule
+        :type alert_rule: ~azure.mgmt.securityinsight.models.AlertRule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -211,8 +208,6 @@ class AlertRulesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        alert_rule = models.AlertRule(kind=kind, etag=etag)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {

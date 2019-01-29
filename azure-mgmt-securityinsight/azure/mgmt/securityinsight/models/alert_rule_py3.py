@@ -15,8 +15,13 @@ from msrest.serialization import Model
 class AlertRule(Model):
     """Alert rule.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ScheduledAlertRule
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -24,31 +29,35 @@ class AlertRule(Model):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param kind: The kind of the alert rule. Possible values include:
-     'Scheduled'
-    :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
     :param etag: Etag of the alert rule.
     :type etag: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, kind=None, etag: str=None, **kwargs) -> None:
+    _subtype_map = {
+        'kind': {'Scheduled': 'ScheduledAlertRule'}
+    }
+
+    def __init__(self, *, etag: str=None, **kwargs) -> None:
         super(AlertRule, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.kind = kind
         self.etag = etag
+        self.kind = None
