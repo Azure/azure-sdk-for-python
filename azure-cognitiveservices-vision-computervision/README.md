@@ -1,12 +1,14 @@
 # Azure Cognitive Services Computer Vision SDK for Python
 
-The cloud-based Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. Computer Vision works with popular image formats, such as JPEG and PNG. To analyze an image, you can either upload an image or specify an image URL. Computer Vision algorithms can analyze the content of an image in different ways, depending on the visual features you're interested in. For example, Computer Vision can determine if an image contains adult or racy content, or find all the faces in an image.
+The cloud-based Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. This service works with popular image formats, such as JPEG and PNG. 
+
+To analyze an image, you can either upload an image or specify an image URL. Computer Vision algorithms analyze the content of an image in different ways, depending on the visual features you're interested in. For example, Computer Vision can determine if an image contains adult or racy content, or find all the faces in an image.
 
 You can use Computer Vision in your application to:
 
 - Analyze images for insight
 - Extract text from images
-- Moderate content in images
+- Generate thumbnails
 
 Looking for source code or API reference?
 
@@ -22,7 +24,17 @@ Looking for source code or API reference?
 If you need a Computer Vision API account, you can create one with this [Azure CLI][azure_cli] command:
 
 ```Bash
-az cognitiveservices account create -n myresource -g myResourceGroup --kind ComputerVision --sku S1 -l WestEurope --yes
+RES_REGION=westeurope 
+RES_GROUP=<resourcegroup-name>
+ACCT_NAME=<computervision-account-name>
+
+az cognitiveservices account create \
+-n $ACCT_NAME \
+-g $RES_GROUP \
+-l $RES_REGION \
+--kind ComputerVision \
+--sku S1 \
+ --yes
 ```
 
 ## Installation
@@ -31,7 +43,7 @@ Install the Azure Cognitive Services Computer Vision SDK with [pip][pip], option
 
 ### Configure a virtual environment (optional)
 
-Although not required, you can keep your your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
+Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
 
 ```Bash
 python3 -m venv azure-cognitiveservices-vision-computervision-environment
@@ -48,18 +60,28 @@ pip install git+https://github.com/johanste/azure-computervision-python.git@ux g
 
 ## Authentication
 
-Interaction with Computer Vision starts with an instance of the [Computer Vision][ref_computervisionclient] class. You need an **account**, its **URI**, and one of its **account keys** to instantiate the client object.
+To use the Computer Vision SDK, create an instance of the [Computer Vision][ref_computervisionclient]. Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
 
 ### Get credentials
 
 Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account URI and its primary master key (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
 
 ```Bash
-RES_GROUP=<resource-group-name>
+RES_GROUP=<resourcegroup-name>
 ACCT_NAME=<computervision-account-name>
 
-export ACCOUNT_URI=$(az computervision show --resource-group $RES_GROUP --name $ACCT_NAME --query documentEndpoint --output tsv)
-export ACCOUNT_KEY=$(az computervision list-keys --resource-group $RES_GROUP --name $ACCT_NAME --query primaryMasterKey --output tsv)
+export ACCOUNT_REGION=$(az cognitiveservices account show \
+--resource-group $RES_GROUP \
+--name $ACCT_NAME \
+--query location \
+--output tsv)
+
+export ACCOUNT_KEY=$(az cognitiveservices account keys list \
+--name $ACCT_NAME \
+--resource-group $RES_GROUP \
+--name $ACCT_NAME \
+--query key1 \
+--output tsv)
 ```
 
 ### Create client
@@ -83,65 +105,108 @@ client = ComputerVisionAPI(region, credentials)
 
 Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client, you can:
 
-* [Analyze an image][ref_database]: You can analyze images using Computer Vision to detect and provide insight about the visual features and characteristics of your images. You can either upload the contents of an image to analyze local images, or you can specify the URL of an image to analyze remote images. 
+* [Analyze an image][ref_analyzeimage]: You can analyze an internet image for certain features such as faces, colors, tags. The image can be local to the computer, on the internet.  
 
-* [Moderate images in content][ref_item]: Detect adult and racy content in an image, rating the likelihood that the image contains either adult or racy content and generating a confidence score for both. The filter for adult and racy content detection can be set on a sliding scale to accommodate your preferences.
+* [Moderate images in content][ref_moderateimage]: An image can be analyzed for adult content.
 
-* [Extract text from an image][ref_item]: Extract text using OCR from an image into a machine-readable character stream. If needed, OCR corrects the rotation of the recognized text, in degrees, around the horizontal image axis, and provides the frame coordinates of each word. OCR supports 25 languages, and automatically detects the language of extracted text.
+* [Extract text from an image][ref_extracttext]: An image can be scanned for text. In order to complete the analysis, Computer Vision may correct rotation before analysis. Computer Vision supports 25 languages, and automatically detects the language of extracted text.
 
 For more information about these resources, see [Working with Azure computer vision][computervision_resources].
 
 ## Examples
 
-The following sections provide several code snippets covering some of the most common computervision tasks, including:
+The following sections provide several code snippets covering some of the most common Computer Vision tasks, including:
 
-* [Analyze an image](#)
-* [Analyze an image by domain](#)
-* [Describe image](#insert-data)
-* [Generate thumbnail](#delete-data)
-* [Get list of domains](#query-the-database)
+* [Analyze an image](#analyze-an-image)
+* [Analyze an image by domain](#analyze-an-image-by-domain)
+* [Get text description of an image](#get-text-description-of-an-image)
+* [Generate thumbnail](#generate-thumbnail)
+* [Get subject domain list](#get-subject-domain-list)
 
 ### Analyze an image
 
 After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can analyze an image for certain features.
 
 ```Python
-try:
-    image_analysis = client.analyze_image(url,visual_features=[VisualFeatureTypes.tags])
+image_analysis = client.analyze_image(url,visual_features=[VisualFeatureTypes.tags])
 
-    for tag in image_analysis.tags:
-        print(tag)
-
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+for tag in image_analysis.tags:
+    print(tag)
 ```
 
 
 ### Analyze an image by domain
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can analyze an image by domain. 
+After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can analyze an image by subject domain. 
 
 ```Python
 domain = "landmarks"
 url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
 language = "en"
 
-try:
-    analysis = client.analyze_image_by_domain(domain, url, language)
-
-    print(analysis.result)
-
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+analysis = client.analyze_image_by_domain(domain, url, language)
 ```
 
-### Describe image
+### Get text description of an image
 
-This example creates a container with default settings. If a container with the same name already exists in the database (generating a `409 Conflict` error), the existing container is obtained instead.
+After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can get a language-based text description of an image. 
 
 ```Python
+domain = "landmarks"
+url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
+language = "en"
+max_descriptions=3
+
+analysis = client.describe_image(url, max_descriptions, language)
+
+for caption in analysis.captions:
+    print(caption.text)
+    print(caption.confidence)
+```
+
+### Generate thumbnail
+
+After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can generate a thumbnail (JPG) of an image. 
+
+```Python
+from PIL import Image
+import io
+
+width=50
+height=50
+url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
+
+thumbnail = client.generate_thumbnail(width, height, url)
+
+for x in thumbnail:
+    image = Image.open(io.BytesIO(x))
+image.save('thumbnail.jpg')
+```
+
+### Get subject domain list
+
+After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, review the subject domains used to analyze your image. 
+
+```Python
+models = client.list_models()
+
+for x in models.models_property:
+    print(x)
+```
+
+
+## Troubleshooting
+
+### General
+
+When you interact with the [ComputerVisionAPI][ref_computervisionclient] client using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
+
+[HTTP Status Codes for Azure ComputerVisionAPI][computervision_http_status_codes]
+
+For example, if you try to analyze an image with an invalid key, a `401` error is returned. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
+
+```Python
+
 domain = "landmarks"
 url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
 language = "en"
@@ -153,104 +218,26 @@ try:
     for caption in analysis.captions:
         print(caption.text)
         print(caption.confidence)
-
 except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
-```
-
-### Generate thumbnail
-
-Retrieve an existing container from the database:
-
-```Python
-from PIL import Image
-import io
-
-width=50
-height=50
-url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
-
-try:
-    thumbnail = client.generate_thumbnail(width, height, url)
-
-    for x in thumbnail:
-        image = Image.open(io.BytesIO(x))
-    image.save('thumbnail.jpg')
-
-
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
-```
-
-### Get subject domain list
-
-The supported subject domains list contains all domains an image can be analyzed for.
-
-```Python
-try:
-    models = client.list_models()
-
-    for x in models.models_property:
-        print(x)
-
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
-```
-
-<!--
-
-{'additional_properties': {}, 'name': 'celebrities', 'categories': ['people_', '人_', 'pessoas_', 'gente_']}
-{'additional_properties': {}, 'name': 'landmarks', 'categories': ['outdoor_', '户外_', '屋外_', 'aoarlivre_', 'alairelibre_', 'building_', '建筑_', '建物_', 'edifício_']}
-
--->
-
-## Troubleshooting
-
-### General
-
-When you interact with computervision DB using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
-
-[HTTP Status Codes for Azure computervision DB][computervision_http_status_codes]
-
-For example, if you try to create a container using an ID (name) that's already in use in your computervision DB database, a `409` error is returned, indicating the conflict. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
-
-```Python
-try:
-    database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
-except HTTPFailure as e:
-    if e.status_code == 409:
-        print("""Error creating container.
-HTTP status code 409: The ID (name) provided for the container is already in use.
-The container name must be unique within the database.""")
+    if e.status_code == 401:
+        print("""Error unauthorized.
+HTTP status code 401: your Computer Vision account is not authorized. Make sure your key and region are correct.""")
     else:
         raise
 ```
 
 ### Handle transient errors with retries
 
-While working with computervision DB, you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
+While working with the [ComputerVisionAPI][ref_computervisionclient] client , you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
 
 ## Next steps
 
 ### More sample code
 
-Several computervision DB Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with computervision DB:
+Several Computer Vision Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Computer Vision:
 
 * [`examples.py`][sample_examples_misc] - Contains the code snippets found in this article.
-* [`databasemanagementsample.py`][sample_database_mgmt] - Python code for working with Azure computervision DB databases, including:
-  * Create database
-  * Get database by ID
-  * Get database by query
-  * List databases in account
-  * Delete database
-* [`documentmanagementsample.py`][sample_document_mgmt] - Example code for working with computervision DB documents, including:
-  * Create container
-  * Create documents (including those with differing schemas)
-  * Get document by ID
-  * Get all documents in a container
+
 
 ### Additional documentation
 
