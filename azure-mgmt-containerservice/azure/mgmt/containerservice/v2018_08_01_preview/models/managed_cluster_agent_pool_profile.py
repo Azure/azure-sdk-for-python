@@ -101,6 +101,8 @@ class ManagedClusterAgentPoolProfile(Model):
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
      ~azure.mgmt.containerservice.v2018_08_01_preview.models.AgentPoolType
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -121,6 +123,7 @@ class ManagedClusterAgentPoolProfile(Model):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -136,3 +139,4 @@ class ManagedClusterAgentPoolProfile(Model):
         self.min_count = kwargs.get('min_count', None)
         self.enable_auto_scaling = kwargs.get('enable_auto_scaling', None)
         self.type = kwargs.get('type', None)
+        self.availability_zones = kwargs.get('availability_zones', None)

@@ -101,6 +101,8 @@ class ManagedClusterAgentPoolProfile(Model):
      values include: 'VirtualMachineScaleSets', 'AvailabilitySet'
     :type type: str or
      ~azure.mgmt.containerservice.v2018_08_01_preview.models.AgentPoolType
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -121,9 +123,10 @@ class ManagedClusterAgentPoolProfile(Model):
         'min_count': {'key': 'minCount', 'type': 'int'},
         'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
         'type': {'key': 'type', 'type': 'str'},
+        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, **kwargs) -> None:
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, availability_zones=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -136,3 +139,4 @@ class ManagedClusterAgentPoolProfile(Model):
         self.min_count = min_count
         self.enable_auto_scaling = enable_auto_scaling
         self.type = type
+        self.availability_zones = availability_zones
