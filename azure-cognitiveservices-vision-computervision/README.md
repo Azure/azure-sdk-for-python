@@ -18,7 +18,7 @@ Looking for source code or API reference?
 ## Prerequisites
 
 * Azure subscription - [Create a free account][azure_sub]
-* Azure [Computer Vision resource][computer_vision_resource] - SQL API
+* Azure [Computer Vision resource][computer_vision_resource]
 * [Python 3.6+][python]
 
 If you need a Computer Vision API account, you can create one with this [Azure CLI][azure_cli] command:
@@ -125,10 +125,7 @@ The following sections provide several code snippets covering some of the most c
 
 ### Analyze an image
 
-You can analyze an image for certain features. Use the `visual_features` property to set the types of analysis to perform on the image. Common values are: 
-
-    * VisualFeatureTypes.tags
-    * VisualFeatureTypes.description
+You can analyze an image for certain features. Use the `visual_features` property to set the types of analysis to perform on the image. Common values are `VisualFeatureTypes.tags` and `VisualFeatureTypes.description`.
 
 ```Python
 url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
@@ -158,11 +155,7 @@ for landmark in analysis.result["landmarks"]:
 
 ### Get text description of an image
 
-You can get a language-based text description of an image. Request several descriptions with the `max_description` property if you are doing text analysis for keywords associated with the image. Examples of a text description for the following image include:
-
-    * a train crossing a bridge over a body of water
-    * a large bridge over a body of water
-    * a train crossing a bridge over a large body of water
+You can get a language-based text description of an image. Request several descriptions with the `max_description` property if you are doing text analysis for keywords associated with the image. Examples of a text description for the following image include `a train crossing a bridge over a body of water`, `a large bridge over a body of water`, and `a train crossing a bridge over a large body of water`.
 
 ```Python
 domain = "landmarks"
@@ -263,6 +256,7 @@ For more extensive documentation on the computervision DB service, see the [Azur
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
+[computer_vision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
 [computervision_account_create]: https://docs.microsoft.com/azure/computervision-db/how-to-manage-database-account
 [computervision_account]: https://docs.microsoft.com/azure/computervision-db/account-overview
 [computervision_container]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items#azure-computervision-containers
