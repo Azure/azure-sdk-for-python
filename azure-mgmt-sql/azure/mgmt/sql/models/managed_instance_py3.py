@@ -63,6 +63,11 @@ class ManagedInstance(TrackedResource):
     :param dns_zone_partner: The resource id of another managed instance whose
      DNS zone this managed instance will share after creation.
     :type dns_zone_partner: str
+    :param public_data_endpoint_enabled: Whether or not the public data
+     endpoint is enabled.
+    :type public_data_endpoint_enabled: bool
+    :param proxy_override: Proxy override of the managed instance.
+    :type proxy_override: str
     """
 
     _validation = {
@@ -94,9 +99,11 @@ class ManagedInstance(TrackedResource):
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
         'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
+        'public_data_endpoint_enabled': {'key': 'properties.publicDataEndpointEnabled', 'type': 'bool'},
+        'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override: str=None, **kwargs) -> None:
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
@@ -111,3 +118,5 @@ class ManagedInstance(TrackedResource):
         self.collation = collation
         self.dns_zone = None
         self.dns_zone_partner = dns_zone_partner
+        self.public_data_endpoint_enabled = public_data_endpoint_enabled
+        self.proxy_override = proxy_override

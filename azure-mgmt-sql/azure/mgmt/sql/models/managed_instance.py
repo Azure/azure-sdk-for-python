@@ -63,6 +63,11 @@ class ManagedInstance(TrackedResource):
     :param dns_zone_partner: The resource id of another managed instance whose
      DNS zone this managed instance will share after creation.
     :type dns_zone_partner: str
+    :param public_data_endpoint_enabled: Whether or not the public data
+     endpoint is enabled.
+    :type public_data_endpoint_enabled: bool
+    :param proxy_override: Proxy override of the managed instance.
+    :type proxy_override: str
     """
 
     _validation = {
@@ -94,6 +99,8 @@ class ManagedInstance(TrackedResource):
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
         'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
+        'public_data_endpoint_enabled': {'key': 'properties.publicDataEndpointEnabled', 'type': 'bool'},
+        'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -111,3 +118,5 @@ class ManagedInstance(TrackedResource):
         self.collation = kwargs.get('collation', None)
         self.dns_zone = None
         self.dns_zone_partner = kwargs.get('dns_zone_partner', None)
+        self.public_data_endpoint_enabled = kwargs.get('public_data_endpoint_enabled', None)
+        self.proxy_override = kwargs.get('proxy_override', None)
