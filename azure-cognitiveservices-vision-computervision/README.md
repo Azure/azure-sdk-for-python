@@ -226,8 +226,7 @@ try:
         print(caption.confidence)
 except HTTPFailure as e:
     if e.status_code == 401:
-        print("""Error unauthorized.
-HTTP status code 401: your Computer Vision account is not authorized. Make sure your key and region are correct.""")
+        print("Error unauthorized. Make sure your key and region are correct.")
     else:
         raise
 ```
