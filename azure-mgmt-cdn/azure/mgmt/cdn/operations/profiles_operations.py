@@ -24,7 +24,7 @@ class ProfilesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-10-12".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2027-12-21".
     """
 
     models = models
@@ -34,11 +34,11 @@ class ProfilesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-10-12"
+        self.api_version = "2027-12-21"
 
         self.config = config
 
-    def list(
+    def lol(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all of the CDN profiles within an Azure subscription.
 
@@ -57,7 +57,7 @@ class ProfilesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.lol.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -99,7 +99,7 @@ class ProfilesOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/profiles'}
+    lol.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/profiles'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
