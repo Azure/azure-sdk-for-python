@@ -18,8 +18,6 @@ class Database(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
@@ -36,12 +34,12 @@ class Database(ProxyResource):
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period_in_days: Required. The number of days data
-     should be kept before it stops being accessible to queries.
-    :type soft_delete_period_in_days: int
-    :param hot_cache_period_in_days: The number of days of data that should be
-     kept in cache for fast queries.
-    :type hot_cache_period_in_days: int
+    :param soft_delete_period: The time the data should be kept before it
+     stops being accessible to queries in TimeSpan.
+    :type soft_delete_period: timedelta
+    :param hot_cache_period: The time the data that should be kept in cache
+     for fast queries in TimeSpan.
+    :type hot_cache_period: timedelta
     :param statistics: The statistics of the database.
     :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     """
@@ -52,7 +50,6 @@ class Database(ProxyResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'soft_delete_period_in_days': {'required': True},
     }
 
     _attribute_map = {
@@ -62,16 +59,16 @@ class Database(ProxyResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
-        'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
-    def __init__(self, *, soft_delete_period_in_days: int, location: str=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, soft_delete_period=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
         super(Database, self).__init__(**kwargs)
         self.etag = None
         self.location = location
         self.provisioning_state = None
-        self.soft_delete_period_in_days = soft_delete_period_in_days
-        self.hot_cache_period_in_days = hot_cache_period_in_days
+        self.soft_delete_period = soft_delete_period
+        self.hot_cache_period = hot_cache_period
         self.statistics = statistics
