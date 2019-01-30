@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class EventHubConnectionValidationResult(Model):
-    """EventHubConnectionValidationResult.
+class AvailabilityZone(Model):
+    """Defines Azure availability zone where a cluster can be deployed to.
 
-    :param error_message: A message which indicates a problem in event hub
-     connection validation.
-    :type error_message: str
+    :param value: Availability Zone where a cluster can be deployed to.
+    :type value: str
     """
 
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, error_message: str=None, **kwargs) -> None:
-        super(EventHubConnectionValidationResult, self).__init__(**kwargs)
-        self.error_message = error_message
+    def __init__(self, **kwargs):
+        super(AvailabilityZone, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

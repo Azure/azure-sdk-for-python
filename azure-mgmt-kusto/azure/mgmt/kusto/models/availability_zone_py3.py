@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class EventHubConnectionValidationListResult(Model):
-    """The list Kusto event hub connection validation result.
+class AvailabilityZone(Model):
+    """Defines Azure availability zone where a cluster can be deployed to.
 
-    :param value: The list of Kusto event hub connection validation errors.
-    :type value:
-     list[~azure.mgmt.kusto.models.EventHubConnectionValidationResult]
+    :param value: Availability Zone where a cluster can be deployed to.
+    :type value: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EventHubConnectionValidationResult]'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(EventHubConnectionValidationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: str=None, **kwargs) -> None:
+        super(AvailabilityZone, self).__init__(**kwargs)
         self.value = value

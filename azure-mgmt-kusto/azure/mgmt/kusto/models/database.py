@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .proxy_resource import ProxyResource
 
 
-class Database(TrackedResource):
+class Database(ProxyResource):
     """Class representing a Kusto database.
 
     Variables are only populated by the server, and will be ignored when
@@ -28,12 +28,10 @@ class Database(TrackedResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
-    :type location: str
     :ivar etag: An ETag of the resource created.
     :vartype etag: str
+    :param location: Resource location.
+    :type location: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
@@ -52,7 +50,6 @@ class Database(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'soft_delete_period_in_days': {'required': True},
@@ -62,9 +59,8 @@ class Database(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
         'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
@@ -74,6 +70,7 @@ class Database(TrackedResource):
     def __init__(self, **kwargs):
         super(Database, self).__init__(**kwargs)
         self.etag = None
+        self.location = kwargs.get('location', None)
         self.provisioning_state = None
         self.soft_delete_period_in_days = kwargs.get('soft_delete_period_in_days', None)
         self.hot_cache_period_in_days = kwargs.get('hot_cache_period_in_days', None)

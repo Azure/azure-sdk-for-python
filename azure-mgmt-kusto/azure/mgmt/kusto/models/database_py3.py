@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource_py3 import TrackedResource
+from .proxy_resource_py3 import ProxyResource
 
 
-class Database(TrackedResource):
+class Database(ProxyResource):
     """Class representing a Kusto database.
 
     Variables are only populated by the server, and will be ignored when
@@ -28,12 +28,10 @@ class Database(TrackedResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
-    :type location: str
     :ivar etag: An ETag of the resource created.
     :vartype etag: str
+    :param location: Resource location.
+    :type location: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
@@ -52,7 +50,6 @@ class Database(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'soft_delete_period_in_days': {'required': True},
@@ -62,18 +59,18 @@ class Database(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
         'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
-    def __init__(self, *, location: str, soft_delete_period_in_days: int, tags=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
-        super(Database, self).__init__(tags=tags, location=location, **kwargs)
+    def __init__(self, *, soft_delete_period_in_days: int, location: str=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
+        super(Database, self).__init__(**kwargs)
         self.etag = None
+        self.location = location
         self.provisioning_state = None
         self.soft_delete_period_in_days = soft_delete_period_in_days
         self.hot_cache_period_in_days = hot_cache_period_in_days

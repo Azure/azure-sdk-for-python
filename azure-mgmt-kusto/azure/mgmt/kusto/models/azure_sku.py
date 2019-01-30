@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AzureSku(Model):
-    """AzureSku.
+    """Azure SKU definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -21,7 +21,7 @@ class AzureSku(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. SKU name. Possible values include: 'KC8', 'KC16',
-     'KS8', 'KS16', 'D13_v2', 'D14_v2', 'L8', 'L16'
+     'KS8', 'KS16', 'D13_v2', 'D14_v2', 'L8', 'L16', 'D11_v2', 'D12_v2', 'L4'
     :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :param capacity: SKU capacity.
     :type capacity: int

@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class TrustedExternalTenant(Model):
-    """Repersents a tenant ID that is trusted by the cluster.
+class DataConnectionValidationListResult(Model):
+    """The list Kusto data connection validation result.
 
-    :param value: GUID representing an external tenant.
-    :type value: str
+    :param value: The list of Kusto data connection validation errors.
+    :type value: list[~azure.mgmt.kusto.models.DataConnectionValidationResult]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[DataConnectionValidationResult]'},
     }
 
     def __init__(self, **kwargs):
-        super(TrustedExternalTenant, self).__init__(**kwargs)
+        super(DataConnectionValidationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)

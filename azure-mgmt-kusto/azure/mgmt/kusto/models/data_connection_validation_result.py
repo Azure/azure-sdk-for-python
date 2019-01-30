@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class TrustedExternalTenant(Model):
-    """Repersents a tenant ID that is trusted by the cluster.
+class DataConnectionValidationResult(Model):
+    """The result returned from a data connection validation request.
 
-    :param value: GUID representing an external tenant.
-    :type value: str
+    :param error_message: A message which indicates a problem in data
+     connection validation.
+    :type error_message: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(TrustedExternalTenant, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        super(DataConnectionValidationResult, self).__init__(**kwargs)
+        self.error_message = kwargs.get('error_message', None)

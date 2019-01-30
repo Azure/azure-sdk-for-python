@@ -38,7 +38,7 @@ class Cluster(TrackedResource):
     :type sku: ~azure.mgmt.kusto.models.AzureSku
     :ivar state: The state of the resource. Possible values include:
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
-     'Stopped', 'Starting'
+     'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
@@ -51,6 +51,8 @@ class Cluster(TrackedResource):
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
+    :param availability_zones: The cluster's zones.
+    :type availability_zones: list[~azure.mgmt.kusto.models.AvailabilityZone]
     """
 
     _validation = {
@@ -79,6 +81,7 @@ class Cluster(TrackedResource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
+        'availability_zones': {'key': 'properties.availabilityZones', 'type': '[AvailabilityZone]'},
     }
 
     def __init__(self, **kwargs):
@@ -90,3 +93,4 @@ class Cluster(TrackedResource):
         self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
+        self.availability_zones = kwargs.get('availability_zones', None)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DatabaseCheckNameRequest(Model):
-    """DatabaseCheckNameRequest.
+    """The result returned from a database check name availability request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
