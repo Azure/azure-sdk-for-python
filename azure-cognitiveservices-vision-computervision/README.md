@@ -29,12 +29,12 @@ RES_GROUP=<resourcegroup-name>
 ACCT_NAME=<computervision-account-name>
 
 az cognitiveservices account create \
--n $ACCT_NAME \
--g $RES_GROUP \
--l $RES_REGION \
---kind ComputerVision \
---sku S1 \
- --yes
+    --resource-group $RES_GROUP \
+    --name $ACCT_NAME \
+    --location $RES_REGION \
+    --kind ComputerVision \
+    --sku S1 \
+    --yes
 ```
 
 ## Installation
@@ -43,11 +43,11 @@ Install the Azure Cognitive Services Computer Vision SDK with [pip][pip], option
 
 ### Configure a virtual environment (optional)
 
-Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
+Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv], such as `cogsrv-vision-env`:
 
 ```Bash
-python3 -m venv azure-cognitiveservices-vision-computervision-environment
-source azure-cognitiveservices-vision-computervision-environment/bin/activate
+python3 -m venv cogsrv-vision-env
+source cogsrv-vision-env/bin/activate
 ```
 
 ### Install the SDK
@@ -55,33 +55,35 @@ source azure-cognitiveservices-vision-computervision-environment/bin/activate
 Install the Azure Cognitive Services Computer Vision SDK for Python with [pip][pip]:
 
 ```Bash
-pip install git+https://github.com/johanste/azure-computervision-python.git@ux git+https://github.com/binderjoe/computervision-python-prototype.git@master
+pip install azure-cognitiveservices-vision-computervision
 ```
 
 ## Authentication
 
-To use the Computer Vision SDK, create an instance of the [Computer Vision][ref_computervisionclient]. Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
+Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
+
+Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient]. 
 
 ### Get credentials
 
-Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account URI and its primary master key (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
+Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account URI and one of its key (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
 
 ```Bash
 RES_GROUP=<resourcegroup-name>
 ACCT_NAME=<computervision-account-name>
 
 export ACCOUNT_REGION=$(az cognitiveservices account show \
---resource-group $RES_GROUP \
---name $ACCT_NAME \
---query location \
---output tsv)
+    --resource-group $RES_GROUP \
+    --name $ACCT_NAME \
+    --query location \
+    --output tsv)
 
 export ACCOUNT_KEY=$(az cognitiveservices account keys list \
---name $ACCT_NAME \
---resource-group $RES_GROUP \
---name $ACCT_NAME \
---query key1 \
---output tsv)
+    --name $ACCT_NAME \
+    --resource-group $RES_GROUP \
+    --name $ACCT_NAME \
+    --query key1 \
+    --output tsv)
 ```
 
 ### Create client
@@ -105,7 +107,7 @@ client = ComputerVisionAPI(region, credentials)
 
 Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client, you can:
 
-* [Analyze an image][ref_analyzeimage]: You can analyze an internet image for certain features such as faces, colors, tags. The image can be local to the computer, on the internet.  
+* [Analyze an image][ref_analyzeimage]: You can analyze an iimage for certain features such as faces, colors, tags.   
 
 * [Moderate images in content][ref_moderateimage]: An image can be analyzed for adult content.
 
@@ -125,9 +127,14 @@ The following sections provide several code snippets covering some of the most c
 
 ### Analyze an image
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can analyze an image for certain features.
+You can analyze an image for certain features. Use the `visual_features` property to set the types of analysis to perform on the image. Common values are: 
+
+    * `VisualFeatureTypes.tags` 
+    * `VisualFeatureTypes.description`
 
 ```Python
+url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
+
 image_analysis = client.analyze_image(url,visual_features=[VisualFeatureTypes.tags])
 
 for tag in image_analysis.tags:
@@ -137,7 +144,7 @@ for tag in image_analysis.tags:
 
 ### Analyze an image by domain
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can analyze an image by subject domain. 
+You can analyze an image by subject domain. Get the [list of support subject domains](#get-subject-domain-list) in order to use the correct domain name.  
 
 ```Python
 domain = "landmarks"
@@ -145,11 +152,19 @@ url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Ti
 language = "en"
 
 analysis = client.analyze_image_by_domain(domain, url, language)
+
+for landmark in analysis.result["landmarks"]:
+    print(landmark["name"])
+    print(landmark["confidence"])
 ```
 
 ### Get text description of an image
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can get a language-based text description of an image. 
+You can get a language-based text description of an image. Request several descriptions with the `max_description` property if you are doing text analysis for keywords associated with the image. Examples of a text description for the following image include:
+
+    * a train crossing a bridge over a body of water
+    * a large bridge over a body of water
+    * a train crossing a bridge over a large body of water
 
 ```Python
 domain = "landmarks"
@@ -166,7 +181,7 @@ for caption in analysis.captions:
 
 ### Generate thumbnail
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, you can generate a thumbnail (JPG) of an image. 
+You can generate a thumbnail (JPG) of an image. The thumbnail does not need to be in the same proportions as the original image. 
 
 ```Python
 from PIL import Image
@@ -185,7 +200,7 @@ image.save('thumbnail.jpg')
 
 ### Get subject domain list
 
-After authenticating your [ComputerVisionAPI][ref_computervisionclient] client, review the subject domains used to analyze your image. 
+Review the subject domains used to analyze your image. These domain names are used when [analyzing an image by domain](#analyze-an-image-by-domain). An example of a domain is `landmarks`.
 
 ```Python
 models = client.list_models()
