@@ -48,6 +48,11 @@ class ManagedInstanceUpdate(Model):
     :param dns_zone_partner: The resource id of another managed instance whose
      DNS zone this managed instance will share after creation.
     :type dns_zone_partner: str
+    :param public_data_endpoint_enabled: Whether or not the public data
+     endpoint is enabled.
+    :type public_data_endpoint_enabled: bool
+    :param proxy_override: Proxy override of the managed instance.
+    :type proxy_override: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -71,10 +76,12 @@ class ManagedInstanceUpdate(Model):
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
         'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
+        'public_data_endpoint_enabled': {'key': 'properties.publicDataEndpointEnabled', 'type': 'bool'},
+        'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override: str=None, tags=None, **kwargs) -> None:
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.fully_qualified_domain_name = None
@@ -88,4 +95,6 @@ class ManagedInstanceUpdate(Model):
         self.collation = collation
         self.dns_zone = None
         self.dns_zone_partner = dns_zone_partner
+        self.public_data_endpoint_enabled = public_data_endpoint_enabled
+        self.proxy_override = proxy_override
         self.tags = tags
