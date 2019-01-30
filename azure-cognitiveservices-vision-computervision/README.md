@@ -107,11 +107,9 @@ client = ComputerVisionAPI(region, credentials)
 
 Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client, you can:
 
-* [Analyze an image][ref_analyzeimage]: You can analyze an iimage for certain features such as faces, colors, tags.   
-
-* [Moderate images in content][ref_moderateimage]: An image can be analyzed for adult content.
-
-* [Extract text from an image][ref_extracttext]: An image can be scanned for text. In order to complete the analysis, Computer Vision may correct rotation before analysis. Computer Vision supports 25 languages, and automatically detects the language of extracted text.
+* Analyze an image: You can analyze an iimage for certain features such as faces, colors, tags.   
+* Moderate images in content: An image can be analyzed for adult content.
+* Extract text from an image: An image can be scanned for text. In order to complete the analysis, Computer Vision may correct rotation before analysis. Computer Vision supports 25 languages, and automatically detects the language of extracted text.
 
 For more information about these resources, see [Working with Azure computer vision][computervision_resources].
 
@@ -129,8 +127,8 @@ The following sections provide several code snippets covering some of the most c
 
 You can analyze an image for certain features. Use the `visual_features` property to set the types of analysis to perform on the image. Common values are: 
 
-    * `VisualFeatureTypes.tags` 
-    * `VisualFeatureTypes.description`
+    * VisualFeatureTypes.tags
+    * VisualFeatureTypes.description
 
 ```Python
 url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
