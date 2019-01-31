@@ -40,8 +40,6 @@ class AppServicePlan(Resource):
     :vartype status: str or ~azure.mgmt.web.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
-    :param admin_site_name: App Service plan administration site.
-    :type admin_site_name: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
@@ -118,7 +116,6 @@ class AppServicePlan(Resource):
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
-        'admin_site_name': {'key': 'properties.adminSiteName', 'type': 'str'},
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int'},
         'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
@@ -138,12 +135,11 @@ class AppServicePlan(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, worker_tier_name: str=None, admin_site_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, maximum_elastic_worker_count: int=None, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str=None, tags=None, worker_tier_name: str=None, hosting_environment_profile=None, per_site_scaling: bool=False, maximum_elastic_worker_count: int=None, is_spot: bool=None, spot_expiration_time=None, free_offer_expiration_time=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, target_worker_count: int=None, target_worker_size_id: int=None, sku=None, **kwargs) -> None:
         super(AppServicePlan, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.worker_tier_name = worker_tier_name
         self.status = None
         self.subscription = None
-        self.admin_site_name = admin_site_name
         self.hosting_environment_profile = hosting_environment_profile
         self.maximum_number_of_workers = None
         self.geo_region = None

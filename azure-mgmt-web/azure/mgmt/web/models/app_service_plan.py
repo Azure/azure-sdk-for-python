@@ -40,8 +40,6 @@ class AppServicePlan(Resource):
     :vartype status: str or ~azure.mgmt.web.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
-    :param admin_site_name: App Service plan administration site.
-    :type admin_site_name: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
@@ -118,7 +116,6 @@ class AppServicePlan(Resource):
         'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'StatusOptions'},
         'subscription': {'key': 'properties.subscription', 'type': 'str'},
-        'admin_site_name': {'key': 'properties.adminSiteName', 'type': 'str'},
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int'},
         'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
@@ -143,7 +140,6 @@ class AppServicePlan(Resource):
         self.worker_tier_name = kwargs.get('worker_tier_name', None)
         self.status = None
         self.subscription = None
-        self.admin_site_name = kwargs.get('admin_site_name', None)
         self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
         self.maximum_number_of_workers = None
         self.geo_region = None
