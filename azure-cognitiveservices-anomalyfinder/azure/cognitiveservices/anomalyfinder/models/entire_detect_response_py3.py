@@ -66,13 +66,13 @@ class EntireDetectResponse(Model):
     }
 
     _attribute_map = {
-        'period': {'key': 'Period', 'type': 'int'},
-        'expected_values': {'key': 'ExpectedValues', 'type': '[float]'},
-        'upper_margins': {'key': 'UpperMargins', 'type': '[float]'},
-        'lower_margins': {'key': 'LowerMargins', 'type': '[float]'},
-        'is_anomaly': {'key': 'IsAnomaly', 'type': '[bool]'},
-        'is_negative_anomaly': {'key': 'IsNegativeAnomaly', 'type': '[bool]'},
-        'is_positive_anomaly': {'key': 'IsPositiveAnomaly', 'type': '[bool]'},
+        'period': {'key': 'period', 'type': 'int'},
+        'expected_values': {'key': 'expectedValues', 'type': '[float]'},
+        'upper_margins': {'key': 'upperMargins', 'type': '[float]'},
+        'lower_margins': {'key': 'lowerMargins', 'type': '[float]'},
+        'is_anomaly': {'key': 'isAnomaly', 'type': '[bool]'},
+        'is_negative_anomaly': {'key': 'isNegativeAnomaly', 'type': '[bool]'},
+        'is_positive_anomaly': {'key': 'isPositiveAnomaly', 'type': '[bool]'},
     }
 
     def __init__(self, *, period: int, expected_values, upper_margins, lower_margins, is_anomaly, is_negative_anomaly, is_positive_anomaly, **kwargs) -> None:

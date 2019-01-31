@@ -49,14 +49,14 @@ class LastDetectResponse(Model):
     """
 
     _attribute_map = {
-        'period': {'key': 'Period', 'type': 'int'},
-        'suggested_window': {'key': 'SuggestedWindow', 'type': 'int'},
-        'expected_value': {'key': 'ExpectedValue', 'type': 'float'},
-        'upper_margin': {'key': 'UpperMargin', 'type': 'float'},
-        'lower_margin': {'key': 'LowerMargin', 'type': 'float'},
-        'is_anomaly': {'key': 'IsAnomaly', 'type': 'bool'},
-        'is_negative_anomaly': {'key': 'IsNegativeAnomaly', 'type': 'bool'},
-        'is_positive_anomaly': {'key': 'IsPositiveAnomaly', 'type': 'bool'},
+        'period': {'key': 'period', 'type': 'int'},
+        'suggested_window': {'key': 'suggestedWindow', 'type': 'int'},
+        'expected_value': {'key': 'expectedValue', 'type': 'float'},
+        'upper_margin': {'key': 'upperMargin', 'type': 'float'},
+        'lower_margin': {'key': 'lowerMargin', 'type': 'float'},
+        'is_anomaly': {'key': 'isAnomaly', 'type': 'bool'},
+        'is_negative_anomaly': {'key': 'isNegativeAnomaly', 'type': 'bool'},
+        'is_positive_anomaly': {'key': 'isPositiveAnomaly', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):

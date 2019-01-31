@@ -30,7 +30,7 @@ class Request(Model):
      ~azure.cognitiveservices.anomalyfinder.models.Granularity
     :param custom_interval: Custom Interval is used to set non-standard time
      interval, for example, if the series is 5 minutes, request can be set as
-     {"Granularity":"minutely", "CustomInterval":5}.
+     {"granularity":"minutely", "customInterval":5}.
     :type custom_interval: int
     :param period: Optional argument, periodic value of a time series. If the
      value is null or does not present, the API will determine the period
@@ -56,12 +56,12 @@ class Request(Model):
     }
 
     _attribute_map = {
-        'series': {'key': 'Series', 'type': '[Point]'},
-        'granularity': {'key': 'Granularity', 'type': 'Granularity'},
-        'custom_interval': {'key': 'CustomInterval', 'type': 'int'},
-        'period': {'key': 'Period', 'type': 'int'},
-        'max_anomaly_ratio': {'key': 'MaxAnomalyRatio', 'type': 'float'},
-        'sensitivity': {'key': 'Sensitivity', 'type': 'float'},
+        'series': {'key': 'series', 'type': '[Point]'},
+        'granularity': {'key': 'granularity', 'type': 'Granularity'},
+        'custom_interval': {'key': 'customInterval', 'type': 'int'},
+        'period': {'key': 'period', 'type': 'int'},
+        'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
+        'sensitivity': {'key': 'sensitivity', 'type': 'float'},
     }
 
     def __init__(self, *, series, granularity, custom_interval: int=None, period: int=None, max_anomaly_ratio: float=0.25, sensitivity: float=99, **kwargs) -> None:

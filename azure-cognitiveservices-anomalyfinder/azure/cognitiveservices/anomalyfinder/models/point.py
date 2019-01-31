@@ -31,8 +31,8 @@ class Point(Model):
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'Timestamp', 'type': 'iso-8601'},
-        'value': {'key': 'Value', 'type': 'float'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'value': {'key': 'value', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
