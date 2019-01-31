@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.alert_rules_operations import AlertRulesOperations
+from .operations.data_connectors_operations import DataConnectorsOperations
 from . import models
 
 
@@ -60,6 +61,8 @@ class SecurityInsights(SDKClient):
     :vartype operations: azure.mgmt.securityinsight.operations.Operations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
+    :ivar data_connectors: DataConnectors operations
+    :vartype data_connectors: azure.mgmt.securityinsight.operations.DataConnectorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,4 +86,6 @@ class SecurityInsights(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_connectors = DataConnectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)

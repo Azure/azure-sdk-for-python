@@ -31,3 +31,18 @@ class TriggerOperator(str, Enum):
     less_than = "LessThan"
     equal = "Equal"
     not_equal = "NotEqual"
+
+
+class DataConnectorKind(str, Enum):
+
+    azure_active_directory = "AzureActiveDirectory"
+    azure_security_center = "AzureSecurityCenter"
+    microsoft_cloud_aapp_security = "MicrosoftCloudAappSecurity"
+    threat_inelegance = "ThreatInelegance"
+    office365 = "Office365"
+
+
+class DataTypeState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
