@@ -12,8 +12,8 @@
 from .resource_py3 import Resource
 
 
-class ReservationSummary(Resource):
-    """reservation summary resource.
+class ReservationDetails(Resource):
+    """reservation details resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -37,30 +37,22 @@ class ReservationSummary(Resource):
      to which the reservation benefit can be applied to.
     :vartype reservation_id: str
     :ivar sku_name: This is the ARM Sku name. It can be used to join with the
-     serviceType field in additional info in usage records.
+     servicetype field in additoinalinfo in usage records.
     :vartype sku_name: str
-    :ivar reserved_hours: This is the total hours reserved. E.g. if
-     reservation for 1 instance was made on 1 PM, this will be 11 hours for
-     that day and 24 hours from subsequent days
+    :ivar reserved_hours: This is the total hours reserved for the day. E.g.
+     if reservation for 1 instance was made on 1 PM, this will be 11 hours for
+     that day and 24 hours from subsequent days.
     :vartype reserved_hours: decimal.Decimal
-    :ivar usage_date: Data corresponding to the utilization record. If the
-     grain of data is monthly, it will be first day of month.
+    :ivar usage_date: The date on which consumption occurred.
     :vartype usage_date: datetime
-    :ivar used_hours: Total used hours by the reservation
+    :ivar used_hours: This is the total hours used by the instance.
     :vartype used_hours: decimal.Decimal
-    :ivar min_utilization_percentage: This is the minimum hourly utilization
-     in the usage time (day or month). E.g. if usage record corresponds to
-     12/10/2017 and on that for hour 4 and 5, utilization was 10%, this field
-     will return 10% for that day
-    :vartype min_utilization_percentage: decimal.Decimal
-    :ivar avg_utilization_percentage: This is average utilization for the
-     entire time range. (day or month depending on the grain)
-    :vartype avg_utilization_percentage: decimal.Decimal
-    :ivar max_utilization_percentage: This is the maximum hourly utilization
-     in the usage time (day or month). E.g. if usage record corresponds to
-     12/10/2017 and on that for hour 4 and 5, utilization was 100%, this field
-     will return 100% for that day.
-    :vartype max_utilization_percentage: decimal.Decimal
+    :ivar instance_id: This identifier is the name of the resource or the
+     fully qualified Resource ID.
+    :vartype instance_id: str
+    :ivar total_reserved_quantity: This is the total count of instances that
+     are reserved for the reservationid.
+    :vartype total_reserved_quantity: decimal.Decimal
     """
 
     _validation = {
@@ -74,9 +66,8 @@ class ReservationSummary(Resource):
         'reserved_hours': {'readonly': True},
         'usage_date': {'readonly': True},
         'used_hours': {'readonly': True},
-        'min_utilization_percentage': {'readonly': True},
-        'avg_utilization_percentage': {'readonly': True},
-        'max_utilization_percentage': {'readonly': True},
+        'instance_id': {'readonly': True},
+        'total_reserved_quantity': {'readonly': True},
     }
 
     _attribute_map = {
@@ -90,19 +81,17 @@ class ReservationSummary(Resource):
         'reserved_hours': {'key': 'properties.reservedHours', 'type': 'decimal'},
         'usage_date': {'key': 'properties.usageDate', 'type': 'iso-8601'},
         'used_hours': {'key': 'properties.usedHours', 'type': 'decimal'},
-        'min_utilization_percentage': {'key': 'properties.minUtilizationPercentage', 'type': 'decimal'},
-        'avg_utilization_percentage': {'key': 'properties.avgUtilizationPercentage', 'type': 'decimal'},
-        'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'decimal'},
+        'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
+        'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'decimal'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ReservationSummary, self).__init__(**kwargs)
+        super(ReservationDetails, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None
         self.reserved_hours = None
         self.usage_date = None
         self.used_hours = None
-        self.min_utilization_percentage = None
-        self.avg_utilization_percentage = None
-        self.max_utilization_percentage = None
+        self.instance_id = None
+        self.total_reserved_quantity = None

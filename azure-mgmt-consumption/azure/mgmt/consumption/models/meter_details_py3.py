@@ -37,10 +37,6 @@ class MeterDetails(Model):
     :vartype total_included_quantity: decimal.Decimal
     :ivar pretax_standard_rate: The pretax listing price.
     :vartype pretax_standard_rate: decimal.Decimal
-    :ivar service_name: The name of the service.
-    :vartype service_name: str
-    :ivar service_tier: The service tier.
-    :vartype service_tier: str
     """
 
     _validation = {
@@ -51,8 +47,6 @@ class MeterDetails(Model):
         'meter_location': {'readonly': True},
         'total_included_quantity': {'readonly': True},
         'pretax_standard_rate': {'readonly': True},
-        'service_name': {'readonly': True},
-        'service_tier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,8 +57,6 @@ class MeterDetails(Model):
         'meter_location': {'key': 'meterLocation', 'type': 'str'},
         'total_included_quantity': {'key': 'totalIncludedQuantity', 'type': 'decimal'},
         'pretax_standard_rate': {'key': 'pretaxStandardRate', 'type': 'decimal'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
-        'service_tier': {'key': 'serviceTier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -76,5 +68,3 @@ class MeterDetails(Model):
         self.meter_location = None
         self.total_included_quantity = None
         self.pretax_standard_rate = None
-        self.service_name = None
-        self.service_tier = None

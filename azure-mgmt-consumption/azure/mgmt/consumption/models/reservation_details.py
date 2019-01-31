@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class ReservationDetail(Resource):
-    """reservation detail resource.
+class ReservationDetails(Resource):
+    """reservation details resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -37,7 +37,7 @@ class ReservationDetail(Resource):
      to which the reservation benefit can be applied to.
     :vartype reservation_id: str
     :ivar sku_name: This is the ARM Sku name. It can be used to join with the
-     serviceType field in additional info in usage records.
+     servicetype field in additoinalinfo in usage records.
     :vartype sku_name: str
     :ivar reserved_hours: This is the total hours reserved for the day. E.g.
      if reservation for 1 instance was made on 1 PM, this will be 11 hours for
@@ -51,7 +51,7 @@ class ReservationDetail(Resource):
      fully qualified Resource ID.
     :vartype instance_id: str
     :ivar total_reserved_quantity: This is the total count of instances that
-     are reserved for the reservationId.
+     are reserved for the reservationid.
     :vartype total_reserved_quantity: decimal.Decimal
     """
 
@@ -86,7 +86,7 @@ class ReservationDetail(Resource):
     }
 
     def __init__(self, **kwargs):
-        super(ReservationDetail, self).__init__(**kwargs)
+        super(ReservationDetails, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None

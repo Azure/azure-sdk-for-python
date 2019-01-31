@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class ResourceAttributes(Model):
-    """The Resource model definition.
+class PriceSheetListResult(Model):
+    """price sheet result. It contains the pricesheet associated with billing
+    period.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar location: Resource location
-    :vartype location: str
-    :ivar sku: Resource sku
-    :vartype sku: str
+    :ivar value: Price sheet
+    :vartype value: object
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'location': {'readonly': True},
-        'sku': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ResourceAttributes, self).__init__(**kwargs)
-        self.location = None
-        self.sku = None
+    def __init__(self, **kwargs):
+        super(PriceSheetListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None

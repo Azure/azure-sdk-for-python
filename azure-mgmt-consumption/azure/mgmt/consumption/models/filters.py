@@ -20,11 +20,9 @@ class Filters(Model):
     :type resource_groups: list[str]
     :param resources: The list of filters on resources.
     :type resources: list[str]
-    :param meters: The list of filters on meters (GUID), mandatory for budgets
-     of usage category.
+    :param meters: The list of filters on meters, mandatory for budgets of
+     usage category.
     :type meters: list[str]
-    :param tags: The dictionary of filters on tags.
-    :type tags: dict[str, list[str]]
     """
 
     _validation = {
@@ -37,7 +35,6 @@ class Filters(Model):
         'resource_groups': {'key': 'resourceGroups', 'type': '[str]'},
         'resources': {'key': 'resources', 'type': '[str]'},
         'meters': {'key': 'meters', 'type': '[str]'},
-        'tags': {'key': 'tags', 'type': '{[str]}'},
     }
 
     def __init__(self, **kwargs):
@@ -45,4 +42,3 @@ class Filters(Model):
         self.resource_groups = kwargs.get('resource_groups', None)
         self.resources = kwargs.get('resources', None)
         self.meters = kwargs.get('meters', None)
-        self.tags = kwargs.get('tags', None)

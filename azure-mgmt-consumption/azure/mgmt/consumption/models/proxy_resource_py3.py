@@ -24,7 +24,7 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param e_tag: eTag of the resource. To handle concurrent update scenario,
+    :param e_tag: eTag of the resource. To handle concurrent update scenarion,
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str

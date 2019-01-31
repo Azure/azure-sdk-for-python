@@ -60,7 +60,7 @@ class Marketplace(Resource):
     :vartype pretax_cost: decimal.Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
-    :ivar meter_id: The meter id (GUID).
+    :ivar meter_id: The meter id.
     :vartype meter_id: str
     :ivar subscription_guid: Subscription guid.
     :vartype subscription_guid: str
@@ -82,9 +82,6 @@ class Marketplace(Resource):
     :vartype publisher_name: str
     :ivar plan_name: The name of plan.
     :vartype plan_name: str
-    :ivar is_recurring_charge: Flag indicating whether this is a recurring
-     charge or not.
-    :vartype is_recurring_charge: bool
     """
 
     _validation = {
@@ -116,7 +113,6 @@ class Marketplace(Resource):
         'additional_properties': {'readonly': True},
         'publisher_name': {'readonly': True},
         'plan_name': {'readonly': True},
-        'is_recurring_charge': {'readonly': True},
     }
 
     _attribute_map = {
@@ -148,7 +144,6 @@ class Marketplace(Resource):
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
         'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
         'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'is_recurring_charge': {'key': 'properties.isRecurringCharge', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -177,4 +172,3 @@ class Marketplace(Resource):
         self.additional_properties = None
         self.publisher_name = None
         self.plan_name = None
-        self.is_recurring_charge = None

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class ReservationSummary(Resource):
-    """reservation summary resource.
+class ReservationSummaries(Resource):
+    """reservation summaries resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -37,7 +37,7 @@ class ReservationSummary(Resource):
      to which the reservation benefit can be applied to.
     :vartype reservation_id: str
     :ivar sku_name: This is the ARM Sku name. It can be used to join with the
-     serviceType field in additional info in usage records.
+     servicetype field in additoinalinfo in usage records.
     :vartype sku_name: str
     :ivar reserved_hours: This is the total hours reserved. E.g. if
      reservation for 1 instance was made on 1 PM, this will be 11 hours for
@@ -95,8 +95,8 @@ class ReservationSummary(Resource):
         'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'decimal'},
     }
 
-    def __init__(self, **kwargs):
-        super(ReservationSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ReservationSummaries, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None

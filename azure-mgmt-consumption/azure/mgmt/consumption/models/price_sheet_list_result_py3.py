@@ -12,29 +12,30 @@
 from msrest.serialization import Model
 
 
-class BalancePropertiesAdjustmentDetailsItem(Model):
-    """BalancePropertiesAdjustmentDetailsItem.
+class PriceSheetListResult(Model):
+    """price sheet result. It contains the pricesheet associated with billing
+    period.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of new adjustment.
-    :vartype name: str
-    :ivar value: the value of new adjustment.
-    :vartype value: decimal.Decimal
+    :ivar value: Price sheet
+    :vartype value: object
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'name': {'readonly': True},
         'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'decimal'},
+        'value': {'key': 'value', 'type': 'object'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(BalancePropertiesAdjustmentDetailsItem, self).__init__(**kwargs)
-        self.name = None
+        super(PriceSheetListResult, self).__init__(**kwargs)
         self.value = None
+        self.next_link = None

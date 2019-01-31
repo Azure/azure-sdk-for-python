@@ -22,7 +22,7 @@ class PriceSheetOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-10-01. Constant value: "2018-10-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
     """
 
     models = models
@@ -32,13 +32,13 @@ class PriceSheetOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-10-01"
+        self.api_version = "2018-01-31"
 
         self.config = config
 
-    def get(
-            self, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the price sheet for a scope by subscriptionId. Price sheet is
+    def list(
+            self, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the price sheet for a scope by subscriptionId. Price sheets are
         available via this API only for May 1, 2014 or later.
 
         :param expand: May be used to expand the properties/meterDetails
@@ -50,22 +50,19 @@ class PriceSheetOperations(object):
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
-        :param top: May be used to limit the number of results to the top N
-         results.
-        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PriceSheetResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.PriceSheetResult or
+        :return: PriceSheetListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.PriceSheetListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -77,8 +74,6 @@ class PriceSheetOperations(object):
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         if skiptoken is not None:
             query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -101,19 +96,19 @@ class PriceSheetOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PriceSheetResult', response)
+            deserialized = self._deserialize('PriceSheetListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'}
 
-    def get_by_billing_period(
-            self, billing_period_name, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get the price sheet for a scope by subscriptionId and billing period.
-        Price sheet is available via this API only for May 1, 2014 or later.
+    def list_by_billing_period(
+            self, billing_period_name, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the price sheet for a scope by subscriptionId and billing period.
+        Price sheets are available via this API only for May 1, 2014 or later.
 
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
@@ -126,22 +121,19 @@ class PriceSheetOperations(object):
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
-        :param top: May be used to limit the number of results to the top N
-         results.
-        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PriceSheetResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.PriceSheetResult or
+        :return: PriceSheetListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.PriceSheetListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_billing_period.metadata['url']
+        url = self.list_by_billing_period.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
@@ -154,8 +146,6 @@ class PriceSheetOperations(object):
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         if skiptoken is not None:
             query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -178,11 +168,11 @@ class PriceSheetOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PriceSheetResult', response)
+            deserialized = self._deserialize('PriceSheetListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_by_billing_period.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'}
+    list_by_billing_period.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'}
