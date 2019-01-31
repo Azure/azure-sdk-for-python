@@ -34,8 +34,8 @@ class TIDataConnector(DataConnector):
      tenantID, SubscriptionID etc.).
     :type context_id: str
     :param data_types: The available data types for the connector.
-    :type data_types: dict[str,
-     ~azure.mgmt.securityinsight.models.TIDataConnectorDataTypes]
+    :type data_types:
+     ~azure.mgmt.securityinsight.models.TIDataConnectorDataTypes
     """
 
     _validation = {
@@ -52,7 +52,7 @@ class TIDataConnector(DataConnector):
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'context_id': {'key': 'properties.contextId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': '{TIDataConnectorDataTypes}'},
+        'data_types': {'key': 'properties.dataTypes', 'type': 'TIDataConnectorDataTypes'},
     }
 
     def __init__(self, *, etag: str=None, context_id: str=None, data_types=None, **kwargs) -> None:

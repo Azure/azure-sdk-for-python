@@ -37,8 +37,8 @@ class DataConnectorWithAlerts(DataConnector):
      tenantID, SubscriptionID etc.).
     :type context_id: str
     :param data_types: The available data types for the connector.
-    :type data_types: dict[str,
-     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector]
+    :type data_types:
+     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
     """
 
     _validation = {
@@ -55,7 +55,7 @@ class DataConnectorWithAlerts(DataConnector):
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'context_id': {'key': 'properties.contextId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': '{AlertsDataTypeOfDataConnector}'},
+        'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
     _subtype_map = {
