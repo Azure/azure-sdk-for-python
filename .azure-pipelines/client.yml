@@ -17,15 +17,15 @@ jobs:
     inputs:
       versionSpec: 3.6
 
+  - script: |
+     pip install wheel setuptools pathlib Jinja2
+    displayName: 'Prep Environment'
+
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
     inputs:
       scriptPath: 'scripts/analyze_deps.py'
-      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.txt"'
-
-  - script: |
-     pip install wheel setuptools pathlib
-    displayName: 'Prep Environment'
+      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
 
   - task: PythonScript@0
     displayName: 'Generate Packages'
