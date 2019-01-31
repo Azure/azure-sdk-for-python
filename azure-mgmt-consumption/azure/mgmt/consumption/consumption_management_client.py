@@ -43,29 +43,16 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param start_date: The start of the date time range.
-    :type start_date: datetime
-    :param end_date: The start of the date time range.
-    :type end_date: datetime
-    :param look_back_period: The number of days of usage data to look back
-     into.
-    :type look_back_period: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, start_date, end_date, look_back_period, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if start_date is None:
-            raise ValueError("Parameter 'start_date' must not be None.")
-        if end_date is None:
-            raise ValueError("Parameter 'end_date' must not be None.")
-        if look_back_period is None:
-            raise ValueError("Parameter 'look_back_period' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -76,9 +63,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.start_date = start_date
-        self.end_date = end_date
-        self.look_back_period = look_back_period
 
 
 class ConsumptionManagementClient(SDKClient):
@@ -127,20 +111,13 @@ class ConsumptionManagementClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param start_date: The start of the date time range.
-    :type start_date: datetime
-    :param end_date: The start of the date time range.
-    :type end_date: datetime
-    :param look_back_period: The number of days of usage data to look back
-     into.
-    :type look_back_period: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, start_date, end_date, look_back_period, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, start_date, end_date, look_back_period, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

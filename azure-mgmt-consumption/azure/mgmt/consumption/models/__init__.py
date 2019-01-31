@@ -43,9 +43,7 @@ try:
     from .amount_py3 import Amount
     from .reservation_recommendation_properties_with_amount_py3 import ReservationRecommendationPropertiesWithAmount
     from .reservation_recommendations_shared_py3 import ReservationRecommendationsShared
-    from .reservation_recommendations_shared_list_result_py3 import ReservationRecommendationsSharedListResult
     from .reservation_recommendations_single_py3 import ReservationRecommendationsSingle
-    from .reservation_recommendations_single_list_result_py3 import ReservationRecommendationsSingleListResult
     from .query_options_py3 import QueryOptions
 except (SyntaxError, ImportError):
     from .meter_details import MeterDetails
@@ -81,9 +79,7 @@ except (SyntaxError, ImportError):
     from .amount import Amount
     from .reservation_recommendation_properties_with_amount import ReservationRecommendationPropertiesWithAmount
     from .reservation_recommendations_shared import ReservationRecommendationsShared
-    from .reservation_recommendations_shared_list_result import ReservationRecommendationsSharedListResult
     from .reservation_recommendations_single import ReservationRecommendationsSingle
-    from .reservation_recommendations_single_list_result import ReservationRecommendationsSingleListResult
     from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
@@ -93,6 +89,8 @@ from .reservation_recommendation_paged import ReservationRecommendationPaged
 from .budget_paged import BudgetPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
+from .reservation_recommendations_shared_paged import ReservationRecommendationsSharedPaged
+from .reservation_recommendations_single_paged import ReservationRecommendationsSinglePaged
 from .consumption_management_client_enums import (
     BillingFrequency,
     CategoryType,
@@ -138,9 +136,7 @@ __all__ = [
     'Amount',
     'ReservationRecommendationPropertiesWithAmount',
     'ReservationRecommendationsShared',
-    'ReservationRecommendationsSharedListResult',
     'ReservationRecommendationsSingle',
-    'ReservationRecommendationsSingleListResult',
     'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
@@ -150,6 +146,8 @@ __all__ = [
     'BudgetPaged',
     'ForecastPaged',
     'OperationPaged',
+    'ReservationRecommendationsSharedPaged',
+    'ReservationRecommendationsSinglePaged',
     'BillingFrequency',
     'CategoryType',
     'TimeGrainType',

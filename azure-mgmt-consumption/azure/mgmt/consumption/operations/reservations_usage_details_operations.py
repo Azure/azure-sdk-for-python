@@ -37,7 +37,7 @@ class ReservationsUsageDetailsOperations(object):
         self.config = config
 
     def list_by_billing_profile(
-            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_profile_id, start_date, end_date, custom_headers=None, raw=False, **operation_config):
         """List the reserved instance usage details based on billingAccountId and
         billingProfileId within the provided date range.
 
@@ -45,6 +45,10 @@ class ReservationsUsageDetailsOperations(object):
         :type billing_account_id: str
         :param billing_profile_id: BillingProfile ID
         :type billing_profile_id: str
+        :param start_date: The start of the date time range.
+        :type start_date: datetime
+        :param end_date: The start of the date time range.
+        :type end_date: datetime
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -69,8 +73,8 @@ class ReservationsUsageDetailsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['startDate'] = self._serialize.query("self.config.start_date", self.config.start_date, 'iso-8601')
-                query_parameters['endDate'] = self._serialize.query("self.config.end_date", self.config.end_date, 'iso-8601')
+                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'iso-8601')
+                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'iso-8601')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

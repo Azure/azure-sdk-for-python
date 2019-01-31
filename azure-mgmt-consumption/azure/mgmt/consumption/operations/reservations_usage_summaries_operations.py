@@ -37,7 +37,7 @@ class ReservationsUsageSummariesOperations(object):
         self.config = config
 
     def list_by_billing_profile(
-            self, billing_account_id, billing_profile_id, grain, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_profile_id, start_date, end_date, grain, custom_headers=None, raw=False, **operation_config):
         """List the reserved instance usage summary for daily or monthly grain
         based on billingAccountId and billingProfileId within the provided date
         range.
@@ -46,6 +46,10 @@ class ReservationsUsageSummariesOperations(object):
         :type billing_account_id: str
         :param billing_profile_id: BillingProfile ID
         :type billing_profile_id: str
+        :param start_date: The start of the date time range.
+        :type start_date: datetime
+        :param end_date: The start of the date time range.
+        :type end_date: datetime
         :param grain: Can be daily or monthly. Possible values include:
          'DailyGrain', 'MonthlyGrain'
         :type grain: str or ~azure.mgmt.consumption.models.Datagrain
@@ -73,8 +77,8 @@ class ReservationsUsageSummariesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['startDate'] = self._serialize.query("self.config.start_date", self.config.start_date, 'iso-8601')
-                query_parameters['endDate'] = self._serialize.query("self.config.end_date", self.config.end_date, 'iso-8601')
+                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'iso-8601')
+                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'iso-8601')
                 query_parameters['grain'] = self._serialize.query("grain", grain, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
