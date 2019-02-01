@@ -106,7 +106,7 @@ client = ComputerVisionAPI(region, credentials)
 
 Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client object, you can:
 
-* Analyze an image: You can analyze an iimage for certain features such as faces, colors, tags.   
+* Analyze an image: You can analyze an image for certain features such as faces, colors, tags.   
 * Generate thumbnails: Create a custom JPEG image to use as a thumbnail of the original image.
 * Get description of an image: Get a description of the image based on its subject domain. 
 
