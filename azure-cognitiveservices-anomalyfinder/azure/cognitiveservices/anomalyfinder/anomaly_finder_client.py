@@ -16,8 +16,8 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class AnomalyFinderConfiguration(Configuration):
-    """Configuration for AnomalyFinder
+class AnomalyFinderClientConfiguration(Configuration):
+    """Configuration for AnomalyFinderClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -38,7 +38,7 @@ class AnomalyFinderConfiguration(Configuration):
             raise ValueError("Parameter 'credentials' must not be None.")
         base_url = '{Endpoint}/anomalyfinder/v2.0'
 
-        super(AnomalyFinderConfiguration, self).__init__(base_url)
+        super(AnomalyFinderClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-anomalyfinder/{}'.format(VERSION))
 
@@ -46,11 +46,11 @@ class AnomalyFinderConfiguration(Configuration):
         self.credentials = credentials
 
 
-class AnomalyFinder(SDKClient):
-    """The Anomaly Detection Service detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the timeseries, another is detecting last point with model trained by points before. By using this service, business customers can discover incidents and establish a logic flow for root cause analysis. Ensure online service quality is one of the main reasons we develop this service. Improving anomaly detection service to provide precise results will always be fundamental work of our team.
+class AnomalyFinderClient(SDKClient):
+    """The Anomaly Finder API detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the timeseries, another is detecting last point with model trained by points before. By using this service, business customers can discover incidents and establish a logic flow for root cause analysis.
 
     :ivar config: Configuration for client.
-    :vartype config: AnomalyFinderConfiguration
+    :vartype config: AnomalyFinderClientConfiguration
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -63,8 +63,8 @@ class AnomalyFinder(SDKClient):
     def __init__(
             self, endpoint, credentials):
 
-        self.config = AnomalyFinderConfiguration(endpoint, credentials)
-        super(AnomalyFinder, self).__init__(self.config.credentials, self.config)
+        self.config = AnomalyFinderClientConfiguration(endpoint, credentials)
+        super(AnomalyFinderClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2.0'
@@ -72,7 +72,7 @@ class AnomalyFinder(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def post_timeseries_entire_detect(
+    def entire_detect(
             self, body, custom_headers=None, raw=False, **operation_config):
         """Find anomalies for the entire series in batch.
 
@@ -98,7 +98,7 @@ class AnomalyFinder(SDKClient):
          :class:`APIErrorException<azure.cognitiveservices.anomalyfinder.models.APIErrorException>`
         """
         # Construct URL
-        url = self.post_timeseries_entire_detect.metadata['url']
+        url = self.entire_detect.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -134,9 +134,9 @@ class AnomalyFinder(SDKClient):
             return client_raw_response
 
         return deserialized
-    post_timeseries_entire_detect.metadata = {'url': '/timeseries/entire/detect'}
+    entire_detect.metadata = {'url': '/timeseries/entire/detect'}
 
-    def post_timeseries_last_detect(
+    def last_detect(
             self, body, custom_headers=None, raw=False, **operation_config):
         """Detect anomaly status of the latest point in time series.
 
@@ -161,7 +161,7 @@ class AnomalyFinder(SDKClient):
          :class:`APIErrorException<azure.cognitiveservices.anomalyfinder.models.APIErrorException>`
         """
         # Construct URL
-        url = self.post_timeseries_last_detect.metadata['url']
+        url = self.last_detect.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -197,4 +197,4 @@ class AnomalyFinder(SDKClient):
             return client_raw_response
 
         return deserialized
-    post_timeseries_last_detect.metadata = {'url': '/timeseries/last/detect'}
+    last_detect.metadata = {'url': '/timeseries/last/detect'}

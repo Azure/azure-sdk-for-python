@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .anomaly_finder import AnomalyFinder
+from .anomaly_finder_client import AnomalyFinderClient
 from .version import VERSION
 
-__all__ = ['AnomalyFinder']
+__all__ = ['AnomalyFinderClient']
 
 __version__ = VERSION
 

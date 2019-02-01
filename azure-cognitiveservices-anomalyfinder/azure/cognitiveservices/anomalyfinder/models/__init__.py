@@ -21,7 +21,7 @@ except (SyntaxError, ImportError):
     from .request import Request
     from .entire_detect_response import EntireDetectResponse
     from .last_detect_response import LastDetectResponse
-from .anomaly_finder_enums import (
+from .anomaly_finder_client_enums import (
     Granularity,
 )
 

@@ -37,22 +37,17 @@ class Request(Model):
      automatically.
     :type period: int
     :param max_anomaly_ratio: Optional argument, advanced model parameter, max
-     anomaly ratio in a time series. Must be between 0 and 0.5 (exclusive).
-     Default value: 0.25 .
+     anomaly ratio in a time series.
     :type max_anomaly_ratio: float
     :param sensitivity: Optional argument, advanced model parameter, between
      0-99, the lower the value is, the larger the margin value will be which
-     means less anomalies will be accepted. Must be between 0 and 99
-     (inclusive). Default value: 99 .
+     means less anomalies will be accepted.
     :type sensitivity: float
     """
 
     _validation = {
-        'series': {'required': True, 'max_items': 8640, 'min_items': 12},
+        'series': {'required': True},
         'granularity': {'required': True},
-        'period': {'minimum': 0},
-        'max_anomaly_ratio': {'maximum_ex': 0.5, 'minimum_ex': 0},
-        'sensitivity': {'maximum': 99, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -70,5 +65,5 @@ class Request(Model):
         self.granularity = kwargs.get('granularity', None)
         self.custom_interval = kwargs.get('custom_interval', None)
         self.period = kwargs.get('period', None)
-        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', 0.25)
-        self.sensitivity = kwargs.get('sensitivity', 99)
+        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
+        self.sensitivity = kwargs.get('sensitivity', None)
