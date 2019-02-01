@@ -6,6 +6,9 @@
 {% set rel_url   = env.get('RELEASE_RELEASEWEBURL') %}
 {% set release   = env.get('RELEASE_RELEASENAME') %}
 {% set repo      = env.get('BUILD_REPOSITORY_NAME') if isfork else ('Azure/' + repo_name) %}
+{% macro pluralize(num, singular, plural) -%}
+{% if num == 1 %}{{ singular }}{% else %}{{ plural }}{% endif %}
+{%- endmacro %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -38,6 +41,9 @@
           color: white;
           font-weight: 300;
           text-align: left;
+      }
+      th a {
+        color: white;
       }
       th.inconsistent {
         background-color: #FF0000;
@@ -77,14 +83,14 @@
       .tooltip:hover .tooltiptext {
           visibility: visible;
       }
-      
+
       .success {
           color: #00CC00;
       }
       .fail {
           color: #CC0000;
       }
-      
+
       @media only screen and (max-width: 1350px) {
           body, table {
               font-size: 25px;
@@ -118,28 +124,31 @@
         {% endif %}
         {% endif %}
       </h3>
-      <p>This report scanned the <a href="#packages">packages</a> listed in the first table below.<br/>
-         Package <a href="#dependencies">dependencies</a> have been analyzed to determine if any packages declare inconsistent dependency versions.<br/>
-         Declared dependencies have then been validated against those in the <a href="#lockfile">lockfile</a> (if present).</p>
-    <a name="packages"/>
-    <table class="condensed">
-      <thead>
-        <tr><th colspan="3"><strong>Packages Scanned for this Report</strong></th></tr>
-        <tr><th>Package Analyzed</th><th>Package Version</th><th>Package Source</th></tr>
-      </thead>
-      <tbody>
-      {% for name, info in packages|dictsort %}
-      <tr>
-        <td>{{ name }}</td>
-        <td>{{ info.version }}</td>
-        <td>{{ info.source }}</td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    <br/><br/><hr/><br/><br/>
+      <p>
+         {{ dependencies|length - external|length }} internal and {{ external|length }} external package <a href="#dependencies">{{ pluralize(dependencies|length,'dependency</a> was','dependencies</a> were') }} analyzed to determine if any packages declare inconsistent dependency versions.<br/>
+         {% if inconsistent %}
+         <strong>{{ inconsistent|length }} inconsistent package dependency {{ pluralize(inconsistent|length,'version was','versions were') }} discovered.</strong><br/><br/>
+         {% else %}
+         No inconsistent package dependency versions were discovered.<br/><br/>
+         {% endif %}
+         {% if frozen %}
+         {{ frozen|length }} dependency {{ pluralize(frozen|length,'version was','versions were') }} discovered in the <a href="#lockfile">lockfile</a>.<br/>
+         {% if new_reqs %}
+         <strong>{{ new_reqs|length }} {{ pluralize(new_reqs|length,'dependency is','dependencies are') }} missing from the lockfile.</strong><br/>
+         {% endif %}
+         {% if changed_reqs %}
+         <strong>{{ changed_reqs|length }} dependency {{ pluralize(changed_reqs|length,'version does','versions do') }} not match the version in the lockfile.</strong><br/>
+         {% endif %}
+         {% if not new_reqs and not changed_reqs %}
+         All declared dependency versions were validated against those in the lockfile.<br/>
+         {% endif %}
+         {% else %}
+         <strong>No lockfile is present in the repo, declared dependency versions were not able to be validated.</strong><br/>
+         {% endif %}
+         <br/>This report scanned {{ packages|length }} <a href="#packages">{{ pluralize(packages|length,'package','packages') }}</a>.
+       </p>
     <a name="dependencies"/>
-    {% for dep_name, requirements in dependencies|dictsort %}
+    {% for dep_name in ordered_deps %}
     <a name="dep_{{ dep_name }}"/>
     <table>
       <thead>
@@ -147,16 +156,20 @@
         <tr><th colspan="2"><strong>Dependencies Discovered in Packages</strong></th></tr>
         {% endif %}
         <tr>
-        {% if dep_name in inconsistent %}
-          <th colspan="2" class="inconsistent"><strong>Inconsistent Dependency:</strong> {{ dep_name }}</th></tr>
+        {% if dep_name in external %}
+        {% set dep_type = "external" %}
         {% else %}
-          <th colspan="2"><strong>Dependency:</strong> {{ dep_name }}</th></tr>
+        {% set dep_type = "internal" %}
         {% endif %}
+        {% if dep_name in inconsistent %}
+        {% set dep_type = "inconsistent " + dep_type %}
+        {% endif %}
+        <th colspan="2" class="{{ dep_type }}"><strong>{{ dep_type|title }} Dependency:</strong> {{ dep_name }}</th></tr>
       </thead>
       <tbody>
-      {% for requirement, packages in requirements|dictsort %}
+      {% for requirement, packages in dependencies[dep_name]|dictsort %}
       <tr>
-        <td class="version">{{ requirement if requirement else '(any)' }}</td>
+        <td class="version">{{ requirement if requirement else '(empty)' }}</td>
         <td>
           {% for package_name in packages|sort %}
           {{ package_name }}<br/>
@@ -181,7 +194,7 @@
       {% for name, versions in frozen|dictsort %}
       <tr>
         <td><a href="#dep_{{ name }}">{{ name }}</a></td>
-        <td>{{ versions[0] if versions[0] else '(any)' }}</td>
+        <td>{{ versions[0] if versions[0] else '(empty)' }}</td>
         {% if name in missing_reqs %}
         <td>⚠️ No packages reference this dependency</td>
         {% elif name in changed_reqs %}
@@ -221,7 +234,7 @@
       <tbody>
       {% for requirement, packages in dependencies[name]|dictsort %}
       <tr>
-        <td class="version">{{ requirement if requirement else '(any)' }}</td>
+        <td class="version">{{ requirement if requirement else '(empty)' }}</td>
         <td>
           {% for package_name in packages|sort %}
           {{ package_name }}<br/>
@@ -233,6 +246,23 @@
     </table>
     {% endfor %}
     {% endif %}
+    <br/><br/><hr/><br/><br/>
+    <a name="packages"/>
+    <table class="condensed">
+      <thead>
+        <tr><th colspan="3"><strong>Packages Scanned for this Report</strong></th></tr>
+        <tr><th>Package Analyzed</th><th>Package Version</th><th>Package Source</th></tr>
+      </thead>
+      <tbody>
+      {% for name, info in packages|dictsort %}
+      <tr>
+        <td>{{ name }}</td>
+        <td>{{ info.version }}</td>
+        <td>{{ info.source }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
     </center>
   </body>
 </html>
