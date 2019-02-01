@@ -67,6 +67,7 @@ class VisualFeatureTypes(str, Enum):
     tags = "Tags"
     description = "Description"
     objects = "Objects"
+    brands = "Brands"
 
 
 class TextRecognitionMode(str, Enum):
