@@ -22,7 +22,7 @@ class QueryOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-03-01-preview. Constant value: "2019-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class QueryOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01-preview"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -40,10 +40,9 @@ class QueryOperations(object):
             self, parameters, custom_headers=None, raw=False, **operation_config):
         """Query the usage data for subscriptionId.
 
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -85,7 +84,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -113,10 +112,9 @@ class QueryOperations(object):
 
         :param resource_group_name: Azure Resource Group Name.
         :type resource_group_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -159,7 +157,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -187,10 +185,9 @@ class QueryOperations(object):
 
         :param billing_account_id: BillingAccount ID
         :type billing_account_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -232,7 +229,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -262,10 +259,9 @@ class QueryOperations(object):
         :type billing_account_id: str
         :param enrollment_account_id: Enrollment Account ID
         :type enrollment_account_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -308,7 +304,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -338,10 +334,9 @@ class QueryOperations(object):
         :type billing_account_id: str
         :param department_id: Department ID
         :type department_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -384,7 +379,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -406,16 +401,15 @@ class QueryOperations(object):
         return deserialized
     usage_by_department.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}/providers/Microsoft.CostManagement/Query'}
 
-    def usage_by_managment_group(
+    def usage_by_management_group(
             self, management_group_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Lists the usage data for management group.
 
         :param management_group_id: ManagementGroup ID
         :type management_group_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -431,7 +425,7 @@ class QueryOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.usage_by_managment_group.metadata['url']
+                url = self.usage_by_management_group.metadata['url']
                 path_format_arguments = {
                     'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
@@ -457,7 +451,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -477,4 +471,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage_by_managment_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.CostManagement/Query'}
+    usage_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.CostManagement/Query'}

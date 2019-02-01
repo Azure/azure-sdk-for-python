@@ -17,37 +17,61 @@ class TimeframeType(str, Enum):
     week_to_date = "WeekToDate"
     month_to_date = "MonthToDate"
     year_to_date = "YearToDate"
+    the_last_week = "TheLastWeek"
+    the_last_month = "TheLastMonth"
+    the_last_year = "TheLastYear"
     custom = "Custom"
 
 
 class GranularityType(str, Enum):
 
     daily = "Daily"
-    monthly = "Monthly"
+    hourly = "Hourly"
 
 
-class ReportConfigColumnType(str, Enum):
+class QueryColumnType(str, Enum):
 
     tag = "Tag"
     dimension = "Dimension"
 
 
-class OperatorType(str, Enum):
+class SortDirection(str, Enum):
 
-    in_enum = "In"
-    contains = "Contains"
-
-
-class ConnectorStatus(str, Enum):
-
-    active = "active"
-    error = "error"
-    suspended = "suspended"
+    ascending = "Ascending"
+    descending = "Descending"
 
 
-class ConnectorBillingModel(str, Enum):
+class StatusType(str, Enum):
 
-    trial = "trial"
-    auto_upgrade = "autoUpgrade"
-    premium = "premium"
-    expired = "expired"
+    active = "Active"
+    inactive = "Inactive"
+
+
+class RecurrenceType(str, Enum):
+
+    daily = "Daily"
+    weekly = "Weekly"
+    monthly = "Monthly"
+    annually = "Annually"
+
+
+class FormatType(str, Enum):
+
+    csv = "Csv"
+
+
+class ExecutionType(str, Enum):
+
+    on_demand = "OnDemand"
+    scheduled = "Scheduled"
+
+
+class ExecutionStatus(str, Enum):
+
+    queued = "Queued"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+    timeout = "Timeout"
+    new_data_not_available = "NewDataNotAvailable"
+    data_not_available = "DataNotAvailable"

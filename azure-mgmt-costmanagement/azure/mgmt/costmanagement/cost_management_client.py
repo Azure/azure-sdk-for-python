@@ -15,11 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.dimensions_operations import DimensionsOperations
 from .operations.query_operations import QueryOperations
-from .operations.forecast_operations import ForecastOperations
-from .operations.cloud_connector_operations import CloudConnectorOperations
-from .operations.external_billing_account_operations import ExternalBillingAccountOperations
-from .operations.external_subscription_operations import ExternalSubscriptionOperations
-from .operations.entities_operations import EntitiesOperations
+from .operations.exports_operations import ExportsOperations
 from .operations.operations import Operations
 from . import models
 
@@ -66,16 +62,8 @@ class CostManagementClient(SDKClient):
     :vartype dimensions: azure.mgmt.costmanagement.operations.DimensionsOperations
     :ivar query: Query operations
     :vartype query: azure.mgmt.costmanagement.operations.QueryOperations
-    :ivar forecast: Forecast operations
-    :vartype forecast: azure.mgmt.costmanagement.operations.ForecastOperations
-    :ivar cloud_connector: CloudConnector operations
-    :vartype cloud_connector: azure.mgmt.costmanagement.operations.CloudConnectorOperations
-    :ivar external_billing_account: ExternalBillingAccount operations
-    :vartype external_billing_account: azure.mgmt.costmanagement.operations.ExternalBillingAccountOperations
-    :ivar external_subscription: ExternalSubscription operations
-    :vartype external_subscription: azure.mgmt.costmanagement.operations.ExternalSubscriptionOperations
-    :ivar entities: Entities operations
-    :vartype entities: azure.mgmt.costmanagement.operations.EntitiesOperations
+    :ivar exports: Exports operations
+    :vartype exports: azure.mgmt.costmanagement.operations.ExportsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.costmanagement.operations.Operations
 
@@ -94,7 +82,7 @@ class CostManagementClient(SDKClient):
         super(CostManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-03-01-preview'
+        self.api_version = '2019-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -102,15 +90,7 @@ class CostManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.query = QueryOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.forecast = ForecastOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.cloud_connector = CloudConnectorOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.external_billing_account = ExternalBillingAccountOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.external_subscription = ExternalSubscriptionOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.entities = EntitiesOperations(
+        self.exports = ExportsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

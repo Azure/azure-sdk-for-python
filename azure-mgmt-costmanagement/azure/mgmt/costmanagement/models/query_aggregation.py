@@ -12,29 +12,33 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class QueryAggregation(Model):
+    """The aggregation expression to be used in the query.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the column to aggregate.
+    :type name: str
+    :ivar function: Required. The name of the aggregation function to use.
+     Default value: "Sum" .
+    :vartype function: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'name': {'required': True},
+        'function': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'function': {'key': 'function', 'type': 'str'},
     }
 
+    function = "Sum"
+
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+        super(QueryAggregation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
