@@ -1,8 +1,6 @@
 # Azure Cognitive Services Computer Vision SDK for Python
 
-The cloud-based Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. This service works with popular image formats, such as JPEG and PNG. 
-
-To analyze an image, you can either upload an image or specify an image URL. Computer Vision algorithms analyze the content of an image in different ways, depending on the visual features you're interested in. For example, Computer Vision can determine if an image contains adult or racy content, or find all the faces in an image.
+The Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. Computer Vision algorithms analyze the content of an image in different ways, depending on the visual features you're interested in. For example, Computer Vision can determine if an image contains adult or racy content, find all the faces in an image, get handwritten or printed text. This service works with popular image formats, such as JPEG and PNG. 
 
 You can use Computer Vision in your application to:
 
@@ -12,13 +10,14 @@ You can use Computer Vision in your application to:
 
 Looking for source code or API reference?
 
-* [SDK source code][source_code]
+* [Pip package][pypi_computervision]
 * [SDK reference documentation][ref_computervision_sdk]
+* [SDK source code][source_code]
 
 ## Prerequisites
 
 * Azure subscription - [Create a free account][azure_sub]
-* Azure [Computer Vision resource][computer_vision_resource]
+* Azure [Computer Vision resource][computervision_resource]
 * [Python 3.6+][python]
 
 If you need a Computer Vision API account, you can create one with this [Azure CLI][azure_cli] command:
@@ -111,7 +110,7 @@ Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client o
 * Generate thumbnails: Create a custom JPEG image to use as a thumbnail of the original image.
 * Get description of an image: Get a description of the image based on its subject domain. 
 
-For more information about these resources, see [Working with Azure computer vision][computervision_resources].
+For more information about this service, see [What is Computer Vision?][computervision_docs].
 
 ## Examples
 
@@ -120,7 +119,7 @@ The following sections provide several code snippets covering some of the most c
 * [Analyze an image](#analyze-an-image)
 * [Analyze an image by domain](#analyze-an-image-by-domain)
 * [Get text description of an image](#get-text-description-of-an-image)
-* [Get text from image](#get-text-from-image)
+* [Get handwritten text from image](#get-text-from-image)
 * [Generate thumbnail](#generate-thumbnail)
 * [Get subject domain list](#get-subject-domain-list)
 
@@ -150,7 +149,7 @@ for x in models.models_property:
 
 ### Analyze an image by domain
 
-You can analyze an image by subject domain with [`analyze_image_by_domain`][ref_computervisionclient_analyze_image_by_domain]. Get the [list of support subject domains](#get-subject-domain-list) in order to use the correct domain name.  
+You can analyze an image by subject domain with [`analyze_image_by_domain`][ref_computervisionclient_analyze_image_by_domain]. Get the [list of supported subject domains](#get-subject-domain-list) in order to use the correct domain name.  
 
 ```Python
 domain = "landmarks"
@@ -172,7 +171,7 @@ You can get a language-based text description of an image with [`describe_image`
 domain = "landmarks"
 url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
 language = "en"
-max_descriptions=3
+max_descriptions = 3
 
 analysis = client.describe_image(url, max_descriptions, language)
 
@@ -221,14 +220,15 @@ This example uses the [Pillow][pypi_pillow] package to save the new thumbnail im
 from PIL import Image
 import io
 
-width=50
-height=50
+width = 50
+height = 50
 url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
 
 thumbnail = client.generate_thumbnail(width, height, url)
 
 for x in thumbnail:
     image = Image.open(io.BytesIO(x))
+
 image.save('thumbnail.jpg')
 ```
 
@@ -236,18 +236,16 @@ image.save('thumbnail.jpg')
 
 ### General
 
-When you interact with the [ComputerVisionAPI][ref_computervisionclient] client object using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
+When you interact with the [ComputerVisionAPI][ref_computervisionclient] client object using the Python SDK, the [`ComputerVisionErrorException`][ref_computervision_computervisionerrorexception] class is used to return errors. Errors returned by the service correspond to the same HTTP status codes returned for REST API requests.
 
-[HTTP Status Codes for Azure ComputerVisionAPI][computervision_http_status_codes]
-
-For example, if you try to analyze an image with an invalid key, a `401` error is returned. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
+For example, if you try to analyze an image with an invalid key, a `401` error is returned. In the following snippet, the [error][ref_httpfailure] is handled gracefully by catching the exception and displaying additional information about the error.
 
 ```Python
 
 domain = "landmarks"
 url = "http://www.public-domain-photos.com/free-stock-photos-4/travel/san-francisco/golden-gate-bridge-in-san-francisco.jpg"
 language = "en"
-max_descriptions=3
+max_descriptions = 3
 
 try:
     analysis = client.describe_image(url, max_descriptions, language)
@@ -264,7 +262,7 @@ except HTTPFailure as e:
 
 ### Handle transient errors with retries
 
-While working with the [ComputerVisionAPI][ref_computervisionclient] client , you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
+While working with the [ComputerVisionAPI][ref_computervisionclient] client, you might encounter transient failures caused by [rate limits][computervision_request_units] enforced by the service, or other transient problems like network outages. For information about handling these types of failures, see [Retry pattern][azure_pattern_retry] in the Cloud Design Patterns guide, and the related [Circuit Breaker pattern][azure_pattern_circuit_breaker].
 
 ## Next steps
 
@@ -272,12 +270,11 @@ While working with the [ComputerVisionAPI][ref_computervisionclient] client , yo
 
 Several Computer Vision Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Computer Vision:
 
-* [`examples.py`][sample_examples_misc] - Contains the code snippets found in this article.
-
+* [recognize_text][recognize-text]
 
 ### Additional documentation
 
-For more extensive documentation on the computervision DB service, see the [Azure computervision DB documentation][computervision_docs] on docs.microsoft.com.
+For more extensive documentation on the Computer Vision service, see the [Azure Computer Vision documentation][computervision_docs] on docs.microsoft.com.
 
 <!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
@@ -294,20 +291,19 @@ For more extensive documentation on the computervision DB service, see the [Azur
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 
-[source_code]: https://github.com/binderjoe/computervision-python-prototype
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/azure-cognitiveservices-vision-computervision
 
-
+[pypi_computervision]:https://pypi.org/project/azure-cognitiveservices-vision-computervision/
 [pypi_pillow]:https://pypi.org/project/Pillow/
 
-[ref_computervision_sdk]: http://computervisionproto.westus.azurecontainer.io
-[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-computervision/azure.computervision.errors.httpfailure
+[ref_computervision_sdk]: https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision?view=azure-python
+[ref_computervision_computervisionerrorexception]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.models.computervisionerrorexception?view=azure-python
+[ref_httpfailure]: https://docs.microsoft.com/en-us/python/api/msrest/msrest.exceptions.httpoperationerror?view=azure-python
 
 
-[computer_vision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
+[computervision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
 
-[computervision_docs]: https://docs.microsoft.com/azure/computervision-db/
-[computervision_http_status_codes]: https://docs.microsoft.com/rest/api/computervision-db/http-status-codes-for-computervision
-[computervision_resources]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items
+[computervision_docs]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/home
 
 [computervision_ttl]: https://docs.microsoft.com/azure/computervision-db/time-to-live
 
@@ -327,6 +323,7 @@ For more extensive documentation on the computervision DB service, see the [Azur
 
 [ref_computervision_model_textoperationstatuscodes]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.models.textoperationstatuscodes?view=azure-python
 
+[computervision_request_units]:https://azure.microsoft.com/en-us/pricing/details/cognitive-services/computer-vision/
 
-
+[recognize-text]:https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/blob/master/samples/vision/computer_vision_samples.py
 
