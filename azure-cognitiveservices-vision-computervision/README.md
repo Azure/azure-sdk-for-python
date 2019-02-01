@@ -62,11 +62,11 @@ pip install azure-cognitiveservices-vision-computervision
 
 Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
 
-Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient]. 
+Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient] client object. 
 
 ### Get credentials
 
-Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account URI and one of its key (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
+Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account **region** and one of its **keys** (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
 
 ```Bash
 RES_GROUP=<resourcegroup-name>
@@ -88,7 +88,7 @@ export ACCOUNT_KEY=$(az cognitiveservices account keys list \
 
 ### Create client
 
-Once you've populated the `ACCOUNT_REGION` and `ACCOUNT_KEY` environment variables, you can create the [ComputerVisionAPI][ref_computervisionclient] client.
+Once you've populated the `ACCOUNT_REGION` and `ACCOUNT_KEY` environment variables, you can create the [ComputerVisionAPI][ref_computervisionclient] client object.
 
 ```Python
 from azure.cognitiveservices.vision.computervision import ComputerVisionAPI
@@ -105,11 +105,11 @@ client = ComputerVisionAPI(region, credentials)
 
 ## Usage
 
-Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client, you can:
+Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client object, you can:
 
 * Analyze an image: You can analyze an iimage for certain features such as faces, colors, tags.   
-* Moderate images in content: An image can be analyzed for adult content.
-* Extract text from an image: An image can be scanned for text. In order to complete the analysis, Computer Vision may correct rotation before analysis. Computer Vision supports 25 languages, and automatically detects the language of extracted text.
+* Generate thumbnails: Create a custom JPEG image to use as a thumbnail of the original image.
+* Get description of an image: Get a description of the image based on its subject domain. 
 
 For more information about these resources, see [Working with Azure computer vision][computervision_resources].
 
@@ -120,12 +120,13 @@ The following sections provide several code snippets covering some of the most c
 * [Analyze an image](#analyze-an-image)
 * [Analyze an image by domain](#analyze-an-image-by-domain)
 * [Get text description of an image](#get-text-description-of-an-image)
+* [Get text from image](#get-text-from-image)
 * [Generate thumbnail](#generate-thumbnail)
 * [Get subject domain list](#get-subject-domain-list)
 
 ### Analyze an image
 
-You can analyze an image for certain features. Use the `visual_features` property to set the types of analysis to perform on the image. Common values are `VisualFeatureTypes.tags` and `VisualFeatureTypes.description`.
+You can analyze an image for certain features with [`analyze_image`][ref_computervisionclient_analyze_image]. Use the [`visual_features`][ref_computervision_model_visualfeatures] property to set the types of analysis to perform on the image. Common values are `VisualFeatureTypes.tags` and `VisualFeatureTypes.description`.
 
 ```Python
 url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
@@ -136,10 +137,20 @@ for tag in image_analysis.tags:
     print(tag)
 ```
 
+### Get subject domain list
+
+Review the subject domains used to analyze your image with [`list_models`][ref_computervisionclient_list_models]. These domain names are used when [analyzing an image by domain](#analyze-an-image-by-domain). An example of a domain is `landmarks`.
+
+```Python
+models = client.list_models()
+
+for x in models.models_property:
+    print(x)
+```
 
 ### Analyze an image by domain
 
-You can analyze an image by subject domain. Get the [list of support subject domains](#get-subject-domain-list) in order to use the correct domain name.  
+You can analyze an image by subject domain with [`analyze_image_by_domain`][ref_computervisionclient_analyze_image_by_domain]. Get the [list of support subject domains](#get-subject-domain-list) in order to use the correct domain name.  
 
 ```Python
 domain = "landmarks"
@@ -155,7 +166,7 @@ for landmark in analysis.result["landmarks"]:
 
 ### Get text description of an image
 
-You can get a language-based text description of an image. Request several descriptions with the `max_description` property if you are doing text analysis for keywords associated with the image. Examples of a text description for the following image include `a train crossing a bridge over a body of water`, `a large bridge over a body of water`, and `a train crossing a bridge over a large body of water`.
+You can get a language-based text description of an image with [`describe_image`][ref_computervisionclient_describe_image]. Request several descriptions with the `max_description` property if you are doing text analysis for keywords associated with the image. Examples of a text description for the following image include `a train crossing a bridge over a body of water`, `a large bridge over a body of water`, and `a train crossing a bridge over a large body of water`.
 
 ```Python
 domain = "landmarks"
@@ -170,9 +181,41 @@ for caption in analysis.captions:
     print(caption.confidence)
 ```
 
+### Get text from image
+
+You can get any handwritten or printed text from an image. This requires two calls to the SDK: **[recognize_text][ref_computervisionclient_recognize_text]** and **[get_text_operation_result][ref_computervisionclient_get_text_operation_result]**. The call to recognize_text is asynchronous. In the results of the get_text_operation_result call, you need to check if the first call completed with [`TextOperationStatusCodes`][ref_computervision_model_textoperationstatuscodes] before extracting the text data. The results include the text as well as the bounding box coordinates for the text. 
+
+```Python
+url = "https://azurecomcdn.azureedge.net/cvt-1979217d3d0d31c5c87cbd991bccfee2d184b55eeb4081200012bdaf6a65601a/images/shared/cognitive-services-demos/read-text/read-1-thumbnail.png"
+mode = TextRecognitionMode.handwritten
+raw = True
+custom_headers = None
+numberOfCharsInOperationId = 36
+
+# SDK call
+rawHttpResponse = client.recognize_text(url, mode, custom_headers,  raw)
+
+# Get ID from returned headers
+operationLocation = rawHttpResponse.headers["Operation-Location"]
+idLocation = len(operationLocation) - numberOfCharsInOperationId
+operationId = operationLocation[idLocation:]
+
+# SDK call
+result = client.get_text_operation_result(operationId)
+
+# Get data
+if result.status == TextOperationStatusCodes.succeeded:
+
+    for line in result.recognition_result.lines:
+        print(line.text)
+        print(line.bounding_box)
+```
+
 ### Generate thumbnail
 
-You can generate a thumbnail (JPG) of an image. The thumbnail does not need to be in the same proportions as the original image. 
+You can generate a thumbnail (JPG) of an image with [`generate_thumbnail`][ref_computervisionclient_generate_thumbnail]. The thumbnail does not need to be in the same proportions as the original image. 
+
+This example uses the [Pillow][pypi_pillow] package to save the new thumbnail image locally.
 
 ```Python
 from PIL import Image
@@ -189,23 +232,11 @@ for x in thumbnail:
 image.save('thumbnail.jpg')
 ```
 
-### Get subject domain list
-
-Review the subject domains used to analyze your image. These domain names are used when [analyzing an image by domain](#analyze-an-image-by-domain). An example of a domain is `landmarks`.
-
-```Python
-models = client.list_models()
-
-for x in models.models_property:
-    print(x)
-```
-
-
 ## Troubleshooting
 
 ### General
 
-When you interact with the [ComputerVisionAPI][ref_computervisionclient] client using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
+When you interact with the [ComputerVisionAPI][ref_computervisionclient] client object using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
 
 [HTTP Status Codes for Azure ComputerVisionAPI][computervision_http_status_codes]
 
@@ -249,39 +280,53 @@ Several Computer Vision Python SDK samples are available to you in the SDK's Git
 For more extensive documentation on the computervision DB service, see the [Azure computervision DB documentation][computervision_docs] on docs.microsoft.com.
 
 <!-- LINKS -->
+[pip]: https://pypi.org/project/pip/
+[python]: https://www.python.org/downloads/
+
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker
 [azure_pattern_retry]: https://docs.microsoft.com/azure/architecture/patterns/retry
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
+
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
-[computer_vision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
-[computervision_account_create]: https://docs.microsoft.com/azure/computervision-db/how-to-manage-database-account
-[computervision_account]: https://docs.microsoft.com/azure/computervision-db/account-overview
-[computervision_container]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items#azure-computervision-containers
-[computervision_database]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items#azure-computervision-databases
-[computervision_docs]: https://docs.microsoft.com/azure/computervision-db/
-[computervision_http_status_codes]: https://docs.microsoft.com/rest/api/computervision-db/http-status-codes-for-computervision
-[computervision_item]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items#azure-computervision-items
-[computervision_request_units]: https://docs.microsoft.com/azure/computervision-db/request-units
-[computervision_resources]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items
-[computervision_sql_queries]: https://docs.microsoft.com/azure/computervision-db/how-to-sql-query
-[computervision_ttl]: https://docs.microsoft.com/azure/computervision-db/time-to-live
-[pip]: https://pypi.org/project/pip/
-[python]: https://www.python.org/downloads/
-[ref_container_delete_item]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Container.delete_item
-[ref_container_query_items]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Container.query_items
-[ref_container_upsert_item]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Container.upsert_item
-[ref_container]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Container
-[ref_computervision_sdk]: http://computervisionproto.westus.azurecontainer.io
-[ref_computervisionclient_create_database]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.computervisionClient.create_database
-[ref_computervisionclient]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.computervisionClient
-[ref_database]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Database
-[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-computervision/azure.computervision.errors.httpfailure
-[ref_item]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.Item
-[sample_database_mgmt]: https://github.com/binderjoe/computervision-python-prototype/blob/master/examples/databasemanagementsample.py
-[sample_document_mgmt]: https://github.com/binderjoe/computervision-python-prototype/blob/master/examples/documentmanagementsample.py
-[sample_examples_misc]: https://github.com/binderjoe/computervision-python-prototype/blob/master/examples/examples.py
-[source_code]: https://github.com/binderjoe/computervision-python-prototype
+
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
+
+[source_code]: https://github.com/binderjoe/computervision-python-prototype
+
+
+[pypi_pillow]:https://pypi.org/project/Pillow/
+
+[ref_computervision_sdk]: http://computervisionproto.westus.azurecontainer.io
+[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-computervision/azure.computervision.errors.httpfailure
+
+
+[computer_vision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
+
+[computervision_docs]: https://docs.microsoft.com/azure/computervision-db/
+[computervision_http_status_codes]: https://docs.microsoft.com/rest/api/computervision-db/http-status-codes-for-computervision
+[computervision_resources]: https://docs.microsoft.com/azure/computervision-db/databases-containers-items
+
+[computervision_ttl]: https://docs.microsoft.com/azure/computervision-db/time-to-live
+
+[ref_computervisionclient]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.computervisionClient
+
+
+[ref_computervisionclient_analyze_image]: https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#analyze-image-url--visual-features-none--details-none--language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_list_models]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#list-models-custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_analyze_image_by_domain]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#analyze-image-by-domain-model--url--language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_describe_image]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#describe-image-url--max-candidates--1---language--en---custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_recognize_text]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#recognize-text-url--mode--custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_get_text_operation_result]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#get-text-operation-result-operation-id--custom-headers-none--raw-false----operation-config-
+[ref_computervisionclient_generate_thumbnail]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.computervisionapi?view=azure-python#generate-thumbnail-width--height--url--smart-cropping-false--custom-headers-none--raw-false--callback-none----operation-config-
+
+
+[ref_computervision_model_visualfeatures]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.models.visualfeaturetypes?view=azure-python
+
+[ref_computervision_model_textoperationstatuscodes]:https://docs.microsoft.com/en-us/python/api/azure-cognitiveservices-vision-computervision/azure.cognitiveservices.vision.computervision.models.textoperationstatuscodes?view=azure-python
+
+
+
+
