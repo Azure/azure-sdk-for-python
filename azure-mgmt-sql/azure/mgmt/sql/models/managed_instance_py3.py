@@ -66,8 +66,10 @@ class ManagedInstance(TrackedResource):
     :param public_data_endpoint_enabled: Whether or not the public data
      endpoint is enabled.
     :type public_data_endpoint_enabled: bool
-    :param proxy_override: Proxy override of the managed instance.
-    :type proxy_override: str
+    :param proxy_override: Connection type used for connecting to the
+     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
+    :type proxy_override: str or
+     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     """
 
     _validation = {
@@ -103,7 +105,7 @@ class ManagedInstance(TrackedResource):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override=None, **kwargs) -> None:
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
