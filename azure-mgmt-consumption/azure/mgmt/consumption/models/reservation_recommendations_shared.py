@@ -37,16 +37,16 @@ class ReservationRecommendationsShared(Resource):
     :vartype region: str
     :ivar term: RI recommendations in one or three year terms.
     :vartype term: str
-    :ivar cost_with_no_ri: The total amount of cost without reserved
+    :param cost_with_no_ri: The total amount of cost without reserved
      instances.
-    :vartype cost_with_no_ri: decimal.Decimal
+    :type cost_with_no_ri: ~azure.mgmt.consumption.models.Amount
     :ivar recommended_quantity: Recommended quality for reserved instances.
     :vartype recommended_quantity: decimal.Decimal
-    :ivar total_cost_with_ri: The total amount of cost with reserved
+    :param total_cost_with_ri: The total amount of cost with reserved
      instances.
-    :vartype total_cost_with_ri: decimal.Decimal
-    :ivar net_savings: Total estimated savings with reserved instances.
-    :vartype net_savings: decimal.Decimal
+    :type total_cost_with_ri: ~azure.mgmt.consumption.models.Amount
+    :param net_savings: Total estimated savings with reserved instances.
+    :type net_savings: ~azure.mgmt.consumption.models.Amount
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: datetime
     """
@@ -61,10 +61,7 @@ class ReservationRecommendationsShared(Resource):
         'sku_name': {'readonly': True},
         'region': {'readonly': True},
         'term': {'readonly': True},
-        'cost_with_no_ri': {'readonly': True},
         'recommended_quantity': {'readonly': True},
-        'total_cost_with_ri': {'readonly': True},
-        'net_savings': {'readonly': True},
         'first_usage_date': {'readonly': True},
     }
 
@@ -78,10 +75,10 @@ class ReservationRecommendationsShared(Resource):
         'sku_name': {'key': 'properties.skuName', 'type': 'str'},
         'region': {'key': 'properties.region', 'type': 'str'},
         'term': {'key': 'properties.term', 'type': 'str'},
-        'cost_with_no_ri': {'key': 'properties.costWithNoRI', 'type': 'decimal'},
+        'cost_with_no_ri': {'key': 'properties.costWithNoRI', 'type': 'Amount'},
         'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
-        'total_cost_with_ri': {'key': 'properties.totalCostWithRI', 'type': 'decimal'},
-        'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
+        'total_cost_with_ri': {'key': 'properties.totalCostWithRI', 'type': 'Amount'},
+        'net_savings': {'key': 'properties.netSavings', 'type': 'Amount'},
         'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
     }
 
@@ -92,8 +89,8 @@ class ReservationRecommendationsShared(Resource):
         self.sku_name = None
         self.region = None
         self.term = None
-        self.cost_with_no_ri = None
+        self.cost_with_no_ri = kwargs.get('cost_with_no_ri', None)
         self.recommended_quantity = None
-        self.total_cost_with_ri = None
-        self.net_savings = None
+        self.total_cost_with_ri = kwargs.get('total_cost_with_ri', None)
+        self.net_savings = kwargs.get('net_savings', None)
         self.first_usage_date = None

@@ -29,16 +29,16 @@ class ReservationRecommendationPropertiesWithAmount(Model):
     :vartype region: str
     :ivar term: RI recommendations in one or three year terms.
     :vartype term: str
-    :ivar cost_with_no_ri: The total amount of cost without reserved
+    :param cost_with_no_ri: The total amount of cost without reserved
      instances.
-    :vartype cost_with_no_ri: decimal.Decimal
+    :type cost_with_no_ri: ~azure.mgmt.consumption.models.Amount
     :ivar recommended_quantity: Recommended quality for reserved instances.
     :vartype recommended_quantity: decimal.Decimal
-    :ivar total_cost_with_ri: The total amount of cost with reserved
+    :param total_cost_with_ri: The total amount of cost with reserved
      instances.
-    :vartype total_cost_with_ri: decimal.Decimal
-    :ivar net_savings: Total estimated savings with reserved instances.
-    :vartype net_savings: decimal.Decimal
+    :type total_cost_with_ri: ~azure.mgmt.consumption.models.Amount
+    :param net_savings: Total estimated savings with reserved instances.
+    :type net_savings: ~azure.mgmt.consumption.models.Amount
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: datetime
     """
@@ -49,10 +49,7 @@ class ReservationRecommendationPropertiesWithAmount(Model):
         'sku_name': {'readonly': True},
         'region': {'readonly': True},
         'term': {'readonly': True},
-        'cost_with_no_ri': {'readonly': True},
         'recommended_quantity': {'readonly': True},
-        'total_cost_with_ri': {'readonly': True},
-        'net_savings': {'readonly': True},
         'first_usage_date': {'readonly': True},
     }
 
@@ -62,22 +59,22 @@ class ReservationRecommendationPropertiesWithAmount(Model):
         'sku_name': {'key': 'skuName', 'type': 'str'},
         'region': {'key': 'region', 'type': 'str'},
         'term': {'key': 'term', 'type': 'str'},
-        'cost_with_no_ri': {'key': 'costWithNoRI', 'type': 'decimal'},
+        'cost_with_no_ri': {'key': 'costWithNoRI', 'type': 'Amount'},
         'recommended_quantity': {'key': 'recommendedQuantity', 'type': 'decimal'},
-        'total_cost_with_ri': {'key': 'totalCostWithRI', 'type': 'decimal'},
-        'net_savings': {'key': 'netSavings', 'type': 'decimal'},
+        'total_cost_with_ri': {'key': 'totalCostWithRI', 'type': 'Amount'},
+        'net_savings': {'key': 'netSavings', 'type': 'Amount'},
         'first_usage_date': {'key': 'firstUsageDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, cost_with_no_ri=None, total_cost_with_ri=None, net_savings=None, **kwargs) -> None:
         super(ReservationRecommendationPropertiesWithAmount, self).__init__(**kwargs)
         self.look_back_period = None
         self.meter_id = None
         self.sku_name = None
         self.region = None
         self.term = None
-        self.cost_with_no_ri = None
+        self.cost_with_no_ri = cost_with_no_ri
         self.recommended_quantity = None
-        self.total_cost_with_ri = None
-        self.net_savings = None
+        self.total_cost_with_ri = total_cost_with_ri
+        self.net_savings = net_savings
         self.first_usage_date = None
