@@ -79,6 +79,11 @@ try:
     from .media_live_event_incoming_data_chunk_dropped_event_data_py3 import MediaLiveEventIncomingDataChunkDroppedEventData
     from .media_live_event_ingest_heartbeat_event_data_py3 import MediaLiveEventIngestHeartbeatEventData
     from .media_live_event_track_discontinuity_detected_event_data_py3 import MediaLiveEventTrackDiscontinuityDetectedEventData
+    from .maps_geofence_entered_event_data_py3 import MapsGeofenceEnteredEventData
+    from .maps_geofence_exited_event_data_py3 import MapsGeofenceExitedEventData
+    from .maps_geofence_result_event_data_py3 import MapsGeofenceResultEventData
+    from .maps_geofence_geometry_py3 import MapsGeofenceGeometry
+    from .maps_geofence_event_properties_py3 import MapsGeofenceEventProperties
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -149,6 +154,11 @@ except (SyntaxError, ImportError):
     from .media_live_event_incoming_data_chunk_dropped_event_data import MediaLiveEventIncomingDataChunkDroppedEventData
     from .media_live_event_ingest_heartbeat_event_data import MediaLiveEventIngestHeartbeatEventData
     from .media_live_event_track_discontinuity_detected_event_data import MediaLiveEventTrackDiscontinuityDetectedEventData
+    from .maps_geofence_entered_event_data import MapsGeofenceEnteredEventData
+    from .maps_geofence_exited_event_data import MapsGeofenceExitedEventData
+    from .maps_geofence_result_event_data import MapsGeofenceResultEventData
+    from .maps_geofence_geometry import MapsGeofenceGeometry
+    from .maps_geofence_event_properties import MapsGeofenceEventProperties
 from .event_grid_client_enums import (
     MediaJobState,
     MediaJobErrorCode,
@@ -226,6 +236,11 @@ __all__ = [
     'MediaLiveEventIncomingDataChunkDroppedEventData',
     'MediaLiveEventIngestHeartbeatEventData',
     'MediaLiveEventTrackDiscontinuityDetectedEventData',
+    'MapsGeofenceEnteredEventData',
+    'MapsGeofenceExitedEventData',
+    'MapsGeofenceResultEventData',
+    'MapsGeofenceGeometry',
+    'MapsGeofenceEventProperties',
     'MediaJobState',
     'MediaJobErrorCode',
     'MediaJobErrorCategory',
