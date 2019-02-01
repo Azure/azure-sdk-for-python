@@ -69,6 +69,10 @@ try:
     from .source_trigger_py3 import SourceTrigger
     from .base_image_trigger_py3 import BaseImageTrigger
     from .trigger_properties_py3 import TriggerProperties
+    from .source_registry_credentials_py3 import SourceRegistryCredentials
+    from .secret_object_py3 import SecretObject
+    from .custom_registry_credentials_py3 import CustomRegistryCredentials
+    from .credentials_py3 import Credentials
     from .task_py3 import Task
     from .platform_update_parameters_py3 import PlatformUpdateParameters
     from .task_step_update_parameters_py3 import TaskStepUpdateParameters
@@ -151,6 +155,10 @@ except (SyntaxError, ImportError):
     from .source_trigger import SourceTrigger
     from .base_image_trigger import BaseImageTrigger
     from .trigger_properties import TriggerProperties
+    from .source_registry_credentials import SourceRegistryCredentials
+    from .secret_object import SecretObject
+    from .custom_registry_credentials import CustomRegistryCredentials
+    from .credentials import Credentials
     from .task import Task
     from .platform_update_parameters import PlatformUpdateParameters
     from .task_step_update_parameters import TaskStepUpdateParameters
@@ -205,6 +213,8 @@ from .container_registry_management_client_enums import (
     SourceTriggerEvent,
     TriggerStatus,
     BaseImageTriggerType,
+    SourceRegistryLoginMode,
+    SecretObjectType,
 )
 
 __all__ = [
@@ -267,6 +277,10 @@ __all__ = [
     'SourceTrigger',
     'BaseImageTrigger',
     'TriggerProperties',
+    'SourceRegistryCredentials',
+    'SecretObject',
+    'CustomRegistryCredentials',
+    'Credentials',
     'Task',
     'PlatformUpdateParameters',
     'TaskStepUpdateParameters',
@@ -320,4 +334,6 @@ __all__ = [
     'SourceTriggerEvent',
     'TriggerStatus',
     'BaseImageTriggerType',
+    'SourceRegistryLoginMode',
+    'SecretObjectType',
 ]
