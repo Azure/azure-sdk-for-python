@@ -20,6 +20,8 @@ class BackupStatusResponse(Model):
      'Protected', 'ProtectionFailed'
     :type protection_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
+    :param vault_id: Specifies the arm resource id of the vault
+    :type vault_id: str
     :param fabric_name: Specifies the fabric name - Azure or AD. Possible
      values include: 'Invalid', 'Azure'
     :type fabric_name: str or
@@ -42,6 +44,7 @@ class BackupStatusResponse(Model):
 
     _attribute_map = {
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
+        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
         'container_name': {'key': 'containerName', 'type': 'str'},
         'protected_item_name': {'key': 'protectedItemName', 'type': 'str'},
@@ -54,6 +57,7 @@ class BackupStatusResponse(Model):
     def __init__(self, **kwargs):
         super(BackupStatusResponse, self).__init__(**kwargs)
         self.protection_status = kwargs.get('protection_status', None)
+        self.vault_id = kwargs.get('vault_id', None)
         self.fabric_name = kwargs.get('fabric_name', None)
         self.container_name = kwargs.get('container_name', None)
         self.protected_item_name = kwargs.get('protected_item_name', None)
