@@ -37,8 +37,8 @@ class DataConnectorKind(str, Enum):
 
     azure_active_directory = "AzureActiveDirectory"
     azure_security_center = "AzureSecurityCenter"
-    microsoft_cloud_aapp_security = "MicrosoftCloudAappSecurity"
-    threat_inelegance = "ThreatInelegance"
+    microsoft_cloud_app_security = "MicrosoftCloudAppSecurity"
+    threat_intelligence = "ThreatIntelligence"
     office365 = "Office365"
 
 

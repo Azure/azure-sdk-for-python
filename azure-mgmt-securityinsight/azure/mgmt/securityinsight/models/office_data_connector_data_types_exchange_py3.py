@@ -15,8 +15,8 @@ from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
 class OfficeDataConnectorDataTypesExchange(DataConnectorDataTypeCommon):
     """Exchange data type connection.
 
-    :param state: Describe whther this data type connection is enabled or not.
-     Possible values include: 'Enabled', 'Disabled'
+    :param state: Describe whether this data type connection is enabled or
+     not. Possible values include: 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.securityinsight.models.DataTypeState
     """
 

@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class DataConnectorDataTypeCommon(Model):
     """Common field for data type in data connectors.
 
-    :param state: Describe whther this data type connection is enabled or not.
-     Possible values include: 'Enabled', 'Disabled'
+    :param state: Describe whether this data type connection is enabled or
+     not. Possible values include: 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.securityinsight.models.DataTypeState
     """
 

@@ -59,7 +59,7 @@ class DataConnectorWithAlerts(DataConnector):
     }
 
     _subtype_map = {
-        'kind': {'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAappSecurity': 'MCASDataConnector'}
+        'kind': {'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector'}
     }
 
     def __init__(self, **kwargs):

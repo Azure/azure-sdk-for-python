@@ -13,7 +13,7 @@ from .data_connector_with_alerts_py3 import DataConnectorWithAlerts
 
 
 class MCASDataConnector(DataConnectorWithAlerts):
-    """Represents MCAS (Microsoft Cloud Aapp Security) data connector.
+    """Represents MCAS (Microsoft Cloud App Security) data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -57,4 +57,4 @@ class MCASDataConnector(DataConnectorWithAlerts):
 
     def __init__(self, *, etag: str=None, context_id: str=None, data_types=None, **kwargs) -> None:
         super(MCASDataConnector, self).__init__(etag=etag, context_id=context_id, data_types=data_types, **kwargs)
-        self.kind = 'MicrosoftCloudAappSecurity'
+        self.kind = 'MicrosoftCloudAppSecurity'

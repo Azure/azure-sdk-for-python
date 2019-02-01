@@ -52,7 +52,7 @@ class DataConnector(Model):
     }
 
     _subtype_map = {
-        'kind': {'Office365': 'OfficeDataConnector', 'ThreatInelegance': 'TIDataConnector', 'DataConnectorWithAlerts': 'DataConnectorWithAlerts'}
+        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'DataConnectorWithAlerts': 'DataConnectorWithAlerts'}
     }
 
     def __init__(self, *, etag: str=None, **kwargs) -> None:

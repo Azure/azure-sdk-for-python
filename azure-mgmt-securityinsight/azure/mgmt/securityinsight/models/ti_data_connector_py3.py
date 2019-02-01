@@ -13,7 +13,7 @@ from .data_connector_py3 import DataConnector
 
 
 class TIDataConnector(DataConnector):
-    """Represents threat inelegance data connector.
+    """Represents threat intelligence data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -59,4 +59,4 @@ class TIDataConnector(DataConnector):
         super(TIDataConnector, self).__init__(etag=etag, **kwargs)
         self.context_id = context_id
         self.data_types = data_types
-        self.kind = 'ThreatInelegance'
+        self.kind = 'ThreatIntelligence'

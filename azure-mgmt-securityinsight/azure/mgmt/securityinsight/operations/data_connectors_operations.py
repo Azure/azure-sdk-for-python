@@ -124,7 +124,7 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connecto ID
+        :param data_connector_id: Connector ID
         :type data_connector_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -194,7 +194,7 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connecto ID
+        :param data_connector_id: Connector ID
         :type data_connector_id: str
         :param data_connector: The data connector
         :type data_connector: ~azure.mgmt.securityinsight.models.DataConnector
@@ -272,7 +272,7 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connecto ID
+        :param data_connector_id: Connector ID
         :type data_connector_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
