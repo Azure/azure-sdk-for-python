@@ -29,6 +29,8 @@ class PreValidateEnableBackupRequest(Model):
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param resource_id: ARM Virtual Machine Id
     :type resource_id: str
+    :param vault_id: Specifies the arm resource id of the vault
+    :type vault_id: str
     :param properties: Configuration of VM if any needs to be validated like
      OS type etc
     :type properties: str
@@ -37,11 +39,13 @@ class PreValidateEnableBackupRequest(Model):
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'vault_id': {'key': 'vaultId', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_type=None, resource_id: str=None, properties: str=None, **kwargs) -> None:
+    def __init__(self, *, resource_type=None, resource_id: str=None, vault_id: str=None, properties: str=None, **kwargs) -> None:
         super(PreValidateEnableBackupRequest, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.resource_id = resource_id
+        self.vault_id = vault_id
         self.properties = properties
