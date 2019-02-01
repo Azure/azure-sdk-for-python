@@ -42,7 +42,7 @@ Install the Azure Cognitive Services Computer Vision SDK with [pip][pip], option
 
 ### Configure a virtual environment (optional)
 
-Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv], such as `cogsrv-vision-env`:
+Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a [virtual environment][virtualenv]. Execute the following commands to configure and then enter a virtual environment with [venv][venv], such as `cogsrv-vision-env`:
 
 ```Bash
 python3 -m venv cogsrv-vision-env
@@ -65,7 +65,7 @@ Use these values when you create the instance of the [ComputerVisionAPI][ref_com
 
 ### Get credentials
 
-Use the Azure CLI snippet below to populate two environment variables with the Computer Vision account **region** and one of its **keys** (you can also find these values in the Azure portal). The snippet is formatted for the Bash shell.
+Use the [Azure CLI][cloud_shell] snippet below to populate two environment variables with the Computer Vision account **region** and one of its **keys** (you can also find these values in the [Azure portal][azure_portal]). The snippet is formatted for the Bash shell.
 
 ```Bash
 RES_GROUP=<resourcegroup-name>
@@ -304,8 +304,6 @@ For more extensive documentation on the Computer Vision service, see the [Azure 
 [computervision_resource]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/vision-api-how-to-topics/howtosubscribe
 
 [computervision_docs]: https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/home
-
-[computervision_ttl]: https://docs.microsoft.com/azure/computervision-db/time-to-live
 
 [ref_computervisionclient]: http://computervisionproto.westus.azurecontainer.io/#azure.computervision.computervisionClient
 
