@@ -94,6 +94,7 @@ try:
     from .schedule_trigger_recurrence_py3 import ScheduleTriggerRecurrence
     from .schedule_trigger_py3 import ScheduleTrigger
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
+    from .sap_open_hub_linked_service_py3 import SapOpenHubLinkedService
     from .azure_function_linked_service_py3 import AzureFunctionLinkedService
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
@@ -172,6 +173,7 @@ try:
     from .azure_table_storage_linked_service_py3 import AzureTableStorageLinkedService
     from .azure_blob_storage_linked_service_py3 import AzureBlobStorageLinkedService
     from .azure_storage_linked_service_py3 import AzureStorageLinkedService
+    from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
     from .responsys_object_dataset_py3 import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset_py3 import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset_py3 import VerticaTableDataset
@@ -248,6 +250,7 @@ try:
     from .get_metadata_activity_py3 import GetMetadataActivity
     from .web_activity_authentication_py3 import WebActivityAuthentication
     from .web_activity_py3 import WebActivity
+    from .sap_open_hub_source_py3 import SapOpenHubSource
     from .redshift_unload_settings_py3 import RedshiftUnloadSettings
     from .amazon_redshift_source_py3 import AmazonRedshiftSource
     from .responsys_source_py3 import ResponsysSource
@@ -459,6 +462,7 @@ except (SyntaxError, ImportError):
     from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
     from .schedule_trigger import ScheduleTrigger
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
+    from .sap_open_hub_linked_service import SapOpenHubLinkedService
     from .azure_function_linked_service import AzureFunctionLinkedService
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
@@ -537,6 +541,7 @@ except (SyntaxError, ImportError):
     from .azure_table_storage_linked_service import AzureTableStorageLinkedService
     from .azure_blob_storage_linked_service import AzureBlobStorageLinkedService
     from .azure_storage_linked_service import AzureStorageLinkedService
+    from .sap_open_hub_table_dataset import SapOpenHubTableDataset
     from .responsys_object_dataset import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset import VerticaTableDataset
@@ -613,6 +618,7 @@ except (SyntaxError, ImportError):
     from .get_metadata_activity import GetMetadataActivity
     from .web_activity_authentication import WebActivityAuthentication
     from .web_activity import WebActivity
+    from .sap_open_hub_source import SapOpenHubSource
     from .redshift_unload_settings import RedshiftUnloadSettings
     from .amazon_redshift_source import AmazonRedshiftSource
     from .responsys_source import ResponsysSource
@@ -895,6 +901,7 @@ __all__ = [
     'ScheduleTriggerRecurrence',
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
+    'SapOpenHubLinkedService',
     'AzureFunctionLinkedService',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
@@ -973,6 +980,7 @@ __all__ = [
     'AzureTableStorageLinkedService',
     'AzureBlobStorageLinkedService',
     'AzureStorageLinkedService',
+    'SapOpenHubTableDataset',
     'ResponsysObjectDataset',
     'SalesforceMarketingCloudObjectDataset',
     'VerticaTableDataset',
@@ -1049,6 +1057,7 @@ __all__ = [
     'GetMetadataActivity',
     'WebActivityAuthentication',
     'WebActivity',
+    'SapOpenHubSource',
     'RedshiftUnloadSettings',
     'AmazonRedshiftSource',
     'ResponsysSource',
