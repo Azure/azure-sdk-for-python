@@ -37,12 +37,11 @@ class DimensionsOperations(object):
         self.config = config
 
     def list_by_subscription(
-            self, scope_dimension_parameter, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, filter=None, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Lists the dimensions by the defined scope.
 
-        :param scope_dimension_parameter: The scope associated with dimension
-         operations. This includes '/subscriptions/{subscriptionId}/' for
-         subscription scope,
+        :param scope: The scope associated with dimension operations. This
+         includes '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -53,7 +52,7 @@ class DimensionsOperations(object):
          for EnrollmentAccount scope and
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
          for Management Group scope..
-        :type scope_dimension_parameter: str
+        :type scope: str
         :param filter: May be used to filter dimensions by
          properties/category, properties/usageStart, properties/usageEnd.
          Supported operators are 'eq','lt', 'gt', 'le', 'ge'.
@@ -87,7 +86,7 @@ class DimensionsOperations(object):
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
-                    'scopeDimensionParameter': self._serialize.url("scope_dimension_parameter", scope_dimension_parameter, 'str', skip_quote=True)
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -135,4 +134,4 @@ class DimensionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/{scopeDimensionParameter}/providers/Microsoft.CostManagement/dimensions'}
+    list_by_subscription.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/dimensions'}

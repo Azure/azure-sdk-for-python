@@ -37,12 +37,12 @@ class ExportsOperations(object):
         self.config = config
 
     def list(
-            self, scope_query_parameter, custom_headers=None, raw=False, **operation_config):
+            self, scope, custom_headers=None, raw=False, **operation_config):
         """Lists all exports at the given scope.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -51,7 +51,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,7 +66,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,15 +101,15 @@ class ExportsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports'}
 
     def get(
-            self, scope_query_parameter, export_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """Gets the export for the defined scope by export name.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -118,7 +118,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param export_name: Export Name.
         :type export_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -135,7 +135,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'exportName': self._serialize.url("export_name", export_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -171,17 +171,17 @@ class ExportsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports/{exportName}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports/{exportName}'}
 
     def create_or_update(
-            self, scope_query_parameter, export_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, scope, export_name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update a export. Update operation requires
         latest eTag to be set in the request. You may obtain the latest eTag by
         performing a get operation. Create operation does not require eTag.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -190,7 +190,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param export_name: Export Name.
         :type export_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate Export
@@ -210,7 +210,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'exportName': self._serialize.url("export_name", export_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -252,15 +252,15 @@ class ExportsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports/{exportName}'}
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports/{exportName}'}
 
     def delete(
-            self, scope_query_parameter, export_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a export.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -269,7 +269,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param export_name: Export Name.
         :type export_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -285,7 +285,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'exportName': self._serialize.url("export_name", export_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -313,15 +313,15 @@ class ExportsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports/{exportName}'}
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports/{exportName}'}
 
     def execute(
-            self, scope_query_parameter, export_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to execute a export.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -330,7 +330,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param export_name: Export Name.
         :type export_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -346,7 +346,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.execute.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'exportName': self._serialize.url("export_name", export_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -374,16 +374,16 @@ class ExportsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    execute.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports/{exportName}/run'}
+    execute.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports/{exportName}/run'}
 
     def get_execution_history(
-            self, scope_query_parameter, export_name, custom_headers=None, raw=False, **operation_config):
+            self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """Gets the execution history of a export for the defined scope by export
         name.
 
-        :param scope_query_parameter: The scope associated with query and
-         export operations. This includes '/subscriptions/{subscriptionId}/'
-         for subscription scope,
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -392,7 +392,7 @@ class ExportsOperations(object):
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
          for EnrollmentAccount scope' for Management Group scope..
-        :type scope_query_parameter: str
+        :type scope: str
         :param export_name: Export Name.
         :type export_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -409,7 +409,7 @@ class ExportsOperations(object):
         # Construct URL
         url = self.get_execution_history.metadata['url']
         path_format_arguments = {
-            'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True),
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'exportName': self._serialize.url("export_name", export_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -445,4 +445,4 @@ class ExportsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_execution_history.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/exports/{exportName}/runHistory'}
+    get_execution_history.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/exports/{exportName}/runHistory'}
