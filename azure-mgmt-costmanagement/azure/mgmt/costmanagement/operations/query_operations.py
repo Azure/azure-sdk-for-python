@@ -37,22 +37,21 @@ class QueryOperations(object):
         self.config = config
 
     def usage_by_scope(
-            self, scope, parameters, custom_headers=None, raw=False, **operation_config):
+            self, scope_query_parameter, parameters, custom_headers=None, raw=False, **operation_config):
         """Query the usage data for scope defined.
 
-        :param scope: The scope at which to query usage data. This includes
-         '/subscriptions/{subscriptionId}/' for subscription scope,
+        :param scope_query_parameter: The scope associated with query and
+         export operations. This includes '/subscriptions/{subscriptionId}/'
+         for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
-         Billing Account scope,
+         Billing Account scope and
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope.
-        :type scope: str
+         for EnrollmentAccount scope' for Management Group scope..
+        :type scope_query_parameter: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
         :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
@@ -73,7 +72,7 @@ class QueryOperations(object):
                 # Construct URL
                 url = self.usage_by_scope.metadata['url']
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+                    'scopeQueryParameter': self._serialize.url("scope_query_parameter", scope_query_parameter, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -117,4 +116,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
+    usage_by_scope.metadata = {'url': '/{scopeQueryParameter}/providers/Microsoft.CostManagement/query'}
