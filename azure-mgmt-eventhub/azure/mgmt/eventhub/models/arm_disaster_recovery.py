@@ -31,7 +31,7 @@ class ArmDisasterRecovery(Resource):
     :vartype provisioning_state: str or
      ~azure.mgmt.eventhub.models.ProvisioningStateDR
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub
-     namespace name, which is part of GEO DR pairning
+     namespace name, which is part of GEO DR pairing
     :type partner_namespace: str
     :param alternate_name: Alternate name specified when alias and namespace
      names are same.

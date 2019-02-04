@@ -45,7 +45,7 @@ class EHNamespace(TrackedResource):
      is enabled for eventhub namespace.
     :type is_auto_inflate_enabled: bool
     :param maximum_throughput_units: Upper limit of throughput units when
-     AutoInflate is enabled, vaule should be within 0 to 20 throughput units. (
+     AutoInflate is enabled, value should be within 0 to 20 throughput units. (
      '0' if AutoInflateEnabled = true)
     :type maximum_throughput_units: int
     :param kafka_enabled: Value that indicates whether Kafka is enabled for

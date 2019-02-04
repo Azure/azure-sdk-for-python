@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.3.0 (2019-02-04)
+++++++++++++++++++
+
+**Features**
+
+- Model CaptureDescription has a new parameter skip_empty_archives
+
 2.2.0 (2018-10-29)
 ++++++++++++++++++
 
