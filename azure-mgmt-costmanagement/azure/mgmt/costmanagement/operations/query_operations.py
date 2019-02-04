@@ -22,7 +22,7 @@ class QueryOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-03-01-preview. Constant value: "2019-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,18 +32,31 @@ class QueryOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01-preview"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
-    def usage_by_subscription(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for subscriptionId.
+    def usage_by_scope(
+            self, scope, parameters, custom_headers=None, raw=False, **operation_config):
+        """Query the usage data for scope defined.
 
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
+        :param scope: The scope associated with query and export operations.
+         This includes '/subscriptions/{subscriptionId}/' for subscription
+         scope,
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
+         for resourceGroup scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         Billing Account scope and
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
+         for Department scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
+         for EnrollmentAccount scope and
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope..
+        :type scope: str
+        :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,9 +72,9 @@ class QueryOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.usage_by_subscription.metadata['url']
+                url = self.usage_by_scope.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,7 +98,7 @@ class QueryOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
+            body_content = self._serialize.body(parameters, 'QueryDefinition')
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -105,376 +118,4 @@ class QueryOperations(object):
             return client_raw_response
 
         return deserialized
-    usage_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CostManagement/Query'}
-
-    def usage_by_resource_group(
-            self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for subscriptionId and resource group.
-
-        :param resource_group_name: Azure Resource Group Name.
-        :type resource_group_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Query
-        :rtype:
-         ~azure.mgmt.costmanagement.models.QueryPaged[~azure.mgmt.costmanagement.models.Query]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.usage_by_resource_group.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.QueryPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.QueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    usage_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.CostManagement/Query'}
-
-    def usage_by_billing_account(
-            self, billing_account_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for billing account.
-
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Query
-        :rtype:
-         ~azure.mgmt.costmanagement.models.QueryPaged[~azure.mgmt.costmanagement.models.Query]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.usage_by_billing_account.metadata['url']
-                path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.QueryPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.QueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    usage_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.CostManagement/Query'}
-
-    def usage_by_enrollment_account(
-            self, billing_account_id, enrollment_account_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for an enrollment account.
-
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param enrollment_account_id: Enrollment Account ID
-        :type enrollment_account_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Query
-        :rtype:
-         ~azure.mgmt.costmanagement.models.QueryPaged[~azure.mgmt.costmanagement.models.Query]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.usage_by_enrollment_account.metadata['url']
-                path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-                    'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.QueryPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.QueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    usage_by_enrollment_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.CostManagement/Query'}
-
-    def usage_by_department(
-            self, billing_account_id, department_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Query the usage data for department.
-
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
-        :param department_id: Department ID
-        :type department_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Query
-        :rtype:
-         ~azure.mgmt.costmanagement.models.QueryPaged[~azure.mgmt.costmanagement.models.Query]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.usage_by_department.metadata['url']
-                path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-                    'departmentId': self._serialize.url("department_id", department_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.QueryPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.QueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    usage_by_department.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}/providers/Microsoft.CostManagement/Query'}
-
-    def usage_by_managment_group(
-            self, management_group_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage data for management group.
-
-        :param management_group_id: ManagementGroup ID
-        :type management_group_id: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Report
-         Config operation.
-        :type parameters:
-         ~azure.mgmt.costmanagement.models.ReportConfigDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Query
-        :rtype:
-         ~azure.mgmt.costmanagement.models.QueryPaged[~azure.mgmt.costmanagement.models.Query]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.usage_by_managment_group.metadata['url']
-                path_format_arguments = {
-                    'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct body
-            body_content = self._serialize.body(parameters, 'ReportConfigDefinition')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters, body_content)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.QueryPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.QueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    usage_by_managment_group.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.CostManagement/Query'}
+    usage_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/query'}
