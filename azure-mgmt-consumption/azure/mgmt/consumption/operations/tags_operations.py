@@ -37,11 +37,22 @@ class TagsOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Get all available tag keys for a billing account.
+            self, scope, custom_headers=None, raw=False, **operation_config):
+        """Get all available tag keys for the defined scope.
 
-        :param billing_account_id: BillingAccount ID
-        :type billing_account_id: str
+        :param scope: The scope associated with tags operations. This includes
+         '/subscriptions/{subscriptionId}/' for subscription scope,
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
+         for resourceGroup scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
+         Billing Account scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
+         for Department scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
+         for EnrollmentAccount scope and
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
+         for Management Group scope..
+        :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,7 +67,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -91,4 +102,4 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/tags'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/tags'}
