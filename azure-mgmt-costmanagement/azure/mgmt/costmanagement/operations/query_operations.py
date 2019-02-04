@@ -50,7 +50,9 @@ class QueryOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope' for Management Group scope..
+         for EnrollmentAccount scope and
+         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
+         for Management Group scope..
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query
          Config operation.
