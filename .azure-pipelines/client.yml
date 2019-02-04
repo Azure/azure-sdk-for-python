@@ -112,9 +112,16 @@ jobs:
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
       reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    condition: and(eq(variables['os.name'],'Windows'),succeeded())
+
 - job: Test_Alpha_Python
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
+
+
+- job: Special_Python_Distro_Tests
   dependsOn:
   - 'Build_Target_Packages'
   pool:
