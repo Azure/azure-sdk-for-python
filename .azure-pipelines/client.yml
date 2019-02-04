@@ -2,6 +2,7 @@
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
 #  'codecov-python-repository-token' Is the codecov.io repository token.
 #  'long_running_tests' Is a boolean indicating that the long-running tests should be executed. 
+#  'EnableDetectorPip': true
 
 trigger:
 - master
