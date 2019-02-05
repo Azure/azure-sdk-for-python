@@ -1543,8 +1543,7 @@ class ServicesOperations(object):
 
     def list_all_risky_ip_download_report(
             self, service_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the blob uris for the Risky IP reports requested for a given
-        service in the last 7 days.
+        """Gets all Risky IP report URIs for the last 7 days.
 
         :param service_name: The name of the service.
         :type service_name: str
@@ -1606,13 +1605,12 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_all_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/GetAllBlobUri'}
+    list_all_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/blobUris'}
 
     def list_current_risky_ip_download_report(
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Initiate the generation of a new Risky IP report. Returns the URI for
-        the new one, along with all the blob uris for the Risky IP reports
-        requested in the last 7 days.
+        the new one.
 
         :param service_name: The name of the service.
         :type service_name: str
@@ -1655,7 +1653,7 @@ class ServicesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self._client.post(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -1674,4 +1672,4 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_current_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/GetBlobUri'}
+    list_current_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/blobUri'}
