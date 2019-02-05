@@ -75,10 +75,10 @@ except (SyntaxError, ImportError):
     from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
+from .budget_paged import BudgetPaged
 from .reservation_summary_paged import ReservationSummaryPaged
 from .reservation_detail_paged import ReservationDetailPaged
 from .reservation_recommendation_paged import ReservationRecommendationPaged
-from .budget_paged import BudgetPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
@@ -126,10 +126,10 @@ __all__ = [
     'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
+    'BudgetPaged',
     'ReservationSummaryPaged',
     'ReservationDetailPaged',
     'ReservationRecommendationPaged',
-    'BudgetPaged',
     'ForecastPaged',
     'OperationPaged',
     'BillingFrequency',
