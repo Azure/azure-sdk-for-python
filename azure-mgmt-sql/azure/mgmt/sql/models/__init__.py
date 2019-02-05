@@ -118,6 +118,7 @@ try:
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
     from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
+    from .sensitivity_label_py3 import SensitivityLabel
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -267,6 +268,7 @@ except (SyntaxError, ImportError):
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
     from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
+    from .sensitivity_label import SensitivityLabel
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -357,6 +359,7 @@ from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restorable_dropped_managed_database_paged import RestorableDroppedManagedDatabasePaged
 from .restore_point_paged import RestorePointPaged
+from .sensitivity_label_paged import SensitivityLabelPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -443,6 +446,7 @@ from .sql_management_client_enums import (
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
+    SensitivityLabelSource,
     CapabilityGroup,
 )
 
@@ -555,6 +559,7 @@ __all__ = [
     'CreateDatabaseRestorePointDefinition',
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedServerSecurityAlertPolicy',
+    'SensitivityLabel',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -645,6 +650,7 @@ __all__ = [
     'ServerDnsAliasPaged',
     'RestorableDroppedManagedDatabasePaged',
     'RestorePointPaged',
+    'SensitivityLabelPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -730,5 +736,6 @@ __all__ = [
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
+    'SensitivityLabelSource',
     'CapabilityGroup',
 ]
