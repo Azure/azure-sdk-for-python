@@ -50,7 +50,7 @@ source cogsrv-vision-env/bin/activate
 
 ### Install the SDK
 
-Install the Azure Cognitive Services Computer Vision SDK for Python with [pip][pip]:
+Install the Azure Cognitive Services Computer Vision SDK for Python [pip package][pypi_computervision] with [pip][pip]:
 
 ```Bash
 pip install azure-cognitiveservices-vision-computervision
