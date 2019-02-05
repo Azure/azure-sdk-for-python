@@ -3,8 +3,8 @@ import json
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume, VolumePatch
-from pooltests import create_pool, delete_pool
-from accounttests import delete_account
+from test_pool import create_pool, delete_pool
+from test_account import delete_account
 from setup import *
 import azure.mgmt.netapp.models
 
