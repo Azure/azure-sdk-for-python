@@ -13,6 +13,9 @@ Microsoft Azure SDK for Python
 .. image:: https://ci.appveyor.com/api/projects/status/m51hrgewcxknxhsd/branch/master?svg=true
     :target: https://ci.appveyor.com/project/lmazuel/azure-sdk-for-python/branch/master
 
+.. image:: https://img.shields.io/badge/dependencies-analyzed-blue.svg
+    :target: https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html
+
 This project provides a set of Python packages that make it easy to
 access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Batch, Monitor) components of
 `Microsoft Azure <https://azure.microsoft.com/>`_
