@@ -15,6 +15,23 @@ try:
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
+    from .data_connector_py3 import DataConnector
+    from .data_connector_kind1_py3 import DataConnectorKind1
+    from .data_connector_context_id_py3 import DataConnectorContextId
+    from .office_data_connector_data_types_share_point_py3 import OfficeDataConnectorDataTypesSharePoint
+    from .office_data_connector_data_types_exchange_py3 import OfficeDataConnectorDataTypesExchange
+    from .office_data_connector_data_types_py3 import OfficeDataConnectorDataTypes
+    from .office_data_connector_py3 import OfficeDataConnector
+    from .ti_data_connector_data_types_indicators_py3 import TIDataConnectorDataTypesIndicators
+    from .ti_data_connector_data_types_py3 import TIDataConnectorDataTypes
+    from .ti_data_connector_py3 import TIDataConnector
+    from .aad_data_connector_py3 import AADDataConnector
+    from .asc_data_connector_py3 import ASCDataConnector
+    from .mcas_data_connector_py3 import MCASDataConnector
+    from .alerts_data_type_of_data_connector_alerts_py3 import AlertsDataTypeOfDataConnectorAlerts
+    from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
+    from .data_connector_with_alerts_py3 import DataConnectorWithAlerts
+    from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
@@ -22,13 +39,33 @@ except (SyntaxError, ImportError):
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
+    from .data_connector import DataConnector
+    from .data_connector_kind1 import DataConnectorKind1
+    from .data_connector_context_id import DataConnectorContextId
+    from .office_data_connector_data_types_share_point import OfficeDataConnectorDataTypesSharePoint
+    from .office_data_connector_data_types_exchange import OfficeDataConnectorDataTypesExchange
+    from .office_data_connector_data_types import OfficeDataConnectorDataTypes
+    from .office_data_connector import OfficeDataConnector
+    from .ti_data_connector_data_types_indicators import TIDataConnectorDataTypesIndicators
+    from .ti_data_connector_data_types import TIDataConnectorDataTypes
+    from .ti_data_connector import TIDataConnector
+    from .aad_data_connector import AADDataConnector
+    from .asc_data_connector import ASCDataConnector
+    from .mcas_data_connector import MCASDataConnector
+    from .alerts_data_type_of_data_connector_alerts import AlertsDataTypeOfDataConnectorAlerts
+    from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
+    from .data_connector_with_alerts import DataConnectorWithAlerts
+    from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .resource import Resource
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
+from .data_connector_paged import DataConnectorPaged
 from .security_insights_enums import (
     AlertRuleKind,
     Severity,
     TriggerOperator,
+    DataConnectorKind,
+    DataTypeState,
 )
 
 __all__ = [
@@ -37,10 +74,30 @@ __all__ = [
     'AlertRule',
     'AlertRuleKind1',
     'ScheduledAlertRule',
+    'DataConnector',
+    'DataConnectorKind1',
+    'DataConnectorContextId',
+    'OfficeDataConnectorDataTypesSharePoint',
+    'OfficeDataConnectorDataTypesExchange',
+    'OfficeDataConnectorDataTypes',
+    'OfficeDataConnector',
+    'TIDataConnectorDataTypesIndicators',
+    'TIDataConnectorDataTypes',
+    'TIDataConnector',
+    'AADDataConnector',
+    'ASCDataConnector',
+    'MCASDataConnector',
+    'AlertsDataTypeOfDataConnectorAlerts',
+    'AlertsDataTypeOfDataConnector',
+    'DataConnectorWithAlerts',
+    'DataConnectorDataTypeCommon',
     'Resource',
     'OperationPaged',
     'AlertRulePaged',
+    'DataConnectorPaged',
     'AlertRuleKind',
     'Severity',
     'TriggerOperator',
+    'DataConnectorKind',
+    'DataTypeState',
 ]

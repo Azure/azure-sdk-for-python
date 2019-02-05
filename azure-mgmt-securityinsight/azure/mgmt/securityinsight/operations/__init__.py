@@ -11,8 +11,10 @@
 
 from .operations import Operations
 from .alert_rules_operations import AlertRulesOperations
+from .data_connectors_operations import DataConnectorsOperations
 
 __all__ = [
     'Operations',
     'AlertRulesOperations',
+    'DataConnectorsOperations',
 ]
