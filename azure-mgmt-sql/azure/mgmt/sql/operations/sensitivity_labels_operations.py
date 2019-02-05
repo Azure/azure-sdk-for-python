@@ -120,7 +120,7 @@ class SensitivityLabelsOperations(object):
     list_current_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/currentSensitivityLabels'}
 
     def list_recommended_by_database(
-            self, resource_group_name, server_name, database_name, skip_token=None, include_disabled_recommendations=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, skip_token=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that
@@ -133,9 +133,6 @@ class SensitivityLabelsOperations(object):
         :type database_name: str
         :param skip_token:
         :type skip_token: str
-        :param include_disabled_recommendations: Specifies whether to include
-         disabled recommendations or not.
-        :type include_disabled_recommendations: bool
         :param filter: An OData filter expression that filters elements in the
          collection.
         :type filter: str
@@ -166,8 +163,6 @@ class SensitivityLabelsOperations(object):
                 query_parameters = {}
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
-                if include_disabled_recommendations is not None:
-                    query_parameters['includeDisabledRecommendations'] = self._serialize.query("include_disabled_recommendations", include_disabled_recommendations, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
