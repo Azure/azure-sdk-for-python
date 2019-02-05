@@ -3,9 +3,9 @@ import json
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume
-from volumetests import create_volume, wait_for_volume, delete_volume
-from pooltests import delete_pool
-from accounttests import delete_account
+from test_volume import create_volume, wait_for_volume, delete_volume
+from test_pool import delete_pool
+from test_account import delete_account
 from azure.mgmt.netapp.models import Snapshot
 from setup import *
 import azure.mgmt.netapp.models

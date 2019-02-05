@@ -3,12 +3,11 @@ import json
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch
-from accounttests import create_account, delete_account
+from test_account import create_account, delete_account
 from setup import *
 import azure.mgmt.netapp.models
 
 pools = [TEST_POOL_1, TEST_POOL_2]
-
 
 def create_pool(client, rg=TEST_RG, acc_name=TEST_ACC_1, pool_name=TEST_POOL_1, location=LOCATION, pool_only=False):
     if not pool_only:
@@ -110,11 +109,13 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_patch_pool(self):
         create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        tag = {'Tag1', 'Value1'}
 
+        tag = {'Tag2': 'Value1'}
         capacity_pool_patch = CapacityPoolPatch(tags=tag)
-        pool = self.client.pools.update(TEST_RG, TEST_ACC_1, TEST_POOL_1, tags=capacity_pool_patch)
-        self.assertTrue("'Tag1', 'Value1'" in pool.tags['tags'])
+
+        pool = self.client.pools.update(TEST_RG, TEST_ACC_1, TEST_POOL_1, tags=capacity_pool_patch.tags)
+
+        self.assertTrue(pool.tags['Tag2'] == 'Value1')
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
         wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)

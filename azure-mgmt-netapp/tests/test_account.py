@@ -8,7 +8,6 @@ from setup import *
 
 accounts = [TEST_ACC_1, TEST_ACC_2]
 
-
 def create_account(client, rg, acc_name, location=LOCATION):
     account = client.accounts.create_or_update(
         rg,
@@ -76,11 +75,12 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_patch_account(self):
         create_account(self.client, TEST_RG, TEST_ACC_1)
-        tag = {'Tag1', 'Value1'}
 
+        tag = {'Tag1': 'Value2'}
         netapp_account_patch = NetAppAccountPatch(tags=tag)
-        account = self.client.accounts.update(TEST_RG, TEST_ACC_1, tags=netapp_account_patch)
-        self.assertTrue("'Tag1', 'Value1'" in account.tags['tags'])
+
+        account = self.client.accounts.update(TEST_RG, TEST_ACC_1, tags=netapp_account_patch.tags)
+        self.assertTrue(account.tags['Tag1'] == 'Value2')
 
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
