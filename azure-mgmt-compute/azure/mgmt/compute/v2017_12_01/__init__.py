@@ -9,10 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from ._configuration import ComputeManagementClientConfiguration
+from ._compute_management_client import ComputeManagementClient
+__all__ = ['ComputeManagementClient', 'ComputeManagementClientConfiguration']
 
-__all__ = ['ComputeManagementClient']
+try:
+    from ._compute_management_client_async import ComputeManagementClientAsync
+    __all__ += ['ComputeManagementClientAsync']
+except (SyntaxError, ImportError):  # Python 2
+    pass
+
+from .version import VERSION
 
 __version__ = VERSION
 
