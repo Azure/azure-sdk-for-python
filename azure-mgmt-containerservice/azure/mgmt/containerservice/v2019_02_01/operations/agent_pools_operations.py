@@ -40,12 +40,14 @@ class AgentPoolsOperations(object):
         self.config = config
 
     def list(
-            self, managed_cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_cluster_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of agent pools in the specified managed cluster.
 
         Gets a list of agent pools in the specified managed cluster. The
         operation returns properties of each agent pool.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param managed_cluster_name: The name of the managed cluster resource.
         :type managed_cluster_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -65,6 +67,7 @@ class AgentPoolsOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
                     'managedClusterName': self._serialize.url("managed_cluster_name", managed_cluster_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -107,7 +110,7 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools'}
 
     def get(
             self, resource_group_name, managed_cluster_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
