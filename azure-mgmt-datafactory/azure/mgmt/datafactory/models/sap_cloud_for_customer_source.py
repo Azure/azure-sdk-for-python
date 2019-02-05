@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class SapCloudForCustomerSource(CopySource):
     """A copy activity source for SAP Cloud for Customer source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class SapCloudForCustomerSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param query: SAP Cloud for Customer OData query. For example, "$top=1".
      Type: string (or Expression with resultType string).
@@ -44,7 +46,7 @@ class SapCloudForCustomerSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None):
-        super(SapCloudForCustomerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.query = query
+    def __init__(self, **kwargs):
+        super(SapCloudForCustomerSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
         self.type = 'SapCloudForCustomerSource'
