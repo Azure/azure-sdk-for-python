@@ -36,10 +36,6 @@ class ProvisioningState(str, Enum):
 
 class AzureSkuName(str, Enum):
 
-    kc8 = "KC8"
-    kc16 = "KC16"
-    ks8 = "KS8"
-    ks16 = "KS16"
     d13_v2 = "D13_v2"
     d14_v2 = "D14_v2"
     l8 = "L8"
