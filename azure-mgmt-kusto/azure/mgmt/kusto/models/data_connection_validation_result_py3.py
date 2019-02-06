@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class EventHubConnectionValidationListResult(Model):
-    """The list Kusto event hub connection validation result.
+class DataConnectionValidationResult(Model):
+    """The result returned from a data connection validation request.
 
-    :param value: The list of Kusto event hub connection validation errors.
-    :type value:
-     list[~azure.mgmt.kusto.models.EventHubConnectionValidationResult]
+    :param error_message: A message which indicates a problem in data
+     connection validation.
+    :type error_message: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EventHubConnectionValidationResult]'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(EventHubConnectionValidationListResult, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *, error_message: str=None, **kwargs) -> None:
+        super(DataConnectionValidationResult, self).__init__(**kwargs)
+        self.error_message = error_message
