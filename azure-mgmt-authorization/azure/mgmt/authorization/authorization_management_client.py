@@ -159,6 +159,19 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def elevate_access(self):
+        """Instance depends on the API version:
+
+           * 2015-07-01: :class:`ElevateAccessOperations<azure.mgmt.authorization.v2015_07_01.operations.ElevateAccessOperations>`
+        """
+        api_version = self._get_api_version('elevate_access')
+        if api_version == '2015-07-01':
+            from .v2015_07_01.operations import ElevateAccessOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def permissions(self):
         """Instance depends on the API version:
 

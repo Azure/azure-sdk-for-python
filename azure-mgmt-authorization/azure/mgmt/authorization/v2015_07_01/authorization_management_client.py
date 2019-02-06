@@ -17,6 +17,7 @@ from .operations.permissions_operations import PermissionsOperations
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
 from .operations.role_assignments_operations import RoleAssignmentsOperations
 from .operations.role_definitions_operations import RoleDefinitionsOperations
+from .operations.elevate_access_operations import ElevateAccessOperations
 from . import models
 
 
@@ -66,6 +67,8 @@ class AuthorizationManagementClient(SDKClient):
     :vartype role_assignments: azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
     :vartype role_definitions: azure.mgmt.authorization.v2015_07_01.operations.RoleDefinitionsOperations
+    :ivar elevate_access: ElevateAccess operations
+    :vartype elevate_access: azure.mgmt.authorization.v2015_07_01.operations.ElevateAccessOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -93,4 +96,6 @@ class AuthorizationManagementClient(SDKClient):
         self.role_assignments = RoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.role_definitions = RoleDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.elevate_access = ElevateAccessOperations(
             self._client, self.config, self._serialize, self._deserialize)
