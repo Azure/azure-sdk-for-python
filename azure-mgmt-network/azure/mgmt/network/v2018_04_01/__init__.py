@@ -9,10 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient
-from .version import VERSION
+from ._configuration import NetworkManagementClientConfiguration
+from ._network_management_client import NetworkManagementClient
+__all__ = ['NetworkManagementClient', 'NetworkManagementClientConfiguration']
 
-__all__ = ['NetworkManagementClient']
+try:
+    from ._network_management_client_async import NetworkManagementClientAsync
+    __all__ += ['NetworkManagementClientAsync']
+except (SyntaxError, ImportError):  # Python 2
+    pass
+
+from .version import VERSION
 
 __version__ = VERSION
 
