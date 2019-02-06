@@ -1,5 +1,7 @@
 # Variables: 
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'codecov-python-repository-token' Is the codecov.io repository token.
+#  'long_running_tests' Is a boolean indicating that the long-running tests should be executed. 
 
 trigger:
 - master
@@ -17,8 +19,14 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel setuptools pathlib
+     pip install wheel setuptools pathlib Jinja2
     displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Analyze dependencies'
+    inputs:
+      scriptPath: 'scripts/analyze_deps.py'
+      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
 
   - task: PythonScript@0
     displayName: 'Generate Packages'
@@ -28,6 +36,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
+    condition: succeededOrFailed()
 
 - job: 'Generic_Tests'
   dependsOn:
@@ -72,7 +81,7 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install pathlib twine
+     pip install pathlib twine codecov beautifulsoup4
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -81,7 +90,62 @@ jobs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: '"$(build_targeting_string)"'
 
-- job: Special_Python_Distro_Tests
+  - script: |
+     coverage xml
+     coverage html
+    displayName: 'Generate Coverage XML'
+
+  - script: |
+     codecov -t $(codecov-python-repository-token)
+    displayName: 'Publish Code Cov'
+    condition: ne(variables['codecov-python-repository-token'], '')
+
+  - task: PythonScript@0
+    displayName: 'Inline CSS for Cobertura'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
+
+- job: Test_Alpha_Python
+  timeoutInMinutes: 90
+  condition: eq(variables['long_running_tests'], True)
+  dependsOn:
+  - 'Build_Target_Packages'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7 For Build Tools'
+    inputs:
+      versionSpec: '3.7'
+
+  - script: |
+     sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+     cd ~/
+     git clone https://github.com/python/cpython.git
+     cd cpython
+     mkdir debug
+     cd debug
+     ../configure --enable-optimizations --prefix=$HOME
+     make install
+     
+     cd $(Build.SourcesDirectory)
+
+     PATH=/home/vsts/bin:$PATH
+     python3 -m ensurepip
+     python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
+    displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+    continueOnError: true
+
+- job: Test_PyPy
+  timeoutInMinutes: 90
+  condition: eq(variables['long_running_tests'], True)
   dependsOn:
   - 'Build_Target_Packages'
   pool:
@@ -107,22 +171,4 @@ jobs:
      pypy3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
     displayName: 'Setup and Run Filtered Tests PyPy3'
-    continueOnError: true
-
-  - script: |
-     sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-     cd ~/
-     git clone https://github.com/python/cpython.git
-     cd cpython
-     mkdir debug
-     cd debug
-     ../configure --enable-optimizations --prefix=$HOME
-     make install
-     
-     cd $(Build.SourcesDirectory)
-
-     PATH=/home/vsts/bin:$PATH
-     python3 -m ensurepip
-     python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
-    displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true

@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.18 (2019-01-29)
++++++++++++++++++++
+
+- Remove deprecated extra dependencies
+
 1.1.17 (2019-01-15)
 +++++++++++++++++++
 

@@ -46,6 +46,10 @@ class FileTaskRunRequest(RunRequest):
      If it is relative URL, the relative path should be obtained from calling
      listBuildSourceUploadUrl API.
     :type source_location: str
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -65,9 +69,10 @@ class FileTaskRunRequest(RunRequest):
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
         'source_location': {'key': 'sourceLocation', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, task_file_path: str, platform, is_archive_enabled: bool=False, values_file_path: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, **kwargs) -> None:
+    def __init__(self, *, task_file_path: str, platform, is_archive_enabled: bool=False, values_file_path: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
         super(FileTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
         self.task_file_path = task_file_path
         self.values_file_path = values_file_path
@@ -76,4 +81,5 @@ class FileTaskRunRequest(RunRequest):
         self.platform = platform
         self.agent_configuration = agent_configuration
         self.source_location = source_location
+        self.credentials = credentials
         self.type = 'FileTaskRunRequest'
