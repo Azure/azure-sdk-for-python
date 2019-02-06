@@ -9,10 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .graph_rbac_management_client import GraphRbacManagementClient
-from .version import VERSION
+from ._configuration import GraphRbacManagementClientConfiguration
+from ._graph_rbac_management_client import GraphRbacManagementClient
+__all__ = ['GraphRbacManagementClient', 'GraphRbacManagementClientConfiguration']
 
-__all__ = ['GraphRbacManagementClient']
+try:
+    from ._graph_rbac_management_client_async import GraphRbacManagementClientAsync
+    __all__ += ['GraphRbacManagementClientAsync']
+except (SyntaxError, ImportError):  # Python 2
+    pass
+
+from .version import VERSION
 
 __version__ = VERSION
 
