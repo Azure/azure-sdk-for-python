@@ -10,343 +10,343 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .sub_resource_py3 import SubResource
-    from .backend_address_pool_py3 import BackendAddressPool
-    from .inbound_nat_rule_py3 import InboundNatRule
-    from .security_rule_py3 import SecurityRule
-    from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
-    from .network_interface_py3 import NetworkInterface
-    from .network_security_group_py3 import NetworkSecurityGroup
-    from .route_py3 import Route
-    from .route_table_py3 import RouteTable
-    from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
-    from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
-    from .public_ip_address_py3 import PublicIPAddress
-    from .ip_configuration_py3 import IPConfiguration
-    from .resource_navigation_link_py3 import ResourceNavigationLink
-    from .subnet_py3 import Subnet
-    from .network_interface_ip_configuration_py3 import NetworkInterfaceIPConfiguration
-    from .application_gateway_backend_address_py3 import ApplicationGatewayBackendAddress
-    from .application_gateway_backend_address_pool_py3 import ApplicationGatewayBackendAddressPool
-    from .application_gateway_connection_draining_py3 import ApplicationGatewayConnectionDraining
-    from .application_gateway_backend_http_settings_py3 import ApplicationGatewayBackendHttpSettings
-    from .application_gateway_backend_health_server_py3 import ApplicationGatewayBackendHealthServer
-    from .application_gateway_backend_health_http_settings_py3 import ApplicationGatewayBackendHealthHttpSettings
-    from .application_gateway_backend_health_pool_py3 import ApplicationGatewayBackendHealthPool
-    from .application_gateway_backend_health_py3 import ApplicationGatewayBackendHealth
-    from .application_gateway_sku_py3 import ApplicationGatewaySku
-    from .application_gateway_ssl_policy_py3 import ApplicationGatewaySslPolicy
-    from .application_gateway_ip_configuration_py3 import ApplicationGatewayIPConfiguration
-    from .application_gateway_authentication_certificate_py3 import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
-    from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
-    from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
-    from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
-    from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
-    from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
-    from .application_gateway_probe_py3 import ApplicationGatewayProbe
-    from .application_gateway_request_routing_rule_py3 import ApplicationGatewayRequestRoutingRule
-    from .application_gateway_redirect_configuration_py3 import ApplicationGatewayRedirectConfiguration
-    from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
-    from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
-    from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_py3 import ApplicationGateway
-    from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
-    from .application_gateway_firewall_rule_group_py3 import ApplicationGatewayFirewallRuleGroup
-    from .application_gateway_firewall_rule_set_py3 import ApplicationGatewayFirewallRuleSet
-    from .application_gateway_available_waf_rule_sets_result_py3 import ApplicationGatewayAvailableWafRuleSetsResult
-    from .application_gateway_available_ssl_options_py3 import ApplicationGatewayAvailableSslOptions
-    from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
-    from .resource_py3 import Resource
-    from .dns_name_availability_result_py3 import DnsNameAvailabilityResult
-    from .endpoint_service_result_py3 import EndpointServiceResult
-    from .express_route_circuit_authorization_py3 import ExpressRouteCircuitAuthorization
-    from .express_route_circuit_peering_config_py3 import ExpressRouteCircuitPeeringConfig
-    from .route_filter_rule_py3 import RouteFilterRule
-    from .express_route_circuit_stats_py3 import ExpressRouteCircuitStats
-    from .express_route_circuit_peering_py3 import ExpressRouteCircuitPeering
-    from .route_filter_py3 import RouteFilter
-    from .ipv6_express_route_circuit_peering_config_py3 import Ipv6ExpressRouteCircuitPeeringConfig
-    from .express_route_circuit_sku_py3 import ExpressRouteCircuitSku
-    from .express_route_circuit_service_provider_properties_py3 import ExpressRouteCircuitServiceProviderProperties
-    from .express_route_circuit_py3 import ExpressRouteCircuit
-    from .express_route_circuit_arp_table_py3 import ExpressRouteCircuitArpTable
-    from .express_route_circuits_arp_table_list_result_py3 import ExpressRouteCircuitsArpTableListResult
-    from .express_route_circuit_routes_table_py3 import ExpressRouteCircuitRoutesTable
-    from .express_route_circuits_routes_table_list_result_py3 import ExpressRouteCircuitsRoutesTableListResult
-    from .express_route_circuit_routes_table_summary_py3 import ExpressRouteCircuitRoutesTableSummary
-    from .express_route_circuits_routes_table_summary_list_result_py3 import ExpressRouteCircuitsRoutesTableSummaryListResult
-    from .express_route_service_provider_bandwidths_offered_py3 import ExpressRouteServiceProviderBandwidthsOffered
-    from .express_route_service_provider_py3 import ExpressRouteServiceProvider
-    from .frontend_ip_configuration_py3 import FrontendIPConfiguration
-    from .load_balancing_rule_py3 import LoadBalancingRule
-    from .probe_py3 import Probe
-    from .inbound_nat_pool_py3 import InboundNatPool
-    from .outbound_nat_rule_py3 import OutboundNatRule
-    from .load_balancer_py3 import LoadBalancer
-    from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error
-    from .azure_async_operation_result_py3 import AzureAsyncOperationResult
-    from .effective_network_security_group_association_py3 import EffectiveNetworkSecurityGroupAssociation
-    from .effective_network_security_rule_py3 import EffectiveNetworkSecurityRule
-    from .effective_network_security_group_py3 import EffectiveNetworkSecurityGroup
-    from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
-    from .effective_route_py3 import EffectiveRoute
-    from .effective_route_list_result_py3 import EffectiveRouteListResult
-    from .network_watcher_py3 import NetworkWatcher
-    from .topology_parameters_py3 import TopologyParameters
-    from .topology_association_py3 import TopologyAssociation
-    from .topology_resource_py3 import TopologyResource
-    from .topology_py3 import Topology
-    from .verification_ip_flow_parameters_py3 import VerificationIPFlowParameters
-    from .verification_ip_flow_result_py3 import VerificationIPFlowResult
-    from .next_hop_parameters_py3 import NextHopParameters
-    from .next_hop_result_py3 import NextHopResult
-    from .security_group_view_parameters_py3 import SecurityGroupViewParameters
-    from .network_interface_association_py3 import NetworkInterfaceAssociation
-    from .subnet_association_py3 import SubnetAssociation
-    from .security_rule_associations_py3 import SecurityRuleAssociations
-    from .security_group_network_interface_py3 import SecurityGroupNetworkInterface
-    from .security_group_view_result_py3 import SecurityGroupViewResult
-    from .packet_capture_storage_location_py3 import PacketCaptureStorageLocation
-    from .packet_capture_filter_py3 import PacketCaptureFilter
-    from .packet_capture_parameters_py3 import PacketCaptureParameters
-    from .packet_capture_py3 import PacketCapture
-    from .packet_capture_result_py3 import PacketCaptureResult
-    from .packet_capture_query_status_result_py3 import PacketCaptureQueryStatusResult
-    from .troubleshooting_parameters_py3 import TroubleshootingParameters
-    from .query_troubleshooting_parameters_py3 import QueryTroubleshootingParameters
-    from .troubleshooting_recommended_actions_py3 import TroubleshootingRecommendedActions
-    from .troubleshooting_details_py3 import TroubleshootingDetails
-    from .troubleshooting_result_py3 import TroubleshootingResult
-    from .retention_policy_parameters_py3 import RetentionPolicyParameters
-    from .flow_log_status_parameters_py3 import FlowLogStatusParameters
-    from .flow_log_information_py3 import FlowLogInformation
-    from .connectivity_source_py3 import ConnectivitySource
-    from .connectivity_destination_py3 import ConnectivityDestination
-    from .connectivity_parameters_py3 import ConnectivityParameters
-    from .connectivity_issue_py3 import ConnectivityIssue
-    from .connectivity_hop_py3 import ConnectivityHop
-    from .connectivity_information_py3 import ConnectivityInformation
-    from .patch_route_filter_rule_py3 import PatchRouteFilterRule
-    from .patch_route_filter_py3 import PatchRouteFilter
-    from .bgp_community_py3 import BGPCommunity
-    from .bgp_service_community_py3 import BgpServiceCommunity
-    from .usage_name_py3 import UsageName
-    from .usage_py3 import Usage
-    from .virtual_network_peering_py3 import VirtualNetworkPeering
-    from .address_space_py3 import AddressSpace
-    from .dhcp_options_py3 import DhcpOptions
-    from .virtual_network_py3 import VirtualNetwork
-    from .ip_address_availability_result_py3 import IPAddressAvailabilityResult
-    from .virtual_network_usage_name_py3 import VirtualNetworkUsageName
-    from .virtual_network_usage_py3 import VirtualNetworkUsage
-    from .virtual_network_gateway_ip_configuration_py3 import VirtualNetworkGatewayIPConfiguration
-    from .virtual_network_gateway_sku_py3 import VirtualNetworkGatewaySku
-    from .vpn_client_root_certificate_py3 import VpnClientRootCertificate
-    from .vpn_client_revoked_certificate_py3 import VpnClientRevokedCertificate
-    from .vpn_client_configuration_py3 import VpnClientConfiguration
-    from .bgp_settings_py3 import BgpSettings
-    from .bgp_peer_status_py3 import BgpPeerStatus
-    from .gateway_route_py3 import GatewayRoute
-    from .virtual_network_gateway_py3 import VirtualNetworkGateway
-    from .vpn_client_parameters_py3 import VpnClientParameters
-    from .bgp_peer_status_list_result_py3 import BgpPeerStatusListResult
-    from .gateway_route_list_result_py3 import GatewayRouteListResult
-    from .tunnel_connection_health_py3 import TunnelConnectionHealth
-    from .local_network_gateway_py3 import LocalNetworkGateway
-    from .ipsec_policy_py3 import IpsecPolicy
-    from .virtual_network_gateway_connection_py3 import VirtualNetworkGatewayConnection
-    from .connection_reset_shared_key_py3 import ConnectionResetSharedKey
-    from .connection_shared_key_py3 import ConnectionSharedKey
-    from .virtual_network_connection_gateway_reference_py3 import VirtualNetworkConnectionGatewayReference
-    from .virtual_network_gateway_connection_list_entity_py3 import VirtualNetworkGatewayConnectionListEntity
+    from ._models_py3 import AddressSpace
+    from ._models_py3 import ApplicationGateway
+    from ._models_py3 import ApplicationGatewayAuthenticationCertificate
+    from ._models_py3 import ApplicationGatewayAvailableSslOptions
+    from ._models_py3 import ApplicationGatewayAvailableWafRuleSetsResult
+    from ._models_py3 import ApplicationGatewayBackendAddress
+    from ._models_py3 import ApplicationGatewayBackendAddressPool
+    from ._models_py3 import ApplicationGatewayBackendHealth
+    from ._models_py3 import ApplicationGatewayBackendHealthHttpSettings
+    from ._models_py3 import ApplicationGatewayBackendHealthPool
+    from ._models_py3 import ApplicationGatewayBackendHealthServer
+    from ._models_py3 import ApplicationGatewayBackendHttpSettings
+    from ._models_py3 import ApplicationGatewayConnectionDraining
+    from ._models_py3 import ApplicationGatewayFirewallDisabledRuleGroup
+    from ._models_py3 import ApplicationGatewayFirewallRule
+    from ._models_py3 import ApplicationGatewayFirewallRuleGroup
+    from ._models_py3 import ApplicationGatewayFirewallRuleSet
+    from ._models_py3 import ApplicationGatewayFrontendIPConfiguration
+    from ._models_py3 import ApplicationGatewayFrontendPort
+    from ._models_py3 import ApplicationGatewayHttpListener
+    from ._models_py3 import ApplicationGatewayIPConfiguration
+    from ._models_py3 import ApplicationGatewayPathRule
+    from ._models_py3 import ApplicationGatewayProbe
+    from ._models_py3 import ApplicationGatewayProbeHealthResponseMatch
+    from ._models_py3 import ApplicationGatewayRedirectConfiguration
+    from ._models_py3 import ApplicationGatewayRequestRoutingRule
+    from ._models_py3 import ApplicationGatewaySku
+    from ._models_py3 import ApplicationGatewaySslCertificate
+    from ._models_py3 import ApplicationGatewaySslPolicy
+    from ._models_py3 import ApplicationGatewaySslPredefinedPolicy
+    from ._models_py3 import ApplicationGatewayUrlPathMap
+    from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
+    from ._models_py3 import AzureAsyncOperationResult
+    from ._models_py3 import BackendAddressPool
+    from ._models_py3 import BGPCommunity
+    from ._models_py3 import BgpPeerStatus
+    from ._models_py3 import BgpPeerStatusListResult
+    from ._models_py3 import BgpServiceCommunity
+    from ._models_py3 import BgpSettings
+    from ._models_py3 import ConnectionResetSharedKey
+    from ._models_py3 import ConnectionSharedKey
+    from ._models_py3 import ConnectivityDestination
+    from ._models_py3 import ConnectivityHop
+    from ._models_py3 import ConnectivityInformation
+    from ._models_py3 import ConnectivityIssue
+    from ._models_py3 import ConnectivityParameters
+    from ._models_py3 import ConnectivitySource
+    from ._models_py3 import DhcpOptions
+    from ._models_py3 import DnsNameAvailabilityResult
+    from ._models_py3 import EffectiveNetworkSecurityGroup
+    from ._models_py3 import EffectiveNetworkSecurityGroupAssociation
+    from ._models_py3 import EffectiveNetworkSecurityGroupListResult
+    from ._models_py3 import EffectiveNetworkSecurityRule
+    from ._models_py3 import EffectiveRoute
+    from ._models_py3 import EffectiveRouteListResult
+    from ._models_py3 import EndpointServiceResult
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ExpressRouteCircuit
+    from ._models_py3 import ExpressRouteCircuitArpTable
+    from ._models_py3 import ExpressRouteCircuitAuthorization
+    from ._models_py3 import ExpressRouteCircuitPeering
+    from ._models_py3 import ExpressRouteCircuitPeeringConfig
+    from ._models_py3 import ExpressRouteCircuitRoutesTable
+    from ._models_py3 import ExpressRouteCircuitRoutesTableSummary
+    from ._models_py3 import ExpressRouteCircuitsArpTableListResult
+    from ._models_py3 import ExpressRouteCircuitServiceProviderProperties
+    from ._models_py3 import ExpressRouteCircuitSku
+    from ._models_py3 import ExpressRouteCircuitsRoutesTableListResult
+    from ._models_py3 import ExpressRouteCircuitsRoutesTableSummaryListResult
+    from ._models_py3 import ExpressRouteCircuitStats
+    from ._models_py3 import ExpressRouteServiceProvider
+    from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
+    from ._models_py3 import FlowLogInformation
+    from ._models_py3 import FlowLogStatusParameters
+    from ._models_py3 import FrontendIPConfiguration
+    from ._models_py3 import GatewayRoute
+    from ._models_py3 import GatewayRouteListResult
+    from ._models_py3 import InboundNatPool
+    from ._models_py3 import InboundNatRule
+    from ._models_py3 import IPAddressAvailabilityResult
+    from ._models_py3 import IPConfiguration
+    from ._models_py3 import IpsecPolicy
+    from ._models_py3 import Ipv6ExpressRouteCircuitPeeringConfig
+    from ._models_py3 import LoadBalancer
+    from ._models_py3 import LoadBalancingRule
+    from ._models_py3 import LocalNetworkGateway
+    from ._models_py3 import NetworkInterface
+    from ._models_py3 import NetworkInterfaceAssociation
+    from ._models_py3 import NetworkInterfaceDnsSettings
+    from ._models_py3 import NetworkInterfaceIPConfiguration
+    from ._models_py3 import NetworkSecurityGroup
+    from ._models_py3 import NetworkWatcher
+    from ._models_py3 import NextHopParameters
+    from ._models_py3 import NextHopResult
+    from ._models_py3 import OutboundNatRule
+    from ._models_py3 import PacketCapture
+    from ._models_py3 import PacketCaptureFilter
+    from ._models_py3 import PacketCaptureParameters
+    from ._models_py3 import PacketCaptureQueryStatusResult
+    from ._models_py3 import PacketCaptureResult
+    from ._models_py3 import PacketCaptureStorageLocation
+    from ._models_py3 import PatchRouteFilter
+    from ._models_py3 import PatchRouteFilterRule
+    from ._models_py3 import Probe
+    from ._models_py3 import PublicIPAddress
+    from ._models_py3 import PublicIPAddressDnsSettings
+    from ._models_py3 import QueryTroubleshootingParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceNavigationLink
+    from ._models_py3 import RetentionPolicyParameters
+    from ._models_py3 import Route
+    from ._models_py3 import RouteFilter
+    from ._models_py3 import RouteFilterRule
+    from ._models_py3 import RouteTable
+    from ._models_py3 import SecurityGroupNetworkInterface
+    from ._models_py3 import SecurityGroupViewParameters
+    from ._models_py3 import SecurityGroupViewResult
+    from ._models_py3 import SecurityRule
+    from ._models_py3 import SecurityRuleAssociations
+    from ._models_py3 import ServiceEndpointPropertiesFormat
+    from ._models_py3 import Subnet
+    from ._models_py3 import SubnetAssociation
+    from ._models_py3 import SubResource
+    from ._models_py3 import Topology
+    from ._models_py3 import TopologyAssociation
+    from ._models_py3 import TopologyParameters
+    from ._models_py3 import TopologyResource
+    from ._models_py3 import TroubleshootingDetails
+    from ._models_py3 import TroubleshootingParameters
+    from ._models_py3 import TroubleshootingRecommendedActions
+    from ._models_py3 import TroubleshootingResult
+    from ._models_py3 import TunnelConnectionHealth
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
+    from ._models_py3 import VerificationIPFlowParameters
+    from ._models_py3 import VerificationIPFlowResult
+    from ._models_py3 import VirtualNetwork
+    from ._models_py3 import VirtualNetworkConnectionGatewayReference
+    from ._models_py3 import VirtualNetworkGateway
+    from ._models_py3 import VirtualNetworkGatewayConnection
+    from ._models_py3 import VirtualNetworkGatewayConnectionListEntity
+    from ._models_py3 import VirtualNetworkGatewayIPConfiguration
+    from ._models_py3 import VirtualNetworkGatewaySku
+    from ._models_py3 import VirtualNetworkPeering
+    from ._models_py3 import VirtualNetworkUsage
+    from ._models_py3 import VirtualNetworkUsageName
+    from ._models_py3 import VpnClientConfiguration
+    from ._models_py3 import VpnClientParameters
+    from ._models_py3 import VpnClientRevokedCertificate
+    from ._models_py3 import VpnClientRootCertificate
 except (SyntaxError, ImportError):
-    from .sub_resource import SubResource
-    from .backend_address_pool import BackendAddressPool
-    from .inbound_nat_rule import InboundNatRule
-    from .security_rule import SecurityRule
-    from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-    from .network_interface import NetworkInterface
-    from .network_security_group import NetworkSecurityGroup
-    from .route import Route
-    from .route_table import RouteTable
-    from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
-    from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-    from .public_ip_address import PublicIPAddress
-    from .ip_configuration import IPConfiguration
-    from .resource_navigation_link import ResourceNavigationLink
-    from .subnet import Subnet
-    from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
-    from .application_gateway_backend_address import ApplicationGatewayBackendAddress
-    from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
-    from .application_gateway_connection_draining import ApplicationGatewayConnectionDraining
-    from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
-    from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
-    from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
-    from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
-    from .application_gateway_backend_health import ApplicationGatewayBackendHealth
-    from .application_gateway_sku import ApplicationGatewaySku
-    from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
-    from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
-    from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
-    from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
-    from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
-    from .application_gateway_http_listener import ApplicationGatewayHttpListener
-    from .application_gateway_path_rule import ApplicationGatewayPathRule
-    from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
-    from .application_gateway_probe import ApplicationGatewayProbe
-    from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
-    from .application_gateway_redirect_configuration import ApplicationGatewayRedirectConfiguration
-    from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
-    from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
-    from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway import ApplicationGateway
-    from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
-    from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
-    from .application_gateway_firewall_rule_set import ApplicationGatewayFirewallRuleSet
-    from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
-    from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
-    from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
-    from .resource import Resource
-    from .dns_name_availability_result import DnsNameAvailabilityResult
-    from .endpoint_service_result import EndpointServiceResult
-    from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
-    from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
-    from .route_filter_rule import RouteFilterRule
-    from .express_route_circuit_stats import ExpressRouteCircuitStats
-    from .express_route_circuit_peering import ExpressRouteCircuitPeering
-    from .route_filter import RouteFilter
-    from .ipv6_express_route_circuit_peering_config import Ipv6ExpressRouteCircuitPeeringConfig
-    from .express_route_circuit_sku import ExpressRouteCircuitSku
-    from .express_route_circuit_service_provider_properties import ExpressRouteCircuitServiceProviderProperties
-    from .express_route_circuit import ExpressRouteCircuit
-    from .express_route_circuit_arp_table import ExpressRouteCircuitArpTable
-    from .express_route_circuits_arp_table_list_result import ExpressRouteCircuitsArpTableListResult
-    from .express_route_circuit_routes_table import ExpressRouteCircuitRoutesTable
-    from .express_route_circuits_routes_table_list_result import ExpressRouteCircuitsRoutesTableListResult
-    from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoutesTableSummary
-    from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
-    from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
-    from .express_route_service_provider import ExpressRouteServiceProvider
-    from .frontend_ip_configuration import FrontendIPConfiguration
-    from .load_balancing_rule import LoadBalancingRule
-    from .probe import Probe
-    from .inbound_nat_pool import InboundNatPool
-    from .outbound_nat_rule import OutboundNatRule
-    from .load_balancer import LoadBalancer
-    from .error_details import ErrorDetails
-    from .error import Error
-    from .azure_async_operation_result import AzureAsyncOperationResult
-    from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
-    from .effective_network_security_rule import EffectiveNetworkSecurityRule
-    from .effective_network_security_group import EffectiveNetworkSecurityGroup
-    from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
-    from .effective_route import EffectiveRoute
-    from .effective_route_list_result import EffectiveRouteListResult
-    from .network_watcher import NetworkWatcher
-    from .topology_parameters import TopologyParameters
-    from .topology_association import TopologyAssociation
-    from .topology_resource import TopologyResource
-    from .topology import Topology
-    from .verification_ip_flow_parameters import VerificationIPFlowParameters
-    from .verification_ip_flow_result import VerificationIPFlowResult
-    from .next_hop_parameters import NextHopParameters
-    from .next_hop_result import NextHopResult
-    from .security_group_view_parameters import SecurityGroupViewParameters
-    from .network_interface_association import NetworkInterfaceAssociation
-    from .subnet_association import SubnetAssociation
-    from .security_rule_associations import SecurityRuleAssociations
-    from .security_group_network_interface import SecurityGroupNetworkInterface
-    from .security_group_view_result import SecurityGroupViewResult
-    from .packet_capture_storage_location import PacketCaptureStorageLocation
-    from .packet_capture_filter import PacketCaptureFilter
-    from .packet_capture_parameters import PacketCaptureParameters
-    from .packet_capture import PacketCapture
-    from .packet_capture_result import PacketCaptureResult
-    from .packet_capture_query_status_result import PacketCaptureQueryStatusResult
-    from .troubleshooting_parameters import TroubleshootingParameters
-    from .query_troubleshooting_parameters import QueryTroubleshootingParameters
-    from .troubleshooting_recommended_actions import TroubleshootingRecommendedActions
-    from .troubleshooting_details import TroubleshootingDetails
-    from .troubleshooting_result import TroubleshootingResult
-    from .retention_policy_parameters import RetentionPolicyParameters
-    from .flow_log_status_parameters import FlowLogStatusParameters
-    from .flow_log_information import FlowLogInformation
-    from .connectivity_source import ConnectivitySource
-    from .connectivity_destination import ConnectivityDestination
-    from .connectivity_parameters import ConnectivityParameters
-    from .connectivity_issue import ConnectivityIssue
-    from .connectivity_hop import ConnectivityHop
-    from .connectivity_information import ConnectivityInformation
-    from .patch_route_filter_rule import PatchRouteFilterRule
-    from .patch_route_filter import PatchRouteFilter
-    from .bgp_community import BGPCommunity
-    from .bgp_service_community import BgpServiceCommunity
-    from .usage_name import UsageName
-    from .usage import Usage
-    from .virtual_network_peering import VirtualNetworkPeering
-    from .address_space import AddressSpace
-    from .dhcp_options import DhcpOptions
-    from .virtual_network import VirtualNetwork
-    from .ip_address_availability_result import IPAddressAvailabilityResult
-    from .virtual_network_usage_name import VirtualNetworkUsageName
-    from .virtual_network_usage import VirtualNetworkUsage
-    from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
-    from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
-    from .vpn_client_root_certificate import VpnClientRootCertificate
-    from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
-    from .vpn_client_configuration import VpnClientConfiguration
-    from .bgp_settings import BgpSettings
-    from .bgp_peer_status import BgpPeerStatus
-    from .gateway_route import GatewayRoute
-    from .virtual_network_gateway import VirtualNetworkGateway
-    from .vpn_client_parameters import VpnClientParameters
-    from .bgp_peer_status_list_result import BgpPeerStatusListResult
-    from .gateway_route_list_result import GatewayRouteListResult
-    from .tunnel_connection_health import TunnelConnectionHealth
-    from .local_network_gateway import LocalNetworkGateway
-    from .ipsec_policy import IpsecPolicy
-    from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
-    from .connection_reset_shared_key import ConnectionResetSharedKey
-    from .connection_shared_key import ConnectionSharedKey
-    from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
-    from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
-from .application_gateway_paged import ApplicationGatewayPaged
-from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
-from .endpoint_service_result_paged import EndpointServiceResultPaged
-from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
-from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
-from .express_route_circuit_paged import ExpressRouteCircuitPaged
-from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
-from .load_balancer_paged import LoadBalancerPaged
-from .backend_address_pool_paged import BackendAddressPoolPaged
-from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
-from .inbound_nat_rule_paged import InboundNatRulePaged
-from .load_balancing_rule_paged import LoadBalancingRulePaged
-from .network_interface_paged import NetworkInterfacePaged
-from .probe_paged import ProbePaged
-from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
-from .network_security_group_paged import NetworkSecurityGroupPaged
-from .security_rule_paged import SecurityRulePaged
-from .network_watcher_paged import NetworkWatcherPaged
-from .packet_capture_result_paged import PacketCaptureResultPaged
-from .public_ip_address_paged import PublicIPAddressPaged
-from .route_filter_paged import RouteFilterPaged
-from .route_filter_rule_paged import RouteFilterRulePaged
-from .route_table_paged import RouteTablePaged
-from .route_paged import RoutePaged
-from .bgp_service_community_paged import BgpServiceCommunityPaged
-from .usage_paged import UsagePaged
-from .virtual_network_paged import VirtualNetworkPaged
-from .virtual_network_usage_paged import VirtualNetworkUsagePaged
-from .subnet_paged import SubnetPaged
-from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
-from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
-from .virtual_network_gateway_connection_list_entity_paged import VirtualNetworkGatewayConnectionListEntityPaged
-from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
-from .local_network_gateway_paged import LocalNetworkGatewayPaged
+    from ._models import AddressSpace
+    from ._models import ApplicationGateway
+    from ._models import ApplicationGatewayAuthenticationCertificate
+    from ._models import ApplicationGatewayAvailableSslOptions
+    from ._models import ApplicationGatewayAvailableWafRuleSetsResult
+    from ._models import ApplicationGatewayBackendAddress
+    from ._models import ApplicationGatewayBackendAddressPool
+    from ._models import ApplicationGatewayBackendHealth
+    from ._models import ApplicationGatewayBackendHealthHttpSettings
+    from ._models import ApplicationGatewayBackendHealthPool
+    from ._models import ApplicationGatewayBackendHealthServer
+    from ._models import ApplicationGatewayBackendHttpSettings
+    from ._models import ApplicationGatewayConnectionDraining
+    from ._models import ApplicationGatewayFirewallDisabledRuleGroup
+    from ._models import ApplicationGatewayFirewallRule
+    from ._models import ApplicationGatewayFirewallRuleGroup
+    from ._models import ApplicationGatewayFirewallRuleSet
+    from ._models import ApplicationGatewayFrontendIPConfiguration
+    from ._models import ApplicationGatewayFrontendPort
+    from ._models import ApplicationGatewayHttpListener
+    from ._models import ApplicationGatewayIPConfiguration
+    from ._models import ApplicationGatewayPathRule
+    from ._models import ApplicationGatewayProbe
+    from ._models import ApplicationGatewayProbeHealthResponseMatch
+    from ._models import ApplicationGatewayRedirectConfiguration
+    from ._models import ApplicationGatewayRequestRoutingRule
+    from ._models import ApplicationGatewaySku
+    from ._models import ApplicationGatewaySslCertificate
+    from ._models import ApplicationGatewaySslPolicy
+    from ._models import ApplicationGatewaySslPredefinedPolicy
+    from ._models import ApplicationGatewayUrlPathMap
+    from ._models import ApplicationGatewayWebApplicationFirewallConfiguration
+    from ._models import AzureAsyncOperationResult
+    from ._models import BackendAddressPool
+    from ._models import BGPCommunity
+    from ._models import BgpPeerStatus
+    from ._models import BgpPeerStatusListResult
+    from ._models import BgpServiceCommunity
+    from ._models import BgpSettings
+    from ._models import ConnectionResetSharedKey
+    from ._models import ConnectionSharedKey
+    from ._models import ConnectivityDestination
+    from ._models import ConnectivityHop
+    from ._models import ConnectivityInformation
+    from ._models import ConnectivityIssue
+    from ._models import ConnectivityParameters
+    from ._models import ConnectivitySource
+    from ._models import DhcpOptions
+    from ._models import DnsNameAvailabilityResult
+    from ._models import EffectiveNetworkSecurityGroup
+    from ._models import EffectiveNetworkSecurityGroupAssociation
+    from ._models import EffectiveNetworkSecurityGroupListResult
+    from ._models import EffectiveNetworkSecurityRule
+    from ._models import EffectiveRoute
+    from ._models import EffectiveRouteListResult
+    from ._models import EndpointServiceResult
+    from ._models import Error
+    from ._models import ErrorDetails
+    from ._models import ExpressRouteCircuit
+    from ._models import ExpressRouteCircuitArpTable
+    from ._models import ExpressRouteCircuitAuthorization
+    from ._models import ExpressRouteCircuitPeering
+    from ._models import ExpressRouteCircuitPeeringConfig
+    from ._models import ExpressRouteCircuitRoutesTable
+    from ._models import ExpressRouteCircuitRoutesTableSummary
+    from ._models import ExpressRouteCircuitsArpTableListResult
+    from ._models import ExpressRouteCircuitServiceProviderProperties
+    from ._models import ExpressRouteCircuitSku
+    from ._models import ExpressRouteCircuitsRoutesTableListResult
+    from ._models import ExpressRouteCircuitsRoutesTableSummaryListResult
+    from ._models import ExpressRouteCircuitStats
+    from ._models import ExpressRouteServiceProvider
+    from ._models import ExpressRouteServiceProviderBandwidthsOffered
+    from ._models import FlowLogInformation
+    from ._models import FlowLogStatusParameters
+    from ._models import FrontendIPConfiguration
+    from ._models import GatewayRoute
+    from ._models import GatewayRouteListResult
+    from ._models import InboundNatPool
+    from ._models import InboundNatRule
+    from ._models import IPAddressAvailabilityResult
+    from ._models import IPConfiguration
+    from ._models import IpsecPolicy
+    from ._models import Ipv6ExpressRouteCircuitPeeringConfig
+    from ._models import LoadBalancer
+    from ._models import LoadBalancingRule
+    from ._models import LocalNetworkGateway
+    from ._models import NetworkInterface
+    from ._models import NetworkInterfaceAssociation
+    from ._models import NetworkInterfaceDnsSettings
+    from ._models import NetworkInterfaceIPConfiguration
+    from ._models import NetworkSecurityGroup
+    from ._models import NetworkWatcher
+    from ._models import NextHopParameters
+    from ._models import NextHopResult
+    from ._models import OutboundNatRule
+    from ._models import PacketCapture
+    from ._models import PacketCaptureFilter
+    from ._models import PacketCaptureParameters
+    from ._models import PacketCaptureQueryStatusResult
+    from ._models import PacketCaptureResult
+    from ._models import PacketCaptureStorageLocation
+    from ._models import PatchRouteFilter
+    from ._models import PatchRouteFilterRule
+    from ._models import Probe
+    from ._models import PublicIPAddress
+    from ._models import PublicIPAddressDnsSettings
+    from ._models import QueryTroubleshootingParameters
+    from ._models import Resource
+    from ._models import ResourceNavigationLink
+    from ._models import RetentionPolicyParameters
+    from ._models import Route
+    from ._models import RouteFilter
+    from ._models import RouteFilterRule
+    from ._models import RouteTable
+    from ._models import SecurityGroupNetworkInterface
+    from ._models import SecurityGroupViewParameters
+    from ._models import SecurityGroupViewResult
+    from ._models import SecurityRule
+    from ._models import SecurityRuleAssociations
+    from ._models import ServiceEndpointPropertiesFormat
+    from ._models import Subnet
+    from ._models import SubnetAssociation
+    from ._models import SubResource
+    from ._models import Topology
+    from ._models import TopologyAssociation
+    from ._models import TopologyParameters
+    from ._models import TopologyResource
+    from ._models import TroubleshootingDetails
+    from ._models import TroubleshootingParameters
+    from ._models import TroubleshootingRecommendedActions
+    from ._models import TroubleshootingResult
+    from ._models import TunnelConnectionHealth
+    from ._models import Usage
+    from ._models import UsageName
+    from ._models import VerificationIPFlowParameters
+    from ._models import VerificationIPFlowResult
+    from ._models import VirtualNetwork
+    from ._models import VirtualNetworkConnectionGatewayReference
+    from ._models import VirtualNetworkGateway
+    from ._models import VirtualNetworkGatewayConnection
+    from ._models import VirtualNetworkGatewayConnectionListEntity
+    from ._models import VirtualNetworkGatewayIPConfiguration
+    from ._models import VirtualNetworkGatewaySku
+    from ._models import VirtualNetworkPeering
+    from ._models import VirtualNetworkUsage
+    from ._models import VirtualNetworkUsageName
+    from ._models import VpnClientConfiguration
+    from ._models import VpnClientParameters
+    from ._models import VpnClientRevokedCertificate
+    from ._models import VpnClientRootCertificate
+from ._paged_models import ApplicationGatewayPaged
+from ._paged_models import ApplicationGatewaySslPredefinedPolicyPaged
+from ._paged_models import BackendAddressPoolPaged
+from ._paged_models import BgpServiceCommunityPaged
+from ._paged_models import EndpointServiceResultPaged
+from ._paged_models import ExpressRouteCircuitAuthorizationPaged
+from ._paged_models import ExpressRouteCircuitPaged
+from ._paged_models import ExpressRouteCircuitPeeringPaged
+from ._paged_models import ExpressRouteServiceProviderPaged
+from ._paged_models import FrontendIPConfigurationPaged
+from ._paged_models import InboundNatRulePaged
+from ._paged_models import LoadBalancerPaged
+from ._paged_models import LoadBalancingRulePaged
+from ._paged_models import LocalNetworkGatewayPaged
+from ._paged_models import NetworkInterfaceIPConfigurationPaged
+from ._paged_models import NetworkInterfacePaged
+from ._paged_models import NetworkSecurityGroupPaged
+from ._paged_models import NetworkWatcherPaged
+from ._paged_models import PacketCaptureResultPaged
+from ._paged_models import ProbePaged
+from ._paged_models import PublicIPAddressPaged
+from ._paged_models import RouteFilterPaged
+from ._paged_models import RouteFilterRulePaged
+from ._paged_models import RoutePaged
+from ._paged_models import RouteTablePaged
+from ._paged_models import SecurityRulePaged
+from ._paged_models import SubnetPaged
+from ._paged_models import UsagePaged
+from ._paged_models import VirtualNetworkGatewayConnectionListEntityPaged
+from ._paged_models import VirtualNetworkGatewayConnectionPaged
+from ._paged_models import VirtualNetworkGatewayPaged
+from ._paged_models import VirtualNetworkPaged
+from ._paged_models import VirtualNetworkPeeringPaged
+from ._paged_models import VirtualNetworkUsagePaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -414,157 +414,157 @@ from .network_management_client_enums import (
 )
 
 __all__ = [
-    'SubResource',
-    'BackendAddressPool',
-    'InboundNatRule',
-    'SecurityRule',
-    'NetworkInterfaceDnsSettings',
-    'NetworkInterface',
-    'NetworkSecurityGroup',
-    'Route',
-    'RouteTable',
-    'ServiceEndpointPropertiesFormat',
-    'PublicIPAddressDnsSettings',
-    'PublicIPAddress',
-    'IPConfiguration',
-    'ResourceNavigationLink',
-    'Subnet',
-    'NetworkInterfaceIPConfiguration',
+    'AddressSpace',
+    'ApplicationGateway',
+    'ApplicationGatewayAuthenticationCertificate',
+    'ApplicationGatewayAvailableSslOptions',
+    'ApplicationGatewayAvailableWafRuleSetsResult',
     'ApplicationGatewayBackendAddress',
     'ApplicationGatewayBackendAddressPool',
-    'ApplicationGatewayConnectionDraining',
-    'ApplicationGatewayBackendHttpSettings',
-    'ApplicationGatewayBackendHealthServer',
+    'ApplicationGatewayBackendHealth',
     'ApplicationGatewayBackendHealthHttpSettings',
     'ApplicationGatewayBackendHealthPool',
-    'ApplicationGatewayBackendHealth',
-    'ApplicationGatewaySku',
-    'ApplicationGatewaySslPolicy',
-    'ApplicationGatewayIPConfiguration',
-    'ApplicationGatewayAuthenticationCertificate',
-    'ApplicationGatewaySslCertificate',
-    'ApplicationGatewayFrontendIPConfiguration',
-    'ApplicationGatewayFrontendPort',
-    'ApplicationGatewayHttpListener',
-    'ApplicationGatewayPathRule',
-    'ApplicationGatewayProbeHealthResponseMatch',
-    'ApplicationGatewayProbe',
-    'ApplicationGatewayRequestRoutingRule',
-    'ApplicationGatewayRedirectConfiguration',
-    'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayBackendHealthServer',
+    'ApplicationGatewayBackendHttpSettings',
+    'ApplicationGatewayConnectionDraining',
     'ApplicationGatewayFirewallDisabledRuleGroup',
-    'ApplicationGatewayWebApplicationFirewallConfiguration',
-    'ApplicationGateway',
     'ApplicationGatewayFirewallRule',
     'ApplicationGatewayFirewallRuleGroup',
     'ApplicationGatewayFirewallRuleSet',
-    'ApplicationGatewayAvailableWafRuleSetsResult',
-    'ApplicationGatewayAvailableSslOptions',
+    'ApplicationGatewayFrontendIPConfiguration',
+    'ApplicationGatewayFrontendPort',
+    'ApplicationGatewayHttpListener',
+    'ApplicationGatewayIPConfiguration',
+    'ApplicationGatewayPathRule',
+    'ApplicationGatewayProbe',
+    'ApplicationGatewayProbeHealthResponseMatch',
+    'ApplicationGatewayRedirectConfiguration',
+    'ApplicationGatewayRequestRoutingRule',
+    'ApplicationGatewaySku',
+    'ApplicationGatewaySslCertificate',
+    'ApplicationGatewaySslPolicy',
     'ApplicationGatewaySslPredefinedPolicy',
-    'Resource',
-    'DnsNameAvailabilityResult',
-    'EndpointServiceResult',
-    'ExpressRouteCircuitAuthorization',
-    'ExpressRouteCircuitPeeringConfig',
-    'RouteFilterRule',
-    'ExpressRouteCircuitStats',
-    'ExpressRouteCircuitPeering',
-    'RouteFilter',
-    'Ipv6ExpressRouteCircuitPeeringConfig',
-    'ExpressRouteCircuitSku',
-    'ExpressRouteCircuitServiceProviderProperties',
-    'ExpressRouteCircuit',
-    'ExpressRouteCircuitArpTable',
-    'ExpressRouteCircuitsArpTableListResult',
-    'ExpressRouteCircuitRoutesTable',
-    'ExpressRouteCircuitsRoutesTableListResult',
-    'ExpressRouteCircuitRoutesTableSummary',
-    'ExpressRouteCircuitsRoutesTableSummaryListResult',
-    'ExpressRouteServiceProviderBandwidthsOffered',
-    'ExpressRouteServiceProvider',
-    'FrontendIPConfiguration',
-    'LoadBalancingRule',
-    'Probe',
-    'InboundNatPool',
-    'OutboundNatRule',
-    'LoadBalancer',
-    'ErrorDetails',
-    'Error',
+    'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayWebApplicationFirewallConfiguration',
     'AzureAsyncOperationResult',
-    'EffectiveNetworkSecurityGroupAssociation',
-    'EffectiveNetworkSecurityRule',
-    'EffectiveNetworkSecurityGroup',
-    'EffectiveNetworkSecurityGroupListResult',
-    'EffectiveRoute',
-    'EffectiveRouteListResult',
-    'NetworkWatcher',
-    'TopologyParameters',
-    'TopologyAssociation',
-    'TopologyResource',
-    'Topology',
-    'VerificationIPFlowParameters',
-    'VerificationIPFlowResult',
-    'NextHopParameters',
-    'NextHopResult',
-    'SecurityGroupViewParameters',
-    'NetworkInterfaceAssociation',
-    'SubnetAssociation',
-    'SecurityRuleAssociations',
-    'SecurityGroupNetworkInterface',
-    'SecurityGroupViewResult',
-    'PacketCaptureStorageLocation',
-    'PacketCaptureFilter',
-    'PacketCaptureParameters',
-    'PacketCapture',
-    'PacketCaptureResult',
-    'PacketCaptureQueryStatusResult',
-    'TroubleshootingParameters',
-    'QueryTroubleshootingParameters',
-    'TroubleshootingRecommendedActions',
-    'TroubleshootingDetails',
-    'TroubleshootingResult',
-    'RetentionPolicyParameters',
-    'FlowLogStatusParameters',
-    'FlowLogInformation',
-    'ConnectivitySource',
-    'ConnectivityDestination',
-    'ConnectivityParameters',
-    'ConnectivityIssue',
-    'ConnectivityHop',
-    'ConnectivityInformation',
-    'PatchRouteFilterRule',
-    'PatchRouteFilter',
+    'BackendAddressPool',
     'BGPCommunity',
-    'BgpServiceCommunity',
-    'UsageName',
-    'Usage',
-    'VirtualNetworkPeering',
-    'AddressSpace',
-    'DhcpOptions',
-    'VirtualNetwork',
-    'IPAddressAvailabilityResult',
-    'VirtualNetworkUsageName',
-    'VirtualNetworkUsage',
-    'VirtualNetworkGatewayIPConfiguration',
-    'VirtualNetworkGatewaySku',
-    'VpnClientRootCertificate',
-    'VpnClientRevokedCertificate',
-    'VpnClientConfiguration',
-    'BgpSettings',
     'BgpPeerStatus',
-    'GatewayRoute',
-    'VirtualNetworkGateway',
-    'VpnClientParameters',
     'BgpPeerStatusListResult',
-    'GatewayRouteListResult',
-    'TunnelConnectionHealth',
-    'LocalNetworkGateway',
-    'IpsecPolicy',
-    'VirtualNetworkGatewayConnection',
+    'BgpServiceCommunity',
+    'BgpSettings',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
+    'ConnectivityDestination',
+    'ConnectivityHop',
+    'ConnectivityInformation',
+    'ConnectivityIssue',
+    'ConnectivityParameters',
+    'ConnectivitySource',
+    'DhcpOptions',
+    'DnsNameAvailabilityResult',
+    'EffectiveNetworkSecurityGroup',
+    'EffectiveNetworkSecurityGroupAssociation',
+    'EffectiveNetworkSecurityGroupListResult',
+    'EffectiveNetworkSecurityRule',
+    'EffectiveRoute',
+    'EffectiveRouteListResult',
+    'EndpointServiceResult',
+    'Error',
+    'ErrorDetails',
+    'ExpressRouteCircuit',
+    'ExpressRouteCircuitArpTable',
+    'ExpressRouteCircuitAuthorization',
+    'ExpressRouteCircuitPeering',
+    'ExpressRouteCircuitPeeringConfig',
+    'ExpressRouteCircuitRoutesTable',
+    'ExpressRouteCircuitRoutesTableSummary',
+    'ExpressRouteCircuitsArpTableListResult',
+    'ExpressRouteCircuitServiceProviderProperties',
+    'ExpressRouteCircuitSku',
+    'ExpressRouteCircuitsRoutesTableListResult',
+    'ExpressRouteCircuitsRoutesTableSummaryListResult',
+    'ExpressRouteCircuitStats',
+    'ExpressRouteServiceProvider',
+    'ExpressRouteServiceProviderBandwidthsOffered',
+    'FlowLogInformation',
+    'FlowLogStatusParameters',
+    'FrontendIPConfiguration',
+    'GatewayRoute',
+    'GatewayRouteListResult',
+    'InboundNatPool',
+    'InboundNatRule',
+    'IPAddressAvailabilityResult',
+    'IPConfiguration',
+    'IpsecPolicy',
+    'Ipv6ExpressRouteCircuitPeeringConfig',
+    'LoadBalancer',
+    'LoadBalancingRule',
+    'LocalNetworkGateway',
+    'NetworkInterface',
+    'NetworkInterfaceAssociation',
+    'NetworkInterfaceDnsSettings',
+    'NetworkInterfaceIPConfiguration',
+    'NetworkSecurityGroup',
+    'NetworkWatcher',
+    'NextHopParameters',
+    'NextHopResult',
+    'OutboundNatRule',
+    'PacketCapture',
+    'PacketCaptureFilter',
+    'PacketCaptureParameters',
+    'PacketCaptureQueryStatusResult',
+    'PacketCaptureResult',
+    'PacketCaptureStorageLocation',
+    'PatchRouteFilter',
+    'PatchRouteFilterRule',
+    'Probe',
+    'PublicIPAddress',
+    'PublicIPAddressDnsSettings',
+    'QueryTroubleshootingParameters',
+    'Resource',
+    'ResourceNavigationLink',
+    'RetentionPolicyParameters',
+    'Route',
+    'RouteFilter',
+    'RouteFilterRule',
+    'RouteTable',
+    'SecurityGroupNetworkInterface',
+    'SecurityGroupViewParameters',
+    'SecurityGroupViewResult',
+    'SecurityRule',
+    'SecurityRuleAssociations',
+    'ServiceEndpointPropertiesFormat',
+    'Subnet',
+    'SubnetAssociation',
+    'SubResource',
+    'Topology',
+    'TopologyAssociation',
+    'TopologyParameters',
+    'TopologyResource',
+    'TroubleshootingDetails',
+    'TroubleshootingParameters',
+    'TroubleshootingRecommendedActions',
+    'TroubleshootingResult',
+    'TunnelConnectionHealth',
+    'Usage',
+    'UsageName',
+    'VerificationIPFlowParameters',
+    'VerificationIPFlowResult',
+    'VirtualNetwork',
     'VirtualNetworkConnectionGatewayReference',
+    'VirtualNetworkGateway',
+    'VirtualNetworkGatewayConnection',
     'VirtualNetworkGatewayConnectionListEntity',
+    'VirtualNetworkGatewayIPConfiguration',
+    'VirtualNetworkGatewaySku',
+    'VirtualNetworkPeering',
+    'VirtualNetworkUsage',
+    'VirtualNetworkUsageName',
+    'VpnClientConfiguration',
+    'VpnClientParameters',
+    'VpnClientRevokedCertificate',
+    'VpnClientRootCertificate',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'EndpointServiceResultPaged',
