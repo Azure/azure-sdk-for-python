@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class ImageUrl(Model):
-    """ImageUrl.
+    """Image url.
 
-    :param url:
+    :param url: Url of the image.
     :type url: str
     """
 
