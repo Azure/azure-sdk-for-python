@@ -19,7 +19,7 @@ class ExpressionEvaluationDetails(Model):
     :type result: str
     :param expression: Expression evaluated.
     :type expression: str
-    :param path: Property path if the expression is a field or an aliase.
+    :param path: Property path if the expression is a field or an alias.
     :type path: str
     :param expression_value: Value of the expression.
     :type expression_value: str
