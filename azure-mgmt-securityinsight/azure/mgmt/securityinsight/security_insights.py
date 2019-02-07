@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.alert_rules_operations import AlertRulesOperations
+from .operations.actions_operations import ActionsOperations
 from .operations.data_connectors_operations import DataConnectorsOperations
 from . import models
 
@@ -61,6 +62,8 @@ class SecurityInsights(SDKClient):
     :vartype operations: azure.mgmt.securityinsight.operations.Operations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
+    :ivar actions: Actions operations
+    :vartype actions: azure.mgmt.securityinsight.operations.ActionsOperations
     :ivar data_connectors: DataConnectors operations
     :vartype data_connectors: azure.mgmt.securityinsight.operations.DataConnectorsOperations
 
@@ -86,6 +89,8 @@ class SecurityInsights(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.actions = ActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_connectors = DataConnectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)

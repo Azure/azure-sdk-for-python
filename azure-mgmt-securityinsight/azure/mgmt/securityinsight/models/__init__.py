@@ -15,6 +15,7 @@ try:
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
+    from .action_py3 import Action
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
     from .data_connector_context_id_py3 import DataConnectorContextId
@@ -39,6 +40,7 @@ except (SyntaxError, ImportError):
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
+    from .action import Action
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
     from .data_connector_context_id import DataConnectorContextId
@@ -59,6 +61,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
+from .action_paged import ActionPaged
 from .data_connector_paged import DataConnectorPaged
 from .security_insights_enums import (
     AlertRuleKind,
@@ -74,6 +77,7 @@ __all__ = [
     'AlertRule',
     'AlertRuleKind1',
     'ScheduledAlertRule',
+    'Action',
     'DataConnector',
     'DataConnectorKind1',
     'DataConnectorContextId',
@@ -94,6 +98,7 @@ __all__ = [
     'Resource',
     'OperationPaged',
     'AlertRulePaged',
+    'ActionPaged',
     'DataConnectorPaged',
     'AlertRuleKind',
     'Severity',

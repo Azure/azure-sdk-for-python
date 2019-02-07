@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .alert_rules_operations import AlertRulesOperations
-from .actions_operations import ActionsOperations
-from .data_connectors_operations import DataConnectorsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'Operations',
-    'AlertRulesOperations',
-    'ActionsOperations',
-    'DataConnectorsOperations',
-]
+
+class ActionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Action <azure.mgmt.securityinsight.models.Action>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Action]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ActionPaged, self).__init__(*args, **kwargs)
