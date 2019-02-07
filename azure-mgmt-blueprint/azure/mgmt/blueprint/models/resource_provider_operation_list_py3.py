@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceProviderOperationList(Model):
-    """Result of the request to list operations.
+    """Results of the request to list operations.
 
     :param value: List of operations supported by this resource provider.
     :type value: list[~azure.mgmt.blueprint.models.ResourceProviderOperation]

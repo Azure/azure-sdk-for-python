@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class ParameterValueBase(Model):
     """Base class for ParameterValue.
 
-    :param description: Optional property, just to establish
-     ParameterValueBase as a BaseClass.
+    :param description: Optional property. Establishes ParameterValueBase as a
+     BaseClass.
     :type description: str
     """
 

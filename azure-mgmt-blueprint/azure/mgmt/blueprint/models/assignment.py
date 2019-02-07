@@ -13,7 +13,7 @@ from .tracked_resource import TrackedResource
 
 
 class Assignment(TrackedResource):
-    """Represents a Blueprint assignment.
+    """Represents a blueprint assignment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,31 +26,32 @@ class Assignment(TrackedResource):
     :vartype type: str
     :ivar name: Name of this resource.
     :vartype name: str
-    :param location: Required. The location of this Blueprint assignment.
+    :param location: Required. The location of this blueprint assignment.
     :type location: str
-    :param identity: Required. Managed Service Identity for this Blueprint
-     assignment
+    :param identity: Required. Managed identity for this blueprint assignment.
     :type identity: ~azure.mgmt.blueprint.models.ManagedServiceIdentity
     :param display_name: One-liner string explain this resource.
     :type display_name: str
     :param description: Multi-line explain this resource.
     :type description: str
-    :param blueprint_id: ID of the Blueprint definition resource.
+    :param blueprint_id: ID of the published version of a blueprint
+     definition.
     :type blueprint_id: str
-    :param parameters: Required. Blueprint parameter values.
+    :param parameters: Required. Blueprint assignment parameter values.
     :type parameters: dict[str,
      ~azure.mgmt.blueprint.models.ParameterValueBase]
     :param resource_groups: Required. Names and locations of resource group
      placeholders.
     :type resource_groups: dict[str,
      ~azure.mgmt.blueprint.models.ResourceGroupValue]
-    :ivar status: Status of Blueprint assignment. This field is readonly.
+    :ivar status: Status of blueprint assignment. This field is readonly.
     :vartype status: ~azure.mgmt.blueprint.models.AssignmentStatus
-    :param locks: Defines how Blueprint-managed resources will be locked.
+    :param locks: Defines how resources deployed by a blueprint assignment are
+     locked.
     :type locks: ~azure.mgmt.blueprint.models.AssignmentLockSettings
-    :ivar provisioning_state: State of the assignment. Possible values
-     include: 'creating', 'validating', 'waiting', 'deploying', 'cancelling',
-     'locking', 'succeeded', 'failed', 'canceled', 'deleting'
+    :ivar provisioning_state: State of the blueprint assignment. Possible
+     values include: 'creating', 'validating', 'waiting', 'deploying',
+     'cancelling', 'locking', 'succeeded', 'failed', 'canceled', 'deleting'
     :vartype provisioning_state: str or
      ~azure.mgmt.blueprint.models.AssignmentProvisioningState
     """

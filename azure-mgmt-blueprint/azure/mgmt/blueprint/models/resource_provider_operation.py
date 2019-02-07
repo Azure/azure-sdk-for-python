@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceProviderOperation(Model):
-    """Supported operation of this resource provider.
+    """Supported operations of this resource provider.
 
     :param name: Operation name, in format of
      {provider}/{resource}/{operation}

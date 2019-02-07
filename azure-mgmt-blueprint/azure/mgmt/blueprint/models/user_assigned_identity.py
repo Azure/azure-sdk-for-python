@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UserAssignedIdentity(Model):
-    """User assigned Identity.
+    """User-assigned managed identity.
 
     :param principal_id: Azure Active Directory principal ID associated with
      this Identity.

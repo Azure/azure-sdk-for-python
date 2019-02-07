@@ -17,10 +17,10 @@ class ParameterValue(ParameterValueBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param description: Optional property, just to establish
-     ParameterValueBase as a BaseClass.
+    :param description: Optional property. Establishes ParameterValueBase as a
+     BaseClass.
     :type description: str
-    :param value: Required. actual value.
+    :param value: Required. Actual value.
     :type value: object
     """
 

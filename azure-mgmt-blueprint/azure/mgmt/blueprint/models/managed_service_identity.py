@@ -13,20 +13,21 @@ from msrest.serialization import Model
 
 
 class ManagedServiceIdentity(Model):
-    """Managed Service Identity.
+    """Managed identity generic object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of the Managed Service Identity. Possible
-     values include: 'None', 'SystemAssigned', 'UserAssigned'
+    :param type: Required. Type of the managed identity. Possible values
+     include: 'None', 'SystemAssigned', 'UserAssigned'
     :type type: str or ~azure.mgmt.blueprint.models.ManagedServiceIdentityType
     :param principal_id: Azure Active Directory principal ID associated with
      this Identity.
     :type principal_id: str
     :param tenant_id: ID of the Azure Active Directory.
     :type tenant_id: str
-    :param user_assigned_identities: The list of user identities associated
-     with the resource, key will be Azure resource Id of the ManagedIdentity.
+    :param user_assigned_identities: The list of user-assigned managed
+     identities associated with the resource. Key is the Azure resource Id of
+     the managed identity.
     :type user_assigned_identities: dict[str,
      ~azure.mgmt.blueprint.models.UserAssignedIdentity]
     """

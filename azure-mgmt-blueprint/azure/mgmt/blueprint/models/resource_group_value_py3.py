@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ResourceGroupValue(Model):
     """Represents an Azure resource group.
 
-    :param name: Name of the resource group
+    :param name: Name of the resource group.
     :type name: str
-    :param location: Location of the resource group
+    :param location: Location of the resource group.
     :type location: str
     """
 

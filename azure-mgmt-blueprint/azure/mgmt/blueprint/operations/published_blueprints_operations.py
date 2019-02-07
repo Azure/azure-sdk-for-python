@@ -23,7 +23,7 @@ class PublishedBlueprintsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -39,17 +39,17 @@ class PublishedBlueprintsOperations(object):
 
     def create(
             self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
-        """Publish a new version of the Blueprint with the latest artifacts.
-        Published Blueprints are immutable.
+        """Publish a new version of the blueprint definition with the latest
+        artifacts. Published blueprint definitions are immutable.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param version_id: version of the published blueprint.
+        :param version_id: Version of the published blueprint definition.
         :type version_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -107,16 +107,16 @@ class PublishedBlueprintsOperations(object):
 
     def get(
             self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
-        """Get a published Blueprint.
+        """Get a published version of a blueprint definition.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param version_id: version of the published blueprint.
+        :param version_id: Version of the published blueprint definition.
         :type version_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -174,16 +174,16 @@ class PublishedBlueprintsOperations(object):
 
     def delete(
             self, scope, blueprint_name, version_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a published Blueprint.
+        """Delete a published version of a blueprint definition.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param version_id: version of the published blueprint.
+        :param version_id: Version of the published blueprint definition.
         :type version_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -241,14 +241,14 @@ class PublishedBlueprintsOperations(object):
 
     def list(
             self, scope, blueprint_name, custom_headers=None, raw=False, **operation_config):
-        """List published versions of given Blueprint.
+        """List published versions of given blueprint definition.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

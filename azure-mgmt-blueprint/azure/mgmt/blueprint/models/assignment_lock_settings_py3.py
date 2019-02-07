@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AssignmentLockSettings(Model):
-    """Defines how Blueprint-managed resources will be locked.
+    """Defines how resources deployed by a blueprint assignment are locked.
 
     :param mode: Lock mode. Possible values include: 'None', 'AllResources'
     :type mode: str or ~azure.mgmt.blueprint.models.AssignmentLockMode

@@ -13,7 +13,7 @@ from .artifact_py3 import Artifact
 
 
 class PolicyAssignmentArtifact(Artifact):
-    """Blueprint artifact applies Policy assignments.
+    """Blueprint artifact that applies a Policy assignment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

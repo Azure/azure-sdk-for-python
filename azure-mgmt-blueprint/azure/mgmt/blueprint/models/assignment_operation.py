@@ -13,7 +13,8 @@ from .azure_resource_base import AzureResourceBase
 
 
 class AssignmentOperation(AzureResourceBase):
-    """Represents underlying deployment detail for each update to the assignment.
+    """Represents underlying deployment detail for each update to the blueprint
+    assignment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,18 +25,18 @@ class AssignmentOperation(AzureResourceBase):
     :vartype type: str
     :ivar name: Name of this resource.
     :vartype name: str
-    :param blueprint_version: The blueprint version used for the assignment
-     operation.
+    :param blueprint_version: The published version of the blueprint
+     definition used for the blueprint assignment operation.
     :type blueprint_version: str
-    :param assignment_state: State of this assignment operation.
+    :param assignment_state: State of this blueprint assignment operation.
     :type assignment_state: str
-    :param time_created: Create time of this Assignment Operation.
+    :param time_created: Create time of this blueprint assignment operation.
     :type time_created: str
     :param time_started: Start time of the underlying deployment.
     :type time_started: str
     :param time_finished: Finish time of the overall underlying deployments.
     :type time_finished: str
-    :param deployments: List of jobs in this assignment operation.
+    :param deployments: List of jobs in this blueprint assignment operation.
     :type deployments:
      list[~azure.mgmt.blueprint.models.AssignmentDeploymentJob]
     """

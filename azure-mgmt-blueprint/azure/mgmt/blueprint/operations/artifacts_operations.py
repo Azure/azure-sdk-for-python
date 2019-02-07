@@ -23,7 +23,7 @@ class ArtifactsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -39,18 +39,18 @@ class ArtifactsOperations(object):
 
     def create_or_update(
             self, scope, blueprint_name, artifact_name, artifact, custom_headers=None, raw=False, **operation_config):
-        """Create or update Blueprint artifact.
+        """Create or update blueprint artifact.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param artifact_name: name of the artifact.
+        :param artifact_name: Name of the blueprint artifact.
         :type artifact_name: str
-        :param artifact: Blueprint artifact to save.
+        :param artifact: Blueprint artifact to create or update.
         :type artifact: ~azure.mgmt.blueprint.models.Artifact
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,16 +112,16 @@ class ArtifactsOperations(object):
 
     def get(
             self, scope, blueprint_name, artifact_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Blueprint artifact.
+        """Get a blueprint artifact.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param artifact_name: name of the artifact.
+        :param artifact_name: Name of the blueprint artifact.
         :type artifact_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -179,16 +179,16 @@ class ArtifactsOperations(object):
 
     def delete(
             self, scope, blueprint_name, artifact_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Blueprint artifact.
+        """Delete a blueprint artifact.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
-        :param artifact_name: name of the artifact.
+        :param artifact_name: Name of the blueprint artifact.
         :type artifact_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -246,14 +246,14 @@ class ArtifactsOperations(object):
 
     def list(
             self, scope, blueprint_name, custom_headers=None, raw=False, **operation_config):
-        """List artifacts for a given Blueprint.
+        """List artifacts for a given blueprint definition.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

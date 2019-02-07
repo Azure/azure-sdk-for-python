@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class KeyVaultReference(Model):
-    """Specifies the link to a KeyVault.
+    """Specifies the link to a Key Vault.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Azure resource ID of the KeyVault.
+    :param id: Required. Azure resource ID of the Key Vault.
     :type id: str
     """
 

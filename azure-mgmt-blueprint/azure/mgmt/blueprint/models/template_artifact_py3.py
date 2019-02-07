@@ -13,7 +13,7 @@ from .artifact_py3 import Artifact
 
 
 class TemplateArtifact(Artifact):
-    """Blueprint artifact deploys Azure resource manager template.
+    """Blueprint artifact that deploys a Resource Manager template.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,12 +35,15 @@ class TemplateArtifact(Artifact):
     :param depends_on: Artifacts which need to be deployed before the
      specified artifact.
     :type depends_on: list[str]
-    :param template: Required. The Azure Resource Manager template body.
+    :param template: Required. The Resource Manager template blueprint
+     artifact body.
     :type template: object
     :param resource_group: If applicable, the name of the resource group
-     placeholder to which the template will be deployed.
+     placeholder to which the Resource Manager template blueprint artifact will
+     be deployed.
     :type resource_group: str
-    :param parameters: Required. Template parameter values.
+    :param parameters: Required. Resource Manager template blueprint artifact
+     parameter values.
     :type parameters: dict[str,
      ~azure.mgmt.blueprint.models.ParameterValueBase]
     """
