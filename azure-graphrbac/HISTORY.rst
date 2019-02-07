@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.53.0 (2018-11-27)
++++++++++++++++++++
+
+**Features**
+
+- Add PasswordCredentials.custom_key_identifier
+- Add Application.key_credentials
+- Add Application.password_credentials
+
+**Bugfix**
+
+- Fix KeyCredential.custom_key_identifier type from bytes to str
+
 0.52.0 (2018-10-29)
 +++++++++++++++++++
 

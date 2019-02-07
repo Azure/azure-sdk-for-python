@@ -33,7 +33,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     :type audio_language: str
     :param insights_to_extract: The type of insights to be extracted. If not
      set then based on the content the type will selected.  If the content is
-     audi only then only audio insights are extraced and if it is video only.
+     audio only then only audio insights are extracted and if it is video only.
      Possible values include: 'AudioInsightsOnly', 'VideoInsightsOnly',
      'AllInsights'
     :type insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
@@ -46,7 +46,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'audio_language': {'key': 'audioLanguage', 'type': 'str'},
-        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'InsightsType'},
+        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

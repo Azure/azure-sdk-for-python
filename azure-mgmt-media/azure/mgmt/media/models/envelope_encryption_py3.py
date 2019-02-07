@@ -22,7 +22,7 @@ class EnvelopeEncryption(Model):
     :param content_keys: Representing default content key for each encryption
      scheme and separate content keys for specific tracks
     :type content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
-    :param custom_key_acquisition_url_template: KeyAcquistionUrlTemplate is
+    :param custom_key_acquisition_url_template: KeyAcquisitionUrlTemplate is
      used to point to user specified service to delivery content keys
     :type custom_key_acquisition_url_template: str
     """

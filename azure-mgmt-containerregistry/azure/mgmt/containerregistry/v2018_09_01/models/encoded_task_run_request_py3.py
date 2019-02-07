@@ -42,10 +42,14 @@ class EncodedTaskRunRequest(RunRequest):
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
-     context. It can be an URL to a tar or git repoistory.
+     context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
      listBuildSourceUploadUrl API.
     :type source_location: str
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -65,9 +69,10 @@ class EncodedTaskRunRequest(RunRequest):
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
         'source_location': {'key': 'sourceLocation', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, **kwargs) -> None:
+    def __init__(self, *, encoded_task_content: str, platform, is_archive_enabled: bool=False, encoded_values_content: str=None, values=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
         super(EncodedTaskRunRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
@@ -76,4 +81,5 @@ class EncodedTaskRunRequest(RunRequest):
         self.platform = platform
         self.agent_configuration = agent_configuration
         self.source_location = source_location
+        self.credentials = credentials
         self.type = 'EncodedTaskRunRequest'

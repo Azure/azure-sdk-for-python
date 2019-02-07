@@ -29,6 +29,9 @@ class TaskStepProperties(Model):
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -41,6 +44,7 @@ class TaskStepProperties(Model):
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
         'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -48,8 +52,9 @@ class TaskStepProperties(Model):
         'type': {'Docker': 'DockerBuildStep', 'FileTask': 'FileTaskStep', 'EncodedTask': 'EncodedTaskStep'}
     }
 
-    def __init__(self, *, context_path: str=None, **kwargs) -> None:
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, **kwargs) -> None:
         super(TaskStepProperties, self).__init__(**kwargs)
         self.base_image_dependencies = None
         self.context_path = context_path
+        self.context_access_token = context_access_token
         self.type = None

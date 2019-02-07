@@ -35,9 +35,9 @@ class FilterTrackPropertyCondition(Model):
     }
 
     _attribute_map = {
-        'property': {'key': 'property', 'type': 'FilterTrackPropertyType'},
+        'property': {'key': 'property', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'FilterTrackPropertyCompareOperation'},
+        'operation': {'key': 'operation', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

@@ -22,6 +22,8 @@ class IntegrationRuntimeStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -30,10 +32,10 @@ class IntegrationRuntimeStatus(Model):
     :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
-     'NeedRegistration', 'Online', 'Limited', 'Offline'
+     'NeedRegistration', 'Online', 'Limited', 'Offline', 'AccessDenied'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -54,9 +56,9 @@ class IntegrationRuntimeStatus(Model):
         'type': {'SelfHosted': 'SelfHostedIntegrationRuntimeStatus', 'Managed': 'ManagedIntegrationRuntimeStatus'}
     }
 
-    def __init__(self, additional_properties=None):
-        super(IntegrationRuntimeStatus, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeStatus, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.data_factory_name = None
         self.state = None
         self.type = None

@@ -48,8 +48,8 @@ class Metric(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'MetricUnit'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'MetricAggregationType'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
     }
 

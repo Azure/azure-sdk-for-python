@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServiceSasParameters(Model):
-    """The parameters to list service SAS credentials of a speicific resource.
+    """The parameters to list service SAS credentials of a specific resource.
 
     All required parameters must be populated in order to send to Azure.
 

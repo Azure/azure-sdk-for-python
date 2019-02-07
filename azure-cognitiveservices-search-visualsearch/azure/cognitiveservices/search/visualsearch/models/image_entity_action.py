@@ -13,7 +13,7 @@ from .image_action import ImageAction
 
 
 class ImageEntityAction(ImageAction):
-    """ImageEntityAction.
+    """Defines an entity action.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -67,8 +67,6 @@ class ImageEntityAction(ImageAction):
     :vartype service_url: str
     :ivar action_type: A string representing the type of action.
     :vartype action_type: str
-    :ivar data: Information about the entity.
-    :vartype data: ~azure.cognitiveservices.search.visualsearch.models.Thing
     """
 
     _validation = {
@@ -91,7 +89,6 @@ class ImageEntityAction(ImageAction):
         'is_top_action': {'readonly': True},
         'service_url': {'readonly': True},
         'action_type': {'readonly': True},
-        'data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -114,10 +111,8 @@ class ImageEntityAction(ImageAction):
         'is_top_action': {'key': 'isTopAction', 'type': 'bool'},
         'service_url': {'key': 'serviceUrl', 'type': 'str'},
         'action_type': {'key': 'actionType', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'Thing'},
     }
 
     def __init__(self, **kwargs):
         super(ImageEntityAction, self).__init__(**kwargs)
-        self.data = None
         self._type = 'ImageEntityAction'
