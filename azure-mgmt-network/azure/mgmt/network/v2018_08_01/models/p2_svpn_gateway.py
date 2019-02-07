@@ -44,7 +44,7 @@ class P2SVpnGateway(Resource):
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool:
      ~azure.mgmt.network.v2018_08_01.models.AddressSpace
-    :ivar vpn_client_connection_health: All P2S VPN clients' connection health
+    :ivar vpn_client_connection_health: All P2S vpnclients' connection health
      status.
     :vartype vpn_client_connection_health:
      ~azure.mgmt.network.v2018_08_01.models.VpnClientConnectionHealth

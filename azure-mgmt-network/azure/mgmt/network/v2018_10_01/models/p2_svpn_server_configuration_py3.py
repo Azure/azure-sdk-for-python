@@ -22,7 +22,7 @@ class P2SVpnServerConfiguration(SubResource):
     :type id: str
     :param p2_svpn_server_configuration_properties_name: The name of the
      P2SVpnServerConfiguration that is unique within a VirtualWan in a resource
-     group. This name can be used to access the resource along with Parent
+     group. This name can be used to access the resource along with Paren
      VirtualWan resource name.
     :type p2_svpn_server_configuration_properties_name: str
     :param vpn_protocols: vpnProtocols for the P2SVpnServerConfiguration.
@@ -52,7 +52,8 @@ class P2SVpnServerConfiguration(SubResource):
      P2SVpnServerConfiguration resource for point to site client connection.
     :type radius_server_address: str
     :param radius_server_secret: The radius secret property of the
-     P2SVpnServerConfiguration resource for point to site client connection.
+     P2SVpnServerConfiguration resource for for point to site client
+     connection.
     :type radius_server_secret: str
     :ivar provisioning_state: The provisioning state of the
      P2SVpnServerConfiguration resource. Possible values are: 'Updating',

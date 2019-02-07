@@ -25,7 +25,7 @@ class ContainerNetworkInterface(SubResource):
      created.
     :type container_network_interface_configuration:
      ~azure.mgmt.network.v2018_10_01.models.ContainerNetworkInterfaceConfiguration
-    :param container: Reference to the container to which this container
+    :param container: Reference to the conatinaer to which this container
      network interface is attached.
     :type container: ~azure.mgmt.network.v2018_10_01.models.Container
     :param ip_configurations: Reference to the ip configuration on this

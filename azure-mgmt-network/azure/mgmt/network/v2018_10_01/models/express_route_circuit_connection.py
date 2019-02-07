@@ -39,7 +39,7 @@ class ExpressRouteCircuitConnection(SubResource):
     :vartype circuit_connection_status: str or
      ~azure.mgmt.network.v2018_10_01.models.CircuitConnectionStatus
     :ivar provisioning_state: Provisioning state of the circuit connection
-     resource. Possible values are: 'Succeeded', 'Updating', 'Deleting', and
+     resource. Possible values are: 'Succeded', 'Updating', 'Deleting', and
      'Failed'.
     :vartype provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource

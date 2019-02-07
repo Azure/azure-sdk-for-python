@@ -13,7 +13,7 @@ from .sub_resource_py3 import SubResource
 
 
 class LoadBalancingRule(SubResource):
-    """A load balancing rule for a load balancer.
+    """A loag balancing rule for a load balancer.
 
     All required parameters must be populated in order to send to Azure.
 

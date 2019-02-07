@@ -30,7 +30,7 @@ class TrafficQuery(Model):
     :param destination: Required. Traffic destination. Accepted values are:
      '*', IP Address/CIDR, Service Tag.
     :type destination: str
-    :param destination_port: Required. Traffic destination port. Accepted
+    :param destination_port: Required. Traffice destination port. Accepted
      values are '*', port (for example, 3389) and port range (for example,
      80-100).
     :type destination_port: str

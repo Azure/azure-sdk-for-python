@@ -40,7 +40,7 @@ class VpnSitesOperations(object):
 
     def get(
             self, resource_group_name, vpn_site_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the details of a VPN site.
+        """Retrieves the details of a VPNsite.
 
         :param resource_group_name: The resource group name of the VpnSite.
         :type resource_group_name: str

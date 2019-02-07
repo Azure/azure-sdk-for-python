@@ -20,8 +20,8 @@ class IPConfigurationProfile(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param subnet: The reference of the subnet resource to create a container
-     network interface ip configuration.
+    :param subnet: The reference of the subnet resource to create a
+     contatainer network interface ip configruation.
     :type subnet: ~azure.mgmt.network.v2018_08_01.models.Subnet
     :ivar provisioning_state: The provisioning state of the resource.
     :vartype provisioning_state: str

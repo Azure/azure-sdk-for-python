@@ -45,7 +45,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):
     :type local_network_gateway2:
      ~azure.mgmt.network.v2017_11_01.models.VirtualNetworkConnectionGatewayReference
     :param connection_type: Required. Gateway connection type. Possible values
-     are: 'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
+     are: 'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2017_11_01.models.VirtualNetworkGatewayConnectionType

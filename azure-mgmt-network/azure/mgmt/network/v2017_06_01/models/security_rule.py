@@ -27,21 +27,21 @@ class SecurityRule(SubResource):
     :type protocol: str or
      ~azure.mgmt.network.v2017_06_01.models.SecurityRuleProtocol
     :param source_port_range: The source port or range. Integer or range
-     between 0 and 65535. Asterisk '*' can also be used to match all ports.
+     between 0 and 65535. Asterix '*' can also be used to match all ports.
     :type source_port_range: str
     :param destination_port_range: The destination port or range. Integer or
-     range between 0 and 65535. Asterisk '*' can also be used to match all
+     range between 0 and 65535. Asterix '*' can also be used to match all
      ports.
     :type destination_port_range: str
-    :param source_address_prefix: The CIDR or source IP range. Asterisk '*'
-     can also be used to match all source IPs. Default tags such as
+    :param source_address_prefix: The CIDR or source IP range. Asterix '*' can
+     also be used to match all source IPs. Default tags such as
      'VirtualNetwork', 'AzureLoadBalancer' and 'Internet' can also be used. If
      this is an ingress rule, specifies where network traffic originates from.
     :type source_address_prefix: str
     :param source_address_prefixes: The CIDR or source IP ranges.
     :type source_address_prefixes: list[str]
     :param destination_address_prefix: The destination address prefix. CIDR or
-     destination IP range. Asterisk '*' can also be used to match all source
+     destination IP range. Asterix '*' can also be used to match all source
      IPs. Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and
      'Internet' can also be used.
     :type destination_address_prefix: str
@@ -63,7 +63,7 @@ class SecurityRule(SubResource):
      rule.
     :type priority: int
     :param direction: Required. The direction of the rule. The direction
-     specifies if rule will be evaluated on incoming or outgoing traffic.
+     specifies if rule will be evaluated on incoming or outcoming traffic.
      Possible values are: 'Inbound' and 'Outbound'. Possible values include:
      'Inbound', 'Outbound'
     :type direction: str or

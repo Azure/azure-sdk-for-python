@@ -13,7 +13,7 @@ from .sub_resource_py3 import SubResource
 
 
 class ContainerNetworkInterfaceConfiguration(SubResource):
-    """Container network interface configuration child resource.
+    """Container network interface configruation child resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -34,12 +34,12 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
      list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayFirewallDisabledRuleGroup]
     :param request_body_check: Whether allow WAF to check request Body.
     :type request_body_check: bool
-    :param max_request_body_size: Maximum request body size for WAF.
+    :param max_request_body_size: Maxium request body size for WAF.
     :type max_request_body_size: int
-    :param max_request_body_size_in_kb: Maximum request body size in Kb for
+    :param max_request_body_size_in_kb: Maxium request body size in Kb for
      WAF.
     :type max_request_body_size_in_kb: int
-    :param file_upload_limit_in_mb: Maximum file upload size in Mb for WAF.
+    :param file_upload_limit_in_mb: Maxium file upload size in Mb for WAF.
     :type file_upload_limit_in_mb: int
     :param exclusions: The exclusion list.
     :type exclusions:
