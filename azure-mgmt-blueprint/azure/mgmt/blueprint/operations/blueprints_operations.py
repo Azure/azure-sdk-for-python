@@ -23,7 +23,7 @@ class BlueprintsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -39,14 +39,14 @@ class BlueprintsOperations(object):
 
     def create_or_update(
             self, scope, blueprint_name, blueprint, custom_headers=None, raw=False, **operation_config):
-        """Create or update Blueprint definition.
+        """Create or update a blueprint definition.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
         :param blueprint: Blueprint definition.
         :type blueprint: ~azure.mgmt.blueprint.models.Blueprint
@@ -116,7 +116,7 @@ class BlueprintsOperations(object):
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -180,7 +180,7 @@ class BlueprintsOperations(object):
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param blueprint_name: name of the blueprint.
+        :param blueprint_name: Name of the blueprint definition.
         :type blueprint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -237,7 +237,7 @@ class BlueprintsOperations(object):
 
     def list(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """Create or update blueprint definition.
+        """List blueprint definitions.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:

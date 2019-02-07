@@ -28,22 +28,22 @@ class Blueprint(AzureResourceBase):
     :type display_name: str
     :param description: Multi-line explain this resource.
     :type description: str
-    :ivar status: Status of the Blueprint. This field is readonly.
+    :ivar status: Status of the blueprint. This field is readonly.
     :vartype status: ~azure.mgmt.blueprint.models.BlueprintStatus
-    :param target_scope: The scope where this Blueprint can be applied.
-     Possible values include: 'subscription', 'managementGroup'
+    :param target_scope: The scope where this blueprint definition can be
+     assigned. Possible values include: 'subscription', 'managementGroup'
     :type target_scope: str or
      ~azure.mgmt.blueprint.models.BlueprintTargetScope
-    :param parameters: Parameters required by this Blueprint definition.
+    :param parameters: Parameters required by this blueprint definition.
     :type parameters: dict[str,
      ~azure.mgmt.blueprint.models.ParameterDefinition]
     :param resource_groups: Resource group placeholders defined by this
-     Blueprint definition.
+     blueprint definition.
     :type resource_groups: dict[str,
      ~azure.mgmt.blueprint.models.ResourceGroupDefinition]
-    :param versions: Published versions of this blueprint.
+    :param versions: Published versions of this blueprint definition.
     :type versions: object
-    :param layout: Layout view of the blueprint, for UI reference.
+    :param layout: Layout view of the blueprint definition for UI reference.
     :type layout: object
     """
 

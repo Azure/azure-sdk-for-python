@@ -13,7 +13,7 @@ from .artifact import Artifact
 
 
 class RoleAssignmentArtifact(Artifact):
-    """Blueprint artifact applies Azure role assignment.
+    """Blueprint artifact that applies a Role assignment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,10 +39,10 @@ class RoleAssignmentArtifact(Artifact):
      RoleDefinition.
     :type role_definition_id: str
     :param principal_ids: Required. Array of user or group identities in Azure
-     Active Directory. The roleDefinition will apply to these identity.
+     Active Directory. The roleDefinition will apply to each identity.
     :type principal_ids: object
-    :param resource_group: RoleAssignment will be scope to this resourceGroup,
-     if left empty, it would scope to the subscription.
+    :param resource_group: RoleAssignment will be scope to this resourceGroup.
+     If empty, it scopes to the subscription.
     :type resource_group: str
     """
 

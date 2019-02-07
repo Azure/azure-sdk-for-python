@@ -13,7 +13,7 @@ from .azure_resource_base_py3 import AzureResourceBase
 
 
 class PublishedBlueprint(AzureResourceBase):
-    """Represents a published Blueprint.
+    """Represents a published blueprint.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,22 +28,22 @@ class PublishedBlueprint(AzureResourceBase):
     :type display_name: str
     :param description: Multi-line explain this resource.
     :type description: str
-    :ivar status: Status of the Blueprint. This field is readonly.
+    :ivar status: Status of the blueprint. This field is readonly.
     :vartype status: ~azure.mgmt.blueprint.models.BlueprintStatus
-    :param target_scope: The scope where this Blueprint can be applied.
-     Possible values include: 'subscription', 'managementGroup'
+    :param target_scope: The scope where this blueprint definition can be
+     assigned. Possible values include: 'subscription', 'managementGroup'
     :type target_scope: str or
      ~azure.mgmt.blueprint.models.BlueprintTargetScope
-    :param parameters: Parameters required by this Blueprint definition.
+    :param parameters: Parameters required by this blueprint definition.
     :type parameters: dict[str,
      ~azure.mgmt.blueprint.models.ParameterDefinition]
     :param resource_groups: Resource group placeholders defined by this
-     Blueprint definition.
+     blueprint definition.
     :type resource_groups: dict[str,
      ~azure.mgmt.blueprint.models.ResourceGroupDefinition]
-    :param blueprint_name: Name of the Blueprint definition.
+    :param blueprint_name: Name of the published blueprint definition.
     :type blueprint_name: str
-    :param change_notes: Version-specific change notes
+    :param change_notes: Version-specific change notes.
     :type change_notes: str
     """
 

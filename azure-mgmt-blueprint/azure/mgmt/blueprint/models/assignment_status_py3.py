@@ -13,14 +13,14 @@ from .blueprint_resource_status_base_py3 import BlueprintResourceStatusBase
 
 
 class AssignmentStatus(BlueprintResourceStatusBase):
-    """The status of Blueprint assignment. This field is readonly.
+    """The status of a blueprint assignment. This field is readonly.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar time_created: Creation time of this blueprint.
+    :ivar time_created: Creation time of this blueprint definition.
     :vartype time_created: str
-    :ivar last_modified: Last modified time of this blueprint.
+    :ivar last_modified: Last modified time of this blueprint definition.
     :vartype last_modified: str
     """
 

@@ -23,7 +23,7 @@ class AssignmentOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -39,14 +39,14 @@ class AssignmentOperations(object):
 
     def list(
             self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
-        """List Operations for given blueprint assignment within a subscription.
+        """List operations for given blueprint assignment within a subscription.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param assignment_name: name of the assignment.
+        :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -111,16 +111,17 @@ class AssignmentOperations(object):
 
     def get(
             self, scope, assignment_name, assignment_operation_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Blueprint assignment operation.
+        """Get a blueprint assignment operation.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param assignment_name: name of the assignment.
+        :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
-        :param assignment_operation_name: Name of the assignment operation.
+        :param assignment_operation_name: Name of the blueprint assignment
+         operation.
         :type assignment_operation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -13,17 +13,16 @@ from msrest.serialization import Model
 
 
 class SecretValueReference(Model):
-    """Reference to a KeyVault secret.
+    """Reference to a Key Vault secret.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_vault: Required. Specifies the reference to a given Azure
-     KeyVault.
+    :param key_vault: Required. Specifies the reference to a given Azure Key
+     Vault.
     :type key_vault: ~azure.mgmt.blueprint.models.KeyVaultReference
     :param secret_name: Required. Name of the secret.
     :type secret_name: str
-    :param secret_version: Version of the secret, (if there are multiple
-     versions)
+    :param secret_version: If multiple versions, the version of the secret.
     :type secret_version: str
     """
 

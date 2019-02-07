@@ -18,9 +18,9 @@ class BlueprintStatus(BlueprintResourceStatusBase):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar time_created: Creation time of this blueprint.
+    :ivar time_created: Creation time of this blueprint definition.
     :vartype time_created: str
-    :ivar last_modified: Last modified time of this blueprint.
+    :ivar last_modified: Last modified time of this blueprint definition.
     :vartype last_modified: str
     """
 

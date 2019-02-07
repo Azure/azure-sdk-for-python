@@ -13,20 +13,20 @@ from msrest.serialization import Model
 
 
 class ResourceGroupDefinition(Model):
-    """Represents an Azure resource group in a Blueprint definition.
+    """Represents an Azure resource group in a blueprint definition.
 
-    :param name: Name of this resourceGroup, leave empty if the resource group
-     name will be specified during the Blueprint assignment.
+    :param name: Name of this resourceGroup. Leave empty if the resource group
+     name will be specified during the blueprint assignment.
     :type name: str
-    :param location: Location of this resourceGroup, leave empty if the
-     resource group location will be specified during the Blueprint assignment.
+    :param location: Location of this resourceGroup. Leave empty if the
+     resource group location will be specified during the blueprint assignment.
     :type location: str
     :param display_name: DisplayName of this parameter/resourceGroup.
     :type display_name: str
     :param description: Description of this parameter/resourceGroup.
     :type description: str
     :param strong_type: StrongType for UI to render rich experience during
-     assignment time.
+     blueprint assignment.
     :type strong_type: str
     :param depends_on: Artifacts which need to be deployed before this
      resource group.

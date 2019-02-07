@@ -23,7 +23,7 @@ class AssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-11-01-preview".
+    :ivar api_version: Client API Version. Constant value: "2018-11-01-preview".
     """
 
     models = models
@@ -39,16 +39,16 @@ class AssignmentsOperations(object):
 
     def create_or_update(
             self, scope, assignment_name, assignment, custom_headers=None, raw=False, **operation_config):
-        """Create or update a Blueprint assignment.
+        """Create or update a blueprint assignment.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param assignment_name: name of the assignment.
+        :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
-        :param assignment: assignment object to save.
+        :param assignment: Blueprint assignment object to save.
         :type assignment: ~azure.mgmt.blueprint.models.Assignment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -109,14 +109,14 @@ class AssignmentsOperations(object):
 
     def get(
             self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Blueprint assignment.
+        """Get a blueprint assignment.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param assignment_name: name of the assignment.
+        :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -173,14 +173,14 @@ class AssignmentsOperations(object):
 
     def delete(
             self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Blueprint assignment.
+        """Delete a blueprint assignment.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
          subscription (format: '/subscriptions/{subscriptionId}').
         :type scope: str
-        :param assignment_name: name of the assignment.
+        :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -237,7 +237,7 @@ class AssignmentsOperations(object):
 
     def list(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """List Blueprint assignments within a subscription.
+        """List blueprint assignments within a subscription.
 
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:

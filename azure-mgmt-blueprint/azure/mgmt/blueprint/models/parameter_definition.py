@@ -17,16 +17,16 @@ class ParameterDefinition(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Allowed data types for Azure Resource Manager
-     template parameters. Possible values include: 'string', 'array', 'bool',
-     'int', 'object', 'secureObject', 'secureString'
+    :param type: Required. Allowed data types for Resource Manager template
+     parameters. Possible values include: 'string', 'array', 'bool', 'int',
+     'object', 'secureObject', 'secureString'
     :type type: str or ~azure.mgmt.blueprint.models.TemplateParameterType
     :param display_name: DisplayName of this parameter/resourceGroup.
     :type display_name: str
     :param description: Description of this parameter/resourceGroup.
     :type description: str
     :param strong_type: StrongType for UI to render rich experience during
-     assignment time.
+     blueprint assignment.
     :type strong_type: str
     :param default_value: Default Value for this parameter.
     :type default_value: object

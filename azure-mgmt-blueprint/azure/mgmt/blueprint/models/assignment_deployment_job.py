@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class AssignmentDeploymentJob(Model):
-    """Represents individual job in given assignment operation.
+    """Represents individual job in given blueprint assignment operation.
 
-    :param kind: Kind of the job.
+    :param kind: Kind of job.
     :type kind: str
     :param action: Name of the action performed in this job.
     :type action: str

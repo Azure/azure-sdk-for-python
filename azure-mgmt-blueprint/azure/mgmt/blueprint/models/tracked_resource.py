@@ -26,7 +26,7 @@ class TrackedResource(AzureResourceBase):
     :vartype type: str
     :ivar name: Name of this resource.
     :vartype name: str
-    :param location: Required. The location of this Blueprint assignment.
+    :param location: Required. The location of this blueprint assignment.
     :type location: str
     """
 
