@@ -22,7 +22,7 @@ class AlertingAction(Action):
     :param severity: Required. Severity of the alert. Possible values include:
      '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-    :param azns_action: Required. Azure action group reference.
+    :param azns_action: Azure action group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
     :param throttling_in_min: time (in minutes) for which Alerts should be
      throttled or suppressed.
@@ -35,7 +35,6 @@ class AlertingAction(Action):
     _validation = {
         'odatatype': {'required': True},
         'severity': {'required': True},
-        'azns_action': {'required': True},
         'trigger': {'required': True},
     }
 
@@ -47,7 +46,7 @@ class AlertingAction(Action):
         'trigger': {'key': 'trigger', 'type': 'TriggerCondition'},
     }
 
-    def __init__(self, *, severity, azns_action, trigger, throttling_in_min: int=None, **kwargs) -> None:
+    def __init__(self, *, severity, trigger, azns_action=None, throttling_in_min: int=None, **kwargs) -> None:
         super(AlertingAction, self).__init__(**kwargs)
         self.severity = severity
         self.azns_action = azns_action
