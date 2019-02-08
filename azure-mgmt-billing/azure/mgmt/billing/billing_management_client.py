@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
+from .operations.products_operations import ProductsOperations
 from .operations.operations import Operations
 from . import models
 
@@ -64,6 +65,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
+    :ivar products: Products operations
+    :vartype products: azure.mgmt.billing.operations.ProductsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
 
@@ -82,7 +85,7 @@ class BillingManagementClient(SDKClient):
         super(BillingManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01-preview'
+        self.api_version = '2018-11-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -91,6 +94,8 @@ class BillingManagementClient(SDKClient):
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.products = ProductsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

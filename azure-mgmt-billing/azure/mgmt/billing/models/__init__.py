@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .transfer_product_properties_py3 import TransferProductProperties
     from .enrollment_account_py3 import EnrollmentAccount
     from .billing_period_py3 import BillingPeriod
     from .download_url_py3 import DownloadUrl
@@ -20,6 +21,7 @@ try:
     from .operation_py3 import Operation
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
+    from .transfer_product_properties import TransferProductProperties
     from .enrollment_account import EnrollmentAccount
     from .billing_period import BillingPeriod
     from .download_url import DownloadUrl
@@ -35,6 +37,7 @@ from .invoice_paged import InvoicePaged
 from .operation_paged import OperationPaged
 
 __all__ = [
+    'TransferProductProperties',
     'EnrollmentAccount',
     'BillingPeriod',
     'DownloadUrl',
