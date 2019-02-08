@@ -18,6 +18,10 @@ from common_tasks import process_glob_string, run_check_call
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
+# a return code of 5 from pytest == no tests run
+# evaluating whether we want this or not.
+ALLOWED_RETURN_CODES = [] 
+
 def prep_and_run_tests(targeted_packages, python_version):
     print('running test setup for {}'.format(targeted_packages))
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
@@ -25,12 +29,7 @@ def prep_and_run_tests(targeted_packages, python_version):
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(targeted_packages)
-    run_check_call(command_array, root_dir)
-
-    for package_path in targeted_packages:
-        print('Checking setup.py for {}'.format(os.path.join(package_path, 'setup.py')))
-        run_check_call([python_version, 'setup.py', 'check', '-r', '-s'], package_path)
-
+    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
