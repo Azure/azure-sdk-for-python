@@ -74,6 +74,32 @@ class ChangeFeedManagement:
 
         print('\nFinished reading all the change feed\n')
 
+    @staticmethod
+    def ReadFeedForTime(client, time):
+        print('\nReading Change Feed from point in time\n')
+
+        options = {}
+        # Define a point in time to start reading the feed from
+        options["startTime"] = time
+        response = client.QueryItemsChangeFeed(collection_link, options)
+        for doc in response:
+            print(doc)
+
+        print('\nFinished reading all the changes from point in time\n')
+
+
+    @staticmethod
+    def ReadFeedFromTimestamp(client, timestamp):
+        print('\nReading Change Feed from the beginning\n')
+
+        options = {}
+        options["startFromBeginning"] = True
+        
+        response = client.QueryItemsChangeFeed(collection_link, options)
+        for doc in response:
+            print(doc)
+
+        print('\nFinished reading all the change feed\n')
 
 def run_sample():
     with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
@@ -110,6 +136,9 @@ def run_sample():
 
             ChangeFeedManagement.CreateDocuments(client)
             ChangeFeedManagement.ReadFeed(client)
+            time = datetime.datetime.now()
+            ChangeFeedManagement.CreateDocuments(client)
+            ChangeFeedManagement.ReadFeedForTime(client, time)
 
         except errors.HTTPFailure as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
