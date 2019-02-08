@@ -87,20 +87,6 @@ class ChangeFeedManagement:
 
         print('\nFinished reading all the changes from point in time\n')
 
-
-    @staticmethod
-    def ReadFeedFromTimestamp(client, timestamp):
-        print('\nReading Change Feed from the beginning\n')
-
-        options = {}
-        options["startFromBeginning"] = True
-        
-        response = client.QueryItemsChangeFeed(collection_link, options)
-        for doc in response:
-            print(doc)
-
-        print('\nFinished reading all the change feed\n')
-
 def run_sample():
     with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
