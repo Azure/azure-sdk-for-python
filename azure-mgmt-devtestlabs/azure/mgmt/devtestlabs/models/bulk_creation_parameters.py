@@ -23,6 +23,6 @@ class BulkCreationParameters(Model):
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
     }
 
-    def __init__(self, instance_count=None):
-        super(BulkCreationParameters, self).__init__()
-        self.instance_count = instance_count
+    def __init__(self, **kwargs):
+        super(BulkCreationParameters, self).__init__(**kwargs)
+        self.instance_count = kwargs.get('instance_count', None)
