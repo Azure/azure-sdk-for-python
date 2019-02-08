@@ -31,7 +31,7 @@ Usage
 =====
 
 For code examples, see `QnA Maker
-<https://docs.microsoft.com/python/api/overview/azure/cognitive-services>`__
+<https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/knowledge>`__
 on docs.microsoft.com.
 
 
