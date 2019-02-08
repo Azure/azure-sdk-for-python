@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TransferProductProperties(Model):
-    """The properties of the product to initiate itansfer.
+    """The properties of the product to initiate a transfer.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
