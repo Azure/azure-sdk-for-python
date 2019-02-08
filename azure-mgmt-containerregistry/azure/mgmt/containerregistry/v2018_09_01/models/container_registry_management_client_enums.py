@@ -173,3 +173,14 @@ class BaseImageTriggerType(str, Enum):
 
     all = "All"
     runtime = "Runtime"
+
+
+class SourceRegistryLoginMode(str, Enum):
+
+    none = "None"
+    default = "Default"
+
+
+class SecretObjectType(str, Enum):
+
+    opaque = "Opaque"
