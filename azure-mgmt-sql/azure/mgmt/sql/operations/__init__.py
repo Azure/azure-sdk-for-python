@@ -70,6 +70,7 @@ from .restorable_dropped_managed_databases_operations import RestorableDroppedMa
 from .restore_points_operations import RestorePointsOperations
 from .managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from .managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
+from .sensitivity_labels_operations import SensitivityLabelsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -86,6 +87,7 @@ from .managed_instance_encryption_protectors_operations import ManagedInstanceEn
 from .recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
 from .managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
+from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -149,6 +151,7 @@ __all__ = [
     'RestorePointsOperations',
     'ManagedDatabaseSecurityAlertPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
+    'SensitivityLabelsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
@@ -165,4 +168,5 @@ __all__ = [
     'RecoverableManagedDatabasesOperations',
     'ManagedInstanceVulnerabilityAssessmentsOperations',
     'ServerVulnerabilityAssessmentsOperations',
+    'ManagedDatabaseSensitivityLabelsOperations',
 ]

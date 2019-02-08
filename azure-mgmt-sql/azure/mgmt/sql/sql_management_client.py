@@ -74,6 +74,7 @@ from .operations.restorable_dropped_managed_databases_operations import Restorab
 from .operations.restore_points_operations import RestorePointsOperations
 from .operations.managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from .operations.managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
+from .operations.sensitivity_labels_operations import SensitivityLabelsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -90,6 +91,7 @@ from .operations.managed_instance_encryption_protectors_operations import Manage
 from .operations.recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
 from .operations.managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations.server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
+from .operations.managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from . import models
 
 
@@ -254,6 +256,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_database_security_alert_policies: azure.mgmt.sql.operations.ManagedDatabaseSecurityAlertPoliciesOperations
     :ivar managed_server_security_alert_policies: ManagedServerSecurityAlertPolicies operations
     :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
+    :ivar sensitivity_labels: SensitivityLabels operations
+    :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -286,6 +290,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
     :ivar server_vulnerability_assessments: ServerVulnerabilityAssessments operations
     :vartype server_vulnerability_assessments: azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
+    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabels operations
+    :vartype managed_database_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -428,6 +434,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.sensitivity_labels = SensitivityLabelsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_operations = ElasticPoolOperations(
@@ -459,4 +467,6 @@ class SqlManagementClient(SDKClient):
         self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
