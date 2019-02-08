@@ -51,8 +51,10 @@ class ManagedInstanceUpdate(Model):
     :param public_data_endpoint_enabled: Whether or not the public data
      endpoint is enabled.
     :type public_data_endpoint_enabled: bool
-    :param proxy_override: Proxy override of the managed instance.
-    :type proxy_override: str
+    :param proxy_override: Connection type used for connecting to the
+     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
+    :type proxy_override: str or
+     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -81,7 +83,7 @@ class ManagedInstanceUpdate(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type: str=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, proxy_override=None, tags=None, **kwargs) -> None:
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.fully_qualified_domain_name = None

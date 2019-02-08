@@ -51,8 +51,10 @@ class ManagedInstanceUpdate(Model):
     :param public_data_endpoint_enabled: Whether or not the public data
      endpoint is enabled.
     :type public_data_endpoint_enabled: bool
-    :param proxy_override: Proxy override of the managed instance.
-    :type proxy_override: str
+    :param proxy_override: Connection type used for connecting to the
+     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
+    :type proxy_override: str or
+     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """

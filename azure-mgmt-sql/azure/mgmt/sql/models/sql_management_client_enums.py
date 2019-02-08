@@ -325,6 +325,13 @@ class IdentityType(str, Enum):
     system_assigned = "SystemAssigned"
 
 
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
 class OperationOrigin(str, Enum):
 
     user = "user"
