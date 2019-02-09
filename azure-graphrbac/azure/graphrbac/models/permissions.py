@@ -20,6 +20,8 @@ class Permissions(Model):
     :param client_id: The objectId of the Service Principal associated with
      the app
     :type client_id: str
+    :param object_id: The objectId of the permission grant
+    :type object_id: str
     :param consent_type: Typically set to AllPrincipals
     :type consent_type: str
     :param principal_id: Set to null if AllPrincipals is set
@@ -37,6 +39,7 @@ class Permissions(Model):
     _attribute_map = {
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
         'consent_type': {'key': 'consentType', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'object'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
@@ -49,6 +52,7 @@ class Permissions(Model):
         super(Permissions, self).__init__(**kwargs)
         self.odatatype = kwargs.get('odatatype', None)
         self.client_id = kwargs.get('client_id', None)
+        self.object_id = kwargs.get('object_id', None)
         self.consent_type = kwargs.get('consent_type', None)
         self.principal_id = kwargs.get('principal_id', None)
         self.resource_id = kwargs.get('resource_id', None)
