@@ -42,6 +42,7 @@ try:
     from .get_objects_parameters_py3 import GetObjectsParameters
     from .domain_py3 import Domain
     from .permissions_py3 import Permissions
+    from .permissions_list_result_py3 import PermissionsListResult
 except (SyntaxError, ImportError):
     from .graph_error import GraphError, GraphErrorException
     from .directory_object import DirectoryObject
@@ -75,6 +76,7 @@ except (SyntaxError, ImportError):
     from .get_objects_parameters import GetObjectsParameters
     from .domain import Domain
     from .permissions import Permissions
+    from .permissions_list_result import PermissionsListResult
 from .directory_object_paged import DirectoryObjectPaged
 from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
@@ -121,6 +123,7 @@ __all__ = [
     'GetObjectsParameters',
     'Domain',
     'Permissions',
+    'PermissionsListResult',
     'DirectoryObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
