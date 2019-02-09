@@ -15,21 +15,14 @@ from msrest.serialization import Model
 class TransferProductProperties(Model):
     """The properties of the product to initiate a transfer.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar destination_invoice_section_id: Destination invoice section id.
-    :vartype destination_invoice_section_id: str
+    :param destination_invoice_section_id: Destination invoice section id.
+    :type destination_invoice_section_id: str
     """
-
-    _validation = {
-        'destination_invoice_section_id': {'readonly': True},
-    }
 
     _attribute_map = {
         'destination_invoice_section_id': {'key': 'destinationInvoiceSectionId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, destination_invoice_section_id: str=None, **kwargs) -> None:
         super(TransferProductProperties, self).__init__(**kwargs)
-        self.destination_invoice_section_id = None
+        self.destination_invoice_section_id = destination_invoice_section_id
