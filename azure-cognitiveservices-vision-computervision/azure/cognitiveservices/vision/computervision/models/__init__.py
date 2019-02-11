@@ -25,6 +25,7 @@ try:
     from .bounding_rect_py3 import BoundingRect
     from .object_hierarchy_py3 import ObjectHierarchy
     from .detected_object_py3 import DetectedObject
+    from .detected_brand_py3 import DetectedBrand
     from .image_metadata_py3 import ImageMetadata
     from .image_analysis_py3 import ImageAnalysis
     from .image_description_py3 import ImageDescription
@@ -62,6 +63,7 @@ except (SyntaxError, ImportError):
     from .bounding_rect import BoundingRect
     from .object_hierarchy import ObjectHierarchy
     from .detected_object import DetectedObject
+    from .detected_brand import DetectedBrand
     from .image_metadata import ImageMetadata
     from .image_analysis import ImageAnalysis
     from .image_description import ImageDescription
@@ -108,6 +110,7 @@ __all__ = [
     'BoundingRect',
     'ObjectHierarchy',
     'DetectedObject',
+    'DetectedBrand',
     'ImageMetadata',
     'ImageAnalysis',
     'ImageDescription',

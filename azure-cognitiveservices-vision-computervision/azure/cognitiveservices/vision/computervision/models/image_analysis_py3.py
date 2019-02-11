@@ -44,6 +44,9 @@ class ImageAnalysis(Model):
      image.
     :type objects:
      list[~azure.cognitiveservices.vision.computervision.models.DetectedObject]
+    :param brands: Array of brands detected in the image.
+    :type brands:
+     list[~azure.cognitiveservices.vision.computervision.models.DetectedBrand]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -60,11 +63,12 @@ class ImageAnalysis(Model):
         'description': {'key': 'description', 'type': 'ImageDescriptionDetails'},
         'faces': {'key': 'faces', 'type': '[FaceDescription]'},
         'objects': {'key': 'objects', 'type': '[DetectedObject]'},
+        'brands': {'key': 'brands', 'type': '[DetectedBrand]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, objects=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, objects=None, brands=None, request_id: str=None, metadata=None, **kwargs) -> None:
         super(ImageAnalysis, self).__init__(**kwargs)
         self.categories = categories
         self.adult = adult
@@ -74,5 +78,6 @@ class ImageAnalysis(Model):
         self.description = description
         self.faces = faces
         self.objects = objects
+        self.brands = brands
         self.request_id = request_id
         self.metadata = metadata

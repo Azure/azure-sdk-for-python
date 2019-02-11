@@ -36,7 +36,7 @@ class ComputerVisionClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}'
+        base_url = '{Endpoint}/vision/v2.0'
 
         super(ComputerVisionClientConfiguration, self).__init__(base_url)
 
@@ -98,7 +98,9 @@ class ComputerVisionClient(SDKClient):
          image is pornographic in nature (depicts nudity or a sex act).
          Sexually suggestive content is also detected. Objects - detects
          various objects within an image, including the approximate location.
-         The Objects argument is only available in English.
+         The Objects argument is only available in English. Brands - detects
+         various brands within an image, including the approximate location.
+         The Brands argument is only available in English.
         :type visual_features: list[str or
          ~azure.cognitiveservices.vision.computervision.models.VisualFeatureTypes]
         :param details: A string indicating which domain-specific details to
@@ -910,7 +912,9 @@ class ComputerVisionClient(SDKClient):
          image is pornographic in nature (depicts nudity or a sex act).
          Sexually suggestive content is also detected. Objects - detects
          various objects within an image, including the approximate location.
-         The Objects argument is only available in English.
+         The Objects argument is only available in English. Brands - detects
+         various brands within an image, including the approximate location.
+         The Brands argument is only available in English.
         :type visual_features: list[str or
          ~azure.cognitiveservices.vision.computervision.models.VisualFeatureTypes]
         :param details: A string indicating which domain-specific details to

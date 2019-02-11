@@ -44,6 +44,9 @@ class ImageAnalysis(Model):
      image.
     :type objects:
      list[~azure.cognitiveservices.vision.computervision.models.DetectedObject]
+    :param brands: Array of brands detected in the image.
+    :type brands:
+     list[~azure.cognitiveservices.vision.computervision.models.DetectedBrand]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -60,6 +63,7 @@ class ImageAnalysis(Model):
         'description': {'key': 'description', 'type': 'ImageDescriptionDetails'},
         'faces': {'key': 'faces', 'type': '[FaceDescription]'},
         'objects': {'key': 'objects', 'type': '[DetectedObject]'},
+        'brands': {'key': 'brands', 'type': '[DetectedBrand]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
@@ -74,5 +78,6 @@ class ImageAnalysis(Model):
         self.description = kwargs.get('description', None)
         self.faces = kwargs.get('faces', None)
         self.objects = kwargs.get('objects', None)
+        self.brands = kwargs.get('brands', None)
         self.request_id = kwargs.get('request_id', None)
         self.metadata = kwargs.get('metadata', None)
