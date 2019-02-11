@@ -87,7 +87,8 @@ class FaceTest(ReplayableTest):
         while operationStatus != "succeeded" and operationStatus != "failed":
           getOperationStatusResponse = face_client.snapshot.get_operation_status(takeOperationId)
           operationStatus = getOperationStatusResponse.additional_properties["Status"]
-          sleep(1)
+          if self.is_live:
+              sleep(1)
 
         self.assertEqual(operationStatus, "succeeded")
 
@@ -104,7 +105,8 @@ class FaceTest(ReplayableTest):
         while operationStatus != "succeeded" and operationStatus != "failed":
           applyOperationStatusResponse = face_client.snapshot.get_operation_status(applyOperationId)
           operationStatus = applyOperationStatusResponse.additional_properties["Status"]
-          sleep(1)
+          if self.is_live:
+              sleep(1)
 
         self.assertEqual(operationStatus, "succeeded")
 
