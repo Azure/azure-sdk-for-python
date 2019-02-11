@@ -47,6 +47,10 @@ class AzureFirewall(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_12_01.models.ProvisioningState
+    :param threat_intel_mode: The operation mode for Threat Intelligence.
+     Possible values include: 'Alert', 'Deny', 'Off'
+    :type threat_intel_mode: str or
+     ~azure.mgmt.network.v2018_12_01.models.AzureFirewallThreatIntelMode
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -69,6 +73,7 @@ class AzureFirewall(Resource):
         'network_rule_collections': {'key': 'properties.networkRuleCollections', 'type': '[AzureFirewallNetworkRuleCollection]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[AzureFirewallIPConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -79,4 +84,5 @@ class AzureFirewall(Resource):
         self.network_rule_collections = kwargs.get('network_rule_collections', None)
         self.ip_configurations = kwargs.get('ip_configurations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.threat_intel_mode = kwargs.get('threat_intel_mode', None)
         self.etag = None
