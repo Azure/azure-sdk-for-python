@@ -17,12 +17,12 @@ class AlertRuleKind(str, Enum):
     scheduled = "Scheduled"
 
 
-class Severity(str, Enum):
+class AlertSeverity(str, Enum):
 
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-    informational = "Informational"
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
 
 
 class TriggerOperator(str, Enum):
@@ -31,6 +31,30 @@ class TriggerOperator(str, Enum):
     less_than = "LessThan"
     equal = "Equal"
     not_equal = "NotEqual"
+
+
+class CaseSeverity(str, Enum):
+
+    critical = "Critical"  #: Critical severity
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
+
+
+class Status(str, Enum):
+
+    draft = "Draft"  #: Case is in draft status
+    open = "Open"  #: Case is in open status
+    in_progress = "InProgress"  #: Case is in progress status
+    closed = "Closed"  #: Case is in closed status
+
+
+class CloseReason(str, Enum):
+
+    resolved = "Resolved"  #: Case was resolved
+    dismissed = "Dismissed"  #: Case was dismissed
+    other = "Other"  #: Case was closed for another reason
 
 
 class DataConnectorKind(str, Enum):
@@ -43,6 +67,33 @@ class DataConnectorKind(str, Enum):
 
 
 class DataTypeState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class EntityKind(str, Enum):
+
+    account = "Account"
+    host = "Host"
+    file = "File"
+
+
+class OSFamily(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
+    android = "Android"
+    ios = "IOS"
+
+
+class SettingKind(str, Enum):
+
+    ueba_settings = "UebaSettings"
+    toggle_settings = "ToggleSettings"
+
+
+class StatusInMcas(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"

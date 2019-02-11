@@ -36,8 +36,8 @@ class ScheduledAlertRule(AlertRule):
     :param description: Required. The description of the alert rule.
     :type description: str
     :param severity: Required. The severity for alerts created by this alert
-     rule. Possible values include: 'Low', 'Medium', 'High', 'Informational'
-    :type severity: str or ~azure.mgmt.securityinsight.models.Severity
+     rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :param enabled: Required. Determines whether this alert rule is enabled or
      disabled.
     :type enabled: bool
@@ -94,7 +94,7 @@ class ScheduledAlertRule(AlertRule):
         'kind': {'key': 'kind', 'type': 'str'},
         'rule_name': {'key': 'properties.ruleName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'Severity'},
+        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},

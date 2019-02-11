@@ -15,7 +15,13 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.alert_rules_operations import AlertRulesOperations
+from .operations.actions_operations import ActionsOperations
+from .operations.cases_operations import CasesOperations
+from .operations.bookmarks_operations import BookmarksOperations
 from .operations.data_connectors_operations import DataConnectorsOperations
+from .operations.entities_operations import EntitiesOperations
+from .operations.office_consents_operations import OfficeConsentsOperations
+from .operations.product_settings_operations import ProductSettingsOperations
 from . import models
 
 
@@ -61,8 +67,20 @@ class SecurityInsights(SDKClient):
     :vartype operations: azure.mgmt.securityinsight.operations.Operations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
+    :ivar actions: Actions operations
+    :vartype actions: azure.mgmt.securityinsight.operations.ActionsOperations
+    :ivar cases: Cases operations
+    :vartype cases: azure.mgmt.securityinsight.operations.CasesOperations
+    :ivar bookmarks: Bookmarks operations
+    :vartype bookmarks: azure.mgmt.securityinsight.operations.BookmarksOperations
     :ivar data_connectors: DataConnectors operations
     :vartype data_connectors: azure.mgmt.securityinsight.operations.DataConnectorsOperations
+    :ivar entities: Entities operations
+    :vartype entities: azure.mgmt.securityinsight.operations.EntitiesOperations
+    :ivar office_consents: OfficeConsents operations
+    :vartype office_consents: azure.mgmt.securityinsight.operations.OfficeConsentsOperations
+    :ivar product_settings: ProductSettings operations
+    :vartype product_settings: azure.mgmt.securityinsight.operations.ProductSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,5 +105,17 @@ class SecurityInsights(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.actions = ActionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cases = CasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bookmarks = BookmarksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.data_connectors = DataConnectorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.entities = EntitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.office_consents = OfficeConsentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.product_settings = ProductSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)

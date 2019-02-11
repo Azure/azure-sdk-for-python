@@ -15,6 +15,11 @@ try:
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
+    from .action_py3 import Action
+    from .user_info_py3 import UserInfo
+    from .case_py3 import Case
+    from .bookmark_properties_updated_by_py3 import BookmarkPropertiesUpdatedBy
+    from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
     from .data_connector_context_id_py3 import DataConnectorContextId
@@ -32,13 +37,28 @@ try:
     from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .data_connector_with_alerts_py3 import DataConnectorWithAlerts
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
+    from .entity_py3 import Entity
+    from .entity_kind1_py3 import EntityKind1
+    from .account_entity_py3 import AccountEntity
+    from .host_entity_py3 import HostEntity
+    from .file_entity_py3 import FileEntity
+    from .office_consent_py3 import OfficeConsent
     from .resource_py3 import Resource
+    from .settings_py3 import Settings
+    from .settings_kind_py3 import SettingsKind
+    from .ueba_settings_py3 import UebaSettings
+    from .toggle_settings_py3 import ToggleSettings
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
+    from .action import Action
+    from .user_info import UserInfo
+    from .case import Case
+    from .bookmark_properties_updated_by import BookmarkPropertiesUpdatedBy
+    from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
     from .data_connector_context_id import DataConnectorContextId
@@ -56,16 +76,38 @@ except (SyntaxError, ImportError):
     from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .data_connector_with_alerts import DataConnectorWithAlerts
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
+    from .entity import Entity
+    from .entity_kind1 import EntityKind1
+    from .account_entity import AccountEntity
+    from .host_entity import HostEntity
+    from .file_entity import FileEntity
+    from .office_consent import OfficeConsent
     from .resource import Resource
+    from .settings import Settings
+    from .settings_kind import SettingsKind
+    from .ueba_settings import UebaSettings
+    from .toggle_settings import ToggleSettings
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
+from .action_paged import ActionPaged
+from .case_paged import CasePaged
+from .bookmark_paged import BookmarkPaged
 from .data_connector_paged import DataConnectorPaged
+from .entity_paged import EntityPaged
+from .office_consent_paged import OfficeConsentPaged
 from .security_insights_enums import (
     AlertRuleKind,
-    Severity,
+    AlertSeverity,
     TriggerOperator,
+    CaseSeverity,
+    Status,
+    CloseReason,
     DataConnectorKind,
     DataTypeState,
+    EntityKind,
+    OSFamily,
+    SettingKind,
+    StatusInMcas,
 )
 
 __all__ = [
@@ -74,6 +116,11 @@ __all__ = [
     'AlertRule',
     'AlertRuleKind1',
     'ScheduledAlertRule',
+    'Action',
+    'UserInfo',
+    'Case',
+    'BookmarkPropertiesUpdatedBy',
+    'Bookmark',
     'DataConnector',
     'DataConnectorKind1',
     'DataConnectorContextId',
@@ -91,13 +138,35 @@ __all__ = [
     'AlertsDataTypeOfDataConnector',
     'DataConnectorWithAlerts',
     'DataConnectorDataTypeCommon',
+    'Entity',
+    'EntityKind1',
+    'AccountEntity',
+    'HostEntity',
+    'FileEntity',
+    'OfficeConsent',
     'Resource',
+    'Settings',
+    'SettingsKind',
+    'UebaSettings',
+    'ToggleSettings',
     'OperationPaged',
     'AlertRulePaged',
+    'ActionPaged',
+    'CasePaged',
+    'BookmarkPaged',
     'DataConnectorPaged',
+    'EntityPaged',
+    'OfficeConsentPaged',
     'AlertRuleKind',
-    'Severity',
+    'AlertSeverity',
     'TriggerOperator',
+    'CaseSeverity',
+    'Status',
+    'CloseReason',
     'DataConnectorKind',
     'DataTypeState',
+    'EntityKind',
+    'OSFamily',
+    'SettingKind',
+    'StatusInMcas',
 ]
