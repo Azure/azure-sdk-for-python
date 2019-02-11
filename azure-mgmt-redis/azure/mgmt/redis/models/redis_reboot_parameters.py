@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class RedisRebootParameters(Model):
     """Specifies which Redis node(s) to reboot.
 
-    :param reboot_type: Which Redis node(s) to reboot. Depending on this value
-     data loss is possible. Possible values include: 'PrimaryNode',
+    All required parameters must be populated in order to send to Azure.
+
+    :param reboot_type: Required. Which Redis node(s) to reboot. Depending on
+     this value data loss is possible. Possible values include: 'PrimaryNode',
      'SecondaryNode', 'AllNodes'
     :type reboot_type: str or ~azure.mgmt.redis.models.RebootType
     :param shard_id: If clustering is enabled, the ID of the shard to be
@@ -33,7 +35,7 @@ class RedisRebootParameters(Model):
         'shard_id': {'key': 'shardId', 'type': 'int'},
     }
 
-    def __init__(self, reboot_type, shard_id=None):
-        super(RedisRebootParameters, self).__init__()
-        self.reboot_type = reboot_type
-        self.shard_id = shard_id
+    def __init__(self, **kwargs):
+        super(RedisRebootParameters, self).__init__(**kwargs)
+        self.reboot_type = kwargs.get('reboot_type', None)
+        self.shard_id = kwargs.get('shard_id', None)

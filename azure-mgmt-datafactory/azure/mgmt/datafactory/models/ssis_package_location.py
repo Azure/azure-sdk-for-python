@@ -15,8 +15,11 @@ from msrest.serialization import Model
 class SSISPackageLocation(Model):
     """SSIS package location.
 
-    :param package_path: The SSIS package path.
-    :type package_path: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param package_path: Required. The SSIS package path. Type: string (or
+     Expression with resultType string).
+    :type package_path: object
     """
 
     _validation = {
@@ -24,9 +27,9 @@ class SSISPackageLocation(Model):
     }
 
     _attribute_map = {
-        'package_path': {'key': 'packagePath', 'type': 'str'},
+        'package_path': {'key': 'packagePath', 'type': 'object'},
     }
 
-    def __init__(self, package_path):
-        super(SSISPackageLocation, self).__init__()
-        self.package_path = package_path
+    def __init__(self, **kwargs):
+        super(SSISPackageLocation, self).__init__(**kwargs)
+        self.package_path = kwargs.get('package_path', None)

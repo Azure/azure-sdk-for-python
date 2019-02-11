@@ -16,24 +16,29 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
-    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
-    GetMetadataActivity, WebActivity, LookupActivity,
-    SqlServerStoredProcedureActivity, CustomActivity,
-    ExecuteSSISPackageActivity, HDInsightSparkActivity,
+    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
+    DatabricksSparkJarActivity, DatabricksNotebookActivity,
+    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
+    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
+    LookupActivity, DeleteActivity, SqlServerStoredProcedureActivity,
+    CustomActivity, ExecuteSSISPackageActivity, HDInsightSparkActivity,
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
     HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -52,17 +57,18 @@ class ExecutionActivity(Activity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
     }
 
     _subtype_map = {
-        'type': {'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None):
-        super(ExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
-        self.linked_service_name = linked_service_name
-        self.policy = policy
+    def __init__(self, **kwargs):
+        super(ExecutionActivity, self).__init__(**kwargs)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.policy = kwargs.get('policy', None)
         self.type = 'Execution'
