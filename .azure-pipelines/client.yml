@@ -2,6 +2,8 @@
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
 #  'codecov-python-repository-token' Is the codecov.io repository token.
 #  'long_running_tests' Is a boolean indicating that the long-running tests should be executed. 
+#  'EnableDetectorPip': true . Required for Component Governance Support
+
 
 trigger:
 - master
@@ -19,15 +21,9 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel setuptools pathlib Jinja2 twine readme-renderer[md]
+     pip install wheel setuptools pathlib twine readme-renderer[md]
     displayName: 'Prep Environment'
-
-  - task: PythonScript@0
-    displayName: 'Analyze dependencies'
-    inputs:
-      scriptPath: 'scripts/analyze_deps.py'
-      arguments: '--verbose --out "$(Build.SourcesDirectory)/dependencies.html"'
-
+  
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
@@ -49,6 +45,35 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     condition: succeededOrFailed()
+
+- job: 'Analyze'
+  dependsOn:
+    - 'Build_Target_Packages'
+  
+  pool:
+    vmImage: 'vs2017-win2016' 
+    
+  steps:
+  
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.6'
+    inputs:
+      versionSpec: 3.6
+
+  - script: |
+     pip install wheel Jinja2
+    displayName: 'Prep Environment'
+    
+  - task: PythonScript@0
+    displayName: 'Analyze dependencies'
+    enabled: true
+    inputs:
+      scriptPath: 'scripts/analyze_deps.py'
+      arguments: '--verbose --out "$(Build.SourcesDirectory)/dependencies.html"'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    condition: and(always(), ne(variables['System.TeamProject'], 'public'))
+    displayName: 'Component Detection'
 
 - job: 'Generic_Tests'
   dependsOn:
@@ -124,9 +149,16 @@ jobs:
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
       reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    condition: and(eq(variables['os.name'],'Windows'),succeeded())
+
 - job: Test_Alpha_Python
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
+
+
+- job: Special_Python_Distro_Tests
   dependsOn:
   - 'Build_Target_Packages'
   pool:
