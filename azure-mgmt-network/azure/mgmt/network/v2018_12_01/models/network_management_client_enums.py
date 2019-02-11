@@ -208,6 +208,7 @@ class AzureFirewallRCActionType(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
+    alert = "Alert"
 
 
 class AzureFirewallApplicationRuleProtocolType(str, Enum):
@@ -228,6 +229,13 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     udp = "UDP"
     any = "Any"
     icmp = "ICMP"
+
+
+class AzureFirewallThreatIntelMode(str, Enum):
+
+    alert = "Alert"
+    deny = "Deny"
+    off = "Off"
 
 
 class DdosCustomPolicyProtocol(str, Enum):

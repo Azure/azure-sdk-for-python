@@ -47,6 +47,10 @@ class AzureFirewall(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_12_01.models.ProvisioningState
+    :param threat_intel_mode: The operation mode for Threat Intelligence.
+     Possible values include: 'Alert', 'Deny', 'Off'
+    :type threat_intel_mode: str or
+     ~azure.mgmt.network.v2018_12_01.models.AzureFirewallThreatIntelMode
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -69,14 +73,16 @@ class AzureFirewall(Resource):
         'network_rule_collections': {'key': 'properties.networkRuleCollections', 'type': '[AzureFirewallNetworkRuleCollection]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[AzureFirewallIPConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, application_rule_collections=None, nat_rule_collections=None, network_rule_collections=None, ip_configurations=None, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, application_rule_collections=None, nat_rule_collections=None, network_rule_collections=None, ip_configurations=None, provisioning_state=None, threat_intel_mode=None, **kwargs) -> None:
         super(AzureFirewall, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.application_rule_collections = application_rule_collections
         self.nat_rule_collections = nat_rule_collections
         self.network_rule_collections = network_rule_collections
         self.ip_configurations = ip_configurations
         self.provisioning_state = provisioning_state
+        self.threat_intel_mode = threat_intel_mode
         self.etag = None
