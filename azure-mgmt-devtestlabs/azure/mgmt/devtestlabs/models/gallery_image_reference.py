@@ -35,10 +35,10 @@ class GalleryImageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, offer=None, publisher=None, sku=None, os_type=None, version=None):
-        super(GalleryImageReference, self).__init__()
-        self.offer = offer
-        self.publisher = publisher
-        self.sku = sku
-        self.os_type = os_type
-        self.version = version
+    def __init__(self, **kwargs):
+        super(GalleryImageReference, self).__init__(**kwargs)
+        self.offer = kwargs.get('offer', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.sku = kwargs.get('sku', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.version = kwargs.get('version', None)

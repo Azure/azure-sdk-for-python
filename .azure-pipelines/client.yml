@@ -19,20 +19,32 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel setuptools pathlib Jinja2
+     pip install wheel setuptools pathlib Jinja2 twine readme-renderer[md]
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
     inputs:
       scriptPath: 'scripts/analyze_deps.py'
-      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+      arguments: '--verbose --out "$(Build.SourcesDirectory)/dependencies.html"'
 
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
       arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
+
+  - script: |
+      twine check $(Build.ArtifactStagingDirectory)/*
+    displayName: 'Verify Readme'
+
+  - task: CopyFiles@2
+    displayName: 'Move Dependencies Report to Build Artifacts'
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)'
+      Contents: dependencies.html
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    condition: always()
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
