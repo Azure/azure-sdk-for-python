@@ -36,8 +36,8 @@ class Case(Resource):
     :type end_time_utc: datetime
     :param start_time_utc: The start time of the case
     :type start_time_utc: datetime
-    :param tags: List of tags
-    :type tags: list[str]
+    :param labels: List of labels relevant to this case
+    :type labels: list[str]
     :param description: The description of the case
     :type description: str
     :param title: Required. The title of the case
@@ -73,7 +73,7 @@ class Case(Resource):
         'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'iso-8601'},
         'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
@@ -82,14 +82,14 @@ class Case(Resource):
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
     }
 
-    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, tags=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
+    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
         self.last_updated_time_utc = last_updated_time_utc
         self.created_time_utc = created_time_utc
         self.end_time_utc = end_time_utc
         self.start_time_utc = start_time_utc
-        self.tags = tags
+        self.labels = labels
         self.description = description
         self.title = title
         self.assigned_to = assigned_to

@@ -44,10 +44,10 @@ class CaseSeverity(str, Enum):
 
 class Status(str, Enum):
 
-    draft = "Draft"  #: Case is in draft status
-    open = "Open"  #: Case is in open status
-    in_progress = "InProgress"  #: Case is in progress status
-    closed = "Closed"  #: Case is in closed status
+    draft = "Draft"  #: Case that wasn't promoted yet to active
+    open = "Open"  #: An active case which isn't handled currently
+    in_progress = "InProgress"  #: An active case which is handled
+    closed = "Closed"  #: A non active case
 
 
 class CloseReason(str, Enum):
@@ -74,17 +74,17 @@ class DataTypeState(str, Enum):
 
 class EntityKind(str, Enum):
 
-    account = "Account"
-    host = "Host"
-    file = "File"
+    account = "Account"  #: Entity represents account in the system.
+    host = "Host"  #: Entity represents host in the system.
+    file = "File"  #: Entity represents file in the system.
 
 
 class OSFamily(str, Enum):
 
-    linux = "Linux"
-    windows = "Windows"
-    android = "Android"
-    ios = "IOS"
+    linux = "Linux"  #: Host with Linux operartion system.
+    windows = "Windows"  #: Host with Windows operartion system.
+    android = "Android"  #: Host with Android operartion system.
+    ios = "IOS"  #: Host with IOS operartion system.
 
 
 class SettingKind(str, Enum):

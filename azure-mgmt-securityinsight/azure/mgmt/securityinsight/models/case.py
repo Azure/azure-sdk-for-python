@@ -36,8 +36,8 @@ class Case(Resource):
     :type end_time_utc: datetime
     :param start_time_utc: The start time of the case
     :type start_time_utc: datetime
-    :param tags: List of tags
-    :type tags: list[str]
+    :param labels: List of labels relevant to this case
+    :type labels: list[str]
     :param description: The description of the case
     :type description: str
     :param title: Required. The title of the case
@@ -73,7 +73,7 @@ class Case(Resource):
         'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'iso-8601'},
         'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'labels': {'key': 'properties.labels', 'type': '[str]'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
@@ -89,7 +89,7 @@ class Case(Resource):
         self.created_time_utc = kwargs.get('created_time_utc', None)
         self.end_time_utc = kwargs.get('end_time_utc', None)
         self.start_time_utc = kwargs.get('start_time_utc', None)
-        self.tags = kwargs.get('tags', None)
+        self.labels = kwargs.get('labels', None)
         self.description = kwargs.get('description', None)
         self.title = kwargs.get('title', None)
         self.assigned_to = kwargs.get('assigned_to', None)

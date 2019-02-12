@@ -28,9 +28,9 @@ class AccountEntity(Entity):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar account_entity_name: The name of the account. This field should hold
-     only the name without any domain added to it, i.e. administrator.
-    :vartype account_entity_name: str
+    :ivar account_name: The name of the account. This field should hold only
+     the name without any domain added to it, i.e. administrator.
+    :vartype account_name: str
     :ivar nt_domain: The NETBIOS domain name as it appears in the alert format
      – domain\\username. Examples: NT AUTHORITY.
     :vartype nt_domain: str
@@ -39,11 +39,11 @@ class AccountEntity(Entity):
     :vartype upn_suffix: str
     :ivar sid: The account security identifier, e.g. S-1-5-18.
     :vartype sid: str
-    :ivar aad_tenant_id: The AAD tenant id.
+    :ivar aad_tenant_id: The Azure Active Directory tenant id.
     :vartype aad_tenant_id: str
-    :ivar aad_user_id: The AAD user id.
+    :ivar aad_user_id: The Azure Active Directory user id.
     :vartype aad_user_id: str
-    :ivar puid: The AAD Passport User ID.
+    :ivar puid: The Azure Active Directory Passport User ID.
     :vartype puid: str
     :ivar is_domain_joined: Determines whether this is a domain account.
     :vartype is_domain_joined: bool
@@ -58,7 +58,7 @@ class AccountEntity(Entity):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'account_entity_name': {'readonly': True},
+        'account_name': {'readonly': True},
         'nt_domain': {'readonly': True},
         'upn_suffix': {'readonly': True},
         'sid': {'readonly': True},
@@ -74,7 +74,7 @@ class AccountEntity(Entity):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'account_entity_name': {'key': 'properties.name', 'type': 'str'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'nt_domain': {'key': 'properties.ntDomain', 'type': 'str'},
         'upn_suffix': {'key': 'properties.upnSuffix', 'type': 'str'},
         'sid': {'key': 'properties.sid', 'type': 'str'},
@@ -87,7 +87,7 @@ class AccountEntity(Entity):
 
     def __init__(self, **kwargs):
         super(AccountEntity, self).__init__(**kwargs)
-        self.account_entity_name = None
+        self.account_name = None
         self.nt_domain = None
         self.upn_suffix = None
         self.sid = None

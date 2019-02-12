@@ -37,13 +37,12 @@ class Bookmark(Resource):
     :param created_by: Describes a user that created the bookmark
     :type created_by: ~azure.mgmt.securityinsight.models.UserInfo
     :param updated_by: Describes a user that updated the bookmark
-    :type updated_by:
-     ~azure.mgmt.securityinsight.models.BookmarkPropertiesUpdatedBy
+    :type updated_by: ~azure.mgmt.securityinsight.models.UserInfo
     :param notes: The notes of the bookmark
     :type notes: str
-    :param tags: List of tags
-    :type tags: list[str]
-    :param query: The query of the bookmark.
+    :param labels: List of labels relevant to this bookmark
+    :type labels: list[str]
+    :param query: Required. The query of the bookmark.
     :type query: str
     """
 
@@ -52,6 +51,7 @@ class Bookmark(Resource):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'display_name': {'required': True},
+        'query': {'required': True},
     }
 
     _attribute_map = {
@@ -63,13 +63,13 @@ class Bookmark(Resource):
         'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
         'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'created_by': {'key': 'properties.createdBy', 'type': 'UserInfo'},
-        'updated_by': {'key': 'properties.updatedBy', 'type': 'BookmarkPropertiesUpdatedBy'},
+        'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'labels': {'key': 'properties.labels', 'type': '[str]'},
         'query': {'key': 'properties.query', 'type': 'str'},
     }
 
-    def __init__(self, *, display_name: str, etag: str=None, last_updated_time_utc=None, created_time_utc=None, created_by=None, updated_by=None, notes: str=None, tags=None, query: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str, query: str, etag: str=None, last_updated_time_utc=None, created_time_utc=None, created_by=None, updated_by=None, notes: str=None, labels=None, **kwargs) -> None:
         super(Bookmark, self).__init__(**kwargs)
         self.etag = etag
         self.display_name = display_name
@@ -78,5 +78,5 @@ class Bookmark(Resource):
         self.created_by = created_by
         self.updated_by = updated_by
         self.notes = notes
-        self.tags = tags
+        self.labels = labels
         self.query = query

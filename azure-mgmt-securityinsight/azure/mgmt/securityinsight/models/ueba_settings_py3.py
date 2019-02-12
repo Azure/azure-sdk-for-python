@@ -13,7 +13,7 @@ from .settings_py3 import Settings
 
 
 class UebaSettings(Settings):
-    """Represents settings for UEBA enablement.
+    """Represents settings for User and Entity Behavior Analytics enablement.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,13 +28,16 @@ class UebaSettings(Settings):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param is_enabled: Determines whether UEBA is enabled for this workspace.
+    :param is_enabled: Determines whether User and Entity Behavior Analytics
+     is enabled for this workspace.
     :type is_enabled: bool
-    :ivar status_in_mcas: Determines whether UEBA is enabled from MCAS.
-     Possible values include: 'Enabled', 'Disabled'
+    :ivar status_in_mcas: Determines whether User and Entity Behavior
+     Analytics is enabled from MCAS (Microsoft Cloud App Security). Possible
+     values include: 'Enabled', 'Disabled'
     :vartype status_in_mcas: str or
      ~azure.mgmt.securityinsight.models.StatusInMcas
-    :ivar atp_license_status: Determines whether the tenant .
+    :ivar atp_license_status: Determines whether the tenant has ATP (Advanced
+     Threat Protection) license.
     :vartype atp_license_status: bool
     """
 

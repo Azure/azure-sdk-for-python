@@ -30,9 +30,9 @@ class FileEntity(Entity):
     :type kind: str
     :ivar directory: The full path to the file.
     :vartype directory: str
-    :ivar file_entity_name: The file name without path (some alerts might not
-     include path).
-    :vartype file_entity_name: str
+    :ivar file_name: The file name without path (some alerts might not include
+     path).
+    :vartype file_name: str
     """
 
     _validation = {
@@ -41,7 +41,7 @@ class FileEntity(Entity):
         'name': {'readonly': True},
         'kind': {'required': True},
         'directory': {'readonly': True},
-        'file_entity_name': {'readonly': True},
+        'file_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,11 +50,11 @@ class FileEntity(Entity):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'directory': {'key': 'properties.directory', 'type': 'str'},
-        'file_entity_name': {'key': 'properties.name', 'type': 'str'},
+        'file_name': {'key': 'properties.fileName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(FileEntity, self).__init__(**kwargs)
         self.directory = None
-        self.file_entity_name = None
+        self.file_name = None
         self.kind = 'File'

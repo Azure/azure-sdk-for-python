@@ -18,7 +18,6 @@ try:
     from .action_py3 import Action
     from .user_info_py3 import UserInfo
     from .case_py3 import Case
-    from .bookmark_properties_updated_by_py3 import BookmarkPropertiesUpdatedBy
     from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
@@ -57,7 +56,6 @@ except (SyntaxError, ImportError):
     from .action import Action
     from .user_info import UserInfo
     from .case import Case
-    from .bookmark_properties_updated_by import BookmarkPropertiesUpdatedBy
     from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
@@ -119,7 +117,6 @@ __all__ = [
     'Action',
     'UserInfo',
     'Case',
-    'BookmarkPropertiesUpdatedBy',
     'Bookmark',
     'DataConnector',
     'DataConnectorKind1',

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TIDataConnectorDataTypes(Model):
-    """The available data types for TI data connector.
+    """The available data types for TI (Threat Intelligence) data connector.
 
     :param indicators: Data type for indicators connection.
     :type indicators:

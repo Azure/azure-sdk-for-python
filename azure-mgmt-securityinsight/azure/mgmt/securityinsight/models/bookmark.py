@@ -37,13 +37,12 @@ class Bookmark(Resource):
     :param created_by: Describes a user that created the bookmark
     :type created_by: ~azure.mgmt.securityinsight.models.UserInfo
     :param updated_by: Describes a user that updated the bookmark
-    :type updated_by:
-     ~azure.mgmt.securityinsight.models.BookmarkPropertiesUpdatedBy
+    :type updated_by: ~azure.mgmt.securityinsight.models.UserInfo
     :param notes: The notes of the bookmark
     :type notes: str
-    :param tags: List of tags
-    :type tags: list[str]
-    :param query: The query of the bookmark.
+    :param labels: List of labels relevant to this bookmark
+    :type labels: list[str]
+    :param query: Required. The query of the bookmark.
     :type query: str
     """
 
@@ -52,6 +51,7 @@ class Bookmark(Resource):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'display_name': {'required': True},
+        'query': {'required': True},
     }
 
     _attribute_map = {
@@ -63,9 +63,9 @@ class Bookmark(Resource):
         'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
         'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'created_by': {'key': 'properties.createdBy', 'type': 'UserInfo'},
-        'updated_by': {'key': 'properties.updatedBy', 'type': 'BookmarkPropertiesUpdatedBy'},
+        'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'labels': {'key': 'properties.labels', 'type': '[str]'},
         'query': {'key': 'properties.query', 'type': 'str'},
     }
 
@@ -78,5 +78,5 @@ class Bookmark(Resource):
         self.created_by = kwargs.get('created_by', None)
         self.updated_by = kwargs.get('updated_by', None)
         self.notes = kwargs.get('notes', None)
-        self.tags = kwargs.get('tags', None)
+        self.labels = kwargs.get('labels', None)
         self.query = kwargs.get('query', None)
