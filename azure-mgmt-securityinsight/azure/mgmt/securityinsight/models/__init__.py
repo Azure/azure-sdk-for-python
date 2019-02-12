@@ -21,7 +21,7 @@ try:
     from .bookmark_py3 import Bookmark
     from .data_connector_py3 import DataConnector
     from .data_connector_kind1_py3 import DataConnectorKind1
-    from .data_connector_context_id_py3 import DataConnectorContextId
+    from .data_connector_tenant_id_py3 import DataConnectorTenantId
     from .office_data_connector_data_types_share_point_py3 import OfficeDataConnectorDataTypesSharePoint
     from .office_data_connector_data_types_exchange_py3 import OfficeDataConnectorDataTypesExchange
     from .office_data_connector_data_types_py3 import OfficeDataConnectorDataTypes
@@ -29,12 +29,12 @@ try:
     from .ti_data_connector_data_types_indicators_py3 import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types_py3 import TIDataConnectorDataTypes
     from .ti_data_connector_py3 import TIDataConnector
+    from .alerts_data_type_of_data_connector_alerts_py3 import AlertsDataTypeOfDataConnectorAlerts
+    from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .aad_data_connector_py3 import AADDataConnector
     from .asc_data_connector_py3 import ASCDataConnector
     from .mcas_data_connector_py3 import MCASDataConnector
-    from .alerts_data_type_of_data_connector_alerts_py3 import AlertsDataTypeOfDataConnectorAlerts
-    from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
-    from .data_connector_with_alerts_py3 import DataConnectorWithAlerts
+    from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .entity_py3 import Entity
     from .entity_kind1_py3 import EntityKind1
@@ -59,7 +59,7 @@ except (SyntaxError, ImportError):
     from .bookmark import Bookmark
     from .data_connector import DataConnector
     from .data_connector_kind1 import DataConnectorKind1
-    from .data_connector_context_id import DataConnectorContextId
+    from .data_connector_tenant_id import DataConnectorTenantId
     from .office_data_connector_data_types_share_point import OfficeDataConnectorDataTypesSharePoint
     from .office_data_connector_data_types_exchange import OfficeDataConnectorDataTypesExchange
     from .office_data_connector_data_types import OfficeDataConnectorDataTypes
@@ -67,12 +67,12 @@ except (SyntaxError, ImportError):
     from .ti_data_connector_data_types_indicators import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types import TIDataConnectorDataTypes
     from .ti_data_connector import TIDataConnector
+    from .alerts_data_type_of_data_connector_alerts import AlertsDataTypeOfDataConnectorAlerts
+    from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .aad_data_connector import AADDataConnector
     from .asc_data_connector import ASCDataConnector
     from .mcas_data_connector import MCASDataConnector
-    from .alerts_data_type_of_data_connector_alerts import AlertsDataTypeOfDataConnectorAlerts
-    from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
-    from .data_connector_with_alerts import DataConnectorWithAlerts
+    from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .entity import Entity
     from .entity_kind1 import EntityKind1
@@ -120,7 +120,7 @@ __all__ = [
     'Bookmark',
     'DataConnector',
     'DataConnectorKind1',
-    'DataConnectorContextId',
+    'DataConnectorTenantId',
     'OfficeDataConnectorDataTypesSharePoint',
     'OfficeDataConnectorDataTypesExchange',
     'OfficeDataConnectorDataTypes',
@@ -128,12 +128,12 @@ __all__ = [
     'TIDataConnectorDataTypesIndicators',
     'TIDataConnectorDataTypes',
     'TIDataConnector',
+    'AlertsDataTypeOfDataConnectorAlerts',
+    'AlertsDataTypeOfDataConnector',
     'AADDataConnector',
     'ASCDataConnector',
     'MCASDataConnector',
-    'AlertsDataTypeOfDataConnectorAlerts',
-    'AlertsDataTypeOfDataConnector',
-    'DataConnectorWithAlerts',
+    'DataConnectorWithAlertsProperties',
     'DataConnectorDataTypeCommon',
     'Entity',
     'EntityKind1',

@@ -30,9 +30,8 @@ class OfficeDataConnector(DataConnector):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+    :param tenant_id: The tenant id to connect to, and get the data from.
+    :type tenant_id: str
     :param data_types: The available data types for the connector.
     :type data_types:
      ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypes
@@ -51,12 +50,12 @@ class OfficeDataConnector(DataConnector):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'context_id': {'key': 'properties.contextId', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'data_types': {'key': 'properties.dataTypes', 'type': 'OfficeDataConnectorDataTypes'},
     }
 
     def __init__(self, **kwargs):
         super(OfficeDataConnector, self).__init__(**kwargs)
-        self.context_id = kwargs.get('context_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
         self.data_types = kwargs.get('data_types', None)
         self.kind = 'Office365'

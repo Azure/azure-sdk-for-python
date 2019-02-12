@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class DataConnectorContextId(Model):
-    """Describes an Azure resource with kind.
+class DataConnectorTenantId(Model):
+    """Properties data connector on tenant level.
 
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+    :param tenant_id: The tenant id to connect to, and get the data from.
+    :type tenant_id: str
     """
 
     _attribute_map = {
-        'context_id': {'key': 'contextId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, context_id: str=None, **kwargs) -> None:
-        super(DataConnectorContextId, self).__init__(**kwargs)
-        self.context_id = context_id
+    def __init__(self, **kwargs):
+        super(DataConnectorTenantId, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)

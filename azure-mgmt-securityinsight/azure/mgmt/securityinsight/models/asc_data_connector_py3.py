@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_with_alerts_py3 import DataConnectorWithAlerts
+from .data_connector_py3 import DataConnector
 
 
-class ASCDataConnector(DataConnectorWithAlerts):
+class ASCDataConnector(DataConnector):
     """Represents ASC (Azure Security Center) data connector.
 
     Variables are only populated by the server, and will be ignored when
@@ -30,12 +30,12 @@ class ASCDataConnector(DataConnectorWithAlerts):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
     :param data_types: The available data types for the connector.
     :type data_types:
      ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
+    :param subscription_id: The subscription id to connect to, and get the
+     data from.
+    :type subscription_id: str
     """
 
     _validation = {
@@ -51,10 +51,12 @@ class ASCDataConnector(DataConnectorWithAlerts):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'context_id': {'key': 'properties.contextId', 'type': 'str'},
         'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
+        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, context_id: str=None, data_types=None, **kwargs) -> None:
-        super(ASCDataConnector, self).__init__(etag=etag, context_id=context_id, data_types=data_types, **kwargs)
+    def __init__(self, *, etag: str=None, data_types=None, subscription_id: str=None, **kwargs) -> None:
+        super(ASCDataConnector, self).__init__(etag=etag, **kwargs)
+        self.data_types = data_types
+        self.subscription_id = subscription_id
         self.kind = 'AzureSecurityCenter'

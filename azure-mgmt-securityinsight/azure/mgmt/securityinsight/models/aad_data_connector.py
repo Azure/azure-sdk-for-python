@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_with_alerts import DataConnectorWithAlerts
+from .data_connector import DataConnector
 
 
-class AADDataConnector(DataConnectorWithAlerts):
+class AADDataConnector(DataConnector):
     """Represents AAD (Azure Active Directory) data connector.
 
     Variables are only populated by the server, and will be ignored when
@@ -30,9 +30,8 @@ class AADDataConnector(DataConnectorWithAlerts):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+    :param tenant_id: The tenant id to connect to, and get the data from.
+    :type tenant_id: str
     :param data_types: The available data types for the connector.
     :type data_types:
      ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
@@ -51,10 +50,12 @@ class AADDataConnector(DataConnectorWithAlerts):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'context_id': {'key': 'properties.contextId', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
     def __init__(self, **kwargs):
         super(AADDataConnector, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.data_types = kwargs.get('data_types', None)
         self.kind = 'AzureActiveDirectory'

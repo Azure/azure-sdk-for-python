@@ -30,9 +30,8 @@ class TIDataConnector(DataConnector):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+    :param tenant_id: The tenant id to connect to, and get the data from.
+    :type tenant_id: str
     :param data_types: The available data types for the connector.
     :type data_types:
      ~azure.mgmt.securityinsight.models.TIDataConnectorDataTypes
@@ -51,12 +50,12 @@ class TIDataConnector(DataConnector):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'context_id': {'key': 'properties.contextId', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'data_types': {'key': 'properties.dataTypes', 'type': 'TIDataConnectorDataTypes'},
     }
 
-    def __init__(self, *, etag: str=None, context_id: str=None, data_types=None, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
         super(TIDataConnector, self).__init__(etag=etag, **kwargs)
-        self.context_id = context_id
+        self.tenant_id = tenant_id
         self.data_types = data_types
         self.kind = 'ThreatIntelligence'
