@@ -3,6 +3,30 @@
 Release History
 ===============
 
+0.3.0 (2019-02-06)
+++++++++++++++++++
+
+**Features**
+
+- Model DatabaseUpdate has a new parameter hot_cache_period
+- Model DatabaseUpdate has a new parameter soft_delete_period
+- Model Database has a new parameter hot_cache_period
+- Model Database has a new parameter soft_delete_period
+- Added operation group DataConnectionsOperations
+
+**Breaking changes**
+
+- Model DatabaseUpdate no longer has parameter hot_cache_period_in_days
+- Model DatabaseUpdate no longer has parameter etag
+- Model DatabaseUpdate no longer has parameter soft_delete_period_in_days
+- Model Database no longer has parameter tags
+- Model Database no longer has parameter etag
+- Model Database no longer has parameter hot_cache_period_in_days
+- Model Database no longer has parameter soft_delete_period_in_days
+- Model Cluster no longer has parameter etag
+- Model ClusterUpdate no longer has parameter etag
+- Removed operation group EventHubConnectionsOperations
+
 0.2.0 (2018-11-27)
 ++++++++++++++++++
 

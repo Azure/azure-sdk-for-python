@@ -40,10 +40,10 @@ class UserIdentityFragment(Model):
         'app_id': {'key': 'appId', 'type': 'str'},
     }
 
-    def __init__(self, principal_name=None, principal_id=None, tenant_id=None, object_id=None, app_id=None):
-        super(UserIdentityFragment, self).__init__()
-        self.principal_name = principal_name
-        self.principal_id = principal_id
-        self.tenant_id = tenant_id
-        self.object_id = object_id
-        self.app_id = app_id
+    def __init__(self, **kwargs):
+        super(UserIdentityFragment, self).__init__(**kwargs)
+        self.principal_name = kwargs.get('principal_name', None)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.app_id = kwargs.get('app_id', None)

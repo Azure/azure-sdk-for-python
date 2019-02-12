@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ClusterCheckNameRequest(Model):
-    """ClusterCheckNameRequest.
+    """The result returned from a cluster check name availability request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

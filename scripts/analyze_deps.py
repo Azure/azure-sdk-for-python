@@ -2,7 +2,9 @@
 from __future__ import print_function
 import argparse
 import ast
+from datetime import datetime
 import glob
+import io
 import os
 import re
 import sys
@@ -26,6 +28,7 @@ def locate_wheels(base_dir):
     return sorted(wheels)
 
 def get_lib_deps(base_dir):
+    packages = {}
     dependencies = {}
     for lib_dir in locate_libs(base_dir):
         try:
@@ -33,7 +36,13 @@ def get_lib_deps(base_dir):
             if should_skip_lib(lib_name):
                 continue
             setup_path = os.path.join(lib_dir, 'setup.py')
-            requires = parse_setup(setup_path)
+            version, requires = parse_setup(setup_path)
+
+            packages[lib_name] = {
+                'version': version,
+                'source': lib_dir
+            }
+
             for req in requires:
                 req_parts = re.split('([<>~=]+)', req, 1)
                 req_name = req_parts[0]
@@ -46,13 +55,14 @@ def get_lib_deps(base_dir):
                 dependencies[req_name][spec].append(lib_name)
         except:
             print('Failed to parse %s' % (setup_path))
-    return dependencies
+    return packages, dependencies
 
 def get_wheel_deps(wheel_dir):
     from wheel.pkginfo import read_pkg_info_bytes
     from wheel.wheelfile import WheelFile
 
     requires_dist_re = re.compile(r"""^(?P<name>\S+)(\s\((?P<spec>.+)\))?$""")
+    packages = {}
     dependencies = {}
     for whl_path in locate_wheels(wheel_dir):
         try:
@@ -61,6 +71,12 @@ def get_wheel_deps(wheel_dir):
                 lib_name = pkg_info.get('Name')
                 if should_skip_lib(lib_name):
                     continue
+
+                packages[lib_name] = {
+                    'version': pkg_info.get('Version'),
+                    'source': whl_path
+                }
+
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
                     parsed = requires_dist_re.match(req.split(';')[0].strip())
@@ -73,7 +89,7 @@ def get_wheel_deps(wheel_dir):
                     dependencies[req_name][spec].append(lib_name)
         except:
             print('Failed to parse METADATA from %s' % (whl_path))
-    return dependencies
+    return packages, dependencies
 
 def parse_setup(setup_filename):
     mock_setup = textwrap.dedent('''\
@@ -105,13 +121,14 @@ def parse_setup(setup_filename):
     os.chdir(current_dir)
     _, kwargs = global_vars['__setup_calls__'][0]
 
+    version = kwargs['version']
     requires = []
     if 'install_requires' in kwargs:
         requires += kwargs['install_requires']
     if 'extras_require' in kwargs:
         for extra in kwargs['extras_require'].values():
             requires += extra
-    return requires
+    return version, requires
 
 def dict_compare(d1, d2):
     d1_keys = set(d1.keys())
@@ -122,17 +139,13 @@ def dict_compare(d1, d2):
     modified = {o : (d1[o], d2[o]) for o in intersect_keys if d1[o] != d2[o]}
     return added, removed, modified
 
-class Logger(object):
-    def __init__(self, path):
-        self.terminal = sys.stdout
-        self.log = open(path, 'a')
-
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-
-    def flush(self):
-        pass
+def render_report(output_path, report_context):
+    env = Environment(
+        loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__)))
+    )
+    template = env.get_template('deps.html.j2')
+    with io.open(output_path, 'w', encoding='utf-8') as output:
+        output.write(template.render(report_context))
 
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -148,54 +161,59 @@ if __name__ == '__main__':
     ''')
     parser.add_argument('--verbose', help='verbose output', action='store_true')
     parser.add_argument('--freeze', help='freeze dependencies after analyzing (otherwise, validate dependencies against frozen list)', action='store_true')
-    parser.add_argument('--out', metavar='FILE', help='write log output to FILE in addition to stdout')
+    parser.add_argument('--out', metavar='FILE', help='write HTML-formatted report to FILE')
     parser.add_argument('--wheeldir', metavar='DIR', help='analyze wheels in DIR rather than source packages in this repository')
     args = parser.parse_args()
 
     if args.out:
-        sys.stdout = Logger(args.out)
+        try:
+            from jinja2 import Environment, FileSystemLoader
+        except:
+            print("Jinja2 is required to render the dependency report. Please install with 'pip install Jinja2' to use this option.")
+            sys.exit(1)
 
     if args.wheeldir:
-        dependencies = get_wheel_deps(args.wheeldir)
+        packages, dependencies = get_wheel_deps(args.wheeldir)
     else:
-        dependencies = get_lib_deps(base_dir)
+        packages, dependencies = get_lib_deps(base_dir)
 
     if args.verbose:
-        print('Requirements discovered:')
+        print('Packages analyzed:')
+        for package in sorted(packages.keys()):
+            info = packages[package]
+            print("%s %s" % (package, info['version']))
+            print("  from %s" % (info['source']))
+
+        print('\n\nRequirements discovered:')
         for requirement in sorted(dependencies.keys()):
             specs = dependencies[requirement]
             libs = []
+            print('\n%s' % (requirement))
             for spec in specs.keys():
-                friendly_spec = ' (%s)' % (spec) if spec != '' else ''
+                print('%s' % (spec if spec else '(empty)'))
                 for lib in specs[spec]:
-                    libs.append('  * %s%s' % (lib, friendly_spec))
+                    print('  * %s' % (lib))
 
-            if len(libs) > 0:
-                print('\n%s' % (requirement))
-                for lib in libs:
-                    print(lib)
-
-    consistent = True
+    inconsistent = []
     for requirement in sorted(dependencies.keys()):
         specs = dependencies[requirement]
         num_specs = len(specs)
         if num_specs == 1:
             continue
-        consistent = False
-        if not args.verbose:
-            break
 
-        print("\n\nRequirement '%s' has %s unique specifiers:" % (requirement, num_specs))
-        for spec in sorted(specs.keys()):
-            libs = specs[spec]
-            friendly_spec = '(none)' if spec == '' else spec
-            print("\n  '%s'" % (friendly_spec))
-            print('  ' + ('-' * (len(friendly_spec) + 2)))
-            for lib in sorted(libs):
-                print('    * %s' % (lib))
+        inconsistent.append(requirement)
+        if args.verbose:
+            print("\n\nRequirement '%s' has %s unique specifiers:" % (requirement, num_specs))
+            for spec in sorted(specs.keys()):
+                libs = specs[spec]
+                friendly_spec = '(none)' if spec == '' else spec
+                print("\n  '%s'" % (friendly_spec))
+                print('  ' + ('-' * (len(friendly_spec) + 2)))
+                for lib in sorted(libs):
+                    print('    * %s' % (lib))
 
     exitcode = 0
-    if not consistent:
+    if inconsistent:
         if not args.verbose:
             print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
         else:
@@ -228,37 +246,61 @@ if __name__ == '__main__':
                 spec = ''.join(req_parts[1:])
                 frozen[req_name] = [spec]
     except:
-        print('Unable to open shared_requirements.txt, shared requirements will not be validated')
-        sys.exit(exitcode)
-    
-    flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
-    missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
-    if args.verbose and len(missing_reqs) > 0:
-        print('\nThe following requirements are frozen but do not exist in any current library:')
-        for missing_req in missing_reqs:
-            [spec] = frozen[missing_req]
-            print('  * %s' % (missing_req + spec))
-    if len(new_reqs) > 0:
-        exitcode = 1
-        if args.verbose:
-            for new_req in new_reqs:
-                for spec in dependencies[new_req]:
-                    libs = dependencies[new_req][spec]
-                    print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
-                    for lib in libs:
-                        print("  * %s" % (lib))
-    if len(changed_reqs) > 0:
-        exitcode = 1
-        if args.verbose:
-            for changed_req in changed_reqs:
-                [frozen_spec] = frozen[changed_req]
-                for current_spec in dependencies[changed_req]:
-                    if frozen_spec == current_spec:
-                        continue
-                    libs = dependencies[changed_req][current_spec]
-                    print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
-                    for lib in libs:
-                        print("  * %s" % (lib))
+        print('Unable to open shared_requirements.txt, shared requirements have not been validated')
+
+    missing_reqs, new_reqs, changed_reqs = {}, {}, {}
+    if frozen:
+        flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
+        missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
+        if args.verbose and len(missing_reqs) > 0:
+            print('\nThe following requirements are frozen but do not exist in any current library:')
+            for missing_req in missing_reqs:
+                [spec] = frozen[missing_req]
+                print('  * %s' % (missing_req + spec))
+        if len(new_reqs) > 0:
+            exitcode = 1
+            if args.verbose:
+                for new_req in new_reqs:
+                    for spec in dependencies[new_req]:
+                        libs = dependencies[new_req][spec]
+                        print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
+                        for lib in libs:
+                            print("  * %s" % (lib))
+        if len(changed_reqs) > 0:
+            exitcode = 1
+            if args.verbose:
+                for changed_req in changed_reqs:
+                    [frozen_spec] = frozen[changed_req]
+                    for current_spec in dependencies[changed_req]:
+                        if frozen_spec == current_spec:
+                            continue
+                        libs = dependencies[changed_req][current_spec]
+                        print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
+                        for lib in libs:
+                            print("  * %s" % (lib))
+
+    if args.out:
+        external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
+        def display_order(k):
+            if k in inconsistent:
+                return 'a' + k if k in external else 'b' + k
+            else:
+                return 'c' + k if k in external else 'd' + k
+
+        render_report(args.out, {
+            'changed_reqs': changed_reqs,
+            'curtime': datetime.utcnow(),
+            'dependencies': dependencies,
+            'env': os.environ,
+            'external': external,
+            'frozen': frozen,
+            'inconsistent': inconsistent,
+            'missing_reqs': missing_reqs,
+            'new_reqs': new_reqs,
+            'ordered_deps': sorted(dependencies.keys(), key=display_order),
+            'packages': packages,
+            'repo_name': 'azure-sdk-for-python'
+        })
 
     if exitcode == 0:
         print('All library dependencies validated against frozen requirements')
