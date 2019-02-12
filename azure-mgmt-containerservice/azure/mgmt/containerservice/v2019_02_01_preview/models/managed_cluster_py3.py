@@ -60,6 +60,9 @@ class ManagedCluster(Resource):
     :param enable_rbac: Whether to enable Kubernetes Role-Based Access
      Control.
     :type enable_rbac: bool
+    :param enable_pod_security_policy: Whether to enable Kubernetes Pod
+     security policy.
+    :type enable_pod_security_policy: bool
     :param network_profile: Profile of network configuration.
     :type network_profile:
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.ContainerServiceNetworkProfile
@@ -94,11 +97,12 @@ class ManagedCluster(Resource):
         'addon_profiles': {'key': 'properties.addonProfiles', 'type': '{ManagedClusterAddonProfile}'},
         'node_resource_group': {'key': 'properties.nodeResourceGroup', 'type': 'str'},
         'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},
+        'enable_pod_security_policy': {'key': 'properties.enablePodSecurityPolicy', 'type': 'bool'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
     }
 
-    def __init__(self, *, location: str, tags=None, kubernetes_version: str=None, dns_prefix: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, addon_profiles=None, enable_rbac: bool=None, network_profile=None, aad_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, kubernetes_version: str=None, dns_prefix: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, addon_profiles=None, enable_rbac: bool=None, enable_pod_security_policy: bool=None, network_profile=None, aad_profile=None, **kwargs) -> None:
         super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.kubernetes_version = kubernetes_version
@@ -110,5 +114,6 @@ class ManagedCluster(Resource):
         self.addon_profiles = addon_profiles
         self.node_resource_group = None
         self.enable_rbac = enable_rbac
+        self.enable_pod_security_policy = enable_pod_security_policy
         self.network_profile = network_profile
         self.aad_profile = aad_profile
