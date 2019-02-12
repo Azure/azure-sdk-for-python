@@ -4,21 +4,20 @@
 #  'long_running_tests' Is a boolean indicating that the long-running tests should be executed. 
 #  'EnableDetectorPip': true . Required for Component Governance Support
 
-
 trigger:
 - master
+variables:
+  python.version: '3.6'
 
 jobs:
 - job: 'Build_Target_Packages'
-
   pool:
     vmImage: 'ubuntu-16.04'  
-
   steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.6'
+    displayName: 'Use Python $(python.version)'
     inputs:
-      versionSpec: 3.6
+      versionSpec: $(python.version)
 
   - script: |
      pip install wheel setuptools pathlib twine readme-renderer[md]
@@ -34,31 +33,20 @@ jobs:
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
 
-  - task: CopyFiles@2
-    displayName: 'Move Dependencies Report to Build Artifacts'
-    inputs:
-      SourceFolder: '$(Build.SourcesDirectory)'
-      Contents: dependencies.html
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    condition: always()
-
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     condition: succeededOrFailed()
 
 - job: 'Analyze'
   dependsOn:
-    - 'Build_Target_Packages'
-  
+    - 'Build_Target_Packages'  
   pool:
-    vmImage: 'vs2017-win2016' 
-    
-  steps:
-  
+    vmImage: 'ubuntu-16.04'     
+  steps:  
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.6'
+    displayName: 'Use Python $(python.version)'
     inputs:
-      versionSpec: 3.6
+      versionSpec: $(python.version)
 
   - script: |
      pip install wheel Jinja2
@@ -69,9 +57,11 @@ jobs:
     enabled: true
     inputs:
       scriptPath: 'scripts/analyze_deps.py'
-      arguments: '--verbose --out "$(Build.SourcesDirectory)/dependencies.html"'
+      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
+    # builds should be sufficient.
     condition: and(always(), ne(variables['System.TeamProject'], 'public'))
     displayName: 'Component Detection'
 
@@ -110,7 +100,6 @@ jobs:
         python.version: '2.7'
   pool:
     vmImage: '$(os.vmImage)'
-
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'
@@ -149,14 +138,9 @@ jobs:
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
       reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    condition: and(eq(variables['os.name'],'Windows'),succeeded())
-
 - job: Test_Alpha_Python
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
-
 
 - job: Special_Python_Distro_Tests
   dependsOn:
@@ -177,10 +161,8 @@ jobs:
      mkdir debug
      cd debug
      ../configure --enable-optimizations --prefix=$HOME
-     make install
-     
+     make install     
      cd $(Build.SourcesDirectory)
-
      PATH=/home/vsts/bin:$PATH
      python3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
@@ -207,10 +189,8 @@ jobs:
   - script: |
      cd ~/
      wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-     tar xf pypy3-v6.0.0-linux64.tar.bz2
-     
-     cd $(Build.SourcesDirectory)
-     
+     tar xf pypy3-v6.0.0-linux64.tar.bz2     
+     cd $(Build.SourcesDirectory)     
      PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
      pypy3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
