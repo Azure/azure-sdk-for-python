@@ -65,6 +65,10 @@ jobs:
     condition: and(always(), ne(variables['System.TeamProject'], 'public'))
     displayName: 'Component Detection'
 
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+    condition: succeededOrFailed()
+    
 - job: 'Generic_Tests'
   dependsOn:
     - 'Build_Target_Packages'
