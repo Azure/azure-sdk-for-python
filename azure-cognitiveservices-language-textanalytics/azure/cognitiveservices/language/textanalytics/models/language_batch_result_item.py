@@ -21,8 +21,7 @@ class LanguageBatchResultItem(Model):
     :type detected_languages:
      list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
     :param statistics: (Optional) if showStats=true was specified in the
-     request this field will contain information about the
-     document payload.
+     request this field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """

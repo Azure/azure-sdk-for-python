@@ -18,14 +18,12 @@ class SentimentBatchResultItem(Model):
     :param id: Unique, non-empty document identifier.
     :type id: str
     :param score: A decimal number between 0 and 1 denoting the sentiment of
-     the document.
-     A score above 0.7 usually refers to a positive document while a score
-     below 0.3 normally has a negative connotation.
-     Mid values refer to neutral text.
+     the document. A score above 0.7 usually refers to a positive document
+     while a score below 0.3 normally has a negative connotation. Mid values
+     refer to neutral text.
     :type score: float
     :param statistics: (Optional) if showStats=true was specified in the
-     request this field will contain information about the
-     document payload.
+     request this field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """

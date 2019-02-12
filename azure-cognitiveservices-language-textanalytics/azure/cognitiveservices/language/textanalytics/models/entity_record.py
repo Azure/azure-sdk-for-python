@@ -30,9 +30,9 @@ class EntityRecord(Model):
     :type wikipedia_id: str
     :ivar wikipedia_url: URL for the entity's Wikipedia page.
     :vartype wikipedia_url: str
-    :param bing_id: Bing unique identifier of the recognized entity.
-     Use in conjunction with the Bing Entity Search API to fetch additional
-     relevant information.
+    :param bing_id: Bing unique identifier of the recognized entity. Use in
+     conjunction with the Bing Entity Search API to fetch additional relevant
+     information.
     :type bing_id: str
     :param type: Entity type from Named Entity Recognition model
     :type type: str

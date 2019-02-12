@@ -25,8 +25,7 @@ class KeyPhraseBatchResultItem(Model):
      input document.
     :vartype key_phrases: list[str]
     :param statistics: (Optional) if showStats=true was specified in the
-     request this field will contain information about the
-     document payload.
+     request this field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """

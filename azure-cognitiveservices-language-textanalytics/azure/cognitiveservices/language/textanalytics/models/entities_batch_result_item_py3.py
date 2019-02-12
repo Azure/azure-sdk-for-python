@@ -24,8 +24,7 @@ class EntitiesBatchResultItem(Model):
     :vartype entities:
      list[~azure.cognitiveservices.language.textanalytics.models.EntityRecord]
     :param statistics: (Optional) if showStats=true was specified in the
-     request this field will contain information about the
-     document payload.
+     request this field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """

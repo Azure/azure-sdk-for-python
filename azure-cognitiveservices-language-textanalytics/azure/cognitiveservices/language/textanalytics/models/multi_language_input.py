@@ -16,8 +16,7 @@ class MultiLanguageInput(Model):
     """MultiLanguageInput.
 
     :param language: This is the 2 letter ISO 639-1 representation of a
-     language.
-     For example, use "en" for English; "es" for Spanish etc.,
+     language. For example, use "en" for English; "es" for Spanish etc.,
     :type language: str
     :param id: Unique, non-empty document identifier.
     :type id: str

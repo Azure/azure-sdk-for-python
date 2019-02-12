@@ -24,11 +24,8 @@ class LanguageBatchResult(Model):
     :ivar errors: Errors and Warnings by document
     :vartype errors:
      list[~azure.cognitiveservices.language.textanalytics.models.ErrorRecord]
-    :ivar statistics: /// <summary>
-     (Optional) if showStats=true was specified in the request this field will
-     contain information about the
-     request payload.
-     </summary>
+    :ivar statistics: (Optional) if showStats=true was specified in the
+     request this field will contain information about the request payload.
     :vartype statistics:
      ~azure.cognitiveservices.language.textanalytics.models.RequestStatistics
     """

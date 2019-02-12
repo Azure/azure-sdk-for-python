@@ -16,12 +16,11 @@ class MatchRecord(Model):
     """MatchRecord.
 
     :param wikipedia_score: (optional) If a well-known item with Wikipedia
-     link is recognized,
-     a decimal number denoting the confidence level of the Wikipedia info will
-     be returned.
+     link is recognized, a decimal number denoting the confidence level of the
+     Wikipedia info will be returned.
     :type wikipedia_score: float
-    :param entity_type_score: (optional) If an entity type is recognized,
-     a decimal number denoting the confidence level of the entity type will be
+    :param entity_type_score: (optional) If an entity type is recognized, a
+     decimal number denoting the confidence level of the entity type will be
      returned.
     :type entity_type_score: float
     :param text: Entity text as appears in the request.
