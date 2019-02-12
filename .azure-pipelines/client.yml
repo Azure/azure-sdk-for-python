@@ -17,7 +17,7 @@ jobs:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'
     inputs:
-      versionSpec: $(python.version)
+      versionSpec: '$(python.version)'
 
   - script: |
      pip install wheel setuptools pathlib twine readme-renderer[md]
@@ -46,7 +46,7 @@ jobs:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'
     inputs:
-      versionSpec: $(python.version)
+      versionSpec: '$(python.version)'
 
   - script: |
      pip install wheel Jinja2
