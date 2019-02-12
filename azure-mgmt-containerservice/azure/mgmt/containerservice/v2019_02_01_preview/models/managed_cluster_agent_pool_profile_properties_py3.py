@@ -107,6 +107,8 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -128,9 +130,10 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'type': {'key': 'type', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -144,3 +147,4 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.type = type
         self.orchestrator_version = orchestrator_version
         self.provisioning_state = None
+        self.availability_zones = availability_zones

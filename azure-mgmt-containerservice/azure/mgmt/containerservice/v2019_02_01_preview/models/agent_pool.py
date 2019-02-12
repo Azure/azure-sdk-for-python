@@ -114,6 +114,8 @@ class AgentPool(SubResource):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -141,6 +143,7 @@ class AgentPool(SubResource):
         'agent_pool_type': {'key': 'properties.type', 'type': 'str'},
         'orchestrator_version': {'key': 'properties.orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -157,3 +160,4 @@ class AgentPool(SubResource):
         self.agent_pool_type = kwargs.get('agent_pool_type', None)
         self.orchestrator_version = kwargs.get('orchestrator_version', None)
         self.provisioning_state = None
+        self.availability_zones = kwargs.get('availability_zones', None)

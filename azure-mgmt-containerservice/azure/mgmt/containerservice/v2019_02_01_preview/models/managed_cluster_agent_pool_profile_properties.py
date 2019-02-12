@@ -107,6 +107,8 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -128,6 +130,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'type': {'key': 'type', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -144,3 +147,4 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.type = kwargs.get('type', None)
         self.orchestrator_version = kwargs.get('orchestrator_version', None)
         self.provisioning_state = None
+        self.availability_zones = kwargs.get('availability_zones', None)

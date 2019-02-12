@@ -114,6 +114,8 @@ class AgentPool(SubResource):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     """
 
     _validation = {
@@ -141,9 +143,10 @@ class AgentPool(SubResource):
         'agent_pool_type': {'key': 'properties.type', 'type': 'str'},
         'orchestrator_version': {'key': 'properties.orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, **kwargs) -> None:
         super(AgentPool, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -157,3 +160,4 @@ class AgentPool(SubResource):
         self.agent_pool_type = agent_pool_type
         self.orchestrator_version = orchestrator_version
         self.provisioning_state = None
+        self.availability_zones = availability_zones

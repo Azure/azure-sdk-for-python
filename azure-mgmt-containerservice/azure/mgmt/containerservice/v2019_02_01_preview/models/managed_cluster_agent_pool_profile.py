@@ -107,6 +107,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
+    :param availability_zones: Availability zones for nodes
+    :type availability_zones: list[str]
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
@@ -132,6 +134,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'type': {'key': 'type', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
