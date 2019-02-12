@@ -73,13 +73,13 @@ class TextAnalyticsClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven(
+    def detect_language(
             self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
-        """Detect Language.
+        """The API returns the detected language and a numeric score between 0 and
+        1.
 
-        The API returns the detected language and a numeric score between 0 and
-        1. Scores close to 1 indicate 100% certainty that the identified
-        language is true. A total of 120 languages are supported.
+        Scores close to 1 indicate 100% certainty that the identified language
+        is true. A total of 120 languages are supported.
 
         :param show_stats: (optional) if set to true, response will contain
          input and document level statistics.
@@ -104,7 +104,7 @@ class TextAnalyticsClient(SDKClient):
             language_batch_input = models.LanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven.metadata['url']
+        url = self.detect_language.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -145,25 +145,17 @@ class TextAnalyticsClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven.metadata = {'url': '/languages'}
+    detect_language.metadata = {'url': '/languages'}
 
-    def fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four(
+    def entities(
             self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
-        """Entities.
+        """The API returns a list of recognized entities in a given document.
 
-        The API returns a list of known entities and general named entities
-        (\"Person\", \"Location\", \"Organization\" etc) in a given document.
-        Known entities are returned with Wikipedia Id and Wikipedia link, and
-        also Bing Id which can be used in Bing Entity Search API. General named
-        entities are returned with entity types. If a general named entity is
-        also a known entity, then all information regarding it (Wikipedia Id,
-        Bing Id, entity type etc) will be returned. See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking#supported-types-for-named-entity-recognition">Supported
-        Entity Types in Text Analytics API</a> for the list of supported Entity
-        Types. See the <a
+        To get even more information on each recognized entity we recommend
+        using the Bing Entity Search API by querying for the recognized
+        entities names. See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
         languages in Text Analytics API</a> for the list of enabled languages.
-        .
 
         :param show_stats: (optional) if set to true, response will contain
          input and document level statistics.
@@ -188,7 +180,7 @@ class TextAnalyticsClient(SDKClient):
             multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four.metadata['url']
+        url = self.entities.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -229,16 +221,17 @@ class TextAnalyticsClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four.metadata = {'url': '/entities'}
+    entities.metadata = {'url': '/entities'}
 
-    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six(
+    def key_phrases(
             self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
-        """Key Phrases.
+        """The API returns a list of strings denoting the key talking points in
+        the input text.
 
-        The API returns a list of strings denoting the key talking points in
-        the input text. See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
-        languages in Text Analytics API</a> for the list of enabled languages.
+        See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
+        Analytics Documentation</a> for details about the languages that are
+        supported by key phrase extraction.
 
         :param show_stats: (optional) if set to true, response will contain
          input and document level statistics.
@@ -263,7 +256,7 @@ class TextAnalyticsClient(SDKClient):
             multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six.metadata['url']
+        url = self.key_phrases.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -304,18 +297,18 @@ class TextAnalyticsClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six.metadata = {'url': '/keyPhrases'}
+    key_phrases.metadata = {'url': '/keyPhrases'}
 
-    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine(
+    def sentiment(
             self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
-        """Sentiment.
+        """The API returns a numeric score between 0 and 1.
 
-        The API returns a numeric score between 0 and 1. Scores close to 1
-        indicate positive sentiment, while scores close to 0 indicate negative
-        sentiment. A score of 0.5 indicates the lack of sentiment (e.g. a
-        factoid statement). See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
-        languages in Text Analytics API</a> for the list of enabled languages.
+        Scores close to 1 indicate positive sentiment, while scores close to 0
+        indicate negative sentiment. A score of 0.5 indicates the lack of
+        sentiment (e.g. a factoid statement). See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
+        Analytics Documentation</a> for details about the languages that are
+        supported by sentiment analysis.
 
         :param show_stats: (optional) if set to true, response will contain
          input and document level statistics.
@@ -338,7 +331,7 @@ class TextAnalyticsClient(SDKClient):
             multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine.metadata['url']
+        url = self.sentiment.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -381,4 +374,4 @@ class TextAnalyticsClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine.metadata = {'url': '/sentiment'}
+    sentiment.metadata = {'url': '/sentiment'}
