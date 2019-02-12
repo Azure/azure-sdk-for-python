@@ -143,7 +143,7 @@ class BookmarksOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -215,7 +215,7 @@ class BookmarksOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -290,7 +290,7 @@ class BookmarksOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

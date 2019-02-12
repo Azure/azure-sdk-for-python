@@ -66,7 +66,7 @@ class AccountEntity(Entity):
         'aad_user_id': {'readonly': True},
         'puid': {'readonly': True},
         'is_domain_joined': {'readonly': True},
-        'object_guid': {'readonly': True, 'pattern': r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'},
+        'object_guid': {'readonly': True},
     }
 
     _attribute_map = {

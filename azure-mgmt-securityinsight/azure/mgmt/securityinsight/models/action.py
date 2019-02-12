@@ -28,15 +28,12 @@ class Action(Resource):
     :type etag: str
     :param trigger_uri: The uri for the action to trigger.
     :type trigger_uri: str
-    :ivar rule_id: The unique identifier of the rule.
-    :vartype rule_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'rule_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,11 +42,9 @@ class Action(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'trigger_uri': {'key': 'properties.triggerUri', 'type': 'str'},
-        'rule_id': {'key': 'properties.ruleId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Action, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
         self.trigger_uri = kwargs.get('trigger_uri', None)
-        self.rule_id = None

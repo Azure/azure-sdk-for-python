@@ -30,9 +30,9 @@ class ScheduledAlertRule(AlertRule):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param rule_name: Required. The name for alerts created by this alert
+    :param display_name: The display name for alerts created by this alert
      rule.
-    :type rule_name: str
+    :type display_name: str
     :param description: Required. The description of the alert rule.
     :type description: str
     :param severity: Required. The severity for alerts created by this alert
@@ -72,7 +72,6 @@ class ScheduledAlertRule(AlertRule):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'rule_name': {'required': True},
         'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
@@ -92,7 +91,7 @@ class ScheduledAlertRule(AlertRule):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'rule_name': {'key': 'properties.ruleName', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
@@ -106,9 +105,9 @@ class ScheduledAlertRule(AlertRule):
         'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
     }
 
-    def __init__(self, *, rule_name: str, description: str, severity, enabled: bool, query: str, query_frequency, query_period, trigger_operator, trigger_threshold: int, suppression_enabled: bool, suppression_duration, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str, severity, enabled: bool, query: str, query_frequency, query_period, trigger_operator, trigger_threshold: int, suppression_enabled: bool, suppression_duration, etag: str=None, display_name: str=None, **kwargs) -> None:
         super(ScheduledAlertRule, self).__init__(etag=etag, **kwargs)
-        self.rule_name = rule_name
+        self.display_name = display_name
         self.description = description
         self.severity = severity
         self.enabled = enabled
