@@ -11,10 +11,8 @@ variables:
 
 jobs:
 - job: 'Build_Target_Packages'
-
   pool:
-    vmImage: 'ubuntu-16.04'  
-
+    vmImage: 'ubuntu-16.04'
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -22,9 +20,9 @@ jobs:
       versionSpec: $(PythonVersion)
 
   - script: |
-     pip install wheel setuptools pathlib Jinja2 twine readme-renderer[md]
+     pip install wheel setuptools pathlib twine readme-renderer[md]
     displayName: 'Prep Environment'
-
+  
   - task: PythonScript@0
     displayName: 'Generate Packages'
     inputs:
@@ -41,14 +39,14 @@ jobs:
 
 - job: 'Analyze'
   dependsOn:
-    - 'Build_Target_Packages'  
+    - 'Build_Target_Packages'
   pool:
-    vmImage: 'ubuntu-16.04'     
+    vmImage: 'ubuntu-16.04'
   steps:  
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(python.version)'
+    displayName: 'Use Python $(PythonVersion)'
     inputs:
-      versionSpec: '$(python.version)'
+      versionSpec: '$(PythonVersion)'
 
   - script: |
      pip install wheel Jinja2
@@ -106,16 +104,16 @@ jobs:
         python.version: '2.7'
   pool:
     vmImage: '$(os.vmImage)'
-
   steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
+    displayName: 'Use Python $(python.version)'
     inputs:
-      versionSpec: '$(PythonVersion)'
+      versionSpec: '$(python.version)'
 
   - script: |
      pip install pathlib twine codecov beautifulsoup4
     displayName: 'Prep Environment'
+
   - task: PythonScript@0
     displayName: 'Setup and Run Tests'
     inputs:
@@ -126,10 +124,12 @@ jobs:
      coverage xml
      coverage html
     displayName: 'Generate Coverage XML'
+
   - script: |
      codecov -t $(codecov-python-repository-token)
     displayName: 'Publish Code Cov'
     condition: ne(variables['codecov-python-repository-token'], '')
+
   - task: PythonScript@0
     displayName: 'Inline CSS for Cobertura'
     inputs:
@@ -164,8 +164,9 @@ jobs:
      cd debug
      ../configure --enable-optimizations --prefix=$HOME
      make install
-     
+
      cd $(Build.SourcesDirectory)
+
      PATH=/home/vsts/bin:$PATH
      python3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
@@ -188,13 +189,12 @@ jobs:
   - script: |
      pip install pathlib twine
     displayName: 'Prep Environment'
+
   - script: |
      cd ~/
      wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-     tar xf pypy3-v6.0.0-linux64.tar.bz2
-     
-     cd $(Build.SourcesDirectory)
-     
+     tar xf pypy3-v6.0.0-linux64.tar.bz2     
+     cd $(Build.SourcesDirectory)     
      PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
      pypy3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 

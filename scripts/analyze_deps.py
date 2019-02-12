@@ -190,7 +190,7 @@ if __name__ == '__main__':
             libs = []
             print('\n%s' % (requirement))
             for spec in specs.keys():
-                print('%s' % (spec if spec else '(any)'))
+                print('%s' % (spec if spec else '(empty)'))
                 for lib in specs[spec]:
                     print('  * %s' % (lib))
 
@@ -247,7 +247,7 @@ if __name__ == '__main__':
                 frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
-    
+
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     if frozen:
         flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
@@ -278,17 +278,26 @@ if __name__ == '__main__':
                         print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
                         for lib in libs:
                             print("  * %s" % (lib))
-    
+
     if args.out:
+        external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
+        def display_order(k):
+            if k in inconsistent:
+                return 'a' + k if k in external else 'b' + k
+            else:
+                return 'c' + k if k in external else 'd' + k
+
         render_report(args.out, {
             'changed_reqs': changed_reqs,
             'curtime': datetime.utcnow(),
             'dependencies': dependencies,
             'env': os.environ,
+            'external': external,
             'frozen': frozen,
             'inconsistent': inconsistent,
             'missing_reqs': missing_reqs,
             'new_reqs': new_reqs,
+            'ordered_deps': sorted(dependencies.keys(), key=display_order),
             'packages': packages,
             'repo_name': 'azure-sdk-for-python'
         })
