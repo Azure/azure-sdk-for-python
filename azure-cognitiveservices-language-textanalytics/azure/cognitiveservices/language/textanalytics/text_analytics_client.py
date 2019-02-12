@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import HttpOperationError
 from . import models
 
 
@@ -36,7 +37,7 @@ class TextAnalyticsClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/text/analytics/v2.1-preview'
+        base_url = '{Endpoint}/text/analytics/v2.1'
 
         super(TextAnalyticsClientConfiguration, self).__init__(base_url)
 
@@ -67,88 +68,25 @@ class TextAnalyticsClient(SDKClient):
         super(TextAnalyticsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = 'v2.1-preview'
+        self.api_version = 'v2.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
 
-    def key_phrases(
-            self, documents=None, custom_headers=None, raw=False, **operation_config):
-        """The API returns a list of strings denoting the key talking points in
-        the input text.
+    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven(
+            self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
+        """Detect Language.
 
-        See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
-        Analytics Documentation</a> for details about the languages that are
-        supported by key phrase extraction.
+        The API returns the detected language and a numeric score between 0 and
+        1. Scores close to 1 indicate 100% certainty that the identified
+        language is true. A total of 120 languages are supported.
 
+        :param show_stats: (optional) if set to true, response will contain
+         input and document level statistics.
+        :type show_stats: bool
         :param documents:
         :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: KeyPhraseBatchResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.KeyPhraseBatchResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
-        """
-        input = models.MultiLanguageBatchInput(documents=documents)
-
-        # Construct URL
-        url = self.key_phrases.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyPhraseBatchResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    key_phrases.metadata = {'url': '/keyPhrases'}
-
-    def detect_language(
-            self, documents=None, custom_headers=None, raw=False, **operation_config):
-        """The API returns the detected language and a numeric score between 0 and
-        1.
-
-        Scores close to 1 indicate 100% certainty that the identified language
-        is true. A total of 120 languages are supported.
-
-        :param documents:
-        :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.Input]
+         list[~azure.cognitiveservices.language.textanalytics.models.LanguageInput]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -161,10 +99,12 @@ class TextAnalyticsClient(SDKClient):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
         """
-        input = models.BatchInput(documents=documents)
+        language_batch_input = None
+        if documents is not None:
+            language_batch_input = models.LanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.detect_language.metadata['url']
+        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -172,6 +112,8 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        if show_stats is not None:
+            query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -181,7 +123,10 @@ class TextAnalyticsClient(SDKClient):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(input, 'BatchInput')
+        if language_batch_input is not None:
+            body_content = self._serialize.body(language_batch_input, 'LanguageBatchInput')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -200,98 +145,29 @@ class TextAnalyticsClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_language.metadata = {'url': '/languages'}
+    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_seven.metadata = {'url': '/languages'}
 
-    def sentiment(
-            self, documents=None, custom_headers=None, raw=False, **operation_config):
-        """The API returns a numeric score between 0 and 1.
+    def fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four(
+            self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
+        """Entities.
 
-        Scores close to 1 indicate positive sentiment, while scores close to 0
-        indicate negative sentiment. A score of 0.5 indicates the lack of
-        sentiment (e.g. a factoid statement). See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview#supported-languages">Text
-        Analytics Documentation</a> for details about the languages that are
-        supported by sentiment analysis.
-
-        :param documents:
-        :type documents:
-         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: SentimentBatchResult or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.SentimentBatchResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
-        """
-        input = models.MultiLanguageBatchInput(documents=documents)
-
-        # Construct URL
-        url = self.sentiment.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SentimentBatchResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    sentiment.metadata = {'url': '/sentiment'}
-
-    def entities(
-            self, documents=None, custom_headers=None, raw=False, **operation_config):
-        """The API returns a list of recognized entities in a given document.
-
-        The API returns a list of recognized entities in a given document. To
-        get even more information on each recognized entity we recommend using
-        the Bing Entity Search API by querying for the recognized entities
-        names. See the <a
-        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
-        languages in Text Analytics API</a> for the list of enabled
-        languages.The API returns a list of known entities and general named
-        entities ("Person", "Location", "Organization" etc) in a given
-        document. Known entities are returned with Wikipedia Id and Wikipedia
-        link, and also Bing Id which can be used in Bing Entity Search API.
-        General named entities are returned with entity types. If a general
-        named entity is also a known entity, then all information regarding it
-        (Wikipedia Id, Bing Id, entity type etc) will be returned. See the <a
+        The API returns a list of known entities and general named entities
+        (\"Person\", \"Location\", \"Organization\" etc) in a given document.
+        Known entities are returned with Wikipedia Id and Wikipedia link, and
+        also Bing Id which can be used in Bing Entity Search API. General named
+        entities are returned with entity types. If a general named entity is
+        also a known entity, then all information regarding it (Wikipedia Id,
+        Bing Id, entity type etc) will be returned. See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking#supported-types-for-named-entity-recognition">Supported
         Entity Types in Text Analytics API</a> for the list of supported Entity
         Types. See the <a
         href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
         languages in Text Analytics API</a> for the list of enabled languages.
+        .
 
+        :param show_stats: (optional) if set to true, response will contain
+         input and document level statistics.
+        :type show_stats: bool
         :param documents:
         :type documents:
          list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
@@ -300,17 +176,19 @@ class TextAnalyticsClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EntitiesBatchResultV2dot1 or ClientRawResponse if raw=true
+        :return: EntitiesBatchResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResultV2dot1
+         ~azure.cognitiveservices.language.textanalytics.models.EntitiesBatchResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
         """
-        input = models.MultiLanguageBatchInput(documents=documents)
+        multi_language_batch_input = None
+        if documents is not None:
+            multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.entities.metadata['url']
+        url = self.fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -318,6 +196,8 @@ class TextAnalyticsClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        if show_stats is not None:
+            query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -327,7 +207,10 @@ class TextAnalyticsClient(SDKClient):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(input, 'MultiLanguageBatchInput')
+        if multi_language_batch_input is not None:
+            body_content = self._serialize.body(multi_language_batch_input, 'MultiLanguageBatchInput')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -339,11 +222,163 @@ class TextAnalyticsClient(SDKClient):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EntitiesBatchResultV2dot1', response)
+            deserialized = self._deserialize('EntitiesBatchResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    entities.metadata = {'url': '/entities'}
+    fiveac_four_two_five_oned_fiveb_fourccd_one_five_five_fourda_seven_six_three_four.metadata = {'url': '/entities'}
+
+    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six(
+            self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
+        """Key Phrases.
+
+        The API returns a list of strings denoting the key talking points in
+        the input text. See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
+        languages in Text Analytics API</a> for the list of enabled languages.
+
+        :param show_stats: (optional) if set to true, response will contain
+         input and document level statistics.
+        :type show_stats: bool
+        :param documents:
+        :type documents:
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: KeyPhraseBatchResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.textanalytics.models.KeyPhraseBatchResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.textanalytics.models.ErrorResponseException>`
+        """
+        multi_language_batch_input = None
+        if documents is not None:
+            multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
+
+        # Construct URL
+        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if show_stats is not None:
+            query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if multi_language_batch_input is not None:
+            body_content = self._serialize.body(multi_language_batch_input, 'MultiLanguageBatchInput')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('KeyPhraseBatchResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_six.metadata = {'url': '/keyPhrases'}
+
+    def five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine(
+            self, show_stats=None, documents=None, custom_headers=None, raw=False, **operation_config):
+        """Sentiment.
+
+        The API returns a numeric score between 0 and 1. Scores close to 1
+        indicate positive sentiment, while scores close to 0 indicate negative
+        sentiment. A score of 0.5 indicates the lack of sentiment (e.g. a
+        factoid statement). See the <a
+        href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/text-analytics-supported-languages">Supported
+        languages in Text Analytics API</a> for the list of enabled languages.
+
+        :param show_stats: (optional) if set to true, response will contain
+         input and document level statistics.
+        :type show_stats: bool
+        :param documents:
+        :type documents:
+         list[~azure.cognitiveservices.language.textanalytics.models.MultiLanguageInput]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        multi_language_batch_input = None
+        if documents is not None:
+            multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
+
+        # Construct URL
+        url = self.five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if show_stats is not None:
+            query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if multi_language_batch_input is not None:
+            body_content = self._serialize.body(multi_language_batch_input, 'MultiLanguageBatchInput')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 500]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SentimentBatchResult', response)
+        if response.status_code == 500:
+            deserialized = self._deserialize('ErrorResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    five_sixf_three_zeroceeeda_five_six_five_zerodb_zero_five_fivea_threec_nine.metadata = {'url': '/sentiment'}

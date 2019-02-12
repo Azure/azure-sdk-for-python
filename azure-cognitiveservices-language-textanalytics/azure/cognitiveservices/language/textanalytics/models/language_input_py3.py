@@ -12,26 +12,25 @@
 from msrest.serialization import Model
 
 
-class MatchRecordV2dot1(Model):
-    """MatchRecordV2dot1.
+class LanguageInput(Model):
+    """LanguageInput.
 
-    :param text: Entity text as appears in the request.
+    :param country_hint:
+    :type country_hint: str
+    :param id: Unique, non-empty document identifier.
+    :type id: str
+    :param text:
     :type text: str
-    :param offset: Start position (in Unicode characters) for the entity match
-     text.
-    :type offset: int
-    :param length: Length (in Unicode characters) for the entity match text.
-    :type length: int
     """
 
     _attribute_map = {
+        'country_hint': {'key': 'countryHint', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'text': {'key': 'text', 'type': 'str'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
     }
 
-    def __init__(self, *, text: str=None, offset: int=None, length: int=None, **kwargs) -> None:
-        super(MatchRecordV2dot1, self).__init__(**kwargs)
+    def __init__(self, *, country_hint: str=None, id: str=None, text: str=None, **kwargs) -> None:
+        super(LanguageInput, self).__init__(**kwargs)
+        self.country_hint = country_hint
+        self.id = id
         self.text = text
-        self.offset = offset
-        self.length = length

@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class EntityRecordV2dot1(Model):
-    """EntityRecordV2dot1.
+class EntityRecord(Model):
+    """EntityRecord.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,17 +22,17 @@ class EntityRecordV2dot1(Model):
     :type name: str
     :param matches: List of instances this entity appears in the text.
     :type matches:
-     list[~azure.cognitiveservices.language.textanalytics.models.MatchRecordV2dot1]
+     list[~azure.cognitiveservices.language.textanalytics.models.MatchRecord]
     :param wikipedia_language: Wikipedia language for which the WikipediaId
      and WikipediaUrl refers to.
     :type wikipedia_language: str
     :param wikipedia_id: Wikipedia unique identifier of the recognized entity.
     :type wikipedia_id: str
-    :ivar wikipedia_url: URL for the entity's English Wikipedia page.
+    :ivar wikipedia_url: URL for the entity's Wikipedia page.
     :vartype wikipedia_url: str
-    :param bing_id: Bing unique identifier of the recognized entity. Use in
-     conjunction with the Bing Entity Search API to fetch additional relevant
-     information.
+    :param bing_id: Bing unique identifier of the recognized entity.
+     Use in conjunction with the Bing Entity Search API to fetch additional
+     relevant information.
     :type bing_id: str
     :param type: Entity type from Named Entity Recognition model
     :type type: str
@@ -46,7 +46,7 @@ class EntityRecordV2dot1(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'matches': {'key': 'matches', 'type': '[MatchRecordV2dot1]'},
+        'matches': {'key': 'matches', 'type': '[MatchRecord]'},
         'wikipedia_language': {'key': 'wikipediaLanguage', 'type': 'str'},
         'wikipedia_id': {'key': 'wikipediaId', 'type': 'str'},
         'wikipedia_url': {'key': 'wikipediaUrl', 'type': 'str'},
@@ -56,7 +56,7 @@ class EntityRecordV2dot1(Model):
     }
 
     def __init__(self, **kwargs):
-        super(EntityRecordV2dot1, self).__init__(**kwargs)
+        super(EntityRecord, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.matches = kwargs.get('matches', None)
         self.wikipedia_language = kwargs.get('wikipedia_language', None)
