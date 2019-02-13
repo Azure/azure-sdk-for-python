@@ -11,6 +11,7 @@
 
 from .servers_operations import ServersOperations
 from .firewall_rules_operations import FirewallRulesOperations
+from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .databases_operations import DatabasesOperations
 from .configurations_operations import ConfigurationsOperations
 from .log_files_operations import LogFilesOperations
@@ -22,6 +23,7 @@ from .operations import Operations
 __all__ = [
     'ServersOperations',
     'FirewallRulesOperations',
+    'VirtualNetworkRulesOperations',
     'DatabasesOperations',
     'ConfigurationsOperations',
     'LogFilesOperations',

@@ -20,6 +20,9 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param task_file_path: The task template/definition file path relative to
@@ -40,6 +43,7 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
 
     _attribute_map = {
         'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'task_file_path': {'key': 'taskFilePath', 'type': 'str'},
         'values_file_path': {'key': 'valuesFilePath', 'type': 'str'},

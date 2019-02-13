@@ -65,6 +65,7 @@ class FabricErrorError(Model):
      - "FABRIC_E_BACKUP_NOT_ENABLED"
      - "FABRIC_E_BACKUP_POLICY_NOT_EXISTING"
      - "FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING"
+     - "FABRIC_E_IMAGEBUILDER_RESERVED_DIRECTORY_ERROR"
      - Possible values of the error code for HTTP status code 409 (Conflict)
      - "FABRIC_E_APPLICATION_TYPE_ALREADY_EXISTS"
      - "FABRIC_E_APPLICATION_ALREADY_EXISTS"
@@ -171,7 +172,7 @@ class FabricErrorError(Model):
      'FABRIC_E_SINGLE_INSTANCE_APPLICATION_ALREADY_EXISTS',
      'FABRIC_E_SINGLE_INSTANCE_APPLICATION_NOT_FOUND',
      'FABRIC_E_VOLUME_ALREADY_EXISTS', 'FABRIC_E_VOLUME_NOT_FOUND',
-     'SerializationError'
+     'SerializationError', 'FABRIC_E_IMAGEBUILDER_RESERVED_DIRECTORY_ERROR'
     :type code: str or ~azure.servicefabric.models.FabricErrorCodes
     :param message: Error message.
     :type message: str

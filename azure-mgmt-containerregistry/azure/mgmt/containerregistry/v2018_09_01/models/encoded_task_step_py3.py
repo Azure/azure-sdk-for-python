@@ -26,6 +26,9 @@ class EncodedTaskStep(TaskStepProperties):
     :param context_path: The URL(absolute or relative) of the source context
      for the task step.
     :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param encoded_task_content: Required. Base64 encoded value of the
@@ -49,14 +52,15 @@ class EncodedTaskStep(TaskStepProperties):
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
         'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'encoded_task_content': {'key': 'encodedTaskContent', 'type': 'str'},
         'encoded_values_content': {'key': 'encodedValuesContent', 'type': 'str'},
         'values': {'key': 'values', 'type': '[SetValue]'},
     }
 
-    def __init__(self, *, encoded_task_content: str, context_path: str=None, encoded_values_content: str=None, values=None, **kwargs) -> None:
-        super(EncodedTaskStep, self).__init__(context_path=context_path, **kwargs)
+    def __init__(self, *, encoded_task_content: str, context_path: str=None, context_access_token: str=None, encoded_values_content: str=None, values=None, **kwargs) -> None:
+        super(EncodedTaskStep, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
         self.encoded_task_content = encoded_task_content
         self.encoded_values_content = encoded_values_content
         self.values = values

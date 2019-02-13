@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class HiveLinkedService(LinkedService):
     """Hive Server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,11 @@ class HiveLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: IP address or host name of the Hive server, separated by ';'
-     for multiple hosts (only when serviceDiscoveryMode is enable).
+    :param host: Required. IP address or host name of the Hive server,
+     separated by ';' for multiple hosts (only when serviceDiscoveryMode is
+     enable).
     :type host: object
     :param port: The TCP port that the Hive server uses to listen for client
      connections.
@@ -44,8 +47,8 @@ class HiveLinkedService(LinkedService):
      Thrift layer. Possible values include: 'Binary', 'SASL', 'HTTP '
     :type thrift_transport_protocol: str or
      ~azure.mgmt.datafactory.models.HiveThriftTransportProtocol
-    :param authentication_type: The authentication method used to access the
-     Hive server. Possible values include: 'Anonymous', 'Username',
+    :param authentication_type: Required. The authentication method used to
+     access the Hive server. Possible values include: 'Anonymous', 'Username',
      'UsernameAndPassword', 'WindowsAzureHDInsightService'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.HiveAuthenticationType
@@ -122,23 +125,23 @@ class HiveLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, server_type=None, thrift_transport_protocol=None, service_discovery_mode=None, zoo_keeper_name_space=None, use_native_query=None, username=None, password=None, http_path=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, encrypted_credential=None):
-        super(HiveLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.port = port
-        self.server_type = server_type
-        self.thrift_transport_protocol = thrift_transport_protocol
-        self.authentication_type = authentication_type
-        self.service_discovery_mode = service_discovery_mode
-        self.zoo_keeper_name_space = zoo_keeper_name_space
-        self.use_native_query = use_native_query
-        self.username = username
-        self.password = password
-        self.http_path = http_path
-        self.enable_ssl = enable_ssl
-        self.trusted_cert_path = trusted_cert_path
-        self.use_system_trust_store = use_system_trust_store
-        self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
-        self.allow_self_signed_server_cert = allow_self_signed_server_cert
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(HiveLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.port = kwargs.get('port', None)
+        self.server_type = kwargs.get('server_type', None)
+        self.thrift_transport_protocol = kwargs.get('thrift_transport_protocol', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.service_discovery_mode = kwargs.get('service_discovery_mode', None)
+        self.zoo_keeper_name_space = kwargs.get('zoo_keeper_name_space', None)
+        self.use_native_query = kwargs.get('use_native_query', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.http_path = kwargs.get('http_path', None)
+        self.enable_ssl = kwargs.get('enable_ssl', None)
+        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
+        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
+        self.allow_host_name_cn_mismatch = kwargs.get('allow_host_name_cn_mismatch', None)
+        self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Hive'

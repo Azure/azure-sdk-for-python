@@ -286,7 +286,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_arp_table(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The ListArpTable from ExpressRouteCircuit opertion retrieves the
+        """The ListArpTable from ExpressRouteCircuit operation retrieves the
         currently advertised arp table associated with the ExpressRouteCircuits
         in a resource group.
 
@@ -358,7 +358,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_routes_table(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The ListRoutesTable from ExpressRouteCircuit opertion retrieves the
+        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the
         currently advertised routes table associated with the
         ExpressRouteCircuits in a resource group.
 
@@ -430,8 +430,8 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_stats(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The Liststats ExpressRouteCircuit opertion retrieves all the stats from
-        a ExpressRouteCircuits in a resource group.
+        """The ListStats ExpressRouteCircuit operation retrieves all the stats
+        from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
