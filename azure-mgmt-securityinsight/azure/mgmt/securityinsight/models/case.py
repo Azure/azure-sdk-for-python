@@ -49,7 +49,7 @@ class Case(Resource):
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
     :param status: Required. The status of the case. Possible values include:
      'Draft', 'Open', 'InProgress', 'Closed'
-    :type status: str or ~azure.mgmt.securityinsight.models.Status
+    :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason

@@ -42,7 +42,7 @@ class CaseSeverity(str, Enum):
     informational = "Informational"  #: Informational severity
 
 
-class Status(str, Enum):
+class CaseStatus(str, Enum):
 
     draft = "Draft"  #: Case that wasn't promoted yet to active
     open = "Open"  #: An active case which isn't handled currently

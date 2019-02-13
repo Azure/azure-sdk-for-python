@@ -182,7 +182,7 @@ class AlertRulesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}'}
 
-    def create(
+    def create_or_update(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, alert_rule, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the alert rule.
 
@@ -209,7 +209,7 @@ class AlertRulesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -258,7 +258,7 @@ class AlertRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}'}
 
     def delete(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, custom_headers=None, raw=False, **operation_config):
@@ -394,7 +394,7 @@ class AlertRulesOperations(object):
         return deserialized
     get_action.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}'}
 
-    def create_action(
+    def create_or_update_action(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, action_id, etag=None, trigger_uri=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the action of alert rule.
 
@@ -427,7 +427,7 @@ class AlertRulesOperations(object):
         action = models.Action(etag=etag, trigger_uri=trigger_uri)
 
         # Construct URL
-        url = self.create_action.metadata['url']
+        url = self.create_or_update_action.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -477,7 +477,7 @@ class AlertRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_action.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}'}
+    create_or_update_action.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}'}
 
     def delete_action(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, action_id, custom_headers=None, raw=False, **operation_config):
