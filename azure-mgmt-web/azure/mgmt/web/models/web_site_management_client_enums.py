@@ -200,6 +200,15 @@ class SiteAvailabilityState(str, Enum):
     disaster_recovery_mode = "DisasterRecoveryMode"
 
 
+class RedundancyMode(str, Enum):
+
+    none = "None"
+    manual = "Manual"
+    failover = "Failover"
+    active_active = "ActiveActive"
+    geo_redundant = "GeoRedundant"
+
+
 class StatusOptions(str, Enum):
 
     ready = "Ready"
