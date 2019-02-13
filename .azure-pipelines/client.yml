@@ -66,7 +66,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
     # builds should be sufficient.
-    condition: and(always(), ne(variables['Build.Reason'],'PullRequest'))
+    condition: and(succeedOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
 
   - task: PublishBuildArtifacts@1
