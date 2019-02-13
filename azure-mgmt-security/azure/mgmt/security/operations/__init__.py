@@ -9,6 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .pricings_operations import PricingsOperations
+from .security_contacts_operations import SecurityContactsOperations
+from .workspace_settings_operations import WorkspaceSettingsOperations
+from .auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
+from .compliances_operations import CompliancesOperations
+from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
+from .settings_operations import SettingsOperations
+from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations import Operations
 from .locations_operations import LocationsOperations
 from .tasks_operations import TasksOperations
@@ -20,6 +28,14 @@ from .topology_operations import TopologyOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
 
 __all__ = [
+    'PricingsOperations',
+    'SecurityContactsOperations',
+    'WorkspaceSettingsOperations',
+    'AutoProvisioningSettingsOperations',
+    'CompliancesOperations',
+    'AdvancedThreatProtectionOperations',
+    'SettingsOperations',
+    'InformationProtectionPoliciesOperations',
     'Operations',
     'LocationsOperations',
     'TasksOperations',

@@ -13,6 +13,14 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.pricings_operations import PricingsOperations
+from .operations.security_contacts_operations import SecurityContactsOperations
+from .operations.workspace_settings_operations import WorkspaceSettingsOperations
+from .operations.auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
+from .operations.compliances_operations import CompliancesOperations
+from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
+from .operations.settings_operations import SettingsOperations
+from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations.operations import Operations
 from .operations.locations_operations import LocationsOperations
 from .operations.tasks_operations import TasksOperations
@@ -33,23 +41,23 @@ class SecurityCenterConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Azure subscription ID
+    :type subscription_id: str
     :param asc_location: The location where ASC stores the data of the
      subscription. can be retrieved from Get locations
     :type asc_location: str
-    :param subscription_id: Azure subscription ID
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, asc_location, subscription_id, base_url=None):
+            self, credentials, subscription_id, asc_location, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if asc_location is None:
-            raise ValueError("Parameter 'asc_location' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if asc_location is None:
+            raise ValueError("Parameter 'asc_location' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,8 +67,8 @@ class SecurityCenterConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.asc_location = asc_location
         self.subscription_id = subscription_id
+        self.asc_location = asc_location
 
 
 class SecurityCenter(SDKClient):
@@ -69,6 +77,22 @@ class SecurityCenter(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SecurityCenterConfiguration
 
+    :ivar pricings: Pricings operations
+    :vartype pricings: azure.mgmt.security.operations.PricingsOperations
+    :ivar security_contacts: SecurityContacts operations
+    :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
+    :ivar workspace_settings: WorkspaceSettings operations
+    :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
+    :ivar auto_provisioning_settings: AutoProvisioningSettings operations
+    :vartype auto_provisioning_settings: azure.mgmt.security.operations.AutoProvisioningSettingsOperations
+    :ivar compliances: Compliances operations
+    :vartype compliances: azure.mgmt.security.operations.CompliancesOperations
+    :ivar advanced_threat_protection: AdvancedThreatProtection operations
+    :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
+    :ivar settings: Settings operations
+    :vartype settings: azure.mgmt.security.operations.SettingsOperations
+    :ivar information_protection_policies: InformationProtectionPolicies operations
+    :vartype information_protection_policies: azure.mgmt.security.operations.InformationProtectionPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.security.operations.Operations
     :ivar locations: Locations operations
@@ -91,25 +115,40 @@ class SecurityCenter(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Azure subscription ID
+    :type subscription_id: str
     :param asc_location: The location where ASC stores the data of the
      subscription. can be retrieved from Get locations
     :type asc_location: str
-    :param subscription_id: Azure subscription ID
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, asc_location, subscription_id, base_url=None):
+            self, credentials, subscription_id, asc_location, base_url=None):
 
-        self.config = SecurityCenterConfiguration(credentials, asc_location, subscription_id, base_url)
+        self.config = SecurityCenterConfiguration(credentials, subscription_id, asc_location, base_url)
         super(SecurityCenter, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-06-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.pricings = PricingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.security_contacts = SecurityContactsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspace_settings = WorkspaceSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.auto_provisioning_settings = AutoProvisioningSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.compliances = CompliancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.advanced_threat_protection = AdvancedThreatProtectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.settings = SettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.information_protection_policies = InformationProtectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(

@@ -10,10 +10,24 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .pricing_py3 import Pricing
+    from .asc_location_py3 import AscLocation
+    from .resource_py3 import Resource
+    from .security_contact_py3 import SecurityContact
+    from .workspace_setting_py3 import WorkspaceSetting
+    from .auto_provisioning_setting_py3 import AutoProvisioningSetting
+    from .compliance_segment_py3 import ComplianceSegment
+    from .compliance_py3 import Compliance
+    from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
+    from .setting_py3 import Setting
+    from .data_export_setting_py3 import DataExportSetting
+    from .setting_resource_py3 import SettingResource
+    from .sensitivity_label_py3 import SensitivityLabel
+    from .information_protection_keyword_py3 import InformationProtectionKeyword
+    from .information_type_py3 import InformationType
+    from .information_protection_policy_py3 import InformationProtectionPolicy
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .resource_py3 import Resource
-    from .asc_location_py3 import AscLocation
     from .security_task_parameters_py3 import SecurityTaskParameters
     from .security_task_py3 import SecurityTask
     from .alert_entity_py3 import AlertEntity
@@ -50,10 +64,24 @@ try:
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
 except (SyntaxError, ImportError):
+    from .pricing import Pricing
+    from .asc_location import AscLocation
+    from .resource import Resource
+    from .security_contact import SecurityContact
+    from .workspace_setting import WorkspaceSetting
+    from .auto_provisioning_setting import AutoProvisioningSetting
+    from .compliance_segment import ComplianceSegment
+    from .compliance import Compliance
+    from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
+    from .setting import Setting
+    from .data_export_setting import DataExportSetting
+    from .setting_resource import SettingResource
+    from .sensitivity_label import SensitivityLabel
+    from .information_protection_keyword import InformationProtectionKeyword
+    from .information_type import InformationType
+    from .information_protection_policy import InformationProtectionPolicy
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .resource import Resource
-    from .asc_location import AscLocation
     from .security_task_parameters import SecurityTaskParameters
     from .security_task import SecurityTask
     from .alert_entity import AlertEntity
@@ -89,6 +117,13 @@ except (SyntaxError, ImportError):
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
+from .pricing_paged import PricingPaged
+from .security_contact_paged import SecurityContactPaged
+from .workspace_setting_paged import WorkspaceSettingPaged
+from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
+from .compliance_paged import CompliancePaged
+from .setting_paged import SettingPaged
+from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .operation_paged import OperationPaged
 from .asc_location_paged import AscLocationPaged
 from .security_task_paged import SecurityTaskPaged
@@ -99,6 +134,11 @@ from .external_security_solution_paged import ExternalSecuritySolutionPaged
 from .topology_resource_paged import TopologyResourcePaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .security_center_enums import (
+    PricingTier,
+    AlertNotifications,
+    AlertsToAdmins,
+    AutoProvision,
+    SettingKind,
     ReportedSeverity,
     SecurityFamily,
     Protocol,
@@ -110,10 +150,24 @@ from .security_center_enums import (
 )
 
 __all__ = [
+    'Pricing',
+    'AscLocation',
+    'Resource',
+    'SecurityContact',
+    'WorkspaceSetting',
+    'AutoProvisioningSetting',
+    'ComplianceSegment',
+    'Compliance',
+    'AdvancedThreatProtectionSetting',
+    'Setting',
+    'DataExportSetting',
+    'SettingResource',
+    'SensitivityLabel',
+    'InformationProtectionKeyword',
+    'InformationType',
+    'InformationProtectionPolicy',
     'OperationDisplay',
     'Operation',
-    'Resource',
-    'AscLocation',
     'SecurityTaskParameters',
     'SecurityTask',
     'AlertEntity',
@@ -149,6 +203,13 @@ __all__ = [
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
+    'PricingPaged',
+    'SecurityContactPaged',
+    'WorkspaceSettingPaged',
+    'AutoProvisioningSettingPaged',
+    'CompliancePaged',
+    'SettingPaged',
+    'InformationProtectionPolicyPaged',
     'OperationPaged',
     'AscLocationPaged',
     'SecurityTaskPaged',
@@ -158,6 +219,11 @@ __all__ = [
     'ExternalSecuritySolutionPaged',
     'TopologyResourcePaged',
     'AllowedConnectionsResourcePaged',
+    'PricingTier',
+    'AlertNotifications',
+    'AlertsToAdmins',
+    'AutoProvision',
+    'SettingKind',
     'ReportedSeverity',
     'SecurityFamily',
     'Protocol',
