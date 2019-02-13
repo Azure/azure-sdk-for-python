@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DataConnectorsOperations(object):
-    """DataConnectorsOperations operations.
+class BookmarksOperations(object):
+    """BookmarksOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,7 @@ class DataConnectorsOperations(object):
 
     def list(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all data connectors.
+        """Gets all bookmarks.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -54,9 +54,9 @@ class DataConnectorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DataConnector
+        :return: An iterator like instance of Bookmark
         :rtype:
-         ~azure.mgmt.securityinsight.models.DataConnectorPaged[~azure.mgmt.securityinsight.models.DataConnector]
+         ~azure.mgmt.securityinsight.models.BookmarkPaged[~azure.mgmt.securityinsight.models.Bookmark]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -102,19 +102,19 @@ class DataConnectorsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DataConnectorPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BookmarkPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DataConnectorPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BookmarkPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks'}
 
     def get(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, data_connector_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a data connector.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, bookmark_id, custom_headers=None, raw=False, **operation_config):
+        """Gets a bookmark.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -124,15 +124,15 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connector ID
-        :type data_connector_id: str
+        :param bookmark_id: Bookmark ID
+        :type bookmark_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataConnector or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.DataConnector or
+        :return: Bookmark or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.Bookmark or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -143,7 +143,7 @@ class DataConnectorsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'dataConnectorId': self._serialize.url("data_connector_id", data_connector_id, 'str')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -173,18 +173,18 @@ class DataConnectorsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnector', response)
+            deserialized = self._deserialize('Bookmark', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks/{bookmarkId}'}
 
     def create_or_update(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, data_connector_id, data_connector, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the data connector.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, bookmark_id, bookmark, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates the bookmark.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -194,17 +194,17 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connector ID
-        :type data_connector_id: str
-        :param data_connector: The data connector
-        :type data_connector: ~azure.mgmt.securityinsight.models.DataConnector
+        :param bookmark_id: Bookmark ID
+        :type bookmark_id: str
+        :param bookmark: The bookmark
+        :type bookmark: ~azure.mgmt.securityinsight.models.Bookmark
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataConnector or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.DataConnector or
+        :return: Bookmark or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.Bookmark or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -215,7 +215,7 @@ class DataConnectorsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'dataConnectorId': self._serialize.url("data_connector_id", data_connector_id, 'str')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -235,7 +235,7 @@ class DataConnectorsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(data_connector, 'DataConnector')
+        body_content = self._serialize.body(bookmark, 'Bookmark')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -249,20 +249,20 @@ class DataConnectorsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnector', response)
+            deserialized = self._deserialize('Bookmark', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DataConnector', response)
+            deserialized = self._deserialize('Bookmark', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks/{bookmarkId}'}
 
     def delete(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, data_connector_id, custom_headers=None, raw=False, **operation_config):
-        """Delete the data connector.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, bookmark_id, custom_headers=None, raw=False, **operation_config):
+        """Delete the bookmark.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -272,8 +272,8 @@ class DataConnectorsOperations(object):
         :type operational_insights_resource_provider: str
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
-        :param data_connector_id: Connector ID
-        :type data_connector_id: str
+        :param bookmark_id: Bookmark ID
+        :type bookmark_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -290,7 +290,7 @@ class DataConnectorsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationalInsightsResourceProvider': self._serialize.url("operational_insights_resource_provider", operational_insights_resource_provider, 'str'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=90, min_length=1),
-            'dataConnectorId': self._serialize.url("data_connector_id", data_connector_id, 'str')
+            'bookmarkId': self._serialize.url("bookmark_id", bookmark_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -319,4 +319,4 @@ class DataConnectorsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks/{bookmarkId}'}

@@ -30,14 +30,14 @@ class ScheduledAlertRule(AlertRule):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param rule_name: Required. The name for alerts created by this alert
-     rule.
-    :type rule_name: str
+    :param display_name: Required. The display name for alerts created by this
+     alert rule.
+    :type display_name: str
     :param description: Required. The description of the alert rule.
     :type description: str
     :param severity: Required. The severity for alerts created by this alert
-     rule. Possible values include: 'Low', 'Medium', 'High', 'Informational'
-    :type severity: str or ~azure.mgmt.securityinsight.models.Severity
+     rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :param enabled: Required. Determines whether this alert rule is enabled or
      disabled.
     :type enabled: bool
@@ -72,7 +72,7 @@ class ScheduledAlertRule(AlertRule):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'rule_name': {'required': True},
+        'display_name': {'required': True},
         'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
@@ -92,9 +92,9 @@ class ScheduledAlertRule(AlertRule):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'rule_name': {'key': 'properties.ruleName', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'Severity'},
+        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},
@@ -108,7 +108,7 @@ class ScheduledAlertRule(AlertRule):
 
     def __init__(self, **kwargs):
         super(ScheduledAlertRule, self).__init__(**kwargs)
-        self.rule_name = kwargs.get('rule_name', None)
+        self.display_name = kwargs.get('display_name', None)
         self.description = kwargs.get('description', None)
         self.severity = kwargs.get('severity', None)
         self.enabled = kwargs.get('enabled', None)

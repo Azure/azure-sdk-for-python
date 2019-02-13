@@ -11,10 +11,22 @@
 
 from .operations import Operations
 from .alert_rules_operations import AlertRulesOperations
+from .actions_operations import ActionsOperations
+from .cases_operations import CasesOperations
+from .bookmarks_operations import BookmarksOperations
 from .data_connectors_operations import DataConnectorsOperations
+from .entities_operations import EntitiesOperations
+from .office_consents_operations import OfficeConsentsOperations
+from .product_settings_operations import ProductSettingsOperations
 
 __all__ = [
     'Operations',
     'AlertRulesOperations',
+    'ActionsOperations',
+    'CasesOperations',
+    'BookmarksOperations',
     'DataConnectorsOperations',
+    'EntitiesOperations',
+    'OfficeConsentsOperations',
+    'ProductSettingsOperations',
 ]

@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class DataConnectorContextId(Model):
+class SettingsKind(Model):
     """Describes an Azure resource with kind.
 
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+    :param kind: The kind of the setting. Possible values include:
+     'UebaSettings', 'ToggleSettings'
+    :type kind: str or ~azure.mgmt.securityinsight.models.SettingKind
     """
 
     _attribute_map = {
-        'context_id': {'key': 'contextId', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(DataConnectorContextId, self).__init__(**kwargs)
-        self.context_id = kwargs.get('context_id', None)
+        super(SettingsKind, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)

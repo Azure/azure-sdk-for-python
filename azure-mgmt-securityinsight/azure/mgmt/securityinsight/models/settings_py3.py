@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_py3 import DataConnector
+from msrest.serialization import Model
 
 
-class OfficeDataConnector(DataConnector):
-    """Represents office data connector.
+class Settings(Model):
+    """The Setting.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: UebaSettings, ToggleSettings
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,15 +29,8 @@ class OfficeDataConnector(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypes
     """
 
     _validation = {
@@ -48,14 +44,16 @@ class OfficeDataConnector(DataConnector):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'OfficeDataConnectorDataTypes'},
     }
 
-    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(OfficeDataConnector, self).__init__(etag=etag, **kwargs)
-        self.tenant_id = tenant_id
-        self.data_types = data_types
-        self.kind = 'Office365'
+    _subtype_map = {
+        'kind': {'UebaSettings': 'UebaSettings', 'ToggleSettings': 'ToggleSettings'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Settings, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.kind = None

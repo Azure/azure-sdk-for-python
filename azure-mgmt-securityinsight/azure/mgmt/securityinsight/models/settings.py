@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector import DataConnector
+from msrest.serialization import Model
 
 
-class DataConnectorWithAlerts(DataConnector):
-    """Data connector with alerts data type.
+class Settings(Model):
+    """The Setting.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AADDataConnector, ASCDataConnector, MCASDataConnector
+    sub-classes are: UebaSettings, ToggleSettings
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,16 +29,8 @@ class DataConnectorWithAlerts(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
     """
 
     _validation = {
@@ -52,18 +44,16 @@ class DataConnectorWithAlerts(DataConnector):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'context_id': {'key': 'properties.contextId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
     _subtype_map = {
-        'kind': {'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector'}
+        'kind': {'UebaSettings': 'UebaSettings', 'ToggleSettings': 'ToggleSettings'}
     }
 
     def __init__(self, **kwargs):
-        super(DataConnectorWithAlerts, self).__init__(**kwargs)
-        self.context_id = kwargs.get('context_id', None)
-        self.data_types = kwargs.get('data_types', None)
-        self.kind = 'DataConnectorWithAlerts'
+        super(Settings, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.kind = None

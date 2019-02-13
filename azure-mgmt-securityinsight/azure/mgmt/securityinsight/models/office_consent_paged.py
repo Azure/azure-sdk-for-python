@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class DataConnectorContextId(Model):
-    """Describes an Azure resource with kind.
-
-    :param context_id: The context id of the origin data source (Like
-     tenantID, SubscriptionID etc.).
-    :type context_id: str
+class OfficeConsentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`OfficeConsent <azure.mgmt.securityinsight.models.OfficeConsent>` object
     """
 
     _attribute_map = {
-        'context_id': {'key': 'contextId', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[OfficeConsent]'}
     }
 
-    def __init__(self, *, context_id: str=None, **kwargs) -> None:
-        super(DataConnectorContextId, self).__init__(**kwargs)
-        self.context_id = context_id
+    def __init__(self, *args, **kwargs):
+
+        super(OfficeConsentPaged, self).__init__(*args, **kwargs)

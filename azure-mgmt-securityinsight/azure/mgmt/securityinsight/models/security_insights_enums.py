@@ -17,12 +17,12 @@ class AlertRuleKind(str, Enum):
     scheduled = "Scheduled"
 
 
-class Severity(str, Enum):
+class AlertSeverity(str, Enum):
 
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-    informational = "Informational"
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
 
 
 class TriggerOperator(str, Enum):
@@ -31,6 +31,30 @@ class TriggerOperator(str, Enum):
     less_than = "LessThan"
     equal = "Equal"
     not_equal = "NotEqual"
+
+
+class CaseSeverity(str, Enum):
+
+    critical = "Critical"  #: Critical severity
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
+
+
+class CaseStatus(str, Enum):
+
+    draft = "Draft"  #: Case that wasn't promoted yet to active
+    open = "Open"  #: An active case which isn't handled currently
+    in_progress = "InProgress"  #: An active case which is handled
+    closed = "Closed"  #: A non active case
+
+
+class CloseReason(str, Enum):
+
+    resolved = "Resolved"  #: Case was resolved
+    dismissed = "Dismissed"  #: Case was dismissed
+    other = "Other"  #: Case was closed for another reason
 
 
 class DataConnectorKind(str, Enum):
@@ -43,6 +67,33 @@ class DataConnectorKind(str, Enum):
 
 
 class DataTypeState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class EntityKind(str, Enum):
+
+    account = "Account"  #: Entity represents account in the system.
+    host = "Host"  #: Entity represents host in the system.
+    file = "File"  #: Entity represents file in the system.
+
+
+class OSFamily(str, Enum):
+
+    linux = "Linux"  #: Host with Linux operartion system.
+    windows = "Windows"  #: Host with Windows operartion system.
+    android = "Android"  #: Host with Android operartion system.
+    ios = "IOS"  #: Host with IOS operartion system.
+
+
+class SettingKind(str, Enum):
+
+    ueba_settings = "UebaSettings"
+    toggle_settings = "ToggleSettings"
+
+
+class StatusInMcas(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"

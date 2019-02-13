@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_py3 import DataConnector
+from .entity_py3 import Entity
 
 
-class OfficeDataConnector(DataConnector):
-    """Represents office data connector.
+class FileEntity(Entity):
+    """Represents a file entity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,15 +26,13 @@ class OfficeDataConnector(DataConnector):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the data connector.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypes
+    :ivar directory: The full path to the file.
+    :vartype directory: str
+    :ivar file_name: The file name without path (some alerts might not include
+     path).
+    :vartype file_name: str
     """
 
     _validation = {
@@ -42,20 +40,21 @@ class OfficeDataConnector(DataConnector):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
+        'directory': {'readonly': True},
+        'file_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'OfficeDataConnectorDataTypes'},
+        'directory': {'key': 'properties.directory', 'type': 'str'},
+        'file_name': {'key': 'properties.fileName', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(OfficeDataConnector, self).__init__(etag=etag, **kwargs)
-        self.tenant_id = tenant_id
-        self.data_types = data_types
-        self.kind = 'Office365'
+    def __init__(self, **kwargs) -> None:
+        super(FileEntity, self).__init__(**kwargs)
+        self.directory = None
+        self.file_name = None
+        self.kind = 'File'

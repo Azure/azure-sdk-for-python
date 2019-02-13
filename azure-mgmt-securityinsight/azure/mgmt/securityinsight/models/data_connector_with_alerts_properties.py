@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class TIDataConnectorDataTypes(Model):
-    """The available data types for TI (Threat Intelligence) data connector.
+class DataConnectorWithAlertsProperties(Model):
+    """Data connector properties.
 
-    :param indicators: Data type for indicators connection.
-    :type indicators:
-     ~azure.mgmt.securityinsight.models.TIDataConnectorDataTypesIndicators
+    :param data_types: The available data types for the connector.
+    :type data_types:
+     ~azure.mgmt.securityinsight.models.AlertsDataTypeOfDataConnector
     """
 
     _attribute_map = {
-        'indicators': {'key': 'indicators', 'type': 'TIDataConnectorDataTypesIndicators'},
+        'data_types': {'key': 'dataTypes', 'type': 'AlertsDataTypeOfDataConnector'},
     }
 
-    def __init__(self, *, indicators=None, **kwargs) -> None:
-        super(TIDataConnectorDataTypes, self).__init__(**kwargs)
-        self.indicators = indicators
+    def __init__(self, **kwargs):
+        super(DataConnectorWithAlertsProperties, self).__init__(**kwargs)
+        self.data_types = kwargs.get('data_types', None)

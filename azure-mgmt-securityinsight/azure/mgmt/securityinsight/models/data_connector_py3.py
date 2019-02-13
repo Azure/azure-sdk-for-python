@@ -16,8 +16,8 @@ class DataConnector(Model):
     """Data connector.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: OfficeDataConnector, TIDataConnector,
-    DataConnectorWithAlerts
+    sub-classes are: OfficeDataConnector, TIDataConnector, AADDataConnector,
+    ASCDataConnector, MCASDataConnector
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -52,7 +52,7 @@ class DataConnector(Model):
     }
 
     _subtype_map = {
-        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'DataConnectorWithAlerts': 'DataConnectorWithAlerts'}
+        'kind': {'Office365': 'OfficeDataConnector', 'ThreatIntelligence': 'TIDataConnector', 'AzureActiveDirectory': 'AADDataConnector', 'AzureSecurityCenter': 'ASCDataConnector', 'MicrosoftCloudAppSecurity': 'MCASDataConnector'}
     }
 
     def __init__(self, *, etag: str=None, **kwargs) -> None:

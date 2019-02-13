@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class TIDataConnectorDataTypes(Model):
-    """The available data types for TI (Threat Intelligence) data connector.
+class EntityKind1(Model):
+    """Describes an Azure resource with kind.
 
-    :param indicators: Data type for indicators connection.
-    :type indicators:
-     ~azure.mgmt.securityinsight.models.TIDataConnectorDataTypesIndicators
+    :param kind: The kind of the entity. Possible values include: 'Account',
+     'Host', 'File'
+    :type kind: str or ~azure.mgmt.securityinsight.models.EntityKind
     """
 
     _attribute_map = {
-        'indicators': {'key': 'indicators', 'type': 'TIDataConnectorDataTypesIndicators'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, indicators=None, **kwargs) -> None:
-        super(TIDataConnectorDataTypes, self).__init__(**kwargs)
-        self.indicators = indicators
+    def __init__(self, *, kind=None, **kwargs) -> None:
+        super(EntityKind1, self).__init__(**kwargs)
+        self.kind = kind
