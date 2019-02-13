@@ -138,6 +138,8 @@ try:
     from .custom_data_source_linked_service_py3 import CustomDataSourceLinkedService
     from .amazon_redshift_linked_service_py3 import AmazonRedshiftLinkedService
     from .amazon_s3_linked_service_py3 import AmazonS3LinkedService
+    from .rest_service_linked_service_py3 import RestServiceLinkedService
+    from .sap_open_hub_linked_service_py3 import SapOpenHubLinkedService
     from .sap_ecc_linked_service_py3 import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service_py3 import SapCloudForCustomerLinkedService
     from .salesforce_linked_service_py3 import SalesforceLinkedService
@@ -216,7 +218,9 @@ try:
     from .http_dataset_py3 import HttpDataset
     from .azure_search_index_dataset_py3 import AzureSearchIndexDataset
     from .web_table_dataset_py3 import WebTableDataset
+    from .rest_service_dataset_py3 import RestServiceDataset
     from .sql_server_table_dataset_py3 import SqlServerTableDataset
+    from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
@@ -293,6 +297,8 @@ try:
     from .sql_dw_source_py3 import SqlDWSource
     from .stored_procedure_parameter_py3 import StoredProcedureParameter
     from .sql_source_py3 import SqlSource
+    from .rest_source_py3 import RestSource
+    from .sap_open_hub_source_py3 import SapOpenHubSource
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
@@ -503,6 +509,8 @@ except (SyntaxError, ImportError):
     from .custom_data_source_linked_service import CustomDataSourceLinkedService
     from .amazon_redshift_linked_service import AmazonRedshiftLinkedService
     from .amazon_s3_linked_service import AmazonS3LinkedService
+    from .rest_service_linked_service import RestServiceLinkedService
+    from .sap_open_hub_linked_service import SapOpenHubLinkedService
     from .sap_ecc_linked_service import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service import SapCloudForCustomerLinkedService
     from .salesforce_linked_service import SalesforceLinkedService
@@ -581,7 +589,9 @@ except (SyntaxError, ImportError):
     from .http_dataset import HttpDataset
     from .azure_search_index_dataset import AzureSearchIndexDataset
     from .web_table_dataset import WebTableDataset
+    from .rest_service_dataset import RestServiceDataset
     from .sql_server_table_dataset import SqlServerTableDataset
+    from .sap_open_hub_table_dataset import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
@@ -658,6 +668,8 @@ except (SyntaxError, ImportError):
     from .sql_dw_source import SqlDWSource
     from .stored_procedure_parameter import StoredProcedureParameter
     from .sql_source import SqlSource
+    from .rest_source import RestSource
+    from .sap_open_hub_source import SapOpenHubSource
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
@@ -780,6 +792,7 @@ from .data_factory_management_client_enums import (
     SftpAuthenticationType,
     FtpAuthenticationType,
     HttpAuthenticationType,
+    RestServiceAuthenticationType,
     MongoDbAuthenticationType,
     ODataAuthenticationType,
     TeradataAuthenticationType,
@@ -939,6 +952,8 @@ __all__ = [
     'CustomDataSourceLinkedService',
     'AmazonRedshiftLinkedService',
     'AmazonS3LinkedService',
+    'RestServiceLinkedService',
+    'SapOpenHubLinkedService',
     'SapEccLinkedService',
     'SapCloudForCustomerLinkedService',
     'SalesforceLinkedService',
@@ -1017,7 +1032,9 @@ __all__ = [
     'HttpDataset',
     'AzureSearchIndexDataset',
     'WebTableDataset',
+    'RestServiceDataset',
     'SqlServerTableDataset',
+    'SapOpenHubTableDataset',
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
     'SalesforceObjectDataset',
@@ -1094,6 +1111,8 @@ __all__ = [
     'SqlDWSource',
     'StoredProcedureParameter',
     'SqlSource',
+    'RestSource',
+    'SapOpenHubSource',
     'SapEccSource',
     'SapCloudForCustomerSource',
     'SalesforceSource',
@@ -1215,6 +1234,7 @@ __all__ = [
     'SftpAuthenticationType',
     'FtpAuthenticationType',
     'HttpAuthenticationType',
+    'RestServiceAuthenticationType',
     'MongoDbAuthenticationType',
     'ODataAuthenticationType',
     'TeradataAuthenticationType',
