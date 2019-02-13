@@ -12,36 +12,6 @@
 from enum import Enum
 
 
-class AlertNotifications(str, Enum):
-
-    on = "On"  #: Get notifications on new alerts
-    off = "Off"  #: Don't get notifications on new alerts
-
-
-class AlertsToAdmins(str, Enum):
-
-    on = "On"  #: Send notification on new alerts to the subscription's admins
-    off = "Off"  #: Don't send notification on new alerts to the subscription's admins
-
-
-class PricingTier(str, Enum):
-
-    free = "Free"  #: Get free Azure security center experience with basic security features
-    standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
-
-
-class AutoProvision(str, Enum):
-
-    on = "On"  #: Install missing security agent on VMs automatically
-    off = "Off"  #: Do not install security agent on the VMs automatically
-
-
-class SettingKind(str, Enum):
-
-    data_export_setting = "DataExportSetting"
-    alert_suppression_setting = "AlertSuppressionSetting"
-
-
 class ReportedSeverity(str, Enum):
 
     silent = "Silent"
