@@ -115,7 +115,7 @@ class VirtualNetworkLinksOperations(object):
         :param if_match: The ETag of the virtual network link to the Private
          DNS zone. Omit this value to always overwrite the current virtual
          network link. Specify the last-seen ETag value to prevent accidentally
-         overwritting any concurrent changes.
+         overwriting any concurrent changes.
         :type if_match: str
         :param if_none_match: Set to '*' to allow a new virtual network link
          to the Private DNS zone to be created, but to prevent updating an
@@ -234,7 +234,7 @@ class VirtualNetworkLinksOperations(object):
         :param if_match: The ETag of the virtual network link to the Private
          DNS zone. Omit this value to always overwrite the current virtual
          network link. Specify the last-seen ETag value to prevent accidentally
-         overwritting any concurrent changes.
+         overwriting any concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

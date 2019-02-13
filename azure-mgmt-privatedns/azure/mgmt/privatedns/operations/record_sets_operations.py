@@ -59,7 +59,7 @@ class RecordSetsOperations(object):
         :type parameters: ~azure.mgmt.privatedns.models.RecordSet
         :param if_match: The ETag of the record set. Omit this value to always
          overwrite the current record set. Specify the last-seen ETag value to
-         prevent accidentally overwritting any concurrent changes.
+         prevent accidentally overwriting any concurrent changes.
         :type if_match: str
         :param if_none_match: Set to '*' to allow a new record set to be
          created, but to prevent updating an existing record set. Other values
@@ -151,7 +151,7 @@ class RecordSetsOperations(object):
         :type parameters: ~azure.mgmt.privatedns.models.RecordSet
         :param if_match: The ETag of the record set. Omit this value to always
          overwrite the current record set. Specify the last-seen ETag value to
-         prevent accidentally overwritting concurrent changes.
+         prevent accidentally overwriting concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -110,7 +110,7 @@ class PrivateZonesOperations(object):
         :type parameters: ~azure.mgmt.privatedns.models.PrivateZone
         :param if_match: The ETag of the Private DNS zone. Omit this value to
          always overwrite the current zone. Specify the last-seen ETag value to
-         prevent accidentally overwritting any concurrent changes.
+         prevent accidentally overwriting any concurrent changes.
         :type if_match: str
         :param if_none_match: Set to '*' to allow a new Private DNS zone to be
          created, but to prevent updating an existing zone. Other values will
@@ -224,7 +224,7 @@ class PrivateZonesOperations(object):
         :type parameters: ~azure.mgmt.privatedns.models.PrivateZone
         :param if_match: The ETag of the Private DNS zone. Omit this value to
          always overwrite the current zone. Specify the last-seen ETag value to
-         prevent accidentally overwritting any concurrent changes.
+         prevent accidentally overwriting any concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
