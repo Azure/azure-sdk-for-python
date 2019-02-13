@@ -1,33 +1,34 @@
 # Variables: 
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
 #  'codecov-python-repository-token' Is the codecov.io repository token.
-#  'long_running_tests' Is a boolean indicating that the long-running tests should be executed. 
-#  'EnableDetectorPip': true . Required for Component Governance Support
-
+#  'long_running_tests' Is a boolean indicating that the long-running tests should be executed.
 trigger:
 - master
+
 variables:
   PythonVersion: '3.6'
 
 jobs:
 - job: 'Build_Target_Packages'
+
   pool:
     vmImage: 'ubuntu-16.04'
+
   steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: $(PythonVersion)
+    displayName: 'Use Python $(PythonVersion)'
 
   - script: |
      pip install wheel setuptools pathlib twine readme-renderer[md]
     displayName: 'Prep Environment'
   
   - task: PythonScript@0
-    displayName: 'Generate Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
       arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
+    displayName: 'Generate Packages'
 
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/*
@@ -38,26 +39,29 @@ jobs:
     condition: succeededOrFailed()
 
 - job: 'Analyze'
+
   dependsOn:
     - 'Build_Target_Packages'
+
   pool:
     vmImage: 'ubuntu-16.04'
-  steps:  
+
+  steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: '$(PythonVersion)'
+    displayName: 'Use Python $(PythonVersion)'
 
   - script: |
      pip install wheel Jinja2
     displayName: 'Prep Environment'
-    
-  - task: PythonScript@0
-    displayName: 'Analyze dependencies'
+
+  - task: PythonScript@0    
     enabled: true
     inputs:
       scriptPath: 'scripts/analyze_deps.py'
       arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+    displayName: 'Analyze dependencies'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
@@ -66,12 +70,14 @@ jobs:
     displayName: 'Component Detection'
 
   - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()    
     displayName: 'Publish Artifacts'
-    condition: succeededOrFailed()
 
 - job: 'Generic_Tests'
+
   dependsOn:
     - 'Build_Target_Packages'
+
   strategy:
     matrix:
       Linux_Python27:
@@ -102,8 +108,10 @@ jobs:
         os.name: 'MacOS'
         os.vmImage: 'macOS-10.13'
         python.version: '2.7'
+
   pool:
     vmImage: '$(os.vmImage)'
+
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(python.version)'
@@ -143,12 +151,15 @@ jobs:
       reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Test_Alpha_Python
+
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
   dependsOn:
   - 'Build_Target_Packages'
+
   pool:
     vmImage: 'ubuntu-16.04'
+
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.7 For Build Tools'
@@ -174,12 +185,15 @@ jobs:
     continueOnError: true
 
 - job: Test_PyPy
+
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
   dependsOn:
   - 'Build_Target_Packages'
+
   pool:
     vmImage: 'ubuntu-16.04'
+
   steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.7 For Build Tools'
