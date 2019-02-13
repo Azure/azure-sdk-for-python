@@ -10,7 +10,7 @@ variables:
   PythonVersion: '3.6'
 
 jobs:
-- job: 'Build_Target_Packages'
+- job: 'Build'
 
   pool:
     vmImage: 'ubuntu-16.04'
@@ -41,7 +41,7 @@ jobs:
 - job: 'Analyze'
 
   dependsOn:
-    - 'Build_Target_Packages'
+    - 'Build'
 
   pool:
     vmImage: 'ubuntu-16.04'
@@ -77,47 +77,47 @@ jobs:
 - job: 'Generic_Tests'
 
   dependsOn:
-    - 'Build_Target_Packages'
+    - 'Build'
 
   strategy:
     matrix:
       Linux_Python27:
-        os.name: 'Linux'
-        os.vmImage: 'ubuntu-16.04'
-        python.version: '2.7'
+        OSName: 'Linux'
+        OSVmImage: 'ubuntu-16.04'
+        PythonVersion: '2.7'
       Linux_Python34:
-        os.name: 'Linux'
-        os.vmImage: 'ubuntu-16.04'
-        python.version: '3.4'
+        OSName: 'Linux'
+        OSVmImage: 'ubuntu-16.04'
+        PythonVersion: '3.4'
       Linux_Python35:
-        os.name: 'Linux'
-        os.vmImage: 'ubuntu-16.04'
-        python.version: '3.5'
+        OSName: 'Linux'
+        OSVmImage: 'ubuntu-16.04'
+        PythonVersion: '3.5'
       Linux_Python36:
-        os.name: 'Linux'
-        os.vmImage: 'ubuntu-16.04'
-        python.version: '3.6'
+        OSName: 'Linux'
+        OSVmImage: 'ubuntu-16.04'
+        PythonVersion: '3.6'
       Linux_Python37:
-        os.name: 'Linux'
-        os.vmImage: 'ubuntu-16.04'
-        python.version: '3.7'
+        OSName: 'Linux'
+        OSVmImage: 'ubuntu-16.04'
+        PythonVersion: '3.7'
       Windows_Python35:
-        os.name: 'Windows'
-        os.vmImage: 'vs2017-win2016'
-        python.version: '3.5'
+        OSName: 'Windows'
+        OSVmImage: 'vs2017-win2016'
+        PythonVersion: '3.5'
       MacOS_Python27:
-        os.name: 'MacOS'
-        os.vmImage: 'macOS-10.13'
-        python.version: '2.7'
+        OSName: 'MacOS'
+        OSVmImage: 'macOS-10.13'
+        PythonVersion: '2.7'
 
   pool:
-    vmImage: '$(os.vmImage)'
+    vmImage: '$(OSVmImage)'
 
   steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(python.version)'
+    displayName: 'Use Python $(PythonVersion)'
     inputs:
-      versionSpec: '$(python.version)'
+      versionSpec: '$(PythonVersion)'
 
   - script: |
      pip install pathlib twine codecov beautifulsoup4
@@ -156,7 +156,7 @@ jobs:
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
   dependsOn:
-  - 'Build_Target_Packages'
+  - 'Build'
 
   pool:
     vmImage: 'ubuntu-16.04'
@@ -188,7 +188,7 @@ jobs:
   timeoutInMinutes: 90
   condition: eq(variables['long_running_tests'], True)
   dependsOn:
-  - 'Build_Target_Packages'
+  - 'Build'
 
   pool:
     vmImage: 'ubuntu-16.04'
