@@ -30,8 +30,8 @@ class ScheduledAlertRule(AlertRule):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param display_name: The display name for alerts created by this alert
-     rule.
+    :param display_name: Required. The display name for alerts created by this
+     alert rule.
     :type display_name: str
     :param description: Required. The description of the alert rule.
     :type description: str
@@ -72,6 +72,7 @@ class ScheduledAlertRule(AlertRule):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
+        'display_name': {'required': True},
         'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
@@ -105,7 +106,7 @@ class ScheduledAlertRule(AlertRule):
         'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
     }
 
-    def __init__(self, *, description: str, severity, enabled: bool, query: str, query_frequency, query_period, trigger_operator, trigger_threshold: int, suppression_enabled: bool, suppression_duration, etag: str=None, display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str, description: str, severity, enabled: bool, query: str, query_frequency, query_period, trigger_operator, trigger_threshold: int, suppression_enabled: bool, suppression_duration, etag: str=None, **kwargs) -> None:
         super(ScheduledAlertRule, self).__init__(etag=etag, **kwargs)
         self.display_name = display_name
         self.description = description

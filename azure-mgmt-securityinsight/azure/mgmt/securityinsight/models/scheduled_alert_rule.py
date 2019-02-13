@@ -30,8 +30,8 @@ class ScheduledAlertRule(AlertRule):
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param display_name: The display name for alerts created by this alert
-     rule.
+    :param display_name: Required. The display name for alerts created by this
+     alert rule.
     :type display_name: str
     :param description: Required. The description of the alert rule.
     :type description: str
@@ -72,6 +72,7 @@ class ScheduledAlertRule(AlertRule):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
+        'display_name': {'required': True},
         'description': {'required': True},
         'severity': {'required': True},
         'enabled': {'required': True},
