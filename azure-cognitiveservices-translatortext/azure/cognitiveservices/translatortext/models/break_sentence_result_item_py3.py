@@ -9,8 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .translator_operations import TranslatorOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'TranslatorOperations',
-]
+
+class BreakSentenceResultItem(Model):
+    """BreakSentenceResultItem.
+
+    :param sent_len:
+    :type sent_len: list[int]
+    """
+
+    _attribute_map = {
+        'sent_len': {'key': 'sentLen', 'type': '[int]'},
+    }
+
+    def __init__(self, *, sent_len=None, **kwargs) -> None:
+        super(BreakSentenceResultItem, self).__init__(**kwargs)
+        self.sent_len = sent_len

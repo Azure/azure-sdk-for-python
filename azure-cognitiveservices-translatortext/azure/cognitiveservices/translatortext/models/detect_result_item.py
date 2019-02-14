@@ -9,8 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .translator_operations import TranslatorOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'TranslatorOperations',
-]
+
+class DetectResultItem(Model):
+    """DetectResultItem.
+
+    :param text:
+    :type text: str
+    """
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DetectResultItem, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)

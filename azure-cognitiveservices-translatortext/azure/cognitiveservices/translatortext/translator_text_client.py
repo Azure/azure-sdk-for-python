@@ -12,13 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-from .operations.break_sentence_operations import BreakSentenceOperations
-from .operations.detect_operations import DetectOperations
-from .operations.dictionary_operations import DictionaryOperations
-from .operations.dictionary_examples_operations import DictionaryExamplesOperations
-from .operations.translate_operations import TranslateOperations
-from .operations.transliterate_operations import TransliterateOperations
+from .operations.translator_operations import TranslatorOperations
 from . import models
 
 
@@ -29,13 +23,17 @@ class TranslatorTextClientConfiguration(Configuration):
 
     :param endpoint: Supported Cognitive Services endpoints
     :type endpoint: str
+    :param x_client_trace_id: A client-generated GUID to uniquely identify the
+     request. Note that you can omit this header if you include the trace ID in
+     the query string using a query parameter named ClientTraceId.
+    :type x_client_trace_id: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, endpoint, credentials, x_client_trace_id=None):
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -48,6 +46,7 @@ class TranslatorTextClientConfiguration(Configuration):
         self.add_user_agent('azure-cognitiveservices-translatortext/{}'.format(VERSION))
 
         self.endpoint = endpoint
+        self.x_client_trace_id = x_client_trace_id
         self.credentials = credentials
 
 
@@ -90,6 +89,15 @@ class TranslatorTextClient(SDKClient):
     | ----------    | ----------   |
     | Ocp-Apim-Subscription-key    | Use with Cognitive Services subscription if you are passing your secret key.                               The value is the Azure secret key for your subscription to Translator Text API.                         |
     | Authorization                | Use with Cognitive Services subscription if you are passing an authentication token. The value is the Bearer token: `Bearer &lt;token&gt;`.       |
+    ## All-in-one subscription
+    The last authentication option is to use a Cognitive Service’s all-in-one subscription. This allows you to use a single secret key to authenticate requests for multiple services.
+    When you use an all-in-one secret key, you must include two authentication headers with your request. The first passes the secret key, the second specifies the region associated with your subscription.
+    `Ocp-Api-Subscription-Key` `Ocp-Apim-Subscription-Region`
+    If you pass the secret key in the query string with the parameter `Subscription-Key`, then you must specify the region with query parameter `Subscription-Region`.
+    If you use a bearer token, you must obtain the token from the region endpoint:
+    `https://&lt;your-region&gt;.api.cognitive.microsoft.com/sts/v1.0/issueToken`.
+    Available regions are: `australiaeast`, `brazilsouth`, `canadacentral`, `centralindia`, `centraluseuap`, `eastasia`, `eastus`, `eastus2`, `japaneast`, `northeurope`, `southcentralus`, `southeastasia`, `uksouth`, `westcentralus`, `westeurope`, `westus`, and `westus2`.
+    Region is required for the all-in-one Text API subscription.
     # Errors
     A standard error response is a JSON object with name/value pair named `error`. The value is also a JSON object with properties:
       * `code`: A server-defined error code.
@@ -103,34 +111,32 @@ class TranslatorTextClient(SDKClient):
       }
     }
     ```
+    # Enter your subcription keys to try out Microsoft Translator.
+    Select the `Authorize` button and enter your Microsoft Translator subscription key, OR your `all in one Cognitive Services` subscription key. If you are using the all in one Cognitive Services key you will need to also enter your subscription region.
+    ## Available regions are:
+      `australiaeast`, `brazilsouth`, `canadacentral`, `centralindia`, `centraluseuap`, `eastasia`, `eastus`, `eastus2`, `japaneast`, `northeurope`, `southcentralus`, `southeastasia`, `uksouth`, `westcentralus`, `westeurope`, `westus`, `westus2`.
 
     :ivar config: Configuration for client.
     :vartype config: TranslatorTextClientConfiguration
 
-    :ivar break_sentence: BreakSentence operations
-    :vartype break_sentence: azure.cognitiveservices.translatortext.operations.BreakSentenceOperations
-    :ivar detect: Detect operations
-    :vartype detect: azure.cognitiveservices.translatortext.operations.DetectOperations
-    :ivar dictionary: Dictionary operations
-    :vartype dictionary: azure.cognitiveservices.translatortext.operations.DictionaryOperations
-    :ivar dictionary_examples: DictionaryExamples operations
-    :vartype dictionary_examples: azure.cognitiveservices.translatortext.operations.DictionaryExamplesOperations
-    :ivar translate: Translate operations
-    :vartype translate: azure.cognitiveservices.translatortext.operations.TranslateOperations
-    :ivar transliterate: Transliterate operations
-    :vartype transliterate: azure.cognitiveservices.translatortext.operations.TransliterateOperations
+    :ivar translator: Translator operations
+    :vartype translator: azure.cognitiveservices.translatortext.operations.TranslatorOperations
 
     :param endpoint: Supported Cognitive Services endpoints
     :type endpoint: str
+    :param x_client_trace_id: A client-generated GUID to uniquely identify the
+     request. Note that you can omit this header if you include the trace ID in
+     the query string using a query parameter named ClientTraceId.
+    :type x_client_trace_id: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, endpoint, credentials, x_client_trace_id=None):
 
-        self.config = TranslatorTextClientConfiguration(endpoint, credentials)
+        self.config = TranslatorTextClientConfiguration(endpoint, credentials, x_client_trace_id)
         super(TranslatorTextClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -138,263 +144,5 @@ class TranslatorTextClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.break_sentence = BreakSentenceOperations(
+        self.translator = TranslatorOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.detect = DetectOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dictionary = DictionaryOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dictionary_examples = DictionaryExamplesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.translate = TranslateOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.transliterate = TransliterateOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-
-    def languages_text_translation_v3(
-            self, api_version, scope=None, accept_language=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the set of languages currently supported by other operations of
-        the Translator Text API.
-        **Authentication is not required to get language resources.**
-        # Response Body
-        A client uses the `scope` query parameter to define which groups of
-        languages it is interested in.
-        * `scope=translation` provides languages supported to translate text
-        from one language to another language.
-        * `scope=transliteration` provides capabilities for converting text in
-        one language from one script to another script.
-        * `scope=dictionary` provides language pairs for which `Dictionary`
-        operations return data.
-        A client may retrieve several groups simultaneously by specifying a
-        comma-separated list of names. For example,
-        `scope=translation,transliteration,dictionary` would return supported
-        languages for all groups.
-        A successful response is a JSON object with one property for each
-        requested group.
-        The value for each property is as follows.
-        * `translation` property
-        The value of the `translation` property is a dictionary of (key, value)
-        pairs. Each key is a BCP 47 language tag. A key identifies a language
-        for which text can be translated to or translated from. The value
-        associated with the key is a JSON object with properties that describe
-        the language
-        * `name-` Display name of the language in the locale requested via
-        `Accept-Language` header.
-        * `nativeName-` Display name of the language in the locale native for
-        this language.
-        * `dir-` Directionality, which is `rtl` for right-to-left languages or
-        `ltr` for left-to-right languages.
-        ```json
-        {
-        "translation": {
-        ...
-        "fr": {
-        "name": "French",
-        "nativeName": "Français",
-        "dir": "ltr"
-        },
-        ...
-        }
-        }
-        ```
-        * `transliteration` property
-        The value of the `transliteration` property is a dictionary of (key,
-        value) pairs. Each key is a BCP 47 language tag. A key identifies a
-        language for which text can be converted from one script to another
-        script. The value associated with the key is a JSON object with
-        properties that describe the language and its supported scripts
-        * `name-` Display name of the language in the locale requested via
-        `Accept-Language` header.
-        * `nativeName-` Display name of the language in the locale native for
-        this language.
-        * `scripts-` List of scripts to convert from. Each element of the
-        `scripts` list has properties-
-        * `code-` Code identifying the script.
-        * `name-` Display name of the script in the locale requested via
-        `Accept-Language` header.
-        * `nativeName-` Display name of the language in the locale native for
-        the language.
-        * `dir-` Directionality, which is `rtl` for right-to-left languages or
-        `ltr` for left-to-right languages.
-        * `toScripts-` List of scripts available to convert text to. Each
-        element of the `toScripts` list has properties `code`, `name`,
-        `nativeName`, and `dir` as described earlier.
-        ```json
-        {
-        "transliteration": {
-        ...
-        "ja": {
-        "name": "Japanese",
-        "nativeName": "日本語",
-        "scripts": [
-        {
-        "code": "Jpan",
-        "name": "Japanese",
-        "nativeName": "日本語",
-        "dir": "ltr",
-        "toScripts": [
-        {
-        "code": "Latn",
-        "name": "Latin",
-        "nativeName": "ラテン語",
-        "dir": "ltr"
-        }
-        ]
-        },
-        {
-        "code": "Latn",
-        "name": "Latin",
-        "nativeName": "ラテン語",
-        "dir": "ltr",
-        "toScripts": [
-        {
-        "code": "Jpan",
-        "name": "Japanese",
-        "nativeName": "日本語",
-        "dir": "ltr"
-        }
-        ]
-        }
-        ]
-        },
-        ...
-        }
-        }
-        ```
-        * `dictionary` property
-        The value of the `dictionary` property is a dictionary of (key, value)
-        pairs. Each key is a BCP 47 language tag. The key identifies a language
-        for which alternative translations and back-translations are available.
-        The value is a JSON object that describes the source language and the
-        target languages with available translations.
-        * `name-` Display name of the source language in the locale requested
-        via `Accept-Language` header.
-        * `nativeName-` Display name of the language in the locale native for
-        this language.
-        * `dir-` Directionality, which is `rtl` for right-to-left languages or
-        `ltr` for left-to-right languages.
-        * `translations-` List of languages with alterative translations and
-        examples for the query expressed in the source language. Each element
-        of the `translations` list has properties
-        * `name-` Display name of the target language in the locale requested
-        via `Accept-Language` header.
-        * `nativeName-` Display name of the target language in the locale
-        native for the target language.
-        * `dir-` Directionality, which is `rtl` for right-to-left languages or
-        `ltr` for left-to-right languages.
-        * `code-` Language code identifying the target language.
-        ```json
-        "es": {
-        "name": "Spanish",
-        "nativeName": "Español",
-        "dir": "ltr",
-        "translations": [
-        {
-        "name": "English",
-        "nativeName": "English",
-        "dir": "ltr",
-        "code": "en"
-        }
-        ]
-        },
-        ```
-        The structure of the response object will not change without a change
-        in the version of the API. For the same version of the API, the list of
-        available languages may change over time because Microsoft Translator
-        continually extends the list of languages supported by its services.
-        The list of supported languages will not change frequently. To save
-        network bandwidth and improve responsiveness, a client application
-        should consider caching language resources and the corresponding entity
-        tag (`ETag`). Then, the client application can periodically (for
-        example, once every 24 hours) query the service to fetch the latest set
-        of supported languages. Passing the current `ETag` value in an
-        `If-None-Match` header field will allow the service to optimize the
-        response. If the resource has not been modified, the service will
-        return status code 304 and an empty response body.
-        # Response Header
-        ETag - Current value of the entity tag for the requested groups of
-        supported languages. To make subsequent requests more efficient, the
-        client may send the `ETag` value in an `If-None-Match` header field.
-        X-RequestId - Value generated by the service to identify the request.
-        It is used for troubleshooting purposes.
-        .
-
-        :param api_version: Version of the API requested by the client. Value
-         must be **3.0**.
-        :type api_version: str
-        :param scope: A comma-separated list of names defining the group of
-         languages to return. Allowed group names are- `translation`,
-         `transliteration` and `dictionary`. If no scope is given, then all
-         groups are returned, which is equivalent to passing
-         `scope=translation,transliteration,dictionary`. To decide which set of
-         supported languages is appropriate for your scenario, see the
-         description of the response object.
-        :type scope: str
-        :param accept_language: The language to use for user interface
-         strings. Some of the fields in the response are names of languages or
-         names of regions. Use this parameter to define the language in which
-         these names are returned. The language is specified by providing a
-         well-formed BCP 47 language tag. For instance, use the value `fr` to
-         request names in French or use the value `zh-Hant` to request names in
-         Chinese Traditional. Names are provided in the English language when a
-         target language is not specified or when localization is not
-         available.
-        :type accept_language: str
-        :param x_client_trace_id: A client-generated GUID to uniquely identify
-         the request. Note that you can omit this header if you include the
-         trace ID in the query string using a query parameter named
-         ClientTraceId.
-        :type x_client_trace_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: LanguageExampleSuccess or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.translatortext.models.LanguageExampleSuccess
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorMessageException<azure.cognitiveservices.translatortext.models.ErrorMessageException>`
-        """
-        # Construct URL
-        url = self.languages_text_translation_v3.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if scope is not None:
-            query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if accept_language is not None:
-            header_parameters['Accept-Language'] = self._serialize.header("accept_language", accept_language, 'str')
-        if x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorMessageException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('LanguageExampleSuccess', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    languages_text_translation_v3.metadata = {'url': '/Languages'}

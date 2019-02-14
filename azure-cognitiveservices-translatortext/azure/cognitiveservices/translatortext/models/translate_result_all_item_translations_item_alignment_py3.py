@@ -9,8 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .translator_operations import TranslatorOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'TranslatorOperations',
-]
+
+class TranslateResultAllItemTranslationsItemAlignment(Model):
+    """TranslateResultAllItemTranslationsItemAlignment.
+
+    :param proj:
+    :type proj: str
+    """
+
+    _attribute_map = {
+        'proj': {'key': 'proj', 'type': 'str'},
+    }
+
+    def __init__(self, *, proj: str=None, **kwargs) -> None:
+        super(TranslateResultAllItemTranslationsItemAlignment, self).__init__(**kwargs)
+        self.proj = proj

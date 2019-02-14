@@ -10,26 +10,34 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .language_example_success_translation_language_code_py3 import LanguageExampleSuccessTranslationLanguageCode
-    from .language_example_success_translation_py3 import LanguageExampleSuccessTranslation
-    from .language_example_success_transliteration_language_code_scripts_item_to_scripts_item_py3 import LanguageExampleSuccessTransliterationLanguageCodeScriptsItemToScriptsItem
-    from .language_example_success_transliteration_language_code_scripts_item_py3 import LanguageExampleSuccessTransliterationLanguageCodeScriptsItem
-    from .language_example_success_transliteration_language_code_py3 import LanguageExampleSuccessTransliterationLanguageCode
-    from .language_example_success_transliteration_py3 import LanguageExampleSuccessTransliteration
-    from .language_example_success_dictionary_language_code_translations_item_py3 import LanguageExampleSuccessDictionaryLanguageCodeTranslationsItem
-    from .language_example_success_dictionary_language_code_py3 import LanguageExampleSuccessDictionaryLanguageCode
-    from .language_example_success_dictionary_py3 import LanguageExampleSuccessDictionary
-    from .language_example_success_py3 import LanguageExampleSuccess
-    from .dictionary_example_success_item_examples_item_py3 import DictionaryExampleSuccessItemExamplesItem
-    from .dictionary_example_success_item_py3 import DictionaryExampleSuccessItem
-    from .dictionary_lookup_success_item_translations_item_back_translations_item_py3 import DictionaryLookupSuccessItemTranslationsItemBackTranslationsItem
-    from .dictionary_lookup_success_item_translations_item_py3 import DictionaryLookupSuccessItemTranslationsItem
-    from .dictionary_lookup_success_item_py3 import DictionaryLookupSuccessItem
-    from .translate_success_item_translation_item_py3 import TranslateSuccessItemTranslationItem
-    from .translate_success_item_py3 import TranslateSuccessItem
-    from .break_sentence_success_item_py3 import BreakSentenceSuccessItem
-    from .transliterate_success_item_py3 import TransliterateSuccessItem
-    from .detect_success_item_py3 import DetectSuccessItem
+    from .languages_result_translation_language_code_py3 import LanguagesResultTranslationLanguageCode
+    from .languages_result_translation_py3 import LanguagesResultTranslation
+    from .languages_result_transliteration_language_code_scripts_item_to_scripts_item_py3 import LanguagesResultTransliterationLanguageCodeScriptsItemToScriptsItem
+    from .languages_result_transliteration_language_code_scripts_item_py3 import LanguagesResultTransliterationLanguageCodeScriptsItem
+    from .languages_result_transliteration_language_code_py3 import LanguagesResultTransliterationLanguageCode
+    from .languages_result_transliteration_py3 import LanguagesResultTransliteration
+    from .languages_result_dictionary_language_code_translations_item_py3 import LanguagesResultDictionaryLanguageCodeTranslationsItem
+    from .languages_result_dictionary_language_code_py3 import LanguagesResultDictionaryLanguageCode
+    from .languages_result_dictionary_py3 import LanguagesResultDictionary
+    from .languages_result_py3 import LanguagesResult
+    from .dictionary_example_result_item_examples_item_py3 import DictionaryExampleResultItemExamplesItem
+    from .dictionary_example_result_item_py3 import DictionaryExampleResultItem
+    from .dictionary_lookup_result_item_translations_item_back_translations_item_py3 import DictionaryLookupResultItemTranslationsItemBackTranslationsItem
+    from .dictionary_lookup_result_item_translations_item_py3 import DictionaryLookupResultItemTranslationsItem
+    from .dictionary_lookup_result_item_py3 import DictionaryLookupResultItem
+    from .translate_result_item_translation_item_py3 import TranslateResultItemTranslationItem
+    from .translate_result_item_py3 import TranslateResultItem
+    from .translate_result_all_item_detected_language_py3 import TranslateResultAllItemDetectedLanguage
+    from .translate_result_all_item_translations_item_transliteration_py3 import TranslateResultAllItemTranslationsItemTransliteration
+    from .translate_result_all_item_translations_item_alignment_py3 import TranslateResultAllItemTranslationsItemAlignment
+    from .translate_result_all_item_translations_item_sent_len_src_sent_len_item_py3 import TranslateResultAllItemTranslationsItemSentLenSrcSentLenItem
+    from .translate_result_all_item_translations_item_sent_len_trans_sent_len_item_py3 import TranslateResultAllItemTranslationsItemSentLenTransSentLenItem
+    from .translate_result_all_item_translations_item_sent_len_py3 import TranslateResultAllItemTranslationsItemSentLen
+    from .translate_result_all_item_translations_item_py3 import TranslateResultAllItemTranslationsItem
+    from .translate_result_all_item_py3 import TranslateResultAllItem
+    from .break_sentence_result_item_py3 import BreakSentenceResultItem
+    from .transliterate_result_item_py3 import TransliterateResultItem
+    from .detect_result_item_py3 import DetectResultItem
     from .break_sentence_text_input_py3 import BreakSentenceTextInput
     from .error_message_error_py3 import ErrorMessageError
     from .error_message_py3 import ErrorMessage, ErrorMessageException
@@ -39,26 +47,34 @@ try:
     from .translate_text_input_py3 import TranslateTextInput
     from .transliterate_text_input_py3 import TransliterateTextInput
 except (SyntaxError, ImportError):
-    from .language_example_success_translation_language_code import LanguageExampleSuccessTranslationLanguageCode
-    from .language_example_success_translation import LanguageExampleSuccessTranslation
-    from .language_example_success_transliteration_language_code_scripts_item_to_scripts_item import LanguageExampleSuccessTransliterationLanguageCodeScriptsItemToScriptsItem
-    from .language_example_success_transliteration_language_code_scripts_item import LanguageExampleSuccessTransliterationLanguageCodeScriptsItem
-    from .language_example_success_transliteration_language_code import LanguageExampleSuccessTransliterationLanguageCode
-    from .language_example_success_transliteration import LanguageExampleSuccessTransliteration
-    from .language_example_success_dictionary_language_code_translations_item import LanguageExampleSuccessDictionaryLanguageCodeTranslationsItem
-    from .language_example_success_dictionary_language_code import LanguageExampleSuccessDictionaryLanguageCode
-    from .language_example_success_dictionary import LanguageExampleSuccessDictionary
-    from .language_example_success import LanguageExampleSuccess
-    from .dictionary_example_success_item_examples_item import DictionaryExampleSuccessItemExamplesItem
-    from .dictionary_example_success_item import DictionaryExampleSuccessItem
-    from .dictionary_lookup_success_item_translations_item_back_translations_item import DictionaryLookupSuccessItemTranslationsItemBackTranslationsItem
-    from .dictionary_lookup_success_item_translations_item import DictionaryLookupSuccessItemTranslationsItem
-    from .dictionary_lookup_success_item import DictionaryLookupSuccessItem
-    from .translate_success_item_translation_item import TranslateSuccessItemTranslationItem
-    from .translate_success_item import TranslateSuccessItem
-    from .break_sentence_success_item import BreakSentenceSuccessItem
-    from .transliterate_success_item import TransliterateSuccessItem
-    from .detect_success_item import DetectSuccessItem
+    from .languages_result_translation_language_code import LanguagesResultTranslationLanguageCode
+    from .languages_result_translation import LanguagesResultTranslation
+    from .languages_result_transliteration_language_code_scripts_item_to_scripts_item import LanguagesResultTransliterationLanguageCodeScriptsItemToScriptsItem
+    from .languages_result_transliteration_language_code_scripts_item import LanguagesResultTransliterationLanguageCodeScriptsItem
+    from .languages_result_transliteration_language_code import LanguagesResultTransliterationLanguageCode
+    from .languages_result_transliteration import LanguagesResultTransliteration
+    from .languages_result_dictionary_language_code_translations_item import LanguagesResultDictionaryLanguageCodeTranslationsItem
+    from .languages_result_dictionary_language_code import LanguagesResultDictionaryLanguageCode
+    from .languages_result_dictionary import LanguagesResultDictionary
+    from .languages_result import LanguagesResult
+    from .dictionary_example_result_item_examples_item import DictionaryExampleResultItemExamplesItem
+    from .dictionary_example_result_item import DictionaryExampleResultItem
+    from .dictionary_lookup_result_item_translations_item_back_translations_item import DictionaryLookupResultItemTranslationsItemBackTranslationsItem
+    from .dictionary_lookup_result_item_translations_item import DictionaryLookupResultItemTranslationsItem
+    from .dictionary_lookup_result_item import DictionaryLookupResultItem
+    from .translate_result_item_translation_item import TranslateResultItemTranslationItem
+    from .translate_result_item import TranslateResultItem
+    from .translate_result_all_item_detected_language import TranslateResultAllItemDetectedLanguage
+    from .translate_result_all_item_translations_item_transliteration import TranslateResultAllItemTranslationsItemTransliteration
+    from .translate_result_all_item_translations_item_alignment import TranslateResultAllItemTranslationsItemAlignment
+    from .translate_result_all_item_translations_item_sent_len_src_sent_len_item import TranslateResultAllItemTranslationsItemSentLenSrcSentLenItem
+    from .translate_result_all_item_translations_item_sent_len_trans_sent_len_item import TranslateResultAllItemTranslationsItemSentLenTransSentLenItem
+    from .translate_result_all_item_translations_item_sent_len import TranslateResultAllItemTranslationsItemSentLen
+    from .translate_result_all_item_translations_item import TranslateResultAllItemTranslationsItem
+    from .translate_result_all_item import TranslateResultAllItem
+    from .break_sentence_result_item import BreakSentenceResultItem
+    from .transliterate_result_item import TransliterateResultItem
+    from .detect_result_item import DetectResultItem
     from .break_sentence_text_input import BreakSentenceTextInput
     from .error_message_error import ErrorMessageError
     from .error_message import ErrorMessage, ErrorMessageException
@@ -69,26 +85,34 @@ except (SyntaxError, ImportError):
     from .transliterate_text_input import TransliterateTextInput
 
 __all__ = [
-    'LanguageExampleSuccessTranslationLanguageCode',
-    'LanguageExampleSuccessTranslation',
-    'LanguageExampleSuccessTransliterationLanguageCodeScriptsItemToScriptsItem',
-    'LanguageExampleSuccessTransliterationLanguageCodeScriptsItem',
-    'LanguageExampleSuccessTransliterationLanguageCode',
-    'LanguageExampleSuccessTransliteration',
-    'LanguageExampleSuccessDictionaryLanguageCodeTranslationsItem',
-    'LanguageExampleSuccessDictionaryLanguageCode',
-    'LanguageExampleSuccessDictionary',
-    'LanguageExampleSuccess',
-    'DictionaryExampleSuccessItemExamplesItem',
-    'DictionaryExampleSuccessItem',
-    'DictionaryLookupSuccessItemTranslationsItemBackTranslationsItem',
-    'DictionaryLookupSuccessItemTranslationsItem',
-    'DictionaryLookupSuccessItem',
-    'TranslateSuccessItemTranslationItem',
-    'TranslateSuccessItem',
-    'BreakSentenceSuccessItem',
-    'TransliterateSuccessItem',
-    'DetectSuccessItem',
+    'LanguagesResultTranslationLanguageCode',
+    'LanguagesResultTranslation',
+    'LanguagesResultTransliterationLanguageCodeScriptsItemToScriptsItem',
+    'LanguagesResultTransliterationLanguageCodeScriptsItem',
+    'LanguagesResultTransliterationLanguageCode',
+    'LanguagesResultTransliteration',
+    'LanguagesResultDictionaryLanguageCodeTranslationsItem',
+    'LanguagesResultDictionaryLanguageCode',
+    'LanguagesResultDictionary',
+    'LanguagesResult',
+    'DictionaryExampleResultItemExamplesItem',
+    'DictionaryExampleResultItem',
+    'DictionaryLookupResultItemTranslationsItemBackTranslationsItem',
+    'DictionaryLookupResultItemTranslationsItem',
+    'DictionaryLookupResultItem',
+    'TranslateResultItemTranslationItem',
+    'TranslateResultItem',
+    'TranslateResultAllItemDetectedLanguage',
+    'TranslateResultAllItemTranslationsItemTransliteration',
+    'TranslateResultAllItemTranslationsItemAlignment',
+    'TranslateResultAllItemTranslationsItemSentLenSrcSentLenItem',
+    'TranslateResultAllItemTranslationsItemSentLenTransSentLenItem',
+    'TranslateResultAllItemTranslationsItemSentLen',
+    'TranslateResultAllItemTranslationsItem',
+    'TranslateResultAllItem',
+    'BreakSentenceResultItem',
+    'TransliterateResultItem',
+    'DetectResultItem',
     'BreakSentenceTextInput',
     'ErrorMessageError',
     'ErrorMessage', 'ErrorMessageException',
