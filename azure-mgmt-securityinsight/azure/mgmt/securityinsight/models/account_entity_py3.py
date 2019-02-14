@@ -31,7 +31,7 @@ class AccountEntity(Entity):
     :ivar account_name: The name of the account. This field should hold only
      the name without any domain added to it, i.e. administrator.
     :vartype account_name: str
-    :ivar nt_domain: The NETBIOS domain name as it appears in the alert format
+    :ivar nt_domain: The NetBIOS domain name as it appears in the alert format
      – domain\\username. Examples: NT AUTHORITY.
     :vartype nt_domain: str
     :ivar upn_suffix: The user principal name suffix for the account, in some

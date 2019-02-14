@@ -39,7 +39,7 @@ class ProductSettingsOperations(object):
 
     def get(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, settings_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a stting.
+        """Gets a setting.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.

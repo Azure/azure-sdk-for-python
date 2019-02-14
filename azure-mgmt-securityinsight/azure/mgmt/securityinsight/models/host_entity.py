@@ -41,7 +41,7 @@ class HostEntity(Entity):
     :vartype azure_id: str
     :ivar oms_agent_id: The OMS agent id, if the host has OMS agent installed.
     :vartype oms_agent_id: str
-    :param os_family: The operartion system type. Possible values include:
+    :param os_family: The operating system type. Possible values include:
      'Linux', 'Windows', 'Android', 'IOS'
     :type os_family: str or ~azure.mgmt.securityinsight.models.OSFamily
     :ivar os_version: A free text representation of the operating system. This
