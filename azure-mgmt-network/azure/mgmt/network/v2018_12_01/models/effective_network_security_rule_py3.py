@@ -29,11 +29,11 @@ class EffectiveNetworkSecurityRule(Model):
     :type destination_port_range: str
     :param source_port_ranges: The source port ranges. Expected values include
      a single integer between 0 and 65535, a range using '-' as separator (e.g.
-     100-400), or an asterix (*)
+     100-400), or an asterisk (*)
     :type source_port_ranges: list[str]
     :param destination_port_ranges: The destination port ranges. Expected
      values include a single integer between 0 and 65535, a range using '-' as
-     separator (e.g. 100-400), or an asterix (*)
+     separator (e.g. 100-400), or an asterisk (*)
     :type destination_port_ranges: list[str]
     :param source_address_prefix: The source address prefix.
     :type source_address_prefix: str
@@ -41,11 +41,11 @@ class EffectiveNetworkSecurityRule(Model):
     :type destination_address_prefix: str
     :param source_address_prefixes: The source address prefixes. Expected
      values include CIDR IP ranges, Default Tags (VirtualNetwork,
-     AzureLoadBalancer, Internet), System Tags, and the asterix (*).
+     AzureLoadBalancer, Internet), System Tags, and the asterisk (*).
     :type source_address_prefixes: list[str]
     :param destination_address_prefixes: The destination address prefixes.
      Expected values include CIDR IP ranges, Default Tags (VirtualNetwork,
-     AzureLoadBalancer, Internet), System Tags, and the asterix (*).
+     AzureLoadBalancer, Internet), System Tags, and the asterisk (*).
     :type destination_address_prefixes: list[str]
     :param expanded_source_address_prefix: The expanded source address prefix.
     :type expanded_source_address_prefix: list[str]

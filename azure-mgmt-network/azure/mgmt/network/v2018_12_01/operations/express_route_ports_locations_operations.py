@@ -41,7 +41,7 @@ class ExpressRoutePortsLocationsOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Retrieves all ExpressRoutePort peering locations. Does not return
         available bandwidths for each location. Available bandwidths can only
-        be obtained when retriving a specific peering location.
+        be obtained when retrieving a specific peering location.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
