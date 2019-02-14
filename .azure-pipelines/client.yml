@@ -34,6 +34,7 @@ jobs:
   - script: |
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
+
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     condition: succeededOrFailed()
@@ -81,32 +82,25 @@ jobs:
 
   strategy:
     matrix:
-      Linux_Python27:
-        OSName: 'Linux'
+      Linux_Python27:       
         OSVmImage: 'ubuntu-16.04'
         PythonVersion: '2.7'
-      Linux_Python34:
-        OSName: 'Linux'
+      Linux_Python34:        
         OSVmImage: 'ubuntu-16.04'
         PythonVersion: '3.4'
-      Linux_Python35:
-        OSName: 'Linux'
+      Linux_Python35:      
         OSVmImage: 'ubuntu-16.04'
         PythonVersion: '3.5'
       Linux_Python36:
-        OSName: 'Linux'
         OSVmImage: 'ubuntu-16.04'
         PythonVersion: '3.6'
       Linux_Python37:
-        OSName: 'Linux'
         OSVmImage: 'ubuntu-16.04'
         PythonVersion: '3.7'
       Windows_Python35:
-        OSName: 'Windows'
         OSVmImage: 'vs2017-win2016'
         PythonVersion: '3.5'
       MacOS_Python27:
-        OSName: 'MacOS'
         OSVmImage: 'macOS-10.13'
         PythonVersion: '2.7'
 
