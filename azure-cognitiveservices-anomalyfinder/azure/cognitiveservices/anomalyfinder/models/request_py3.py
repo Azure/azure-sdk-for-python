@@ -42,7 +42,7 @@ class Request(Model):
     :param sensitivity: Optional argument, advanced model parameter, between
      0-99, the lower the value is, the larger the margin value will be which
      means less anomalies will be accepted.
-    :type sensitivity: float
+    :type sensitivity: int
     """
 
     _validation = {
@@ -56,10 +56,10 @@ class Request(Model):
         'custom_interval': {'key': 'customInterval', 'type': 'int'},
         'period': {'key': 'period', 'type': 'int'},
         'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
-        'sensitivity': {'key': 'sensitivity', 'type': 'float'},
+        'sensitivity': {'key': 'sensitivity', 'type': 'int'},
     }
 
-    def __init__(self, *, series, granularity, custom_interval: int=None, period: int=None, max_anomaly_ratio: float=None, sensitivity: float=None, **kwargs) -> None:
+    def __init__(self, *, series, granularity, custom_interval: int=None, period: int=None, max_anomaly_ratio: float=None, sensitivity: int=None, **kwargs) -> None:
         super(Request, self).__init__(**kwargs)
         self.series = series
         self.granularity = granularity

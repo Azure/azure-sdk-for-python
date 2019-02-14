@@ -17,9 +17,7 @@ class Point(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param timestamp: Required. Timestamp of a data point. Please make sure it
-     aligns with the midnight, and use a UTC date time string, e.g.,
-     2017-08-01T00:00:00Z.
+    :param timestamp: Required. Timestamp of a data point (ISO8601 format).
     :type timestamp: datetime
     :param value: Required. The measurement of that point, should be float.
     :type value: float
