@@ -24,9 +24,9 @@ class OfficeConsent(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param tenant_id: The tenantId of the Office365 with the concesnt.
+    :param tenant_id: The tenantId of the Office365 with the consent.
     :type tenant_id: str
-    :ivar tenant_name: The tenant name of the Office365 with the concesnt.
+    :ivar tenant_name: The tenant name of the Office365 with the consent.
     :vartype tenant_name: str
     """
 

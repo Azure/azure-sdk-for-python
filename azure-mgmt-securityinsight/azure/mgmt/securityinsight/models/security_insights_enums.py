@@ -81,10 +81,10 @@ class EntityKind(str, Enum):
 
 class OSFamily(str, Enum):
 
-    linux = "Linux"  #: Host with Linux operartion system.
-    windows = "Windows"  #: Host with Windows operartion system.
-    android = "Android"  #: Host with Android operartion system.
-    ios = "IOS"  #: Host with IOS operartion system.
+    linux = "Linux"  #: Host with Linux operating system.
+    windows = "Windows"  #: Host with Windows operating system.
+    android = "Android"  #: Host with Android operating system.
+    ios = "IOS"  #: Host with IOS operating system.
 
 
 class SettingKind(str, Enum):
