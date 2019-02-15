@@ -36,7 +36,7 @@ class TranslatorOperations(object):
         self.api_version = "3.0"
 
     def break_sentence(
-            self, text, language=None, script=None, custom_headers=None, raw=False, **operation_config):
+            self, text, language=None, script=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Identifies the position of sentence boundaries in a piece of text.
         .
 
@@ -79,6 +79,11 @@ class TranslatorOperations(object):
          If a script is not specified, the default script of the language will
          be assumed.
         :type script: str
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -112,8 +117,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(text, '[BreakSentenceTextInput]')
@@ -138,7 +143,7 @@ class TranslatorOperations(object):
     break_sentence.metadata = {'url': '/BreakSentence'}
 
     def detect(
-            self, text, custom_headers=None, raw=False, **operation_config):
+            self, text, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Identifies the language of a string of text.
         .
 
@@ -174,6 +179,11 @@ class TranslatorOperations(object):
          It is used for troubleshooting purposes.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DetectTextInput]
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -203,8 +213,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(text, '[DetectTextInput]')
@@ -229,7 +239,7 @@ class TranslatorOperations(object):
     detect.metadata = {'url': '/Detect'}
 
     def dictionary_lookup(
-            self, from_parameter, to, text, custom_headers=None, raw=False, **operation_config):
+            self, from_parameter, to, text, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Provides alternative translations for a word and a small number of
         idiomatic phrases. Each translation has a `part-of-speech` and a list
         of `back-translations`. The back-translations enable a user to
@@ -336,6 +346,11 @@ class TranslatorOperations(object):
          It is used for troubleshooting purposes.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DictionaryLookupTextInput]
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -367,8 +382,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(text, '[DictionaryLookupTextInput]')
@@ -393,7 +408,7 @@ class TranslatorOperations(object):
     dictionary_lookup.metadata = {'url': '/Dictionary/Lookup'}
 
     def dictionary_examples(
-            self, from_parameter, to, text, custom_headers=None, raw=False, **operation_config):
+            self, from_parameter, to, text, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Provides examples that show how terms in the dictionary are used in
         context. This operation is used in tandem with `Dictionary lookup`.
         .
@@ -459,6 +474,11 @@ class TranslatorOperations(object):
          (OK) but the `examples` list is an empty list.
         :type text:
          list[~azure.cognitiveservices.translatortext.models.DictionaryExampleTextInput]
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -490,8 +510,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(text, '[DictionaryExampleTextInput]')
@@ -516,7 +536,7 @@ class TranslatorOperations(object):
     dictionary_examples.metadata = {'url': '/Dictionary/Examples'}
 
     def languages(
-            self, scope=None, accept_language=None, custom_headers=None, raw=False, **operation_config):
+            self, scope=None, accept_language=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Gets the set of languages currently supported by other operations of
         the Translator Text API.
         **Authentication is not required to get language resources.**
@@ -701,6 +721,11 @@ class TranslatorOperations(object):
          target language is not specified or when localization is not
          available.
         :type accept_language: str
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -732,8 +757,8 @@ class TranslatorOperations(object):
             header_parameters.update(custom_headers)
         if accept_language is not None:
             header_parameters['Accept-Language'] = self._serialize.header("accept_language", accept_language, 'str')
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -755,7 +780,7 @@ class TranslatorOperations(object):
     languages.metadata = {'url': '/Languages'}
 
     def translate(
-            self, to, text, from_parameter=None, text_type=None, category=None, profanity_action=None, profanity_marker=None, include_alignment=None, include_sentence_length=None, suggested_from=None, from_script=None, to_script=None, custom_headers=None, raw=False, **operation_config):
+            self, to, text, from_parameter=None, text_type=None, category=None, profanity_action=None, profanity_marker=None, include_alignment=None, include_sentence_length=None, suggested_from=None, from_script=None, to_script=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Translates text into one or more languages.
         .
 
@@ -913,6 +938,11 @@ class TranslatorOperations(object):
         :param to_script: Specifies the script of the translated text.
          Supported scripts are available from the languages method
         :type to_script: list[str]
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -963,8 +993,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(text, '[TranslateTextInput]')
@@ -989,7 +1019,7 @@ class TranslatorOperations(object):
     translate.metadata = {'url': '/translate'}
 
     def transliterate(
-            self, language, from_script, to_script, texts, custom_headers=None, raw=False, **operation_config):
+            self, language, from_script, to_script, texts, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
         """Converts the text of a language in one script into another type of
         script. Example-
         Japanese script "こんにちは"
@@ -1028,6 +1058,11 @@ class TranslatorOperations(object):
          * `script`- A string specifying the script used in the output.
         :type texts:
          list[~azure.cognitiveservices.translatortext.models.TransliterateTextInput]
+        :param x_client_trace_id: A client-generated GUID to uniquely identify
+         the request. Note that you can omit this header if you include the
+         trace ID in the query string using a query parameter named
+         ClientTraceId.
+        :type x_client_trace_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1060,8 +1095,8 @@ class TranslatorOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.x_client_trace_id is not None:
-            header_parameters['X-ClientTraceId'] = self._serialize.header("self.config.x_client_trace_id", self.config.x_client_trace_id, 'str')
+        if x_client_trace_id is not None:
+            header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
 
         # Construct body
         body_content = self._serialize.body(texts, '[TransliterateTextInput]')

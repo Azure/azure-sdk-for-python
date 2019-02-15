@@ -23,17 +23,13 @@ class TranslatorTextClientConfiguration(Configuration):
 
     :param endpoint: Supported Cognitive Services endpoints
     :type endpoint: str
-    :param x_client_trace_id: A client-generated GUID to uniquely identify the
-     request. Note that you can omit this header if you include the trace ID in
-     the query string using a query parameter named ClientTraceId.
-    :type x_client_trace_id: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials, x_client_trace_id=None):
+            self, endpoint, credentials):
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -46,7 +42,6 @@ class TranslatorTextClientConfiguration(Configuration):
         self.add_user_agent('azure-cognitiveservices-translatortext/{}'.format(VERSION))
 
         self.endpoint = endpoint
-        self.x_client_trace_id = x_client_trace_id
         self.credentials = credentials
 
 
@@ -124,19 +119,15 @@ class TranslatorTextClient(SDKClient):
 
     :param endpoint: Supported Cognitive Services endpoints
     :type endpoint: str
-    :param x_client_trace_id: A client-generated GUID to uniquely identify the
-     request. Note that you can omit this header if you include the trace ID in
-     the query string using a query parameter named ClientTraceId.
-    :type x_client_trace_id: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials, x_client_trace_id=None):
+            self, endpoint, credentials):
 
-        self.config = TranslatorTextClientConfiguration(endpoint, credentials, x_client_trace_id)
+        self.config = TranslatorTextClientConfiguration(endpoint, credentials)
         super(TranslatorTextClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
