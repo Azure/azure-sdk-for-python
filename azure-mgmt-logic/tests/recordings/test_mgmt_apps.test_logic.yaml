@@ -1,34 +1,32 @@
 interactions:
 - request:
-    body: '{"properties": {"definition": {"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-      "actions": {}, "outputs": {}, "triggers": {}, "parameters": {}, "contentVersion":
-      "1.0.0.0"}}, "location": "West US"}'
+    body: '{"location": "West US", "properties": {"definition": {"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0", "parameters": {}, "triggers": {}, "actions": {},
+      "outputs": {}}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['268']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.6
-          msrest_azure/0.4.7 logicmanagementclient/2.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17763-SP0) requests/2.20.1 msrest/0.5.5
+          msrest_azure/0.4.34 azure-mgmt-logic/4.0.0rc1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [19de47ca-0a83-11e7-b965-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat?api-version=2016-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat?api-version=2018-07-01-preview
   response:
-    body: {string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2017-03-16T19:59:46.2363547Z","changedTime":"2017-03-16T19:59:46.2363547Z","state":"Enabled","version":"08587119124992771971","accessEndpoint":"https://prod-26.westus.logic.azure.com:443/workflows/30716e4017654266ac30fa93fa70a059","definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{},"endpointsConfiguration":{"workflow":{"outgoingIpAddresses":[{"address":"52.160.92.112"},{"address":"40.118.244.241"},{"address":"40.118.241.243"}],"accessEndpointIpAddresses":[{"address":"52.160.90.237"},{"address":"138.91.188.137"},{"address":"13.91.252.184"}]},"connector":{"outgoingIpAddresses":[{"address":"104.40.51.248"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat","name":"12HourHeartBeat","type":"Microsoft.Logic/workflows","location":"West
+    body: {string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2018-12-10T21:44:59.8075127Z","changedTime":"2018-12-10T21:44:59.793436Z","state":"Enabled","version":"08586571285857002143","accessEndpoint":"https://prod-39.westus.logic.azure.com:443/workflows/c16d097f07b74d8d845e4d08e4b96b87","definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{},"endpointsConfiguration":{"workflow":{"outgoingIpAddresses":[{"address":"52.160.92.112"},{"address":"40.118.244.241"},{"address":"40.118.241.243"},{"address":"157.56.162.53"},{"address":"157.56.167.147"},{"address":"104.42.49.145"},{"address":"40.83.164.80"},{"address":"104.42.38.32"}],"accessEndpointIpAddresses":[{"address":"52.160.90.237"},{"address":"138.91.188.137"},{"address":"13.91.252.184"},{"address":"157.56.160.212
+        "}]},"connector":{"outgoingIpAddresses":[{"address":"104.40.51.248"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat","name":"12HourHeartBeat","type":"Microsoft.Logic/workflows","location":"West
         US"}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['1098']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 16 Mar 2017 19:59:46 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [562b4a8d-1dfc-41bc-ad96-ebae6dadb28f]
+      cache-control: [no-cache]
+      content-length: ['1266']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 10 Dec 2018 21:45:00 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: ['westus:0a51f962-b00f-4cba-b6b5-056156e3d6ea']
-      x-ms-routing-request-id: ['CENTRALUS:20170316T195946Z:562b4a8d-1dfc-41bc-ad96-ebae6dadb28f']
     status: {code: 201, message: Created}
 version: 1

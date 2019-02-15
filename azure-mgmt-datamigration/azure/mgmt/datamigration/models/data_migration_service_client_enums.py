@@ -35,6 +35,42 @@ class AuthenticationType(str, Enum):
     active_directory_password = "ActiveDirectoryPassword"
 
 
+class MongoDbErrorType(str, Enum):
+
+    error = "Error"
+    validation_error = "ValidationError"
+    warning = "Warning"
+
+
+class MongoDbMigrationState(str, Enum):
+
+    not_started = "NotStarted"
+    validating_input = "ValidatingInput"
+    initializing = "Initializing"
+    restarting = "Restarting"
+    copying = "Copying"
+    initial_replay = "InitialReplay"
+    replaying = "Replaying"
+    finalizing = "Finalizing"
+    complete = "Complete"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
+class MongoDbShardKeyOrder(str, Enum):
+
+    forward = "Forward"
+    reverse = "Reverse"
+    hashed = "Hashed"
+
+
+class MongoDbReplication(str, Enum):
+
+    disabled = "Disabled"
+    one_time = "OneTime"
+    continuous = "Continuous"
+
+
 class BackupType(str, Enum):
 
     database = "Database"
@@ -212,6 +248,13 @@ class ServerLevelPermissionsGroup(str, Enum):
     migration_from_my_sql_to_azure_db_for_my_sql = "MigrationFromMySQLToAzureDBForMySQL"
 
 
+class MongoDbClusterType(str, Enum):
+
+    blob_container = "BlobContainer"
+    cosmos_db = "CosmosDb"
+    mongo_db = "MongoDb"
+
+
 class TaskState(str, Enum):
 
     unknown = "Unknown"
@@ -244,6 +287,7 @@ class ProjectTargetPlatform(str, Enum):
     sqlmi = "SQLMI"
     azure_db_for_my_sql = "AzureDbForMySql"
     azure_db_for_postgre_sql = "AzureDbForPostgreSql"
+    mongo_db = "MongoDb"
     unknown = "Unknown"
 
 
@@ -252,6 +296,7 @@ class ProjectSourcePlatform(str, Enum):
     sql = "SQL"
     my_sql = "MySQL"
     postgre_sql = "PostgreSql"
+    mongo_db = "MongoDb"
     unknown = "Unknown"
 
 

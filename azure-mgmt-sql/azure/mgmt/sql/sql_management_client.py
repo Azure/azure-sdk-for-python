@@ -64,6 +64,7 @@ from .operations.job_target_groups_operations import JobTargetGroupsOperations
 from .operations.job_versions_operations import JobVersionsOperations
 from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
+from .operations.managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .operations.managed_databases_operations import ManagedDatabasesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
@@ -226,6 +227,8 @@ class SqlManagementClient(SDKClient):
     :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
+    :ivar managed_backup_short_term_retention_policies: ManagedBackupShortTermRetentionPolicies operations
+    :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
@@ -383,6 +386,8 @@ class SqlManagementClient(SDKClient):
         self.long_term_retention_backups = LongTermRetentionBackupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
