@@ -12,7 +12,7 @@
 from .dataset import Dataset
 
 
-class RestServiceDataset(Dataset):
+class RestResourceDataset(Dataset):
     """A Rest service dataset.
 
     All required parameters must be populated in order to send to Azure.
@@ -57,7 +57,7 @@ class RestServiceDataset(Dataset):
      the RESTful API. Type: string (or Expression with resultType string).
     :type additional_headers: object
     :param pagination_rules: The pagination rules to compose next page
-     requests.
+     requests. Type: string (or Expression with resultType string).
     :type pagination_rules: object
     """
 
@@ -84,7 +84,7 @@ class RestServiceDataset(Dataset):
     }
 
     def __init__(self, **kwargs):
-        super(RestServiceDataset, self).__init__(**kwargs)
+        super(RestResourceDataset, self).__init__(**kwargs)
         self.relative_url = kwargs.get('relative_url', None)
         self.request_method = kwargs.get('request_method', None)
         self.request_body = kwargs.get('request_body', None)

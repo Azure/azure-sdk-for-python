@@ -218,7 +218,7 @@ try:
     from .http_dataset_py3 import HttpDataset
     from .azure_search_index_dataset_py3 import AzureSearchIndexDataset
     from .web_table_dataset_py3 import WebTableDataset
-    from .rest_service_dataset_py3 import RestServiceDataset
+    from .rest_resource_dataset_py3 import RestResourceDataset
     from .sql_server_table_dataset_py3 import SqlServerTableDataset
     from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
@@ -589,7 +589,7 @@ except (SyntaxError, ImportError):
     from .http_dataset import HttpDataset
     from .azure_search_index_dataset import AzureSearchIndexDataset
     from .web_table_dataset import WebTableDataset
-    from .rest_service_dataset import RestServiceDataset
+    from .rest_resource_dataset import RestResourceDataset
     from .sql_server_table_dataset import SqlServerTableDataset
     from .sap_open_hub_table_dataset import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
@@ -1032,7 +1032,7 @@ __all__ = [
     'HttpDataset',
     'AzureSearchIndexDataset',
     'WebTableDataset',
-    'RestServiceDataset',
+    'RestResourceDataset',
     'SqlServerTableDataset',
     'SapOpenHubTableDataset',
     'SapEccResourceDataset',
