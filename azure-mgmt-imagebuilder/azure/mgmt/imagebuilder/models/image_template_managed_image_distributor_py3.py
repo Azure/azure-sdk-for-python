@@ -20,8 +20,9 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
     :param run_output_name: Required. The name to be used for the associated
      RunOutput.
     :type run_output_name: str
-    :param tags: Tags for the images
-    :type tags: dict[str, str]
+    :param artifact_tags: Tags that will be applied to the artifact once it
+     has been created/updated by the distributor.
+    :type artifact_tags: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param image_id: Required. Resource Id of the Managed Disk Image
@@ -40,14 +41,14 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
 
     _attribute_map = {
         'run_output_name': {'key': 'runOutputName', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'artifact_tags': {'key': 'artifactTags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'image_id': {'key': 'imageId', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, run_output_name: str, image_id: str, location: str, tags=None, **kwargs) -> None:
-        super(ImageTemplateManagedImageDistributor, self).__init__(run_output_name=run_output_name, tags=tags, **kwargs)
+    def __init__(self, *, run_output_name: str, image_id: str, location: str, artifact_tags=None, **kwargs) -> None:
+        super(ImageTemplateManagedImageDistributor, self).__init__(run_output_name=run_output_name, artifact_tags=artifact_tags, **kwargs)
         self.image_id = image_id
         self.location = location
         self.type = 'managedImage'

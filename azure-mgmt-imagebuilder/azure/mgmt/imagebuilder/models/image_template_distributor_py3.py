@@ -24,8 +24,9 @@ class ImageTemplateDistributor(Model):
     :param run_output_name: Required. The name to be used for the associated
      RunOutput.
     :type run_output_name: str
-    :param tags: Tags for the images
-    :type tags: dict[str, str]
+    :param artifact_tags: Tags that will be applied to the artifact once it
+     has been created/updated by the distributor.
+    :type artifact_tags: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -37,7 +38,7 @@ class ImageTemplateDistributor(Model):
 
     _attribute_map = {
         'run_output_name': {'key': 'runOutputName', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'artifact_tags': {'key': 'artifactTags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -45,8 +46,8 @@ class ImageTemplateDistributor(Model):
         'type': {'managedImage': 'ImageTemplateManagedImageDistributor', 'sharedImage': 'ImageTemplateSharedImageDistributor'}
     }
 
-    def __init__(self, *, run_output_name: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, run_output_name: str, artifact_tags=None, **kwargs) -> None:
         super(ImageTemplateDistributor, self).__init__(**kwargs)
         self.run_output_name = run_output_name
-        self.tags = tags
+        self.artifact_tags = artifact_tags
         self.type = None

@@ -20,8 +20,9 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :param run_output_name: Required. The name to be used for the associated
      RunOutput.
     :type run_output_name: str
-    :param tags: Tags for the images
-    :type tags: dict[str, str]
+    :param artifact_tags: Tags that will be applied to the artifact once it
+     has been created/updated by the distributor.
+    :type artifact_tags: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
     :param gallery_image_id: Required. Resource Id of the Shared Image Gallery
@@ -40,7 +41,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
 
     _attribute_map = {
         'run_output_name': {'key': 'runOutputName', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'artifact_tags': {'key': 'artifactTags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
         'gallery_image_id': {'key': 'galleryImageId', 'type': 'str'},
         'replication_regions': {'key': 'replicationRegions', 'type': '[str]'},
