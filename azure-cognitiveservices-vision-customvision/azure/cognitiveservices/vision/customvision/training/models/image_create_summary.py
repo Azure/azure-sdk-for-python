@@ -18,9 +18,10 @@ class ImageCreateSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar is_batch_successful:
+    :ivar is_batch_successful: True if all of the images in the batch were
+     created successfully, otherwise false.
     :vartype is_batch_successful: bool
-    :ivar images:
+    :ivar images: List of the image creation results.
     :vartype images:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageCreateResult]
     """

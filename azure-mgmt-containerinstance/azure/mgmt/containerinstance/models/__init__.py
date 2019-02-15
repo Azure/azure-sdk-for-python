@@ -15,6 +15,7 @@ try:
     from .container_state_py3 import ContainerState
     from .event_py3 import Event
     from .container_properties_instance_view_py3 import ContainerPropertiesInstanceView
+    from .gpu_resource_py3 import GpuResource
     from .resource_requests_py3 import ResourceRequests
     from .resource_limits_py3 import ResourceLimits
     from .resource_requirements_py3 import ResourceRequirements
@@ -35,6 +36,7 @@ try:
     from .log_analytics_py3 import LogAnalytics
     from .container_group_diagnostics_py3 import ContainerGroupDiagnostics
     from .container_group_network_profile_py3 import ContainerGroupNetworkProfile
+    from .dns_configuration_py3 import DnsConfiguration
     from .container_group_py3 import ContainerGroup
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -53,6 +55,7 @@ except (SyntaxError, ImportError):
     from .container_state import ContainerState
     from .event import Event
     from .container_properties_instance_view import ContainerPropertiesInstanceView
+    from .gpu_resource import GpuResource
     from .resource_requests import ResourceRequests
     from .resource_limits import ResourceLimits
     from .resource_requirements import ResourceRequirements
@@ -73,6 +76,7 @@ except (SyntaxError, ImportError):
     from .log_analytics import LogAnalytics
     from .container_group_diagnostics import ContainerGroupDiagnostics
     from .container_group_network_profile import ContainerGroupNetworkProfile
+    from .dns_configuration import DnsConfiguration
     from .container_group import ContainerGroup
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -88,6 +92,7 @@ except (SyntaxError, ImportError):
 from .container_group_paged import ContainerGroupPaged
 from .container_instance_management_client_enums import (
     ContainerNetworkProtocol,
+    GpuSku,
     ResourceIdentityType,
     ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
@@ -103,6 +108,7 @@ __all__ = [
     'ContainerState',
     'Event',
     'ContainerPropertiesInstanceView',
+    'GpuResource',
     'ResourceRequests',
     'ResourceLimits',
     'ResourceRequirements',
@@ -123,6 +129,7 @@ __all__ = [
     'LogAnalytics',
     'ContainerGroupDiagnostics',
     'ContainerGroupNetworkProfile',
+    'DnsConfiguration',
     'ContainerGroup',
     'OperationDisplay',
     'Operation',
@@ -137,6 +144,7 @@ __all__ = [
     'Resource',
     'ContainerGroupPaged',
     'ContainerNetworkProtocol',
+    'GpuSku',
     'ResourceIdentityType',
     'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',

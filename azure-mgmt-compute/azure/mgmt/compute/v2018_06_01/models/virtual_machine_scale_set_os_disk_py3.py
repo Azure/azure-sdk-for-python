@@ -36,8 +36,8 @@ class VirtualMachineScaleSetOSDisk(Model):
      Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2018_06_01.models.DiskCreateOptionTypes
-    :param diff_disk_settings: Specifies the differencing Disk Settings for
-     the operating system disk used by the virtual machine scale set.
+    :param diff_disk_settings: Specifies the ephemeral disk Settings for the
+     operating system disk used by the virtual machine scale set.
     :type diff_disk_settings:
      ~azure.mgmt.compute.v2018_06_01.models.DiffDiskSettings
     :param disk_size_gb: Specifies the size of the operating system disk in

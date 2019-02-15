@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.5.0 (2018-10-30)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group VirtualNetworkRulesOperations for MariaDB
+
 1.4.1 (2018-10-16)
 ++++++++++++++++++
 

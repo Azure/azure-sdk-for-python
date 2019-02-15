@@ -20,13 +20,13 @@ class Sku(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Gets or sets the sku name. Required for account
-     creation; optional for update. Note that in older versions, sku name was
+    :param name: Required. Gets or sets the SKU name. Required for account
+     creation; optional for update. Note that in older versions, SKU name was
      called accountType. Possible values include: 'Standard_LRS',
      'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS',
      'Premium_ZRS'
     :type name: str or ~azure.mgmt.storage.v2018_07_01.models.SkuName
-    :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
+    :ivar tier: Gets the SKU tier. This is based on the SKU name. Possible
      values include: 'Standard', 'Premium'
     :vartype tier: str or ~azure.mgmt.storage.v2018_07_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is
@@ -40,8 +40,8 @@ class Sku(Model):
      be supported and registered Azure Geo Regions (e.g. West US, East US,
      Southeast Asia, etc.).
     :vartype locations: list[str]
-    :ivar capabilities: The capability information in the specified sku,
-     including file encryption, network acls, change notification, etc.
+    :ivar capabilities: The capability information in the specified SKU,
+     including file encryption, network ACLs, change notification, etc.
     :vartype capabilities:
      list[~azure.mgmt.storage.v2018_07_01.models.SKUCapability]
     :param restrictions: The restrictions because of which SKU cannot be used.

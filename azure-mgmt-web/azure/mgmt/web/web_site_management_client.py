@@ -119,7 +119,6 @@ class WebSiteManagementClient(SDKClient):
         super(WebSiteManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-02-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -169,12 +168,14 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -224,12 +225,14 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -281,6 +284,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -289,7 +294,7 @@ class WebSiteManagementClient(SDKClient):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -344,6 +349,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.get_source_control.metadata['url']
         path_format_arguments = {
@@ -353,7 +360,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -405,6 +412,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.update_source_control.metadata['url']
         path_format_arguments = {
@@ -414,7 +423,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -470,6 +479,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -486,7 +497,7 @@ class WebSiteManagementClient(SDKClient):
                     query_parameters['billingLocation'] = self._serialize.query("billing_location", billing_location, 'str')
                 if os_type is not None:
                     query_parameters['osType'] = self._serialize.query("os_type", os_type, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -550,6 +561,8 @@ class WebSiteManagementClient(SDKClient):
         """
         request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
 
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -559,7 +572,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -611,6 +624,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.get_subscription_deployment_locations.metadata['url']
         path_format_arguments = {
@@ -620,7 +635,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -652,14 +667,14 @@ class WebSiteManagementClient(SDKClient):
     get_subscription_deployment_locations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'}
 
     def list_geo_regions(
-            self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, xenon_workers_enabled=None, linux_dynamic_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
 
         :param sku: Name of SKU used to filter the regions. Possible values
          include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
-         'Isolated', 'PremiumV2'
+         'Isolated', 'PremiumV2', 'ElasticPremium', 'ElasticIsolated'
         :type sku: str or ~azure.mgmt.web.models.SkuName
         :param linux_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Linux workers.
@@ -667,6 +682,9 @@ class WebSiteManagementClient(SDKClient):
         :param xenon_workers_enabled: Specify <code>true</code> if you want to
          filter to only regions that support Xenon workers.
         :type xenon_workers_enabled: bool
+        :param linux_dynamic_workers_enabled: Specify <code>true</code> if you
+         want to filter to only regions that support Linux Consumption Workers.
+        :type linux_dynamic_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -678,6 +696,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -696,7 +716,9 @@ class WebSiteManagementClient(SDKClient):
                     query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
                 if xenon_workers_enabled is not None:
                     query_parameters['xenonWorkersEnabled'] = self._serialize.query("xenon_workers_enabled", xenon_workers_enabled, 'bool')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if linux_dynamic_workers_enabled is not None:
+                    query_parameters['linuxDynamicWorkersEnabled'] = self._serialize.query("linux_dynamic_workers_enabled", linux_dynamic_workers_enabled, 'bool')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -753,6 +775,8 @@ class WebSiteManagementClient(SDKClient):
         """
         name_identifier = models.NameIdentifier(name=name)
 
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -765,7 +789,7 @@ class WebSiteManagementClient(SDKClient):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -822,6 +846,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -834,7 +860,7 @@ class WebSiteManagementClient(SDKClient):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -887,6 +913,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.list_skus.metadata['url']
         path_format_arguments = {
@@ -896,7 +924,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -948,6 +976,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.verify_hosting_environment_vnet.metadata['url']
         path_format_arguments = {
@@ -957,7 +987,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1016,6 +1046,8 @@ class WebSiteManagementClient(SDKClient):
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
 
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.move.metadata['url']
         path_format_arguments = {
@@ -1026,7 +1058,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1077,6 +1109,8 @@ class WebSiteManagementClient(SDKClient):
         :raises:
          :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.validate.metadata['url']
         path_format_arguments = {
@@ -1087,7 +1121,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1122,6 +1156,75 @@ class WebSiteManagementClient(SDKClient):
         return deserialized
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'}
 
+    def validate_container_settings(
+            self, validate_container_settings_request, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Validate if the container settings are correct.
+
+        Validate if the container settings are correct.
+
+        :param validate_container_settings_request:
+        :type validate_container_settings_request:
+         ~azure.mgmt.web.models.ValidateContainerSettingsRequest
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        api_version = "2018-02-01"
+
+        # Construct URL
+        url = self.validate_container_settings.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(validate_container_settings_request, 'ValidateContainerSettingsRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    validate_container_settings.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validateContainerSettings'}
+
     def validate_move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """Validate whether a resource can be moved.
@@ -1146,6 +1249,8 @@ class WebSiteManagementClient(SDKClient):
         """
         move_resource_envelope = models.CsmMoveResourceEnvelope(target_resource_group=target_resource_group, resources=resources)
 
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.validate_move.metadata['url']
         path_format_arguments = {
@@ -1156,7 +1261,7 @@ class WebSiteManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}

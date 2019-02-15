@@ -18,6 +18,13 @@ class ContainerNetworkProtocol(str, Enum):
     udp = "UDP"
 
 
+class GpuSku(str, Enum):
+
+    k80 = "K80"
+    p100 = "P100"
+    v100 = "V100"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
