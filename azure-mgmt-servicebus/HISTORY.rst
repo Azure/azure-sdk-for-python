@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.3 (2019-02-25)
+++++++++++++++++++
+
+**Features**
+
+- Added operation NamespacesOperations.migrate
+
 0.5.2 (2018-09-28)
 ++++++++++++++++++
 
