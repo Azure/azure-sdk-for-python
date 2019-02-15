@@ -19,12 +19,19 @@ class CorsSettings(Model):
      allowed to make cross-origin
      calls (for example: http://example.com:12345). Use "*" to allow all.
     :type allowed_origins: list[str]
+    :param support_credentials: Gets or sets whether CORS requests with
+     credentials are allowed. See
+     https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Requests_with_credentials
+     for more details.
+    :type support_credentials: bool
     """
 
     _attribute_map = {
         'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
+        'support_credentials': {'key': 'supportCredentials', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(CorsSettings, self).__init__(**kwargs)
         self.allowed_origins = kwargs.get('allowed_origins', None)
+        self.support_credentials = kwargs.get('support_credentials', None)

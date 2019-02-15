@@ -3,12 +3,19 @@
 Release History
 ===============
 
-0.5.3 (2019-02-25)
+0.5.4 (2019-02-15)
 ++++++++++++++++++
 
 **Features**
 
 - Added operation NamespacesOperations.migrate
+
+0.5.3 (2018-10-29)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 0.5.2. No code change.
 
 0.5.2 (2018-09-28)
 ++++++++++++++++++

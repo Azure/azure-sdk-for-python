@@ -3,6 +3,24 @@
 Release History
 ===============
 
+2.3.0 (2019-02-04)
+++++++++++++++++++
+
+**Features**
+
+- Model CaptureDescription has a new parameter skip_empty_archives
+
+2.2.0 (2018-10-29)
+++++++++++++++++++
+
+**Features**
+
+- Add kafka_enabled attribute
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 2.1.0 (2018-07-31)
 ++++++++++++++++++
 

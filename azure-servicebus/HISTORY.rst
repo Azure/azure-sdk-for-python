@@ -3,8 +3,28 @@
 Release History
 ===============
 
+0.50.0 (2019-01-17)
+-------------------
+
+**Breaking changes**
+
+* Introduces new AMQP-based API.
+* Original HTTP-based API still available under new namespace: azure.servicebus.control_client
+* For full API changes, please see updated `reference documentation <https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python>`__.
+
+Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
+so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.
+
+**Features**
+
+* New API supports message send and receive via AMQP with improved performance and stability.
+* New asynchronous APIs (using `asyncio`) for send, receive and message handling.
+* Support for message and session auto lock renewal via background thread or async operation.
+* Now supports scheduled message cancellation.
+
+
 0.21.1 (2017-04-27)
-+++++++++++++++++++
+-------------------
 
 This wheel package is now built with the azure wheel extension
 
@@ -53,4 +73,4 @@ This wheel package is now built with the azure wheel extension
 
 Initial release of this package, from the split of the `azure` package.
 See the `azure` package release note for 1.0.0 for details and previous
-history on service bus.
+history on Service Bus.

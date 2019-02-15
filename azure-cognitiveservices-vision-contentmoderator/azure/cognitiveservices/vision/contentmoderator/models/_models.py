@@ -24,9 +24,9 @@ class APIError(Model):
         'error': {'key': 'Error', 'type': 'Error'},
     }
 
-    def __init__(self, error=None):
-        super(APIError, self).__init__()
-        self.error = error
+    def __init__(self, **kwargs):
+        super(APIError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class APIErrorException(HttpOperationError):
@@ -55,10 +55,10 @@ class Address(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, text=None, index=None):
-        super(Address, self).__init__()
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(Address, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)
 
 
 class Body(Model):
@@ -69,41 +69,20 @@ class Body(Model):
     :param description: Description of the list.
     :type description: str
     :param metadata: Metadata of the list.
-    :type metadata:
-     ~azure.cognitiveservices.vision.contentmoderator.models.BodyMetadata
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'BodyMetadata'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
-    def __init__(self, name=None, description=None, metadata=None):
-        super(Body, self).__init__()
-        self.name = name
-        self.description = description
-        self.metadata = metadata
-
-
-class BodyMetadata(Model):
-    """Metadata of the list.
-
-    :param key_one: Optional key value pair to describe your list.
-    :type key_one: str
-    :param key_two: Optional key value pair to describe your list.
-    :type key_two: str
-    """
-
-    _attribute_map = {
-        'key_one': {'key': 'Key One', 'type': 'str'},
-        'key_two': {'key': 'Key Two', 'type': 'str'},
-    }
-
-    def __init__(self, key_one=None, key_two=None):
-        super(BodyMetadata, self).__init__()
-        self.key_one = key_one
-        self.key_two = key_two
+    def __init__(self, **kwargs):
+        super(Body, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class BodyModel(Model):
@@ -120,10 +99,10 @@ class BodyModel(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, data_representation="URL", value=None):
-        super(BodyModel, self).__init__()
-        self.data_representation = data_representation
-        self.value = value
+    def __init__(self, **kwargs):
+        super(BodyModel, self).__init__(**kwargs)
+        self.data_representation = kwargs.get('data_representation', "URL")
+        self.value = kwargs.get('value', None)
 
 
 class Candidate(Model):
@@ -140,47 +119,109 @@ class Candidate(Model):
         'confidence': {'key': 'Confidence', 'type': 'float'},
     }
 
-    def __init__(self, text=None, confidence=None):
-        super(Candidate, self).__init__()
-        self.text = text
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(Candidate, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.confidence = kwargs.get('confidence', None)
 
 
 class Classification(Model):
     """The classification details of the text.
 
-    :param category1:
+    :param category1: The category1 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category1:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
-    :param category2:
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory1
+    :param category2: The category2 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category2:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
-    :param category3:
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory2
+    :param category3: The category3 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category3:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory3
     :param review_recommended: The review recommended flag.
     :type review_recommended: bool
     """
 
     _attribute_map = {
-        'category1': {'key': 'Category1', 'type': 'Score'},
-        'category2': {'key': 'Category2', 'type': 'Score'},
-        'category3': {'key': 'Category3', 'type': 'Score'},
+        'category1': {'key': 'Category1', 'type': 'ClassificationCategory1'},
+        'category2': {'key': 'Category2', 'type': 'ClassificationCategory2'},
+        'category3': {'key': 'Category3', 'type': 'ClassificationCategory3'},
         'review_recommended': {'key': 'ReviewRecommended', 'type': 'bool'},
     }
 
-    def __init__(self, category1=None, category2=None, category3=None, review_recommended=None):
-        super(Classification, self).__init__()
-        self.category1 = category1
-        self.category2 = category2
-        self.category3 = category3
-        self.review_recommended = review_recommended
+    def __init__(self, **kwargs):
+        super(Classification, self).__init__(**kwargs)
+        self.category1 = kwargs.get('category1', None)
+        self.category2 = kwargs.get('category2', None)
+        self.category3 = kwargs.get('category3', None)
+        self.review_recommended = kwargs.get('review_recommended', None)
+
+
+class ClassificationCategory1(Model):
+    """The category1 score details of the text. <a
+    href="https://aka.ms/textClassifyCategories">Click here</a> for more
+    details on category classification.
+
+    :param score: The category1 score.
+    :type score: float
+    """
+
+    _attribute_map = {
+        'score': {'key': 'Score', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClassificationCategory1, self).__init__(**kwargs)
+        self.score = kwargs.get('score', None)
+
+
+class ClassificationCategory2(Model):
+    """The category2 score details of the text. <a
+    href="https://aka.ms/textClassifyCategories">Click here</a> for more
+    details on category classification.
+
+    :param score: The category2 score.
+    :type score: float
+    """
+
+    _attribute_map = {
+        'score': {'key': 'Score', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClassificationCategory2, self).__init__(**kwargs)
+        self.score = kwargs.get('score', None)
+
+
+class ClassificationCategory3(Model):
+    """The category3 score details of the text. <a
+    href="https://aka.ms/textClassifyCategories">Click here</a> for more
+    details on category classification.
+
+    :param score: The category3 score.
+    :type score: float
+    """
+
+    _attribute_map = {
+        'score': {'key': 'Score', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClassificationCategory3, self).__init__(**kwargs)
+        self.score = kwargs.get('score', None)
 
 
 class Content(Model):
     """Content.
 
-    :param content_value: Content to evaluate for a job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param content_value: Required. Content to evaluate for a job.
     :type content_value: str
     """
 
@@ -192,20 +233,23 @@ class Content(Model):
         'content_value': {'key': 'ContentValue', 'type': 'str'},
     }
 
-    def __init__(self, content_value):
-        super(Content, self).__init__()
-        self.content_value = content_value
+    def __init__(self, **kwargs):
+        super(Content, self).__init__(**kwargs)
+        self.content_value = kwargs.get('content_value', None)
 
 
 class CreateReviewBodyItem(Model):
     """Schema items of the body.
 
-    :param type: Type of the content. Possible values include: 'Image', 'Text'
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Type of the content. Possible values include:
+     'Image', 'Text'
     :type type: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.enum
-    :param content: Content to review.
+    :param content: Required. Content to review.
     :type content: str
-    :param content_id: Content Identifier.
+    :param content_id: Required. Content Identifier.
     :type content_id: str
     :param callback_endpoint: Optional CallbackEndpoint.
     :type callback_endpoint: str
@@ -228,21 +272,23 @@ class CreateReviewBodyItem(Model):
         'metadata': {'key': 'Metadata', 'type': '[CreateReviewBodyItemMetadataItem]'},
     }
 
-    def __init__(self, type, content, content_id, callback_endpoint=None, metadata=None):
-        super(CreateReviewBodyItem, self).__init__()
-        self.type = type
-        self.content = content
-        self.content_id = content_id
-        self.callback_endpoint = callback_endpoint
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(CreateReviewBodyItem, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class CreateReviewBodyItemMetadataItem(Model):
     """CreateReviewBodyItemMetadataItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -256,10 +302,10 @@ class CreateReviewBodyItemMetadataItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(CreateReviewBodyItemMetadataItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CreateReviewBodyItemMetadataItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class CreateVideoReviewsBodyItem(Model):
@@ -268,20 +314,23 @@ class CreateVideoReviewsBodyItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param video_frames: Optional metadata details.
     :type video_frames:
      list[~azure.cognitiveservices.vision.contentmoderator.models.CreateVideoReviewsBodyItemVideoFramesItem]
     :param metadata: Optional metadata details.
     :type metadata:
      list[~azure.cognitiveservices.vision.contentmoderator.models.CreateVideoReviewsBodyItemMetadataItem]
-    :ivar type: Type of the content. Default value: "Video" .
+    :ivar type: Required. Type of the content. Default value: "Video" .
     :vartype type: str
-    :param content: Video content url to review.
+    :param content: Required. Video content url to review.
     :type content: str
-    :param content_id: Content Identifier.
+    :param content_id: Required. Content Identifier.
     :type content_id: str
-    :param status: Status of the video(Complete,Unpublished,Pending). Possible
-     values include: 'Complete', 'Unpublished', 'Pending'
+    :param status: Required. Status of the
+     video(Complete,Unpublished,Pending). Possible values include: 'Complete',
+     'Unpublished', 'Pending'
     :type status: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.enum
     :param timescale: Timescale of the video.
@@ -310,23 +359,25 @@ class CreateVideoReviewsBodyItem(Model):
 
     type = "Video"
 
-    def __init__(self, content, content_id, status, video_frames=None, metadata=None, timescale=None, callback_endpoint=None):
-        super(CreateVideoReviewsBodyItem, self).__init__()
-        self.video_frames = video_frames
-        self.metadata = metadata
-        self.content = content
-        self.content_id = content_id
-        self.status = status
-        self.timescale = timescale
-        self.callback_endpoint = callback_endpoint
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItem, self).__init__(**kwargs)
+        self.video_frames = kwargs.get('video_frames', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.status = kwargs.get('status', None)
+        self.timescale = kwargs.get('timescale', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)
 
 
 class CreateVideoReviewsBodyItemMetadataItem(Model):
     """CreateVideoReviewsBodyItemMetadataItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -340,20 +391,22 @@ class CreateVideoReviewsBodyItemMetadataItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(CreateVideoReviewsBodyItemMetadataItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemMetadataItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class CreateVideoReviewsBodyItemVideoFramesItem(Model):
     """CreateVideoReviewsBodyItemVideoFramesItem.
 
-    :param id: Id of the frame.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Id of the frame.
     :type id: str
-    :param timestamp: Timestamp of the frame.
+    :param timestamp: Required. Timestamp of the frame.
     :type timestamp: int
-    :param frame_image: Frame image Url.
+    :param frame_image: Required. Frame image Url.
     :type frame_image: str
     :param reviewer_result_tags:
     :type reviewer_result_tags:
@@ -377,21 +430,23 @@ class CreateVideoReviewsBodyItemVideoFramesItem(Model):
         'metadata': {'key': 'Metadata', 'type': '[CreateVideoReviewsBodyItemVideoFramesItemMetadataItem]'},
     }
 
-    def __init__(self, id, timestamp, frame_image, reviewer_result_tags=None, metadata=None):
-        super(CreateVideoReviewsBodyItemVideoFramesItem, self).__init__()
-        self.id = id
-        self.timestamp = timestamp
-        self.frame_image = frame_image
-        self.reviewer_result_tags = reviewer_result_tags
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemVideoFramesItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.frame_image = kwargs.get('frame_image', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class CreateVideoReviewsBodyItemVideoFramesItemMetadataItem(Model):
     """CreateVideoReviewsBodyItemVideoFramesItemMetadataItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -405,18 +460,20 @@ class CreateVideoReviewsBodyItemVideoFramesItemMetadataItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(CreateVideoReviewsBodyItemVideoFramesItemMetadataItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemVideoFramesItemMetadataItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem(Model):
     """CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -430,10 +487,10 @@ class CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class DetectedLanguage(Model):
@@ -454,11 +511,11 @@ class DetectedLanguage(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, detected_language=None, status=None, tracking_id=None):
-        super(DetectedLanguage, self).__init__()
-        self.detected_language = detected_language
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(DetectedLanguage, self).__init__(**kwargs)
+        self.detected_language = kwargs.get('detected_language', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class DetectedTerms(Model):
@@ -483,12 +540,12 @@ class DetectedTerms(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, index=None, original_index=None, list_id=None, term=None):
-        super(DetectedTerms, self).__init__()
-        self.index = index
-        self.original_index = original_index
-        self.list_id = list_id
-        self.term = term
+    def __init__(self, **kwargs):
+        super(DetectedTerms, self).__init__(**kwargs)
+        self.index = kwargs.get('index', None)
+        self.original_index = kwargs.get('original_index', None)
+        self.list_id = kwargs.get('list_id', None)
+        self.term = kwargs.get('term', None)
 
 
 class Email(Model):
@@ -512,12 +569,12 @@ class Email(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, detected=None, sub_type=None, text=None, index=None):
-        super(Email, self).__init__()
-        self.detected = detected
-        self.sub_type = sub_type
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(Email, self).__init__(**kwargs)
+        self.detected = kwargs.get('detected', None)
+        self.sub_type = kwargs.get('sub_type', None)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)
 
 
 class Error(Model):
@@ -534,10 +591,10 @@ class Error(Model):
         'message': {'key': 'Message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(Error, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class Evaluate(Model):
@@ -554,7 +611,7 @@ class Evaluate(Model):
     :param is_image_adult_classified: Indicates if an image is classified as
      adult.
     :type is_image_adult_classified: bool
-    :param racy_classification_score: The racy classication score.
+    :param racy_classification_score: The racy classification score.
     :type racy_classification_score: float
     :param is_image_racy_classified: Indicates if the image is classified as
      racy.
@@ -579,17 +636,17 @@ class Evaluate(Model):
         'status': {'key': 'Status', 'type': 'Status'},
     }
 
-    def __init__(self, cache_id=None, result=None, tracking_id=None, adult_classification_score=None, is_image_adult_classified=None, racy_classification_score=None, is_image_racy_classified=None, advanced_info=None, status=None):
-        super(Evaluate, self).__init__()
-        self.cache_id = cache_id
-        self.result = result
-        self.tracking_id = tracking_id
-        self.adult_classification_score = adult_classification_score
-        self.is_image_adult_classified = is_image_adult_classified
-        self.racy_classification_score = racy_classification_score
-        self.is_image_racy_classified = is_image_racy_classified
-        self.advanced_info = advanced_info
-        self.status = status
+    def __init__(self, **kwargs):
+        super(Evaluate, self).__init__(**kwargs)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.result = kwargs.get('result', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.adult_classification_score = kwargs.get('adult_classification_score', None)
+        self.is_image_adult_classified = kwargs.get('is_image_adult_classified', None)
+        self.racy_classification_score = kwargs.get('racy_classification_score', None)
+        self.is_image_racy_classified = kwargs.get('is_image_racy_classified', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.status = kwargs.get('status', None)
 
 
 class Face(Model):
@@ -612,12 +669,12 @@ class Face(Model):
         'top': {'key': 'Top', 'type': 'int'},
     }
 
-    def __init__(self, bottom=None, left=None, right=None, top=None):
-        super(Face, self).__init__()
-        self.bottom = bottom
-        self.left = left
-        self.right = right
-        self.top = top
+    def __init__(self, **kwargs):
+        super(Face, self).__init__(**kwargs)
+        self.bottom = kwargs.get('bottom', None)
+        self.left = kwargs.get('left', None)
+        self.right = kwargs.get('right', None)
+        self.top = kwargs.get('top', None)
 
 
 class FoundFaces(Model):
@@ -652,15 +709,15 @@ class FoundFaces(Model):
         'faces': {'key': 'Faces', 'type': '[Face]'},
     }
 
-    def __init__(self, status=None, tracking_id=None, cache_id=None, result=None, count=None, advanced_info=None, faces=None):
-        super(FoundFaces, self).__init__()
-        self.status = status
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.result = result
-        self.count = count
-        self.advanced_info = advanced_info
-        self.faces = faces
+    def __init__(self, **kwargs):
+        super(FoundFaces, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.result = kwargs.get('result', None)
+        self.count = kwargs.get('count', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.faces = kwargs.get('faces', None)
 
 
 class Frame(Model):
@@ -685,12 +742,12 @@ class Frame(Model):
         'reviewer_result_tags': {'key': 'ReviewerResultTags', 'type': '[Tag]'},
     }
 
-    def __init__(self, timestamp=None, frame_image=None, metadata=None, reviewer_result_tags=None):
-        super(Frame, self).__init__()
-        self.timestamp = timestamp
-        self.frame_image = frame_image
-        self.metadata = metadata
-        self.reviewer_result_tags = reviewer_result_tags
+    def __init__(self, **kwargs):
+        super(Frame, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.frame_image = kwargs.get('frame_image', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
 
 
 class Frames(Model):
@@ -708,10 +765,10 @@ class Frames(Model):
         'video_frames': {'key': 'VideoFrames', 'type': '[Frame]'},
     }
 
-    def __init__(self, review_id=None, video_frames=None):
-        super(Frames, self).__init__()
-        self.review_id = review_id
-        self.video_frames = video_frames
+    def __init__(self, **kwargs):
+        super(Frames, self).__init__(**kwargs)
+        self.review_id = kwargs.get('review_id', None)
+        self.video_frames = kwargs.get('video_frames', None)
 
 
 class IPA(Model):
@@ -731,11 +788,11 @@ class IPA(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, sub_type=None, text=None, index=None):
-        super(IPA, self).__init__()
-        self.sub_type = sub_type
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(IPA, self).__init__(**kwargs)
+        self.sub_type = kwargs.get('sub_type', None)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)
 
 
 class Image(Model):
@@ -760,12 +817,12 @@ class Image(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, content_id=None, additional_info=None, status=None, tracking_id=None):
-        super(Image, self).__init__()
-        self.content_id = content_id
-        self.additional_info = additional_info
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(Image, self).__init__(**kwargs)
+        self.content_id = kwargs.get('content_id', None)
+        self.additional_info = kwargs.get('additional_info', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class ImageAdditionalInfoItem(Model):
@@ -782,10 +839,10 @@ class ImageAdditionalInfoItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
-        super(ImageAdditionalInfoItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ImageAdditionalInfoItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class ImageIds(Model):
@@ -809,12 +866,12 @@ class ImageIds(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, content_source=None, content_ids=None, status=None, tracking_id=None):
-        super(ImageIds, self).__init__()
-        self.content_source = content_source
-        self.content_ids = content_ids
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(ImageIds, self).__init__(**kwargs)
+        self.content_source = kwargs.get('content_source', None)
+        self.content_ids = kwargs.get('content_ids', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class ImageList(Model):
@@ -827,43 +884,22 @@ class ImageList(Model):
     :param description: Description for image list.
     :type description: str
     :param metadata: Image List Metadata.
-    :type metadata:
-     ~azure.cognitiveservices.vision.contentmoderator.models.ImageListMetadata
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'int'},
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'ImageListMetadata'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, name=None, description=None, metadata=None):
-        super(ImageList, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
-        self.metadata = metadata
-
-
-class ImageListMetadata(Model):
-    """Image List Metadata.
-
-    :param key_one: Optional Key value pair to describe your list.
-    :type key_one: str
-    :param key_two: Optional Key value pair to describe your list.
-    :type key_two: str
-    """
-
-    _attribute_map = {
-        'key_one': {'key': 'Key One', 'type': 'str'},
-        'key_two': {'key': 'Key Two', 'type': 'str'},
-    }
-
-    def __init__(self, key_one=None, key_two=None):
-        super(ImageListMetadata, self).__init__()
-        self.key_one = key_one
-        self.key_two = key_two
+    def __init__(self, **kwargs):
+        super(ImageList, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class Job(Model):
@@ -904,17 +940,17 @@ class Job(Model):
         'job_execution_report': {'key': 'JobExecutionReport', 'type': '[JobExecutionReportDetails]'},
     }
 
-    def __init__(self, id=None, team_name=None, status=None, workflow_id=None, type=None, call_back_endpoint=None, review_id=None, result_meta_data=None, job_execution_report=None):
-        super(Job, self).__init__()
-        self.id = id
-        self.team_name = team_name
-        self.status = status
-        self.workflow_id = workflow_id
-        self.type = type
-        self.call_back_endpoint = call_back_endpoint
-        self.review_id = review_id
-        self.result_meta_data = result_meta_data
-        self.job_execution_report = job_execution_report
+    def __init__(self, **kwargs):
+        super(Job, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.team_name = kwargs.get('team_name', None)
+        self.status = kwargs.get('status', None)
+        self.workflow_id = kwargs.get('workflow_id', None)
+        self.type = kwargs.get('type', None)
+        self.call_back_endpoint = kwargs.get('call_back_endpoint', None)
+        self.review_id = kwargs.get('review_id', None)
+        self.result_meta_data = kwargs.get('result_meta_data', None)
+        self.job_execution_report = kwargs.get('job_execution_report', None)
 
 
 class JobExecutionReportDetails(Model):
@@ -931,10 +967,10 @@ class JobExecutionReportDetails(Model):
         'msg': {'key': 'Msg', 'type': 'str'},
     }
 
-    def __init__(self, ts=None, msg=None):
-        super(JobExecutionReportDetails, self).__init__()
-        self.ts = ts
-        self.msg = msg
+    def __init__(self, **kwargs):
+        super(JobExecutionReportDetails, self).__init__(**kwargs)
+        self.ts = kwargs.get('ts', None)
+        self.msg = kwargs.get('msg', None)
 
 
 class JobId(Model):
@@ -948,9 +984,9 @@ class JobId(Model):
         'job_id': {'key': 'JobId', 'type': 'str'},
     }
 
-    def __init__(self, job_id=None):
-        super(JobId, self).__init__()
-        self.job_id = job_id
+    def __init__(self, **kwargs):
+        super(JobId, self).__init__(**kwargs)
+        self.job_id = kwargs.get('job_id', None)
 
 
 class JobListResult(Model):
@@ -964,9 +1000,9 @@ class JobListResult(Model):
         'value': {'key': 'Value', 'type': '[str]'},
     }
 
-    def __init__(self, value=None):
-        super(JobListResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(JobListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class KeyValuePair(Model):
@@ -983,10 +1019,10 @@ class KeyValuePair(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
-        super(KeyValuePair, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(KeyValuePair, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class Match(Model):
@@ -1012,13 +1048,13 @@ class Match(Model):
         'label': {'key': 'Label', 'type': 'str'},
     }
 
-    def __init__(self, score=None, match_id=None, source=None, tags=None, label=None):
-        super(Match, self).__init__()
-        self.score = score
-        self.match_id = match_id
-        self.source = source
-        self.tags = tags
-        self.label = label
+    def __init__(self, **kwargs):
+        super(Match, self).__init__(**kwargs)
+        self.score = kwargs.get('score', None)
+        self.match_id = kwargs.get('match_id', None)
+        self.source = kwargs.get('source', None)
+        self.tags = kwargs.get('tags', None)
+        self.label = kwargs.get('label', None)
 
 
 class MatchResponse(Model):
@@ -1046,13 +1082,13 @@ class MatchResponse(Model):
         'status': {'key': 'Status', 'type': 'Status'},
     }
 
-    def __init__(self, tracking_id=None, cache_id=None, is_match=None, matches=None, status=None):
-        super(MatchResponse, self).__init__()
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.is_match = is_match
-        self.matches = matches
-        self.status = status
+    def __init__(self, **kwargs):
+        super(MatchResponse, self).__init__(**kwargs)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.is_match = kwargs.get('is_match', None)
+        self.matches = kwargs.get('matches', None)
+        self.status = kwargs.get('status', None)
 
 
 class OCR(Model):
@@ -1087,15 +1123,15 @@ class OCR(Model):
         'candidates': {'key': 'Candidates', 'type': '[Candidate]'},
     }
 
-    def __init__(self, status=None, metadata=None, tracking_id=None, cache_id=None, language=None, text=None, candidates=None):
-        super(OCR, self).__init__()
-        self.status = status
-        self.metadata = metadata
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.language = language
-        self.text = text
-        self.candidates = candidates
+    def __init__(self, **kwargs):
+        super(OCR, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.language = kwargs.get('language', None)
+        self.text = kwargs.get('text', None)
+        self.candidates = kwargs.get('candidates', None)
 
 
 class PII(Model):
@@ -1104,6 +1140,9 @@ class PII(Model):
     :param email:
     :type email:
      list[~azure.cognitiveservices.vision.contentmoderator.models.Email]
+    :param ssn:
+    :type ssn:
+     list[~azure.cognitiveservices.vision.contentmoderator.models.SSN]
     :param ipa:
     :type ipa:
      list[~azure.cognitiveservices.vision.contentmoderator.models.IPA]
@@ -1117,17 +1156,19 @@ class PII(Model):
 
     _attribute_map = {
         'email': {'key': 'Email', 'type': '[Email]'},
+        'ssn': {'key': 'SSN', 'type': '[SSN]'},
         'ipa': {'key': 'IPA', 'type': '[IPA]'},
         'phone': {'key': 'Phone', 'type': '[Phone]'},
         'address': {'key': 'Address', 'type': '[Address]'},
     }
 
-    def __init__(self, email=None, ipa=None, phone=None, address=None):
-        super(PII, self).__init__()
-        self.email = email
-        self.ipa = ipa
-        self.phone = phone
-        self.address = address
+    def __init__(self, **kwargs):
+        super(PII, self).__init__(**kwargs)
+        self.email = kwargs.get('email', None)
+        self.ssn = kwargs.get('ssn', None)
+        self.ipa = kwargs.get('ipa', None)
+        self.phone = kwargs.get('phone', None)
+        self.address = kwargs.get('address', None)
 
 
 class Phone(Model):
@@ -1148,11 +1189,11 @@ class Phone(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, country_code=None, text=None, index=None):
-        super(Phone, self).__init__()
-        self.country_code = country_code
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(Phone, self).__init__(**kwargs)
+        self.country_code = kwargs.get('country_code', None)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)
 
 
 class RefreshIndex(Model):
@@ -1163,8 +1204,7 @@ class RefreshIndex(Model):
     :param is_update_success: Update success status.
     :type is_update_success: bool
     :param advanced_info: Advanced info list.
-    :type advanced_info:
-     list[~azure.cognitiveservices.vision.contentmoderator.models.RefreshIndexAdvancedInfoItem]
+    :type advanced_info: list[dict[str, str]]
     :param status: Refresh index status.
     :type status:
      ~azure.cognitiveservices.vision.contentmoderator.models.Status
@@ -1175,38 +1215,18 @@ class RefreshIndex(Model):
     _attribute_map = {
         'content_source_id': {'key': 'ContentSourceId', 'type': 'str'},
         'is_update_success': {'key': 'IsUpdateSuccess', 'type': 'bool'},
-        'advanced_info': {'key': 'AdvancedInfo', 'type': '[RefreshIndexAdvancedInfoItem]'},
+        'advanced_info': {'key': 'AdvancedInfo', 'type': '[{str}]'},
         'status': {'key': 'Status', 'type': 'Status'},
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, content_source_id=None, is_update_success=None, advanced_info=None, status=None, tracking_id=None):
-        super(RefreshIndex, self).__init__()
-        self.content_source_id = content_source_id
-        self.is_update_success = is_update_success
-        self.advanced_info = advanced_info
-        self.status = status
-        self.tracking_id = tracking_id
-
-
-class RefreshIndexAdvancedInfoItem(Model):
-    """RefreshIndexAdvancedInfoItem.
-
-    :param key_one: Key parameter to describe advanced info.
-    :type key_one: str
-    :param key_two: Key parameter to describe advanced info.
-    :type key_two: str
-    """
-
-    _attribute_map = {
-        'key_one': {'key': 'Key One', 'type': 'str'},
-        'key_two': {'key': 'Key Two', 'type': 'str'},
-    }
-
-    def __init__(self, key_one=None, key_two=None):
-        super(RefreshIndexAdvancedInfoItem, self).__init__()
-        self.key_one = key_one
-        self.key_two = key_two
+    def __init__(self, **kwargs):
+        super(RefreshIndex, self).__init__(**kwargs)
+        self.content_source_id = kwargs.get('content_source_id', None)
+        self.is_update_success = kwargs.get('is_update_success', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class Review(Model):
@@ -1249,36 +1269,38 @@ class Review(Model):
         'callback_endpoint': {'key': 'CallbackEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, review_id=None, sub_team=None, status=None, reviewer_result_tags=None, created_by=None, metadata=None, type=None, content=None, content_id=None, callback_endpoint=None):
-        super(Review, self).__init__()
-        self.review_id = review_id
-        self.sub_team = sub_team
-        self.status = status
-        self.reviewer_result_tags = reviewer_result_tags
-        self.created_by = created_by
-        self.metadata = metadata
-        self.type = type
-        self.content = content
-        self.content_id = content_id
-        self.callback_endpoint = callback_endpoint
+    def __init__(self, **kwargs):
+        super(Review, self).__init__(**kwargs)
+        self.review_id = kwargs.get('review_id', None)
+        self.sub_team = kwargs.get('sub_team', None)
+        self.status = kwargs.get('status', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
+        self.created_by = kwargs.get('created_by', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.type = kwargs.get('type', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)
 
 
-class Score(Model):
-    """The classification score details of the text. <a
-    href="https://aka.ms/textClassifyCategories">Click here</a> for more
-    details on category classification.
+class SSN(Model):
+    """Detected SSN details.
 
-    :param score: The category score.
-    :type score: float
+    :param text: Detected SSN in the input text content.
+    :type text: str
+    :param index: Index(Location) of the SSN in the input text content.
+    :type index: int
     """
 
     _attribute_map = {
-        'score': {'key': 'Score', 'type': 'float'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, score=None):
-        super(Score, self).__init__()
-        self.score = score
+    def __init__(self, **kwargs):
+        super(SSN, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)
 
 
 class Screen(Model):
@@ -1322,18 +1344,18 @@ class Screen(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, original_text=None, normalized_text=None, auto_corrected_text=None, misrepresentation=None, classification=None, status=None, pii=None, language=None, terms=None, tracking_id=None):
-        super(Screen, self).__init__()
-        self.original_text = original_text
-        self.normalized_text = normalized_text
-        self.auto_corrected_text = auto_corrected_text
-        self.misrepresentation = misrepresentation
-        self.classification = classification
-        self.status = status
-        self.pii = pii
-        self.language = language
-        self.terms = terms
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(Screen, self).__init__(**kwargs)
+        self.original_text = kwargs.get('original_text', None)
+        self.normalized_text = kwargs.get('normalized_text', None)
+        self.auto_corrected_text = kwargs.get('auto_corrected_text', None)
+        self.misrepresentation = kwargs.get('misrepresentation', None)
+        self.classification = kwargs.get('classification', None)
+        self.status = kwargs.get('status', None)
+        self.pii = kwargs.get('pii', None)
+        self.language = kwargs.get('language', None)
+        self.terms = kwargs.get('terms', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class Status(Model):
@@ -1353,11 +1375,11 @@ class Status(Model):
         'exception': {'key': 'Exception', 'type': 'str'},
     }
 
-    def __init__(self, code=None, description=None, exception=None):
-        super(Status, self).__init__()
-        self.code = code
-        self.description = description
-        self.exception = exception
+    def __init__(self, **kwargs):
+        super(Status, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.description = kwargs.get('description', None)
+        self.exception = kwargs.get('exception', None)
 
 
 class Tag(Model):
@@ -1374,10 +1396,10 @@ class Tag(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
-        super(Tag, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class TermList(Model):
@@ -1390,43 +1412,22 @@ class TermList(Model):
     :param description: Description for term list.
     :type description: str
     :param metadata: Term list metadata.
-    :type metadata:
-     ~azure.cognitiveservices.vision.contentmoderator.models.TermListMetadata
+    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'int'},
         'name': {'key': 'Name', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'metadata': {'key': 'Metadata', 'type': 'TermListMetadata'},
+        'metadata': {'key': 'Metadata', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, name=None, description=None, metadata=None):
-        super(TermList, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
-        self.metadata = metadata
-
-
-class TermListMetadata(Model):
-    """Term list metadata.
-
-    :param key_one: Optional Key value pair to describe your list.
-    :type key_one: str
-    :param key_two: Optional Key value pair to describe your list.
-    :type key_two: str
-    """
-
-    _attribute_map = {
-        'key_one': {'key': 'Key One', 'type': 'str'},
-        'key_two': {'key': 'Key Two', 'type': 'str'},
-    }
-
-    def __init__(self, key_one=None, key_two=None):
-        super(TermListMetadata, self).__init__()
-        self.key_one = key_one
-        self.key_two = key_two
+    def __init__(self, **kwargs):
+        super(TermList, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class Terms(Model):
@@ -1445,10 +1446,10 @@ class Terms(Model):
         'paging': {'key': 'Paging', 'type': 'TermsPaging'},
     }
 
-    def __init__(self, data=None, paging=None):
-        super(Terms, self).__init__()
-        self.data = data
-        self.paging = paging
+    def __init__(self, **kwargs):
+        super(Terms, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
+        self.paging = kwargs.get('paging', None)
 
 
 class TermsData(Model):
@@ -1473,12 +1474,12 @@ class TermsData(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, language=None, terms=None, status=None, tracking_id=None):
-        super(TermsData, self).__init__()
-        self.language = language
-        self.terms = terms
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(TermsData, self).__init__(**kwargs)
+        self.language = kwargs.get('language', None)
+        self.terms = kwargs.get('terms', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
 
 
 class TermsInList(Model):
@@ -1492,9 +1493,9 @@ class TermsInList(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, term=None):
-        super(TermsInList, self).__init__()
-        self.term = term
+    def __init__(self, **kwargs):
+        super(TermsInList, self).__init__(**kwargs)
+        self.term = kwargs.get('term', None)
 
 
 class TermsPaging(Model):
@@ -1517,20 +1518,22 @@ class TermsPaging(Model):
         'returned': {'key': 'Returned', 'type': 'int'},
     }
 
-    def __init__(self, total=None, limit=None, offset=None, returned=None):
-        super(TermsPaging, self).__init__()
-        self.total = total
-        self.limit = limit
-        self.offset = offset
-        self.returned = returned
+    def __init__(self, **kwargs):
+        super(TermsPaging, self).__init__(**kwargs)
+        self.total = kwargs.get('total', None)
+        self.limit = kwargs.get('limit', None)
+        self.offset = kwargs.get('offset', None)
+        self.returned = kwargs.get('returned', None)
 
 
 class TranscriptModerationBodyItem(Model):
     """Schema items of the body.
 
-    :param timestamp: Timestamp of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. Timestamp of the image.
     :type timestamp: str
-    :param terms: Optional metadata details.
+    :param terms: Required. Optional metadata details.
     :type terms:
      list[~azure.cognitiveservices.vision.contentmoderator.models.TranscriptModerationBodyItemTermsItem]
     """
@@ -1545,18 +1548,20 @@ class TranscriptModerationBodyItem(Model):
         'terms': {'key': 'Terms', 'type': '[TranscriptModerationBodyItemTermsItem]'},
     }
 
-    def __init__(self, timestamp, terms):
-        super(TranscriptModerationBodyItem, self).__init__()
-        self.timestamp = timestamp
-        self.terms = terms
+    def __init__(self, **kwargs):
+        super(TranscriptModerationBodyItem, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.terms = kwargs.get('terms', None)
 
 
 class TranscriptModerationBodyItemTermsItem(Model):
     """TranscriptModerationBodyItemTermsItem.
 
-    :param index: Index of the word
+    All required parameters must be populated in order to send to Azure.
+
+    :param index: Required. Index of the word
     :type index: int
-    :param term: Detected word.
+    :param term: Required. Detected word.
     :type term: str
     """
 
@@ -1570,18 +1575,20 @@ class TranscriptModerationBodyItemTermsItem(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, index, term):
-        super(TranscriptModerationBodyItemTermsItem, self).__init__()
-        self.index = index
-        self.term = term
+    def __init__(self, **kwargs):
+        super(TranscriptModerationBodyItemTermsItem, self).__init__(**kwargs)
+        self.index = kwargs.get('index', None)
+        self.term = kwargs.get('term', None)
 
 
 class VideoFrameBodyItem(Model):
     """Schema items of the body.
 
-    :param timestamp: Timestamp of the frame.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. Timestamp of the frame.
     :type timestamp: str
-    :param frame_image: Content to review.
+    :param frame_image: Required. Content to review.
     :type frame_image: str
     :param reviewer_result_tags:
     :type reviewer_result_tags:
@@ -1603,20 +1610,22 @@ class VideoFrameBodyItem(Model):
         'metadata': {'key': 'Metadata', 'type': '[VideoFrameBodyItemMetadataItem]'},
     }
 
-    def __init__(self, timestamp, frame_image, reviewer_result_tags=None, metadata=None):
-        super(VideoFrameBodyItem, self).__init__()
-        self.timestamp = timestamp
-        self.frame_image = frame_image
-        self.reviewer_result_tags = reviewer_result_tags
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(VideoFrameBodyItem, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.frame_image = kwargs.get('frame_image', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class VideoFrameBodyItemMetadataItem(Model):
     """VideoFrameBodyItemMetadataItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -1630,18 +1639,20 @@ class VideoFrameBodyItemMetadataItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(VideoFrameBodyItemMetadataItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(VideoFrameBodyItemMetadataItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
 
 
 class VideoFrameBodyItemReviewerResultTagsItem(Model):
     """VideoFrameBodyItemReviewerResultTagsItem.
 
-    :param key: Your key parameter.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. Your key parameter.
     :type key: str
-    :param value: Your value parameter.
+    :param value: Required. Your value parameter.
     :type value: str
     """
 
@@ -1655,7 +1666,7 @@ class VideoFrameBodyItemReviewerResultTagsItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(VideoFrameBodyItemReviewerResultTagsItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(VideoFrameBodyItemReviewerResultTagsItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

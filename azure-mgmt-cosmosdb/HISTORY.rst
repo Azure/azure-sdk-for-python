@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.2 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add ignore_missing_vnet_service_endpoint support
+
 0.5.1 (2018-10-16)
 ++++++++++++++++++
 

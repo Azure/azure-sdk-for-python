@@ -52,6 +52,17 @@ class Application(DirectoryObject):
     :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
      for OAuth2
     :type oauth2_allow_implicit_flow: bool
+    :param required_resource_access: Specifies resources that this application
+     requires access to and the set of OAuth permission scopes and application
+     roles that it needs under each of those resources. This pre-configuration
+     of required resource access drives the consent experience.
+    :type required_resource_access:
+     list[~azure.graphrbac.models.RequiredResourceAccess]
+    :param key_credentials: A collection of KeyCredential objects.
+    :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
+    :param password_credentials: A collection of PasswordCredential objects
+    :type password_credentials:
+     list[~azure.graphrbac.models.PasswordCredential]
     """
 
     _validation = {
@@ -74,6 +85,9 @@ class Application(DirectoryObject):
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
+        'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
+        'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
+        'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
     def __init__(self, **kwargs):
@@ -87,4 +101,7 @@ class Application(DirectoryObject):
         self.reply_urls = kwargs.get('reply_urls', None)
         self.homepage = kwargs.get('homepage', None)
         self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
         self.object_type = 'Application'

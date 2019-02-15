@@ -20,8 +20,12 @@ class ImportSource(Model):
     :param resource_id: The resource identifier of the source Azure Container
      Registry.
     :type resource_id: str
-    :param registry_uri: The address of the source registry.
+    :param registry_uri: The address of the source registry (e.g.
+     'mcr.microsoft.com').
     :type registry_uri: str
+    :param credentials: Credentials used when importing from a registry uri.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ImportSourceCredentials
     :param source_image: Required. Repository name of the source image.
      Specify an image by repository ('hello-world'). This will use the 'latest'
      tag.
@@ -38,6 +42,7 @@ class ImportSource(Model):
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'registry_uri': {'key': 'registryUri', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'ImportSourceCredentials'},
         'source_image': {'key': 'sourceImage', 'type': 'str'},
     }
 
@@ -45,4 +50,5 @@ class ImportSource(Model):
         super(ImportSource, self).__init__(**kwargs)
         self.resource_id = kwargs.get('resource_id', None)
         self.registry_uri = kwargs.get('registry_uri', None)
+        self.credentials = kwargs.get('credentials', None)
         self.source_image = kwargs.get('source_image', None)

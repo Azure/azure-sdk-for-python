@@ -34,6 +34,9 @@ class CaptureDescription(Model):
     :param destination: Properties of Destination where capture will be
      stored. (Storage Account, Blob Names)
     :type destination: ~azure.mgmt.eventhub.models.Destination
+    :param skip_empty_archives: A value that indicates whether to Skip Empty
+     Archives
+    :type skip_empty_archives: bool
     """
 
     _validation = {
@@ -47,12 +50,14 @@ class CaptureDescription(Model):
         'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'int'},
         'size_limit_in_bytes': {'key': 'sizeLimitInBytes', 'type': 'int'},
         'destination': {'key': 'destination', 'type': 'Destination'},
+        'skip_empty_archives': {'key': 'skipEmptyArchives', 'type': 'bool'},
     }
 
-    def __init__(self, *, enabled: bool=None, encoding=None, interval_in_seconds: int=None, size_limit_in_bytes: int=None, destination=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool=None, encoding=None, interval_in_seconds: int=None, size_limit_in_bytes: int=None, destination=None, skip_empty_archives: bool=None, **kwargs) -> None:
         super(CaptureDescription, self).__init__(**kwargs)
         self.enabled = enabled
         self.encoding = encoding
         self.interval_in_seconds = interval_in_seconds
         self.size_limit_in_bytes = size_limit_in_bytes
         self.destination = destination
+        self.skip_empty_archives = skip_empty_archives
