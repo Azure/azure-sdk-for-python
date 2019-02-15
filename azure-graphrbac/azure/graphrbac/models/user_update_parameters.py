@@ -64,10 +64,10 @@ class UserUpdateParameters(UserBase):
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None, account_enabled=None, display_name=None, password_profile=None, user_principal_name=None, mail_nickname=None):
-        super(UserUpdateParameters, self).__init__(additional_properties=additional_properties, immutable_id=immutable_id, usage_location=usage_location, given_name=given_name, surname=surname, user_type=user_type)
-        self.account_enabled = account_enabled
-        self.display_name = display_name
-        self.password_profile = password_profile
-        self.user_principal_name = user_principal_name
-        self.mail_nickname = mail_nickname
+    def __init__(self, **kwargs):
+        super(UserUpdateParameters, self).__init__(**kwargs)
+        self.account_enabled = kwargs.get('account_enabled', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.password_profile = kwargs.get('password_profile', None)
+        self.user_principal_name = kwargs.get('user_principal_name', None)
+        self.mail_nickname = kwargs.get('mail_nickname', None)

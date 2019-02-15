@@ -13,7 +13,8 @@ from .resource_py3 import Resource
 
 
 class Gallery(Resource):
-    """Specifies information about the gallery that you want to create or update.
+    """Specifies information about the Shared Image Gallery that you want to
+    create or update.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,7 +31,8 @@ class Gallery(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param description: The description of this gallery resource.
+    :param description: The description of this Shared Image Gallery resource.
+     This property is updatable.
     :type description: str
     :param identifier:
     :type identifier: ~azure.mgmt.compute.v2018_06_01.models.GalleryIdentifier

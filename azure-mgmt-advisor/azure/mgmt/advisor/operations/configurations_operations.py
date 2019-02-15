@@ -22,7 +22,7 @@ class ConfigurationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
@@ -58,7 +58,7 @@ class ConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -74,7 +74,7 @@ class ConfigurationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -83,9 +83,8 @@ class ConfigurationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -103,6 +102,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
 
     def create_in_subscription(
             self, config_contract, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +125,7 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'
+        url = self.create_in_subscription.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -137,6 +137,7 @@ class ConfigurationsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -149,9 +150,8 @@ class ConfigurationsOperations(object):
         body_content = self._serialize.body(config_contract, 'ConfigData')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 400]:
             exp = CloudError(response)
@@ -168,6 +168,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_in_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
 
     def list_by_resource_group(
             self, resource_group, custom_headers=None, raw=False, **operation_config):
@@ -189,7 +190,7 @@ class ConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroup': self._serialize.url("resource_group", resource_group, 'str')
@@ -206,7 +207,7 @@ class ConfigurationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -215,9 +216,8 @@ class ConfigurationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -235,6 +235,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
 
     def create_in_resource_group(
             self, config_contract, resource_group, custom_headers=None, raw=False, **operation_config):
@@ -256,7 +257,7 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'
+        url = self.create_in_resource_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str')
@@ -269,6 +270,7 @@ class ConfigurationsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -281,9 +283,8 @@ class ConfigurationsOperations(object):
         body_content = self._serialize.body(config_contract, 'ConfigData')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 400]:
             exp = CloudError(response)
@@ -300,3 +301,4 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}

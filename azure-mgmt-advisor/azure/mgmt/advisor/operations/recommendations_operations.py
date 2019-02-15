@@ -12,8 +12,6 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
 
@@ -24,7 +22,7 @@ class RecommendationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
@@ -55,7 +53,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations'
+        url = self.generate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -67,7 +65,6 @@ class RecommendationsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -76,8 +73,8 @@ class RecommendationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)
@@ -91,44 +88,7 @@ class RecommendationsOperations(object):
                 'Retry-After': 'str',
             })
             return client_raw_response
-
-
-    def _get_generate_status_initial(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
+    generate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations'}
 
     def get_generate_status(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
@@ -143,52 +103,46 @@ class RecommendationsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._get_generate_status_initial(
-            operation_id=operation_id,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-        if raw:
-            return raw_result
+        # Construct URL
+        url = self.get_generate_status.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
-            return raw_result.response
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        def get_long_running_status(status_link, headers=None):
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    get_generate_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}'}
 
     def list(
             self, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
@@ -217,7 +171,7 @@ class RecommendationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -239,7 +193,7 @@ class RecommendationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -248,9 +202,8 @@ class RecommendationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -268,6 +221,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations'}
 
     def get(
             self, resource_uri, recommendation_id, custom_headers=None, raw=False, **operation_config):
@@ -289,7 +243,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str')
@@ -302,7 +256,7 @@ class RecommendationsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -311,8 +265,8 @@ class RecommendationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -329,3 +283,4 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}'}

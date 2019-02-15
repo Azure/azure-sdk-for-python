@@ -21,7 +21,7 @@ class DeploymentPropertiesExtended(Model):
     :type correlation_id: str
     :param timestamp: The timestamp of the template deployment.
     :type timestamp: datetime
-    :param outputs: Key/value pairs that represent deploymentoutput.
+    :param outputs: Key/value pairs that represent deployment output.
     :type outputs: object
     :param providers: The list of resource providers needed for the
      deployment.

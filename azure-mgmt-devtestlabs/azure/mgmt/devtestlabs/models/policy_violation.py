@@ -26,7 +26,7 @@ class PolicyViolation(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(PolicyViolation, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(PolicyViolation, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

@@ -41,6 +41,10 @@ def update_pr(gh_token, repo_id, pr_number):
         configure_user(gh_token, sdk_repo)
 
         for package_name in package_names:
+            if package_name.endswith("nspkg"):
+                _LOGGER.info("Skip nspkg packages for update PR")
+                continue
+
             # Rebuild packaging
             build_packaging_by_package_name(package_name, sdk_folder, build_conf=True)
             # Commit that
