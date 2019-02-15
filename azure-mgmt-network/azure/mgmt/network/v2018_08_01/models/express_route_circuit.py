@@ -55,6 +55,16 @@ class ExpressRouteCircuit(Resource):
     :param service_provider_properties: The ServiceProviderProperties.
     :type service_provider_properties:
      ~azure.mgmt.network.v2018_08_01.models.ExpressRouteCircuitServiceProviderProperties
+    :param express_route_port: The reference to the ExpressRoutePort resource
+     when the circuit is provisioned on an ExpressRoutePort resource.
+    :type express_route_port:
+     ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :param bandwidth_in_gbps: The bandwidth of the circuit when the circuit is
+     provisioned on an ExpressRoutePort resource.
+    :type bandwidth_in_gbps: float
+    :ivar stag: The identifier of the circuit traffic. Outer tag for QinQ
+     encapsulation.
+    :vartype stag: int
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -70,6 +80,7 @@ class ExpressRouteCircuit(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'stag': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -88,6 +99,9 @@ class ExpressRouteCircuit(Resource):
         'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
         'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
         'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
+        'express_route_port': {'key': 'properties.expressRoutePort', 'type': 'SubResource'},
+        'bandwidth_in_gbps': {'key': 'properties.bandwidthInGbps', 'type': 'float'},
+        'stag': {'key': 'properties.stag', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
         'allow_global_reach': {'key': 'properties.allowGlobalReach', 'type': 'bool'},
@@ -105,6 +119,9 @@ class ExpressRouteCircuit(Resource):
         self.service_key = kwargs.get('service_key', None)
         self.service_provider_notes = kwargs.get('service_provider_notes', None)
         self.service_provider_properties = kwargs.get('service_provider_properties', None)
+        self.express_route_port = kwargs.get('express_route_port', None)
+        self.bandwidth_in_gbps = kwargs.get('bandwidth_in_gbps', None)
+        self.stag = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
         self.allow_global_reach = kwargs.get('allow_global_reach', None)

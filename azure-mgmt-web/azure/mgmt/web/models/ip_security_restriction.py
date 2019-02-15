@@ -15,10 +15,7 @@ from msrest.serialization import Model
 class IpSecurityRestriction(Model):
     """IP security restriction on an app.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param ip_address: Required. IP address the security restriction is valid
-     for.
+    :param ip_address: IP address the security restriction is valid for.
      It can be in form of pure ipv4 address (required SubnetMask property) or
      CIDR notation such as ipv4/mask (leading bit match). For CIDR,
      SubnetMask property must not be specified.
@@ -26,6 +23,12 @@ class IpSecurityRestriction(Model):
     :param subnet_mask: Subnet mask for the range of IP addresses the
      restriction is valid for.
     :type subnet_mask: str
+    :param vnet_subnet_resource_id: Virtual network resource id
+    :type vnet_subnet_resource_id: str
+    :param vnet_traffic_tag: (internal) Vnet traffic tag
+    :type vnet_traffic_tag: int
+    :param subnet_traffic_tag: (internal) Subnet traffic tag
+    :type subnet_traffic_tag: int
     :param action: Allow or Deny access for this IP range.
     :type action: str
     :param tag: Defines what this IP filter will be used for. This is to
@@ -40,13 +43,12 @@ class IpSecurityRestriction(Model):
     :type description: str
     """
 
-    _validation = {
-        'ip_address': {'required': True},
-    }
-
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+        'vnet_subnet_resource_id': {'key': 'vnetSubnetResourceId', 'type': 'str'},
+        'vnet_traffic_tag': {'key': 'vnetTrafficTag', 'type': 'int'},
+        'subnet_traffic_tag': {'key': 'subnetTrafficTag', 'type': 'int'},
         'action': {'key': 'action', 'type': 'str'},
         'tag': {'key': 'tag', 'type': 'IpFilterTag'},
         'priority': {'key': 'priority', 'type': 'int'},
@@ -58,6 +60,9 @@ class IpSecurityRestriction(Model):
         super(IpSecurityRestriction, self).__init__(**kwargs)
         self.ip_address = kwargs.get('ip_address', None)
         self.subnet_mask = kwargs.get('subnet_mask', None)
+        self.vnet_subnet_resource_id = kwargs.get('vnet_subnet_resource_id', None)
+        self.vnet_traffic_tag = kwargs.get('vnet_traffic_tag', None)
+        self.subnet_traffic_tag = kwargs.get('subnet_traffic_tag', None)
         self.action = kwargs.get('action', None)
         self.tag = kwargs.get('tag', None)
         self.priority = kwargs.get('priority', None)

@@ -38,6 +38,10 @@ class ApplicationGatewayHttpListener(SubResource):
     :param provisioning_state: Provisioning state of the HTTP listener
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param custom_error_configurations: Custom error configurations of the
+     HTTP listener.
+    :type custom_error_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayCustomError]
     :param name: Name of the HTTP listener that is unique within an
      Application Gateway.
     :type name: str
@@ -57,6 +61,7 @@ class ApplicationGatewayHttpListener(SubResource):
         'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
         'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -71,6 +76,7 @@ class ApplicationGatewayHttpListener(SubResource):
         self.ssl_certificate = kwargs.get('ssl_certificate', None)
         self.require_server_name_indication = kwargs.get('require_server_name_indication', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.custom_error_configurations = kwargs.get('custom_error_configurations', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
         self.type = kwargs.get('type', None)

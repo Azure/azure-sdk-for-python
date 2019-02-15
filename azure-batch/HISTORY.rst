@@ -3,6 +3,30 @@
 Release History
 ===============
 
+6.0.0 (2018-12-14)
+++++++++++++++++++
+
+- Using REST API version 2018-12-01.8.0.
+    * **Breaking** Removed support for the `upgrade_os` API on `CloudServiceConfiguration` pools.
+        - Removed `PoolOperations.upgrade_os` API.
+        - Renamed `target_os_version` to `os_version` and removed `current_os_version` on `CloudServiceConfiguration`.
+        - Removed `upgrading` state from `PoolState` enum.
+    * **Breaking** Removed `data_egress_gi_b` and `data_ingress_gi_b` from `PoolUsageMetrics`. These properties are no longer supported.
+    * **Breaking** ResourceFile improvements
+        * Added the ability specify an entire Azure Storage container in `ResourceFile`. There are now three supported modes for `ResourceFile`:
+            - `http_url` creates a `ResourceFile` pointing to a single HTTP URL.
+            - `storage_container_url` creates a `ResourceFile` pointing to the blobs under an Azure Blob Storage container.
+            - `auto_storage_container_name` creates a `ResourceFile` pointing to the blobs under an Azure Blob Storage container in the Batch registered auto-storage account.
+        * URLs provided to `ResourceFile` via the `http_url` property can now be any HTTP URL. Previously, these had to be an Azure Blob Storage URL.
+        * The blobs under the Azure Blob Storage container can be filtered by `blob_prefix` property.
+    * **Breaking** Removed `os_disk` property from `VirtualMachineConfiguration`. This property is no longer supported.
+    * Pools which set the `dynamic_vnet_assignment_scope` on `NetworkConfiguration` to be `DynamicVNetAssignmentScope.job` can now dynamically assign a Virtual Network to each node the job's tasks run on. The specific Virtual Network to join the nodes to is specified in the new `network_configuration` property on `CloudJob` and `JobSpecification`.
+        - Note: This feature is in public preview. It is disabled for all Batch accounts except for those which have contacted us and requested to be in the pilot.
+    * The maximum lifetime of a task is now 180 days (previously it was 7).
+    * Added support on Windows pools for creating users with a specific login mode (either `batch` or `interactive`) via `WindowsUserConfiguration.login_mode`.
+    * The default task retention time for all tasks is now 7 days, previously it was infinite.
+- **Breaking** Renamed the `base_url` parameter to `batch_url` on `BatchServiceClient` class, and it is required now.
+
 5.1.1 (2018-10-16)
 ++++++++++++++++++
 
@@ -18,27 +42,27 @@ Release History
 ++++++++++++++++++
 
 - Update operation TaskOperations.add_collection with the following added functionality:
-    - Retry server side errors.
-    - Automatically chunk lists of more than 100 tasks to multiple requests.
-    - If tasks are too large to be submitted in chunks of 100, reduces number of tasks per request.
-    - Add a parameter to specify number of threads to use when submitting tasks.
+    + Retry server side errors.
+    + Automatically chunk lists of more than 100 tasks to multiple requests.
+    + If tasks are too large to be submitted in chunks of 100, reduces number of tasks per request.
+    + Add a parameter to specify number of threads to use when submitting tasks.
 
 5.0.0 (2018-08-24)
 ++++++++++++++++++
 
 - Using REST API version 2018-08-01.7.0.
-  - Added `node_agent_info` in ComputeNode to return the node agent information
-  - **Breaking** Removed the `validation_status` property from `TaskCounts`.
-  - **Breaking** The default caching type for `DataDisk` and `OSDisk` is now `read_write` instead of `none`.
+    + Added `node_agent_info` in ComputeNode to return the node agent information
+    + **Breaking** Removed the `validation_status` property from `TaskCounts`.
+    + **Breaking** The default caching type for `DataDisk` and `OSDisk` is now `read_write` instead of `none`.
 - `BatchServiceClient` can be used as a context manager to keep the underlying HTTP session open for performance.
 - **Breaking** Model signatures are now using only keywords-arguments syntax. Each positional argument must be rewritten as a keyword argument.
 - **Breaking** The following operations signatures are changed:
-   - Operation PoolOperations.enable_auto_scale
-   - Operation TaskOperations.update
-   - Operation ComputeNodeOperations.reimage
-   - Operation ComputeNodeOperations.disable_scheduling
-   - Operation ComputeNodeOperations.reboot
-   - Operation JobOperations.terminate
+   + Operation PoolOperations.enable_auto_scale
+   + Operation TaskOperations.update
+   + Operation ComputeNodeOperations.reimage
+   + Operation ComputeNodeOperations.disable_scheduling
+   + Operation ComputeNodeOperations.reboot
+   + Operation JobOperations.terminate
 - Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
 
 4.1.3 (2018-04-24)
@@ -66,7 +90,7 @@ Release History
 - Using REST API version 2018-03-01.6.1.
 - Added the ability to query pool node counts by state, via the new `list_pool_node_counts` method.
 - Added the ability to upload Azure Batch node agent logs from a particular node, via the `upload_batch_service_logs` method.
-   - This is intended for use in debugging by Microsoft support when there are problems on a node.
+   + This is intended for use in debugging by Microsoft support when there are problems on a node.
 
 4.0.0 (2017-09-25)
 ++++++++++++++++++
@@ -75,8 +99,8 @@ Release History
 - Added the ability to get a discount on Windows VM pricing if you have on-premises licenses for the OS SKUs you are deploying, via `license_type` on `VirtualMachineConfiguration`.
 - Added support for attaching empty data drives to `VirtualMachineConfiguration` based pools, via the new `data_disks` attribute on `VirtualMachineConfiguration`.
 - **Breaking** Custom images must now be deployed using a reference to an ARM Image, instead of pointing to .vhd files in blobs directly.
-  - The new `virtual_machine_image_id` property on `ImageReference` contains the reference to the ARM Image, and `OSDisk.image_uris` no longer exists.
-  - Because of this, `image_reference` is now a required attribute of `VirtualMachineConfiguration`.
+    + The new `virtual_machine_image_id` property on `ImageReference` contains the reference to the ARM Image, and `OSDisk.image_uris` no longer exists.
+    + Because of this, `image_reference` is now a required attribute of `VirtualMachineConfiguration`.
 - **Breaking** Multi-instance tasks (created using `MultiInstanceSettings`) must now specify a `coordination_commandLine`, and `number_of_instances` is now optional and defaults to 1.
 - Added support for tasks run using Docker containers. To run a task using a Docker container you must specify a `container_configuration` on the `VirtualMachineConfiguration` for a pool, and then add `container_settings` on the Task.
 
@@ -122,11 +146,11 @@ Release History
 
 - AAD token authentication now supported.
 - Some operation names have changed (along with their associated parameter model classes):
-  * pool.list_pool_usage_metrics -> pool.list_usage_metrics
-  * pool.get_all_pools_lifetime_statistics -> pool.get_all_lifetime_statistics
-  * job.get_all_jobs_lifetime_statistics -> job.get_all_lifetime_statistics
-  * file.get_node_file_properties_from_task -> file.get_properties_from_task
-  * file.get_node_file_properties_from_compute_node -> file.get_properties_from_compute_node
+    * pool.list_pool_usage_metrics -> pool.list_usage_metrics
+    * pool.get_all_pools_lifetime_statistics -> pool.get_all_lifetime_statistics
+    * job.get_all_jobs_lifetime_statistics -> job.get_all_lifetime_statistics
+    * file.get_node_file_properties_from_task -> file.get_properties_from_task
+    * file.get_node_file_properties_from_compute_node -> file.get_properties_from_compute_node
 - The attribute 'file_name' in relation to file operations has been renamed to 'file_path'.
 - Change in naming convention for enum values to use underscores: e.g. StartTaskState.waitingforstarttask -> StartTaskState.waiting_for_start_task.
 - Support for running tasks under a predefined or automatic user account. This includes tasks, job manager tasks, job preparation and release tasks and pool start tasks. This feature replaces the previous 'run_elevated' option on a task.

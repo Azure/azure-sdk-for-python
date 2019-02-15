@@ -36,6 +36,9 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
      formatted as a DateTime string.
      If unspecified, default value is the time that the app was deleted.
     :type snapshot_time: str
+    :param use_dr_secondary: If true, the snapshot is retrieved from
+     DRSecondary endpoint.
+    :type use_dr_secondary: bool
     """
 
     _validation = {
@@ -52,10 +55,12 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
         'deleted_site_id': {'key': 'properties.deletedSiteId', 'type': 'str'},
         'recover_configuration': {'key': 'properties.recoverConfiguration', 'type': 'bool'},
         'snapshot_time': {'key': 'properties.snapshotTime', 'type': 'str'},
+        'use_dr_secondary': {'key': 'properties.useDRSecondary', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, deleted_site_id: str=None, recover_configuration: bool=None, snapshot_time: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, deleted_site_id: str=None, recover_configuration: bool=None, snapshot_time: str=None, use_dr_secondary: bool=None, **kwargs) -> None:
         super(DeletedAppRestoreRequest, self).__init__(kind=kind, **kwargs)
         self.deleted_site_id = deleted_site_id
         self.recover_configuration = recover_configuration
         self.snapshot_time = snapshot_time
+        self.use_dr_secondary = use_dr_secondary

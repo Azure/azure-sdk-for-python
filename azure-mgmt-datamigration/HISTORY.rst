@@ -3,6 +3,15 @@
 Release History
 ===============
 
+2.1.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrateSchemaSqlServerSqlDbDatabaseInput has a new parameter name
+- Added operation group FilesOperations
+- Add MongoDB support
+
 2.0.0 (2018-09-07)
 ++++++++++++++++++
 

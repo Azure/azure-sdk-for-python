@@ -5,3 +5,4 @@ package_pprint_name = "Redis Cache Management"
 package_doc_id = "redis"
 is_stable = true
 is_arm = true
+need_msrestazure = true

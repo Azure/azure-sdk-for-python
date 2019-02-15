@@ -56,6 +56,6 @@ class FaceTest(ReplayableTest):
             )
 
         detected = result[0]
-        self.assertEquals(detected.face_attributes.age, 52.4)
-        self.assertEquals(detected.face_attributes.gender, Gender.female)
-        self.assertEquals(detected.face_attributes.emotion.happiness, 1.0)
+        self.assertEqual(detected.face_attributes.age, 52.4)
+        self.assertEqual(detected.face_attributes.gender, Gender.female)
+        self.assertEqual(detected.face_attributes.emotion.happiness, 1.0)
