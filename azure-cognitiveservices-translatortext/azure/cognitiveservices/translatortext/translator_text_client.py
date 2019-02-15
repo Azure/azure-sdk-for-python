@@ -47,7 +47,7 @@ class TranslatorTextClientConfiguration(Configuration):
 
 class TranslatorTextClient(SDKClient):
     """# Introduction
-     The Microsoft Translator Text API provides a JSON-based Web API. It provides:
+    The Microsoft Translator Text API provides a JSON-based Web API. It provides:
       * Translation between any supported languages to any other supported language.
       * Translation to multiple languages in one request.
       * Transliteration to convert text from one script to another script of the same language.
