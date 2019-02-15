@@ -13,6 +13,7 @@ from .operations import Operations
 from .skus_operations import SkusOperations
 from .storage_accounts_operations import StorageAccountsOperations
 from .usages_operations import UsagesOperations
+from .blob_services_operations import BlobServicesOperations
 from .blob_containers_operations import BlobContainersOperations
 from .management_policies_operations import ManagementPoliciesOperations
 
@@ -21,6 +22,7 @@ __all__ = [
     'SkusOperations',
     'StorageAccountsOperations',
     'UsagesOperations',
+    'BlobServicesOperations',
     'BlobContainersOperations',
     'ManagementPoliciesOperations',
 ]

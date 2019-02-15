@@ -1562,9 +1562,7 @@ class NetworkWatchersOperations(object):
 
 
     def _get_network_configuration_diagnostic_initial(
-            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, **operation_config):
-        parameters = models.NetworkConfigurationDiagnosticParameters(target_resource_id=target_resource_id, queries=queries)
-
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.get_network_configuration_diagnostic.metadata['url']
         path_format_arguments = {
@@ -1613,20 +1611,16 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def get_network_configuration_diagnostic(
-            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get network configuration diagnostic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher.
         :type network_watcher_name: str
-        :param target_resource_id: The ID of the target resource to perform
-         network configuration diagnostic. Valid options are VM,
-         NetworkInterface, VMSS/NetworkInterface and Application Gateway.
-        :type target_resource_id: str
-        :param queries: List of traffic queries.
-        :type queries:
-         list[~azure.mgmt.network.v2018_08_01.models.TrafficQuery]
+        :param parameters: Parameters to get network configuration diagnostic.
+        :type parameters:
+         ~azure.mgmt.network.v2018_08_01.models.NetworkConfigurationDiagnosticParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1645,8 +1639,7 @@ class NetworkWatchersOperations(object):
         raw_result = self._get_network_configuration_diagnostic_initial(
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
-            target_resource_id=target_resource_id,
-            queries=queries,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

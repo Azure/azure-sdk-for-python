@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .identifiable import Identifiable
+from .identifiable_py3 import Identifiable
 
 
 class Response(Identifiable):

@@ -55,10 +55,10 @@ class EdifactValidationOverride(Model):
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
         'enforce_character_set': {'key': 'enforceCharacterSet', 'type': 'bool'},
-        'validate_edi_types': {'key': 'validateEdiTypes', 'type': 'bool'},
-        'validate_xsd_types': {'key': 'validateXsdTypes', 'type': 'bool'},
+        'validate_edi_types': {'key': 'validateEDITypes', 'type': 'bool'},
+        'validate_xsd_types': {'key': 'validateXSDTypes', 'type': 'bool'},
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
-        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
+        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'str'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
     }
 
