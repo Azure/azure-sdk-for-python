@@ -18,14 +18,14 @@ class ApplicationGatewayAutoscaleConfiguration(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param min_capacity: Required. Lower bound on number of Application
-     Gateway instances
+     Gateway capacity
     :type min_capacity: int
     :param max_capacity: Upper bound on number of Application Gateway capacity
     :type max_capacity: int
     """
 
     _validation = {
-        'min_capacity': {'required': True, 'minimum': 2},
+        'min_capacity': {'required': True, 'minimum': 0},
         'max_capacity': {'minimum': 2},
     }
 
