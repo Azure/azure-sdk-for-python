@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .offer import Offer
+from .offer_py3 import Offer
 
 
 class AggregateOffer(Offer):

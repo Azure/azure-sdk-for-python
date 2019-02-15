@@ -28,8 +28,9 @@ class NetworkInterface(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param virtual_machine: The reference of a virtual machine.
-    :type virtual_machine: ~azure.mgmt.network.v2018_08_01.models.SubResource
+    :ivar virtual_machine: The reference of a virtual machine.
+    :vartype virtual_machine:
+     ~azure.mgmt.network.v2018_08_01.models.SubResource
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
     :type network_security_group:
@@ -76,6 +77,7 @@ class NetworkInterface(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'virtual_machine': {'readonly': True},
         'interface_endpoint': {'readonly': True},
         'hosted_workloads': {'readonly': True},
     }
@@ -102,9 +104,9 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, network_security_group=None, ip_configurations=None, tap_configurations=None, dns_settings=None, mac_address: str=None, primary: bool=None, enable_accelerated_networking: bool=None, enable_ip_forwarding: bool=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(NetworkInterface, self).__init__(id=id, location=location, tags=tags, **kwargs)
-        self.virtual_machine = virtual_machine
+        self.virtual_machine = None
         self.network_security_group = network_security_group
         self.interface_endpoint = None
         self.ip_configurations = ip_configurations

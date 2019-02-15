@@ -17,6 +17,8 @@ class QueryOptions(Model):
 
     :param top: Maximum number of records to return.
     :type top: int
+    :param filter: OData filter expression.
+    :type filter: str
     :param order_by: Ordering expression using OData notation. One or more
      comma-separated column names with an optional "desc" (the default) or
      "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
@@ -32,28 +34,26 @@ class QueryOptions(Model):
     :param to: ISO 8601 formatted timestamp specifying the end time of the
      interval to query. When not specified, the service uses request time.
     :type to: datetime
-    :param filter: OData filter expression.
-    :type filter: str
     :param apply: OData apply expression for aggregations.
     :type apply: str
     """
 
     _attribute_map = {
         'top': {'key': '', 'type': 'int'},
+        'filter': {'key': '', 'type': 'str'},
         'order_by': {'key': '', 'type': 'str'},
         'select': {'key': '', 'type': 'str'},
         'from_property': {'key': '', 'type': 'iso-8601'},
         'to': {'key': '', 'type': 'iso-8601'},
-        'filter': {'key': '', 'type': 'str'},
         'apply': {'key': '', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(QueryOptions, self).__init__(**kwargs)
         self.top = kwargs.get('top', None)
+        self.filter = kwargs.get('filter', None)
         self.order_by = kwargs.get('order_by', None)
         self.select = kwargs.get('select', None)
         self.from_property = kwargs.get('from_property', None)
         self.to = kwargs.get('to', None)
-        self.filter = kwargs.get('filter', None)
         self.apply = kwargs.get('apply', None)

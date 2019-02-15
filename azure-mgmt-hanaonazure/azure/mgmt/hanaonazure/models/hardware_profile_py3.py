@@ -23,7 +23,7 @@ class HardwareProfile(Model):
     :vartype hardware_type: str or
      ~azure.mgmt.hanaonazure.models.HanaHardwareTypeNamesEnum
     :ivar hana_instance_size: Specifies the HANA instance SKU. Possible values
-     include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S192xm',
+     include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S192xm', 'S96',
      'S384', 'S384m', 'S384xm', 'S384xxm', 'S576m', 'S576xm', 'S768', 'S768m',
      'S768xm', 'S960m'
     :vartype hana_instance_size: str or

@@ -47,10 +47,10 @@ class JobError(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'JobErrorCode'},
+        'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'JobErrorCategory'},
-        'retry': {'key': 'retry', 'type': 'JobRetry'},
+        'category': {'key': 'category', 'type': 'str'},
+        'retry': {'key': 'retry', 'type': 'str'},
         'details': {'key': 'details', 'type': '[JobErrorDetail]'},
     }
 

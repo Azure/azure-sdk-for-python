@@ -21,6 +21,8 @@ class DirectoryObject(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class DirectoryObject(Model):
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
-    :param object_type: Constant filled by server.
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     """
 
@@ -50,9 +52,9 @@ class DirectoryObject(Model):
         'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
     }
 
-    def __init__(self, additional_properties=None):
-        super(DirectoryObject, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(DirectoryObject, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.object_id = None
         self.deletion_timestamp = None
         self.object_type = None

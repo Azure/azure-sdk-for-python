@@ -52,6 +52,8 @@ try:
     from .resource_py3 import Resource
     from .sub_resource_py3 import SubResource
     from .resource_group_export_result_py3 import ResourceGroupExportResult
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
 except (SyntaxError, ImportError):
     from .deployment_extended_filter import DeploymentExtendedFilter
     from .generic_resource_filter import GenericResourceFilter
@@ -95,6 +97,9 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
     from .resource_group_export_result import ResourceGroupExportResult
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+from .operation_paged import OperationPaged
 from .deployment_extended_paged import DeploymentExtendedPaged
 from .provider_paged import ProviderPaged
 from .generic_resource_paged import GenericResourcePaged
@@ -150,6 +155,9 @@ __all__ = [
     'Resource',
     'SubResource',
     'ResourceGroupExportResult',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
     'DeploymentExtendedPaged',
     'ProviderPaged',
     'GenericResourcePaged',
