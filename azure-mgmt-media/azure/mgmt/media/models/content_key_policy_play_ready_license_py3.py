@@ -62,9 +62,9 @@ class ContentKeyPolicyPlayReadyLicense(Model):
         'relative_expiration_date': {'key': 'relativeExpirationDate', 'type': 'duration'},
         'grace_period': {'key': 'gracePeriod', 'type': 'duration'},
         'play_right': {'key': 'playRight', 'type': 'ContentKeyPolicyPlayReadyPlayRight'},
-        'license_type': {'key': 'licenseType', 'type': 'ContentKeyPolicyPlayReadyLicenseType'},
+        'license_type': {'key': 'licenseType', 'type': 'str'},
         'content_key_location': {'key': 'contentKeyLocation', 'type': 'ContentKeyPolicyPlayReadyContentKeyLocation'},
-        'content_type': {'key': 'contentType', 'type': 'ContentKeyPolicyPlayReadyContentType'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
     }
 
     def __init__(self, *, allow_test_devices: bool, license_type, content_key_location, content_type, begin_date=None, expiration_date=None, relative_begin_date=None, relative_expiration_date=None, grace_period=None, play_right=None, **kwargs) -> None:

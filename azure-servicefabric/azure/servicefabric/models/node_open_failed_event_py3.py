@@ -20,6 +20,8 @@ class NodeOpenFailedEvent(NodeEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -67,6 +69,7 @@ class NodeOpenFailedEvent(NodeEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -82,8 +85,8 @@ class NodeOpenFailedEvent(NodeEvent):
         'error': {'key': 'Error', 'type': 'str'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, node_id: str, upgrade_domain: str, fault_domain: str, ip_address_or_fqdn: str, hostname: str, is_seed_node: bool, node_version: str, error: str, has_correlated_events: bool=None, **kwargs) -> None:
-        super(NodeOpenFailedEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, node_name: str, node_instance: int, node_id: str, upgrade_domain: str, fault_domain: str, ip_address_or_fqdn: str, hostname: str, is_seed_node: bool, node_version: str, error: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(NodeOpenFailedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, node_name=node_name, **kwargs)
         self.node_instance = node_instance
         self.node_id = node_id
         self.upgrade_domain = upgrade_domain

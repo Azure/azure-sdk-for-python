@@ -27,7 +27,7 @@ class IntegrationAccountPartnerFilter(Model):
     }
 
     _attribute_map = {
-        'partner_type': {'key': 'partnerType', 'type': 'PartnerType'},
+        'partner_type': {'key': 'partnerType', 'type': 'str'},
     }
 
     def __init__(self, *, partner_type, **kwargs) -> None:

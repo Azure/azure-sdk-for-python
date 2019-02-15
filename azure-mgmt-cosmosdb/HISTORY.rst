@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.5.2 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add ignore_missing_vnet_service_endpoint support
+
+0.5.1 (2018-10-16)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 0.5.0. No code change.
+
 0.5.0 (2018-10-08)
 ++++++++++++++++++
 

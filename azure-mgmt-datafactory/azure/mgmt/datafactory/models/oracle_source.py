@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class OracleSource(CopySource):
     """A copy activity Oracle source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class OracleSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param oracle_reader_query: Oracle reader query. Type: string (or
      Expression with resultType string).
@@ -49,8 +51,8 @@ class OracleSource(CopySource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, oracle_reader_query=None, query_timeout=None):
-        super(OracleSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.oracle_reader_query = oracle_reader_query
-        self.query_timeout = query_timeout
+    def __init__(self, **kwargs):
+        super(OracleSource, self).__init__(**kwargs)
+        self.oracle_reader_query = kwargs.get('oracle_reader_query', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'OracleSource'
