@@ -37,7 +37,8 @@ class TranslatorOperations(object):
 
     def break_sentence(
             self, text, language=None, script=None, x_client_trace_id=None, custom_headers=None, raw=False, **operation_config):
-        """Identifies the position of sentence boundaries in a piece of text.
+        """Identifies where the position of sentence boundaries are in a piece of
+        text.
         .
 
         :param text: # Request Body
