@@ -29,7 +29,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :ivar kind: Resource kind.
     :vartype kind: str
     :param state: Required. Specifies the state of the policy. If state is
-     Enabled, storageEndpoint and storageAccountAccessKey are required.
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
      Possible values include: 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
@@ -37,11 +37,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled, storageAccountAccessKey is
-     required.
+     auditing storage account. If state is Enabled and storageEndpoint is
+     specified, storageAccountAccessKey is required.
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
-     logs.
+     logs in the storage account.
     :type retention_days: int
     :param audit_actions_and_groups: Specifies the Actions-Groups and Actions
      to audit.
@@ -92,10 +92,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      RECEIVE
      REFERENCES
      The general form for defining an action to be audited is:
-     <action> ON <object> BY <principal>
+     {action} ON {object} BY {principal}
      Note that <object> in the above format can refer to an object like a
      table, view, or stored procedure, or an entire database or schema. For the
-     latter cases, the forms DATABASE::<db_name> and SCHEMA::<schema_name> are
+     latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are
      used, respectively.
      For example:
      SELECT on dbo.myTable by public
@@ -110,6 +110,23 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :param is_storage_secondary_key_in_use: Specifies whether
      storageAccountAccessKey value is the storage's secondary key.
     :type is_storage_secondary_key_in_use: bool
+    :param is_azure_monitor_target_enabled: Specifies whether audit events are
+     sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
+     and 'IsAzureMonitorTargetEnabled' as true.
+     When using REST API to configure auditing, Diagnostic Settings with
+     'SQLSecurityAuditEvents' diagnostic logs category on the database should
+     be also created.
+     Note that for server level audit you should use the 'master' database as
+     {databaseName}.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_azure_monitor_target_enabled: bool
     """
 
     _validation = {
@@ -132,9 +149,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
+        'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
         super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.state = state
@@ -144,3 +162,4 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.audit_actions_and_groups = audit_actions_and_groups
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
+        self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled

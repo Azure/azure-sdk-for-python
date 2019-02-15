@@ -34,6 +34,8 @@ class DockerBuildRequest(RunRequest):
     :param docker_file_path: Required. The Docker file path relative to the
      source location.
     :type docker_file_path: str
+    :param target: The name of the target build stage for the docker build.
+    :type target: str
     :param arguments: The collection of override arguments to be used when
      executing the run.
     :type arguments:
@@ -48,10 +50,14 @@ class DockerBuildRequest(RunRequest):
     :type agent_configuration:
      ~azure.mgmt.containerregistry.v2018_09_01.models.AgentProperties
     :param source_location: The URL(absolute or relative) of the source
-     context. It can be an URL to a tar or git repoistory.
+     context. It can be an URL to a tar or git repository.
      If it is relative URL, the relative path should be obtained from calling
      listBuildSourceUploadUrl API.
     :type source_location: str
+    :param credentials: The properties that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     """
 
     _validation = {
@@ -68,22 +74,26 @@ class DockerBuildRequest(RunRequest):
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
         'timeout': {'key': 'timeout', 'type': 'int'},
         'platform': {'key': 'platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'agentConfiguration', 'type': 'AgentProperties'},
         'source_location': {'key': 'sourceLocation', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, docker_file_path: str, platform, is_archive_enabled: bool=False, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, arguments=None, timeout: int=3600, agent_configuration=None, source_location: str=None, **kwargs) -> None:
+    def __init__(self, *, docker_file_path: str, platform, is_archive_enabled: bool=False, image_names=None, is_push_enabled: bool=True, no_cache: bool=False, target: str=None, arguments=None, timeout: int=3600, agent_configuration=None, source_location: str=None, credentials=None, **kwargs) -> None:
         super(DockerBuildRequest, self).__init__(is_archive_enabled=is_archive_enabled, **kwargs)
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
         self.docker_file_path = docker_file_path
+        self.target = target
         self.arguments = arguments
         self.timeout = timeout
         self.platform = platform
         self.agent_configuration = agent_configuration
         self.source_location = source_location
+        self.credentials = credentials
         self.type = 'DockerBuildRequest'

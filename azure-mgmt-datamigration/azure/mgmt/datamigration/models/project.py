@@ -31,12 +31,13 @@ class Project(TrackedResource):
     :param location: Required. Resource location.
     :type location: str
     :param source_platform: Required. Source platform for the project.
-     Possible values include: 'SQL', 'MySQL', 'PostgreSql', 'Unknown'
+     Possible values include: 'SQL', 'MySQL', 'PostgreSql', 'MongoDb',
+     'Unknown'
     :type source_platform: str or
      ~azure.mgmt.datamigration.models.ProjectSourcePlatform
     :param target_platform: Required. Target platform for the project.
      Possible values include: 'SQLDB', 'SQLMI', 'AzureDbForMySql',
-     'AzureDbForPostgreSql', 'Unknown'
+     'AzureDbForPostgreSql', 'MongoDb', 'Unknown'
     :type target_platform: str or
      ~azure.mgmt.datamigration.models.ProjectTargetPlatform
     :ivar creation_time: UTC Date and time when project was created

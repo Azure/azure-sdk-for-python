@@ -26,7 +26,7 @@ class ParametersValueFileInfo(Model):
         'parameters_value_info': {'key': 'parametersValueInfo', 'type': 'object'},
     }
 
-    def __init__(self, file_name=None, parameters_value_info=None):
-        super(ParametersValueFileInfo, self).__init__()
-        self.file_name = file_name
-        self.parameters_value_info = parameters_value_info
+    def __init__(self, **kwargs):
+        super(ParametersValueFileInfo, self).__init__(**kwargs)
+        self.file_name = kwargs.get('file_name', None)
+        self.parameters_value_info = kwargs.get('parameters_value_info', None)

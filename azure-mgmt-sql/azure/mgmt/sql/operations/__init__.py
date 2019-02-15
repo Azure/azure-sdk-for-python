@@ -60,6 +60,7 @@ from .job_target_groups_operations import JobTargetGroupsOperations
 from .job_versions_operations import JobVersionsOperations
 from .long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
+from .managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .managed_databases_operations import ManagedDatabasesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
@@ -131,6 +132,7 @@ __all__ = [
     'JobVersionsOperations',
     'LongTermRetentionBackupsOperations',
     'BackupLongTermRetentionPoliciesOperations',
+    'ManagedBackupShortTermRetentionPoliciesOperations',
     'ManagedDatabasesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
