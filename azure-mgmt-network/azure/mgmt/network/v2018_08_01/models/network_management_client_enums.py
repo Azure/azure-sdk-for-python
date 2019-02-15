@@ -154,6 +154,12 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
     tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
 
 
+class ApplicationGatewayCustomErrorStatusCode(str, Enum):
+
+    http_status403 = "HttpStatus403"
+    http_status502 = "HttpStatus502"
+
+
 class ApplicationGatewayRequestRoutingRuleType(str, Enum):
 
     basic = "Basic"
@@ -213,6 +219,7 @@ class AzureFirewallNetworkRuleProtocol(str, Enum):
     tcp = "TCP"
     udp = "UDP"
     any = "Any"
+    icmp = "ICMP"
 
 
 class AuthorizationUseStatus(str, Enum):
@@ -265,6 +272,7 @@ class ExpressRouteCircuitSkuTier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
+    basic = "Basic"
 
 
 class ExpressRouteCircuitSkuFamily(str, Enum):
@@ -279,6 +287,24 @@ class ServiceProviderProvisioningState(str, Enum):
     provisioning = "Provisioning"
     provisioned = "Provisioned"
     deprovisioning = "Deprovisioning"
+
+
+class ExpressRouteLinkConnectorType(str, Enum):
+
+    lc = "LC"
+    sc = "SC"
+
+
+class ExpressRouteLinkAdminState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ExpressRoutePortsEncapsulation(str, Enum):
+
+    dot1_q = "Dot1Q"
+    qin_q = "QinQ"
 
 
 class LoadBalancerSkuName(str, Enum):
@@ -448,6 +474,13 @@ class EvaluationState(str, Enum):
     not_started = "NotStarted"
     in_progress = "InProgress"
     completed = "Completed"
+
+
+class VerbosityLevel(str, Enum):
+
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
 
 
 class PublicIPPrefixSkuName(str, Enum):

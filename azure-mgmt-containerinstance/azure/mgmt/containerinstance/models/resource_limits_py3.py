@@ -19,14 +19,18 @@ class ResourceLimits(Model):
     :type memory_in_gb: float
     :param cpu: The CPU limit of this container instance.
     :type cpu: float
+    :param gpu: The GPU limit of this container instance.
+    :type gpu: ~azure.mgmt.containerinstance.models.GpuResource
     """
 
     _attribute_map = {
         'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
         'cpu': {'key': 'cpu', 'type': 'float'},
+        'gpu': {'key': 'gpu', 'type': 'GpuResource'},
     }
 
-    def __init__(self, *, memory_in_gb: float=None, cpu: float=None, **kwargs) -> None:
+    def __init__(self, *, memory_in_gb: float=None, cpu: float=None, gpu=None, **kwargs) -> None:
         super(ResourceLimits, self).__init__(**kwargs)
         self.memory_in_gb = memory_in_gb
         self.cpu = cpu
+        self.gpu = gpu
