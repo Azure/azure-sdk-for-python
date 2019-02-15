@@ -1,27 +1,24 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#--------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 
-from setuptools import setup
-try:
-    from azure_bdist_wheel import cmdclass
-except ImportError:
-    from distutils import log as logger
-    logger.warn("Wheel is not available, disabling bdist_wheel hook")
-    cmdclass = {}
+import re
+import os.path
+from io import open
+from setuptools import find_packages, setup
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-servicebus"
+PACKAGE_PPRINT_NAME = "Service Bus"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -38,14 +35,27 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
-    name='azure-servicebus',
-    version='0.21.1',
-    description='Microsoft Azure Service Bus Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
-    license='Apache License 2.0',
+    name=PACKAGE_NAME,
+    version=version,
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + '\n\n' + history,
+    license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -53,21 +63,25 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 3.7',
+        'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
+    packages=find_packages(exclude=[
+        'tests',
+        'examples',
+        # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.servicebus',
-        'azure.servicebus._http',
-    ],
+    ]),
     install_requires=[
-        'azure-common>=1.1.5',
-        'requests',
+        'uamqp~=1.1.0',
+        'msrestazure>=0.4.32,<2.0.0',
+        'azure-common~=1.1',
     ],
-    cmdclass=cmdclass
+    extras_require={
+        ":python_version<'3.0'": ['azure-nspkg', 'futures'],
+    }
 )

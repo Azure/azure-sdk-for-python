@@ -9,13 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.factories_operations import FactoriesOperations
+from .operations.exposure_control_operations import ExposureControlOperations
 from .operations.integration_runtimes_operations import IntegrationRuntimesOperations
+from .operations.integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
 from .operations.integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .operations.linked_services_operations import LinkedServicesOperations
 from .operations.datasets_operations import DatasetsOperations
@@ -23,6 +25,8 @@ from .operations.pipelines_operations import PipelinesOperations
 from .operations.pipeline_runs_operations import PipelineRunsOperations
 from .operations.activity_runs_operations import ActivityRunsOperations
 from .operations.triggers_operations import TriggersOperations
+from .operations.rerun_triggers_operations import RerunTriggersOperations
+from .operations.trigger_runs_operations import TriggerRunsOperations
 from . import models
 
 
@@ -51,14 +55,14 @@ class DataFactoryManagementClientConfiguration(AzureConfiguration):
 
         super(DataFactoryManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-dafactory/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-datafactory/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class DataFactoryManagementClient(object):
+class DataFactoryManagementClient(SDKClient):
     """The Azure Data Factory V2 management API provides a RESTful set of web services that interact with Azure Data Factory V2 services.
 
     :ivar config: Configuration for client.
@@ -68,8 +72,12 @@ class DataFactoryManagementClient(object):
     :vartype operations: azure.mgmt.datafactory.operations.Operations
     :ivar factories: Factories operations
     :vartype factories: azure.mgmt.datafactory.operations.FactoriesOperations
+    :ivar exposure_control: ExposureControl operations
+    :vartype exposure_control: azure.mgmt.datafactory.operations.ExposureControlOperations
     :ivar integration_runtimes: IntegrationRuntimes operations
     :vartype integration_runtimes: azure.mgmt.datafactory.operations.IntegrationRuntimesOperations
+    :ivar integration_runtime_object_metadata: IntegrationRuntimeObjectMetadata operations
+    :vartype integration_runtime_object_metadata: azure.mgmt.datafactory.operations.IntegrationRuntimeObjectMetadataOperations
     :ivar integration_runtime_nodes: IntegrationRuntimeNodes operations
     :vartype integration_runtime_nodes: azure.mgmt.datafactory.operations.IntegrationRuntimeNodesOperations
     :ivar linked_services: LinkedServices operations
@@ -84,6 +92,10 @@ class DataFactoryManagementClient(object):
     :vartype activity_runs: azure.mgmt.datafactory.operations.ActivityRunsOperations
     :ivar triggers: Triggers operations
     :vartype triggers: azure.mgmt.datafactory.operations.TriggersOperations
+    :ivar rerun_triggers: RerunTriggers operations
+    :vartype rerun_triggers: azure.mgmt.datafactory.operations.RerunTriggersOperations
+    :ivar trigger_runs: TriggerRuns operations
+    :vartype trigger_runs: azure.mgmt.datafactory.operations.TriggerRunsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -97,10 +109,10 @@ class DataFactoryManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DataFactoryManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataFactoryManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-01-preview'
+        self.api_version = '2018-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -108,7 +120,11 @@ class DataFactoryManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.factories = FactoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.exposure_control = ExposureControlOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_runtime_object_metadata = IntegrationRuntimeObjectMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtime_nodes = IntegrationRuntimeNodesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -123,4 +139,8 @@ class DataFactoryManagementClient(object):
         self.activity_runs = ActivityRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.triggers = TriggersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.rerun_triggers = RerunTriggersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.trigger_runs = TriggerRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
