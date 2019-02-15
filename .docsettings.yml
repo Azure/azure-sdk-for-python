@@ -1,0 +1,6 @@
+omitted_paths:
+  - azure-sdk-tools/*
+  - scripts/*
+  - azure-mgmt-netapp/tests/*
+language: python
+root_check_enabled: True

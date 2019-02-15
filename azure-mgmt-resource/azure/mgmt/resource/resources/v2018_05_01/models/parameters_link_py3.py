@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ParametersLink(Model):
-    """Entity representing the reference to the deployment paramaters.
+    """Entity representing the reference to the deployment parameters.
 
     All required parameters must be populated in order to send to Azure.
 

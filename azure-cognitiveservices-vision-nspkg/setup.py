@@ -25,7 +25,7 @@ except ImportError:
 
 setup(
     name='azure-cognitiveservices-vision-nspkg',
-    version='2.0.0',
+    version='3.0.0',
     description='Microsoft Azure Cognitive Services Vision Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -37,19 +37,14 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=[
-        'azure',
-        'azure.cognitiveservices',
         'azure.cognitiveservices.vision',
     ],
+    python_requires='<3',
     install_requires=[
-        'azure-cognitiveservices-nspkg>=2.0.0',
+        'azure-cognitiveservices-nspkg>=3.0.0',
     ]
 )

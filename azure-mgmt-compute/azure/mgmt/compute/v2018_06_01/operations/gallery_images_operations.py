@@ -96,13 +96,17 @@ class GalleryImagesOperations(object):
 
     def create_or_update(
             self, resource_group_name, gallery_name, gallery_image_name, gallery_image, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a gallery image.
+        """Create or update a gallery Image Definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition is to be created.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition to
+         be created or updated. The allowed characters are alphabets and
+         numbers with dots, dashes, and periods allowed in the middle. The
+         maximum length is 80 characters.
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the create or update
          gallery image operation.
@@ -151,13 +155,15 @@ class GalleryImagesOperations(object):
 
     def get(
             self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves information about a gallery image.
+        """Retrieves information about a gallery Image Definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery from which
+         the Image Definitions are to be retrieved.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition to
+         be retrieved.
         :type gallery_image_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -259,9 +265,11 @@ class GalleryImagesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition is to be deleted.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition to
+         be deleted.
         :type gallery_image_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -299,11 +307,12 @@ class GalleryImagesOperations(object):
 
     def list_by_gallery(
             self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
-        """List gallery images under a gallery.
+        """List gallery Image Definitions in a gallery.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery from which
+         Image Definitions are to be listed.
         :type gallery_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

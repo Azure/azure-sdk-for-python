@@ -10,8 +10,22 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .presentation_time_range_py3 import PresentationTimeRange
+    from .filter_track_property_condition_py3 import FilterTrackPropertyCondition
+    from .first_quality_py3 import FirstQuality
+    from .filter_track_selection_py3 import FilterTrackSelection
+    from .account_filter_py3 import AccountFilter
+    from .odata_error_py3 import ODataError
+    from .api_error_py3 import ApiError, ApiErrorException
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
     from .provider_py3 import Provider
     from .operation_display_py3 import OperationDisplay
+    from .metric_dimension_py3 import MetricDimension
+    from .metric_py3 import Metric
+    from .service_specification_py3 import ServiceSpecification
+    from .metric_properties_py3 import MetricProperties
     from .operation_py3 import Operation
     from .location_py3 import Location
     from .entity_name_availability_check_output_py3 import EntityNameAvailabilityCheckOutput
@@ -19,15 +33,14 @@ try:
     from .sync_storage_keys_input_py3 import SyncStorageKeysInput
     from .media_service_py3 import MediaService
     from .subscription_media_service_py3 import SubscriptionMediaService
-    from .odata_error_py3 import ODataError
-    from .api_error_py3 import ApiError, ApiErrorException
     from .check_name_availability_input_py3 import CheckNameAvailabilityInput
-    from .proxy_resource_py3 import ProxyResource
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
     from .asset_container_sas_py3 import AssetContainerSas
-    from .asset_storage_encryption_key_py3 import AssetStorageEncryptionKey
+    from .asset_file_encryption_metadata_py3 import AssetFileEncryptionMetadata
+    from .storage_encrypted_asset_decryption_data_py3 import StorageEncryptedAssetDecryptionData
+    from .asset_streaming_locator_py3 import AssetStreamingLocator
+    from .list_streaming_locators_response_py3 import ListStreamingLocatorsResponse
     from .asset_py3 import Asset
+    from .asset_filter_py3 import AssetFilter
     from .list_container_sas_input_py3 import ListContainerSasInput
     from .content_key_policy_play_ready_explicit_analog_television_restriction_py3 import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
     from .content_key_policy_play_ready_content_key_location_py3 import ContentKeyPolicyPlayReadyContentKeyLocation
@@ -123,9 +136,10 @@ try:
     from .hls_py3 import Hls
     from .live_output_py3 import LiveOutput
     from .live_event_endpoint_py3 import LiveEventEndpoint
-    from .live_event_input_py3 import LiveEventInput
     from .ip_range_py3 import IPRange
     from .ip_access_control_py3 import IPAccessControl
+    from .live_event_input_access_control_py3 import LiveEventInputAccessControl
+    from .live_event_input_py3 import LiveEventInput
     from .live_event_preview_access_control_py3 import LiveEventPreviewAccessControl
     from .live_event_preview_py3 import LiveEventPreview
     from .live_event_encoding_py3 import LiveEventEncoding
@@ -138,8 +152,22 @@ try:
     from .streaming_entity_scale_unit_py3 import StreamingEntityScaleUnit
     from .streaming_endpoint_py3 import StreamingEndpoint
 except (SyntaxError, ImportError):
+    from .presentation_time_range import PresentationTimeRange
+    from .filter_track_property_condition import FilterTrackPropertyCondition
+    from .first_quality import FirstQuality
+    from .filter_track_selection import FilterTrackSelection
+    from .account_filter import AccountFilter
+    from .odata_error import ODataError
+    from .api_error import ApiError, ApiErrorException
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .proxy_resource import ProxyResource
     from .provider import Provider
     from .operation_display import OperationDisplay
+    from .metric_dimension import MetricDimension
+    from .metric import Metric
+    from .service_specification import ServiceSpecification
+    from .metric_properties import MetricProperties
     from .operation import Operation
     from .location import Location
     from .entity_name_availability_check_output import EntityNameAvailabilityCheckOutput
@@ -147,15 +175,14 @@ except (SyntaxError, ImportError):
     from .sync_storage_keys_input import SyncStorageKeysInput
     from .media_service import MediaService
     from .subscription_media_service import SubscriptionMediaService
-    from .odata_error import ODataError
-    from .api_error import ApiError, ApiErrorException
     from .check_name_availability_input import CheckNameAvailabilityInput
-    from .proxy_resource import ProxyResource
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
     from .asset_container_sas import AssetContainerSas
-    from .asset_storage_encryption_key import AssetStorageEncryptionKey
+    from .asset_file_encryption_metadata import AssetFileEncryptionMetadata
+    from .storage_encrypted_asset_decryption_data import StorageEncryptedAssetDecryptionData
+    from .asset_streaming_locator import AssetStreamingLocator
+    from .list_streaming_locators_response import ListStreamingLocatorsResponse
     from .asset import Asset
+    from .asset_filter import AssetFilter
     from .list_container_sas_input import ListContainerSasInput
     from .content_key_policy_play_ready_explicit_analog_television_restriction import ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
     from .content_key_policy_play_ready_content_key_location import ContentKeyPolicyPlayReadyContentKeyLocation
@@ -251,9 +278,10 @@ except (SyntaxError, ImportError):
     from .hls import Hls
     from .live_output import LiveOutput
     from .live_event_endpoint import LiveEventEndpoint
-    from .live_event_input import LiveEventInput
     from .ip_range import IPRange
     from .ip_access_control import IPAccessControl
+    from .live_event_input_access_control import LiveEventInputAccessControl
+    from .live_event_input import LiveEventInput
     from .live_event_preview_access_control import LiveEventPreviewAccessControl
     from .live_event_preview import LiveEventPreview
     from .live_event_encoding import LiveEventEncoding
@@ -265,10 +293,12 @@ except (SyntaxError, ImportError):
     from .streaming_endpoint_access_control import StreamingEndpointAccessControl
     from .streaming_entity_scale_unit import StreamingEntityScaleUnit
     from .streaming_endpoint import StreamingEndpoint
+from .account_filter_paged import AccountFilterPaged
 from .operation_paged import OperationPaged
 from .media_service_paged import MediaServicePaged
 from .subscription_media_service_paged import SubscriptionMediaServicePaged
 from .asset_paged import AssetPaged
+from .asset_filter_paged import AssetFilterPaged
 from .content_key_policy_paged import ContentKeyPolicyPaged
 from .transform_paged import TransformPaged
 from .job_paged import JobPaged
@@ -278,6 +308,10 @@ from .live_event_paged import LiveEventPaged
 from .live_output_paged import LiveOutputPaged
 from .streaming_endpoint_paged import StreamingEndpointPaged
 from .azure_media_services_enums import (
+    FilterTrackPropertyType,
+    FilterTrackPropertyCompareOperation,
+    MetricUnit,
+    MetricAggregationType,
     StorageAccountType,
     AssetStorageEncryptionFormat,
     AssetContainerPermission,
@@ -295,6 +329,7 @@ from .azure_media_services_enums import (
     EntropyMode,
     H264Complexity,
     EncoderNamedPreset,
+    InsightsType,
     OnErrorType,
     Priority,
     JobErrorCode,
@@ -315,8 +350,22 @@ from .azure_media_services_enums import (
 )
 
 __all__ = [
+    'PresentationTimeRange',
+    'FilterTrackPropertyCondition',
+    'FirstQuality',
+    'FilterTrackSelection',
+    'AccountFilter',
+    'ODataError',
+    'ApiError', 'ApiErrorException',
+    'TrackedResource',
+    'Resource',
+    'ProxyResource',
     'Provider',
     'OperationDisplay',
+    'MetricDimension',
+    'Metric',
+    'ServiceSpecification',
+    'MetricProperties',
     'Operation',
     'Location',
     'EntityNameAvailabilityCheckOutput',
@@ -324,15 +373,14 @@ __all__ = [
     'SyncStorageKeysInput',
     'MediaService',
     'SubscriptionMediaService',
-    'ODataError',
-    'ApiError', 'ApiErrorException',
     'CheckNameAvailabilityInput',
-    'ProxyResource',
-    'Resource',
-    'TrackedResource',
     'AssetContainerSas',
-    'AssetStorageEncryptionKey',
+    'AssetFileEncryptionMetadata',
+    'StorageEncryptedAssetDecryptionData',
+    'AssetStreamingLocator',
+    'ListStreamingLocatorsResponse',
     'Asset',
+    'AssetFilter',
     'ListContainerSasInput',
     'ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction',
     'ContentKeyPolicyPlayReadyContentKeyLocation',
@@ -428,9 +476,10 @@ __all__ = [
     'Hls',
     'LiveOutput',
     'LiveEventEndpoint',
-    'LiveEventInput',
     'IPRange',
     'IPAccessControl',
+    'LiveEventInputAccessControl',
+    'LiveEventInput',
     'LiveEventPreviewAccessControl',
     'LiveEventPreview',
     'LiveEventEncoding',
@@ -442,10 +491,12 @@ __all__ = [
     'StreamingEndpointAccessControl',
     'StreamingEntityScaleUnit',
     'StreamingEndpoint',
+    'AccountFilterPaged',
     'OperationPaged',
     'MediaServicePaged',
     'SubscriptionMediaServicePaged',
     'AssetPaged',
+    'AssetFilterPaged',
     'ContentKeyPolicyPaged',
     'TransformPaged',
     'JobPaged',
@@ -454,6 +505,10 @@ __all__ = [
     'LiveEventPaged',
     'LiveOutputPaged',
     'StreamingEndpointPaged',
+    'FilterTrackPropertyType',
+    'FilterTrackPropertyCompareOperation',
+    'MetricUnit',
+    'MetricAggregationType',
     'StorageAccountType',
     'AssetStorageEncryptionFormat',
     'AssetContainerPermission',
@@ -471,6 +526,7 @@ __all__ = [
     'EntropyMode',
     'H264Complexity',
     'EncoderNamedPreset',
+    'InsightsType',
     'OnErrorType',
     'Priority',
     'JobErrorCode',

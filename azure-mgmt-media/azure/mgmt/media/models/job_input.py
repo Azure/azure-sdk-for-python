@@ -20,13 +20,6 @@ class JobInput(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param label: A label that is assigned to a JobInput, that is used to
-     satisfy a reference used in the Transform. For example, a Transform can be
-     authored so as to take an image file with the label 'xyz' and apply it as
-     an overlay onto the input video before it is encoded. When submitting a
-     Job, exactly one of the JobInputs should be the image file, and it should
-     have the label 'xyz'.
-    :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
@@ -36,7 +29,6 @@ class JobInput(Model):
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
     }
 
@@ -46,5 +38,4 @@ class JobInput(Model):
 
     def __init__(self, **kwargs):
         super(JobInput, self).__init__(**kwargs)
-        self.label = kwargs.get('label', None)
         self.odatatype = None

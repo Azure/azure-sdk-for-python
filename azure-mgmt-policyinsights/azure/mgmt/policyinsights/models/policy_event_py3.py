@@ -77,7 +77,7 @@ class PolicyEvent(Model):
     :param policy_set_definition_parameters: Policy set definition parameters,
      if the policy assignment is for a policy set.
     :type policy_set_definition_parameters: str
-    :param management_group_ids: Comma seperated list of management group IDs,
+    :param management_group_ids: Comma separated list of management group IDs,
      which represent the hierarchy of the management groups the resource is
      under.
     :type management_group_ids: str
