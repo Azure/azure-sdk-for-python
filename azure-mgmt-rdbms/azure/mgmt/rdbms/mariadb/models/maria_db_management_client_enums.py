@@ -44,6 +44,15 @@ class SkuTier(str, Enum):
     memory_optimized = "MemoryOptimized"
 
 
+class VirtualNetworkRuleState(str, Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    deleting = "Deleting"
+    unknown = "Unknown"
+
+
 class OperationOrigin(str, Enum):
 
     not_specified = "NotSpecified"

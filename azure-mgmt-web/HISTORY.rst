@@ -3,6 +3,64 @@
 Release History
 ===============
 
+0.41.0 (2019-02-13)
++++++++++++++++++++
+
+**Features**
+
+- Model DeletedAppRestoreRequest has a new parameter use_dr_secondary
+- Model StackMinorVersion has a new parameter is_remote_debugging_enabled
+- Model IpSecurityRestriction has a new parameter subnet_traffic_tag
+- Model IpSecurityRestriction has a new parameter vnet_traffic_tag
+- Model IpSecurityRestriction has a new parameter vnet_subnet_resource_id
+- Model DeletedSite has a new parameter geo_region_name
+- Model SnapshotRestoreRequest has a new parameter use_dr_secondary
+- Model SiteAuthSettings has a new parameter client_secret_certificate_thumbprint
+- Model SiteConfig has a new parameter scm_ip_security_restrictions_use_main
+- Model SiteConfig has a new parameter scm_ip_security_restrictions
+- Model CorsSettings has a new parameter support_credentials
+- Model SiteConfigResource has a new parameter scm_ip_security_restrictions_use_main
+- Model SiteConfigResource has a new parameter scm_ip_security_restrictions
+- Model StackMajorVersion has a new parameter application_insights
+- Model AppServicePlanPatchResource has a new parameter maximum_elastic_worker_count
+- Model AppServicePlan has a new parameter maximum_elastic_worker_count
+- Model SitePatchResource has a new parameter geo_distributions
+- Model SitePatchResource has a new parameter in_progress_operation_id
+- Model SitePatchResource has a new parameter client_cert_exclusion_paths
+- Model SitePatchResource has a new parameter redundancy_mode
+- Model Site has a new parameter geo_distributions
+- Model Site has a new parameter in_progress_operation_id
+- Model Site has a new parameter client_cert_exclusion_paths
+- Model Site has a new parameter redundancy_mode
+- Model VnetInfo has a new parameter is_swift
+- Added operation WebAppsOperations.get_network_traces_slot_v2
+- Added operation WebAppsOperations.list_snapshots_from_dr_secondary_slot
+- Added operation WebAppsOperations.get_network_traces_slot
+- Added operation WebAppsOperations.start_web_site_network_trace_operation_slot
+- Added operation WebAppsOperations.get_network_trace_operation_v2
+- Added operation WebAppsOperations.start_web_site_network_trace_operation
+- Added operation WebAppsOperations.get_network_traces_v2
+- Added operation WebAppsOperations.stop_network_trace_slot
+- Added operation WebAppsOperations.get_network_trace_operation_slot_v2
+- Added operation WebAppsOperations.list_snapshots_from_dr_secondary
+- Added operation WebAppsOperations.get_network_trace_operation_slot
+- Added operation WebAppsOperations.stop_network_trace
+- Added operation WebAppsOperations.start_network_trace_slot
+- Added operation WebAppsOperations.get_network_trace_operation
+- Added operation WebAppsOperations.start_network_trace
+- Added operation WebAppsOperations.get_network_traces
+- Added operation RecommendationsOperations.list_recommended_rules_for_hosting_environment
+- Added operation RecommendationsOperations.list_history_for_hosting_environment
+- Added operation RecommendationsOperations.disable_all_for_hosting_environment
+- Added operation RecommendationsOperations.disable_recommendation_for_hosting_environment
+- Added operation RecommendationsOperations.reset_all_filters_for_hosting_environment
+- Added operation RecommendationsOperations.get_rule_details_by_hosting_environment
+
+**Breaking changes**
+
+- Model AppServicePlanPatchResource no longer has parameter admin_site_name
+- Model AppServicePlan no longer has parameter admin_site_name
+
 0.40.0 (2018-08-28)
 +++++++++++++++++++
 

@@ -23,6 +23,12 @@ class DockerBuildStep(TaskStepProperties):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageDependency]
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param image_names: The fully qualified image names including the
@@ -37,15 +43,12 @@ class DockerBuildStep(TaskStepProperties):
     :param docker_file_path: Required. The Docker file path relative to the
      source context.
     :type docker_file_path: str
+    :param target: The name of the target build stage for the docker build.
+    :type target: str
     :param arguments: The collection of override arguments to be used when
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
-    :param context_path: The URL(absolute or relative) of the source context
-     for the build task.
-     If it is relative, the context will be relative to the source repository
-     URL of the build task.
-    :type context_path: str
     """
 
     _validation = {
@@ -56,13 +59,15 @@ class DockerBuildStep(TaskStepProperties):
 
     _attribute_map = {
         'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
+        'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'image_names': {'key': 'imageNames', 'type': '[str]'},
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -71,6 +76,6 @@ class DockerBuildStep(TaskStepProperties):
         self.is_push_enabled = kwargs.get('is_push_enabled', True)
         self.no_cache = kwargs.get('no_cache', False)
         self.docker_file_path = kwargs.get('docker_file_path', None)
+        self.target = kwargs.get('target', None)
         self.arguments = kwargs.get('arguments', None)
-        self.context_path = kwargs.get('context_path', None)
         self.type = 'Docker'

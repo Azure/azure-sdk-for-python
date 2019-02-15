@@ -39,11 +39,14 @@ class BackupInfo(Model):
     :type backup_type: str or ~azure.servicefabric.models.BackupType
     :param epoch_of_last_backup_record: Epoch of the last record in this
      backup.
-    :type epoch_of_last_backup_record: ~azure.servicefabric.models.BackupEpoch
+    :type epoch_of_last_backup_record: ~azure.servicefabric.models.Epoch
     :param lsn_of_last_backup_record: LSN of the last record in this backup.
     :type lsn_of_last_backup_record: str
     :param creation_time_utc: The date time when this backup was taken.
     :type creation_time_utc: datetime
+    :param service_manifest_version: Manifest Version of the service this
+     partition backup belongs to.
+    :type service_manifest_version: str
     :param failure_error: Denotes the failure encountered in getting backup
      point information.
     :type failure_error: ~azure.servicefabric.models.FabricErrorError
@@ -57,13 +60,14 @@ class BackupInfo(Model):
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
         'backup_location': {'key': 'BackupLocation', 'type': 'str'},
         'backup_type': {'key': 'BackupType', 'type': 'str'},
-        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'BackupEpoch'},
+        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'Epoch'},
         'lsn_of_last_backup_record': {'key': 'LsnOfLastBackupRecord', 'type': 'str'},
         'creation_time_utc': {'key': 'CreationTimeUtc', 'type': 'iso-8601'},
+        'service_manifest_version': {'key': 'ServiceManifestVersion', 'type': 'str'},
         'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
     }
 
-    def __init__(self, *, backup_id: str=None, backup_chain_id: str=None, application_name: str=None, service_name: str=None, partition_information=None, backup_location: str=None, backup_type=None, epoch_of_last_backup_record=None, lsn_of_last_backup_record: str=None, creation_time_utc=None, failure_error=None, **kwargs) -> None:
+    def __init__(self, *, backup_id: str=None, backup_chain_id: str=None, application_name: str=None, service_name: str=None, partition_information=None, backup_location: str=None, backup_type=None, epoch_of_last_backup_record=None, lsn_of_last_backup_record: str=None, creation_time_utc=None, service_manifest_version: str=None, failure_error=None, **kwargs) -> None:
         super(BackupInfo, self).__init__(**kwargs)
         self.backup_id = backup_id
         self.backup_chain_id = backup_chain_id
@@ -75,4 +79,5 @@ class BackupInfo(Model):
         self.epoch_of_last_backup_record = epoch_of_last_backup_record
         self.lsn_of_last_backup_record = lsn_of_last_backup_record
         self.creation_time_utc = creation_time_utc
+        self.service_manifest_version = service_manifest_version
         self.failure_error = failure_error

@@ -69,3 +69,5 @@ src/build
 
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
+
+code_reports

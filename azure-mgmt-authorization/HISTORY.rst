@@ -3,6 +3,27 @@
 Release History
 ===============
 
+0.51.1 (2018-11-27)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Missing principal_type in role assignment class  #3802
+
+0.51.0 (2018-11-12)
++++++++++++++++++++
+
+**Features**
+
+- Model RoleAssignmentCreateParameters has a new parameter principal_type
+
+**Breaking changes**
+
+- Parameter role_definition_id of model RoleAssignmentCreateParameters is now required
+- Parameter principal_id of model RoleAssignmentCreateParameters is now required
+
+Role Assignments API version is now 2018-09-01-preview
+
 0.50.0 (2018-05-29)
 +++++++++++++++++++
 

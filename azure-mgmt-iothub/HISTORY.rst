@@ -3,6 +3,21 @@
 Release History
 ===============
 
+0.7.0 (2018-12-14)
+++++++++++++++++++
+
+**Features**
+
+- Model OperationDisplay has a new parameter description
+- Model TestRouteInput has a new parameter twin
+- Model IotHubProperties has a new parameter device_streams
+- Model TestAllRoutesInput has a new parameter twin
+
+**Breaking changes**
+
+- Operation IotHubResourceOperations.test_route has a new signature
+- Operation IotHubResourceOperations.test_all_routes has a new signature
+
 0.6.0 (2018-08-27)
 ++++++++++++++++++
 
