@@ -218,6 +218,435 @@ class RecommendationsOperations(object):
             return client_raw_response
     disable_recommendation_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations/{name}/disable'}
 
+    def list_history_for_hosting_environment(
+            self, resource_group_name, hosting_environment_name, expired_only=None, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Get past recommendations for an app, optionally specified by the time
+        range.
+
+        Get past recommendations for an app, optionally specified by the time
+        range.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param hosting_environment_name: Name of the hosting environment.
+        :type hosting_environment_name: str
+        :param expired_only: Specify <code>false</code> to return all
+         recommendations. The default is <code>true</code>, which returns only
+         expired recommendations.
+        :type expired_only: bool
+        :param filter: Filter is specified by using OData syntax. Example:
+         $filter=channel eq 'Api' or channel eq 'Notification' and startTime eq
+         2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain
+         eq duration'[PT1H|PT1M|P1D]
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Recommendation
+        :rtype:
+         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_history_for_hosting_environment.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if expired_only is not None:
+                    query_parameters['expiredOnly'] = self._serialize.query("expired_only", expired_only, 'bool')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.RecommendationPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.RecommendationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_history_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendationHistory'}
+
+    def list_recommended_rules_for_hosting_environment(
+            self, resource_group_name, hosting_environment_name, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Get all recommendations for an app.
+
+        Get all recommendations for an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param hosting_environment_name: Name of the app.
+        :type hosting_environment_name: str
+        :param featured: Specify <code>true</code> to return only the most
+         critical recommendations. The default is <code>false</code>, which
+         returns all recommendations.
+        :type featured: bool
+        :param filter: Return only channels specified in the filter. Filter is
+         specified by using OData syntax. Example: $filter=channel eq 'Api' or
+         channel eq 'Notification'
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Recommendation
+        :rtype:
+         ~azure.mgmt.web.models.RecommendationPaged[~azure.mgmt.web.models.Recommendation]
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_recommended_rules_for_hosting_environment.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+                    'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if featured is not None:
+                    query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.DefaultErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.RecommendationPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.RecommendationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_recommended_rules_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations'}
+
+    def disable_all_for_hosting_environment(
+            self, resource_group_name, environment_name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
+        """Disable all recommendations for an app.
+
+        Disable all recommendations for an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param environment_name: Name of the app.
+        :type environment_name: str
+        :param hosting_environment_name:
+        :type hosting_environment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.disable_all_for_hosting_environment.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_all_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/disable'}
+
+    def reset_all_filters_for_hosting_environment(
+            self, resource_group_name, environment_name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
+        """Reset all recommendation opt-out settings for an app.
+
+        Reset all recommendation opt-out settings for an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param environment_name: Name of the app.
+        :type environment_name: str
+        :param hosting_environment_name:
+        :type hosting_environment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.reset_all_filters_for_hosting_environment.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    reset_all_filters_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/reset'}
+
+    def get_rule_details_by_hosting_environment(
+            self, resource_group_name, hosting_environment_name, name, update_seen=None, recommendation_id=None, custom_headers=None, raw=False, **operation_config):
+        """Get a recommendation rule for an app.
+
+        Get a recommendation rule for an app.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param hosting_environment_name: Name of the hosting environment.
+        :type hosting_environment_name: str
+        :param name: Name of the recommendation.
+        :type name: str
+        :param update_seen: Specify <code>true</code> to update the last-seen
+         timestamp of the recommendation object.
+        :type update_seen: bool
+        :param recommendation_id: The GUID of the recommendation object if you
+         query an expired one. You don't need to specify it to query an active
+         entry.
+        :type recommendation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RecommendationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.web.models.RecommendationRule or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_rule_details_by_hosting_environment.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if update_seen is not None:
+            query_parameters['updateSeen'] = self._serialize.query("update_seen", update_seen, 'bool')
+        if recommendation_id is not None:
+            query_parameters['recommendationId'] = self._serialize.query("recommendation_id", recommendation_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.DefaultErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RecommendationRule', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_rule_details_by_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/{name}'}
+
+    def disable_recommendation_for_hosting_environment(
+            self, resource_group_name, environment_name, name, hosting_environment_name, custom_headers=None, raw=False, **operation_config):
+        """Disables the specific rule for a web site permanently.
+
+        Disables the specific rule for a web site permanently.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param environment_name: Site name
+        :type environment_name: str
+        :param name: Rule name
+        :type name: str
+        :param hosting_environment_name:
+        :type hosting_environment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.disable_recommendation_for_hosting_environment.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'name': self._serialize.url("name", name, 'str'),
+            'hostingEnvironmentName': self._serialize.url("hosting_environment_name", hosting_environment_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['environmentName'] = self._serialize.query("environment_name", environment_name, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_recommendation_for_hosting_environment.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{hostingEnvironmentName}/recommendations/{name}/disable'}
+
     def list_history_for_web_app(
             self, resource_group_name, site_name, expired_only=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get past recommendations for an app, optionally specified by the time
@@ -517,7 +946,7 @@ class RecommendationsOperations(object):
         :param update_seen: Specify <code>true</code> to update the last-seen
          timestamp of the recommendation object.
         :type update_seen: bool
-        :param recommendation_id: The GUID of the recommedation object if you
+        :param recommendation_id: The GUID of the recommendation object if you
          query an expired one. You don't need to specify it to query an active
          entry.
         :type recommendation_id: str

@@ -41,9 +41,9 @@ class AppServicePlansOperations(object):
 
     def list(
             self, detailed=None, custom_headers=None, raw=False, **operation_config):
-        """Get all App Service plans for a subcription.
+        """Get all App Service plans for a subscription.
 
-        Get all App Service plans for a subcription.
+        Get all App Service plans for a subscription.
 
         :param detailed: Specify <code>true</code> to return all App Service
          plan properties. The default is <code>false</code>, which returns a
@@ -1035,9 +1035,9 @@ class AppServicePlansOperations(object):
 
     def list_metrics(
             self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get metrics for an App Serice plan.
+        """Get metrics for an App Service plan.
 
-        Get metrics for an App Serice plan.
+        Get metrics for an App Service plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -1129,7 +1129,7 @@ class AppServicePlansOperations(object):
         :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
-        :param soft_restart: Specify <code>true</code> to performa a soft
+        :param soft_restart: Specify <code>true</code> to perform a soft
          restart, applies the configuration settings and restarts the apps if
          necessary. The default is <code>false</code>, which always restarts
          and reprovisions the apps
@@ -1270,9 +1270,9 @@ class AppServicePlansOperations(object):
 
     def get_server_farm_skus(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets all selectable sku's for a given App Service Plan.
+        """Gets all selectable SKUs for a given App Service Plan.
 
-        Gets all selectable sku's for a given App Service Plan.
+        Gets all selectable SKUs for a given App Service Plan.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
