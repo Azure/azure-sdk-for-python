@@ -25,7 +25,7 @@ class BandwidthSchedulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,13 +35,13 @@ class BandwidthSchedulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all the bandwidth Schedules for a data box edge/gateway device.
+        """Gets all the bandwidth schedules for a data box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -111,7 +111,7 @@ class BandwidthSchedulesOperations(object):
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the properties of the specified bandwidth schedule name.
+        """Gets the properties of the specified bandwidth schedule.
 
         :param device_name: The device name.
         :type device_name: str

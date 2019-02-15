@@ -15,21 +15,20 @@ from msrest.serialization import Model
 class RefreshDetails(Model):
     """Fields for tracking refresh job on the share.
 
-    :param in_progress_refresh_job_id: If a RefreshShare job is currently
-     inprogress on this share - this field indicates the ArmId of that job.
-     Empty otherwise.
+    :param in_progress_refresh_job_id: If a refresh share job is currently in
+     progress on this share, this field indicates the ARM resource ID of that
+     job. The field is empty if no job is in progress.
     :type in_progress_refresh_job_id: str
-    :param last_completed_refresh_job_time_in_utc: Indicates the job completed
-     time of the last refresh job on this particular share, if any.
-     This could be a failed job or a successful job.
+    :param last_completed_refresh_job_time_in_utc: Indicates the completed
+     time for the last refresh job on this particular share, if any.This could
+     be a failed job or a successful job.
     :type last_completed_refresh_job_time_in_utc: datetime
     :param error_manifest_file: Indicates the relative path of the error xml
-     for the last refresh job on this particular share, if any.
-     This could be a failed job or a successful job.
+     for the last refresh job on this particular share, if any. This could be a
+     failed job or a successful job.
     :type error_manifest_file: str
     :param last_job: Indicates the id of the last refresh job on this
-     particular share,if any.
-     This could be a failed job or a successful job.
+     particular share,if any. This could be a failed job or a successful job.
     :type last_job: str
     """
 

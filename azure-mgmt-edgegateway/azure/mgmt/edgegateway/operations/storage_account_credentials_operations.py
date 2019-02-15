@@ -25,7 +25,7 @@ class StorageAccountCredentialsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class StorageAccountCredentialsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
@@ -44,7 +44,7 @@ class StorageAccountCredentialsOperations(object):
         """Gets all the storage account credentials in a data box edge/gateway
         device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -114,9 +114,9 @@ class StorageAccountCredentialsOperations(object):
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified storage account credential.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the storage account credential to be fetched.
+        :param name: The storage account credential name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -230,12 +230,11 @@ class StorageAccountCredentialsOperations(object):
             self, device_name, name, storage_account_credential, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates the storage account credential.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param name: The storage account credential name.
         :type name: str
-        :param storage_account_credential: The storage account credential to
-         be added or updated.
+        :param storage_account_credential: The storage account credential.
         :type storage_account_credential:
          ~azure.mgmt.edgegateway.models.StorageAccountCredential
         :param resource_group_name: The resource group name.
@@ -325,9 +324,9 @@ class StorageAccountCredentialsOperations(object):
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the storage account credential.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the storage account credential.
+        :param name: The storage account credential name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

@@ -17,7 +17,7 @@ class Operation(Model):
 
     :param name: Name of the operation.
     :type name: str
-    :param display: Properties to displayed for the operation.
+    :param display: Properties displayed for the operation.
     :type display: ~azure.mgmt.edgegateway.models.OperationDisplay
     :param origin: Origin of the operation.
     :type origin: str

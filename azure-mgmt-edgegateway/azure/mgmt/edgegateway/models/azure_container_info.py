@@ -17,11 +17,11 @@ class AzureContainerInfo(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_account_credential_id: Required. ID of the Storage account
-     credential to be used for accessing storage.
+    :param storage_account_credential_id: Required. ID of the storage account
+     credential used to access storage.
     :type storage_account_credential_id: str
     :param container_name: Required. Container name (Based on the data format
-     specified, represents the name of Azure file/ Page blob / Block blob).
+     specified, this represents the name of Azure Files/Page blob/Block blob).
     :type container_name: str
     :param data_format: Required. Storage format used for the file represented
      by the share. Possible values include: 'BlockBlob', 'PageBlob',

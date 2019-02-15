@@ -17,6 +17,7 @@ from .operations.operations import Operations
 from .operations.devices_operations import DevicesOperations
 from .operations.alerts_operations import AlertsOperations
 from .operations.bandwidth_schedules_operations import BandwidthSchedulesOperations
+from .operations.jobs_operations import JobsOperations
 from .operations.operations_status_operations import OperationsStatusOperations
 from .operations.orders_operations import OrdersOperations
 from .operations.roles_operations import RolesOperations
@@ -73,6 +74,8 @@ class DataBoxEdgeManagementClient(SDKClient):
     :vartype alerts: azure.mgmt.edgegateway.operations.AlertsOperations
     :ivar bandwidth_schedules: BandwidthSchedules operations
     :vartype bandwidth_schedules: azure.mgmt.edgegateway.operations.BandwidthSchedulesOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.edgegateway.operations.JobsOperations
     :ivar operations_status: OperationsStatus operations
     :vartype operations_status: azure.mgmt.edgegateway.operations.OperationsStatusOperations
     :ivar orders: Orders operations
@@ -103,7 +106,7 @@ class DataBoxEdgeManagementClient(SDKClient):
         super(DataBoxEdgeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-07-01'
+        self.api_version = '2019-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -114,6 +117,8 @@ class DataBoxEdgeManagementClient(SDKClient):
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.bandwidth_schedules = BandwidthSchedulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations_status = OperationsStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)

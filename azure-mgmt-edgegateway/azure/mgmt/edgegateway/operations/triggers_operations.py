@@ -25,7 +25,7 @@ class TriggersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,15 +35,15 @@ class TriggersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List all the triggers configured in the device.
+        """Lists all the triggers configured in the device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -113,9 +113,9 @@ class TriggersOperations(object):
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Get a specific trigger by name.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of trigger to be fetched.
+        :param name: The trigger name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -227,14 +227,13 @@ class TriggersOperations(object):
 
     def create_or_update(
             self, device_name, name, trigger, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a trigger.
+        """Creates or updates a trigger.
 
-        :param device_name: Name of the edge device in which trigger needs to
-         be added or updated.
+        :param device_name: Creates or updates a trigger
         :type device_name: str
-        :param name: Name of trigger to be added or updated.
+        :param name: The trigger name.
         :type name: str
-        :param trigger: Trigger to be added.
+        :param trigger: The trigger.
         :type trigger: ~azure.mgmt.edgegateway.models.Trigger
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -322,9 +321,9 @@ class TriggersOperations(object):
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the trigger on the gateway device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the trigger which needs to be deleted.
+        :param name: The trigger name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

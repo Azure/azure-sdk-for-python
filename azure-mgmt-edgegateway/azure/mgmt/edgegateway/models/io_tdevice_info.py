@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class IoTDeviceInfo(Model):
-    """Metadata of IoT device/IoT edge device to be configured.
+    """Metadata of IoT device/IoT Edge device to be configured.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param device_id: Required. Id of the IoT device/edge device.
+    :param device_id: Required. ID of the IoT device/edge device.
     :type device_id: str
-    :param io_thost_hub: Required. Host name for IoT hub which is associated
-     to the device.
+    :param io_thost_hub: Required. Host name for the IoT hub associated to the
+     device.
     :type io_thost_hub: str
     :param authentication: IoT device authentication info.
     :type authentication: ~azure.mgmt.edgegateway.models.Authentication

@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class ClientAccessRight(Model):
-    """The mapping between a particular client ip and the type of access client
+    """The mapping between a particular client IP and the type of access client
     has on the NFS share.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client: Required. Ip of the client.
+    :param client: Required. IP of the client.
     :type client: str
     :param access_permission: Required. Type of access to be allowed for the
      client. Possible values include: 'NoAccess', 'ReadOnly', 'ReadWrite'

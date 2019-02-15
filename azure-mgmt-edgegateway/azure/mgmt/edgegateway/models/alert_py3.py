@@ -20,24 +20,24 @@ class Alert(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar title: Title of the alert.
+    :ivar title: Alert title.
     :vartype title: str
-    :ivar alert_type: Type of the alert.
+    :ivar alert_type: Alert type.
     :vartype alert_type: str
-    :ivar appeared_at_date_time: UTC time at which the alert appeared.
+    :ivar appeared_at_date_time: UTC time when the alert appeared.
     :vartype appeared_at_date_time: datetime
-    :ivar recommendation: Recommendation for acting on the alert.
+    :ivar recommendation: Alert recommendation.
     :vartype recommendation: str
     :ivar severity: Severity of the alert. Possible values include:
      'Informational', 'Warning', 'Critical'
     :vartype severity: str or ~azure.mgmt.edgegateway.models.AlertSeverity
     :ivar error_details: Error details of the alert.
     :vartype error_details: ~azure.mgmt.edgegateway.models.AlertErrorDetails
-    :ivar detailed_information: Detailed information about the alert.
+    :ivar detailed_information: Alert details.
     :vartype detailed_information: dict[str, str]
     """
 

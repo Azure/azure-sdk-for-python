@@ -22,7 +22,7 @@ class Share(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
@@ -42,12 +42,12 @@ class Share(ARMBaseModel):
      Possible values include: 'SMB', 'NFS'
     :type access_protocol: str or
      ~azure.mgmt.edgegateway.models.ShareAccessProtocol
-    :param user_access_rights: Mapping of Users and corresponding access
-     rights on the share (mandatory for SMB protocol).
+    :param user_access_rights: Mapping of users and corresponding access
+     rights on the share (required for SMB protocol).
     :type user_access_rights:
      list[~azure.mgmt.edgegateway.models.UserAccessRight]
     :param client_access_rights: List of IP addresses and corresponding access
-     rights on the share(mandatory for NFS protocol).
+     rights on the share(required for NFS protocol).
     :type client_access_rights:
      list[~azure.mgmt.edgegateway.models.ClientAccessRight]
     :param refresh_details: Details of the refresh job on this share.

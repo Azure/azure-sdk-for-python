@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class UpdateInstallProgress(Model):
-    """Details about the progress during installation of updates.
+    """Progress details during installation of updates.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar percent_complete: Percentage of completion.
+    :ivar percent_complete: Percentage completed.
     :vartype percent_complete: int
     :ivar number_of_updates_to_install: Number of updates to install.
     :vartype number_of_updates_to_install: int

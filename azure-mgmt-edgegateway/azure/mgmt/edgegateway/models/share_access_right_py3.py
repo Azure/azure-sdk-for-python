@@ -18,7 +18,7 @@ class ShareAccessRight(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_id: Required. Id of the share.
+    :param share_id: Required. The share ID.
     :type share_id: str
     :param access_type: Required. Type of access to be allowed on the share
      for this user. Possible values include: 'Change', 'Read', 'Custom'

@@ -20,13 +20,13 @@ class OrderStatus(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Status of the order pertaining to the allowed
-     StatusTypes. Possible values include: 'Untracked', 'AwaitingFulfilment',
+    :param status: Required. Status of the order as per the allowed status
+     types. Possible values include: 'Untracked', 'AwaitingFulfilment',
      'AwaitingPreparation', 'AwaitingShipment', 'Shipped', 'Arriving',
      'Delivered', 'ReplacementRequested', 'LostDevice', 'Declined',
      'ReturnInitiated', 'AwaitingReturnShipment', 'ShippedBack',
      'CollectedAtMicrosoft'
-    :type status: str or ~azure.mgmt.edgegateway.models.StatusTypes
+    :type status: str or ~azure.mgmt.edgegateway.models.OrderState
     :ivar update_date_time: Time of status update.
     :vartype update_date_time: datetime
     :param comments: Comments related to this status change.

@@ -25,7 +25,7 @@ class UsersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,13 +35,13 @@ class UsersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all the users registered in a data box edge/gateway device.
+        """Gets all the users registered on a data box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -111,11 +111,11 @@ class UsersOperations(object):
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the properties of the specified user.
+        """Gets the properties of the specified user.
 
         :param device_name: The device name.
         :type device_name: str
-        :param name: The name of the user who needs to be retrieved.
+        :param name: The user name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -229,17 +229,16 @@ class UsersOperations(object):
 
     def create_or_update(
             self, device_name, name, resource_group_name, encrypted_password=None, share_access_rights=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create a new user or update an existing user's information on a data
+        """Creates a new user or updates an existing user's information on a data
         box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
-        :param name: The name of the user who needs to be added/updated.
+        :param name: The user name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
-        :param encrypted_password: The details of the password specified for
-         the user.
+        :param encrypted_password: The password details.
         :type encrypted_password:
          ~azure.mgmt.edgegateway.models.AsymmetricEncryptedSecret
         :param share_access_rights: List of shares that the user has rights
@@ -333,7 +332,7 @@ class UsersOperations(object):
 
         :param device_name: The device name.
         :type device_name: str
-        :param name: The name of the user who needs to be deleted.
+        :param name: The user name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

@@ -27,24 +27,24 @@ class NetworkAdapter(Model):
     :vartype index: int
     :ivar node_id: Node ID of the network adapter.
     :vartype node_id: str
-    :ivar network_adapter_name: Network Adapter Name.
+    :ivar network_adapter_name: Network adapter name.
     :vartype network_adapter_name: str
     :ivar label: Hardware label for the adapter.
     :vartype label: str
-    :ivar mac_address: MAC Address.
+    :ivar mac_address: MAC address.
     :vartype mac_address: str
-    :ivar link_speed: Link Speed.
+    :ivar link_speed: Link speed.
     :vartype link_speed: long
     :ivar status: Value indicating whether this adapter is valid. Possible
      values include: 'Inactive', 'Active'
     :vartype status: str or
      ~azure.mgmt.edgegateway.models.NetworkAdapterStatus
-    :param rdma_status: Value indicating whether this adapter is RDMA Capable.
+    :param rdma_status: Value indicating whether this adapter is RDMA capable.
      Possible values include: 'Incapable', 'Capable'
     :type rdma_status: str or
      ~azure.mgmt.edgegateway.models.NetworkAdapterRDMAStatus
     :param dhcp_status: Value indicating whether this adapter has DHCP
-     Enabled. Possible values include: 'Disabled', 'Enabled'
+     enabled. Possible values include: 'Disabled', 'Enabled'
     :type dhcp_status: str or
      ~azure.mgmt.edgegateway.models.NetworkAdapterDHCPStatus
     :ivar ipv4_configuration: The IPv4 configuration of the network adapter.
@@ -53,7 +53,7 @@ class NetworkAdapter(Model):
     :vartype ipv6_configuration: ~azure.mgmt.edgegateway.models.Ipv6Config
     :ivar ipv6_link_local_address: The IPv6 local address.
     :vartype ipv6_link_local_address: str
-    :ivar dns_servers: The list DNS Servers of the device.
+    :ivar dns_servers: The list of DNS Servers of the device.
     :vartype dns_servers: list[str]
     """
 

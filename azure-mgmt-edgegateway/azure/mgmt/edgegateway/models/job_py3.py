@@ -28,14 +28,13 @@ class Job(Model):
      'Invalid', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Paused',
      'Scheduled'
     :vartype status: str or ~azure.mgmt.edgegateway.models.JobStatus
-    :ivar start_time: The UTC datetime at which the job was started.
+    :ivar start_time: The UTC date and time at which the job started.
     :vartype start_time: datetime
-    :ivar end_time: The UTC datetime at which the job completed.
+    :ivar end_time: The UTC date and time at which the job completed.
     :vartype end_time: datetime
-    :ivar percent_complete: The percentage of the job that is already
-     complete.
+    :ivar percent_complete: The percentage of the job that is complete.
     :vartype percent_complete: int
-    :ivar error: The Error details.
+    :ivar error: The error details.
     :vartype error: ~azure.mgmt.edgegateway.models.JobErrorDetails
     :ivar job_type: The type of the job. Possible values include: 'Invalid',
      'ScanForUpdates', 'DownloadUpdates', 'InstallUpdates', 'RefreshShare'
@@ -56,14 +55,13 @@ class Job(Model):
     :ivar total_refresh_errors: Total number of errors encountered during the
      refresh process.
     :vartype total_refresh_errors: int
-    :ivar error_manifest_file: Local Share/Remote Container relative path to
+    :ivar error_manifest_file: Local share/remote container relative path to
      the error manifest file of the refresh.
     :vartype error_manifest_file: str
-    :ivar share_id: ARM id of the Share on which the Refresh operation was
-     done.
+    :ivar share_id: ARM ID of the share that was refreshed.
     :vartype share_id: str
-    :param folder: If only subfolders need to be refreshed, then the sub
-     folder path inside the share. Empty otherwise.
+    :param folder: If only subfolders need to be refreshed, then the subfolder
+     path inside the share. (The path is empty if there are no subfolders.)
     :type folder: str
     """
 

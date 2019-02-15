@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Sku(Model):
     """The SKU type.
 
-    :param name: Sku name. Possible values include: 'Gateway', 'Edge'
+    :param name: SKU name. Possible values include: 'Gateway', 'Edge'
     :type name: str or ~azure.mgmt.edgegateway.models.SkuName
     :param tier: The SKU tier. This is based on the SKU name. Possible values
      include: 'Standard'

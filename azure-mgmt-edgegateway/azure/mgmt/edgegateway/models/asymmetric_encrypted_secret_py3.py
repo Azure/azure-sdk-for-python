@@ -19,8 +19,8 @@ class AsymmetricEncryptedSecret(Model):
 
     :param value: Required. The value of the secret.
     :type value: str
-    :param encryption_cert_thumbprint: Thumbprint certificate that was used to
-     encrypt "Value". If the value in unencrypted, it will be null.
+    :param encryption_cert_thumbprint: Thumbprint certificate used to encrypt
+     \\"Value\\". If the value is unencrypted, it will be null.
     :type encryption_cert_thumbprint: str
     :param encryption_algorithm: Required. The algorithm used to encrypt
      "Value". Possible values include: 'None', 'AES256', 'RSAES_PKCS1_v_1_5'

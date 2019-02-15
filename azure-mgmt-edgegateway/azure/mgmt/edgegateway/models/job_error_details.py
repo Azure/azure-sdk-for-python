@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobErrorDetails(Model):
-    """The job error information containing List of JobErrorItem.
+    """The job error information containing the list of job errors.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,7 +22,7 @@ class JobErrorDetails(Model):
     :vartype error_details: list[~azure.mgmt.edgegateway.models.JobErrorItem]
     :ivar code: The code intended for programmatic access.
     :vartype code: str
-    :ivar message: The message intended to describe the error in detail.
+    :ivar message: The message that describes the error in detail.
     :vartype message: str
     """
 

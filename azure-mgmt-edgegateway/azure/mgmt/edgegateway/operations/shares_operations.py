@@ -25,7 +25,7 @@ class SharesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class SharesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class SharesOperations(object):
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the shares in a data box edge/gateway device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -111,11 +111,11 @@ class SharesOperations(object):
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a particular share by name.
+        """Gets a share by name.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the share.
+        :param name: The share name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -227,13 +227,13 @@ class SharesOperations(object):
 
     def create_or_update(
             self, device_name, name, share, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new share or update an existing share on the device.
+        """Creates a new share or updates an existing share on the device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the share which needs to be added/updated.
+        :param name: The share name.
         :type name: str
-        :param share: The share object containing the share details.
+        :param share: The share properties.
         :type share: ~azure.mgmt.edgegateway.models.Share
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -321,9 +321,9 @@ class SharesOperations(object):
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the share on the data box edge/gateway device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the share which needs to be deleted.
+        :param name: The share name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -402,12 +402,11 @@ class SharesOperations(object):
 
     def refresh(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Triggers a manual refresh of the share metadata with the actual cloud
-        storage account.
+        """Refreshes the share metadata with the data from the cloud.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the share.
+        :param name: The share name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

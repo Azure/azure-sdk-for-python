@@ -17,15 +17,13 @@ class PeriodicTimerSourceInfo(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. Time time [UTC] of the day, from which the
-     trigger will be valid. Schedule will be computed with reference to the
-     time specified.
+    :param start_time: Required. The time of the day that results in a valid
+     trigger. Schedule is computed with reference to the time specified.
     :type start_time: datetime
     :param schedule: Required. Periodic frequency at which timer event needs
-     to be raised. Supports Daily, Hourly, Minutes and seconds.
+     to be raised. Supports daily, hourly, minutes, and seconds.
     :type schedule: str
-    :param topic: Topic with which periodic events needs to be published to
-     IOT device.
+    :param topic: Topic where periodic events are published to IoT device.
     :type topic: str
     """
 

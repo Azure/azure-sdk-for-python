@@ -25,7 +25,7 @@ class DevicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,13 +35,13 @@ class DevicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_subscription(
             self, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all data box edge/gateway devices in a subscription.
+        """Gets all the data box edge/gateway devices in a subscription.
 
         :param expand: Specify $expand=details to populate additional fields
          related to the resource or Specify $skipToken=<token> to populate the
@@ -111,7 +111,7 @@ class DevicesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all data box edge/gateway devices in a resource group.
+        """Gets all the data box edge/gateway devices in a resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -184,7 +184,7 @@ class DevicesOperations(object):
 
     def get(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the properties of the data box edge/gateway device.
+        """Gets the properties of the data box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -426,7 +426,7 @@ class DevicesOperations(object):
 
     def update(
             self, device_name, resource_group_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates data box edge/gateway device.
+        """Modifies a Data Box Edge/Gateway resource.
 
         :param device_name: The device name.
         :type device_name: str
@@ -534,7 +534,7 @@ class DevicesOperations(object):
 
     def download_updates(
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Downloads the updates on the data box edge/gateway device.
+        """Downloads the updates on a data box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -575,12 +575,12 @@ class DevicesOperations(object):
 
     def create_or_update_extended_info(
             self, device_name, parameters, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the extended info of the data box edge/gateway
-        device.
+        """Creates or updates the additional information of a the data box
+        edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
-        :param parameters: The device extended information.
+        :param parameters: The additional information.
         :type parameters:
          ~azure.mgmt.edgegateway.models.DataBoxEdgeDeviceExtendedInfo
         :param resource_group_name: The resource group name.
@@ -646,7 +646,7 @@ class DevicesOperations(object):
 
     def get_extended_information(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the extended information of the specified data box edge/gateway
+        """Gets additional information for the specified data box edge/gateway
         device.
 
         :param device_name: The device name.
@@ -789,7 +789,7 @@ class DevicesOperations(object):
 
     def get_network_settings(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the network settings of the specified data box edge/gateway
+        """Gets the network settings of the specified data box edge/gateway
         device.
 
         :param device_name: The device name.
@@ -982,10 +982,10 @@ class DevicesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param device_admin_password: Device administrator password as an
-         encrypted string (encrypted using RSA PKCS #1) is used to log into the
-         local web UI of the device. Actual password could have at least 8
-         characters that are a combination of  uppercase, lowercase, numeric,
-         and special characters.
+         encrypted string (encrypted using RSA PKCS #1) is used to sign into
+         the  local web UI of the device. The Actual password should have at
+         least 8 characters that are a combination of  uppercase, lowercase,
+         numeric, and special characters.
         :type device_admin_password:
          ~azure.mgmt.edgegateway.models.AsymmetricEncryptedSecret
         :param dict custom_headers: headers that will be added to the request
@@ -1024,9 +1024,9 @@ class DevicesOperations(object):
 
     def get_update_summary(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about the availability of updates as per the last
-        scan done on the device. It also returns information about any ongoing
-        download or install jobs on the device.
+        """Gets information about the availability of updates based on the last
+        scan of the device. It also gets information about any ongoing download
+        or install jobs on the device.
 
         :param device_name: The device name.
         :type device_name: str

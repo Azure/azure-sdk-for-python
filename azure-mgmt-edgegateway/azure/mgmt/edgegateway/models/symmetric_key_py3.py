@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class SymmetricKey(Model):
-    """Symmetric Key for authentication.
+    """Symmetric key for authentication.
 
-    :param connection_string: Connection string based on symmetric key.
+    :param connection_string: Connection string based on the symmetric key.
     :type connection_string:
      ~azure.mgmt.edgegateway.models.AsymmetricEncryptedSecret
     """

@@ -17,10 +17,11 @@ class UploadCertificateResponse(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auth_type: Specifies the Authentication type. Possible values
-     include: 'Invalid', 'AzureActiveDirectory'
+    :param auth_type: Specifies authentication type. Possible values include:
+     'Invalid', 'AzureActiveDirectory'
     :type auth_type: str or ~azure.mgmt.edgegateway.models.AuthenticationType
-    :param resource_id: Required. The resource ID of the edge device.
+    :param resource_id: Required. The resource ID of the Data Box Edge/Gateway
+     device.
     :type resource_id: str
     :param aad_authority: Required. Azure Active Directory tenant authority.
     :type aad_authority: str
@@ -30,10 +31,10 @@ class UploadCertificateResponse(Model):
      service principal client ID.
     :type service_principal_client_id: str
     :param service_principal_object_id: Required. Azure Active Directory
-     service principal Object ID.
+     service principal object ID.
     :type service_principal_object_id: str
-    :param azure_management_endpoint_audience: Required. The Azure Management
-     Endpoint Audience.
+    :param azure_management_endpoint_audience: Required. The azure management
+     endpoint audience.
     :type azure_management_endpoint_audience: str
     """
 
