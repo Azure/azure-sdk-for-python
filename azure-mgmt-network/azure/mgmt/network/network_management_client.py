@@ -123,7 +123,9 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2018-11-01':
+        if api_version == '2018-12-01':
+            from .v2018_12_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-11-01':
             from .v2018_11_01 import NetworkManagementClient as ClientClass
         elif api_version == '2018-10-01':
             from .v2018_10_01 import NetworkManagementClient as ClientClass
