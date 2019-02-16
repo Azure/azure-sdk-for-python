@@ -157,7 +157,7 @@ class AppsOperations(object):
     def import_method(
             self, luis_app, app_name=None, custom_headers=None, raw=False, **operation_config):
         """Imports an application to LUIS, the application's structure should be
-        included in in the request body.
+        included in the request body.
 
         :param luis_app: A LUIS application structure.
         :type luis_app:
@@ -592,11 +592,13 @@ class AppsOperations(object):
     update.metadata = {'url': '/apps/{appId}'}
 
     def delete(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, force=False, custom_headers=None, raw=False, **operation_config):
         """Deletes an application.
 
         :param app_id: The application ID.
         :type app_id: str
+        :param force: A flag to indicate whether to force an operation.
+        :type force: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -619,6 +621,8 @@ class AppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if force is not None:
+            query_parameters['force'] = self._serialize.query("force", force, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -646,15 +650,16 @@ class AppsOperations(object):
     delete.metadata = {'url': '/apps/{appId}'}
 
     def publish(
-            self, app_id, application_publish_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id=None, is_staging=False, custom_headers=None, raw=False, **operation_config):
         """Publishes a specific version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param application_publish_object: The application publish object. The
-         region is the target region that the application is published to.
-        :type application_publish_object:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationPublishObject
+        :param version_id: The version ID to publish.
+        :type version_id: str
+        :param is_staging: Indicates if the staging slot should be used,
+         instead of the Production one.
+        :type is_staging: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -668,6 +673,8 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
+        application_publish_object = models.ApplicationPublishObject(version_id=version_id, is_staging=is_staging)
+
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {
@@ -693,12 +700,14 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 207]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
+            deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
+        if response.status_code == 207:
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
 
         if raw:
@@ -1156,3 +1165,129 @@ class AppsOperations(object):
 
         return deserialized
     list_available_custom_prebuilt_domains_for_culture.metadata = {'url': '/apps/customprebuiltdomains/{culture}'}
+
+    def package_published_application_as_gzip(
+            self, app_id, slot_name, custom_headers=None, raw=False, callback=None, **operation_config):
+        """package - Gets published LUIS application package in binary stream GZip
+        format.
+
+        Packages published LUIS application as GZip.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param slot_name: The publishing slot name.
+        :type slot_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.package_published_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'slotName': self._serialize.url("slot_name", slot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_published_application_as_gzip.metadata = {'url': '/package/{appId}/slot/{slotName}/gzip'}
+
+    def package_trained_application_as_gzip(
+            self, app_id, version_id, custom_headers=None, raw=False, callback=None, **operation_config):
+        """package - Gets trained LUIS application package in binary stream GZip
+        format.
+
+        Packages trained LUIS application as GZip.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.package_trained_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_trained_application_as_gzip.metadata = {'url': '/package/{appId}/versions/{versionId}/gzip'}
