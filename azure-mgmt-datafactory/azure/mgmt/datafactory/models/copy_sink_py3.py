@@ -16,10 +16,11 @@ class CopySink(Model):
     """A copy activity sink.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SalesforceSink, DynamicsSink, OdbcSink,
-    AzureSearchIndexSink, AzureDataLakeStoreSink, OracleSink, SqlDWSink,
-    SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
-    AzureTableSink, AzureQueueSink, SapCloudForCustomerSink
+    sub-classes are: CosmosDbMongoDbApiSink, SalesforceSink,
+    AzureDataExplorerSink, DynamicsSink, OdbcSink, AzureSearchIndexSink,
+    AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink, SqlDWSink, SqlSink,
+    DocumentDbCollectionSink, FileSystemSink, BlobSink, AzureTableSink,
+    AzureQueueSink, SapCloudForCustomerSink
 
     All required parameters must be populated in order to send to Azure.
 
@@ -58,7 +59,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'SalesforceSink': 'SalesforceSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink'}
     }
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, **kwargs) -> None:
