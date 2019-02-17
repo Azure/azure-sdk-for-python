@@ -22,14 +22,14 @@ class IoTRole(Role):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param host_platform: Required. Host OS which IoT role support. Possible
-     values include: 'Windows', 'Linux'
+    :param host_platform: Required. Host OS supported by the IoT role.
+     Possible values include: 'Windows', 'Linux'
     :type host_platform: str or ~azure.mgmt.edgegateway.models.PlatformType
     :param io_tdevice_details: Required. IoT device metadata to which data box
      edge device needs to be connected.

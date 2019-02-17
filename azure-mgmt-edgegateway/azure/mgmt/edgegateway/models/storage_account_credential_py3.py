@@ -22,19 +22,19 @@ class StorageAccountCredential(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param alias: Required. Alias for the storage account.
     :type alias: str
-    :param user_name: UserName for the storage account.
+    :param user_name: Username for the storage account.
     :type user_name: str
     :param account_key: Encrypted storage key.
     :type account_key:
      ~azure.mgmt.edgegateway.models.AsymmetricEncryptedSecret
-    :param connection_string: ConnectionString for the storage account. This
-     needs to be specified if UserName/AccountKey are not specified.
+    :param connection_string: Connection string for the storage account. Use
+     this string if username and account key are not specified.
     :type connection_string: str
     :param ssl_status: Required. Signifies whether SSL needs to be enabled or
      not. Possible values include: 'Enabled', 'Disabled'

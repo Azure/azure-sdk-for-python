@@ -32,7 +32,7 @@ class MetricSpecificationV1(Model):
     :param dimensions: Metric dimensions, other than default dimension which
      is resource.
     :type dimensions: list[~azure.mgmt.edgegateway.models.MetricDimensionV1]
-    :param fill_gap_with_zero: set true to fill the gaps with zero.
+    :param fill_gap_with_zero: Set true to fill the gaps with zero.
     :type fill_gap_with_zero: bool
     :param category: Metric category. Possible values include: 'Capacity',
      'Transaction'

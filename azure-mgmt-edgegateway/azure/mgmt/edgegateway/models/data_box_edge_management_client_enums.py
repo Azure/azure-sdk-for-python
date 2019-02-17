@@ -212,7 +212,7 @@ class NetworkAdapterDHCPStatus(str, Enum):
     enabled = "Enabled"
 
 
-class StatusTypes(str, Enum):
+class OrderState(str, Enum):
 
     untracked = "Untracked"
     awaiting_fulfilment = "AwaitingFulfilment"

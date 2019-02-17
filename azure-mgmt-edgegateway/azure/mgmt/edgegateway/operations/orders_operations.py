@@ -25,7 +25,7 @@ class OrdersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,15 +35,15 @@ class OrdersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List all the orders related to the device.
+        """Lists all the orders related to a data box edge/gateway device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -111,9 +111,9 @@ class OrdersOperations(object):
 
     def get(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a specific order by name.
+        """Gets a specific order by name.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -225,10 +225,9 @@ class OrdersOperations(object):
             self, device_name, order, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an order.
 
-        :param device_name: Name of the edge device for which order needs to
-         be added or updated.
+        :param device_name: The order details of a device.
         :type device_name: str
-        :param order: Order to be added.
+        :param order: The order to be created or updated.
         :type order: ~azure.mgmt.edgegateway.models.Order
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -314,7 +313,7 @@ class OrdersOperations(object):
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the order related to the device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

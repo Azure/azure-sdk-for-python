@@ -19,9 +19,9 @@ class Address(Model):
 
     :param address_line1: Required. The address line1.
     :type address_line1: str
-    :param address_line2: Required. The address line2.
+    :param address_line2: The address line2.
     :type address_line2: str
-    :param address_line3: Required. The address line3.
+    :param address_line3: The address line3.
     :type address_line3: str
     :param postal_code: Required. The postal code.
     :type postal_code: str
@@ -35,8 +35,6 @@ class Address(Model):
 
     _validation = {
         'address_line1': {'required': True},
-        'address_line2': {'required': True},
-        'address_line3': {'required': True},
         'postal_code': {'required': True},
         'city': {'required': True},
         'state': {'required': True},
@@ -53,7 +51,7 @@ class Address(Model):
         'country': {'key': 'country', 'type': 'str'},
     }
 
-    def __init__(self, *, address_line1: str, address_line2: str, address_line3: str, postal_code: str, city: str, state: str, country: str, **kwargs) -> None:
+    def __init__(self, *, address_line1: str, postal_code: str, city: str, state: str, country: str, address_line2: str=None, address_line3: str=None, **kwargs) -> None:
         super(Address, self).__init__(**kwargs)
         self.address_line1 = address_line1
         self.address_line2 = address_line2

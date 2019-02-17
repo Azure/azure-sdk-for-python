@@ -23,7 +23,7 @@ class AlertsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -33,13 +33,13 @@ class AlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all the alerts for a data box edge/gateway device.
+        """Gets all the alerts for a data box edge/gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -109,11 +109,11 @@ class AlertsOperations(object):
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an alert by name.
+        """Gets an alert by name.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the alert which needs to be retrieved.
+        :param name: The alert name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

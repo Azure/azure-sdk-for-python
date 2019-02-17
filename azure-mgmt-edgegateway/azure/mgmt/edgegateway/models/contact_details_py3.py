@@ -17,13 +17,13 @@ class ContactDetails(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param contact_person: Required. Gets or sets the contact person.
+    :param contact_person: Required. The contact person name.
     :type contact_person: str
-    :param company_name: Required. Gets or sets the name of the company.
+    :param company_name: Required. The name of the company.
     :type company_name: str
-    :param phone: Required. Gets or sets the phone number.
+    :param phone: Required. The phone number.
     :type phone: str
-    :param email_list: Required. Gets or sets the email list.
+    :param email_list: Required. The email list.
     :type email_list: list[str]
     """
 

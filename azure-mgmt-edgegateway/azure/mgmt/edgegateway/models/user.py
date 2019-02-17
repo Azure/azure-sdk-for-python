@@ -13,20 +13,19 @@ from .arm_base_model import ARMBaseModel
 
 
 class User(ARMBaseModel):
-    """Represents a user who has access to one or more shares on the Edge storage
-    device.
+    """Represents a user who has access to one or more shares on the Data Box
+    Edge/Gateway device.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param encrypted_password: The details of the password specified for the
-     user.
+    :param encrypted_password: The password details.
     :type encrypted_password:
      ~azure.mgmt.edgegateway.models.AsymmetricEncryptedSecret
     :param share_access_rights: List of shares that the user has rights on.

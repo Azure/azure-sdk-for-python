@@ -25,7 +25,7 @@ class RolesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01".
+    :ivar api_version: The API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class RolesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class RolesOperations(object):
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the roles configured in a data box edge/gateway device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -111,11 +111,11 @@ class RolesOperations(object):
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a specific role by name.
+        """Gets a specific role by name.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of role to be fetched.
+        :param name: The role name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -229,12 +229,11 @@ class RolesOperations(object):
             self, device_name, name, role, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a role.
 
-        :param device_name: Name of the device in which the role needs to be
-         added or updated.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the role to be updated.
+        :param name: The role name.
         :type name: str
-        :param role: Role to be added.
+        :param role: The role properties.
         :type role: ~azure.mgmt.edgegateway.models.Role
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -320,11 +319,11 @@ class RolesOperations(object):
 
     def delete(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the role on the gateway device.
+        """Deletes the role on the data box edge device.
 
-        :param device_name: Name of the device.
+        :param device_name: The device name.
         :type device_name: str
-        :param name: Name of the role which needs to be deleted.
+        :param name: The role name.
         :type name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

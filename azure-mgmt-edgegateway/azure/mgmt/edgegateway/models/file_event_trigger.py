@@ -22,20 +22,20 @@ class FileEventTrigger(Trigger):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param source_info: File event source details.
+    :param source_info: Required. File event source details.
     :type source_info: ~azure.mgmt.edgegateway.models.FileSourceInfo
-    :param sink_info: Role Sink info.
+    :param sink_info: Required. Role sink info.
     :type sink_info: ~azure.mgmt.edgegateway.models.RoleSinkInfo
-    :param custom_context_tag: Custom context tag, typically used to co-relate
-     the trigger against its usage. Eg. If a PeriodicTimer trigger may be
-     intended for certain specific IOT modules in device, the tag can be the
-     name/image url of the module.
+    :param custom_context_tag: A custom context tag typically used to
+     correlate the trigger against its usage. For example, if a periodic timer
+     trigger is intended for certain specific IoT modules in the device, the
+     tag can be the name or the image URL of the module.
     :type custom_context_tag: str
     """
 
@@ -44,6 +44,8 @@ class FileEventTrigger(Trigger):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'source_info': {'required': True},
+        'sink_info': {'required': True},
     }
 
     _attribute_map = {

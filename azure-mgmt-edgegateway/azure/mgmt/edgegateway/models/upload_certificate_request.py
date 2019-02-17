@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UploadCertificateRequest(Model):
-    """The Upload certificate request.
+    """The upload certificate request.
 
     All required parameters must be populated in order to send to Azure.
 

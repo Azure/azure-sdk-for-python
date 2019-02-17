@@ -22,7 +22,7 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
@@ -34,7 +34,7 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     :type encryption_key_thumbprint: str
     :param encryption_key: The Channel Integrity Key (CIK) of the device.
     :type encryption_key: str
-    :ivar resource_key: The Resource Id of the Resource.
+    :ivar resource_key: The Resource ID of the Resource.
     :vartype resource_key: str
     """
 

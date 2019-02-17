@@ -22,7 +22,7 @@ class JobErrorItem(Model):
     :vartype recommendations: list[str]
     :ivar code: The code intended for programmatic access.
     :vartype code: str
-    :ivar message: The message intended to describe the error in detail.
+    :ivar message: The message that describes the error in detail.
     :vartype message: str
     """
 

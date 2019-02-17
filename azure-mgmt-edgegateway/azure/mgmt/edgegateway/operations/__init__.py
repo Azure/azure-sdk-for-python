@@ -13,6 +13,7 @@ from .operations import Operations
 from .devices_operations import DevicesOperations
 from .alerts_operations import AlertsOperations
 from .bandwidth_schedules_operations import BandwidthSchedulesOperations
+from .jobs_operations import JobsOperations
 from .operations_status_operations import OperationsStatusOperations
 from .orders_operations import OrdersOperations
 from .roles_operations import RolesOperations
@@ -26,6 +27,7 @@ __all__ = [
     'DevicesOperations',
     'AlertsOperations',
     'BandwidthSchedulesOperations',
+    'JobsOperations',
     'OperationsStatusOperations',
     'OrdersOperations',
     'RolesOperations',

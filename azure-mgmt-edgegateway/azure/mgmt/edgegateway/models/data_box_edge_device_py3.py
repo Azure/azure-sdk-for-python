@@ -22,22 +22,22 @@ class DataBoxEdgeDevice(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param location: Required. The location of the device. This will be one of
-     the supported and registered Azure Geo Regions (e.g. West US, East US,
-     Southeast Asia, etc.). The geo region of a device cannot be changed once
-     it is created, but if an identical geo region is specified on update the
-     request will succeed.
+    :param location: Required. The location of the device. This is a supported
+     and registered Azure geographical region (for example, West US, East US,
+     or Southeast Asia). The geographical region of a device cannot be changed
+     once it is created, but if an identical geographical region is specified
+     on update, the request will succeed.
     :type location: str
     :param tags: The list of tags that describe the device. These tags can be
-     used in viewing and grouping this device (across resource groups).
+     used to view and group this device (across resource groups).
     :type tags: dict[str, str]
-    :param sku: The sku type.
+    :param sku: The SKU type.
     :type sku: ~azure.mgmt.edgegateway.models.Sku
-    :param etag: The etag of the devices.
+    :param etag: The etag for the devices.
     :type etag: str
     :param data_box_edge_device_status: The status of the Data Box
      Edge/Gateway device. Possible values include: 'ReadyToSetup', 'Online',

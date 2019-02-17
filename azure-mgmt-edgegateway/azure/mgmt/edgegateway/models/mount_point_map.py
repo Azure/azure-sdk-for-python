@@ -20,7 +20,7 @@ class MountPointMap(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param share_id: Required. ID of the share which is mounted to role VM.
+    :param share_id: Required. ID of the share mounted to the role VM.
     :type share_id: str
     :ivar role_id: ID of the role to which share is mounted.
     :vartype role_id: str

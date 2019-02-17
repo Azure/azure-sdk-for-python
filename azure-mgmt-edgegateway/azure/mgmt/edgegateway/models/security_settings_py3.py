@@ -22,13 +22,13 @@ class SecuritySettings(ARMBaseModel):
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
-    :ivar name: The name of the object.
+    :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param device_admin_password: Required. Device administrator password as
-     an encrypted string (encrypted using RSA PKCS #1) is used to log into the
-     local web UI of the device. Actual password could have at least 8
+     an encrypted string (encrypted using RSA PKCS #1) is used to sign into the
+     local web UI of the device. The Actual password should have at least 8
      characters that are a combination of  uppercase, lowercase, numeric, and
      special characters.
     :type device_admin_password:

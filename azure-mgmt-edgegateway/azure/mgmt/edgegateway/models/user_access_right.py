@@ -13,12 +13,11 @@ from msrest.serialization import Model
 
 
 class UserAccessRight(Model):
-    """The mapping between a particular user and the type of access they have on
-    the SMB share.
+    """The mapping between a particular user and the access type on the SMB share.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param user_id: Required. Id of the user (already existing in the device).
+    :param user_id: Required. User ID (already existing in the device).
     :type user_id: str
     :param access_type: Required. Type of access to be allowed for the user.
      Possible values include: 'Change', 'Read', 'Custom'
