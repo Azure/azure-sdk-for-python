@@ -13,7 +13,7 @@ from .linked_service_py3 import LinkedService
 
 
 class GoogleAdWordsLinkedService(LinkedService):
-    """Google Awords service linked service.
+    """Google Adwords service linked service.
 
     All required parameters must be populated in order to send to Azure.
 
