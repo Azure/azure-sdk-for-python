@@ -22,7 +22,8 @@ class SecretValueReference(Model):
     :type key_vault: ~azure.mgmt.blueprint.models.KeyVaultReference
     :param secret_name: Required. Name of the secret.
     :type secret_name: str
-    :param secret_version: If multiple versions, the version of the secret.
+    :param secret_version: The version of the secret to use. If left blank,
+     the latest version of the secret is used.
     :type secret_version: str
     """
 
