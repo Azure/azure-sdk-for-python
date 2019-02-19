@@ -3,6 +3,29 @@
 Release History
 ===============
 
+0.4.0 (2019-02-19)
+++++++++++++++++++
+
+**Features**
+
+- Model AzureWorkloadRestoreRequest has a new parameter target_info
+- Model AzureVmWorkloadSAPHanaDatabaseProtectableItem has a new parameter is_auto_protected
+- Model AzureVmWorkloadSAPHanaSystemProtectableItem has a new parameter is_auto_protected
+- Model AzureIaaSVMJobTaskDetails has a new parameter task_execution_details
+- Model AzureWorkloadContainer has a new parameter operation_type
+- Model AzureVmWorkloadSQLInstanceProtectableItem has a new parameter is_auto_protected
+- Model AzureIaaSVMJobExtendedInfo has a new parameter estimated_remaining_duration
+- Model AzureVmWorkloadSQLAvailabilityGroupProtectableItem has a new parameter is_auto_protected
+- Model AzureVmWorkloadProtectableItem has a new parameter is_auto_protected
+- Model AzureVMAppContainerProtectionContainer has a new parameter operation_type
+- Model AzureSQLAGWorkloadContainerProtectionContainer has a new parameter operation_type
+- Model AzureVmWorkloadSQLDatabaseProtectableItem has a new parameter is_auto_protected
+- Added operation BackupResourceStorageConfigsOperations.patch
+- Added operation ProtectionIntentOperations.delete
+- Added operation ProtectionIntentOperations.get
+- Added operation group BackupProtectionIntentOperations
+- Added operation group OperationOperations
+
 0.3.0 (2018-06-27)
 ++++++++++++++++++
 
