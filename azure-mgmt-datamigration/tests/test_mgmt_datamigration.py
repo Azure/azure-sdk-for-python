@@ -33,7 +33,7 @@ class MgmtDataMigrationTest(AzureMgmtTestCase):
         vnet_name = self.get_resource_name('pysdkdmstestvnet')
         vsubnet_id = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Network/virtualNetworks/{}/subnets/subnet1'
         service_name = self.get_resource_name('pysdkdmstestservice')
-        sku_name = 'Basic_2vCores'
+        sku_name = 'GeneralPurpose_2vCores'
         project_name = self.get_resource_name('pysdkdmstestproject')
         task_name = self.get_resource_name('pysdkdmstesttask')
 

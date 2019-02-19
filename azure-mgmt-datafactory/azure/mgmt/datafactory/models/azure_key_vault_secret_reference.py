@@ -15,12 +15,14 @@ from .secret_base import SecretBase
 class AzureKeyVaultSecretReference(SecretBase):
     """Azure Key Vault secret reference.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param store: The Azure Key Vault linked service reference.
+    :param store: Required. The Azure Key Vault linked service reference.
     :type store: ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param secret_name: The name of the secret in Azure Key Vault. Type:
-     string (or Expression with resultType string).
+    :param secret_name: Required. The name of the secret in Azure Key Vault.
+     Type: string (or Expression with resultType string).
     :type secret_name: object
     :param secret_version: The version of the secret in Azure Key Vault. The
      default value is the latest version of the secret. Type: string (or
@@ -41,9 +43,9 @@ class AzureKeyVaultSecretReference(SecretBase):
         'secret_version': {'key': 'secretVersion', 'type': 'object'},
     }
 
-    def __init__(self, store, secret_name, secret_version=None):
-        super(AzureKeyVaultSecretReference, self).__init__()
-        self.store = store
-        self.secret_name = secret_name
-        self.secret_version = secret_version
+    def __init__(self, **kwargs):
+        super(AzureKeyVaultSecretReference, self).__init__(**kwargs)
+        self.store = kwargs.get('store', None)
+        self.secret_name = kwargs.get('secret_name', None)
+        self.secret_version = kwargs.get('secret_version', None)
         self.type = 'AzureKeyVaultSecret'

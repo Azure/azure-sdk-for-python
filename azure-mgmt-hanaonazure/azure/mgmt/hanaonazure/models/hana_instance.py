@@ -46,6 +46,8 @@ class HanaInstance(Resource):
      'starting', 'started', 'stopping', 'stopped', 'restarting', 'unknown'
     :vartype power_state: str or
      ~azure.mgmt.hanaonazure.models.HanaInstancePowerStateEnum
+    :ivar proximity_placement_group: Resource proximity placement group
+    :vartype proximity_placement_group: str
     """
 
     _validation = {
@@ -56,6 +58,7 @@ class HanaInstance(Resource):
         'tags': {'readonly': True},
         'hana_instance_id': {'readonly': True},
         'power_state': {'readonly': True},
+        'proximity_placement_group': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,6 +73,7 @@ class HanaInstance(Resource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
         'power_state': {'key': 'properties.powerState', 'type': 'str'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -80,3 +84,4 @@ class HanaInstance(Resource):
         self.network_profile = kwargs.get('network_profile', None)
         self.hana_instance_id = None
         self.power_state = None
+        self.proximity_placement_group = None

@@ -32,9 +32,9 @@ class AutoHealTriggers(Model):
         'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
     }
 
-    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
-        super(AutoHealTriggers, self).__init__()
-        self.requests = requests
-        self.private_bytes_in_kb = private_bytes_in_kb
-        self.status_codes = status_codes
-        self.slow_requests = slow_requests
+    def __init__(self, **kwargs):
+        super(AutoHealTriggers, self).__init__(**kwargs)
+        self.requests = kwargs.get('requests', None)
+        self.private_bytes_in_kb = kwargs.get('private_bytes_in_kb', None)
+        self.status_codes = kwargs.get('status_codes', None)
+        self.slow_requests = kwargs.get('slow_requests', None)

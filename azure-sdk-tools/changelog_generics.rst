@@ -1,3 +1,9 @@
+PEP420
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 Autorest context manager
 
 **Features**

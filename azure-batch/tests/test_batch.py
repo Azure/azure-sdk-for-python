@@ -10,11 +10,11 @@ import io
 import logging
 import time
 import unittest
-
 import requests
 
 import azure.batch
 from azure.batch import models
+
 from batch_preparers import (
     AccountPreparer,
     PoolPreparer,
@@ -54,7 +54,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -62,7 +62,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -74,6 +74,20 @@ class BatchTest(AzureMgmtTestCase):
             self.assertEqual(err.error.code, code)
         except Exception as err:
             self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+
+    def assertCreateTasksError(self, code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            self.fail("CreateTasksError expected but not raised")
+        except models.CreateTasksErrorException as err:
+            try:
+                batch_error = err.errors.pop()
+                if code:
+                    self.assertEqual(batch_error.error.code, code)
+            except IndexError:
+                self.fail("Inner BatchErrorException expected but not exist")
+        except Exception as err:
+            self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
@@ -94,9 +108,9 @@ class BatchTest(AzureMgmtTestCase):
         # Test Create Task with Application Package
         task_id = 'python_task_with_app_package'
         task = models.TaskAddParameter(
-            task_id,
-            'cmd /c "echo hello world"',
-            application_package_references=[models.ApplicationPackageReference('application_id', 'v1.0')]
+            id=task_id,
+            command_line='cmd /c "echo hello world"',
+            application_package_references=[models.ApplicationPackageReference(application_id='application_id', version='v1.0')]
         )
         response = client.task.add(batch_job.id, task)
         self.assertIsNone(response)
@@ -159,8 +173,8 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Create Iaas Pool
         users = [
-            models.UserAccount('test-user-1', 'kt#_gahr!@aGERDXA'),
-            models.UserAccount('test-user-2', 'kt#_gahr!@aGERDXA', models.ElevationLevel.admin)
+            models.UserAccount(name='test-user-1', password='kt#_gahr!@aGERDXA'),
+            models.UserAccount(name='test-user-2', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
         ]
         test_iaas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_iaas_'),
@@ -172,8 +186,8 @@ class BatchTest(AzureMgmtTestCase):
                     sku='2016-Datacenter-smalldisk'
                 ),
                 node_agent_sku_id='batch.node.windows amd64',
-                windows_configuration=models.WindowsConfiguration(True)),
-            task_scheduling_policy=models.TaskSchedulingPolicy(models.ComputeNodeFillType.pack),
+                windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True)),
+            task_scheduling_policy=models.TaskSchedulingPolicy(node_fill_type=models.ComputeNodeFillType.pack),
             user_accounts=users
         )
         response = client.pool.add(test_iaas_pool)
@@ -190,7 +204,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(counts[0].low_priority.total, 0)
 
         # Test Create Pool with Network Configuration
-        network_config = models.NetworkConfiguration('/subscriptions/00000000-0000-0000-0000-000000000000'
+        network_config = models.NetworkConfiguration(subnet_id='/subscriptions/00000000-0000-0000-0000-000000000000'
                                                      '/resourceGroups/test'
                                                      '/providers/Microsoft.Network'
                                                      '/virtualNetworks/vnet1'
@@ -224,25 +238,6 @@ class BatchTest(AzureMgmtTestCase):
             )
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
-
-        # Test Create Pool with OSDisk
-        os_disk = models.OSDisk(caching=models.CachingType.read_write)
-        test_osdisk_pool = models.PoolAddParameter(
-            id=self.get_resource_name('batch_osdisk_'),
-            vm_size='Standard_A1',
-            virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher='Canonical',
-                    offer='UbuntuServer',
-                    sku='16.04-LTS'
-                ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
-                os_disk=os_disk)
-        )
-        response = client.pool.add(test_osdisk_pool)
-        self.assertIsNone(response)
-        osdisk_pool = client.pool.get(test_osdisk_pool.id)
-        self.assertEqual(osdisk_pool.virtual_machine_configuration.os_disk.caching, os_disk.caching)
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(lun=1, disk_size_gb=50)
@@ -314,8 +309,8 @@ class BatchTest(AzureMgmtTestCase):
             ),
             start_task=models.StartTask(
                 command_line="cmd.exe /c \"echo hello world\"",
-                resource_files=[models.ResourceFile('https://blobsource.com', 'filename.txt')],
-                environment_settings=[models.EnvironmentSetting('ENV_VAR', 'env_value')],
+                resource_files=[models.ResourceFile(http_url='https://blobsource.com', file_path='filename.txt')],
+                environment_settings=[models.EnvironmentSetting(name='ENV_VAR', value='env_value')],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(
                         elevation_level=models.ElevationLevel.admin
@@ -326,21 +321,16 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.add(test_paas_pool)
         self.assertIsNone(response)
 
-        # Test Upgrade Pool OS
-        self.assertBatchError(
-            "PoolVersionEqualsUpgradeVersion",
-            client.pool.upgrade_os,
-            test_paas_pool.id,
-            "*"
-        )
-
         # Test Update Pool Parameters
-        params = models.PoolUpdatePropertiesParameter([], [], [models.MetadataItem('foo', 'bar')])
+        params = models.PoolUpdatePropertiesParameter(
+            certificate_references=[], 
+            application_package_references=[], 
+            metadata=[models.MetadataItem(name='foo', value='bar')])
         response = client.pool.update_properties(test_paas_pool.id, params)
         self.assertIsNone(response)
 
         # Test Patch Pool Parameters
-        params = models.PoolPatchParameter(metadata=[models.MetadataItem('foo2', 'bar2')])
+        params = models.PoolPatchParameter(metadata=[models.MetadataItem(name='foo2', value='bar2')])
         response = client.pool.patch(test_paas_pool.id, params)
         self.assertIsNone(response)
 
@@ -401,7 +391,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Pool Resize
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
@@ -414,8 +404,10 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
+        # It looks like there has test framework issue, it couldn't find the correct recording frame
+        # So in live mode, target-decicate is 0, and target low pri is 2
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
 
@@ -434,11 +426,11 @@ class BatchTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
     def test_batch_job_schedules(self, **kwargs):
-        client = self.create_aad_client(**kwargs)
+        client = self.create_sharedkey_client(**kwargs)
         # Test Create Job Schedule
         schedule_id = self.get_resource_name('batch_schedule_')
         job_spec = models.JobSpecification(
-            pool_info=models.PoolInformation("pool_id"),
+            pool_info=models.PoolInformation(pool_id="pool_id"),
             constraints=models.JobConstraints(max_task_retry_count=2),
             on_all_tasks_complete=models.OnAllTasksComplete.terminate_job
         )
@@ -447,9 +439,9 @@ class BatchTest(AzureMgmtTestCase):
             recurrence_interval=datetime.timedelta(days=1)
         )
         params = models.JobScheduleAddParameter(
-            schedule_id,
-            schedule,
-            job_spec
+            id=schedule_id,
+            schedule=schedule,
+            job_specification=job_spec
         )
         response = client.job_schedule.add(params)
         self.assertIsNone(response)
@@ -482,12 +474,12 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Update Job Schedule
         job_spec = models.JobSpecification(
-            pool_info=models.PoolInformation('pool_id')
+            pool_info=models.PoolInformation(pool_id='pool_id')
         )
         schedule = models.Schedule(
             recurrence_interval=datetime.timedelta(hours=10)
         )
-        params = models.JobScheduleUpdateParameter(schedule, job_spec)
+        params = models.JobScheduleUpdateParameter(schedule=schedule, job_specification=job_spec)
         response = client.job_schedule.update(schedule_id, params)
         self.assertIsNone(response)
 
@@ -495,7 +487,7 @@ class BatchTest(AzureMgmtTestCase):
         schedule = models.Schedule(
             recurrence_interval=datetime.timedelta(hours=5)
         )
-        params = models.JobSchedulePatchParameter(schedule)
+        params = models.JobSchedulePatchParameter(schedule=schedule)
         response = client.job_schedule.patch(schedule_id, params)
         self.assertIsNone(response)
 
@@ -510,7 +502,7 @@ class BatchTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
     def test_batch_network_configuration(self, **kwargs):
-        client = self.create_aad_client(**kwargs)
+        client = self.create_sharedkey_client(**kwargs)
         # Test Create Pool with Network Config
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.PoolEndpointConfiguration(
@@ -578,6 +570,8 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(node, models.ComputeNode)
         self.assertEqual(node.scheduling_state, models.SchedulingState.enabled)
         self.assertTrue(node.is_dedicated)
+        self.assertIsNotNone(node.node_agent_info)
+        self.assertIsNotNone(node.node_agent_info.version)
 
         # Test Upload Log
         config = models.UploadBatchServiceLogsConfiguration(
@@ -602,12 +596,14 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Reimage Node
-        response = client.compute_node.reimage(
-            batch_pool.name, nodes[1].id, node_reimage_option=models.ComputeNodeReimageOption.terminate)
-        self.assertIsNone(response)
+        self.assertBatchError('OperationNotValidOnNode',
+                              client.compute_node.reimage,
+                              batch_pool.name,
+                              nodes[1].id,
+                              node_reimage_option=models.ComputeNodeReimageOption.terminate)
 
         # Test Remove Nodes
-        options = models.NodeRemoveParameter([n.id for n in nodes])
+        options = models.NodeRemoveParameter(node_list=[n.id for n in nodes])
         response = client.pool.remove_nodes(batch_pool.name, options)
         self.assertIsNone(response)
 
@@ -624,7 +620,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Add User
         user_name = 'BatchPythonSDKUser'
         nodes = list(client.compute_node.list(batch_pool.name))
-        user = models.ComputeNodeUser(user_name, password='kt#_gahr!@aGERDXA', is_admin=False)
+        user = models.ComputeNodeUser(name=user_name, password='kt#_gahr!@aGERDXA', is_admin=False)
         response = client.compute_node.add_user(batch_pool.name, nodes[0].id, user)
         self.assertIsNone(response)
 
@@ -659,7 +655,7 @@ class BatchTest(AzureMgmtTestCase):
             nodes = list(client.compute_node.list(batch_pool.name))
         node = nodes[0].id
         task_id = 'test_task'
-        task_param = models.TaskAddParameter(task_id, 'cmd /c "echo hello world"')
+        task_param = models.TaskAddParameter(id=task_id, command_line='cmd /c "echo hello world"')
         response = client.task.add(batch_job.id, task_param)
         self.assertIsNone(response)
         task = client.task.get(batch_job.id, task_id)
@@ -721,9 +717,9 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Create Task with Auto Complete
         exit_conditions = models.ExitConditions(
-            exit_codes=[models.ExitCodeMapping(1, models.ExitOptions(models.JobAction.terminate))],
-            exit_code_ranges=[models.ExitCodeRangeMapping(2, 4, models.ExitOptions(models.JobAction.disable))],
-            default=models.ExitOptions(models.JobAction.none))
+            exit_codes=[models.ExitCodeMapping(code=1, exit_options=models.ExitOptions(job_action=models.JobAction.terminate))],
+            exit_code_ranges=[models.ExitCodeRangeMapping(start=2, end=4, exit_options=models.ExitOptions(job_action=models.JobAction.disable))],
+            default=models.ExitOptions(job_action=models.JobAction.none))
         task_param = models.TaskAddParameter(
             id=self.get_resource_name('batch_task1_'),
             command_line='cmd /c "echo hello world"',
@@ -803,7 +799,7 @@ class BatchTest(AzureMgmtTestCase):
             command_line='cmd /c "echo hello world"',
             container_settings=models.TaskContainerSettings(
                 image_name='windows_container:latest',
-                registry=models.ContainerRegistry('username', 'password'))
+                registry=models.ContainerRegistry(user_name='username', password='password'))
         )
         client.task.add(batch_job.id, task_param)
         task = client.task.get(batch_job.id, task_param.id)
@@ -826,7 +822,8 @@ class BatchTest(AzureMgmtTestCase):
         tasks = []
         for i in range(7, 10):
             tasks.append(models.TaskAddParameter(
-                self.get_resource_name('batch_task{}_'.format(i)), 'cmd /c "echo hello world"'))
+                id=self.get_resource_name('batch_task{}_'.format(i)),
+                command_line='cmd /c "echo hello world"'))
         result = client.task.add_collection(batch_job.id, tasks)
         self.assertIsInstance(result, models.TaskAddCollectionResult)
         self.assertEqual(len(result.value), 3)
@@ -841,7 +838,6 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(task_counts, models.TaskCounts)
         self.assertEqual(task_counts.completed, 0)
         self.assertEqual(task_counts.succeeded, 0)
-        self.assertEqual(task_counts.validation_status, models.TaskCountValidationStatus.validated)
 
         # Test Terminate Task
         response = client.task.terminate(batch_job.id, task_param.id)
@@ -861,7 +857,7 @@ class BatchTest(AzureMgmtTestCase):
             constraints=models.TaskConstraints(max_task_retry_count=1))
         self.assertIsNone(response)
 
-        # Test Get Subtasks 
+        # Test Get Subtasks
         # TODO: Test with actual subtasks
         subtasks = client.task.list_subtasks(batch_job.id, task_param.id)
         self.assertIsInstance(subtasks, models.CloudTaskListSubtasksResult)
@@ -870,6 +866,48 @@ class BatchTest(AzureMgmtTestCase):
         # Test Delete Task
         response = client.task.delete(batch_job.id, task_param.id)
         self.assertIsNone(response)
+
+        # Test Bulk Add Task Failure
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(10000):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(str(i)),
+                file_path="resourceFile{}".format(str(i)))
+            resource_files.append(resource_file)
+        task = models.TaskAddParameter(
+            id=task_id,
+            command_line="sleep 1",
+            resource_files=resource_files)
+        tasks_to_add.append(task)
+        self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.task.add_collection,
+            batch_job.id,
+            tasks_to_add)
+
+        # Test Bulk Add Task Success
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(100):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile" + str(i),
+                file_path="resourceFile"+str(i))
+            resource_files.append(resource_file)
+        for i in range(733):
+            task = models.TaskAddParameter(
+                id=task_id + str(i),
+                command_line="sleep 1",
+                resource_files=resource_files)
+            tasks_to_add.append(task)
+        result = client.task.add_collection(batch_job.id, tasks_to_add)
+        self.assertIsInstance(result, models.TaskAddCollectionResult)
+        self.assertEqual(len(result.value), 733)
+        self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+        self.assertTrue(
+            all(t.status == models.TaskAddStatus.success for t in result.value))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)

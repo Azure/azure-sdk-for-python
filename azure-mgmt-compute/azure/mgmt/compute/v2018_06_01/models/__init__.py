@@ -29,6 +29,7 @@ try:
     from .virtual_machine_image_py3 import VirtualMachineImage
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
+    from .virtual_machine_reimage_parameters_py3 import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters_py3 import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result_py3 import VirtualMachineCaptureResult
     from .plan_py3 import Plan
@@ -38,10 +39,12 @@ try:
     from .key_vault_key_reference_py3 import KeyVaultKeyReference
     from .disk_encryption_settings_py3 import DiskEncryptionSettings
     from .virtual_hard_disk_py3 import VirtualHardDisk
+    from .diff_disk_settings_py3 import DiffDiskSettings
     from .managed_disk_parameters_py3 import ManagedDiskParameters
     from .os_disk_py3 import OSDisk
     from .data_disk_py3 import DataDisk
     from .storage_profile_py3 import StorageProfile
+    from .additional_capabilities_py3 import AdditionalCapabilities
     from .additional_unattend_content_py3 import AdditionalUnattendContent
     from .win_rm_listener_py3 import WinRMListener
     from .win_rm_configuration_py3 import WinRMConfiguration
@@ -101,6 +104,8 @@ try:
     from .virtual_machine_scale_set_vm_profile_py3 import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile_py3 import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set_py3 import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters_py3 import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters_py3 import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update_py3 import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids_py3 import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -153,10 +158,25 @@ try:
     from .regional_replication_status_py3 import RegionalReplicationStatus
     from .replication_status_py3 import ReplicationStatus
     from .gallery_image_version_py3 import GalleryImageVersion
+    from .target_region_py3 import TargetRegion
     from .managed_artifact_py3 import ManagedArtifact
     from .gallery_artifact_source_py3 import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base_py3 import GalleryArtifactPublishingProfileBase
     from .gallery_disk_image_py3 import GalleryDiskImage
+    from .disk_sku_py3 import DiskSku
+    from .image_disk_reference_py3 import ImageDiskReference
+    from .creation_data_py3 import CreationData
+    from .source_vault_py3 import SourceVault
+    from .key_vault_and_secret_reference_py3 import KeyVaultAndSecretReference
+    from .key_vault_and_key_reference_py3 import KeyVaultAndKeyReference
+    from .encryption_settings_py3 import EncryptionSettings
+    from .disk_py3 import Disk
+    from .disk_update_py3 import DiskUpdate
+    from .snapshot_sku_py3 import SnapshotSku
+    from .grant_access_data_py3 import GrantAccessData
+    from .access_uri_py3 import AccessUri
+    from .snapshot_py3 import Snapshot
+    from .snapshot_update_py3 import SnapshotUpdate
 except (SyntaxError, ImportError):
     from .compute_operation_value import ComputeOperationValue
     from .instance_view_status import InstanceViewStatus
@@ -177,6 +197,7 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image import VirtualMachineImage
     from .usage_name import UsageName
     from .usage import Usage
+    from .virtual_machine_reimage_parameters import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result import VirtualMachineCaptureResult
     from .plan import Plan
@@ -186,10 +207,12 @@ except (SyntaxError, ImportError):
     from .key_vault_key_reference import KeyVaultKeyReference
     from .disk_encryption_settings import DiskEncryptionSettings
     from .virtual_hard_disk import VirtualHardDisk
+    from .diff_disk_settings import DiffDiskSettings
     from .managed_disk_parameters import ManagedDiskParameters
     from .os_disk import OSDisk
     from .data_disk import DataDisk
     from .storage_profile import StorageProfile
+    from .additional_capabilities import AdditionalCapabilities
     from .additional_unattend_content import AdditionalUnattendContent
     from .win_rm_listener import WinRMListener
     from .win_rm_configuration import WinRMConfiguration
@@ -249,6 +272,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_vm_profile import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -301,16 +326,31 @@ except (SyntaxError, ImportError):
     from .regional_replication_status import RegionalReplicationStatus
     from .replication_status import ReplicationStatus
     from .gallery_image_version import GalleryImageVersion
+    from .target_region import TargetRegion
     from .managed_artifact import ManagedArtifact
     from .gallery_artifact_source import GalleryArtifactSource
     from .gallery_artifact_publishing_profile_base import GalleryArtifactPublishingProfileBase
     from .gallery_disk_image import GalleryDiskImage
+    from .disk_sku import DiskSku
+    from .image_disk_reference import ImageDiskReference
+    from .creation_data import CreationData
+    from .source_vault import SourceVault
+    from .key_vault_and_secret_reference import KeyVaultAndSecretReference
+    from .key_vault_and_key_reference import KeyVaultAndKeyReference
+    from .encryption_settings import EncryptionSettings
+    from .disk import Disk
+    from .disk_update import DiskUpdate
+    from .snapshot_sku import SnapshotSku
+    from .grant_access_data import GrantAccessData
+    from .access_uri import AccessUri
+    from .snapshot import Snapshot
+    from .snapshot_update import SnapshotUpdate
 from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
-from .image_paged import ImagePaged
 from .virtual_machine_paged import VirtualMachinePaged
+from .image_paged import ImagePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .upgrade_operation_historical_status_info_paged import UpgradeOperationHistoricalStatusInfoPaged
@@ -320,13 +360,17 @@ from .run_command_document_base_paged import RunCommandDocumentBasePaged
 from .gallery_paged import GalleryPaged
 from .gallery_image_paged import GalleryImagePaged
 from .gallery_image_version_paged import GalleryImageVersionPaged
+from .disk_paged import DiskPaged
+from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
+    AvailabilitySetSkuTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
     DiskCreateOptionTypes,
     StorageAccountTypes,
+    DiffDiskOptions,
     PassNames,
     ComponentNames,
     SettingNames,
@@ -344,10 +388,13 @@ from .compute_management_client_enums import (
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
     IntervalInMins,
-    ScaleTier,
     AggregatedReplicationState,
     ReplicationState,
     HostCaching,
+    DiskStorageAccountTypes,
+    DiskCreateOption,
+    SnapshotStorageAccountTypes,
+    AccessLevel,
     InstanceViewTypes,
     ReplicationStatusTypes,
 )
@@ -372,6 +419,7 @@ __all__ = [
     'VirtualMachineImage',
     'UsageName',
     'Usage',
+    'VirtualMachineReimageParameters',
     'VirtualMachineCaptureParameters',
     'VirtualMachineCaptureResult',
     'Plan',
@@ -381,10 +429,12 @@ __all__ = [
     'KeyVaultKeyReference',
     'DiskEncryptionSettings',
     'VirtualHardDisk',
+    'DiffDiskSettings',
     'ManagedDiskParameters',
     'OSDisk',
     'DataDisk',
     'StorageProfile',
+    'AdditionalCapabilities',
     'AdditionalUnattendContent',
     'WinRMListener',
     'WinRMConfiguration',
@@ -444,6 +494,8 @@ __all__ = [
     'VirtualMachineScaleSetVMProfile',
     'VirtualMachineScaleSetUpdateVMProfile',
     'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetVMReimageParameters',
+    'VirtualMachineScaleSetReimageParameters',
     'VirtualMachineScaleSetUpdate',
     'VirtualMachineScaleSetVMInstanceIDs',
     'VirtualMachineScaleSetVMInstanceRequiredIDs',
@@ -496,16 +548,31 @@ __all__ = [
     'RegionalReplicationStatus',
     'ReplicationStatus',
     'GalleryImageVersion',
+    'TargetRegion',
     'ManagedArtifact',
     'GalleryArtifactSource',
     'GalleryArtifactPublishingProfileBase',
     'GalleryDiskImage',
+    'DiskSku',
+    'ImageDiskReference',
+    'CreationData',
+    'SourceVault',
+    'KeyVaultAndSecretReference',
+    'KeyVaultAndKeyReference',
+    'EncryptionSettings',
+    'Disk',
+    'DiskUpdate',
+    'SnapshotSku',
+    'GrantAccessData',
+    'AccessUri',
+    'Snapshot',
+    'SnapshotUpdate',
     'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
-    'ImagePaged',
     'VirtualMachinePaged',
+    'ImagePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'UpgradeOperationHistoricalStatusInfoPaged',
@@ -515,12 +582,16 @@ __all__ = [
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
+    'DiskPaged',
+    'SnapshotPaged',
     'StatusLevelTypes',
+    'AvailabilitySetSkuTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',
     'DiskCreateOptionTypes',
     'StorageAccountTypes',
+    'DiffDiskOptions',
     'PassNames',
     'ComponentNames',
     'SettingNames',
@@ -538,10 +609,13 @@ __all__ = [
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
     'IntervalInMins',
-    'ScaleTier',
     'AggregatedReplicationState',
     'ReplicationState',
     'HostCaching',
+    'DiskStorageAccountTypes',
+    'DiskCreateOption',
+    'SnapshotStorageAccountTypes',
+    'AccessLevel',
     'InstanceViewTypes',
     'ReplicationStatusTypes',
 ]

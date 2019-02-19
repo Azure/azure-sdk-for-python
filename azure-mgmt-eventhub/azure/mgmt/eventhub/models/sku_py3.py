@@ -23,7 +23,7 @@ class Sku(Model):
     :param tier: The billing tier of this particular SKU. Possible values
      include: 'Basic', 'Standard'
     :type tier: str or ~azure.mgmt.eventhub.models.SkuTier
-    :param capacity: The Event Hubs throughput units, vaule should be 0 to 20
+    :param capacity: The Event Hubs throughput units, value should be 0 to 20
      throughput units.
     :type capacity: int
     """

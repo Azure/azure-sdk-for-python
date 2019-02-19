@@ -50,6 +50,12 @@ class VirtualMachineScaleSetVM(Resource):
      machine disks.
     :type storage_profile:
      ~azure.mgmt.compute.v2018_06_01.models.StorageProfile
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the virtual machine in the scale set. For instance: whether
+     the virtual machine has the capability to support attaching managed data
+     disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2018_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual
      machine.
     :type os_profile: ~azure.mgmt.compute.v2018_06_01.models.OSProfile
@@ -67,7 +73,7 @@ class VirtualMachineScaleSetVM(Resource):
      availability. For more information about availability sets, see [Manage
      the availability of virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-     <br><br> For more information on Azure planned maintainance, see [Planned
+     <br><br> For more information on Azure planned maintenance, see [Planned
      maintenance for virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
@@ -97,6 +103,8 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
      list[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineExtension]
+    :ivar zones: The virtual machine zones.
+    :vartype zones: list[str]
     """
 
     _validation = {
@@ -111,6 +119,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_view': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resources': {'readonly': True},
+        'zones': {'readonly': True},
     }
 
     _attribute_map = {
@@ -126,6 +135,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
@@ -134,6 +144,7 @@ class VirtualMachineScaleSetVM(Resource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -145,6 +156,7 @@ class VirtualMachineScaleSetVM(Resource):
         self.instance_view = None
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
+        self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.os_profile = kwargs.get('os_profile', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
@@ -153,3 +165,4 @@ class VirtualMachineScaleSetVM(Resource):
         self.license_type = kwargs.get('license_type', None)
         self.plan = kwargs.get('plan', None)
         self.resources = None
+        self.zones = None

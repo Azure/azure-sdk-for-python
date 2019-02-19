@@ -18,8 +18,8 @@ class KeyVaultReference(ResourceReference):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource id.
-    :vartype id: str
+    :param id: The resource id.
+    :type id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
@@ -27,7 +27,6 @@ class KeyVaultReference(ResourceReference):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -38,5 +37,5 @@ class KeyVaultReference(ResourceReference):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(KeyVaultReference, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(KeyVaultReference, self).__init__(id=id, **kwargs)

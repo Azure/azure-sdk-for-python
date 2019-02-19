@@ -45,6 +45,6 @@ class AnalysisDefinition(ProxyOnlyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(AnalysisDefinition, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(AnalysisDefinition, self).__init__(**kwargs)
         self.description = None

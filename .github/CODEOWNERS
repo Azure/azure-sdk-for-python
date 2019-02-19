@@ -18,6 +18,7 @@
 /azure-mgmt-datalake-store/ @ro-joowan
 /azure-mgmt-datamigration/ @vchske
 /azure-mgmt-eventgrid/ @kalyanaj
+/azure-mgmt-hdinsight/ @idear1203
 /azure-mgmt-keyvault/ @schaabs
 /azure-mgmt-machinelearningcompute/ @shutchings
 /azure-mgmt-recoveryservices/ @DheerendraRathor
@@ -25,4 +26,5 @@
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
+/azure-servicebus/ @annatisch
 /azure-servicefabric/ @samedder

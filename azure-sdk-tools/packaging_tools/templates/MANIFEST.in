@@ -1,2 +1,5 @@
 include *.rst
-include azure_bdist_wheel.py
+{%- for init_name in init_names %}
+include {{ init_name }}
+{%- endfor %}
+

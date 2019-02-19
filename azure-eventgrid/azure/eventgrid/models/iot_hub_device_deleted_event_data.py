@@ -23,21 +23,14 @@ class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
     :param hub_name: Name of the IoT Hub where the device was created or
      deleted.
     :type hub_name: str
-    :param op_type: The event type specified for this operation by the IoT
-     Hub.
-    :type op_type: str
-    :param operation_timestamp: The ISO8601 timestamp of the operation.
-    :type operation_timestamp: str
     :param twin: Information about the device twin, which is the cloud
-     represenation of application device metadata.
+     representation of application device metadata.
     :type twin: ~azure.eventgrid.models.DeviceTwinInfo
     """
 
     _attribute_map = {
         'device_id': {'key': 'deviceId', 'type': 'str'},
         'hub_name': {'key': 'hubName', 'type': 'str'},
-        'op_type': {'key': 'opType', 'type': 'str'},
-        'operation_timestamp': {'key': 'operationTimestamp', 'type': 'str'},
         'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
     }
 
