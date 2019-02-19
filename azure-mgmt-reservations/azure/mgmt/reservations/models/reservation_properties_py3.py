@@ -19,7 +19,7 @@ class ReservationProperties(Model):
     sending a request.
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off',
@@ -36,11 +36,8 @@ class ReservationProperties(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param quantity: Quantity of the SKUs that are part of the Reservation.
     :type quantity: int
-    :param provisioning_state: Possible values include: 'Creating',
-     'PendingResourceHold', 'ConfirmedResourceHold', 'PendingBilling',
-     'ConfirmedBilling', 'Created', 'Succeeded', 'Cancelled', 'Expired',
-     'BillingFailed', 'Failed', 'Split', 'Merged'
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.enum
+    :param provisioning_state: Current state of the reservation.
+    :type provisioning_state: str
     :param effective_date_time: DateTime of the Reservation starting when this
      version is effective from.
     :type effective_date_time: datetime
@@ -83,7 +80,7 @@ class ReservationProperties(Model):
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
     }
 
-    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
         self.instance_flexibility = instance_flexibility

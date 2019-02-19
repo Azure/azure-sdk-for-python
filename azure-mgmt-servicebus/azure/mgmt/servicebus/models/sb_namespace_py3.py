@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class SBNamespace(TrackedResource):

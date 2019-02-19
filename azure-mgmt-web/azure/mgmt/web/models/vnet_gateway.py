@@ -19,6 +19,8 @@ class VnetGateway(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -29,7 +31,8 @@ class VnetGateway(ProxyOnlyResource):
     :vartype type: str
     :param vnet_name: The Virtual Network name.
     :type vnet_name: str
-    :param vpn_package_uri: The URI where the VPN package can be downloaded.
+    :param vpn_package_uri: Required. The URI where the VPN package can be
+     downloaded.
     :type vpn_package_uri: str
     """
 
@@ -49,7 +52,7 @@ class VnetGateway(ProxyOnlyResource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, vpn_package_uri, kind=None, vnet_name=None):
-        super(VnetGateway, self).__init__(kind=kind)
-        self.vnet_name = vnet_name
-        self.vpn_package_uri = vpn_package_uri
+    def __init__(self, **kwargs):
+        super(VnetGateway, self).__init__(**kwargs)
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vpn_package_uri = kwargs.get('vpn_package_uri', None)

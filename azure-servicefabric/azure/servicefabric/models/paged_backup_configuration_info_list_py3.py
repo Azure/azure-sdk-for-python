@@ -22,7 +22,7 @@ class PagedBackupConfigurationInfoList(Model):
      obtain next set of results. The continuation token is included in the
      response of the API when the results from the system do not fit in a
      single response. When this value is passed to the next API call, the API
-     returns next set of results. If there are no further results then the
+     returns next set of results. If there are no further results, then the
      continuation token is not included in the response.
     :type continuation_token: str
     :param items: List of backup configuration information.

@@ -58,6 +58,9 @@ class StorageAccountCreateParameters(Model):
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true. Default value: False .
     :type enable_https_traffic_only: bool
+    :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
+     true. Default value: False .
+    :type is_hns_enabled: bool
     """
 
     _validation = {
@@ -77,6 +80,7 @@ class StorageAccountCreateParameters(Model):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
+        'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -91,3 +95,4 @@ class StorageAccountCreateParameters(Model):
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.access_tier = kwargs.get('access_tier', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)
+        self.is_hns_enabled = kwargs.get('is_hns_enabled', False)

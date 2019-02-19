@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class BMSRefreshContainersQueryObject(Model):
-    """The query filters that can be used with the list containers API.
+    """The query filters that can be used with the refresh container API.
 
     :param backup_management_type: Backup management type for this container.
      Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',

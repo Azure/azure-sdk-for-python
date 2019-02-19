@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-cognitiveservices-vision-computervision"
+package_pprint_name = "Cognitive Services Computer Vision"
+package_doc_id = "cognitive-services"
+is_stable = false
+is_arm = false

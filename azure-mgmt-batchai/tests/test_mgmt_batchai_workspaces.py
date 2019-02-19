@@ -10,15 +10,15 @@ from azure.mgmt.batchai import BatchAIManagementClient, models
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from msrestazure.azure_exceptions import CloudError
 
-from . import helpers
+from helpers import Helpers
 
 
 class WorkspaceTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
-        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
+        self.client = Helpers.create_batchai_client(self)  # type: BatchAIManagementClient
 
-    @ResourceGroupPreparer(location=helpers.LOCATION)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
     def test_creation_and_deletion(self, resource_group, location):
         name = 'testee'
         workspace = self.client.workspaces.create(resource_group.name, name, location).result()
@@ -39,7 +39,7 @@ class WorkspaceTestCase(AzureMgmtTestCase):
         workspaces = self.client.workspaces.list_by_resource_group(resource_group.name)
         self.assertFalse(list(workspaces))
 
-    @ResourceGroupPreparer(location=helpers.LOCATION)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
     def test_workspaces_isolation(self, resource_group, location):
         self.client.workspaces.create(resource_group.name, 'first', location).result()
         self.client.workspaces.create(resource_group.name, 'second', location).result()
@@ -54,8 +54,8 @@ class WorkspaceTestCase(AzureMgmtTestCase):
                     scale_settings=models.ScaleSettings(
                         manual=models.ManualScaleSettings(target_node_count=0)),
                     user_account_settings=models.UserAccountSettings(
-                        admin_user_name=helpers.ADMIN_USER_NAME,
-                        admin_user_password=helpers.ADMIN_USER_PASSWORD
+                        admin_user_name=Helpers.ADMIN_USER_NAME,
+                        admin_user_password=Helpers.ADMIN_USER_PASSWORD
                     ),
                     vm_priority='lowpriority'
                 )).result()
@@ -86,7 +86,7 @@ class WorkspaceTestCase(AzureMgmtTestCase):
         # And check the job is not terminated
         self.assertEqual(job.execution_state, models.ExecutionState.queued)
 
-    @ResourceGroupPreparer(location=helpers.LOCATION)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
     def test_update(self, resource_group, location):
         self.skipTest('Waiting for the server side fix')
         self.client.workspaces.create(resource_group.name, 'workspace', location).result()

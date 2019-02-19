@@ -15,11 +15,14 @@ from msrest.serialization import Model
 class TelegramChannelProperties(Model):
     """The parameters to provide for the Telegram channel.
 
-    :param access_token: The Telegram access token
+    All required parameters must be populated in order to send to Azure.
+
+    :param access_token: Required. The Telegram access token. Value only
+     returned through POST to the action Channel List API, otherwise empty.
     :type access_token: str
     :param is_validated: Whether this channel is validated for the bot
     :type is_validated: bool
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -34,7 +37,8 @@ class TelegramChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, access_token, is_enabled, is_validated=None):
-        self.access_token = access_token
-        self.is_validated = is_validated
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(TelegramChannelProperties, self).__init__(**kwargs)
+        self.access_token = kwargs.get('access_token', None)
+        self.is_validated = kwargs.get('is_validated', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

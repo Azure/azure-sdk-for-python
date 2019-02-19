@@ -115,7 +115,7 @@ Azure Government
     password = 'password
 
     # Government
-    authentication_endpoint = 'https://login-us.microsoftonline.com/'
+    authentication_endpoint = 'https://login.microsoftonline.us/'
     azure_endpoint = 'https://management.usgovcloudapi.net/'
         
     context = adal.AuthenticationContext(authentication_endpoint+tenant)

@@ -16,12 +16,14 @@ class GitRepoVolume(Model):
     """Represents a volume that is populated with the contents of a git
     repository.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param directory: Target directory name. Must not contain or start with
      '..'.  If '.' is supplied, the volume directory will be the git
      repository.  Otherwise, if specified, the volume will contain the git
      repository in the subdirectory with the given name.
     :type directory: str
-    :param repository: Repository URL
+    :param repository: Required. Repository URL
     :type repository: str
     :param revision: Commit hash for the specified revision.
     :type revision: str
@@ -37,8 +39,8 @@ class GitRepoVolume(Model):
         'revision': {'key': 'revision', 'type': 'str'},
     }
 
-    def __init__(self, repository, directory=None, revision=None):
-        super(GitRepoVolume, self).__init__()
-        self.directory = directory
-        self.repository = repository
-        self.revision = revision
+    def __init__(self, **kwargs):
+        super(GitRepoVolume, self).__init__(**kwargs)
+        self.directory = kwargs.get('directory', None)
+        self.repository = kwargs.get('repository', None)
+        self.revision = kwargs.get('revision', None)

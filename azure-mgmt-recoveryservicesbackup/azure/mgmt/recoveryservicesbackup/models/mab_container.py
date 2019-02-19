@@ -78,4 +78,4 @@ class MabContainer(ProtectionContainer):
         self.extended_info = kwargs.get('extended_info', None)
         self.mab_container_health_details = kwargs.get('mab_container_health_details', None)
         self.container_health_state = kwargs.get('container_health_state', None)
-        self.container_type = 'MABWindowsContainer'
+        self.container_type = 'Windows'

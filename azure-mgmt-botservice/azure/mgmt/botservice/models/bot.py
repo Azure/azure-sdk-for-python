@@ -57,6 +57,6 @@ class Bot(Resource):
         'properties': {'key': 'properties', 'type': 'BotProperties'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, kind=None, etag=None, properties=None):
-        super(Bot, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Bot, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

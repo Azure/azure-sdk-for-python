@@ -45,6 +45,6 @@ class Snapshot(ProxyOnlyResource):
         'time': {'key': 'properties.time', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(Snapshot, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(Snapshot, self).__init__(**kwargs)
         self.time = None

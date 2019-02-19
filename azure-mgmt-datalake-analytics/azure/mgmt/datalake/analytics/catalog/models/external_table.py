@@ -27,7 +27,7 @@ class ExternalTable(Model):
         'data_source': {'key': 'dataSource', 'type': 'EntityId'},
     }
 
-    def __init__(self, table_name=None, data_source=None):
-        super(ExternalTable, self).__init__()
-        self.table_name = table_name
-        self.data_source = data_source
+    def __init__(self, **kwargs):
+        super(ExternalTable, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
+        self.data_source = kwargs.get('data_source', None)

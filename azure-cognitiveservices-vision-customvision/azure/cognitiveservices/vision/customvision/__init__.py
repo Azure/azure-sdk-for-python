@@ -11,6 +11,4 @@
 
 from .version import VERSION
 
-__all__ = ['ManagedServiceIdentityClient']
-
 __version__ = VERSION

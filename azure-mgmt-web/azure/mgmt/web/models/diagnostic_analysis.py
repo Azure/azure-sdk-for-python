@@ -59,10 +59,10 @@ class DiagnosticAnalysis(ProxyOnlyResource):
         'non_correlated_detectors': {'key': 'properties.nonCorrelatedDetectors', 'type': '[DetectorDefinition]'},
     }
 
-    def __init__(self, kind=None, start_time=None, end_time=None, abnormal_time_periods=None, payload=None, non_correlated_detectors=None):
-        super(DiagnosticAnalysis, self).__init__(kind=kind)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.abnormal_time_periods = abnormal_time_periods
-        self.payload = payload
-        self.non_correlated_detectors = non_correlated_detectors
+    def __init__(self, **kwargs):
+        super(DiagnosticAnalysis, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.abnormal_time_periods = kwargs.get('abnormal_time_periods', None)
+        self.payload = kwargs.get('payload', None)
+        self.non_correlated_detectors = kwargs.get('non_correlated_detectors', None)

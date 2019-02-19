@@ -15,33 +15,22 @@ from msrest.serialization import Model
 class ExecutionStatistics(Model):
     """Description about the errors happen while performing migration validation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar execution_count: No. of query executions
-    :vartype execution_count: long
-    :ivar cpu_time_ms: CPU Time in millisecond(s) for the query execution
-    :vartype cpu_time_ms: float
-    :ivar elapsed_time_ms: Time taken in millisecond(s) for executing the
+    :param execution_count: No. of query executions
+    :type execution_count: long
+    :param cpu_time_ms: CPU Time in millisecond(s) for the query execution
+    :type cpu_time_ms: float
+    :param elapsed_time_ms: Time taken in millisecond(s) for executing the
      query
-    :vartype elapsed_time_ms: float
+    :type elapsed_time_ms: float
     :param wait_stats: Dictionary of sql query execution wait types and the
      respective statistics
     :type wait_stats: dict[str,
      ~azure.mgmt.datamigration.models.WaitStatistics]
-    :ivar has_errors: Indicates whether the query resulted in an error
-    :vartype has_errors: bool
-    :ivar sql_errors: List of sql Errors
-    :vartype sql_errors: list[str]
+    :param has_errors: Indicates whether the query resulted in an error
+    :type has_errors: bool
+    :param sql_errors: List of sql Errors
+    :type sql_errors: list[str]
     """
-
-    _validation = {
-        'execution_count': {'readonly': True},
-        'cpu_time_ms': {'readonly': True},
-        'elapsed_time_ms': {'readonly': True},
-        'has_errors': {'readonly': True},
-        'sql_errors': {'readonly': True},
-    }
 
     _attribute_map = {
         'execution_count': {'key': 'executionCount', 'type': 'long'},
@@ -52,11 +41,11 @@ class ExecutionStatistics(Model):
         'sql_errors': {'key': 'sqlErrors', 'type': '[str]'},
     }
 
-    def __init__(self, *, wait_stats=None, **kwargs) -> None:
+    def __init__(self, *, execution_count: int=None, cpu_time_ms: float=None, elapsed_time_ms: float=None, wait_stats=None, has_errors: bool=None, sql_errors=None, **kwargs) -> None:
         super(ExecutionStatistics, self).__init__(**kwargs)
-        self.execution_count = None
-        self.cpu_time_ms = None
-        self.elapsed_time_ms = None
+        self.execution_count = execution_count
+        self.cpu_time_ms = cpu_time_ms
+        self.elapsed_time_ms = elapsed_time_ms
         self.wait_stats = wait_stats
-        self.has_errors = None
-        self.sql_errors = None
+        self.has_errors = has_errors
+        self.sql_errors = sql_errors

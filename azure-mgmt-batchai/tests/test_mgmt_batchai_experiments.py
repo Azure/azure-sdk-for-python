@@ -10,15 +10,15 @@ from azure.mgmt.batchai import BatchAIManagementClient, models
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from msrestazure.azure_exceptions import CloudError
 
-from . import helpers
+from helpers import Helpers
 
 
 class ExperimentTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(ExperimentTestCase, self).setUp()
-        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
+        self.client = Helpers.create_batchai_client(self)  # type: BatchAIManagementClient
 
-    @ResourceGroupPreparer(location=helpers.LOCATION)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
     def test_creation_and_deletion(self, resource_group, location):
         name = 'testee'
         workspace_name = 'workspace'
@@ -37,7 +37,7 @@ class ExperimentTestCase(AzureMgmtTestCase):
         # Check the experiment is actually deleted
         self.assertRaises(CloudError, lambda: self.client.experiments.get(resource_group.name, workspace_name, name))
 
-    @ResourceGroupPreparer(location=helpers.LOCATION)
+    @ResourceGroupPreparer(location=Helpers.LOCATION)
     def test_experiments_isolation(self, resource_group, location):
         self.client.workspaces.create(resource_group.name, 'first', location).result()
         self.client.workspaces.create(resource_group.name, 'second', location).result()
@@ -52,8 +52,8 @@ class ExperimentTestCase(AzureMgmtTestCase):
                     scale_settings=models.ScaleSettings(
                         manual=models.ManualScaleSettings(target_node_count=0)),
                     user_account_settings=models.UserAccountSettings(
-                        admin_user_name=helpers.ADMIN_USER_NAME,
-                        admin_user_password=helpers.ADMIN_USER_PASSWORD
+                        admin_user_name=Helpers.ADMIN_USER_NAME,
+                        admin_user_password=Helpers.ADMIN_USER_PASSWORD
                     ),
                     vm_priority='lowpriority'
                 )).result()

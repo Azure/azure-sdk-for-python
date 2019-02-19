@@ -53,8 +53,8 @@ class PublicCertificate(ProxyOnlyResource):
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, blob=None, public_certificate_location=None):
-        super(PublicCertificate, self).__init__(kind=kind)
-        self.blob = blob
-        self.public_certificate_location = public_certificate_location
+    def __init__(self, **kwargs):
+        super(PublicCertificate, self).__init__(**kwargs)
+        self.blob = kwargs.get('blob', None)
+        self.public_certificate_location = kwargs.get('public_certificate_location', None)
         self.thumbprint = None

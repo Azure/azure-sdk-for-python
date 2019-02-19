@@ -17,8 +17,9 @@ class ProtectedItem(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileshareProtectedItem, AzureIaaSVMProtectedItem,
-    AzureSqlProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
-    DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem
+    AzureSqlProtectedItem, AzureVmWorkloadProtectedItem,
+    AzureVmWorkloadSQLDatabaseProtectedItem, DPMProtectedItem,
+    GenericProtectedItem, MabFileFolderProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
@@ -31,7 +32,7 @@ class ProtectedItem(Model):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -46,6 +47,11 @@ class ProtectedItem(Model):
     :type last_recovery_point: datetime
     :param backup_set_name: Name of the backup set the backup item belongs to
     :type backup_set_name: str
+    :param create_mode: Create mode to indicate recovery of existing soft
+     deleted data source or creation of new data source. Possible values
+     include: 'Invalid', 'Default', 'Recover'
+    :type create_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.CreateMode
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -62,11 +68,12 @@ class ProtectedItem(Model):
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
+        'create_mode': {'key': 'createMode', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
+        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
     def __init__(self, **kwargs):
@@ -78,4 +85,5 @@ class ProtectedItem(Model):
         self.policy_id = kwargs.get('policy_id', None)
         self.last_recovery_point = kwargs.get('last_recovery_point', None)
         self.backup_set_name = kwargs.get('backup_set_name', None)
+        self.create_mode = kwargs.get('create_mode', None)
         self.protected_item_type = None

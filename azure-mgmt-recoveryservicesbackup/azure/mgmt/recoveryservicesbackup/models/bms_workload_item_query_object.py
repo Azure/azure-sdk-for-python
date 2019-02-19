@@ -21,13 +21,14 @@ class BMSWorkloadItemQueryObject(Model):
     :type backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_item_type: Workload Item type. Possible values include:
-     'Invalid', 'SQLInstance', 'SQLDataBase'
+     'Invalid', 'SQLInstance', 'SQLDataBase', 'SAPHanaSystem',
+     'SAPHanaDatabase'
     :type workload_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadItemType
     :param workload_type: Workload type. Possible values include: 'Invalid',
      'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint',
      'VMwareVM', 'SystemState', 'Client', 'GenericDataSource', 'SQLDataBase',
-     'AzureFileShare'
+     'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param protection_status: Backup status query parameter. Possible values

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sub_resource_py3 import SubResource
 
 
 class VirtualMachineScaleSetExtension(SubResource):

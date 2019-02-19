@@ -39,12 +39,9 @@ class ReservationOrderResponse(Model):
      Reservation.
     :type original_quantity: int
     :param term: Possible values include: 'P1Y', 'P3Y'
-    :type term: str or ~azure.mgmt.reservations.models.enum
-    :param provisioning_state: Possible values include: 'Creating',
-     'PendingResourceHold', 'ConfirmedResourceHold', 'PendingBilling',
-     'ConfirmedBilling', 'Created', 'Succeeded', 'Cancelled', 'Expired',
-     'BillingFailed', 'Failed', 'Split', 'Merged'
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.enum
+    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :param provisioning_state: Current state of the reservation.
+    :type provisioning_state: str
     :param reservations:
     :type reservations:
      list[~azure.mgmt.reservations.models.ReservationResponse]

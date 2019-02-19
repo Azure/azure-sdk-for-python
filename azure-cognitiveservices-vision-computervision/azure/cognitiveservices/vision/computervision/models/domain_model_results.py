@@ -16,25 +16,23 @@ class DomainModelResults(Model):
     """Result of image analysis using a specific domain model including additional
     metadata.
 
-    :param celebrities: An array of possible celebritied identified in the
-     image.
-    :type celebrities:
-     list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
+    :param result: Model-specific response
+    :type result: object
     :param request_id: Id of the REST API request.
     :type request_id: str
-    :param metadata: Additional image metadata
+    :param metadata:
     :type metadata:
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
     """
 
     _attribute_map = {
-        'celebrities': {'key': 'result.celebrities', 'type': '[CelebritiesModel]'},
+        'result': {'key': 'result', 'type': 'object'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, celebrities=None, request_id=None, metadata=None):
-        super(DomainModelResults, self).__init__()
-        self.celebrities = celebrities
-        self.request_id = request_id
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(DomainModelResults, self).__init__(**kwargs)
+        self.result = kwargs.get('result', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.metadata = kwargs.get('metadata', None)
