@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-databox"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Data Box"
 package_doc_id = ""
 is_stable = false
 is_arm = true
