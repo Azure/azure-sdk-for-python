@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-automation"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Automation"
 package_doc_id = ""
 is_stable = false
 is_arm = true
