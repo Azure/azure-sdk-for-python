@@ -41,6 +41,10 @@ class CopySink(Model):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     connectioned to sink data store. Type: integer (or Expression with
+     resultType integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -55,6 +59,7 @@ class CopySink(Model):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -69,4 +74,5 @@ class CopySink(Model):
         self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
         self.sink_retry_count = kwargs.get('sink_retry_count', None)
         self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
         self.type = None
