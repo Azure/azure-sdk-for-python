@@ -18,7 +18,8 @@ class GalleryIdentifier(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar unique_name: The unique name of the gallery
+    :ivar unique_name: The unique name of the Shared Image Gallery. This name
+     is generated automatically by Azure.
     :vartype unique_name: str
     """
 

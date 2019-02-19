@@ -116,9 +116,9 @@ class SharedKeyCredentials(Authentication):
         super(SharedKeyCredentials, self).__init__()
         self.auth = SharedKeyAuth(self.header, account_name, key)
     
-    def signed_session(self):
+    def signed_session(self, session=None):
 
-        session = super(SharedKeyCredentials, self).signed_session()
+        session = super(SharedKeyCredentials, self).signed_session(session=session)
         session.auth = self.auth
 
         return session

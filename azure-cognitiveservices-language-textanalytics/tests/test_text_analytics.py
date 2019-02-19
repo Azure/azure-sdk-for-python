@@ -53,6 +53,6 @@ class TextAnalyticsTest(ReplayableTest):
             }]
         )
 
-        self.assertEquals(response.documents[0].detected_languages[0].name, "English")
+        self.assertEqual(response.documents[0].detected_languages[0].name, "English")
 
 

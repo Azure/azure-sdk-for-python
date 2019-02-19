@@ -264,12 +264,6 @@ class TransparentDataEncryptionActivityStatus(str, Enum):
     decrypting = "Decrypting"
 
 
-class BlobAuditingPolicyState(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
@@ -409,6 +403,12 @@ class VirtualNetworkRuleState(str, Enum):
     ready = "Ready"
     deleting = "Deleting"
     unknown = "Unknown"
+
+
+class BlobAuditingPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class JobAgentState(str, Enum):
@@ -655,6 +655,12 @@ class LongTermRetentionDatabaseState(str, Enum):
     all = "All"
     live = "Live"
     deleted = "Deleted"
+
+
+class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
+
+    master = "master"
+    default = "default"
 
 
 class CapabilityGroup(str, Enum):

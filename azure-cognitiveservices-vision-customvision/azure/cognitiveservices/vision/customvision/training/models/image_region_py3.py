@@ -24,7 +24,7 @@ class ImageRegion(Model):
     :vartype tag_name: str
     :ivar created:
     :vartype created: datetime
-    :param tag_id:
+    :param tag_id: Id of the tag associated with this region.
     :type tag_id: str
     :param left:
     :type left: float

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
-    """The parameters used to check the availabity of the storage account name.
+    """The parameters used to check the availability of the storage account name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

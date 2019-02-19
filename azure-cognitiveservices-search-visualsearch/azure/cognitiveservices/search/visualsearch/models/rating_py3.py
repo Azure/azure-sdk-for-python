@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .properties_item import PropertiesItem
+from .properties_item_py3 import PropertiesItem
 
 
 class Rating(PropertiesItem):

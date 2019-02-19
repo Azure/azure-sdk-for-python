@@ -19,7 +19,7 @@ class AkamaiSignatureHeaderAuthenticationKey(Model):
     :type identifier: str
     :param base64_key: authentication key
     :type base64_key: str
-    :param expiration: The exact time the authentication key.
+    :param expiration: The expiration time of the authentication key.
     :type expiration: datetime
     """
 

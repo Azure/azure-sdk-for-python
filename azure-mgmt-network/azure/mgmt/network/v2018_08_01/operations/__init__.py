@@ -26,12 +26,16 @@ from .express_route_cross_connections_operations import ExpressRouteCrossConnect
 from .express_route_cross_connection_peerings_operations import ExpressRouteCrossConnectionPeeringsOperations
 from .express_route_gateways_operations import ExpressRouteGatewaysOperations
 from .express_route_connections_operations import ExpressRouteConnectionsOperations
+from .express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
+from .express_route_ports_operations import ExpressRoutePortsOperations
+from .express_route_links_operations import ExpressRouteLinksOperations
 from .interface_endpoints_operations import InterfaceEndpointsOperations
 from .load_balancers_operations import LoadBalancersOperations
 from .load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
 from .inbound_nat_rules_operations import InboundNatRulesOperations
 from .load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalancingRulesOperations
+from .load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .load_balancer_probes_operations import LoadBalancerProbesOperations
 from .network_interfaces_operations import NetworkInterfacesOperations
@@ -91,12 +95,16 @@ __all__ = [
     'ExpressRouteCrossConnectionPeeringsOperations',
     'ExpressRouteGatewaysOperations',
     'ExpressRouteConnectionsOperations',
+    'ExpressRoutePortsLocationsOperations',
+    'ExpressRoutePortsOperations',
+    'ExpressRouteLinksOperations',
     'InterfaceEndpointsOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',
     'LoadBalancerFrontendIPConfigurationsOperations',
     'InboundNatRulesOperations',
     'LoadBalancerLoadBalancingRulesOperations',
+    'LoadBalancerOutboundRulesOperations',
     'LoadBalancerNetworkInterfacesOperations',
     'LoadBalancerProbesOperations',
     'NetworkInterfacesOperations',

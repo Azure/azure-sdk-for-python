@@ -34,8 +34,16 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
      list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayFirewallDisabledRuleGroup]
     :param request_body_check: Whether allow WAF to check request Body.
     :type request_body_check: bool
-    :param max_request_body_size: Maxium request body size for WAF.
+    :param max_request_body_size: Maximum request body size for WAF.
     :type max_request_body_size: int
+    :param max_request_body_size_in_kb: Maximum request body size in Kb for
+     WAF.
+    :type max_request_body_size_in_kb: int
+    :param file_upload_limit_in_mb: Maximum file upload size in Mb for WAF.
+    :type file_upload_limit_in_mb: int
+    :param exclusions: The exclusion list.
+    :type exclusions:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayFirewallExclusion]
     """
 
     _validation = {
@@ -44,6 +52,8 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'rule_set_type': {'required': True},
         'rule_set_version': {'required': True},
         'max_request_body_size': {'maximum': 128, 'minimum': 8},
+        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
+        'file_upload_limit_in_mb': {'maximum': 500, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -54,6 +64,9 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'disabled_rule_groups': {'key': 'disabledRuleGroups', 'type': '[ApplicationGatewayFirewallDisabledRuleGroup]'},
         'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
         'max_request_body_size': {'key': 'maxRequestBodySize', 'type': 'int'},
+        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
+        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
+        'exclusions': {'key': 'exclusions', 'type': '[ApplicationGatewayFirewallExclusion]'},
     }
 
     def __init__(self, **kwargs):
@@ -65,3 +78,6 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         self.disabled_rule_groups = kwargs.get('disabled_rule_groups', None)
         self.request_body_check = kwargs.get('request_body_check', None)
         self.max_request_body_size = kwargs.get('max_request_body_size', None)
+        self.max_request_body_size_in_kb = kwargs.get('max_request_body_size_in_kb', None)
+        self.file_upload_limit_in_mb = kwargs.get('file_upload_limit_in_mb', None)
+        self.exclusions = kwargs.get('exclusions', None)
