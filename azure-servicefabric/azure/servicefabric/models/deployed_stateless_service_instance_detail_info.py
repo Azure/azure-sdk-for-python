@@ -13,9 +13,9 @@ from .deployed_service_replica_detail_info import DeployedServiceReplicaDetailIn
 
 
 class DeployedStatelessServiceInstanceDetailInfo(DeployedServiceReplicaDetailInfo):
-    """Information about a stateless instance running in a code package. Please
-    note that DeployedServiceReplicaQueryResult will contain duplicate data
-    like ServiceKind, ServiceName, PartitionId and InstanceId.
+    """Information about a stateless instance running in a code package. Note that
+    DeployedServiceReplicaQueryResult will contain duplicate data like
+    ServiceKind, ServiceName, PartitionId and InstanceId.
 
     All required parameters must be populated in order to send to Azure.
 

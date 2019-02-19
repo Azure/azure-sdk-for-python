@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .queue_build_request import QueueBuildRequest
+from .queue_build_request_py3 import QueueBuildRequest
 
 
 class BuildTaskBuildRequest(QueueBuildRequest):

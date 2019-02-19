@@ -39,8 +39,8 @@ class Disk(Model):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, name=None, disk_size_gb=None):
-        super(Disk, self).__init__()
-        self.name = name
-        self.disk_size_gb = disk_size_gb
+    def __init__(self, **kwargs):
+        super(Disk, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
         self.lun = None

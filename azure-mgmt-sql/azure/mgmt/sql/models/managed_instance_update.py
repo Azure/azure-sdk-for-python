@@ -41,6 +41,13 @@ class ManagedInstanceUpdate(Model):
     :type v_cores: int
     :param storage_size_in_gb: The maximum storage size in GB.
     :type storage_size_in_gb: int
+    :param collation: Collation of the managed instance.
+    :type collation: str
+    :ivar dns_zone: The Dns Zone that the managed instance is in.
+    :vartype dns_zone: str
+    :param dns_zone_partner: The resource id of another managed instance whose
+     DNS zone this managed instance will share after creation.
+    :type dns_zone_partner: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -48,6 +55,7 @@ class ManagedInstanceUpdate(Model):
     _validation = {
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
+        'dns_zone': {'readonly': True},
     }
 
     _attribute_map = {
@@ -60,6 +68,9 @@ class ManagedInstanceUpdate(Model):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'v_cores': {'key': 'properties.vCores', 'type': 'int'},
         'storage_size_in_gb': {'key': 'properties.storageSizeInGB', 'type': 'int'},
+        'collation': {'key': 'properties.collation', 'type': 'str'},
+        'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
+        'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -74,4 +85,7 @@ class ManagedInstanceUpdate(Model):
         self.license_type = kwargs.get('license_type', None)
         self.v_cores = kwargs.get('v_cores', None)
         self.storage_size_in_gb = kwargs.get('storage_size_in_gb', None)
+        self.collation = kwargs.get('collation', None)
+        self.dns_zone = None
+        self.dns_zone_partner = kwargs.get('dns_zone_partner', None)
         self.tags = kwargs.get('tags', None)

@@ -20,11 +20,23 @@ class LiveEventPreview(Model):
     :param access_control: The access control for LiveEvent preview.
     :type access_control:
      ~azure.mgmt.media.models.LiveEventPreviewAccessControl
-    :param preview_locator: The preview locator Guid.
+    :param preview_locator: The identifier of the preview locator in Guid
+     format.  Specifying this at creation time allows the caller to know the
+     preview locator url before the event is created.  If omitted, the service
+     will generate a random identifier.  This value cannot be updated once the
+     live event is created.
     :type preview_locator: str
-    :param streaming_policy_name: The name of streaming policy used for
-     LiveEvent preview
+    :param streaming_policy_name: The name of streaming policy used for the
+     LiveEvent preview.  This value is specified at creation time and cannot be
+     updated.
     :type streaming_policy_name: str
+    :param alternative_media_id: An Alternative Media Identifier associated
+     with the StreamingLocator created for the preview.  This value is
+     specified at creation time and cannot be updated.  The identifier can be
+     used in the CustomLicenseAcquisitionUrlTemplate or the
+     CustomKeyAcquisitionUrlTemplate of the StreamingPolicy specified in the
+     StreamingPolicyName field.
+    :type alternative_media_id: str
     """
 
     _attribute_map = {
@@ -32,6 +44,7 @@ class LiveEventPreview(Model):
         'access_control': {'key': 'accessControl', 'type': 'LiveEventPreviewAccessControl'},
         'preview_locator': {'key': 'previewLocator', 'type': 'str'},
         'streaming_policy_name': {'key': 'streamingPolicyName', 'type': 'str'},
+        'alternative_media_id': {'key': 'alternativeMediaId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -40,3 +53,4 @@ class LiveEventPreview(Model):
         self.access_control = kwargs.get('access_control', None)
         self.preview_locator = kwargs.get('preview_locator', None)
         self.streaming_policy_name = kwargs.get('streaming_policy_name', None)
+        self.alternative_media_id = kwargs.get('alternative_media_id', None)

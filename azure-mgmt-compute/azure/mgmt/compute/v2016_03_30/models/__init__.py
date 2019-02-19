@@ -81,8 +81,8 @@ try:
     from .virtual_machine_scale_set_instance_view_py3 import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .api_error_base_py3 import ApiErrorBase
     from .inner_error_py3 import InnerError
     from .api_error_py3 import ApiError
@@ -162,8 +162,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .api_error_base import ApiErrorBase
     from .inner_error import InnerError
     from .api_error import ApiError
@@ -266,8 +266,8 @@ __all__ = [
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
-    'VirtualMachineScaleSetVM',
     'VirtualMachineScaleSetVMInstanceView',
+    'VirtualMachineScaleSetVM',
     'ApiErrorBase',
     'InnerError',
     'ApiError',

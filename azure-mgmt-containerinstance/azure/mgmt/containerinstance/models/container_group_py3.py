@@ -30,6 +30,9 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
+    :param identity: The identity of the container group, if configured.
+    :type identity:
+     ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group.
      This only appears in the response.
     :vartype provisioning_state: str
@@ -64,6 +67,12 @@ class ContainerGroup(Resource):
     :param diagnostics: The diagnostic information for a container group.
     :type diagnostics:
      ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :param network_profile: The network profile information for a container
+     group.
+    :type network_profile:
+     ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
+    :param dns_config: The DNS config information for a container group.
+    :type dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
     """
 
     _validation = {
@@ -82,6 +91,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},
         'image_registry_credentials': {'key': 'properties.imageRegistryCredentials', 'type': '[ImageRegistryCredential]'},
@@ -91,10 +101,13 @@ class ContainerGroup(Resource):
         'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
+        'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
     }
 
-    def __init__(self, *, containers, os_type, location: str=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, diagnostics=None, **kwargs) -> None:
+    def __init__(self, *, containers, os_type, location: str=None, tags=None, identity=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, diagnostics=None, network_profile=None, dns_config=None, **kwargs) -> None:
         super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.containers = containers
         self.image_registry_credentials = image_registry_credentials
@@ -104,3 +117,5 @@ class ContainerGroup(Resource):
         self.volumes = volumes
         self.instance_view = None
         self.diagnostics = diagnostics
+        self.network_profile = network_profile
+        self.dns_config = dns_config

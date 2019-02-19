@@ -15,17 +15,19 @@ from msrest.serialization import Model
 class Address(Model):
     """Address information for domain registration.
 
-    :param address1: First line of an Address.
+    All required parameters must be populated in order to send to Azure.
+
+    :param address1: Required. First line of an Address.
     :type address1: str
     :param address2: The second line of the Address. Optional.
     :type address2: str
-    :param city: The city for the address.
+    :param city: Required. The city for the address.
     :type city: str
-    :param country: The country for the address.
+    :param country: Required. The country for the address.
     :type country: str
-    :param postal_code: The postal code for the address.
+    :param postal_code: Required. The postal code for the address.
     :type postal_code: str
-    :param state: The state or province for the address.
+    :param state: Required. The state or province for the address.
     :type state: str
     """
 
@@ -46,11 +48,11 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, address1, city, country, postal_code, state, address2=None):
-        super(Address, self).__init__()
-        self.address1 = address1
-        self.address2 = address2
-        self.city = city
-        self.country = country
-        self.postal_code = postal_code
-        self.state = state
+    def __init__(self, **kwargs):
+        super(Address, self).__init__(**kwargs)
+        self.address1 = kwargs.get('address1', None)
+        self.address2 = kwargs.get('address2', None)
+        self.city = kwargs.get('city', None)
+        self.country = kwargs.get('country', None)
+        self.postal_code = kwargs.get('postal_code', None)
+        self.state = kwargs.get('state', None)

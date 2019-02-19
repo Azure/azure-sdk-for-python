@@ -17,7 +17,7 @@ class StreamingPolicyContentKeys(Model):
 
     :param default_key: Default content key for an encryption scheme
     :type default_key: ~azure.mgmt.media.models.DefaultKey
-    :param key_to_track_mappings: Representing tracks needs sepearete content
+    :param key_to_track_mappings: Representing tracks needs separate content
      key
     :type key_to_track_mappings:
      list[~azure.mgmt.media.models.StreamingPolicyContentKey]
