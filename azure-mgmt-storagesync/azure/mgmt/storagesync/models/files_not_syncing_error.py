@@ -35,7 +35,7 @@ class FilesNotSyncingError(Model):
     }
 
     _attribute_map = {
-        'error_code': {'key': 'ErrorCode', 'type': 'int'},
+        'error_code': {'key': 'errorCode', 'type': 'int'},
         'persistent_count': {'key': 'persistentCount', 'type': 'int'},
         'transient_count': {'key': 'transientCount', 'type': 'int'},
     }
