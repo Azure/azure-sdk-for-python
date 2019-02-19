@@ -96,6 +96,9 @@ class Site(Resource):
      authentication (TLS mutual authentication); otherwise, <code>false</code>.
      Default is <code>false</code>.
     :type client_cert_enabled: bool
+    :param client_cert_exclusion_paths: client certificate authentication
+     comma-separated exclusion paths
+    :type client_cert_exclusion_paths: str
     :param host_names_disabled: <code>true</code> to disable the public
      hostnames of the app; otherwise, <code>false</code>.
      If <code>true</code>, the app is only accessible via API management
@@ -137,6 +140,14 @@ class Site(Resource):
      requests. Issues redirect for
      http requests
     :type https_only: bool
+    :param redundancy_mode: Site redundancy mode. Possible values include:
+     'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
+    :type redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+    :ivar in_progress_operation_id: Specifies an operation id if this site has
+     a pending operation.
+    :vartype in_progress_operation_id: str
+    :param geo_distributions: GeoDistributions for this site
+    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
     :param identity:
     :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
@@ -163,6 +174,7 @@ class Site(Resource):
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
         'slot_swap_status': {'readonly': True},
+        'in_progress_operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -192,6 +204,7 @@ class Site(Resource):
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
+        'client_cert_exclusion_paths': {'key': 'properties.clientCertExclusionPaths', 'type': 'str'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
         'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
@@ -205,10 +218,13 @@ class Site(Resource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
+        'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
+        'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, location: str, kind: str=None, tags=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str=None, tags=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, client_cert_exclusion_paths: str=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, redundancy_mode=None, geo_distributions=None, identity=None, **kwargs) -> None:
         super(Site, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.state = None
         self.host_names = None
@@ -230,6 +246,7 @@ class Site(Resource):
         self.hosting_environment_profile = hosting_environment_profile
         self.client_affinity_enabled = client_affinity_enabled
         self.client_cert_enabled = client_cert_enabled
+        self.client_cert_exclusion_paths = client_cert_exclusion_paths
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
@@ -243,4 +260,7 @@ class Site(Resource):
         self.default_host_name = None
         self.slot_swap_status = None
         self.https_only = https_only
+        self.redundancy_mode = redundancy_mode
+        self.in_progress_operation_id = None
+        self.geo_distributions = geo_distributions
         self.identity = identity

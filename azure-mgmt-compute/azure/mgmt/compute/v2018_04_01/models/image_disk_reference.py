@@ -17,7 +17,7 @@ class ImageDiskReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A relative uri containing either a Platform Imgage
+    :param id: Required. A relative uri containing either a Platform Image
      Repository or user image reference.
     :type id: str
     :param lun: If the disk is created from an image's data disk, this is an

@@ -123,32 +123,32 @@ class FaceLandmarks(Model):
         'under_lip_bottom': {'key': 'underLipBottom', 'type': 'Coordinate'},
     }
 
-    def __init__(self, pupil_left=None, pupil_right=None, nose_tip=None, mouth_left=None, mouth_right=None, eyebrow_left_outer=None, eyebrow_left_inner=None, eye_left_outer=None, eye_left_top=None, eye_left_bottom=None, eye_left_inner=None, eyebrow_right_inner=None, eyebrow_right_outer=None, eye_right_inner=None, eye_right_top=None, eye_right_bottom=None, eye_right_outer=None, nose_root_left=None, nose_root_right=None, nose_left_alar_top=None, nose_right_alar_top=None, nose_left_alar_out_tip=None, nose_right_alar_out_tip=None, upper_lip_top=None, upper_lip_bottom=None, under_lip_top=None, under_lip_bottom=None):
-        super(FaceLandmarks, self).__init__()
-        self.pupil_left = pupil_left
-        self.pupil_right = pupil_right
-        self.nose_tip = nose_tip
-        self.mouth_left = mouth_left
-        self.mouth_right = mouth_right
-        self.eyebrow_left_outer = eyebrow_left_outer
-        self.eyebrow_left_inner = eyebrow_left_inner
-        self.eye_left_outer = eye_left_outer
-        self.eye_left_top = eye_left_top
-        self.eye_left_bottom = eye_left_bottom
-        self.eye_left_inner = eye_left_inner
-        self.eyebrow_right_inner = eyebrow_right_inner
-        self.eyebrow_right_outer = eyebrow_right_outer
-        self.eye_right_inner = eye_right_inner
-        self.eye_right_top = eye_right_top
-        self.eye_right_bottom = eye_right_bottom
-        self.eye_right_outer = eye_right_outer
-        self.nose_root_left = nose_root_left
-        self.nose_root_right = nose_root_right
-        self.nose_left_alar_top = nose_left_alar_top
-        self.nose_right_alar_top = nose_right_alar_top
-        self.nose_left_alar_out_tip = nose_left_alar_out_tip
-        self.nose_right_alar_out_tip = nose_right_alar_out_tip
-        self.upper_lip_top = upper_lip_top
-        self.upper_lip_bottom = upper_lip_bottom
-        self.under_lip_top = under_lip_top
-        self.under_lip_bottom = under_lip_bottom
+    def __init__(self, **kwargs):
+        super(FaceLandmarks, self).__init__(**kwargs)
+        self.pupil_left = kwargs.get('pupil_left', None)
+        self.pupil_right = kwargs.get('pupil_right', None)
+        self.nose_tip = kwargs.get('nose_tip', None)
+        self.mouth_left = kwargs.get('mouth_left', None)
+        self.mouth_right = kwargs.get('mouth_right', None)
+        self.eyebrow_left_outer = kwargs.get('eyebrow_left_outer', None)
+        self.eyebrow_left_inner = kwargs.get('eyebrow_left_inner', None)
+        self.eye_left_outer = kwargs.get('eye_left_outer', None)
+        self.eye_left_top = kwargs.get('eye_left_top', None)
+        self.eye_left_bottom = kwargs.get('eye_left_bottom', None)
+        self.eye_left_inner = kwargs.get('eye_left_inner', None)
+        self.eyebrow_right_inner = kwargs.get('eyebrow_right_inner', None)
+        self.eyebrow_right_outer = kwargs.get('eyebrow_right_outer', None)
+        self.eye_right_inner = kwargs.get('eye_right_inner', None)
+        self.eye_right_top = kwargs.get('eye_right_top', None)
+        self.eye_right_bottom = kwargs.get('eye_right_bottom', None)
+        self.eye_right_outer = kwargs.get('eye_right_outer', None)
+        self.nose_root_left = kwargs.get('nose_root_left', None)
+        self.nose_root_right = kwargs.get('nose_root_right', None)
+        self.nose_left_alar_top = kwargs.get('nose_left_alar_top', None)
+        self.nose_right_alar_top = kwargs.get('nose_right_alar_top', None)
+        self.nose_left_alar_out_tip = kwargs.get('nose_left_alar_out_tip', None)
+        self.nose_right_alar_out_tip = kwargs.get('nose_right_alar_out_tip', None)
+        self.upper_lip_top = kwargs.get('upper_lip_top', None)
+        self.upper_lip_bottom = kwargs.get('upper_lip_bottom', None)
+        self.under_lip_top = kwargs.get('under_lip_top', None)
+        self.under_lip_bottom = kwargs.get('under_lip_bottom', None)

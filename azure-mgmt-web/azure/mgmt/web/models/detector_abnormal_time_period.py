@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class DetectorAbnormalTimePeriod(Model):
     """Class representing Abnormal Time Period detected.
 
-    :param start_time: Start time of the corelated event
+    :param start_time: Start time of the correlated event
     :type start_time: datetime
-    :param end_time: End time of the corelated event
+    :param end_time: End time of the correlated event
     :type end_time: datetime
     :param message: Message describing the event
     :type message: str

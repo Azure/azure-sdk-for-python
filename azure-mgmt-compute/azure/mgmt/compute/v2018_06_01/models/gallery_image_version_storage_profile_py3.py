@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GalleryImageVersionStorageProfile(Model):
-    """This is the storage profile of a gallery image version.
+    """This is the storage profile of a gallery Image Version.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

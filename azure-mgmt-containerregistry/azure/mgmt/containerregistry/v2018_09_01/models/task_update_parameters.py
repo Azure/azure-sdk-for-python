@@ -34,6 +34,10 @@ class TaskUpdateParameters(Model):
     :param trigger: The properties for updating trigger properties.
     :type trigger:
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerUpdateParameters
+    :param credentials: The parameters that describes a set of credentials
+     that will be used when this run is invoked.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.Credentials
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -45,6 +49,7 @@ class TaskUpdateParameters(Model):
         'timeout': {'key': 'properties.timeout', 'type': 'int'},
         'step': {'key': 'properties.step', 'type': 'TaskStepUpdateParameters'},
         'trigger': {'key': 'properties.trigger', 'type': 'TriggerUpdateParameters'},
+        'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -56,4 +61,5 @@ class TaskUpdateParameters(Model):
         self.timeout = kwargs.get('timeout', None)
         self.step = kwargs.get('step', None)
         self.trigger = kwargs.get('trigger', None)
+        self.credentials = kwargs.get('credentials', None)
         self.tags = kwargs.get('tags', None)

@@ -62,12 +62,12 @@ class AS2SecuritySettings(Model):
         'override_group_signing_certificate': {'key': 'overrideGroupSigningCertificate', 'type': 'bool'},
         'signing_certificate_name': {'key': 'signingCertificateName', 'type': 'str'},
         'encryption_certificate_name': {'key': 'encryptionCertificateName', 'type': 'str'},
-        'enable_nrr_for_inbound_encoded_messages': {'key': 'enableNrrForInboundEncodedMessages', 'type': 'bool'},
-        'enable_nrr_for_inbound_decoded_messages': {'key': 'enableNrrForInboundDecodedMessages', 'type': 'bool'},
-        'enable_nrr_for_outbound_mdn': {'key': 'enableNrrForOutboundMdn', 'type': 'bool'},
-        'enable_nrr_for_outbound_encoded_messages': {'key': 'enableNrrForOutboundEncodedMessages', 'type': 'bool'},
-        'enable_nrr_for_outbound_decoded_messages': {'key': 'enableNrrForOutboundDecodedMessages', 'type': 'bool'},
-        'enable_nrr_for_inbound_mdn': {'key': 'enableNrrForInboundMdn', 'type': 'bool'},
+        'enable_nrr_for_inbound_encoded_messages': {'key': 'enableNRRForInboundEncodedMessages', 'type': 'bool'},
+        'enable_nrr_for_inbound_decoded_messages': {'key': 'enableNRRForInboundDecodedMessages', 'type': 'bool'},
+        'enable_nrr_for_outbound_mdn': {'key': 'enableNRRForOutboundMDN', 'type': 'bool'},
+        'enable_nrr_for_outbound_encoded_messages': {'key': 'enableNRRForOutboundEncodedMessages', 'type': 'bool'},
+        'enable_nrr_for_outbound_decoded_messages': {'key': 'enableNRRForOutboundDecodedMessages', 'type': 'bool'},
+        'enable_nrr_for_inbound_mdn': {'key': 'enableNRRForInboundMDN', 'type': 'bool'},
         'sha2_algorithm_format': {'key': 'sha2AlgorithmFormat', 'type': 'str'},
     }
 

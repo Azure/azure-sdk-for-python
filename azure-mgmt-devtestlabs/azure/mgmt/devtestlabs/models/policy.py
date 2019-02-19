@@ -37,7 +37,7 @@ class Policy(Resource):
      MaxVmsAllowedPerLab, etc. Possible values include: 'UserOwnedLabVmCount',
      'UserOwnedLabPremiumVmCount', 'LabVmCount', 'LabPremiumVmCount',
      'LabVmSize', 'GalleryImage', 'UserOwnedLabVmCountInSubnet',
-     'LabTargetCost'
+     'LabTargetCost', 'EnvironmentTemplate', 'ScheduleEditPermission'
     :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
     :param fact_data: The fact data of the policy.
     :type fact_data: str
@@ -51,11 +51,11 @@ class Policy(Resource):
      ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     :ivar created_date: The creation date of the policy.
     :vartype created_date: datetime
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -63,6 +63,8 @@ class Policy(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'created_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -82,14 +84,14 @@ class Policy(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, description=None, status=None, fact_name=None, fact_data=None, threshold=None, evaluator_type=None, provisioning_state=None, unique_identifier=None):
-        super(Policy, self).__init__(location=location, tags=tags)
-        self.description = description
-        self.status = status
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.threshold = threshold
-        self.evaluator_type = evaluator_type
+    def __init__(self, **kwargs):
+        super(Policy, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.status = kwargs.get('status', None)
+        self.fact_name = kwargs.get('fact_name', None)
+        self.fact_data = kwargs.get('fact_data', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.evaluator_type = kwargs.get('evaluator_type', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = None
+        self.unique_identifier = None

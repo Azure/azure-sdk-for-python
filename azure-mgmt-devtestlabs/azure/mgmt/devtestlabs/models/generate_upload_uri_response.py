@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GenerateUploadUriResponse(Model):
-    """Reponse body for generating an upload URI.
+    """Response body for generating an upload URI.
 
     :param upload_uri: The upload URI for the VHD.
     :type upload_uri: str
@@ -23,6 +23,6 @@ class GenerateUploadUriResponse(Model):
         'upload_uri': {'key': 'uploadUri', 'type': 'str'},
     }
 
-    def __init__(self, upload_uri=None):
-        super(GenerateUploadUriResponse, self).__init__()
-        self.upload_uri = upload_uri
+    def __init__(self, **kwargs):
+        super(GenerateUploadUriResponse, self).__init__(**kwargs)
+        self.upload_uri = kwargs.get('upload_uri', None)
