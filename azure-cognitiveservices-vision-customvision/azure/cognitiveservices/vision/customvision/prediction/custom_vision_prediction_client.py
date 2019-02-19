@@ -21,7 +21,7 @@ class CustomVisionPredictionClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param api_key:
+    :param api_key: API key.
     :type api_key: str
     :param endpoint: Supported Cognitive Services endpoints.
     :type endpoint: str
@@ -50,7 +50,7 @@ class CustomVisionPredictionClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CustomVisionPredictionClientConfiguration
 
-    :param api_key:
+    :param api_key: API key.
     :type api_key: str
     :param endpoint: Supported Cognitive Services endpoints.
     :type endpoint: str

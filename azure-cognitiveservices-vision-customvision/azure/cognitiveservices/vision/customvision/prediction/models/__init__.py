@@ -21,6 +21,9 @@ except (SyntaxError, ImportError):
     from .prediction import Prediction
     from .image_prediction import ImagePrediction
     from .custom_vision_error import CustomVisionError, CustomVisionErrorException
+from .custom_vision_prediction_client_enums import (
+    CustomVisionErrorCodes,
+)
 
 __all__ = [
     'ImageUrl',
@@ -28,4 +31,5 @@ __all__ = [
     'Prediction',
     'ImagePrediction',
     'CustomVisionError', 'CustomVisionErrorException',
+    'CustomVisionErrorCodes',
 ]

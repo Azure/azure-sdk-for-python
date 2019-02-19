@@ -18,8 +18,8 @@ class CustomVisionError(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Possible values include: 'NoError', 'BadRequest',
-     'BadRequestExceededBatchSize', 'BadRequestNotSupported',
+    :param code: Required. The error code. Possible values include: 'NoError',
+     'BadRequest', 'BadRequestExceededBatchSize', 'BadRequestNotSupported',
      'BadRequestInvalidIds', 'BadRequestProjectName',
      'BadRequestProjectNameNotUnique', 'BadRequestProjectDescription',
      'BadRequestProjectUnknownDomain',
@@ -46,9 +46,10 @@ class CustomVisionError(Model):
      'BadRequestMultiClassClassificationTrainingValidationFailed',
      'BadRequestMultiLabelClassificationTrainingValidationFailed',
      'BadRequestDetectionTrainingValidationFailed',
-     'BadRequestTrainingAlreadyInProgress', 'BadRequestExportValidationFailed',
-     'BadRequestExportAlreadyInProgress', 'BadRequestPredictionIdsMissing',
-     'BadRequestPredictionIdsExceededCount',
+     'BadRequestTrainingAlreadyInProgress',
+     'BadRequestDetectionTrainingNotAllowNegativeTag',
+     'BadRequestExportValidationFailed', 'BadRequestExportAlreadyInProgress',
+     'BadRequestPredictionIdsMissing', 'BadRequestPredictionIdsExceededCount',
      'BadRequestPredictionTagsExceededCount',
      'BadRequestPredictionResultsExceededCount',
      'BadRequestPredictionInvalidApplicationName',
@@ -57,8 +58,8 @@ class CustomVisionError(Model):
      'ForbiddenUserResource', 'ForbiddenUserSignupDisabled',
      'ForbiddenUserSignupAllowanceExceeded', 'ForbiddenUserDoesNotExist',
      'ForbiddenUserDisabled', 'ForbiddenUserInsufficientCapability',
-     'ForbiddenInvalid', 'NotFound', 'NotFoundProject',
-     'NotFoundProjectDefaultIteration', 'NotFoundIteration',
+     'ForbiddenDRModeEnabled', 'ForbiddenInvalid', 'NotFound',
+     'NotFoundProject', 'NotFoundProjectDefaultIteration', 'NotFoundIteration',
      'NotFoundIterationPerformance', 'NotFoundTag', 'NotFoundImage',
      'NotFoundDomain', 'NotFoundApimSubscription', 'NotFoundInvalid',
      'Conflict', 'ConflictInvalid', 'ErrorUnknown',
@@ -75,8 +76,9 @@ class CustomVisionError(Model):
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
      'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorInvalid'
     :type code: str or
-     ~azure.cognitiveservices.vision.customvision.prediction.models.enum
-    :param message: Required.
+     ~azure.cognitiveservices.vision.customvision.prediction.models.CustomVisionErrorCodes
+    :param message: Required. A message explaining the error reported by the
+     service.
     :type message: str
     """
 
