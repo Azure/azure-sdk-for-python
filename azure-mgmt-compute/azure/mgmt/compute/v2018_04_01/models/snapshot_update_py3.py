@@ -9,16 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_update import ResourceUpdate
+from msrest.serialization import Model
 
 
-class SnapshotUpdate(ResourceUpdate):
+class SnapshotUpdate(Model):
     """Snapshot update resource.
 
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2018_04_01.models.DiskSku
     :param os_type: the Operating System type. Possible values include:
      'Windows', 'Linux'
     :type os_type: str or
@@ -32,18 +28,24 @@ class SnapshotUpdate(ResourceUpdate):
     :param encryption_settings: Encryption settings for disk or snapshot
     :type encryption_settings:
      ~azure.mgmt.compute.v2018_04_01.models.EncryptionSettings
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param sku:
+    :type sku: ~azure.mgmt.compute.v2018_04_01.models.SnapshotSku
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
         'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
         'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
         'encryption_settings': {'key': 'properties.encryptionSettings', 'type': 'EncryptionSettings'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
     }
 
-    def __init__(self, *, tags=None, sku=None, os_type=None, disk_size_gb: int=None, encryption_settings=None, **kwargs) -> None:
-        super(SnapshotUpdate, self).__init__(tags=tags, sku=sku, **kwargs)
+    def __init__(self, *, os_type=None, disk_size_gb: int=None, encryption_settings=None, tags=None, sku=None, **kwargs) -> None:
+        super(SnapshotUpdate, self).__init__(**kwargs)
         self.os_type = os_type
         self.disk_size_gb = disk_size_gb
         self.encryption_settings = encryption_settings
+        self.tags = tags
+        self.sku = sku

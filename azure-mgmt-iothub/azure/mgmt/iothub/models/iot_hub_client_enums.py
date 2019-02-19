@@ -39,6 +39,7 @@ class IpFilterActionType(str, Enum):
 
 class RoutingSource(str, Enum):
 
+    invalid = "Invalid"
     device_messages = "DeviceMessages"
     twin_change_events = "TwinChangeEvents"
     device_lifecycle_events = "DeviceLifecycleEvents"
@@ -77,6 +78,14 @@ class IotHubSkuTier(str, Enum):
     basic = "Basic"
 
 
+class EndpointHealthStatus(str, Enum):
+
+    unknown = "unknown"
+    healthy = "healthy"
+    unhealthy = "unhealthy"
+    dead = "dead"
+
+
 class JobType(str, Enum):
 
     unknown = "unknown"
@@ -112,3 +121,16 @@ class IotHubNameUnavailabilityReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
+
+
+class TestResultStatus(str, Enum):
+
+    undefined = "undefined"
+    false = "false"
+    true = "true"
+
+
+class RouteErrorSeverity(str, Enum):
+
+    error = "error"
+    warning = "warning"

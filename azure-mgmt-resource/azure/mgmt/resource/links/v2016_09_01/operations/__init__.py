@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .resource_links_operations import ResourceLinksOperations
 
 __all__ = [
+    'Operations',
     'ResourceLinksOperations',
 ]

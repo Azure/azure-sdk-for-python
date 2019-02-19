@@ -13,7 +13,7 @@ from .image_action import ImageAction
 
 
 class ImageRecipesAction(ImageAction):
-    """ImageRecipesAction.
+    """Defines an recipe action.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

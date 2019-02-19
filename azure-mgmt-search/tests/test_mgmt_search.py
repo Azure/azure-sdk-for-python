@@ -42,22 +42,22 @@ class MgmtSearchTest(AzureMgmtTestCase):
 
         availability = self.client.services.check_name_availability(account_name)
         self.assertFalse(availability.is_name_available)
-        self.assertEquals(availability.reason, "AlreadyExists")
+        self.assertEqual(availability.reason, "AlreadyExists")
 
         service = self.client.services.get(
             resource_group.name,
             service.name
         )
-        self.assertEquals(service.name, account_name)        
+        self.assertEqual(service.name, account_name)
 
         services = list(self.client.services.list_by_resource_group(resource_group.name))
-        self.assertEquals(len(services), 1)
-        self.assertEquals(services[0].name, account_name)
+        self.assertEqual(len(services), 1)
+        self.assertEqual(services[0].name, account_name)
 
         self.client.services.delete(
             resource_group.name,
             service.name
-        )    
+        )
 
     @ResourceGroupPreparer()
     def test_search_query_keys(self, resource_group, location):
@@ -83,15 +83,15 @@ class MgmtSearchTest(AzureMgmtTestCase):
             account_name,
             key_name,
         )
-        self.assertEquals(key.name, key_name)
+        self.assertEqual(key.name, key_name)
 
         keys = list(self.client.query_keys.list_by_search_service(
             resource_group.name,
             account_name
         ))
-        self.assertEquals(len(keys), 2) # default key and mine
+        self.assertEqual(len(keys), 2) # default key and mine
         self.assertIsNone(keys[0].name)
-        self.assertEquals(keys[1].name, key_name)
+        self.assertEqual(keys[1].name, key_name)
 
         self.client.query_keys.delete(
             resource_group.name,
@@ -130,7 +130,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
             'primary'
         )
         self.assertIsNotNone(regenerated_admin_keys.primary_key)
-        self.assertEquals(admin_keys.secondary_key, regenerated_admin_keys.secondary_key)
+        self.assertEqual(admin_keys.secondary_key, regenerated_admin_keys.secondary_key)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -32,9 +32,9 @@ class AbnormalTimePeriod(Model):
         'solutions': {'key': 'solutions', 'type': '[Solution]'},
     }
 
-    def __init__(self, start_time=None, end_time=None, events=None, solutions=None):
-        super(AbnormalTimePeriod, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.events = events
-        self.solutions = solutions
+    def __init__(self, **kwargs):
+        super(AbnormalTimePeriod, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.events = kwargs.get('events', None)
+        self.solutions = kwargs.get('solutions', None)

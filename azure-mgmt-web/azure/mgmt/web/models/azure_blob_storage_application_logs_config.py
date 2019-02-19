@@ -33,8 +33,8 @@ class AzureBlobStorageApplicationLogsConfig(Model):
         'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
     }
 
-    def __init__(self, level=None, sas_url=None, retention_in_days=None):
-        super(AzureBlobStorageApplicationLogsConfig, self).__init__()
-        self.level = level
-        self.sas_url = sas_url
-        self.retention_in_days = retention_in_days
+    def __init__(self, **kwargs):
+        super(AzureBlobStorageApplicationLogsConfig, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.sas_url = kwargs.get('sas_url', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
