@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-mgmt-costmanagement"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Cost Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
