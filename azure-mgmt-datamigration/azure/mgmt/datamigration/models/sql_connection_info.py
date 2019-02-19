@@ -39,6 +39,9 @@ class SqlConnectionInfo(ConnectionInfo):
     :param trust_server_certificate: Whether to trust the server certificate.
      Default value: False .
     :type trust_server_certificate: bool
+    :param platform: Server platform type for connection. Possible values
+     include: 'SqlOnPrem'
+    :type platform: str or ~azure.mgmt.datamigration.models.SqlSourcePlatform
     """
 
     _validation = {
@@ -55,6 +58,7 @@ class SqlConnectionInfo(ConnectionInfo):
         'encrypt_connection': {'key': 'encryptConnection', 'type': 'bool'},
         'additional_settings': {'key': 'additionalSettings', 'type': 'str'},
         'trust_server_certificate': {'key': 'trustServerCertificate', 'type': 'bool'},
+        'platform': {'key': 'platform', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -64,4 +68,5 @@ class SqlConnectionInfo(ConnectionInfo):
         self.encrypt_connection = kwargs.get('encrypt_connection', True)
         self.additional_settings = kwargs.get('additional_settings', None)
         self.trust_server_certificate = kwargs.get('trust_server_certificate', False)
+        self.platform = kwargs.get('platform', None)
         self.type = 'SqlConnectionInfo'

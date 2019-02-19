@@ -12,9 +12,14 @@
 try:
     from .management_lock_owner_py3 import ManagementLockOwner
     from .management_lock_object_py3 import ManagementLockObject
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
 except (SyntaxError, ImportError):
     from .management_lock_owner import ManagementLockOwner
     from .management_lock_object import ManagementLockObject
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+from .operation_paged import OperationPaged
 from .management_lock_object_paged import ManagementLockObjectPaged
 from .management_lock_client_enums import (
     LockLevel,
@@ -23,6 +28,9 @@ from .management_lock_client_enums import (
 __all__ = [
     'ManagementLockOwner',
     'ManagementLockObject',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
     'ManagementLockObjectPaged',
     'LockLevel',
 ]

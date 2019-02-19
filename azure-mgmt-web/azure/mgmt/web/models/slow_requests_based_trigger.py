@@ -29,8 +29,8 @@ class SlowRequestsBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, time_taken=None, count=None, time_interval=None):
-        super(SlowRequestsBasedTrigger, self).__init__()
-        self.time_taken = time_taken
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, **kwargs):
+        super(SlowRequestsBasedTrigger, self).__init__(**kwargs)
+        self.time_taken = kwargs.get('time_taken', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)

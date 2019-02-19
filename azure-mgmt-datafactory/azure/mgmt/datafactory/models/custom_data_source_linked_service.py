@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class CustomDataSourceLinkedService(LinkedService):
     """Custom linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class CustomDataSourceLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param type_properties: Custom linked service properties.
+    :param type_properties: Required. Custom linked service properties.
     :type type_properties: object
     """
 
@@ -50,7 +52,7 @@ class CustomDataSourceLinkedService(LinkedService):
         'type_properties': {'key': 'typeProperties', 'type': 'object'},
     }
 
-    def __init__(self, type_properties, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None):
-        super(CustomDataSourceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.type_properties = type_properties
+    def __init__(self, **kwargs):
+        super(CustomDataSourceLinkedService, self).__init__(**kwargs)
+        self.type_properties = kwargs.get('type_properties', None)
         self.type = 'CustomDataSource'

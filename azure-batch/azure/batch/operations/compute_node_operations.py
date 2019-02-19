@@ -22,7 +22,7 @@ class ComputeNodeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-03-01.6.1".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ComputeNodeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01.6.1"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -80,6 +80,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.add_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -111,9 +112,8 @@ class ComputeNodeOperations(object):
         body_content = self._serialize.body(user, 'ComputeNodeUser')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -174,6 +174,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.delete_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'userName': self._serialize.url("user_name", user_name, 'str')
@@ -188,7 +189,6 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -203,8 +203,8 @@ class ComputeNodeOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -269,6 +269,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.update_user.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'userName': self._serialize.url("user_name", user_name, 'str')
@@ -301,9 +302,8 @@ class ComputeNodeOperations(object):
         body_content = self._serialize.body(node_update_user_parameter, 'NodeUpdateUserParameter')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -363,6 +363,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -378,7 +379,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -393,8 +394,8 @@ class ComputeNodeOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -420,7 +421,7 @@ class ComputeNodeOperations(object):
     get.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}'}
 
     def reboot(
-            self, pool_id, node_id, compute_node_reboot_options=None, node_reboot_option=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, node_id, node_reboot_option=None, compute_node_reboot_options=None, custom_headers=None, raw=False, **operation_config):
         """Restarts the specified compute node.
 
         You can restart a node only if it is in an idle or running state.
@@ -429,16 +430,16 @@ class ComputeNodeOperations(object):
         :type pool_id: str
         :param node_id: The ID of the compute node that you want to restart.
         :type node_id: str
-        :param compute_node_reboot_options: Additional parameters for the
-         operation
-        :type compute_node_reboot_options:
-         ~azure.batch.models.ComputeNodeRebootOptions
         :param node_reboot_option: When to reboot the compute node and what to
          do with currently running tasks. The default value is requeue.
          Possible values include: 'requeue', 'terminate', 'taskCompletion',
          'retainedData'
         :type node_reboot_option: str or
          ~azure.batch.models.ComputeNodeRebootOption
+        :param compute_node_reboot_options: Additional parameters for the
+         operation
+        :type compute_node_reboot_options:
+         ~azure.batch.models.ComputeNodeRebootOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -468,6 +469,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.reboot.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -502,9 +504,8 @@ class ComputeNodeOperations(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -522,7 +523,7 @@ class ComputeNodeOperations(object):
     reboot.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/reboot'}
 
     def reimage(
-            self, pool_id, node_id, compute_node_reimage_options=None, node_reimage_option=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, node_id, node_reimage_option=None, compute_node_reimage_options=None, custom_headers=None, raw=False, **operation_config):
         """Reinstalls the operating system on the specified compute node.
 
         You can reinstall the operating system on a node only if it is in an
@@ -533,16 +534,16 @@ class ComputeNodeOperations(object):
         :type pool_id: str
         :param node_id: The ID of the compute node that you want to restart.
         :type node_id: str
-        :param compute_node_reimage_options: Additional parameters for the
-         operation
-        :type compute_node_reimage_options:
-         ~azure.batch.models.ComputeNodeReimageOptions
         :param node_reimage_option: When to reimage the compute node and what
          to do with currently running tasks. The default value is requeue.
          Possible values include: 'requeue', 'terminate', 'taskCompletion',
          'retainedData'
         :type node_reimage_option: str or
          ~azure.batch.models.ComputeNodeReimageOption
+        :param compute_node_reimage_options: Additional parameters for the
+         operation
+        :type compute_node_reimage_options:
+         ~azure.batch.models.ComputeNodeReimageOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -572,6 +573,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.reimage.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -606,9 +608,8 @@ class ComputeNodeOperations(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -626,7 +627,7 @@ class ComputeNodeOperations(object):
     reimage.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/reimage'}
 
     def disable_scheduling(
-            self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, node_id, node_disable_scheduling_option=None, compute_node_disable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
         """Disables task scheduling on the specified compute node.
 
         You can disable task scheduling on a node only if its current
@@ -637,16 +638,16 @@ class ComputeNodeOperations(object):
         :param node_id: The ID of the compute node on which you want to
          disable task scheduling.
         :type node_id: str
-        :param compute_node_disable_scheduling_options: Additional parameters
-         for the operation
-        :type compute_node_disable_scheduling_options:
-         ~azure.batch.models.ComputeNodeDisableSchedulingOptions
         :param node_disable_scheduling_option: What to do with currently
          running tasks when disabling task scheduling on the compute node. The
          default value is requeue. Possible values include: 'requeue',
          'terminate', 'taskCompletion'
         :type node_disable_scheduling_option: str or
          ~azure.batch.models.DisableComputeNodeSchedulingOption
+        :param compute_node_disable_scheduling_options: Additional parameters
+         for the operation
+        :type compute_node_disable_scheduling_options:
+         ~azure.batch.models.ComputeNodeDisableSchedulingOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -676,6 +677,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.disable_scheduling.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -710,9 +712,8 @@ class ComputeNodeOperations(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -771,6 +772,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.enable_scheduling.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -784,7 +786,6 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -799,8 +800,8 @@ class ComputeNodeOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -864,6 +865,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get_remote_login_settings.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -877,7 +879,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -892,8 +894,8 @@ class ComputeNodeOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -967,6 +969,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.get_remote_desktop.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -980,7 +983,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -995,8 +998,8 @@ class ComputeNodeOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=True, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1072,6 +1075,7 @@ class ComputeNodeOperations(object):
         # Construct URL
         url = self.upload_batch_service_logs.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str')
         }
@@ -1085,6 +1089,7 @@ class ComputeNodeOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
@@ -1103,9 +1108,8 @@ class ComputeNodeOperations(object):
         body_content = self._serialize.body(upload_batch_service_logs_configuration, 'UploadBatchServiceLogsConfiguration')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1177,6 +1181,7 @@ class ComputeNodeOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'poolId': self._serialize.url("pool_id", pool_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -1199,7 +1204,7 @@ class ComputeNodeOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1214,9 +1219,8 @@ class ComputeNodeOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)

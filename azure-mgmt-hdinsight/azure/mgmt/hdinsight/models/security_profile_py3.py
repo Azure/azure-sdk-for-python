@@ -35,6 +35,12 @@ class SecurityProfile(Model):
     :param cluster_users_group_dns: Optional. The Distinguished Names for
      cluster user groups
     :type cluster_users_group_dns: list[str]
+    :param aadds_resource_id: The resource ID of the user's Azure Active
+     Directory Domain Service.
+    :type aadds_resource_id: str
+    :param msi_resource_id: User assigned identity that has permissions to
+     read and create cluster-related artifacts in the user's AADDS.
+    :type msi_resource_id: str
     """
 
     _attribute_map = {
@@ -45,9 +51,11 @@ class SecurityProfile(Model):
         'domain_username': {'key': 'domainUsername', 'type': 'str'},
         'domain_user_password': {'key': 'domainUserPassword', 'type': 'str'},
         'cluster_users_group_dns': {'key': 'clusterUsersGroupDNs', 'type': '[str]'},
+        'aadds_resource_id': {'key': 'aaddsResourceId', 'type': 'str'},
+        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, directory_type=None, domain: str=None, organizational_unit_dn: str=None, ldaps_urls=None, domain_username: str=None, domain_user_password: str=None, cluster_users_group_dns=None, **kwargs) -> None:
+    def __init__(self, *, directory_type=None, domain: str=None, organizational_unit_dn: str=None, ldaps_urls=None, domain_username: str=None, domain_user_password: str=None, cluster_users_group_dns=None, aadds_resource_id: str=None, msi_resource_id: str=None, **kwargs) -> None:
         super(SecurityProfile, self).__init__(**kwargs)
         self.directory_type = directory_type
         self.domain = domain
@@ -56,3 +64,5 @@ class SecurityProfile(Model):
         self.domain_username = domain_username
         self.domain_user_password = domain_user_password
         self.cluster_users_group_dns = cluster_users_group_dns
+        self.aadds_resource_id = aadds_resource_id
+        self.msi_resource_id = msi_resource_id

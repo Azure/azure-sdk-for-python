@@ -3,6 +3,34 @@
 Release History
 ===============
 
+0.7.0 (2018-12-14)
+++++++++++++++++++
+
+**Features**
+
+- Model OperationDisplay has a new parameter description
+- Model TestRouteInput has a new parameter twin
+- Model IotHubProperties has a new parameter device_streams
+- Model TestAllRoutesInput has a new parameter twin
+
+**Breaking changes**
+
+- Operation IotHubResourceOperations.test_route has a new signature
+- Operation IotHubResourceOperations.test_all_routes has a new signature
+
+0.6.0 (2018-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model CertificatePropertiesWithNonce has a new parameter certificate
+- Model CertificateProperties has a new parameter certificate
+- Added operation IotHubResourceOperations.test_all_routes
+- Added operation IotHubResourceOperations.test_route
+- Added operation IotHubResourceOperations.get_endpoint_health
+- Added operation group ResourceProviderCommonOperations
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
 0.5.0 (2018-04-17)
 ++++++++++++++++++
 
@@ -24,7 +52,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

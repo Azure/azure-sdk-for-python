@@ -13,7 +13,7 @@ from .resource_py3 import Resource
 
 
 class GalleryImageVersion(Resource):
-    """Specifies information about the gallery image version that you want to
+    """Specifies information about the gallery Image Version that you want to
     create or update.
 
     Variables are only populated by the server, and will be ignored when
@@ -31,10 +31,10 @@ class GalleryImageVersion(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param publishing_profile:
+    :param publishing_profile: Required.
     :type publishing_profile:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery image version.
+    :ivar provisioning_state: The current state of the gallery Image Version.
      The provisioning state, which only appears in the response. Possible
      values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
      'Migrating'
@@ -53,6 +53,7 @@ class GalleryImageVersion(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'publishing_profile': {'required': True},
         'provisioning_state': {'readonly': True},
         'storage_profile': {'readonly': True},
         'replication_status': {'readonly': True},
@@ -70,7 +71,7 @@ class GalleryImageVersion(Resource):
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
     }
 
-    def __init__(self, *, location: str, tags=None, publishing_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, publishing_profile, tags=None, **kwargs) -> None:
         super(GalleryImageVersion, self).__init__(location=location, tags=tags, **kwargs)
         self.publishing_profile = publishing_profile
         self.provisioning_state = None

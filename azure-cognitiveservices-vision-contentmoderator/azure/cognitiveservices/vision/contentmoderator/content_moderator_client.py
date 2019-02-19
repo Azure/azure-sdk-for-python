@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.image_moderation_operations import ImageModerationOperations
@@ -27,55 +27,36 @@ class ContentModeratorClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param base_url_parameter: Supported Azure regions for Content Moderator
-     endpoints. Possible values include: 'westus.api.cognitive.microsoft.com',
-     'westus2.api.cognitive.microsoft.com',
-     'eastus.api.cognitive.microsoft.com',
-     'eastus2.api.cognitive.microsoft.com',
-     'westcentralus.api.cognitive.microsoft.com',
-     'southcentralus.api.cognitive.microsoft.com',
-     'westeurope.api.cognitive.microsoft.com',
-     'northeurope.api.cognitive.microsoft.com',
-     'southeastasia.api.cognitive.microsoft.com',
-     'eastasia.api.cognitive.microsoft.com',
-     'australiaeast.api.cognitive.microsoft.com',
-     'brazilsouth.api.cognitive.microsoft.com',
-     'contentmoderatortest.azure-api.net'
-    :type base_url_parameter: str or
-     ~azure.cognitiveservices.vision.contentmoderator.models.AzureRegionBaseUrl
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, base_url_parameter, credentials):
+            self, endpoint, credentials):
 
-        if base_url_parameter is None:
-            raise ValueError("Parameter 'base_url_parameter' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = 'https://{baseUrl}'
+        base_url = '{Endpoint}'
 
         super(ContentModeratorClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-vision-contentmoderator/{}'.format(VERSION))
 
-        self.base_url_parameter = base_url_parameter
+        self.endpoint = endpoint
         self.credentials = credentials
 
 
-class ContentModeratorClient(object):
+class ContentModeratorClient(SDKClient):
     """You use the API to scan your content as it is generated. Content Moderator then processes your content and sends the results along with relevant information either back to your systems or to the built-in review tool. You can use this information to take decisions e.g. take it down, send to human judge, etc.
     When using the API, images need to have a minimum of 128 pixels and a maximum file size of 4MB.
     Text can be at most 1024 characters long.
     If the content passed to the text API or the image API exceeds the size limits, the API will return an error code that informs about the issue.
-    This API is currently available in:
-    * West US - westus.api.cognitive.microsoft.com
-    * East US 2 - eastus2.api.cognitive.microsoft.com
-    * West Central US - westcentralus.api.cognitive.microsoft.com
-    * West Europe - westeurope.api.cognitive.microsoft.com
-    * Southeast Asia - southeastasia.api.cognitive.microsoft.com .
 
     :ivar config: Configuration for client.
     :vartype config: ContentModeratorClientConfiguration
@@ -95,32 +76,19 @@ class ContentModeratorClient(object):
     :ivar reviews: Reviews operations
     :vartype reviews: azure.cognitiveservices.vision.contentmoderator.operations.ReviewsOperations
 
-    :param base_url_parameter: Supported Azure regions for Content Moderator
-     endpoints. Possible values include: 'westus.api.cognitive.microsoft.com',
-     'westus2.api.cognitive.microsoft.com',
-     'eastus.api.cognitive.microsoft.com',
-     'eastus2.api.cognitive.microsoft.com',
-     'westcentralus.api.cognitive.microsoft.com',
-     'southcentralus.api.cognitive.microsoft.com',
-     'westeurope.api.cognitive.microsoft.com',
-     'northeurope.api.cognitive.microsoft.com',
-     'southeastasia.api.cognitive.microsoft.com',
-     'eastasia.api.cognitive.microsoft.com',
-     'australiaeast.api.cognitive.microsoft.com',
-     'brazilsouth.api.cognitive.microsoft.com',
-     'contentmoderatortest.azure-api.net'
-    :type base_url_parameter: str or
-     ~azure.cognitiveservices.vision.contentmoderator.models.AzureRegionBaseUrl
+    :param endpoint: Supported Cognitive Services endpoints (protocol and
+     hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, base_url_parameter, credentials):
+            self, endpoint, credentials):
 
-        self.config = ContentModeratorClientConfiguration(base_url_parameter, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = ContentModeratorClientConfiguration(endpoint, credentials)
+        super(ContentModeratorClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
