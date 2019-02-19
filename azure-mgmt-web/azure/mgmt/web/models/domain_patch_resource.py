@@ -18,6 +18,8 @@ class DomainPatchResource(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -26,13 +28,13 @@ class DomainPatchResource(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param contact_admin: Administrative contact.
+    :param contact_admin: Required. Administrative contact.
     :type contact_admin: ~azure.mgmt.web.models.Contact
-    :param contact_billing: Billing contact.
+    :param contact_billing: Required. Billing contact.
     :type contact_billing: ~azure.mgmt.web.models.Contact
-    :param contact_registrant: Registrant contact.
+    :param contact_registrant: Required. Registrant contact.
     :type contact_registrant: ~azure.mgmt.web.models.Contact
-    :param contact_tech: Technical contact.
+    :param contact_tech: Required. Technical contact.
     :type contact_tech: ~azure.mgmt.web.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
@@ -67,7 +69,7 @@ class DomainPatchResource(ProxyOnlyResource):
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
     :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
-    :param consent: Legal agreement consent.
+    :param consent: Required. Legal agreement consent.
     :type consent: ~azure.mgmt.web.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str]
@@ -130,25 +132,25 @@ class DomainPatchResource(ProxyOnlyResource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, contact_admin, contact_billing, contact_registrant, contact_tech, consent, kind=None, privacy=None, auto_renew=True, dns_type=None, dns_zone_id=None, target_dns_type=None, auth_code=None):
-        super(DomainPatchResource, self).__init__(kind=kind)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
+    def __init__(self, **kwargs):
+        super(DomainPatchResource, self).__init__(**kwargs)
+        self.contact_admin = kwargs.get('contact_admin', None)
+        self.contact_billing = kwargs.get('contact_billing', None)
+        self.contact_registrant = kwargs.get('contact_registrant', None)
+        self.contact_tech = kwargs.get('contact_tech', None)
         self.registration_status = None
         self.provisioning_state = None
         self.name_servers = None
-        self.privacy = privacy
+        self.privacy = kwargs.get('privacy', None)
         self.created_time = None
         self.expiration_time = None
         self.last_renewed_time = None
-        self.auto_renew = auto_renew
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.ready_for_dns_record_management = None
         self.managed_host_names = None
-        self.consent = consent
+        self.consent = kwargs.get('consent', None)
         self.domain_not_renewable_reasons = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = auth_code
+        self.dns_type = kwargs.get('dns_type', None)
+        self.dns_zone_id = kwargs.get('dns_zone_id', None)
+        self.target_dns_type = kwargs.get('target_dns_type', None)
+        self.auth_code = kwargs.get('auth_code', None)

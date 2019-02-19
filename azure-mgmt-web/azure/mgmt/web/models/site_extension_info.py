@@ -26,14 +26,13 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param site_extension_info_id: Site extension ID.
-    :type site_extension_info_id: str
-    :param title: Site extension title.
+    :param extension_id: Site extension ID.
+    :type extension_id: str
+    :param title:
     :type title: str
-    :param site_extension_info_type: Site extension type. Possible values
-     include: 'Gallery', 'WebRoot'
-    :type site_extension_info_type: str or
-     ~azure.mgmt.web.models.SiteExtensionType
+    :param extension_type: Site extension type. Possible values include:
+     'Gallery', 'WebRoot'
+    :type extension_type: str or ~azure.mgmt.web.models.SiteExtensionType
     :param summary: Summary description.
     :type summary: str
     :param description: Detailed description.
@@ -52,8 +51,8 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :type feed_url: str
     :param authors: List of authors.
     :type authors: list[str]
-    :param installation_args: Installer command line parameters.
-    :type installation_args: str
+    :param installer_command_line_params: Installer command line parameters.
+    :type installer_command_line_params: str
     :param published_date_time: Published timestamp.
     :type published_date_time: datetime
     :param download_count: Count of downloads.
@@ -82,47 +81,47 @@ class SiteExtensionInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'site_extension_info_id': {'key': 'properties.id', 'type': 'str'},
+        'extension_id': {'key': 'properties.extension_id', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
-        'site_extension_info_type': {'key': 'properties.type', 'type': 'SiteExtensionType'},
+        'extension_type': {'key': 'properties.extension_type', 'type': 'SiteExtensionType'},
         'summary': {'key': 'properties.summary', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
-        'extension_url': {'key': 'properties.extensionUrl', 'type': 'str'},
-        'project_url': {'key': 'properties.projectUrl', 'type': 'str'},
-        'icon_url': {'key': 'properties.iconUrl', 'type': 'str'},
-        'license_url': {'key': 'properties.licenseUrl', 'type': 'str'},
-        'feed_url': {'key': 'properties.feedUrl', 'type': 'str'},
+        'extension_url': {'key': 'properties.extension_url', 'type': 'str'},
+        'project_url': {'key': 'properties.project_url', 'type': 'str'},
+        'icon_url': {'key': 'properties.icon_url', 'type': 'str'},
+        'license_url': {'key': 'properties.license_url', 'type': 'str'},
+        'feed_url': {'key': 'properties.feed_url', 'type': 'str'},
         'authors': {'key': 'properties.authors', 'type': '[str]'},
-        'installation_args': {'key': 'properties.installationArgs', 'type': 'str'},
-        'published_date_time': {'key': 'properties.publishedDateTime', 'type': 'iso-8601'},
-        'download_count': {'key': 'properties.downloadCount', 'type': 'int'},
-        'local_is_latest_version': {'key': 'properties.localIsLatestVersion', 'type': 'bool'},
-        'local_path': {'key': 'properties.localPath', 'type': 'str'},
-        'installed_date_time': {'key': 'properties.installedDateTime', 'type': 'iso-8601'},
+        'installer_command_line_params': {'key': 'properties.installer_command_line_params', 'type': 'str'},
+        'published_date_time': {'key': 'properties.published_date_time', 'type': 'iso-8601'},
+        'download_count': {'key': 'properties.download_count', 'type': 'int'},
+        'local_is_latest_version': {'key': 'properties.local_is_latest_version', 'type': 'bool'},
+        'local_path': {'key': 'properties.local_path', 'type': 'str'},
+        'installed_date_time': {'key': 'properties.installed_date_time', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'comment': {'key': 'properties.comment', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, site_extension_info_id=None, title=None, site_extension_info_type=None, summary=None, description=None, version=None, extension_url=None, project_url=None, icon_url=None, license_url=None, feed_url=None, authors=None, installation_args=None, published_date_time=None, download_count=None, local_is_latest_version=None, local_path=None, installed_date_time=None, provisioning_state=None, comment=None):
-        super(SiteExtensionInfo, self).__init__(kind=kind)
-        self.site_extension_info_id = site_extension_info_id
-        self.title = title
-        self.site_extension_info_type = site_extension_info_type
-        self.summary = summary
-        self.description = description
-        self.version = version
-        self.extension_url = extension_url
-        self.project_url = project_url
-        self.icon_url = icon_url
-        self.license_url = license_url
-        self.feed_url = feed_url
-        self.authors = authors
-        self.installation_args = installation_args
-        self.published_date_time = published_date_time
-        self.download_count = download_count
-        self.local_is_latest_version = local_is_latest_version
-        self.local_path = local_path
-        self.installed_date_time = installed_date_time
-        self.provisioning_state = provisioning_state
-        self.comment = comment
+    def __init__(self, **kwargs):
+        super(SiteExtensionInfo, self).__init__(**kwargs)
+        self.extension_id = kwargs.get('extension_id', None)
+        self.title = kwargs.get('title', None)
+        self.extension_type = kwargs.get('extension_type', None)
+        self.summary = kwargs.get('summary', None)
+        self.description = kwargs.get('description', None)
+        self.version = kwargs.get('version', None)
+        self.extension_url = kwargs.get('extension_url', None)
+        self.project_url = kwargs.get('project_url', None)
+        self.icon_url = kwargs.get('icon_url', None)
+        self.license_url = kwargs.get('license_url', None)
+        self.feed_url = kwargs.get('feed_url', None)
+        self.authors = kwargs.get('authors', None)
+        self.installer_command_line_params = kwargs.get('installer_command_line_params', None)
+        self.published_date_time = kwargs.get('published_date_time', None)
+        self.download_count = kwargs.get('download_count', None)
+        self.local_is_latest_version = kwargs.get('local_is_latest_version', None)
+        self.local_path = kwargs.get('local_path', None)
+        self.installed_date_time = kwargs.get('installed_date_time', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.comment = kwargs.get('comment', None)

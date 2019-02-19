@@ -2,6 +2,11 @@
 
 Release History
 ===============
+1.1.0   (2018-08-07)
+++++++++++++++++++++
+
+* Adding support for multi-api and API profiles
+
 1.0.0   (2018-06-27)
 ++++++++++++++++++++
 

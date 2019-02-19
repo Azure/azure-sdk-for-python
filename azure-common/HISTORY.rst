@@ -3,6 +3,37 @@
 Release History
 ===============
 
+1.1.18 (2019-01-29)
++++++++++++++++++++
+
+- Remove deprecated extra dependencies
+
+1.1.17 (2019-01-15)
++++++++++++++++++++
+
+- Fix KeyVaultClient creation with get_client_from_cli_profile
+
+Thanks to patrikn for the contribution
+
+1.1.16 (2018-09-26)
++++++++++++++++++++
+
+- azure-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+1.1.15 (2018-09-13)
++++++++++++++++++++
+
+**Features**
+
+- Adding profile v2018-03-01-hybrid definition
+
+1.1.14 (2018-07-23)
++++++++++++++++++++
+
+**Features**
+
+- Adding KeyVault to profile v2017_03_09_profile
+
 1.1.13 (2018-07-03)
 +++++++++++++++++++
 

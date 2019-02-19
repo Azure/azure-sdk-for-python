@@ -1,13 +1,14 @@
-import unittest
+import json
 import os
 import random
 import string
-import json
-import uuid
 import time
-from azure.keyvault.custom.internal import _bytes_to_int, _int_to_bytes, _int_to_bigendian_8_bytes, \
+import unittest
+import uuid
+
+from azure.keyvault._internal import _bytes_to_int, _int_to_bytes, _int_to_bigendian_8_bytes, \
     _bstr_to_b64url, _b64_to_bstr, _b64_to_str, _str_to_b64url, _a128cbc_hs256_decrypt, _a128cbc_hs256_encrypt, \
-    _RsaKey, _JwsHeader, _JweHeader, _JwsObject, _JweObject
+    _RsaKey, _JwsHeader, _JweHeader
 
 
 class EncodingTests(unittest.TestCase):

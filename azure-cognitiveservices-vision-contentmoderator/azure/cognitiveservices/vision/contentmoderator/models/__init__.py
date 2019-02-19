@@ -9,126 +9,184 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_value_pair import KeyValuePair
-from .tag import Tag
-from .frame import Frame
-from .frames import Frames
-from .score import Score
-from .classification import Classification
-from .status import Status
-from .email import Email
-from .ipa import IPA
-from .phone import Phone
-from .address import Address
-from .pii import PII
-from .detected_terms import DetectedTerms
-from .screen import Screen
-from .face import Face
-from .found_faces import FoundFaces
-from .candidate import Candidate
-from .ocr import OCR
-from .evaluate import Evaluate
-from .match import Match
-from .match_response import MatchResponse
-from .detected_language import DetectedLanguage
-from .image_list_metadata import ImageListMetadata
-from .image_list import ImageList
-from .term_list_metadata import TermListMetadata
-from .term_list import TermList
-from .refresh_index_advanced_info_item import RefreshIndexAdvancedInfoItem
-from .refresh_index import RefreshIndex
-from .image_additional_info_item import ImageAdditionalInfoItem
-from .image import Image
-from .image_ids import ImageIds
-from .terms_in_list import TermsInList
-from .terms_data import TermsData
-from .terms_paging import TermsPaging
-from .terms import Terms
-from .review import Review
-from .job_execution_report_details import JobExecutionReportDetails
-from .job import Job
-from .job_list_result import JobListResult
-from .job_id import JobId
-from .error import Error
-from .api_error import APIError, APIErrorException
-from .body_metadata import BodyMetadata
-from .body import Body
-from .create_review_body_item_metadata_item import CreateReviewBodyItemMetadataItem
-from .create_review_body_item import CreateReviewBodyItem
-from .content import Content
-from .transcript_moderation_body_item_terms_item import TranscriptModerationBodyItemTermsItem
-from .transcript_moderation_body_item import TranscriptModerationBodyItem
-from .body_model import BodyModel
-from .create_video_reviews_body_item_video_frames_item_reviewer_result_tags_item import CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem
-from .create_video_reviews_body_item_video_frames_item_metadata_item import CreateVideoReviewsBodyItemVideoFramesItemMetadataItem
-from .create_video_reviews_body_item_video_frames_item import CreateVideoReviewsBodyItemVideoFramesItem
-from .create_video_reviews_body_item_metadata_item import CreateVideoReviewsBodyItemMetadataItem
-from .create_video_reviews_body_item import CreateVideoReviewsBodyItem
-from .video_frame_body_item_reviewer_result_tags_item import VideoFrameBodyItemReviewerResultTagsItem
-from .video_frame_body_item_metadata_item import VideoFrameBodyItemMetadataItem
-from .video_frame_body_item import VideoFrameBodyItem
-from .content_moderator_client_enums import (
-    AzureRegionBaseUrl,
-)
 
-__all__ = [
-    'KeyValuePair',
-    'Tag',
-    'Frame',
-    'Frames',
-    'Score',
-    'Classification',
-    'Status',
-    'Email',
-    'IPA',
-    'Phone',
+try:
+    from ._models_py3 import APIError
+    from ._models_py3 import Address
+    from ._models_py3 import Body
+    from ._models_py3 import BodyModel
+    from ._models_py3 import Candidate
+    from ._models_py3 import Classification
+    from ._models_py3 import ClassificationCategory1
+    from ._models_py3 import ClassificationCategory2
+    from ._models_py3 import ClassificationCategory3
+    from ._models_py3 import Content
+    from ._models_py3 import CreateReviewBodyItem
+    from ._models_py3 import CreateReviewBodyItemMetadataItem
+    from ._models_py3 import CreateVideoReviewsBodyItem
+    from ._models_py3 import CreateVideoReviewsBodyItemMetadataItem
+    from ._models_py3 import CreateVideoReviewsBodyItemVideoFramesItem
+    from ._models_py3 import CreateVideoReviewsBodyItemVideoFramesItemMetadataItem
+    from ._models_py3 import CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem
+    from ._models_py3 import DetectedLanguage
+    from ._models_py3 import DetectedTerms
+    from ._models_py3 import Email
+    from ._models_py3 import Error
+    from ._models_py3 import Evaluate
+    from ._models_py3 import Face
+    from ._models_py3 import FoundFaces
+    from ._models_py3 import Frame
+    from ._models_py3 import Frames
+    from ._models_py3 import IPA
+    from ._models_py3 import Image
+    from ._models_py3 import ImageAdditionalInfoItem
+    from ._models_py3 import ImageIds
+    from ._models_py3 import ImageList
+    from ._models_py3 import Job
+    from ._models_py3 import JobExecutionReportDetails
+    from ._models_py3 import JobId
+    from ._models_py3 import JobListResult
+    from ._models_py3 import KeyValuePair
+    from ._models_py3 import Match
+    from ._models_py3 import MatchResponse
+    from ._models_py3 import OCR
+    from ._models_py3 import PII
+    from ._models_py3 import Phone
+    from ._models_py3 import RefreshIndex
+    from ._models_py3 import Review
+    from ._models_py3 import SSN
+    from ._models_py3 import Screen
+    from ._models_py3 import Status
+    from ._models_py3 import Tag
+    from ._models_py3 import TermList
+    from ._models_py3 import Terms
+    from ._models_py3 import TermsData
+    from ._models_py3 import TermsInList
+    from ._models_py3 import TermsPaging
+    from ._models_py3 import TranscriptModerationBodyItem
+    from ._models_py3 import TranscriptModerationBodyItemTermsItem
+    from ._models_py3 import VideoFrameBodyItem
+    from ._models_py3 import VideoFrameBodyItemMetadataItem
+    from ._models_py3 import VideoFrameBodyItemReviewerResultTagsItem
+    from ._models_py3 import APIErrorException
+except (SyntaxError, ImportError):
+    from ._models import APIError
+    from ._models import Address
+    from ._models import Body
+    from ._models import BodyModel
+    from ._models import Candidate
+    from ._models import Classification
+    from ._models import ClassificationCategory1
+    from ._models import ClassificationCategory2
+    from ._models import ClassificationCategory3
+    from ._models import Content
+    from ._models import CreateReviewBodyItem
+    from ._models import CreateReviewBodyItemMetadataItem
+    from ._models import CreateVideoReviewsBodyItem
+    from ._models import CreateVideoReviewsBodyItemMetadataItem
+    from ._models import CreateVideoReviewsBodyItemVideoFramesItem
+    from ._models import CreateVideoReviewsBodyItemVideoFramesItemMetadataItem
+    from ._models import CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem
+    from ._models import DetectedLanguage
+    from ._models import DetectedTerms
+    from ._models import Email
+    from ._models import Error
+    from ._models import Evaluate
+    from ._models import Face
+    from ._models import FoundFaces
+    from ._models import Frame
+    from ._models import Frames
+    from ._models import IPA
+    from ._models import Image
+    from ._models import ImageAdditionalInfoItem
+    from ._models import ImageIds
+    from ._models import ImageList
+    from ._models import Job
+    from ._models import JobExecutionReportDetails
+    from ._models import JobId
+    from ._models import JobListResult
+    from ._models import KeyValuePair
+    from ._models import Match
+    from ._models import MatchResponse
+    from ._models import OCR
+    from ._models import PII
+    from ._models import Phone
+    from ._models import RefreshIndex
+    from ._models import Review
+    from ._models import SSN
+    from ._models import Screen
+    from ._models import Status
+    from ._models import Tag
+    from ._models import TermList
+    from ._models import Terms
+    from ._models import TermsData
+    from ._models import TermsInList
+    from ._models import TermsPaging
+    from ._models import TranscriptModerationBodyItem
+    from ._models import TranscriptModerationBodyItemTermsItem
+    from ._models import VideoFrameBodyItem
+    from ._models import VideoFrameBodyItemMetadataItem
+    from ._models import VideoFrameBodyItemReviewerResultTagsItem
+    from ._models import APIErrorException
+
+
+__all__=[
+    'APIError',
     'Address',
-    'PII',
+    'Body',
+    'BodyModel',
+    'Candidate',
+    'Classification',
+    'ClassificationCategory1',
+    'ClassificationCategory2',
+    'ClassificationCategory3',
+    'Content',
+    'CreateReviewBodyItem',
+    'CreateReviewBodyItemMetadataItem',
+    'CreateVideoReviewsBodyItem',
+    'CreateVideoReviewsBodyItemMetadataItem',
+    'CreateVideoReviewsBodyItemVideoFramesItem',
+    'CreateVideoReviewsBodyItemVideoFramesItemMetadataItem',
+    'CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem',
+    'DetectedLanguage',
     'DetectedTerms',
-    'Screen',
+    'Email',
+    'Error',
+    'Evaluate',
     'Face',
     'FoundFaces',
-    'Candidate',
-    'OCR',
-    'Evaluate',
+    'Frame',
+    'Frames',
+    'IPA',
+    'Image',
+    'ImageAdditionalInfoItem',
+    'ImageIds',
+    'ImageList',
+    'Job',
+    'JobExecutionReportDetails',
+    'JobId',
+    'JobListResult',
+    'KeyValuePair',
     'Match',
     'MatchResponse',
-    'DetectedLanguage',
-    'ImageListMetadata',
-    'ImageList',
-    'TermListMetadata',
-    'TermList',
-    'RefreshIndexAdvancedInfoItem',
+    'OCR',
+    'PII',
+    'Phone',
     'RefreshIndex',
-    'ImageAdditionalInfoItem',
-    'Image',
-    'ImageIds',
-    'TermsInList',
-    'TermsData',
-    'TermsPaging',
-    'Terms',
     'Review',
-    'JobExecutionReportDetails',
-    'Job',
-    'JobListResult',
-    'JobId',
-    'Error',
-    'APIError', 'APIErrorException',
-    'BodyMetadata',
-    'Body',
-    'CreateReviewBodyItemMetadataItem',
-    'CreateReviewBodyItem',
-    'Content',
-    'TranscriptModerationBodyItemTermsItem',
+    'SSN',
+    'Screen',
+    'Status',
+    'Tag',
+    'TermList',
+    'Terms',
+    'TermsData',
+    'TermsInList',
+    'TermsPaging',
     'TranscriptModerationBodyItem',
-    'BodyModel',
-    'CreateVideoReviewsBodyItemVideoFramesItemReviewerResultTagsItem',
-    'CreateVideoReviewsBodyItemVideoFramesItemMetadataItem',
-    'CreateVideoReviewsBodyItemVideoFramesItem',
-    'CreateVideoReviewsBodyItemMetadataItem',
-    'CreateVideoReviewsBodyItem',
-    'VideoFrameBodyItemReviewerResultTagsItem',
-    'VideoFrameBodyItemMetadataItem',
+    'TranscriptModerationBodyItemTermsItem',
     'VideoFrameBodyItem',
-    'AzureRegionBaseUrl',
+    'VideoFrameBodyItemMetadataItem',
+    'VideoFrameBodyItemReviewerResultTagsItem',
+    'APIErrorException',
 ]

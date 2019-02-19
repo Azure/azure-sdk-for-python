@@ -13,25 +13,25 @@ class KeyVaultSecretTest(KeyvaultTestCase):
     @StorageAccountPreparer(name_prefix='kvsa1')
     @KeyVaultPreparer()
     def test_e2e(self, vault, storage_account, resource_group, **kwargs):
-        # find the role definition for "Storage Account Key Operator Service Role"
-        filter_str = 'roleName eq \'Storage Account Key Operator Service Role\''
-        authorization_mgmt_client = self.create_mgmt_client(AuthorizationManagementClient)
-        role_id = list(authorization_mgmt_client.role_definitions.list(scope='/', filter=filter_str))[0].id
-
-        # create a role assignment granting the key vault service principal this role
-        role_params = RoleAssignmentCreateParameters(role_definition_id=role_id,
-                                                     # the Azure Key Vault service id
-                                                     principal_id='93c27d83-f79b-4cb2-8dd4-4aa716542e74')
 
         if not self.is_live:
             sa_id = '{}/providers/Microsoft.Storage/storageAccounts/{}'.format(resource_group.id, storage_account.name)
         else:
             sa_id = storage_account.id
 
-        authorization_mgmt_client.role_assignments.create(scope=sa_id,
-                                                          role_assignment_name='d7607bd3-a467-4a14-ab5f-f4b016ffbfff',
-                                                          parameters=role_params)
+            # find the role definition for "Storage Account Key Operator Service Role"
+            filter_str = 'roleName eq \'Storage Account Key Operator Service Role\''
+            authorization_mgmt_client = self.create_mgmt_client(AuthorizationManagementClient)
+            role_id = list(authorization_mgmt_client.role_definitions.list(scope='/', filter=filter_str))[0].id
 
+            # create a role assignment granting the key vault service principal this role
+            role_params = RoleAssignmentCreateParameters(role_definition_id=role_id,
+                                                         # the Azure Key Vault service id
+                                                         principal_id='93c27d83-f79b-4cb2-8dd4-4aa716542e74')
+
+            authorization_mgmt_client.role_assignments.create(scope=sa_id,
+                                                              role_assignment_name='d7607bd3-a467-4a14-ab5f-f4b016ffbfff',
+                                                              parameters=role_params)
 
         # add the storage account to the vault using the users KeyVaultClient
         attributes = StorageAccountAttributes(enabled=True)

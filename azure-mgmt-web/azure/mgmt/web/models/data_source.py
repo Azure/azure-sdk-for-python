@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DataSource(Model):
     """Class representing data source used by the detectors.
 
-    :param instructions: Instrunctions if any for the data source
+    :param instructions: Instructions if any for the data source
     :type instructions: list[str]
     :param data_source_uri: Datasource Uri Links
     :type data_source_uri: list[~azure.mgmt.web.models.NameValuePair]
@@ -26,7 +26,7 @@ class DataSource(Model):
         'data_source_uri': {'key': 'dataSourceUri', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, instructions=None, data_source_uri=None):
-        super(DataSource, self).__init__()
-        self.instructions = instructions
-        self.data_source_uri = data_source_uri
+    def __init__(self, **kwargs):
+        super(DataSource, self).__init__(**kwargs)
+        self.instructions = kwargs.get('instructions', None)
+        self.data_source_uri = kwargs.get('data_source_uri', None)

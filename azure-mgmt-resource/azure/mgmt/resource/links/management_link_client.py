@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class ManagementLinkClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLinkClient(MultiApiClientMixin):
+class ManagementLinkClient(MultiApiClientMixin, SDKClient):
     """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar config: Configuration for client.
@@ -78,16 +78,13 @@ class ManagementLinkClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = ManagementLinkClientConfiguration(credentials, subscription_id, base_url)
         super(ManagementLinkClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = ManagementLinkClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -106,6 +103,19 @@ class ManagementLinkClient(MultiApiClientMixin):
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2016-09-01: :class:`Operations<azure.mgmt.resource.links.v2016_09_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2016-09-01':
+            from .v2016_09_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
     @property
     def resource_links(self):
         """Instance depends on the API version:

@@ -23,7 +23,10 @@ try:
     from .record_set_update_parameters_py3 import RecordSetUpdateParameters
     from .zone_py3 import Zone
     from .zone_delete_result_py3 import ZoneDeleteResult
+    from .proxy_resource_py3 import ProxyResource
+    from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
+    from .tracked_resource_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from .arecord import ARecord
     from .aaaa_record import AaaaRecord
@@ -38,7 +41,10 @@ except (SyntaxError, ImportError):
     from .record_set_update_parameters import RecordSetUpdateParameters
     from .zone import Zone
     from .zone_delete_result import ZoneDeleteResult
+    from .proxy_resource import ProxyResource
+    from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
+    from .tracked_resource import TrackedResource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
 from .dns_management_client_enums import (
@@ -61,7 +67,10 @@ __all__ = [
     'RecordSetUpdateParameters',
     'Zone',
     'ZoneDeleteResult',
+    'ProxyResource',
+    'AzureEntityResource',
     'Resource',
+    'TrackedResource',
     'RecordSetPaged',
     'ZonePaged',
     'OperationStatus',

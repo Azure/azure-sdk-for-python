@@ -62,8 +62,8 @@ class ResourceMetric(Model):
         'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
     }
 
-    def __init__(self):
-        super(ResourceMetric, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceMetric, self).__init__(**kwargs)
         self.name = None
         self.unit = None
         self.time_grain = None

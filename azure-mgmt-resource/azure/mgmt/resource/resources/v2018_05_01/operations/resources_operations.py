@@ -46,9 +46,28 @@ class ResourcesOperations(object):
         :param resource_group_name: The resource group with the resources to
          get.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation.<br><br>The
+         properties you can use for eq (equals) or ne (not equals) are:
+         location, resourceType, name, resourceGroup, identity,
+         identity/principalId, plan, plan/publisher, plan/product, plan/name,
+         plan/version, and plan/promotionCode.<br><br>For example, to filter by
+         a resource type, use: $filter=resourceType eq
+         'Microsoft.Network/virtualNetworks'<br><br>You can use
+         substringof(value, property) in the filter. The properties you can use
+         for substring are: name and resourceGroup.<br><br>For example, to get
+         all resources with 'demo' anywhere in the name, use:
+         $filter=substringof('demo', name)<br><br>You can link more than one
+         substringof together by adding and/or operators.<br><br>You can filter
+         by tag names and values. For example, to filter for a tag name and
+         value, use $filter=tagName eq 'tag1' and tagValue eq
+         'Value1'<br><br>You can use some properties together when filtering.
+         The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and
+         identity/principalId.
         :type filter: str
-        :param expand: The $expand query parameter
+        :param expand: The $expand query parameter. You can expand createdTime
+         and changedTime. For example, to expand both properties, use
+         $expand=changedTime,createdTime
         :type expand: str
         :param top: The number of results to return. If null is passed,
          returns all resources.
@@ -90,7 +109,7 @@ class ResourcesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -99,9 +118,8 @@ class ResourcesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -152,9 +170,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'ResourcesMoveInfo')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
@@ -247,9 +264,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'ResourcesMoveInfo')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204, 409]:
             exp = CloudError(response)
@@ -318,9 +334,28 @@ class ResourcesOperations(object):
             self, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all the resources in a subscription.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation.<br><br>The
+         properties you can use for eq (equals) or ne (not equals) are:
+         location, resourceType, name, resourceGroup, identity,
+         identity/principalId, plan, plan/publisher, plan/product, plan/name,
+         plan/version, and plan/promotionCode.<br><br>For example, to filter by
+         a resource type, use: $filter=resourceType eq
+         'Microsoft.Network/virtualNetworks'<br><br>You can use
+         substringof(value, property) in the filter. The properties you can use
+         for substring are: name and resourceGroup.<br><br>For example, to get
+         all resources with 'demo' anywhere in the name, use:
+         $filter=substringof('demo', name)<br><br>You can link more than one
+         substringof together by adding and/or operators.<br><br>You can filter
+         by tag names and values. For example, to filter for a tag name and
+         value, use $filter=tagName eq 'tag1' and tagValue eq
+         'Value1'<br><br>You can use some properties together when filtering.
+         The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and
+         identity/principalId.
         :type filter: str
-        :param expand: The $expand query parameter.
+        :param expand: The $expand query parameter. You can expand createdTime
+         and changedTime. For example, to expand both properties, use
+         $expand=changedTime,createdTime
         :type expand: str
         :param top: The number of results to return. If null is passed,
          returns all resource groups.
@@ -361,7 +396,7 @@ class ResourcesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -370,9 +405,8 @@ class ResourcesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -438,7 +472,6 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -447,8 +480,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -483,7 +516,6 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -492,8 +524,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
@@ -580,6 +612,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -592,9 +625,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'GenericResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
@@ -700,6 +732,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -712,9 +745,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'GenericResource')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -844,7 +876,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -853,8 +885,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -905,7 +937,6 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -914,8 +945,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204, 404]:
             exp = CloudError(response)
@@ -945,7 +976,6 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -954,8 +984,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
@@ -1025,6 +1055,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -1037,9 +1068,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'GenericResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
@@ -1128,6 +1158,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -1140,9 +1171,8 @@ class ResourcesOperations(object):
         body_content = self._serialize.body(parameters, 'GenericResource')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -1247,7 +1277,7 @@ class ResourcesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1256,8 +1286,8 @@ class ResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

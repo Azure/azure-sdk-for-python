@@ -33,8 +33,8 @@ class Hair(Model):
         'hair_color': {'key': 'hairColor', 'type': '[HairColor]'},
     }
 
-    def __init__(self, bald=None, invisible=None, hair_color=None):
-        super(Hair, self).__init__()
-        self.bald = bald
-        self.invisible = invisible
-        self.hair_color = hair_color
+    def __init__(self, **kwargs):
+        super(Hair, self).__init__(**kwargs)
+        self.bald = kwargs.get('bald', None)
+        self.invisible = kwargs.get('invisible', None)
+        self.hair_color = kwargs.get('hair_color', None)
