@@ -29,8 +29,8 @@ class SkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None):
-        super(SkuInfo, self).__init__()
-        self.resource_type = resource_type
-        self.sku = sku
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(SkuInfo, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)

@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.resource_links_operations import ResourceLinksOperations
 from . import models
 
@@ -55,6 +56,8 @@ class ManagementLinkClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ManagementLinkClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.resource.links.v2016_09_01.operations.Operations
     :ivar resource_links: ResourceLinks operations
     :vartype resource_links: azure.mgmt.resource.links.v2016_09_01.operations.ResourceLinksOperations
 
@@ -77,5 +80,7 @@ class ManagementLinkClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.resource_links = ResourceLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)

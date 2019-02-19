@@ -21,7 +21,7 @@ class ApplicationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -54,7 +54,7 @@ class ApplicationsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/applications'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -66,6 +66,7 @@ class ApplicationsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -78,9 +79,8 @@ class ApplicationsOperations(object):
         body_content = self._serialize.body(parameters, 'ApplicationCreateParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -95,6 +95,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/applications'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -117,7 +118,7 @@ class ApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/applications'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -141,7 +142,7 @@ class ApplicationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -150,9 +151,8 @@ class ApplicationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -168,6 +168,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/applications'}
 
     def delete(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
@@ -186,7 +187,7 @@ class ApplicationsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -199,7 +200,6 @@ class ApplicationsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -208,8 +208,8 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -217,6 +217,7 @@ class ApplicationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}'}
 
     def get(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
@@ -236,7 +237,7 @@ class ApplicationsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -249,7 +250,7 @@ class ApplicationsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -258,8 +259,8 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -274,6 +275,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}'}
 
     def patch(
             self, application_object_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -294,7 +296,7 @@ class ApplicationsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -319,9 +321,8 @@ class ApplicationsOperations(object):
         body_content = self._serialize.body(parameters, 'ApplicationUpdateParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -329,6 +330,7 @@ class ApplicationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    patch.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}'}
 
     def list_owners(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
@@ -355,7 +357,7 @@ class ApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/applications/{applicationObjectId}/owners'
+                url = self.list_owners.metadata['url']
                 path_format_arguments = {
                     'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -372,7 +374,7 @@ class ApplicationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -381,9 +383,8 @@ class ApplicationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -399,6 +400,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_owners.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/owners'}
 
     def add_owner(
             self, application_object_id, url, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -426,10 +428,10 @@ class ApplicationsOperations(object):
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
-        parameters = models.ApplicationAddOwnerParameters(additional_properties=additional_properties, url=url)
+        parameters = models.AddOwnerParameters(additional_properties=additional_properties, url=url)
 
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}/$links/owners'
+        url = self.add_owner.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -451,12 +453,11 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplicationAddOwnerParameters')
+        body_content = self._serialize.body(parameters, 'AddOwnerParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -464,6 +465,60 @@ class ApplicationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_owner.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/$links/owners'}
+
+    def remove_owner(
+            self, application_object_id, owner_object_id, custom_headers=None, raw=False, **operation_config):
+        """Remove a member from owners.
+
+        :param application_object_id: The object ID of the application from
+         which to remove the owner.
+        :type application_object_id: str
+        :param owner_object_id: Owner object id
+        :type owner_object_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
+        """
+        # Construct URL
+        url = self.remove_owner.metadata['url']
+        path_format_arguments = {
+            'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
+            'ownerObjectId': self._serialize.url("owner_object_id", owner_object_id, 'str'),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_owner.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/$links/owners/{ownerObjectId}'}
 
     def list_key_credentials(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
@@ -486,7 +541,7 @@ class ApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/applications/{applicationObjectId}/keyCredentials'
+                url = self.list_key_credentials.metadata['url']
                 path_format_arguments = {
                     'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -503,7 +558,7 @@ class ApplicationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -512,9 +567,8 @@ class ApplicationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -530,6 +584,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_key_credentials.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/keyCredentials'}
 
     def update_key_credentials(
             self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
@@ -552,7 +607,7 @@ class ApplicationsOperations(object):
         parameters = models.KeyCredentialsUpdateParameters(value=value)
 
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}/keyCredentials'
+        url = self.update_key_credentials.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -577,9 +632,8 @@ class ApplicationsOperations(object):
         body_content = self._serialize.body(parameters, 'KeyCredentialsUpdateParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -587,6 +641,7 @@ class ApplicationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_key_credentials.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/keyCredentials'}
 
     def list_password_credentials(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
@@ -609,7 +664,7 @@ class ApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'
+                url = self.list_password_credentials.metadata['url']
                 path_format_arguments = {
                     'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -626,7 +681,7 @@ class ApplicationsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -635,9 +690,8 @@ class ApplicationsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -653,6 +707,7 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_password_credentials.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'}
 
     def update_password_credentials(
             self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
@@ -675,7 +730,7 @@ class ApplicationsOperations(object):
         parameters = models.PasswordCredentialsUpdateParameters(value=value)
 
         # Construct URL
-        url = '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'
+        url = self.update_password_credentials.metadata['url']
         path_format_arguments = {
             'applicationObjectId': self._serialize.url("application_object_id", application_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -700,9 +755,8 @@ class ApplicationsOperations(object):
         body_content = self._serialize.body(parameters, 'PasswordCredentialsUpdateParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -710,3 +764,4 @@ class ApplicationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_password_credentials.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'}

@@ -62,12 +62,12 @@ class RelayServiceConnectionEntity(ProxyOnlyResource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
-        super(RelayServiceConnectionEntity, self).__init__(kind=kind)
-        self.entity_name = entity_name
-        self.entity_connection_string = entity_connection_string
-        self.resource_type = resource_type
-        self.resource_connection_string = resource_connection_string
-        self.hostname = hostname
-        self.port = port
-        self.biztalk_uri = biztalk_uri
+    def __init__(self, **kwargs):
+        super(RelayServiceConnectionEntity, self).__init__(**kwargs)
+        self.entity_name = kwargs.get('entity_name', None)
+        self.entity_connection_string = kwargs.get('entity_connection_string', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_connection_string = kwargs.get('resource_connection_string', None)
+        self.hostname = kwargs.get('hostname', None)
+        self.port = kwargs.get('port', None)
+        self.biztalk_uri = kwargs.get('biztalk_uri', None)

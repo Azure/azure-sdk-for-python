@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class Category(Enum):
+class Category(str, Enum):
 
     high_availability = "HighAvailability"
     security = "Security"
@@ -20,14 +20,14 @@ class Category(Enum):
     cost = "Cost"
 
 
-class Impact(Enum):
+class Impact(str, Enum):
 
     high = "High"
     medium = "Medium"
     low = "Low"
 
 
-class Risk(Enum):
+class Risk(str, Enum):
 
     error = "Error"
     warning = "Warning"

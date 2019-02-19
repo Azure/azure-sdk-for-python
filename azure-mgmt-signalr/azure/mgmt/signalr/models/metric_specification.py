@@ -36,6 +36,8 @@ class MetricSpecification(Model):
     :param category: The name of the metric category that the metric belongs
      to. A metric can only belong to a single category.
     :type category: str
+    :param dimensions: The dimensions of the metrics.
+    :type dimensions: list[~azure.mgmt.signalr.models.Dimension]
     """
 
     _attribute_map = {
@@ -46,6 +48,7 @@ class MetricSpecification(Model):
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
         'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
     }
 
     def __init__(self, **kwargs):
@@ -57,3 +60,4 @@ class MetricSpecification(Model):
         self.aggregation_type = kwargs.get('aggregation_type', None)
         self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
         self.category = kwargs.get('category', None)
+        self.dimensions = kwargs.get('dimensions', None)

@@ -13,8 +13,8 @@ from .resource import Resource
 
 
 class GalleryImage(Resource):
-    """Specifies information about the gallery image that you want to create or
-    update.
+    """Specifies information about the gallery Image Definition that you want to
+    create or update.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,27 +31,30 @@ class GalleryImage(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param description: The description of this gallery image resource.
+    :param description: The description of this gallery Image Definition
+     resource. This property is updatable.
     :type description: str
-    :param eula: The Eula agreement for the gallery image.
+    :param eula: The Eula agreement for the gallery Image Definition.
     :type eula: str
     :param privacy_statement_uri: The privacy statement uri.
     :type privacy_statement_uri: str
     :param release_note_uri: The release note uri.
     :type release_note_uri: str
-    :param os_type: This property allows you to specify the type of the OS
-     that is included in the disk if creating a VM from user-image or a
-     specialized VHD. <br><br> Possible values are: <br><br> **Windows**
-     <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
+    :param os_type: Required. This property allows you to specify the type of
+     the OS that is included in the disk when creating a VM from a managed
+     image. <br><br> Possible values are: <br><br> **Windows** <br><br>
+     **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemTypes
-    :param os_state: The OS State. Possible values include: 'Generalized',
-     'Specialized'
+    :param os_state: Required. The allowed values for OS State are
+     'Generalized'. Possible values include: 'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.OperatingSystemStateTypes
-    :param end_of_life_date: The end of life of this gallery image.
+    :param end_of_life_date: The end of life date of the gallery Image
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
     :type end_of_life_date: datetime
-    :param identifier:
+    :param identifier: Required.
     :type identifier:
      ~azure.mgmt.compute.v2018_06_01.models.GalleryImageIdentifier
     :param recommended:
@@ -62,10 +65,10 @@ class GalleryImage(Resource):
     :param purchase_plan:
     :type purchase_plan:
      ~azure.mgmt.compute.v2018_06_01.models.ImagePurchasePlan
-    :ivar provisioning_state: The current state of the gallery image. The
-     provisioning state, which only appears in the response. Possible values
-     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
-     'Migrating'
+    :ivar provisioning_state: The current state of the gallery Image
+     Definition. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.v2018_06_01.models.enum
     """
@@ -75,6 +78,9 @@ class GalleryImage(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'os_type': {'required': True},
+        'os_state': {'required': True},
+        'identifier': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 

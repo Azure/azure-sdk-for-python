@@ -59,7 +59,7 @@ class IntegrationAccountPartner(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'partner_type': {'key': 'properties.partnerType', 'type': 'PartnerType'},
+        'partner_type': {'key': 'properties.partnerType', 'type': 'str'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},

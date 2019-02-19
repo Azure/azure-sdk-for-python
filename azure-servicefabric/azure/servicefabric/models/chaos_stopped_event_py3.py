@@ -20,6 +20,8 @@ class ChaosStoppedEvent(ClusterEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -40,13 +42,14 @@ class ChaosStoppedEvent(ClusterEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'reason': {'key': 'Reason', 'type': 'str'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, reason: str, has_correlated_events: bool=None, **kwargs) -> None:
-        super(ChaosStoppedEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, reason: str, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(ChaosStoppedEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
         self.reason = reason
         self.kind = 'ChaosStopped'

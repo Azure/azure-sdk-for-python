@@ -11,6 +11,7 @@
 
 try:
     from .operation_display_py3 import OperationDisplay
+    from .dimension_py3 import Dimension
     from .metric_specification_py3 import MetricSpecification
     from .service_specification_py3 import ServiceSpecification
     from .operation_properties_py3 import OperationProperties
@@ -26,8 +27,11 @@ try:
     from .regenerate_key_parameters_py3 import RegenerateKeyParameters
     from .signal_rcreate_parameters_py3 import SignalRCreateParameters
     from .signal_rupdate_parameters_py3 import SignalRUpdateParameters
+    from .signal_rusage_name_py3 import SignalRUsageName
+    from .signal_rusage_py3 import SignalRUsage
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
+    from .dimension import Dimension
     from .metric_specification import MetricSpecification
     from .service_specification import ServiceSpecification
     from .operation_properties import OperationProperties
@@ -43,8 +47,11 @@ except (SyntaxError, ImportError):
     from .regenerate_key_parameters import RegenerateKeyParameters
     from .signal_rcreate_parameters import SignalRCreateParameters
     from .signal_rupdate_parameters import SignalRUpdateParameters
+    from .signal_rusage_name import SignalRUsageName
+    from .signal_rusage import SignalRUsage
 from .operation_paged import OperationPaged
 from .signal_rresource_paged import SignalRResourcePaged
+from .signal_rusage_paged import SignalRUsagePaged
 from .signal_rmanagement_client_enums import (
     SignalRSkuTier,
     ProvisioningState,
@@ -53,6 +60,7 @@ from .signal_rmanagement_client_enums import (
 
 __all__ = [
     'OperationDisplay',
+    'Dimension',
     'MetricSpecification',
     'ServiceSpecification',
     'OperationProperties',
@@ -68,8 +76,11 @@ __all__ = [
     'RegenerateKeyParameters',
     'SignalRCreateParameters',
     'SignalRUpdateParameters',
+    'SignalRUsageName',
+    'SignalRUsage',
     'OperationPaged',
     'SignalRResourcePaged',
+    'SignalRUsagePaged',
     'SignalRSkuTier',
     'ProvisioningState',
     'KeyType',

@@ -26,10 +26,10 @@ class TriggeredJobRun(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param triggered_job_run_id: Job ID.
-    :type triggered_job_run_id: str
-    :ivar triggered_job_run_name: Job name.
-    :vartype triggered_job_run_name: str
+    :param web_job_id: Job ID.
+    :type web_job_id: str
+    :param web_job_name: Job name.
+    :type web_job_name: str
     :param status: Job status. Possible values include: 'Success', 'Failed',
      'Error'
     :type status: str or ~azure.mgmt.web.models.TriggeredWebJobStatus
@@ -55,7 +55,6 @@ class TriggeredJobRun(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'triggered_job_run_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,29 +62,29 @@ class TriggeredJobRun(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'triggered_job_run_id': {'key': 'properties.id', 'type': 'str'},
-        'triggered_job_run_name': {'key': 'properties.name', 'type': 'str'},
+        'web_job_id': {'key': 'properties.web_job_id', 'type': 'str'},
+        'web_job_name': {'key': 'properties.web_job_name', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'TriggeredWebJobStatus'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601'},
         'duration': {'key': 'properties.duration', 'type': 'str'},
-        'output_url': {'key': 'properties.outputUrl', 'type': 'str'},
-        'error_url': {'key': 'properties.errorUrl', 'type': 'str'},
+        'output_url': {'key': 'properties.output_url', 'type': 'str'},
+        'error_url': {'key': 'properties.error_url', 'type': 'str'},
         'url': {'key': 'properties.url', 'type': 'str'},
-        'job_name': {'key': 'properties.jobName', 'type': 'str'},
+        'job_name': {'key': 'properties.job_name', 'type': 'str'},
         'trigger': {'key': 'properties.trigger', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, triggered_job_run_id=None, status=None, start_time=None, end_time=None, duration=None, output_url=None, error_url=None, url=None, job_name=None, trigger=None):
-        super(TriggeredJobRun, self).__init__(kind=kind)
-        self.triggered_job_run_id = triggered_job_run_id
-        self.triggered_job_run_name = None
-        self.status = status
-        self.start_time = start_time
-        self.end_time = end_time
-        self.duration = duration
-        self.output_url = output_url
-        self.error_url = error_url
-        self.url = url
-        self.job_name = job_name
-        self.trigger = trigger
+    def __init__(self, **kwargs):
+        super(TriggeredJobRun, self).__init__(**kwargs)
+        self.web_job_id = kwargs.get('web_job_id', None)
+        self.web_job_name = kwargs.get('web_job_name', None)
+        self.status = kwargs.get('status', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.duration = kwargs.get('duration', None)
+        self.output_url = kwargs.get('output_url', None)
+        self.error_url = kwargs.get('error_url', None)
+        self.url = kwargs.get('url', None)
+        self.job_name = kwargs.get('job_name', None)
+        self.trigger = kwargs.get('trigger', None)

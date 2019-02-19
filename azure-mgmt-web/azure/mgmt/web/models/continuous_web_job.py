@@ -33,18 +33,15 @@ class ContinuousWebJob(ProxyOnlyResource):
     :type detailed_status: str
     :param log_url: Log URL.
     :type log_url: str
-    :ivar continuous_web_job_name: Job name. Used as job identifier in ARM
-     resource URI.
-    :vartype continuous_web_job_name: str
     :param run_command: Run command.
     :type run_command: str
     :param url: Job URL.
     :type url: str
     :param extra_info_url: Extra Info URL.
     :type extra_info_url: str
-    :param job_type: Job type. Possible values include: 'Continuous',
+    :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type job_type: str or ~azure.mgmt.web.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -57,7 +54,6 @@ class ContinuousWebJob(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'continuous_web_job_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -66,28 +62,26 @@ class ContinuousWebJob(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'ContinuousWebJobStatus'},
-        'detailed_status': {'key': 'properties.detailedStatus', 'type': 'str'},
-        'log_url': {'key': 'properties.logUrl', 'type': 'str'},
-        'continuous_web_job_name': {'key': 'properties.name', 'type': 'str'},
-        'run_command': {'key': 'properties.runCommand', 'type': 'str'},
+        'detailed_status': {'key': 'properties.detailed_status', 'type': 'str'},
+        'log_url': {'key': 'properties.log_url', 'type': 'str'},
+        'run_command': {'key': 'properties.run_command', 'type': 'str'},
         'url': {'key': 'properties.url', 'type': 'str'},
-        'extra_info_url': {'key': 'properties.extraInfoUrl', 'type': 'str'},
-        'job_type': {'key': 'properties.jobType', 'type': 'WebJobType'},
+        'extra_info_url': {'key': 'properties.extra_info_url', 'type': 'str'},
+        'web_job_type': {'key': 'properties.web_job_type', 'type': 'WebJobType'},
         'error': {'key': 'properties.error', 'type': 'str'},
-        'using_sdk': {'key': 'properties.usingSdk', 'type': 'bool'},
+        'using_sdk': {'key': 'properties.using_sdk', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': '{object}'},
     }
 
-    def __init__(self, kind=None, status=None, detailed_status=None, log_url=None, run_command=None, url=None, extra_info_url=None, job_type=None, error=None, using_sdk=None, settings=None):
-        super(ContinuousWebJob, self).__init__(kind=kind)
-        self.status = status
-        self.detailed_status = detailed_status
-        self.log_url = log_url
-        self.continuous_web_job_name = None
-        self.run_command = run_command
-        self.url = url
-        self.extra_info_url = extra_info_url
-        self.job_type = job_type
-        self.error = error
-        self.using_sdk = using_sdk
-        self.settings = settings
+    def __init__(self, **kwargs):
+        super(ContinuousWebJob, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.detailed_status = kwargs.get('detailed_status', None)
+        self.log_url = kwargs.get('log_url', None)
+        self.run_command = kwargs.get('run_command', None)
+        self.url = kwargs.get('url', None)
+        self.extra_info_url = kwargs.get('extra_info_url', None)
+        self.web_job_type = kwargs.get('web_job_type', None)
+        self.error = kwargs.get('error', None)
+        self.using_sdk = kwargs.get('using_sdk', None)
+        self.settings = kwargs.get('settings', None)

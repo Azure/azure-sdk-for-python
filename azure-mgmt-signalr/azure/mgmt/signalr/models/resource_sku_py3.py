@@ -20,8 +20,9 @@ class ResourceSku(Model):
     :param name: Required. The name of the SKU. This is typically a letter +
      number code, such as A0 or P3.  Required (if sku is specified)
     :type name: str
-    :param tier: The tier of this particular SKU. Optional. Possible values
-     include: 'Free', 'Basic', 'Premium'
+    :param tier: Optional tier of this particular SKU. `Basic` is deprecated,
+     use `Standard` instead for Basic tier. Possible values include: 'Free',
+     'Basic', 'Standard', 'Premium'
     :type tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
     :param size: Optional, string. When the name field is the combination of
      tier and some other value, this would be the standalone code.

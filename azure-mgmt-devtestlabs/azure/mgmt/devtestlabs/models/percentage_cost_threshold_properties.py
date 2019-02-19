@@ -23,6 +23,6 @@ class PercentageCostThresholdProperties(Model):
         'threshold_value': {'key': 'thresholdValue', 'type': 'float'},
     }
 
-    def __init__(self, threshold_value=None):
-        super(PercentageCostThresholdProperties, self).__init__()
-        self.threshold_value = threshold_value
+    def __init__(self, **kwargs):
+        super(PercentageCostThresholdProperties, self).__init__(**kwargs)
+        self.threshold_value = kwargs.get('threshold_value', None)

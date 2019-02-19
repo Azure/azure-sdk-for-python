@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class Coordinate(Model):
     """Coordinates within an image.
 
-    :param x: The horizontal component, in pixels.
+    All required parameters must be populated in order to send to Azure.
+
+    :param x: Required. The horizontal component, in pixels.
     :type x: float
-    :param y: The vertical component, in pixels.
+    :param y: Required. The vertical component, in pixels.
     :type y: float
     """
 
@@ -31,7 +33,7 @@ class Coordinate(Model):
         'y': {'key': 'y', 'type': 'float'},
     }
 
-    def __init__(self, x, y):
-        super(Coordinate, self).__init__()
-        self.x = x
-        self.y = y
+    def __init__(self, **kwargs):
+        super(Coordinate, self).__init__(**kwargs)
+        self.x = kwargs.get('x', None)
+        self.y = kwargs.get('y', None)
