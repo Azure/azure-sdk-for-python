@@ -42,6 +42,7 @@ try:
     from .get_objects_parameters_py3 import GetObjectsParameters
     from .domain_py3 import Domain
     from .permissions_py3 import Permissions
+    from .permissions_list_result_py3 import PermissionsListResult
 except (SyntaxError, ImportError):
     from .graph_error import GraphError, GraphErrorException
     from .directory_object import DirectoryObject
@@ -75,6 +76,7 @@ except (SyntaxError, ImportError):
     from .get_objects_parameters import GetObjectsParameters
     from .domain import Domain
     from .permissions import Permissions
+    from .permissions_list_result import PermissionsListResult
 from .directory_object_paged import DirectoryObjectPaged
 from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
@@ -84,7 +86,6 @@ from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
 from .domain_paged import DomainPaged
-from .permissions_paged import PermissionsPaged
 from .graph_rbac_management_client_enums import (
     UserType,
 )
@@ -122,6 +123,7 @@ __all__ = [
     'GetObjectsParameters',
     'Domain',
     'Permissions',
+    'PermissionsListResult',
     'DirectoryObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
@@ -131,6 +133,5 @@ __all__ = [
     'ServicePrincipalPaged',
     'UserPaged',
     'DomainPaged',
-    'PermissionsPaged',
     'UserType',
 ]
