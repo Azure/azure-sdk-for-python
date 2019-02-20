@@ -312,7 +312,7 @@ class PipelinesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/pipelines/{pipelineName}'}
 
     def create_run(
-            self, resource_group_name, factory_name, pipeline_name, reference_pipeline_run_id=None, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, pipeline_name, reference_pipeline_run_id=None, is_recovery=None, start_activity_name=None, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Creates a run of a pipeline.
 
         :param resource_group_name: The resource group name.
@@ -325,6 +325,14 @@ class PipelinesOperations(object):
          ID is specified the parameters of the specified run will be used to
          create a new run.
         :type reference_pipeline_run_id: str
+        :param is_recovery: Recovery mode flag. If recovery mode is set to
+         true, the specified referenced pipeline run and the new run will be
+         grouped under the same groupId.
+        :type is_recovery: bool
+        :param start_activity_name: In recovery mode, the specified
+         startActivityName will be the first activity in the pipeline to be
+         run. If not specified, all activities will run
+        :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters
          will be used only if the runId is not specified.
         :type parameters: dict[str, object]
@@ -353,6 +361,10 @@ class PipelinesOperations(object):
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if reference_pipeline_run_id is not None:
             query_parameters['referencePipelineRunId'] = self._serialize.query("reference_pipeline_run_id", reference_pipeline_run_id, 'str')
+        if is_recovery is not None:
+            query_parameters['isRecovery'] = self._serialize.query("is_recovery", is_recovery, 'bool')
+        if start_activity_name is not None:
+            query_parameters['startActivityName'] = self._serialize.query("start_activity_name", start_activity_name, 'str')
 
         # Construct headers
         header_parameters = {}

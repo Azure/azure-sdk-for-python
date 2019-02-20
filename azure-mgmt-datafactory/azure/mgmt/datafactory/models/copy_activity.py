@@ -65,6 +65,8 @@ class CopyActivity(ExecutionActivity):
      settings when EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
      ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
+    :param preserve_rules: Preserve Rules.
+    :type preserve_rules: list[object]
     :param inputs: List of inputs for the activity.
     :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
@@ -96,6 +98,7 @@ class CopyActivity(ExecutionActivity):
         'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
+        'preserve_rules': {'key': 'typeProperties.preserveRules', 'type': '[object]'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
@@ -111,6 +114,7 @@ class CopyActivity(ExecutionActivity):
         self.data_integration_units = kwargs.get('data_integration_units', None)
         self.enable_skip_incompatible_row = kwargs.get('enable_skip_incompatible_row', None)
         self.redirect_incompatible_row_settings = kwargs.get('redirect_incompatible_row_settings', None)
+        self.preserve_rules = kwargs.get('preserve_rules', None)
         self.inputs = kwargs.get('inputs', None)
         self.outputs = kwargs.get('outputs', None)
         self.type = 'Copy'

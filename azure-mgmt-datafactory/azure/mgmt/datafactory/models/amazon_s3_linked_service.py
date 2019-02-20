@@ -40,6 +40,11 @@ class AmazonS3LinkedService(LinkedService):
     :param secret_access_key: The secret access key of the Amazon S3 Identity
      and Access Management (IAM) user.
     :type secret_access_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_url: This value specifies the endpoint to access with the
+     S3 Connector. This is an optional property; change it only if you want to
+     try a different service endpoint or want to switch between https and http.
+     Type: string (or Expression with resultType string).
+    :type service_url: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -59,6 +64,7 @@ class AmazonS3LinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'access_key_id': {'key': 'typeProperties.accessKeyId', 'type': 'object'},
         'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecretBase'},
+        'service_url': {'key': 'typeProperties.serviceUrl', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -66,5 +72,6 @@ class AmazonS3LinkedService(LinkedService):
         super(AmazonS3LinkedService, self).__init__(**kwargs)
         self.access_key_id = kwargs.get('access_key_id', None)
         self.secret_access_key = kwargs.get('secret_access_key', None)
+        self.service_url = kwargs.get('service_url', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AmazonS3'
