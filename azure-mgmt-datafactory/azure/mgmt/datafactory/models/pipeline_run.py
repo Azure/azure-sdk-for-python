@@ -26,7 +26,8 @@ class PipelineRun(Model):
     :ivar run_group_id: Identifier that correlates all the recovery runs of a
      pipeline run.
     :vartype run_group_id: str
-    :ivar is_latest: Indicates if the recovered pipeline run is the latest.
+    :ivar is_latest: Indicates if the recovered pipeline run is the latest in
+     its group.
     :vartype is_latest: bool
     :ivar pipeline_name: The pipeline name.
     :vartype pipeline_name: str
