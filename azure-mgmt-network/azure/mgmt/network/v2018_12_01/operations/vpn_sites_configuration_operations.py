@@ -40,14 +40,14 @@ class VpnSitesConfigurationOperations(object):
 
 
     def _download_initial(
-            self, resource_group_name, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, **operation_config):
         request = models.GetVpnSitesConfigurationRequest(vpn_sites=vpn_sites, output_blob_sas_url=output_blob_sas_url)
 
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -81,12 +81,10 @@ class VpnSitesConfigurationOperations(object):
             return client_raw_response
 
     def download(
-            self, resource_group_name, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gives the sas-url to download the configurations for vpn-sites in a
         resource group.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN for which
          configuration of all vpn-sites is needed.
         :type virtual_wan_name: str
@@ -109,7 +107,6 @@ class VpnSitesConfigurationOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._download_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             vpn_sites=vpn_sites,
             output_blob_sas_url=output_blob_sas_url,
