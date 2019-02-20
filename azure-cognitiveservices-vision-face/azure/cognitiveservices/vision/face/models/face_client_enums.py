@@ -16,7 +16,6 @@ class Gender(str, Enum):
 
     male = "male"
     female = "female"
-    genderless = "genderless"
 
 
 class GlassesType(str, Enum):
