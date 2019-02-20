@@ -18,26 +18,26 @@ class FilesNotSyncingError(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar error_code: Error code
+    :ivar error_code: Error code (HResult)
     :vartype error_code: int
     :ivar persistent_count: Count of persistent files not syncing with the
      specified error code
-    :vartype persistent_count: int
+    :vartype persistent_count: long
     :ivar transient_count: Count of transient files not syncing with the
      specified error code
-    :vartype transient_count: int
+    :vartype transient_count: long
     """
 
     _validation = {
         'error_code': {'readonly': True},
-        'persistent_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'transient_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
+        'persistent_count': {'readonly': True},
+        'transient_count': {'readonly': True},
     }
 
     _attribute_map = {
         'error_code': {'key': 'errorCode', 'type': 'int'},
-        'persistent_count': {'key': 'persistentCount', 'type': 'int'},
-        'transient_count': {'key': 'transientCount', 'type': 'int'},
+        'persistent_count': {'key': 'persistentCount', 'type': 'long'},
+        'transient_count': {'key': 'transientCount', 'type': 'long'},
     }
 
     def __init__(self, **kwargs) -> None:

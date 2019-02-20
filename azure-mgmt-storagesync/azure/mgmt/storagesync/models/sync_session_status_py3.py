@@ -18,20 +18,20 @@ class SyncSessionStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar last_sync_result: Last sync status
+    :ivar last_sync_result: Last sync result (HResult)
     :vartype last_sync_result: int
     :ivar last_sync_timestamp: Last sync timestamp
     :vartype last_sync_timestamp: datetime
     :ivar last_sync_success_timestamp: Last sync success timestamp
     :vartype last_sync_success_timestamp: datetime
     :param last_sync_per_item_error_count: Last sync per item error count.
-    :type last_sync_per_item_error_count: int
+    :type last_sync_per_item_error_count: long
     :ivar persistent_files_not_syncing_count: Count of persistent files not
      syncing. Reserved for future use.
-    :vartype persistent_files_not_syncing_count: int
+    :vartype persistent_files_not_syncing_count: long
     :ivar transient_files_not_syncing_count: Count of transient files not
      syncing. Reserved for future use.
-    :vartype transient_files_not_syncing_count: int
+    :vartype transient_files_not_syncing_count: long
     :ivar files_not_syncing_errors: Array of per-item errors coming from the
      last sync session. Reserved for future use.
     :vartype files_not_syncing_errors:
@@ -42,9 +42,8 @@ class SyncSessionStatus(Model):
         'last_sync_result': {'readonly': True},
         'last_sync_timestamp': {'readonly': True},
         'last_sync_success_timestamp': {'readonly': True},
-        'last_sync_per_item_error_count': {'maximum': 2147483647, 'minimum': 0},
-        'persistent_files_not_syncing_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'transient_files_not_syncing_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
+        'persistent_files_not_syncing_count': {'readonly': True},
+        'transient_files_not_syncing_count': {'readonly': True},
         'files_not_syncing_errors': {'readonly': True},
     }
 
@@ -52,9 +51,9 @@ class SyncSessionStatus(Model):
         'last_sync_result': {'key': 'lastSyncResult', 'type': 'int'},
         'last_sync_timestamp': {'key': 'lastSyncTimestamp', 'type': 'iso-8601'},
         'last_sync_success_timestamp': {'key': 'lastSyncSuccessTimestamp', 'type': 'iso-8601'},
-        'last_sync_per_item_error_count': {'key': 'lastSyncPerItemErrorCount', 'type': 'int'},
-        'persistent_files_not_syncing_count': {'key': 'persistentFilesNotSyncingCount', 'type': 'int'},
-        'transient_files_not_syncing_count': {'key': 'transientFilesNotSyncingCount', 'type': 'int'},
+        'last_sync_per_item_error_count': {'key': 'lastSyncPerItemErrorCount', 'type': 'long'},
+        'persistent_files_not_syncing_count': {'key': 'persistentFilesNotSyncingCount', 'type': 'long'},
+        'transient_files_not_syncing_count': {'key': 'transientFilesNotSyncingCount', 'type': 'long'},
         'files_not_syncing_errors': {'key': 'filesNotSyncingErrors', 'type': '[FilesNotSyncingError]'},
     }
 

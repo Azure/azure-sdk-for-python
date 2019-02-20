@@ -35,7 +35,7 @@ class ServerEndpointSyncStatus(Model):
     :vartype sync_activity: str or ~azure.mgmt.storagesync.models.enum
     :ivar total_persistent_files_not_syncing_count: Total count of persistent
      files not syncing (combined upload + download). Reserved for future use.
-    :vartype total_persistent_files_not_syncing_count: int
+    :vartype total_persistent_files_not_syncing_count: long
     :ivar last_updated_timestamp: Last Updated Timestamp
     :vartype last_updated_timestamp: datetime
     :ivar upload_status: Upload Status
@@ -59,7 +59,7 @@ class ServerEndpointSyncStatus(Model):
         'upload_health': {'readonly': True},
         'combined_health': {'readonly': True},
         'sync_activity': {'readonly': True},
-        'total_persistent_files_not_syncing_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
+        'total_persistent_files_not_syncing_count': {'readonly': True},
         'last_updated_timestamp': {'readonly': True},
         'upload_status': {'readonly': True},
         'download_status': {'readonly': True},
@@ -73,7 +73,7 @@ class ServerEndpointSyncStatus(Model):
         'upload_health': {'key': 'uploadHealth', 'type': 'str'},
         'combined_health': {'key': 'combinedHealth', 'type': 'str'},
         'sync_activity': {'key': 'syncActivity', 'type': 'str'},
-        'total_persistent_files_not_syncing_count': {'key': 'totalPersistentFilesNotSyncingCount', 'type': 'int'},
+        'total_persistent_files_not_syncing_count': {'key': 'totalPersistentFilesNotSyncingCount', 'type': 'long'},
         'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
         'upload_status': {'key': 'uploadStatus', 'type': 'SyncSessionStatus'},
         'download_status': {'key': 'downloadStatus', 'type': 'SyncSessionStatus'},

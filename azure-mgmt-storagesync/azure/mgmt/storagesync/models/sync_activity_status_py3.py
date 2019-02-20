@@ -21,33 +21,33 @@ class SyncActivityStatus(Model):
     :ivar timestamp: Timestamp when properties were updated
     :vartype timestamp: datetime
     :ivar per_item_error_count: Per item error count
-    :vartype per_item_error_count: int
+    :vartype per_item_error_count: long
     :ivar applied_item_count: Applied item count.
-    :vartype applied_item_count: int
+    :vartype applied_item_count: long
     :ivar total_item_count: Total item count (if available)
-    :vartype total_item_count: int
+    :vartype total_item_count: long
     :ivar applied_bytes: Applied bytes
-    :vartype applied_bytes: int
+    :vartype applied_bytes: long
     :ivar total_bytes: Total bytes (if available)
-    :vartype total_bytes: int
+    :vartype total_bytes: long
     """
 
     _validation = {
         'timestamp': {'readonly': True},
-        'per_item_error_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'applied_item_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'total_item_count': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'applied_bytes': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
-        'total_bytes': {'readonly': True, 'maximum': 2147483647, 'minimum': 0},
+        'per_item_error_count': {'readonly': True},
+        'applied_item_count': {'readonly': True},
+        'total_item_count': {'readonly': True},
+        'applied_bytes': {'readonly': True},
+        'total_bytes': {'readonly': True},
     }
 
     _attribute_map = {
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'per_item_error_count': {'key': 'perItemErrorCount', 'type': 'int'},
-        'applied_item_count': {'key': 'appliedItemCount', 'type': 'int'},
-        'total_item_count': {'key': 'totalItemCount', 'type': 'int'},
-        'applied_bytes': {'key': 'appliedBytes', 'type': 'int'},
-        'total_bytes': {'key': 'totalBytes', 'type': 'int'},
+        'per_item_error_count': {'key': 'perItemErrorCount', 'type': 'long'},
+        'applied_item_count': {'key': 'appliedItemCount', 'type': 'long'},
+        'total_item_count': {'key': 'totalItemCount', 'type': 'long'},
+        'applied_bytes': {'key': 'appliedBytes', 'type': 'long'},
+        'total_bytes': {'key': 'totalBytes', 'type': 'long'},
     }
 
     def __init__(self, **kwargs) -> None:
