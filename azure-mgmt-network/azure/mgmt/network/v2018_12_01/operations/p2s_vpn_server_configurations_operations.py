@@ -39,12 +39,9 @@ class P2sVpnServerConfigurationsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a P2SVpnServerConfiguration.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnServerConfiguration.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWan.
         :type virtual_wan_name: str
         :param p2_svpn_server_configuration_name: The name of the
@@ -66,7 +63,7 @@ class P2sVpnServerConfigurationsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
             'p2SVpnServerConfigurationName': self._serialize.url("p2_svpn_server_configuration_name", p2_svpn_server_configuration_name, 'str')
         }
@@ -107,12 +104,12 @@ class P2sVpnServerConfigurationsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, virtual_wan_name, p2_svpn_server_configuration_name, p2_svpn_server_configuration_parameters, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, p2_svpn_server_configuration_name, p2_svpn_server_configuration_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
             'p2SVpnServerConfigurationName': self._serialize.url("p2_svpn_server_configuration_name", p2_svpn_server_configuration_name, 'str')
         }
@@ -157,12 +154,10 @@ class P2sVpnServerConfigurationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, virtual_wan_name, p2_svpn_server_configuration_name, p2_svpn_server_configuration_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, p2_svpn_server_configuration_name, p2_svpn_server_configuration_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a P2SVpnServerConfiguration to associate with a VirtualWan if
         it doesn't exist else updates the existing P2SVpnServerConfiguration.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWan.
         :type virtual_wan_name: str
         :param p2_svpn_server_configuration_name: The name of the
@@ -188,7 +183,6 @@ class P2sVpnServerConfigurationsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             p2_svpn_server_configuration_name=p2_svpn_server_configuration_name,
             p2_svpn_server_configuration_parameters=p2_svpn_server_configuration_parameters,
@@ -217,12 +211,12 @@ class P2sVpnServerConfigurationsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
             'p2SVpnServerConfigurationName': self._serialize.url("p2_svpn_server_configuration_name", p2_svpn_server_configuration_name, 'str')
         }
@@ -253,12 +247,9 @@ class P2sVpnServerConfigurationsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, p2_svpn_server_configuration_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a P2SVpnServerConfiguration.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnServerConfiguration.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWan.
         :type virtual_wan_name: str
         :param p2_svpn_server_configuration_name: The name of the
@@ -277,7 +268,6 @@ class P2sVpnServerConfigurationsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             p2_svpn_server_configuration_name=p2_svpn_server_configuration_name,
             custom_headers=custom_headers,
@@ -300,11 +290,9 @@ class P2sVpnServerConfigurationsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWanName}/p2sVpnServerConfigurations/{p2SVpnServerConfigurationName}'}
 
     def list_by_virtual_wan(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves all P2SVpnServerConfigurations for a particular VirtualWan.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWan.
         :type virtual_wan_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -325,7 +313,7 @@ class P2sVpnServerConfigurationsOperations(object):
                 url = self.list_by_virtual_wan.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
                     'virtualWanName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

@@ -39,13 +39,9 @@ class VirtualHubsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, virtual_hub_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a VirtualHub.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,8 +57,8 @@ class VirtualHubsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,13 +97,13 @@ class VirtualHubsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, virtual_hub_name, virtual_hub_parameters, custom_headers=None, raw=False, **operation_config):
+            self, virtual_hub_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -150,14 +146,10 @@ class VirtualHubsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, virtual_hub_name, virtual_hub_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_hub_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a VirtualHub resource if it doesn't exist else updates the
         existing VirtualHub.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to create or update
          VirtualHub.
         :type virtual_hub_parameters:
@@ -177,8 +169,6 @@ class VirtualHubsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            virtual_hub_name=virtual_hub_name,
             virtual_hub_parameters=virtual_hub_parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -205,15 +195,15 @@ class VirtualHubsOperations(object):
 
 
     def _update_tags_initial(
-            self, resource_group_name, virtual_hub_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, tags=None, custom_headers=None, raw=False, **operation_config):
         virtual_hub_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -256,13 +246,9 @@ class VirtualHubsOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, virtual_hub_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates VirtualHub tags.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -280,8 +266,6 @@ class VirtualHubsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
-            virtual_hub_name=virtual_hub_name,
             tags=tags,
             custom_headers=custom_headers,
             raw=True,
@@ -308,13 +292,13 @@ class VirtualHubsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, virtual_hub_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -343,13 +327,9 @@ class VirtualHubsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, virtual_hub_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a VirtualHub.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -363,8 +343,6 @@ class VirtualHubsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            virtual_hub_name=virtual_hub_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -385,11 +363,9 @@ class VirtualHubsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all the VirtualHubs in a resource group.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -408,7 +384,7 @@ class VirtualHubsOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

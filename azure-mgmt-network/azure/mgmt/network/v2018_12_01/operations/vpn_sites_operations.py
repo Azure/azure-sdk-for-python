@@ -39,11 +39,9 @@ class VpnSitesOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, vpn_site_name, custom_headers=None, raw=False, **operation_config):
+            self, vpn_site_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a VPN site.
 
-        :param resource_group_name: The resource group name of the VpnSite.
-        :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being retrieved.
         :type vpn_site_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -61,7 +59,7 @@ class VpnSitesOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -101,12 +99,12 @@ class VpnSitesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, vpn_site_name, vpn_site_parameters, custom_headers=None, raw=False, **operation_config):
+            self, vpn_site_name, vpn_site_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -150,12 +148,10 @@ class VpnSitesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, vpn_site_name, vpn_site_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, vpn_site_name, vpn_site_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a VpnSite resource if it doesn't exist else updates the
         existing VpnSite.
 
-        :param resource_group_name: The resource group name of the VpnSite.
-        :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being created or
          updated.
         :type vpn_site_name: str
@@ -178,7 +174,6 @@ class VpnSitesOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             vpn_site_name=vpn_site_name,
             vpn_site_parameters=vpn_site_parameters,
             custom_headers=custom_headers,
@@ -206,14 +201,14 @@ class VpnSitesOperations(object):
 
 
     def _update_tags_initial(
-            self, resource_group_name, vpn_site_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, vpn_site_name, tags=None, custom_headers=None, raw=False, **operation_config):
         vpn_site_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -257,11 +252,9 @@ class VpnSitesOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, vpn_site_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, vpn_site_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates VpnSite tags.
 
-        :param resource_group_name: The resource group name of the VpnSite.
-        :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being updated.
         :type vpn_site_name: str
         :param tags: Resource tags.
@@ -281,7 +274,6 @@ class VpnSitesOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
             vpn_site_name=vpn_site_name,
             tags=tags,
             custom_headers=custom_headers,
@@ -309,12 +301,12 @@ class VpnSitesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, vpn_site_name, custom_headers=None, raw=False, **operation_config):
+            self, vpn_site_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -344,11 +336,9 @@ class VpnSitesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, vpn_site_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, vpn_site_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a VpnSite.
 
-        :param resource_group_name: The resource group name of the VpnSite.
-        :type resource_group_name: str
         :param vpn_site_name: The name of the VpnSite being deleted.
         :type vpn_site_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -364,7 +354,6 @@ class VpnSitesOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             vpn_site_name=vpn_site_name,
             custom_headers=custom_headers,
             raw=True,
@@ -386,11 +375,9 @@ class VpnSitesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnSites/{vpnSiteName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all the vpnSites in a resource group.
 
-        :param resource_group_name: The resource group name of the VpnSite.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -409,7 +396,7 @@ class VpnSitesOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

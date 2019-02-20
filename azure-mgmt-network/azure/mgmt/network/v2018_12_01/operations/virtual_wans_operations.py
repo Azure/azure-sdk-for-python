@@ -39,11 +39,9 @@ class VirtualWansOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a VirtualWAN.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being retrieved.
         :type virtual_wan_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -60,9 +58,9 @@ class VirtualWansOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,12 +99,12 @@ class VirtualWansOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -150,12 +148,10 @@ class VirtualWansOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, wan_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a VirtualWAN resource if it doesn't exist else updates the
         existing VirtualWAN.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being created or
          updated.
         :type virtual_wan_name: str
@@ -178,7 +174,6 @@ class VirtualWansOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             wan_parameters=wan_parameters,
             custom_headers=custom_headers,
@@ -206,14 +201,14 @@ class VirtualWansOperations(object):
 
 
     def _update_tags_initial(
-            self, resource_group_name, virtual_wan_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, tags=None, custom_headers=None, raw=False, **operation_config):
         wan_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -257,11 +252,9 @@ class VirtualWansOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, virtual_wan_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a VirtualWAN tags.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being updated.
         :type virtual_wan_name: str
         :param tags: Resource tags.
@@ -281,7 +274,6 @@ class VirtualWansOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             tags=tags,
             custom_headers=custom_headers,
@@ -309,12 +301,12 @@ class VirtualWansOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'VirtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -344,11 +336,9 @@ class VirtualWansOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, virtual_wan_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a VirtualWAN.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN being deleted.
         :type virtual_wan_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -364,7 +354,6 @@ class VirtualWansOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
             custom_headers=custom_headers,
             raw=True,
@@ -386,11 +375,9 @@ class VirtualWansOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all the VirtualWANs in a resource group.
 
-        :param resource_group_name: The resource group name of the VirtualWan.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -409,7 +396,7 @@ class VirtualWansOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

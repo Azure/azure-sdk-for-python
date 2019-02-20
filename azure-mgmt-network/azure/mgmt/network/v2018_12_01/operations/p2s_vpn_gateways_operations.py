@@ -40,12 +40,9 @@ class P2sVpnGatewaysOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a virtual wan p2s vpn gateway.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnGateway.
-        :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -63,7 +60,7 @@ class P2sVpnGatewaysOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -103,12 +100,12 @@ class P2sVpnGatewaysOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -152,13 +149,10 @@ class P2sVpnGatewaysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, gateway_name, p2_svpn_gateway_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates
         the existing gateway.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnGateway.
-        :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :param p2_svpn_gateway_parameters: Parameters supplied to create or
@@ -180,7 +174,6 @@ class P2sVpnGatewaysOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             gateway_name=gateway_name,
             p2_svpn_gateway_parameters=p2_svpn_gateway_parameters,
             custom_headers=custom_headers,
@@ -208,14 +201,14 @@ class P2sVpnGatewaysOperations(object):
 
 
     def _update_tags_initial(
-            self, resource_group_name, gateway_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, tags=None, custom_headers=None, raw=False, **operation_config):
         p2_svpn_gateway_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -259,12 +252,9 @@ class P2sVpnGatewaysOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, gateway_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, gateway_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates virtual wan p2s vpn gateway tags.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnGateway.
-        :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :param tags: Resource tags.
@@ -284,7 +274,6 @@ class P2sVpnGatewaysOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
             gateway_name=gateway_name,
             tags=tags,
             custom_headers=custom_headers,
@@ -312,12 +301,12 @@ class P2sVpnGatewaysOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -347,12 +336,9 @@ class P2sVpnGatewaysOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, gateway_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, gateway_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a virtual wan p2s vpn gateway.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnGateway.
-        :type resource_group_name: str
         :param gateway_name: The name of the gateway.
         :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -368,7 +354,6 @@ class P2sVpnGatewaysOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             gateway_name=gateway_name,
             custom_headers=custom_headers,
             raw=True,
@@ -390,12 +375,9 @@ class P2sVpnGatewaysOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all the P2SVpnGateways in a resource group.
 
-        :param resource_group_name: The resource group name of the
-         P2SVpnGateway.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -414,7 +396,7 @@ class P2sVpnGatewaysOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -521,13 +503,13 @@ class P2sVpnGatewaysOperations(object):
 
 
     def _generate_vpn_profile_initial(
-            self, resource_group_name, gateway_name, authentication_method=None, custom_headers=None, raw=False, **operation_config):
+            self, gateway_name, authentication_method=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.P2SVpnProfileParameters(authentication_method=authentication_method)
 
         # Construct URL
         url = self.generate_vpn_profile.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -572,12 +554,10 @@ class P2sVpnGatewaysOperations(object):
         return deserialized
 
     def generate_vpn_profile(
-            self, resource_group_name, gateway_name, authentication_method=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, gateway_name, authentication_method=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Generates VPN profile for P2S client of the P2SVpnGateway in the
         specified resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param gateway_name: The name of the P2SVpnGateway.
         :type gateway_name: str
         :param authentication_method: VPN client Authentication Method.
@@ -599,7 +579,6 @@ class P2sVpnGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._generate_vpn_profile_initial(
-            resource_group_name=resource_group_name,
             gateway_name=gateway_name,
             authentication_method=authentication_method,
             custom_headers=custom_headers,

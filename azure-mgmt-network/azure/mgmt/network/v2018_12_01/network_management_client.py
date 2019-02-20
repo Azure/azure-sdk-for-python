@@ -101,16 +101,29 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The resource group name of the Microsoft Azure
+     resource.
+    :type resource_group_name: str
+    :param virtual_hub_name: The name of the Virtual Hub resource.
+    :type virtual_hub_name: str
+    :param connection_name: The name of the connection resource.
+    :type connection_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, virtual_hub_name, connection_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if virtual_hub_name is None:
+            raise ValueError("Parameter 'virtual_hub_name' must not be None.")
+        if connection_name is None:
+            raise ValueError("Parameter 'connection_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -121,6 +134,9 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.virtual_hub_name = virtual_hub_name
+        self.connection_name = connection_name
 
 
 class NetworkManagementClient(SDKClient):
@@ -273,13 +289,20 @@ class NetworkManagementClient(SDKClient):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The resource group name of the Microsoft Azure
+     resource.
+    :type resource_group_name: str
+    :param virtual_hub_name: The name of the Virtual Hub resource.
+    :type virtual_hub_name: str
+    :param connection_name: The name of the connection resource.
+    :type connection_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, virtual_hub_name, connection_name, base_url=None):
 
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, resource_group_name, virtual_hub_name, connection_name, base_url)
         super(NetworkManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -492,11 +515,9 @@ class NetworkManagementClient(SDKClient):
     check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}
 
     def supported_security_providers(
-            self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
+            self, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
         """Gives the supported security providers for the virtual wan.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN for which
          supported security providers are needed.
         :type virtual_wan_name: str
@@ -518,7 +539,7 @@ class NetworkManagementClient(SDKClient):
         url = self.supported_security_providers.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'virtualWANName': self._serialize.url("virtual_wan_name", virtual_wan_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

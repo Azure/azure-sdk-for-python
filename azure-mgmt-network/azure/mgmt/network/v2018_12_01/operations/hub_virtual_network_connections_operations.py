@@ -39,15 +39,9 @@ class HubVirtualNetworkConnectionsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, virtual_hub_name, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of a HubVirtualNetworkConnection.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
-        :param connection_name: The name of the vpn connection.
-        :type connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -64,9 +58,9 @@ class HubVirtualNetworkConnectionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
-            'connectionName': self._serialize.url("connection_name", connection_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str'),
+            'connectionName': self._serialize.url("self.config.connection_name", self.config.connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -105,14 +99,14 @@ class HubVirtualNetworkConnectionsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, virtual_hub_name, connection_name, hub_virtual_network_connection_parameters, custom_headers=None, raw=False, **operation_config):
+            self, hub_virtual_network_connection_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
-            'connectionName': self._serialize.url("connection_name", connection_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str'),
+            'connectionName': self._serialize.url("self.config.connection_name", self.config.connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -155,17 +149,10 @@ class HubVirtualNetworkConnectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, virtual_hub_name, connection_name, hub_virtual_network_connection_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, hub_virtual_network_connection_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a HubVirtualNetworkConnection resource if it doesn't exist.
         Updates the HubVirtualNetworkConnection if one exists.
 
-        :param resource_group_name: The resource group name of the
-         HubVirtualNetworkConnection.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the parent Virtual Hub.
-        :type virtual_hub_name: str
-        :param connection_name: The name of the HubVirtualNetworkConnection.
-        :type connection_name: str
         :param hub_virtual_network_connection_parameters: Parameters supplied
          to create or update HubVirtualNetworkConnection.
         :type hub_virtual_network_connection_parameters:
@@ -186,9 +173,6 @@ class HubVirtualNetworkConnectionsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            virtual_hub_name=virtual_hub_name,
-            connection_name=connection_name,
             hub_virtual_network_connection_parameters=hub_virtual_network_connection_parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -215,16 +199,16 @@ class HubVirtualNetworkConnectionsOperations(object):
 
 
     def _update_tags_initial(
-            self, resource_group_name, virtual_hub_name, connection_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, tags=None, custom_headers=None, raw=False, **operation_config):
         hub_virtual_network_connection_parameters = models.TagsObject(tags=tags)
 
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
-            'connectionName': self._serialize.url("connection_name", connection_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str'),
+            'connectionName': self._serialize.url("self.config.connection_name", self.config.connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -267,16 +251,9 @@ class HubVirtualNetworkConnectionsOperations(object):
         return deserialized
 
     def update_tags(
-            self, resource_group_name, virtual_hub_name, connection_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates HubVirtualNetworkConnection tags.
 
-        :param resource_group_name: The resource group name of the
-         HubVirtualNetworkConnection.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the parent Virtual Hub.
-        :type virtual_hub_name: str
-        :param connection_name: The name of the HubVirtualNetworkConnection.
-        :type connection_name: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -295,9 +272,6 @@ class HubVirtualNetworkConnectionsOperations(object):
          :class:`ErrorException<azure.mgmt.network.v2018_12_01.models.ErrorException>`
         """
         raw_result = self._update_tags_initial(
-            resource_group_name=resource_group_name,
-            virtual_hub_name=virtual_hub_name,
-            connection_name=connection_name,
             tags=tags,
             custom_headers=custom_headers,
             raw=True,
@@ -323,13 +297,9 @@ class HubVirtualNetworkConnectionsOperations(object):
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/hubVirtualNetworkConnections/{connectionName}'}
 
     def list(
-            self, resource_group_name, virtual_hub_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Retrieves the details of all HubVirtualNetworkConnections.
 
-        :param resource_group_name: The resource group name of the VirtualHub.
-        :type resource_group_name: str
-        :param virtual_hub_name: The name of the VirtualHub.
-        :type virtual_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -348,8 +318,8 @@ class HubVirtualNetworkConnectionsOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+                    'virtualHubName': self._serialize.url("self.config.virtual_hub_name", self.config.virtual_hub_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
