@@ -40,7 +40,7 @@ class IoTSecuritySolutionModel(Model):
     :param enabled: Is the solution Enabled for the customer. Default value:
      True .
     :type enabled: bool
-    :param export: Wether to save the raw events to the given workspace.
+    :param export: list of additional data to export by the system
     :type export: list[str or ~azure.mgmt.security.models.ExtraData]
     :param iot_hubs: Required. Related iot hub resources ID
     :type iot_hubs: list[str]
@@ -64,7 +64,7 @@ class IoTSecuritySolutionModel(Model):
         'workspace_customer_id': {'key': 'properties.workspaceCustomerId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'export': {'key': 'properties.export', 'type': '[ExtraData]'},
+        'export': {'key': 'properties.export', 'type': '[str]'},
         'iot_hubs': {'key': 'properties.iotHubs', 'type': '[str]'},
     }
 

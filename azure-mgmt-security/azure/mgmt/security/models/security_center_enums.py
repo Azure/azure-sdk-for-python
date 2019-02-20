@@ -32,8 +32,8 @@ class PricingTier(str, Enum):
 
 class ExtraData(str, Enum):
 
-    raw_events = "RawEvents"
-    twin_data = "TwinData"
+    raw_events = "RawEvents"  #: Export the raw events into the security solution workspace
+    twin_data = "TwinData"  #: Export the twin data into the analysis process
 
 
 class AutoProvision(str, Enum):
