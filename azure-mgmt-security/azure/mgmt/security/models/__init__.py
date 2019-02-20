@@ -11,10 +11,12 @@
 
 try:
     from .resource_py3 import Resource
+    from .tags_resource_py3 import TagsResource
     from .kind_py3 import Kind
     from .security_contact_py3 import SecurityContact
     from .pricing_py3 import Pricing
     from .workspace_setting_py3 import WorkspaceSetting
+    from .io_tsecurity_solution_model_py3 import IoTSecuritySolutionModel
     from .auto_provisioning_setting_py3 import AutoProvisioningSetting
     from .compliance_segment_py3 import ComplianceSegment
     from .compliance_py3 import Compliance
@@ -65,10 +67,12 @@ try:
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
 except (SyntaxError, ImportError):
     from .resource import Resource
+    from .tags_resource import TagsResource
     from .kind import Kind
     from .security_contact import SecurityContact
     from .pricing import Pricing
     from .workspace_setting import WorkspaceSetting
+    from .io_tsecurity_solution_model import IoTSecuritySolutionModel
     from .auto_provisioning_setting import AutoProvisioningSetting
     from .compliance_segment import ComplianceSegment
     from .compliance import Compliance
@@ -121,6 +125,7 @@ from .pricing_paged import PricingPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
+from .io_tsecurity_solution_model_paged import IoTSecuritySolutionModelPaged
 from .compliance_paged import CompliancePaged
 from .setting_paged import SettingPaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
@@ -137,6 +142,7 @@ from .security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
     PricingTier,
+    ExtraData,
     AutoProvision,
     SettingKind,
     ReportedSeverity,
@@ -151,10 +157,12 @@ from .security_center_enums import (
 
 __all__ = [
     'Resource',
+    'TagsResource',
     'Kind',
     'SecurityContact',
     'Pricing',
     'WorkspaceSetting',
+    'IoTSecuritySolutionModel',
     'AutoProvisioningSetting',
     'ComplianceSegment',
     'Compliance',
@@ -207,6 +215,7 @@ __all__ = [
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',
+    'IoTSecuritySolutionModelPaged',
     'CompliancePaged',
     'SettingPaged',
     'InformationProtectionPolicyPaged',
@@ -222,6 +231,7 @@ __all__ = [
     'AlertNotifications',
     'AlertsToAdmins',
     'PricingTier',
+    'ExtraData',
     'AutoProvision',
     'SettingKind',
     'ReportedSeverity',

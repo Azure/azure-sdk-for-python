@@ -13,6 +13,9 @@ from .pricings_operations import PricingsOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
 from .auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
+from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
+from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
+from .iot_security_solution_operations import IotSecuritySolutionOperations
 from .compliances_operations import CompliancesOperations
 from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
 from .settings_operations import SettingsOperations
@@ -32,6 +35,9 @@ __all__ = [
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
     'AutoProvisioningSettingsOperations',
+    'IoTSecuritySolutionsOperations',
+    'IoTSecuritySolutionsResourceGroupOperations',
+    'IotSecuritySolutionOperations',
     'CompliancesOperations',
     'AdvancedThreatProtectionOperations',
     'SettingsOperations',

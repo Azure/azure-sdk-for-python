@@ -30,6 +30,12 @@ class PricingTier(str, Enum):
     standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
 
 
+class ExtraData(str, Enum):
+
+    raw_events = "RawEvents"
+    twin_data = "TwinData"
+
+
 class AutoProvision(str, Enum):
 
     on = "On"  #: Install missing security agent on VMs automatically
