@@ -273,6 +273,14 @@ class HttpAuthenticationType(str, Enum):
     client_certificate = "ClientCertificate"
 
 
+class RestServiceAuthenticationType(str, Enum):
+
+    anonymous = "Anonymous"
+    basic = "Basic"
+    aad_service_principal = "AadServicePrincipal"
+    managed_service_identity = "ManagedServiceIdentity"
+
+
 class MongoDbAuthenticationType(str, Enum):
 
     basic = "Basic"
