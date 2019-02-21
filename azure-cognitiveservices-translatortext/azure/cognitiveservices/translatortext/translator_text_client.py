@@ -106,7 +106,7 @@ class TranslatorTextClient(SDKClient):
       }
     }
     ```
-    # Enter your subcription keys to try out Microsoft Translator.
+    # Enter your subscription keys to try out Microsoft Translator.
     Select the `Authorize` button and enter your Microsoft Translator subscription key, OR your `all in one Cognitive Services` subscription key. If you are using the all in one Cognitive Services key you will need to also enter your subscription region.
     ## Available regions are:
       `australiaeast`, `brazilsouth`, `canadacentral`, `centralindia`, `centraluseuap`, `eastasia`, `eastus`, `eastus2`, `japaneast`, `northeurope`, `southcentralus`, `southeastasia`, `uksouth`, `westcentralus`, `westeurope`, `westus`, `westus2`.

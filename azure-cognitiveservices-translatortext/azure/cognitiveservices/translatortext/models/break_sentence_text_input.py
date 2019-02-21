@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class BreakSentenceTextInput(Model):
-    """Text needed for breaksentence request .
+    """Text needed for break sentence request.
 
     :param text:
     :type text: str
