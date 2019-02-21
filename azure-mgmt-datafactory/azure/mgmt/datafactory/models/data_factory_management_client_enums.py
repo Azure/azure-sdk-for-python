@@ -77,6 +77,8 @@ class RunQueryFilterOperand(str, Enum):
     activity_type = "ActivityType"
     trigger_name = "TriggerName"
     trigger_run_timestamp = "TriggerRunTimestamp"
+    run_group_id = "RunGroupId"
+    latest_only = "LatestOnly"
 
 
 class RunQueryFilterOperator(str, Enum):
