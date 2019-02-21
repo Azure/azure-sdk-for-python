@@ -55,6 +55,12 @@ class AmazonS3Dataset(Dataset):
     :param version: The version for the S3 object. Type: string (or Expression
      with resultType string).
     :type version: object
+    :param modified_datetime_start: The start of S3 object's modified
+     datetime. Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of S3 object's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_end: object
     :param format: The format of files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used for the Amazon S3
@@ -82,6 +88,8 @@ class AmazonS3Dataset(Dataset):
         'key': {'key': 'typeProperties.key', 'type': 'object'},
         'prefix': {'key': 'typeProperties.prefix', 'type': 'object'},
         'version': {'key': 'typeProperties.version', 'type': 'object'},
+        'modified_datetime_start': {'key': 'typeProperties.modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'typeProperties.modifiedDatetimeEnd', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
@@ -92,6 +100,8 @@ class AmazonS3Dataset(Dataset):
         self.key = kwargs.get('key', None)
         self.prefix = kwargs.get('prefix', None)
         self.version = kwargs.get('version', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
         self.format = kwargs.get('format', None)
         self.compression = kwargs.get('compression', None)
         self.type = 'AmazonS3Object'

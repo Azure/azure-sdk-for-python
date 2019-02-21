@@ -27,6 +27,10 @@ class WebSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     connectioned to source data store. Type: integer (or Expression with
+     resultType integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -39,6 +43,7 @@ class WebSource(CopySource):
         'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
