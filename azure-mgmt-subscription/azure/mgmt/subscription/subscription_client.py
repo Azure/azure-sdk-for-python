@@ -34,14 +34,18 @@ class SubscriptionClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Subscription Id.
+    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -51,6 +55,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.subscription_id = subscription_id
 
 
 class SubscriptionClient(SDKClient):
@@ -73,13 +78,15 @@ class SubscriptionClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Subscription Id.
+    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = SubscriptionClientConfiguration(credentials, base_url)
+        self.config = SubscriptionClientConfiguration(credentials, subscription_id, base_url)
         super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -98,11 +105,9 @@ class SubscriptionClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
 
     def cancel_subscription(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Cancels the subscription.
 
-        :param subscription_id: Subscription Id.
-        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -119,7 +124,7 @@ class SubscriptionClient(SDKClient):
         # Construct URL
         url = self.cancel_subscription.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -157,11 +162,11 @@ class SubscriptionClient(SDKClient):
     cancel_subscription.metadata = {'url': '/providers/Microsoft.Subscription/subscriptions/{subscriptionId}/cancel'}
 
     def rename_subscription(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, subscription_name=None, custom_headers=None, raw=False, **operation_config):
         """Renames the subscription.
 
-        :param subscription_id: Subscription Id.
-        :type subscription_id: str
+        :param subscription_name: New subscription name
+        :type subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -173,12 +178,14 @@ class SubscriptionClient(SDKClient):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
+        body = models.GetSubscriptionName(subscription_name=subscription_name)
+
         api_version = "2018-11-01-preview"
 
         # Construct URL
         url = self.rename_subscription.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -189,6 +196,7 @@ class SubscriptionClient(SDKClient):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -196,8 +204,11 @@ class SubscriptionClient(SDKClient):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(body, 'GetSubscriptionName')
+
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
