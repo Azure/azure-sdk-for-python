@@ -28,8 +28,8 @@ class CloudEndpoint(ProxyResource):
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
-    :param storage_account_share_name: Storage Account Share name
-    :type storage_account_share_name: str
+    :param azure_file_share_name: Storage Account Share name
+    :type azure_file_share_name: str
     :param storage_account_tenant_id: Storage Account Tenant Id
     :type storage_account_tenant_id: str
     :param partnership_id: Partnership Id
@@ -58,7 +58,7 @@ class CloudEndpoint(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
-        'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
+        'azure_file_share_name': {'key': 'properties.azureFileShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
         'partnership_id': {'key': 'properties.partnershipId', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -71,7 +71,7 @@ class CloudEndpoint(ProxyResource):
     def __init__(self, **kwargs):
         super(CloudEndpoint, self).__init__(**kwargs)
         self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
-        self.storage_account_share_name = kwargs.get('storage_account_share_name', None)
+        self.azure_file_share_name = kwargs.get('azure_file_share_name', None)
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
         self.partnership_id = kwargs.get('partnership_id', None)
         self.friendly_name = kwargs.get('friendly_name', None)

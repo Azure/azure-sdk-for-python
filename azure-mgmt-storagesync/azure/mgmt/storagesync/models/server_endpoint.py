@@ -45,8 +45,9 @@ class ServerEndpoint(ProxyResource):
     :type last_workflow_id: str
     :param last_operation_name: Resource Last Operation Name
     :type last_operation_name: str
-    :param sync_status: Server Endpoint properties.
-    :type sync_status: ~azure.mgmt.storagesync.models.ServerEndpointHealth
+    :ivar sync_status: Server Endpoint sync status
+    :vartype sync_status:
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncStatus
     :param offline_data_transfer: Offline data transfer. Possible values
      include: 'on', 'off'
     :type offline_data_transfer: str or ~azure.mgmt.storagesync.models.enum
@@ -66,6 +67,7 @@ class ServerEndpoint(ProxyResource):
         'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
         'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
+        'sync_status': {'readonly': True},
         'offline_data_transfer_storage_account_resource_id': {'readonly': True},
         'offline_data_transfer_storage_account_tenant_id': {'readonly': True},
     }
@@ -83,7 +85,7 @@ class ServerEndpoint(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'last_workflow_id': {'key': 'properties.lastWorkflowId', 'type': 'str'},
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
-        'sync_status': {'key': 'properties.syncStatus', 'type': 'ServerEndpointHealth'},
+        'sync_status': {'key': 'properties.syncStatus', 'type': 'ServerEndpointSyncStatus'},
         'offline_data_transfer': {'key': 'properties.offlineDataTransfer', 'type': 'str'},
         'offline_data_transfer_storage_account_resource_id': {'key': 'properties.offlineDataTransferStorageAccountResourceId', 'type': 'str'},
         'offline_data_transfer_storage_account_tenant_id': {'key': 'properties.offlineDataTransferStorageAccountTenantId', 'type': 'str'},
@@ -101,7 +103,7 @@ class ServerEndpoint(ProxyResource):
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.last_workflow_id = kwargs.get('last_workflow_id', None)
         self.last_operation_name = kwargs.get('last_operation_name', None)
-        self.sync_status = kwargs.get('sync_status', None)
+        self.sync_status = None
         self.offline_data_transfer = kwargs.get('offline_data_transfer', None)
         self.offline_data_transfer_storage_account_resource_id = None
         self.offline_data_transfer_storage_account_tenant_id = None
