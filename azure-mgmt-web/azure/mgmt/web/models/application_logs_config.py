@@ -32,8 +32,8 @@ class ApplicationLogsConfig(Model):
         'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageApplicationLogsConfig'},
     }
 
-    def __init__(self, file_system=None, azure_table_storage=None, azure_blob_storage=None):
-        super(ApplicationLogsConfig, self).__init__()
-        self.file_system = file_system
-        self.azure_table_storage = azure_table_storage
-        self.azure_blob_storage = azure_blob_storage
+    def __init__(self, **kwargs):
+        super(ApplicationLogsConfig, self).__init__(**kwargs)
+        self.file_system = kwargs.get('file_system', None)
+        self.azure_table_storage = kwargs.get('azure_table_storage', None)
+        self.azure_blob_storage = kwargs.get('azure_blob_storage', None)

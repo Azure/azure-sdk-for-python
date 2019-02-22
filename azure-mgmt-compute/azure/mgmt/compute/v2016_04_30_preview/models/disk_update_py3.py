@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_update import ResourceUpdate
+from .resource_update_py3 import ResourceUpdate
 
 
 class DiskUpdate(ResourceUpdate):

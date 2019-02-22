@@ -22,17 +22,16 @@ class EnvelopeEncryption(Model):
     :param content_keys: Representing default content key for each encryption
      scheme and separate content keys for specific tracks
     :type content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
-    :param custom_license_acquisition_url_template:
-     LicenseAcquistionUrlTemplate is used to point to user speicified service
-     to delivery content keys
-    :type custom_license_acquisition_url_template: str
+    :param custom_key_acquisition_url_template: KeyAcquisitionUrlTemplate is
+     used to point to user specified service to delivery content keys
+    :type custom_key_acquisition_url_template: str
     """
 
     _attribute_map = {
         'enabled_protocols': {'key': 'enabledProtocols', 'type': 'EnabledProtocols'},
         'clear_tracks': {'key': 'clearTracks', 'type': '[TrackSelection]'},
         'content_keys': {'key': 'contentKeys', 'type': 'StreamingPolicyContentKeys'},
-        'custom_license_acquisition_url_template': {'key': 'customLicenseAcquisitionUrlTemplate', 'type': 'str'},
+        'custom_key_acquisition_url_template': {'key': 'customKeyAcquisitionUrlTemplate', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -40,4 +39,4 @@ class EnvelopeEncryption(Model):
         self.enabled_protocols = kwargs.get('enabled_protocols', None)
         self.clear_tracks = kwargs.get('clear_tracks', None)
         self.content_keys = kwargs.get('content_keys', None)
-        self.custom_license_acquisition_url_template = kwargs.get('custom_license_acquisition_url_template', None)
+        self.custom_key_acquisition_url_template = kwargs.get('custom_key_acquisition_url_template', None)

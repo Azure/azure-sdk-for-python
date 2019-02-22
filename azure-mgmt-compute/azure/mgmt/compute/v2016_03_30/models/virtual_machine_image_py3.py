@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .virtual_machine_image_resource import VirtualMachineImageResource
+from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
 
 
 class VirtualMachineImage(VirtualMachineImageResource):

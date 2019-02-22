@@ -67,19 +67,19 @@ class FaceAttributes(Model):
         'noise': {'key': 'noise', 'type': 'Noise'},
     }
 
-    def __init__(self, age=None, gender=None, smile=None, facial_hair=None, glasses=None, head_pose=None, emotion=None, hair=None, makeup=None, occlusion=None, accessories=None, blur=None, exposure=None, noise=None):
-        super(FaceAttributes, self).__init__()
-        self.age = age
-        self.gender = gender
-        self.smile = smile
-        self.facial_hair = facial_hair
-        self.glasses = glasses
-        self.head_pose = head_pose
-        self.emotion = emotion
-        self.hair = hair
-        self.makeup = makeup
-        self.occlusion = occlusion
-        self.accessories = accessories
-        self.blur = blur
-        self.exposure = exposure
-        self.noise = noise
+    def __init__(self, **kwargs):
+        super(FaceAttributes, self).__init__(**kwargs)
+        self.age = kwargs.get('age', None)
+        self.gender = kwargs.get('gender', None)
+        self.smile = kwargs.get('smile', None)
+        self.facial_hair = kwargs.get('facial_hair', None)
+        self.glasses = kwargs.get('glasses', None)
+        self.head_pose = kwargs.get('head_pose', None)
+        self.emotion = kwargs.get('emotion', None)
+        self.hair = kwargs.get('hair', None)
+        self.makeup = kwargs.get('makeup', None)
+        self.occlusion = kwargs.get('occlusion', None)
+        self.accessories = kwargs.get('accessories', None)
+        self.blur = kwargs.get('blur', None)
+        self.exposure = kwargs.get('exposure', None)
+        self.noise = kwargs.get('noise', None)

@@ -53,6 +53,9 @@ from .reservation_order_response_paged import ReservationOrderResponsePaged
 from .reservation_response_paged import ReservationResponsePaged
 from .operation_response_paged import OperationResponsePaged
 from .azure_reservation_api_enums import (
+    ReservationStatusCode,
+    ErrorResponseCode,
+    ReservationTerm,
     ReservedResourceType,
     InstanceFlexibility,
     AppliedScopeType,
@@ -81,6 +84,9 @@ __all__ = [
     'ReservationOrderResponsePaged',
     'ReservationResponsePaged',
     'OperationResponsePaged',
+    'ReservationStatusCode',
+    'ErrorResponseCode',
+    'ReservationTerm',
     'ReservedResourceType',
     'InstanceFlexibility',
     'AppliedScopeType',

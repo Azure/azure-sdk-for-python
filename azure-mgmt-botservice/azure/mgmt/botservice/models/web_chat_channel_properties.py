@@ -33,6 +33,7 @@ class WebChatChannelProperties(Model):
         'sites': {'key': 'sites', 'type': '[WebChatSite]'},
     }
 
-    def __init__(self, sites=None):
+    def __init__(self, **kwargs):
+        super(WebChatChannelProperties, self).__init__(**kwargs)
         self.web_chat_embed_code = None
-        self.sites = sites
+        self.sites = kwargs.get('sites', None)

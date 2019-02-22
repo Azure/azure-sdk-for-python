@@ -27,7 +27,7 @@ class ImageType(Model):
         'line_drawing_type': {'key': 'lineDrawingType', 'type': 'float'},
     }
 
-    def __init__(self, clip_art_type=None, line_drawing_type=None):
-        super(ImageType, self).__init__()
-        self.clip_art_type = clip_art_type
-        self.line_drawing_type = line_drawing_type
+    def __init__(self, **kwargs):
+        super(ImageType, self).__init__(**kwargs)
+        self.clip_art_type = kwargs.get('clip_art_type', None)
+        self.line_drawing_type = kwargs.get('line_drawing_type', None)

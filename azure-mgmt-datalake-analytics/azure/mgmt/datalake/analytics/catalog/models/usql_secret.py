@@ -43,10 +43,10 @@ class USqlSecret(CatalogItem):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, name=None, creation_time=None, uri=None, password=None):
-        super(USqlSecret, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.name = name
-        self.creation_time = creation_time
-        self.uri = uri
-        self.password = password
+    def __init__(self, **kwargs):
+        super(USqlSecret, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.name = kwargs.get('name', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.uri = kwargs.get('uri', None)
+        self.password = kwargs.get('password', None)

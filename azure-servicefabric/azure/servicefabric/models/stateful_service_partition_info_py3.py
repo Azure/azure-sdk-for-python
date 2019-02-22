@@ -41,12 +41,12 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
      returns the duration since it has been in that state. This field is using
      ISO8601 format for specifying the duration.
     :type last_quorum_loss_duration: timedelta
-    :param current_configuration_epoch: An Epoch is a configuration number for
-     the partition as a whole. When the configuration of the replica set
-     changes, for example when the Primary replica changes, the operations that
-     are replicated from the new Primary replica are said to be a new Epoch
-     from the ones which were sent by the old Primary replica.
-    :type current_configuration_epoch: ~azure.servicefabric.models.Epoch
+    :param primary_epoch: An Epoch is a configuration number for the partition
+     as a whole. When the configuration of the replica set changes, for example
+     when the Primary replica changes, the operations that are replicated from
+     the new Primary replica are said to be a new Epoch from the ones which
+     were sent by the old Primary replica.
+    :type primary_epoch: ~azure.servicefabric.models.Epoch
     """
 
     _validation = {
@@ -61,13 +61,13 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
         'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'long'},
         'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'long'},
         'last_quorum_loss_duration': {'key': 'LastQuorumLossDuration', 'type': 'duration'},
-        'current_configuration_epoch': {'key': 'CurrentConfigurationEpoch', 'type': 'Epoch'},
+        'primary_epoch': {'key': 'PrimaryEpoch', 'type': 'Epoch'},
     }
 
-    def __init__(self, *, health_state=None, partition_status=None, partition_information=None, target_replica_set_size: int=None, min_replica_set_size: int=None, last_quorum_loss_duration=None, current_configuration_epoch=None, **kwargs) -> None:
+    def __init__(self, *, health_state=None, partition_status=None, partition_information=None, target_replica_set_size: int=None, min_replica_set_size: int=None, last_quorum_loss_duration=None, primary_epoch=None, **kwargs) -> None:
         super(StatefulServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information, **kwargs)
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.last_quorum_loss_duration = last_quorum_loss_duration
-        self.current_configuration_epoch = current_configuration_epoch
+        self.primary_epoch = primary_epoch
         self.service_kind = 'Stateful'

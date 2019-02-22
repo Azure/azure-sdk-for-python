@@ -27,7 +27,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
@@ -42,6 +42,11 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type last_recovery_point: datetime
     :param backup_set_name: Name of the backup set the backup item belongs to
     :type backup_set_name: str
+    :param create_mode: Create mode to indicate recovery of existing soft
+     deleted data source or creation of new data source. Possible values
+     include: 'Invalid', 'Default', 'Recover'
+    :type create_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.CreateMode
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
@@ -88,6 +93,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
+        'create_mode': {'key': 'createMode', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},

@@ -23,7 +23,7 @@ class BMSPOQueryObject(Model):
     :param workload_type: Workload type. Possible values include: 'Invalid',
      'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint',
      'VMwareVM', 'SystemState', 'Client', 'GenericDataSource', 'SQLDataBase',
-     'AzureFileShare'
+     'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param container_name: Full name of the container whose Protectable

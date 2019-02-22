@@ -18,18 +18,23 @@ class Export(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar platform: Possible values include: 'CoreML', 'TensorFlow',
-     'DockerFile', 'ONNX'
+    :ivar platform: Platform of the export. Possible values include: 'CoreML',
+     'TensorFlow', 'DockerFile', 'ONNX'
     :vartype platform: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
-    :ivar status: Possible values include: 'Exporting', 'Failed', 'Done'
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatformModel
+    :ivar status: Status of the export. Possible values include: 'Exporting',
+     'Failed', 'Done'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportStatusModel
-    :ivar download_uri:
+    :ivar download_uri: URI used to download the model.
     :vartype download_uri: str
-    :ivar flavor: Possible values include: 'Linux', 'Windows'
+    :ivar flavor: Flavor of the export. Possible values include: 'Linux',
+     'Windows', 'ONNX10', 'ONNX12'
     :vartype flavor: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavorModel
+    :ivar newer_version_available: Indicates an updated version of the export
+     package is available and should be re-exported for the latest changes.
+    :vartype newer_version_available: bool
     """
 
     _validation = {
@@ -37,6 +42,7 @@ class Export(Model):
         'status': {'readonly': True},
         'download_uri': {'readonly': True},
         'flavor': {'readonly': True},
+        'newer_version_available': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,6 +50,7 @@ class Export(Model):
         'status': {'key': 'status', 'type': 'str'},
         'download_uri': {'key': 'downloadUri', 'type': 'str'},
         'flavor': {'key': 'flavor', 'type': 'str'},
+        'newer_version_available': {'key': 'newerVersionAvailable', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -52,3 +59,4 @@ class Export(Model):
         self.status = None
         self.download_uri = None
         self.flavor = None
+        self.newer_version_available = None

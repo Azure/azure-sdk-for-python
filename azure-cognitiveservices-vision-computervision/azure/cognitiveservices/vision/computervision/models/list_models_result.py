@@ -31,6 +31,6 @@ class ListModelsResult(Model):
         'models_property': {'key': 'models', 'type': '[ModelDescription]'},
     }
 
-    def __init__(self):
-        super(ListModelsResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(ListModelsResult, self).__init__(**kwargs)
         self.models_property = None

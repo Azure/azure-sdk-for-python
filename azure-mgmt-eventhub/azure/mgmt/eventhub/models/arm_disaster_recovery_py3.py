@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class ArmDisasterRecovery(Resource):
@@ -31,7 +31,7 @@ class ArmDisasterRecovery(Resource):
     :vartype provisioning_state: str or
      ~azure.mgmt.eventhub.models.ProvisioningStateDR
     :param partner_namespace: ARM Id of the Primary/Secondary eventhub
-     namespace name, which is part of GEO DR pairning
+     namespace name, which is part of GEO DR pairing
     :type partner_namespace: str
     :param alternate_name: Alternate name specified when alias and namespace
      names are same.
@@ -40,6 +40,9 @@ class ArmDisasterRecovery(Resource):
      'PrimaryNotReplicating' or 'Secondary'. Possible values include:
      'Primary', 'PrimaryNotReplicating', 'Secondary'
     :vartype role: str or ~azure.mgmt.eventhub.models.RoleDisasterRecovery
+    :ivar pending_replication_operations_count: Number of entities pending to
+     be replicated.
+    :vartype pending_replication_operations_count: long
     """
 
     _validation = {
@@ -48,6 +51,7 @@ class ArmDisasterRecovery(Resource):
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'role': {'readonly': True},
+        'pending_replication_operations_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,6 +62,7 @@ class ArmDisasterRecovery(Resource):
         'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
         'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
         'role': {'key': 'properties.role', 'type': 'RoleDisasterRecovery'},
+        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
     }
 
     def __init__(self, *, partner_namespace: str=None, alternate_name: str=None, **kwargs) -> None:
@@ -66,3 +71,4 @@ class ArmDisasterRecovery(Resource):
         self.partner_namespace = partner_namespace
         self.alternate_name = alternate_name
         self.role = None
+        self.pending_replication_operations_count = None

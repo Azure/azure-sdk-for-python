@@ -8,7 +8,6 @@
 import unittest
 
 import azure.mgmt.network.models
-from testutils.common_recordingtestcase import record
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,
@@ -70,7 +69,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             resource_group.name,
             nic_info.name
         )
-         
+
         nics = list(self.network_client.network_interfaces.list(
             resource_group.name
         ))
@@ -591,121 +590,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.assertTrue(all(hasattr(u, 'bandwidths_offered') for u in ersp))
 
     @ResourceGroupPreparer()
-    def test_express_route_circuit(self, resource_group, location):
-        express_route_name = self.get_resource_name('pyexpressroute')
-        async_express_route = self.network_client.express_route_circuits.create_or_update(
-            resource_group.name,
-            express_route_name,
-            {
-                "location": location,
-                "sku": {
-                    "name": "Standard_MeteredData",
-                    "tier": "Standard",
-                    "family": "MeteredData"
-                },
-                "service_provider_properties": {
-                    "service_provider_name": "Comcast",
-                    "peering_location": "Chicago",
-                    "bandwidth_in_mbps": 100
-                }
-            }
-        )
-        express_route = async_express_route.result()
-
-        express_route = self.network_client.express_route_circuits.get(
-            resource_group.name,
-            express_route_name
-        )
-
-        routes = list(self.network_client.express_route_circuits.list(
-            resource_group.name
-        ))
-        self.assertEqual(len(routes), 1)
-
-        routes = list(self.network_client.express_route_circuits.list_all())
-        self.assertGreater(len(routes), 0)
-
-        stats = self.network_client.express_route_circuits.get_stats(
-            resource_group.name,
-            express_route_name
-        )
-        self.assertIsNotNone(stats)
-
-        async_peering = self.network_client.express_route_circuit_peerings.create_or_update(
-            resource_group.name,
-            express_route_name,
-            'AzurePublicPeering',
-            {
-                "peering_type": "AzurePublicPeering",
-                "peer_asn": 100, 
-                "primary_peer_address_prefix": "192.168.1.0/30",
-                "secondary_peer_address_prefix": "192.168.2.0/30",
-                "vlan_id": 200,
-            }
-        )
-        peering = async_peering.result()
-
-        peering = self.network_client.express_route_circuit_peerings.get(
-            resource_group.name,
-            express_route_name,
-            'AzurePublicPeering'
-        )
-
-        peerings = list(self.network_client.express_route_circuit_peerings.list(
-            resource_group.name,
-            express_route_name
-        ))
-        self.assertEqual(len(peerings), 1)
-
-        stats = self.network_client.express_route_circuits.get_peering_stats(
-            resource_group.name,
-            express_route_name,
-            'AzurePublicPeering'
-        )
-        self.assertIsNotNone(stats)
-
-        auth_name = self.get_resource_name('pyauth')
-        async_auth = self.network_client.express_route_circuit_authorizations.create_or_update(
-            resource_group.name,
-            express_route_name,
-            auth_name,
-            {}
-        )
-        auth = async_auth.result()
-
-        auth = self.network_client.express_route_circuit_authorizations.get(
-            resource_group.name,
-            express_route_name,
-            auth_name
-        )
-
-        auths = list(self.network_client.express_route_circuit_authorizations.list(
-            resource_group.name,
-            express_route_name
-        ))
-        self.assertEqual(len(auths), 1)
-
-        async_auth = self.network_client.express_route_circuit_authorizations.delete(
-            resource_group.name,
-            express_route_name,
-            auth_name
-        )
-        async_auth.wait()
-
-        async_peering = self.network_client.express_route_circuit_peerings.delete(
-            resource_group.name,
-            express_route_name,
-            'AzurePublicPeering'
-        )
-        async_peering.wait()
-
-        async_express_route = self.network_client.express_route_circuits.delete(
-            resource_group.name,
-            express_route_name
-        )
-        async_express_route.wait()
-
-    @ResourceGroupPreparer()
     def test_virtual_network_gateway_operations(self, resource_group, location):
         # https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal
 
@@ -801,7 +685,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             gw_params
         )
         vng = async_create.result()
-        self.assertEquals(vng.name, vng_name)
+        self.assertEqual(vng.name, vng_name)
 
 
 #------------------------------------------------------------------------------

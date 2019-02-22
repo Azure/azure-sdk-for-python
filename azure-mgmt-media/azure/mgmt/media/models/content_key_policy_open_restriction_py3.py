@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .content_key_policy_restriction import ContentKeyPolicyRestriction
+from .content_key_policy_restriction_py3 import ContentKeyPolicyRestriction
 
 
 class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):

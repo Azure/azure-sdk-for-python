@@ -18,20 +18,20 @@ class Project(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the project id
+    :ivar id: Gets The project id.
     :vartype id: str
-    :param name: Gets or sets the name of the project
+    :param name: Gets or sets the name of the project.
     :type name: str
-    :param description: Gets or sets the description of the project
+    :param description: Gets or sets the description of the project.
     :type description: str
-    :param settings: Gets or sets the project settings
+    :param settings: Gets or sets the project settings.
     :type settings:
      ~azure.cognitiveservices.vision.customvision.training.models.ProjectSettings
-    :ivar created: Gets the date this project was created
+    :ivar created: Gets the date this project was created.
     :vartype created: datetime
-    :ivar last_modified: Gets the date this project was last modifed
+    :ivar last_modified: Gets the date this project was last modified.
     :vartype last_modified: datetime
-    :ivar thumbnail_uri: Gets the thumbnail url representing the project
+    :ivar thumbnail_uri: Gets the thumbnail url representing the project.
     :vartype thumbnail_uri: str
     """
 

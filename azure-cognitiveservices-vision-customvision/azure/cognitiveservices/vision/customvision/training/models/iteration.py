@@ -18,29 +18,33 @@ class Iteration(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the iteration
+    :ivar id: Gets the id of the iteration.
     :vartype id: str
-    :param name: Gets or sets the name of the iteration
+    :param name: Gets or sets the name of the iteration.
     :type name: str
     :param is_default: Gets or sets a value indicating whether the iteration
-     is the default iteration for the project
+     is the default iteration for the project.
     :type is_default: bool
-    :ivar status: Gets the current iteration status
+    :ivar status: Gets the current iteration status.
     :vartype status: str
-    :ivar created: Gets the time this iteration was completed
+    :ivar created: Gets the time this iteration was completed.
     :vartype created: datetime
-    :ivar last_modified: Gets the time this iteration was last modified
+    :ivar last_modified: Gets the time this iteration was last modified.
     :vartype last_modified: datetime
-    :ivar trained_at: Gets the time this iteration was last modified
+    :ivar trained_at: Gets the time this iteration was last modified.
     :vartype trained_at: datetime
-    :ivar project_id: Gets the project id of the iteration
+    :ivar project_id: Gets The project id. of the iteration.
     :vartype project_id: str
     :ivar exportable: Whether the iteration can be exported to another format
-     for download
+     for download.
     :vartype exportable: bool
     :ivar domain_id: Get or sets a guid of the domain the iteration has been
-     trained on
+     trained on.
     :vartype domain_id: str
+    :ivar classification_type: Gets the classification type of the project.
+     Possible values include: 'Multiclass', 'Multilabel'
+    :vartype classification_type: str or
+     ~azure.cognitiveservices.vision.customvision.training.models.Classifier
     """
 
     _validation = {
@@ -52,6 +56,7 @@ class Iteration(Model):
         'project_id': {'readonly': True},
         'exportable': {'readonly': True},
         'domain_id': {'readonly': True},
+        'classification_type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -65,6 +70,7 @@ class Iteration(Model):
         'project_id': {'key': 'projectId', 'type': 'str'},
         'exportable': {'key': 'exportable', 'type': 'bool'},
         'domain_id': {'key': 'domainId', 'type': 'str'},
+        'classification_type': {'key': 'classificationType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -79,3 +85,4 @@ class Iteration(Model):
         self.project_id = None
         self.exportable = None
         self.domain_id = None
+        self.classification_type = None

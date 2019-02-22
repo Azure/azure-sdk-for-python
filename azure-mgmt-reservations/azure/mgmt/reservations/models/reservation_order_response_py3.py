@@ -39,12 +39,9 @@ class ReservationOrderResponse(Model):
      Reservation.
     :type original_quantity: int
     :param term: Possible values include: 'P1Y', 'P3Y'
-    :type term: str or ~azure.mgmt.reservations.models.enum
-    :param provisioning_state: Possible values include: 'Creating',
-     'PendingResourceHold', 'ConfirmedResourceHold', 'PendingBilling',
-     'ConfirmedBilling', 'Created', 'Succeeded', 'Cancelled', 'Expired',
-     'BillingFailed', 'Failed', 'Split', 'Merged'
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.enum
+    :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :param provisioning_state: Current state of the reservation.
+    :type provisioning_state: str
     :param reservations:
     :type reservations:
      list[~azure.mgmt.reservations.models.ReservationResponse]
@@ -73,7 +70,7 @@ class ReservationOrderResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: int=None, display_name: str=None, request_date_time=None, created_date_time=None, expiry_date=None, original_quantity: int=None, term=None, provisioning_state=None, reservations=None, **kwargs) -> None:
+    def __init__(self, *, etag: int=None, display_name: str=None, request_date_time=None, created_date_time=None, expiry_date=None, original_quantity: int=None, term=None, provisioning_state: str=None, reservations=None, **kwargs) -> None:
         super(ReservationOrderResponse, self).__init__(**kwargs)
         self.etag = etag
         self.id = None

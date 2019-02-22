@@ -23,7 +23,8 @@ class Catalog(Model):
     :ivar name: The name of SKU
     :vartype name: str
     :ivar terms: Available reservation terms for this resource
-    :vartype terms: list[str]
+    :vartype terms: list[str or
+     ~azure.mgmt.reservations.models.ReservationTerm]
     :ivar locations:
     :vartype locations: list[str]
     :ivar sku_properties:

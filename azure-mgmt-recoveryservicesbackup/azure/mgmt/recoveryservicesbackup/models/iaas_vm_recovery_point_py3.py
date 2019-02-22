@@ -46,8 +46,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type is_managed_virtual_machine: bool
     :param virtual_machine_size: Virtual Machine Size
     :type virtual_machine_size: str
-    :param original_storage_account_option: Original SA Option
+    :param original_storage_account_option: Original Storage Account Option
     :type original_storage_account_option: bool
+    :param os_type: OS type
+    :type os_type: str
     """
 
     _validation = {
@@ -67,9 +69,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'is_managed_virtual_machine': {'key': 'isManagedVirtualMachine', 'type': 'bool'},
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
+        'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
@@ -82,4 +85,5 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.is_managed_virtual_machine = is_managed_virtual_machine
         self.virtual_machine_size = virtual_machine_size
         self.original_storage_account_option = original_storage_account_option
+        self.os_type = os_type
         self.object_type = 'IaasVMRecoveryPoint'

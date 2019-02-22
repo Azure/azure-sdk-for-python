@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .run_command_document_base import RunCommandDocumentBase
+from .run_command_document_base_py3 import RunCommandDocumentBase
 
 
 class RunCommandDocument(RunCommandDocumentBase):

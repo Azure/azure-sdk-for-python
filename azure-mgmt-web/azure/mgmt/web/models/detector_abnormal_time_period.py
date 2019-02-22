@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class DetectorAbnormalTimePeriod(Model):
     """Class representing Abnormal Time Period detected.
 
-    :param start_time: Start time of the corelated event
+    :param start_time: Start time of the correlated event
     :type start_time: datetime
-    :param end_time: End time of the corelated event
+    :param end_time: End time of the correlated event
     :type end_time: datetime
     :param message: Message describing the event
     :type message: str
@@ -46,13 +46,13 @@ class DetectorAbnormalTimePeriod(Model):
         'solutions': {'key': 'solutions', 'type': '[Solution]'},
     }
 
-    def __init__(self, start_time=None, end_time=None, message=None, source=None, priority=None, meta_data=None, type=None, solutions=None):
-        super(DetectorAbnormalTimePeriod, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.message = message
-        self.source = source
-        self.priority = priority
-        self.meta_data = meta_data
-        self.type = type
-        self.solutions = solutions
+    def __init__(self, **kwargs):
+        super(DetectorAbnormalTimePeriod, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.message = kwargs.get('message', None)
+        self.source = kwargs.get('source', None)
+        self.priority = kwargs.get('priority', None)
+        self.meta_data = kwargs.get('meta_data', None)
+        self.type = kwargs.get('type', None)
+        self.solutions = kwargs.get('solutions', None)
