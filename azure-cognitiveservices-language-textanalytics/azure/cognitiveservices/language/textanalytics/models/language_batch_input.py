@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class BatchInput(Model):
-    """BatchInput.
+class LanguageBatchInput(Model):
+    """LanguageBatchInput.
 
     :param documents:
     :type documents:
-     list[~azure.cognitiveservices.language.textanalytics.models.Input]
+     list[~azure.cognitiveservices.language.textanalytics.models.LanguageInput]
     """
 
     _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[Input]'},
+        'documents': {'key': 'documents', 'type': '[LanguageInput]'},
     }
 
-    def __init__(self, *, documents=None, **kwargs) -> None:
-        super(BatchInput, self).__init__(**kwargs)
-        self.documents = documents
+    def __init__(self, **kwargs):
+        super(LanguageBatchInput, self).__init__(**kwargs)
+        self.documents = kwargs.get('documents', None)

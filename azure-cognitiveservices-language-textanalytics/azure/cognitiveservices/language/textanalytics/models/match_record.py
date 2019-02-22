@@ -12,9 +12,17 @@
 from msrest.serialization import Model
 
 
-class MatchRecordV2dot1(Model):
-    """MatchRecordV2dot1.
+class MatchRecord(Model):
+    """MatchRecord.
 
+    :param wikipedia_score: (optional) If a well-known item with Wikipedia
+     link is recognized, a decimal number denoting the confidence level of the
+     Wikipedia info will be returned.
+    :type wikipedia_score: float
+    :param entity_type_score: (optional) If an entity type is recognized, a
+     decimal number denoting the confidence level of the entity type will be
+     returned.
+    :type entity_type_score: float
     :param text: Entity text as appears in the request.
     :type text: str
     :param offset: Start position (in Unicode characters) for the entity match
@@ -25,13 +33,17 @@ class MatchRecordV2dot1(Model):
     """
 
     _attribute_map = {
+        'wikipedia_score': {'key': 'wikipediaScore', 'type': 'float'},
+        'entity_type_score': {'key': 'entityTypeScore', 'type': 'float'},
         'text': {'key': 'text', 'type': 'str'},
         'offset': {'key': 'offset', 'type': 'int'},
         'length': {'key': 'length', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
-        super(MatchRecordV2dot1, self).__init__(**kwargs)
+        super(MatchRecord, self).__init__(**kwargs)
+        self.wikipedia_score = kwargs.get('wikipedia_score', None)
+        self.entity_type_score = kwargs.get('entity_type_score', None)
         self.text = kwargs.get('text', None)
         self.offset = kwargs.get('offset', None)
         self.length = kwargs.get('length', None)

@@ -15,27 +15,25 @@ from msrest.serialization import Model
 class LanguageBatchResultItem(Model):
     """LanguageBatchResultItem.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Unique document identifier.
-    :vartype id: str
-    :ivar detected_languages: A list of extracted languages.
-    :vartype detected_languages:
+    :param id: Unique, non-empty document identifier.
+    :type id: str
+    :param detected_languages: A list of extracted languages.
+    :type detected_languages:
      list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
+    :param statistics: (Optional) if showStats=true was specified in the
+     request this field will contain information about the document payload.
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
-
-    _validation = {
-        'id': {'readonly': True},
-        'detected_languages': {'readonly': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, id: str=None, detected_languages=None, statistics=None, **kwargs) -> None:
         super(LanguageBatchResultItem, self).__init__(**kwargs)
-        self.id = None
-        self.detected_languages = None
+        self.id = id
+        self.detected_languages = detected_languages
+        self.statistics = statistics
