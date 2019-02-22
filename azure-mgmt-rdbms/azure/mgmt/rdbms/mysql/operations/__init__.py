@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from .servers_operations import ServersOperations
-from .server_operations import ServerOperations
 from .replicas_operations import ReplicasOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
@@ -24,7 +23,6 @@ from .operations import Operations
 
 __all__ = [
     'ServersOperations',
-    'ServerOperations',
     'ReplicasOperations',
     'FirewallRulesOperations',
     'VirtualNetworkRulesOperations',
