@@ -15,18 +15,17 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_details_operations import UsageDetailsOperations
 from .operations.marketplaces_operations import MarketplacesOperations
+from .operations.budgets_operations import BudgetsOperations
+from .operations.tags_operations import TagsOperations
+from .operations.charges_operations import ChargesOperations
 from .operations.balances_operations import BalancesOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
-from .operations.budgets_operations import BudgetsOperations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.tags_operations import TagsOperations
 from .operations.forecasts_operations import ForecastsOperations
 from .operations.operations import Operations
 from .operations.aggregated_cost_operations import AggregatedCostOperations
-from .operations.charges_operations import ChargesOperations
-from .operations.tenants_operations import TenantsOperations
 from . import models
 
 
@@ -72,6 +71,12 @@ class ConsumptionManagementClient(SDKClient):
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
     :ivar marketplaces: Marketplaces operations
     :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
+    :ivar budgets: Budgets operations
+    :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
+    :ivar tags: Tags operations
+    :vartype tags: azure.mgmt.consumption.operations.TagsOperations
+    :ivar charges: Charges operations
+    :vartype charges: azure.mgmt.consumption.operations.ChargesOperations
     :ivar balances: Balances operations
     :vartype balances: azure.mgmt.consumption.operations.BalancesOperations
     :ivar reservations_summaries: ReservationsSummaries operations
@@ -80,22 +85,14 @@ class ConsumptionManagementClient(SDKClient):
     :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
     :ivar reservation_recommendations: ReservationRecommendations operations
     :vartype reservation_recommendations: azure.mgmt.consumption.operations.ReservationRecommendationsOperations
-    :ivar budgets: Budgets operations
-    :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
-    :ivar tags: Tags operations
-    :vartype tags: azure.mgmt.consumption.operations.TagsOperations
     :ivar forecasts: Forecasts operations
     :vartype forecasts: azure.mgmt.consumption.operations.ForecastsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar aggregated_cost: AggregatedCost operations
     :vartype aggregated_cost: azure.mgmt.consumption.operations.AggregatedCostOperations
-    :ivar charges: Charges operations
-    :vartype charges: azure.mgmt.consumption.operations.ChargesOperations
-    :ivar tenants: Tenants operations
-    :vartype tenants: azure.mgmt.consumption.operations.TenantsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -112,13 +109,19 @@ class ConsumptionManagementClient(SDKClient):
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-10-01'
+        self.api_version = '2019-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.usage_details = UsageDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.marketplaces = MarketplacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.budgets = BudgetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.charges = ChargesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.balances = BalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -128,19 +131,11 @@ class ConsumptionManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.reservation_recommendations = ReservationRecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.budgets = BudgetsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.forecasts = ForecastsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.aggregated_cost = AggregatedCostOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.charges = ChargesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)

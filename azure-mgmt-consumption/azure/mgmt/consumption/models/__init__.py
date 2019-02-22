@@ -13,8 +13,6 @@ try:
     from .meter_details_py3 import MeterDetails
     from .usage_detail_py3 import UsageDetail
     from .marketplace_py3 import Marketplace
-    from .tenant_py3 import Tenant
-    from .tenant_list_result_py3 import TenantListResult
     from .balance_properties_new_purchases_details_item_py3 import BalancePropertiesNewPurchasesDetailsItem
     from .balance_properties_adjustment_details_item_py3 import BalancePropertiesAdjustmentDetailsItem
     from .balance_py3 import Balance
@@ -47,8 +45,6 @@ except (SyntaxError, ImportError):
     from .meter_details import MeterDetails
     from .usage_detail import UsageDetail
     from .marketplace import Marketplace
-    from .tenant import Tenant
-    from .tenant_list_result import TenantListResult
     from .balance_properties_new_purchases_details_item import BalancePropertiesNewPurchasesDetailsItem
     from .balance_properties_adjustment_details_item import BalancePropertiesAdjustmentDetailsItem
     from .balance import Balance
@@ -79,10 +75,10 @@ except (SyntaxError, ImportError):
     from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
+from .budget_paged import BudgetPaged
 from .reservation_summary_paged import ReservationSummaryPaged
 from .reservation_detail_paged import ReservationDetailPaged
 from .reservation_recommendation_paged import ReservationRecommendationPaged
-from .budget_paged import BudgetPaged
 from .forecast_paged import ForecastPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
@@ -100,8 +96,6 @@ __all__ = [
     'MeterDetails',
     'UsageDetail',
     'Marketplace',
-    'Tenant',
-    'TenantListResult',
     'BalancePropertiesNewPurchasesDetailsItem',
     'BalancePropertiesAdjustmentDetailsItem',
     'Balance',
@@ -132,10 +126,10 @@ __all__ = [
     'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
+    'BudgetPaged',
     'ReservationSummaryPaged',
     'ReservationDetailPaged',
     'ReservationRecommendationPaged',
-    'BudgetPaged',
     'ForecastPaged',
     'OperationPaged',
     'BillingFrequency',

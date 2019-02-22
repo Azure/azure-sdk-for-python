@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class QueryOptions(Model):
-    """Additional parameters for a set of operations.
+    """Additional parameters for list operation.
 
     :param apply: OData apply expression to aggregate usageDetails by tags or
      (tags and properties/usageStart)
