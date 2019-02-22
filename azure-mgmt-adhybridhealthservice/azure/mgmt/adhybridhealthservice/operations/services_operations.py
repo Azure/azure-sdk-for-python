@@ -1672,4 +1672,4 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    list_current_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/blobUri'}
+    list_current_risky_ip_download_report.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/reports/riskyIp/generateBlobUri'}
