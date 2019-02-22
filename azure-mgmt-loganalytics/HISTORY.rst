@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.3.0 (2019-02-21)
+++++++++++++++++++
+
+**Breaking changes**
+
+- Removed operation WorkspacesOperations.list_link_targets
+- Removed operation WorkspacesOperations.get_search_results
+- Removed operation WorkspacesOperations.get_schema
+- Removed operation WorkspacesOperations.update_search_results
+- Removed operation WorkspacesOperations.purge
+- Removed operation group SavedSearchesOperations
+- Removed operation group StorageInsightsOperations
+
 0.2.0 (2018-05-29)
 ++++++++++++++++++
 
