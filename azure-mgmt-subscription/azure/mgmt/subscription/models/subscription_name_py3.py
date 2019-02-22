@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class GetSubscriptionName(Model):
+class SubscriptionName(Model):
     """New name of the subscription.
 
     :param subscription_name: New subscription name
@@ -24,5 +24,5 @@ class GetSubscriptionName(Model):
     }
 
     def __init__(self, *, subscription_name: str=None, **kwargs) -> None:
-        super(GetSubscriptionName, self).__init__(**kwargs)
+        super(SubscriptionName, self).__init__(**kwargs)
         self.subscription_name = subscription_name

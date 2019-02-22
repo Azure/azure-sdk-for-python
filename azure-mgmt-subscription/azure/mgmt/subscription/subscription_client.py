@@ -178,7 +178,7 @@ class SubscriptionClient(SDKClient):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
-        body = models.GetSubscriptionName(subscription_name=subscription_name)
+        body = models.SubscriptionName(subscription_name=subscription_name)
 
         api_version = "2018-11-01-preview"
 
@@ -205,7 +205,7 @@ class SubscriptionClient(SDKClient):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'GetSubscriptionName')
+        body_content = self._serialize.body(body, 'SubscriptionName')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
