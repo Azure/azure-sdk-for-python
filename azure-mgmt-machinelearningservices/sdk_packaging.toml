@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-machinelearningservices"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Machine Learning Service"
 package_doc_id = ""
 is_stable = false
 is_arm = true
