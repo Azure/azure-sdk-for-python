@@ -10,6 +10,13 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .informational_url_py3 import InformationalUrl
+    from .oauth2_permission_py3 import OAuth2Permission
+    from .optional_claim_py3 import OptionalClaim
+    from .optional_claims_py3 import OptionalClaims
+    from .pre_authorized_application_permission_py3 import PreAuthorizedApplicationPermission
+    from .pre_authorized_application_extension_py3 import PreAuthorizedApplicationExtension
+    from .pre_authorized_application_py3 import PreAuthorizedApplication
     from .graph_error_py3 import GraphError, GraphErrorException
     from .directory_object_py3 import DirectoryObject
     from .key_credential_py3 import KeyCredential
@@ -17,8 +24,6 @@ try:
     from .resource_access_py3 import ResourceAccess
     from .required_resource_access_py3 import RequiredResourceAccess
     from .app_role_py3 import AppRole
-    from .application_create_parameters_py3 import ApplicationCreateParameters
-    from .application_update_parameters_py3 import ApplicationUpdateParameters
     from .application_py3 import Application
     from .add_owner_parameters_py3 import AddOwnerParameters
     from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
@@ -29,8 +34,6 @@ try:
     from .group_get_member_groups_parameters_py3 import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters_py3 import CheckGroupMembershipParameters
     from .check_group_membership_result_py3 import CheckGroupMembershipResult
-    from .service_principal_create_parameters_py3 import ServicePrincipalCreateParameters
-    from .service_principal_update_parameters_py3 import ServicePrincipalUpdateParameters
     from .service_principal_py3 import ServicePrincipal
     from .password_profile_py3 import PasswordProfile
     from .user_base_py3 import UserBase
@@ -43,6 +46,13 @@ try:
     from .domain_py3 import Domain
     from .permissions_py3 import Permissions
 except (SyntaxError, ImportError):
+    from .informational_url import InformationalUrl
+    from .oauth2_permission import OAuth2Permission
+    from .optional_claim import OptionalClaim
+    from .optional_claims import OptionalClaims
+    from .pre_authorized_application_permission import PreAuthorizedApplicationPermission
+    from .pre_authorized_application_extension import PreAuthorizedApplicationExtension
+    from .pre_authorized_application import PreAuthorizedApplication
     from .graph_error import GraphError, GraphErrorException
     from .directory_object import DirectoryObject
     from .key_credential import KeyCredential
@@ -50,8 +60,6 @@ except (SyntaxError, ImportError):
     from .resource_access import ResourceAccess
     from .required_resource_access import RequiredResourceAccess
     from .app_role import AppRole
-    from .application_create_parameters import ApplicationCreateParameters
-    from .application_update_parameters import ApplicationUpdateParameters
     from .application import Application
     from .add_owner_parameters import AddOwnerParameters
     from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
@@ -62,8 +70,6 @@ except (SyntaxError, ImportError):
     from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters import CheckGroupMembershipParameters
     from .check_group_membership_result import CheckGroupMembershipResult
-    from .service_principal_create_parameters import ServicePrincipalCreateParameters
-    from .service_principal_update_parameters import ServicePrincipalUpdateParameters
     from .service_principal import ServicePrincipal
     from .password_profile import PasswordProfile
     from .user_base import UserBase
@@ -90,6 +96,13 @@ from .graph_rbac_management_client_enums import (
 )
 
 __all__ = [
+    'InformationalUrl',
+    'OAuth2Permission',
+    'OptionalClaim',
+    'OptionalClaims',
+    'PreAuthorizedApplicationPermission',
+    'PreAuthorizedApplicationExtension',
+    'PreAuthorizedApplication',
     'GraphError', 'GraphErrorException',
     'DirectoryObject',
     'KeyCredential',
@@ -97,8 +110,6 @@ __all__ = [
     'ResourceAccess',
     'RequiredResourceAccess',
     'AppRole',
-    'ApplicationCreateParameters',
-    'ApplicationUpdateParameters',
     'Application',
     'AddOwnerParameters',
     'KeyCredentialsUpdateParameters',
@@ -109,8 +120,6 @@ __all__ = [
     'GroupGetMemberGroupsParameters',
     'CheckGroupMembershipParameters',
     'CheckGroupMembershipResult',
-    'ServicePrincipalCreateParameters',
-    'ServicePrincipalUpdateParameters',
     'ServicePrincipal',
     'PasswordProfile',
     'UserBase',
