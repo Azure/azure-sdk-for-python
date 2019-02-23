@@ -39,11 +39,11 @@ class VolumesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         """List volumes.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -66,7 +66,7 @@ class VolumesOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                     'poolName': self._serialize.url("pool_name", pool_name, 'str')
                 }
@@ -111,11 +111,11 @@ class VolumesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes'}
 
     def get(
-            self, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         """Get a volume.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -137,7 +137,7 @@ class VolumesOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -179,12 +179,12 @@ class VolumesOperations(object):
 
 
     def _create_or_update_initial(
-            self, body, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -230,13 +230,13 @@ class VolumesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, body, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a volume.
 
         :param body: Volume object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.Volume
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -259,7 +259,7 @@ class VolumesOperations(object):
         """
         raw_result = self._create_or_update_initial(
             body=body,
-            resource_group=resource_group,
+            resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
@@ -287,13 +287,13 @@ class VolumesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}'}
 
     def update(
-            self, body, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         """Patch a volume.
 
         :param body: Volume object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.VolumePatch
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -315,7 +315,7 @@ class VolumesOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -361,12 +361,12 @@ class VolumesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -398,11 +398,11 @@ class VolumesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a volume.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -422,7 +422,7 @@ class VolumesOperations(object):
          :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group=resource_group,
+            resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
