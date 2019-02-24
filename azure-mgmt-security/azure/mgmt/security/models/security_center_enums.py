@@ -30,10 +30,20 @@ class PricingTier(str, Enum):
     standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
 
 
-class ExtraData(str, Enum):
+class SecuritySolutionStatus(str, Enum):
 
-    raw_events = "RawEvents"  #: Export the raw events into the security solution workspace
-    twin_data = "TwinData"  #: Export the twin data into the analysis process
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ExportData(str, Enum):
+
+    raw_events = "RawEvents"  #: Agent raw events
+
+
+class DataSource(str, Enum):
+
+    twin_data = "TwinData"  #: Devices twin data
 
 
 class AutoProvision(str, Enum):

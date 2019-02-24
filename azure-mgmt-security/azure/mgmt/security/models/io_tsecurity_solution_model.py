@@ -30,19 +30,20 @@ class IoTSecuritySolutionModel(Model):
     :type tags: dict[str, str]
     :param location: The resource location.
     :type location: str
-    :param workspace_resource_id: The full Azure ID of the workspace to save
-     the data in
-    :type workspace_resource_id: str
-    :param workspace_customer_id: the customer id associate with the workspace
-    :type workspace_customer_id: str
-    :param display_name: Required. The display name.
+    :param workspace: Required. Workspace resource ID
+    :type workspace: str
+    :param display_name: Required. Resource display name.
     :type display_name: str
-    :param enabled: Is the solution Enabled for the customer. Default value:
-     True .
-    :type enabled: bool
-    :param export: list of additional data to export by the system
-    :type export: list[str or ~azure.mgmt.security.models.ExtraData]
-    :param iot_hubs: Required. Related iot hub resources ID
+    :param status: Security solution status. Possible values include:
+     'Enabled', 'Disabled'. Default value: "Enabled" .
+    :type status: str or ~azure.mgmt.security.models.SecuritySolutionStatus
+    :param export: List of additional export to workspace data options
+    :type export: list[str or ~azure.mgmt.security.models.ExportData]
+    :param disabled_data_sources: Disabled data sources. Disabling these data
+     sources compromises the system.
+    :type disabled_data_sources: list[str or
+     ~azure.mgmt.security.models.DataSource]
+    :param iot_hubs: Required. IoT Hub resource IDs
     :type iot_hubs: list[str]
     """
 
@@ -50,6 +51,7 @@ class IoTSecuritySolutionModel(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'workspace': {'required': True},
         'display_name': {'required': True},
         'iot_hubs': {'required': True},
     }
@@ -60,11 +62,11 @@ class IoTSecuritySolutionModel(Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'workspace_resource_id': {'key': 'properties.workspaceResourceId', 'type': 'str'},
-        'workspace_customer_id': {'key': 'properties.workspaceCustomerId', 'type': 'str'},
+        'workspace': {'key': 'properties.workspace', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'export': {'key': 'properties.export', 'type': '[str]'},
+        'disabled_data_sources': {'key': 'properties.disabledDataSources', 'type': '[str]'},
         'iot_hubs': {'key': 'properties.iotHubs', 'type': '[str]'},
     }
 
@@ -75,9 +77,9 @@ class IoTSecuritySolutionModel(Model):
         self.type = None
         self.tags = kwargs.get('tags', None)
         self.location = kwargs.get('location', None)
-        self.workspace_resource_id = kwargs.get('workspace_resource_id', None)
-        self.workspace_customer_id = kwargs.get('workspace_customer_id', None)
+        self.workspace = kwargs.get('workspace', None)
         self.display_name = kwargs.get('display_name', None)
-        self.enabled = kwargs.get('enabled', True)
+        self.status = kwargs.get('status', "Enabled")
         self.export = kwargs.get('export', None)
+        self.disabled_data_sources = kwargs.get('disabled_data_sources', None)
         self.iot_hubs = kwargs.get('iot_hubs', None)
