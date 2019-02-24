@@ -18,7 +18,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     :param advertised_public_prefixes: The reference of
      AdvertisedPublicPrefixes.
     :type advertised_public_prefixes: list[str]
-    :param advertised_communities: The communities of bgp peering. Spepcified
+    :param advertised_communities: The communities of bgp peering. Specified
      for microsoft peering
     :type advertised_communities: list[str]
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of

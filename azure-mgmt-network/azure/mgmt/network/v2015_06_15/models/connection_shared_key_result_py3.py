@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectionSharedKeyResult(Model):
-    """Response for CheckConnectionSharedKey Api servive call.
+    """Response for CheckConnectionSharedKey API service call.
 
     :param value: The virtual network connection shared key value
     :type value: str

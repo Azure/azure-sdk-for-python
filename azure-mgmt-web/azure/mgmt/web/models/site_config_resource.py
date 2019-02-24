@@ -108,7 +108,7 @@ class SiteConfigResource(ProxyOnlyResource):
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
     :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
-    :param experiments: This is work around for polymophic types.
+    :param experiments: This is work around for polymorphic types.
     :type experiments: ~azure.mgmt.web.models.Experiments
     :param limits: Site limits.
     :type limits: ~azure.mgmt.web.models.SiteLimits
@@ -137,9 +137,15 @@ class SiteConfigResource(ProxyOnlyResource):
     :type managed_service_identity_id: int
     :param x_managed_service_identity_id: Explicit Managed Service Identity Id
     :type x_managed_service_identity_id: int
-    :param ip_security_restrictions: IP security restrictions.
+    :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
      list[~azure.mgmt.web.models.IpSecurityRestriction]
+    :param scm_ip_security_restrictions: IP security restrictions for scm.
+    :type scm_ip_security_restrictions:
+     list[~azure.mgmt.web.models.IpSecurityRestriction]
+    :param scm_ip_security_restrictions_use_main: IP security restrictions for
+     scm to use main.
+    :type scm_ip_security_restrictions_use_main: bool
     :param http20_enabled: Http20Enabled: configures a web site to allow
      clients to connect over http2.0. Default value: True .
     :type http20_enabled: bool
@@ -215,6 +221,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'managed_service_identity_id': {'key': 'properties.managedServiceIdentityId', 'type': 'int'},
         'x_managed_service_identity_id': {'key': 'properties.xManagedServiceIdentityId', 'type': 'int'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'scm_ip_security_restrictions': {'key': 'properties.scmIpSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'scm_ip_security_restrictions_use_main': {'key': 'properties.scmIpSecurityRestrictionsUseMain', 'type': 'bool'},
         'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'properties.minTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'properties.ftpsState', 'type': 'str'},
@@ -270,6 +278,8 @@ class SiteConfigResource(ProxyOnlyResource):
         self.managed_service_identity_id = kwargs.get('managed_service_identity_id', None)
         self.x_managed_service_identity_id = kwargs.get('x_managed_service_identity_id', None)
         self.ip_security_restrictions = kwargs.get('ip_security_restrictions', None)
+        self.scm_ip_security_restrictions = kwargs.get('scm_ip_security_restrictions', None)
+        self.scm_ip_security_restrictions_use_main = kwargs.get('scm_ip_security_restrictions_use_main', None)
         self.http20_enabled = kwargs.get('http20_enabled', True)
         self.min_tls_version = kwargs.get('min_tls_version', None)
         self.ftps_state = kwargs.get('ftps_state', None)

@@ -3,6 +3,27 @@
 Release History
 ===============
 
+0.3.2 (2019-01-29)
+++++++++++++++++++
+
+**Features**
+
+- Add proximity_placement_group
+
+0.3.1 (2019-01-24)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix restart operation
+
+0.3.0 (2019-01-03)
+++++++++++++++++++
+
+**Features**
+
+- Added operation HanaInstancesOperations.update
+
 0.2.1 (2018-08-31)
 ++++++++++++++++++
 
