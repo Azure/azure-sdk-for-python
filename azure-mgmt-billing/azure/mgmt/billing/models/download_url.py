@@ -35,7 +35,7 @@ class DownloadUrl(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DownloadUrl, self).__init__()
+    def __init__(self, **kwargs):
+        super(DownloadUrl, self).__init__(**kwargs)
         self.expiry_time = None
         self.url = None

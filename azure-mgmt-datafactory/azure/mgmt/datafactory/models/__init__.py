@@ -95,6 +95,10 @@ try:
     from .schedule_trigger_py3 import ScheduleTrigger
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .azure_function_linked_service_py3 import AzureFunctionLinkedService
+    from .azure_data_explorer_linked_service_py3 import AzureDataExplorerLinkedService
+    from .google_ad_words_linked_service_py3 import GoogleAdWordsLinkedService
+    from .oracle_service_cloud_linked_service_py3 import OracleServiceCloudLinkedService
+    from .dynamics_ax_linked_service_py3 import DynamicsAXLinkedService
     from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
@@ -138,10 +142,16 @@ try:
     from .custom_data_source_linked_service_py3 import CustomDataSourceLinkedService
     from .amazon_redshift_linked_service_py3 import AmazonRedshiftLinkedService
     from .amazon_s3_linked_service_py3 import AmazonS3LinkedService
+    from .rest_service_linked_service_py3 import RestServiceLinkedService
+    from .sap_open_hub_linked_service_py3 import SapOpenHubLinkedService
     from .sap_ecc_linked_service_py3 import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service_py3 import SapCloudForCustomerLinkedService
     from .salesforce_linked_service_py3 import SalesforceLinkedService
+    from .office365_linked_service_py3 import Office365LinkedService
+    from .azure_blob_fs_linked_service_py3 import AzureBlobFSLinkedService
     from .azure_data_lake_store_linked_service_py3 import AzureDataLakeStoreLinkedService
+    from .cosmos_db_mongo_db_api_linked_service_py3 import CosmosDbMongoDbApiLinkedService
+    from .mongo_db_v2_linked_service_py3 import MongoDbV2LinkedService
     from .mongo_db_linked_service_py3 import MongoDbLinkedService
     from .cassandra_linked_service_py3 import CassandraLinkedService
     from .web_client_certificate_authentication_py3 import WebClientCertificateAuthentication
@@ -172,6 +182,10 @@ try:
     from .azure_table_storage_linked_service_py3 import AzureTableStorageLinkedService
     from .azure_blob_storage_linked_service_py3 import AzureBlobStorageLinkedService
     from .azure_storage_linked_service_py3 import AzureStorageLinkedService
+    from .google_ad_words_object_dataset_py3 import GoogleAdWordsObjectDataset
+    from .azure_data_explorer_table_dataset_py3 import AzureDataExplorerTableDataset
+    from .oracle_service_cloud_object_dataset_py3 import OracleServiceCloudObjectDataset
+    from .dynamics_ax_resource_dataset_py3 import DynamicsAXResourceDataset
     from .responsys_object_dataset_py3 import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset_py3 import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset_py3 import VerticaTableDataset
@@ -216,7 +230,9 @@ try:
     from .http_dataset_py3 import HttpDataset
     from .azure_search_index_dataset_py3 import AzureSearchIndexDataset
     from .web_table_dataset_py3 import WebTableDataset
+    from .rest_resource_dataset_py3 import RestResourceDataset
     from .sql_server_table_dataset_py3 import SqlServerTableDataset
+    from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
@@ -224,8 +240,13 @@ try:
     from .azure_my_sql_table_dataset_py3 import AzureMySqlTableDataset
     from .oracle_table_dataset_py3 import OracleTableDataset
     from .odata_resource_dataset_py3 import ODataResourceDataset
+    from .cosmos_db_mongo_db_api_collection_dataset_py3 import CosmosDbMongoDbApiCollectionDataset
+    from .mongo_db_v2_collection_dataset_py3 import MongoDbV2CollectionDataset
     from .mongo_db_collection_dataset_py3 import MongoDbCollectionDataset
     from .file_share_dataset_py3 import FileShareDataset
+    from .azure_data_lake_store_cosmos_structured_stream_dataset_py3 import AzureDataLakeStoreCosmosStructuredStreamDataset
+    from .office365_dataset_py3 import Office365Dataset
+    from .azure_blob_fs_dataset_py3 import AzureBlobFSDataset
     from .azure_data_lake_store_dataset_py3 import AzureDataLakeStoreDataset
     from .dynamics_entity_dataset_py3 import DynamicsEntityDataset
     from .document_db_collection_dataset_py3 import DocumentDbCollectionDataset
@@ -250,6 +271,9 @@ try:
     from .web_activity_py3 import WebActivity
     from .redshift_unload_settings_py3 import RedshiftUnloadSettings
     from .amazon_redshift_source_py3 import AmazonRedshiftSource
+    from .google_ad_words_source_py3 import GoogleAdWordsSource
+    from .oracle_service_cloud_source_py3 import OracleServiceCloudSource
+    from .dynamics_ax_source_py3 import DynamicsAXSource
     from .responsys_source_py3 import ResponsysSource
     from .salesforce_marketing_cloud_source_py3 import SalesforceMarketingCloudSource
     from .vertica_source_py3 import VerticaSource
@@ -281,11 +305,17 @@ try:
     from .azure_postgre_sql_source_py3 import AzurePostgreSqlSource
     from .amazon_mws_source_py3 import AmazonMWSSource
     from .http_source_py3 import HttpSource
+    from .azure_blob_fs_source_py3 import AzureBlobFSSource
     from .azure_data_lake_store_source_py3 import AzureDataLakeStoreSource
+    from .office365_source_py3 import Office365Source
+    from .mongo_db_cursor_methods_properties_py3 import MongoDbCursorMethodsProperties
+    from .cosmos_db_mongo_db_api_source_py3 import CosmosDbMongoDbApiSource
+    from .mongo_db_v2_source_py3 import MongoDbV2Source
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
     from .oracle_source_py3 import OracleSource
+    from .azure_data_explorer_source_py3 import AzureDataExplorerSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
     from .distcp_settings_py3 import DistcpSettings
     from .hdfs_source_py3 import HdfsSource
@@ -293,6 +323,8 @@ try:
     from .sql_dw_source_py3 import SqlDWSource
     from .stored_procedure_parameter_py3 import StoredProcedureParameter
     from .sql_source_py3 import SqlSource
+    from .rest_source_py3 import RestSource
+    from .sap_open_hub_source_py3 import SapOpenHubSource
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
@@ -322,10 +354,13 @@ try:
     from .staging_settings_py3 import StagingSettings
     from .tabular_translator_py3 import TabularTranslator
     from .copy_translator_py3 import CopyTranslator
+    from .cosmos_db_mongo_db_api_sink_py3 import CosmosDbMongoDbApiSink
     from .salesforce_sink_py3 import SalesforceSink
+    from .azure_data_explorer_sink_py3 import AzureDataExplorerSink
     from .dynamics_sink_py3 import DynamicsSink
     from .odbc_sink_py3 import OdbcSink
     from .azure_search_index_sink_py3 import AzureSearchIndexSink
+    from .azure_blob_fs_sink_py3 import AzureBlobFSSink
     from .azure_data_lake_store_sink_py3 import AzureDataLakeStoreSink
     from .oracle_sink_py3 import OracleSink
     from .polybase_settings_py3 import PolybaseSettings
@@ -460,6 +495,10 @@ except (SyntaxError, ImportError):
     from .schedule_trigger import ScheduleTrigger
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .azure_function_linked_service import AzureFunctionLinkedService
+    from .azure_data_explorer_linked_service import AzureDataExplorerLinkedService
+    from .google_ad_words_linked_service import GoogleAdWordsLinkedService
+    from .oracle_service_cloud_linked_service import OracleServiceCloudLinkedService
+    from .dynamics_ax_linked_service import DynamicsAXLinkedService
     from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
@@ -503,10 +542,16 @@ except (SyntaxError, ImportError):
     from .custom_data_source_linked_service import CustomDataSourceLinkedService
     from .amazon_redshift_linked_service import AmazonRedshiftLinkedService
     from .amazon_s3_linked_service import AmazonS3LinkedService
+    from .rest_service_linked_service import RestServiceLinkedService
+    from .sap_open_hub_linked_service import SapOpenHubLinkedService
     from .sap_ecc_linked_service import SapEccLinkedService
     from .sap_cloud_for_customer_linked_service import SapCloudForCustomerLinkedService
     from .salesforce_linked_service import SalesforceLinkedService
+    from .office365_linked_service import Office365LinkedService
+    from .azure_blob_fs_linked_service import AzureBlobFSLinkedService
     from .azure_data_lake_store_linked_service import AzureDataLakeStoreLinkedService
+    from .cosmos_db_mongo_db_api_linked_service import CosmosDbMongoDbApiLinkedService
+    from .mongo_db_v2_linked_service import MongoDbV2LinkedService
     from .mongo_db_linked_service import MongoDbLinkedService
     from .cassandra_linked_service import CassandraLinkedService
     from .web_client_certificate_authentication import WebClientCertificateAuthentication
@@ -537,6 +582,10 @@ except (SyntaxError, ImportError):
     from .azure_table_storage_linked_service import AzureTableStorageLinkedService
     from .azure_blob_storage_linked_service import AzureBlobStorageLinkedService
     from .azure_storage_linked_service import AzureStorageLinkedService
+    from .google_ad_words_object_dataset import GoogleAdWordsObjectDataset
+    from .azure_data_explorer_table_dataset import AzureDataExplorerTableDataset
+    from .oracle_service_cloud_object_dataset import OracleServiceCloudObjectDataset
+    from .dynamics_ax_resource_dataset import DynamicsAXResourceDataset
     from .responsys_object_dataset import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset import VerticaTableDataset
@@ -581,7 +630,9 @@ except (SyntaxError, ImportError):
     from .http_dataset import HttpDataset
     from .azure_search_index_dataset import AzureSearchIndexDataset
     from .web_table_dataset import WebTableDataset
+    from .rest_resource_dataset import RestResourceDataset
     from .sql_server_table_dataset import SqlServerTableDataset
+    from .sap_open_hub_table_dataset import SapOpenHubTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
@@ -589,8 +640,13 @@ except (SyntaxError, ImportError):
     from .azure_my_sql_table_dataset import AzureMySqlTableDataset
     from .oracle_table_dataset import OracleTableDataset
     from .odata_resource_dataset import ODataResourceDataset
+    from .cosmos_db_mongo_db_api_collection_dataset import CosmosDbMongoDbApiCollectionDataset
+    from .mongo_db_v2_collection_dataset import MongoDbV2CollectionDataset
     from .mongo_db_collection_dataset import MongoDbCollectionDataset
     from .file_share_dataset import FileShareDataset
+    from .azure_data_lake_store_cosmos_structured_stream_dataset import AzureDataLakeStoreCosmosStructuredStreamDataset
+    from .office365_dataset import Office365Dataset
+    from .azure_blob_fs_dataset import AzureBlobFSDataset
     from .azure_data_lake_store_dataset import AzureDataLakeStoreDataset
     from .dynamics_entity_dataset import DynamicsEntityDataset
     from .document_db_collection_dataset import DocumentDbCollectionDataset
@@ -615,6 +671,9 @@ except (SyntaxError, ImportError):
     from .web_activity import WebActivity
     from .redshift_unload_settings import RedshiftUnloadSettings
     from .amazon_redshift_source import AmazonRedshiftSource
+    from .google_ad_words_source import GoogleAdWordsSource
+    from .oracle_service_cloud_source import OracleServiceCloudSource
+    from .dynamics_ax_source import DynamicsAXSource
     from .responsys_source import ResponsysSource
     from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
     from .vertica_source import VerticaSource
@@ -646,11 +705,17 @@ except (SyntaxError, ImportError):
     from .azure_postgre_sql_source import AzurePostgreSqlSource
     from .amazon_mws_source import AmazonMWSSource
     from .http_source import HttpSource
+    from .azure_blob_fs_source import AzureBlobFSSource
     from .azure_data_lake_store_source import AzureDataLakeStoreSource
+    from .office365_source import Office365Source
+    from .mongo_db_cursor_methods_properties import MongoDbCursorMethodsProperties
+    from .cosmos_db_mongo_db_api_source import CosmosDbMongoDbApiSource
+    from .mongo_db_v2_source import MongoDbV2Source
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
     from .oracle_source import OracleSource
+    from .azure_data_explorer_source import AzureDataExplorerSource
     from .azure_my_sql_source import AzureMySqlSource
     from .distcp_settings import DistcpSettings
     from .hdfs_source import HdfsSource
@@ -658,6 +723,8 @@ except (SyntaxError, ImportError):
     from .sql_dw_source import SqlDWSource
     from .stored_procedure_parameter import StoredProcedureParameter
     from .sql_source import SqlSource
+    from .rest_source import RestSource
+    from .sap_open_hub_source import SapOpenHubSource
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
@@ -687,10 +754,13 @@ except (SyntaxError, ImportError):
     from .staging_settings import StagingSettings
     from .tabular_translator import TabularTranslator
     from .copy_translator import CopyTranslator
+    from .cosmos_db_mongo_db_api_sink import CosmosDbMongoDbApiSink
     from .salesforce_sink import SalesforceSink
+    from .azure_data_explorer_sink import AzureDataExplorerSink
     from .dynamics_sink import DynamicsSink
     from .odbc_sink import OdbcSink
     from .azure_search_index_sink import AzureSearchIndexSink
+    from .azure_blob_fs_sink import AzureBlobFSSink
     from .azure_data_lake_store_sink import AzureDataLakeStoreSink
     from .oracle_sink import OracleSink
     from .polybase_settings import PolybaseSettings
@@ -764,6 +834,7 @@ from .data_factory_management_client_enums import (
     DayOfWeek,
     DaysOfWeek,
     RecurrenceFrequency,
+    GoogleAdWordsAuthenticationType,
     SparkServerType,
     SparkThriftTransportProtocol,
     SparkAuthenticationType,
@@ -780,8 +851,10 @@ from .data_factory_management_client_enums import (
     SftpAuthenticationType,
     FtpAuthenticationType,
     HttpAuthenticationType,
+    RestServiceAuthenticationType,
     MongoDbAuthenticationType,
     ODataAuthenticationType,
+    ODataAadServicePrincipalCredentialType,
     TeradataAuthenticationType,
     Db2AuthenticationType,
     SybaseAuthenticationType,
@@ -896,6 +969,10 @@ __all__ = [
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
     'AzureFunctionLinkedService',
+    'AzureDataExplorerLinkedService',
+    'GoogleAdWordsLinkedService',
+    'OracleServiceCloudLinkedService',
+    'DynamicsAXLinkedService',
     'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
@@ -939,10 +1016,16 @@ __all__ = [
     'CustomDataSourceLinkedService',
     'AmazonRedshiftLinkedService',
     'AmazonS3LinkedService',
+    'RestServiceLinkedService',
+    'SapOpenHubLinkedService',
     'SapEccLinkedService',
     'SapCloudForCustomerLinkedService',
     'SalesforceLinkedService',
+    'Office365LinkedService',
+    'AzureBlobFSLinkedService',
     'AzureDataLakeStoreLinkedService',
+    'CosmosDbMongoDbApiLinkedService',
+    'MongoDbV2LinkedService',
     'MongoDbLinkedService',
     'CassandraLinkedService',
     'WebClientCertificateAuthentication',
@@ -973,6 +1056,10 @@ __all__ = [
     'AzureTableStorageLinkedService',
     'AzureBlobStorageLinkedService',
     'AzureStorageLinkedService',
+    'GoogleAdWordsObjectDataset',
+    'AzureDataExplorerTableDataset',
+    'OracleServiceCloudObjectDataset',
+    'DynamicsAXResourceDataset',
     'ResponsysObjectDataset',
     'SalesforceMarketingCloudObjectDataset',
     'VerticaTableDataset',
@@ -1017,7 +1104,9 @@ __all__ = [
     'HttpDataset',
     'AzureSearchIndexDataset',
     'WebTableDataset',
+    'RestResourceDataset',
     'SqlServerTableDataset',
+    'SapOpenHubTableDataset',
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
     'SalesforceObjectDataset',
@@ -1025,8 +1114,13 @@ __all__ = [
     'AzureMySqlTableDataset',
     'OracleTableDataset',
     'ODataResourceDataset',
+    'CosmosDbMongoDbApiCollectionDataset',
+    'MongoDbV2CollectionDataset',
     'MongoDbCollectionDataset',
     'FileShareDataset',
+    'AzureDataLakeStoreCosmosStructuredStreamDataset',
+    'Office365Dataset',
+    'AzureBlobFSDataset',
     'AzureDataLakeStoreDataset',
     'DynamicsEntityDataset',
     'DocumentDbCollectionDataset',
@@ -1051,6 +1145,9 @@ __all__ = [
     'WebActivity',
     'RedshiftUnloadSettings',
     'AmazonRedshiftSource',
+    'GoogleAdWordsSource',
+    'OracleServiceCloudSource',
+    'DynamicsAXSource',
     'ResponsysSource',
     'SalesforceMarketingCloudSource',
     'VerticaSource',
@@ -1082,11 +1179,17 @@ __all__ = [
     'AzurePostgreSqlSource',
     'AmazonMWSSource',
     'HttpSource',
+    'AzureBlobFSSource',
     'AzureDataLakeStoreSource',
+    'Office365Source',
+    'MongoDbCursorMethodsProperties',
+    'CosmosDbMongoDbApiSource',
+    'MongoDbV2Source',
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
     'OracleSource',
+    'AzureDataExplorerSource',
     'AzureMySqlSource',
     'DistcpSettings',
     'HdfsSource',
@@ -1094,6 +1197,8 @@ __all__ = [
     'SqlDWSource',
     'StoredProcedureParameter',
     'SqlSource',
+    'RestSource',
+    'SapOpenHubSource',
     'SapEccSource',
     'SapCloudForCustomerSource',
     'SalesforceSource',
@@ -1123,10 +1228,13 @@ __all__ = [
     'StagingSettings',
     'TabularTranslator',
     'CopyTranslator',
+    'CosmosDbMongoDbApiSink',
     'SalesforceSink',
+    'AzureDataExplorerSink',
     'DynamicsSink',
     'OdbcSink',
     'AzureSearchIndexSink',
+    'AzureBlobFSSink',
     'AzureDataLakeStoreSink',
     'OracleSink',
     'PolybaseSettings',
@@ -1199,6 +1307,7 @@ __all__ = [
     'DayOfWeek',
     'DaysOfWeek',
     'RecurrenceFrequency',
+    'GoogleAdWordsAuthenticationType',
     'SparkServerType',
     'SparkThriftTransportProtocol',
     'SparkAuthenticationType',
@@ -1215,8 +1324,10 @@ __all__ = [
     'SftpAuthenticationType',
     'FtpAuthenticationType',
     'HttpAuthenticationType',
+    'RestServiceAuthenticationType',
     'MongoDbAuthenticationType',
     'ODataAuthenticationType',
+    'ODataAadServicePrincipalCredentialType',
     'TeradataAuthenticationType',
     'Db2AuthenticationType',
     'SybaseAuthenticationType',

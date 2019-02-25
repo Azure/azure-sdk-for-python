@@ -52,6 +52,9 @@ class CustomActivity(ExecutionActivity):
      custom activity has the full responsibility to consume and interpret the
      content defined.
     :type extended_properties: dict[str, object]
+    :param retention_time_in_days: The retention time for the files submitted
+     for custom activity. Type: double (or Expression with resultType double).
+    :type retention_time_in_days: object
     """
 
     _validation = {
@@ -74,6 +77,7 @@ class CustomActivity(ExecutionActivity):
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'reference_objects': {'key': 'typeProperties.referenceObjects', 'type': 'CustomActivityReferenceObject'},
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': '{object}'},
+        'retention_time_in_days': {'key': 'typeProperties.retentionTimeInDays', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -83,4 +87,5 @@ class CustomActivity(ExecutionActivity):
         self.folder_path = kwargs.get('folder_path', None)
         self.reference_objects = kwargs.get('reference_objects', None)
         self.extended_properties = kwargs.get('extended_properties', None)
+        self.retention_time_in_days = kwargs.get('retention_time_in_days', None)
         self.type = 'Custom'

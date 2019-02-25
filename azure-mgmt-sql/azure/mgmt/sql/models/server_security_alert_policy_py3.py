@@ -49,6 +49,8 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :param retention_days: Specifies the number of days to keep in the Threat
      Detection audit logs.
     :type retention_days: int
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: datetime
     """
 
     _validation = {
@@ -56,6 +58,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'state': {'required': True},
+        'creation_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,6 +72,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, state, disabled_alerts=None, email_addresses=None, email_account_admins: bool=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, **kwargs) -> None:
@@ -80,3 +84,4 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
         self.retention_days = retention_days
+        self.creation_time = None

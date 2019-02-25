@@ -165,7 +165,7 @@ class ModelOperations(object):
 
     def add_entity(
             self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds an entity extractor to the application.
+        """Adds a simple entity extractor to the application.
 
         :param app_id: The application ID.
         :type app_id: str

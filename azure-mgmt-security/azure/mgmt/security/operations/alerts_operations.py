@@ -115,7 +115,7 @@ class AlertsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
-        """List all the alerts alerts that are associated with the resource group.
+        """List all the alerts that are associated with the resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.

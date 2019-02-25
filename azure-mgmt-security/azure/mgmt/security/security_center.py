@@ -29,6 +29,7 @@ from .operations.discovered_security_solutions_operations import DiscoveredSecur
 from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .operations.topology_operations import TopologyOperations
+from .operations.allowed_connections_operations import AllowedConnectionsOperations
 from . import models
 
 
@@ -108,6 +109,8 @@ class SecurityCenter(SDKClient):
     :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
     :ivar topology: Topology operations
     :vartype topology: azure.mgmt.security.operations.TopologyOperations
+    :ivar allowed_connections: AllowedConnections operations
+    :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -161,4 +164,6 @@ class SecurityCenter(SDKClient):
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topology = TopologyOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.allowed_connections = AllowedConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -35,7 +35,7 @@ class CurrentSpend(Model):
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(CurrentSpend, self).__init__()
+    def __init__(self, **kwargs):
+        super(CurrentSpend, self).__init__(**kwargs)
         self.amount = None
         self.unit = None
