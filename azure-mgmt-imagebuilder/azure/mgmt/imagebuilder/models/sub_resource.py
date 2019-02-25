@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource_py3 import SubResource
+from msrest.serialization import Model
 
 
-class RunOutput(SubResource):
-    """Represents an output that was created by running an image template.
+class SubResource(Model):
+    """The Sub Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,29 +26,22 @@ class RunOutput(SubResource):
     :type name: str
     :ivar type: Resource type
     :vartype type: str
-    :param artifact_id: The resource id of the artifact.
-    :type artifact_id: str
-    :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Creating', 'Succeeded', 'Failed', 'Deleting'
-    :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.enum
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'required': True},
         'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'artifact_id': {'key': 'properties.artifactId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, artifact_id: str=None, **kwargs) -> None:
-        super(RunOutput, self).__init__(name=name, **kwargs)
-        self.artifact_id = artifact_id
-        self.provisioning_state = None
+    def __init__(self, **kwargs):
+        super(SubResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs.get('name', None)
+        self.type = None

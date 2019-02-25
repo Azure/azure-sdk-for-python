@@ -24,6 +24,7 @@ try:
     from .image_template_update_parameters_py3 import ImageTemplateUpdateParameters
     from .run_output_py3 import RunOutput
     from .resource_py3 import Resource
+    from .sub_resource_py3 import SubResource
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .api_error_base_py3 import ApiErrorBase
@@ -44,6 +45,7 @@ except (SyntaxError, ImportError):
     from .image_template_update_parameters import ImageTemplateUpdateParameters
     from .run_output import RunOutput
     from .resource import Resource
+    from .sub_resource import SubResource
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .api_error_base import ApiErrorBase
@@ -68,6 +70,7 @@ __all__ = [
     'ImageTemplateUpdateParameters',
     'RunOutput',
     'Resource',
+    'SubResource',
     'OperationDisplay',
     'Operation',
     'ApiErrorBase',

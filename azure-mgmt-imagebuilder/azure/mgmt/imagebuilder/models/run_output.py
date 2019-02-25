@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .sub_resource import SubResource
 
 
-class RunOutput(Resource):
-    """RunOutput.
+class RunOutput(SubResource):
+    """Represents an output that was created by running an image template.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,14 +22,10 @@ class RunOutput(Resource):
 
     :ivar id: Resource Id
     :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
+    :param name: Required. Resource name
+    :type name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :param artifact_id: The resource id of the artifact.
     :type artifact_id: str
     :ivar provisioning_state: Provisioning state of the resource. Possible
@@ -39,9 +35,8 @@ class RunOutput(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
+        'name': {'required': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -49,8 +44,6 @@ class RunOutput(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'artifact_id': {'key': 'properties.artifactId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }

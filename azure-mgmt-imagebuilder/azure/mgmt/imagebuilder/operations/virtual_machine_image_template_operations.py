@@ -270,7 +270,7 @@ class VirtualMachineImageTemplateOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}'}
 
-    def patch(
+    def update(
             self, resource_group_name, image_template_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Update the tags for this Virtual Machine Image Template.
 
@@ -295,7 +295,7 @@ class VirtualMachineImageTemplateOperations(object):
         parameters = models.ImageTemplateUpdateParameters(tags=tags)
 
         # Construct URL
-        url = self.patch.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -338,7 +338,7 @@ class VirtualMachineImageTemplateOperations(object):
             return client_raw_response
 
         return deserialized
-    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}'}
 
     def get(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, **operation_config):
@@ -517,7 +517,7 @@ class VirtualMachineImageTemplateOperations(object):
 
     def run(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create artifacts from a Existing Template.
+        """Create artifacts from a existing Image Template.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -557,9 +557,9 @@ class VirtualMachineImageTemplateOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     run.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/run'}
 
-    def get_run_outputs(
+    def list_run_outputs(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, **operation_config):
-        """Get run outputs for the specified Template resource.
+        """List all run outputs for the specified Image Template resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -580,7 +580,7 @@ class VirtualMachineImageTemplateOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.get_run_outputs.metadata['url']
+                url = self.list_run_outputs.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -624,7 +624,7 @@ class VirtualMachineImageTemplateOperations(object):
             return client_raw_response
 
         return deserialized
-    get_run_outputs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/runOutputs'}
+    list_run_outputs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/runOutputs'}
 
     def get_run_output(
             self, resource_group_name, image_template_name, run_output_name, custom_headers=None, raw=False, **operation_config):
@@ -653,7 +653,7 @@ class VirtualMachineImageTemplateOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$'),
-            'RunOutputName': self._serialize.url("run_output_name", run_output_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'runOutputName': self._serialize.url("run_output_name", run_output_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -688,4 +688,4 @@ class VirtualMachineImageTemplateOperations(object):
             return client_raw_response
 
         return deserialized
-    get_run_output.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/runOutputs/{RunOutputName}'}
+    get_run_output.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/runOutputs/{runOutputName}'}
