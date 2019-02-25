@@ -15,22 +15,31 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.ResourceProvider
+    All required parameters must be populated in order to send to Azure.
+
+    :param provider: Required. Service provider: Microsoft.ResourceProvider
     :type provider: str
-    :param resource: Resource on which the operation is performed: Profile,
-     endpoint, etc.
+    :param resource: Required. Resource on which the operation is performed:
+     Profile, endpoint, etc.
     :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
+    :param operation: Required. Operation type: Read, write, delete, etc.
     :type operation: str
-    :param description: Description of operation
+    :param description: Required. Description of operation
     :type description: str
     """
 
+    _validation = {
+        'provider': {'required': True},
+        'resource': {'required': True},
+        'operation': {'required': True},
+        'description': {'required': True},
+    }
+
     _attribute_map = {
-        'provider': {'key': 'Provider', 'type': 'str'},
-        'resource': {'key': 'Resource', 'type': 'str'},
-        'operation': {'key': 'Operation', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

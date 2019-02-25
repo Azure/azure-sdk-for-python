@@ -19,7 +19,7 @@ class CheckNameAvailabilityRequest(Model):
 
     :param name: Required. Resource Name To Verify
     :type name: str
-    :param type: Required. fully qualified resource type which includes
+    :param type: Required. Fully qualified resource type which includes
      provider namespace
     :type type: str
     """
