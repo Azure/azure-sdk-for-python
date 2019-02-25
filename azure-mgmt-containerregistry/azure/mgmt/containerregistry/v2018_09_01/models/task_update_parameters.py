@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class TaskUpdateParameters(Model):
     """The parameters for updating a task.
 
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.MsiProperties
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
@@ -43,6 +46,7 @@ class TaskUpdateParameters(Model):
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'MsiProperties'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformUpdateParameters'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
@@ -55,6 +59,7 @@ class TaskUpdateParameters(Model):
 
     def __init__(self, **kwargs):
         super(TaskUpdateParameters, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.status = kwargs.get('status', None)
         self.platform = kwargs.get('platform', None)
         self.agent_configuration = kwargs.get('agent_configuration', None)

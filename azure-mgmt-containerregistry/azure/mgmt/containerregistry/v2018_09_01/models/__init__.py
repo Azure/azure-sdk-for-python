@@ -62,6 +62,8 @@ try:
     from .run_filter_py3 import RunFilter
     from .run_update_parameters_py3 import RunUpdateParameters
     from .run_get_log_result_py3 import RunGetLogResult
+    from .user_identity_properties_py3 import UserIdentityProperties
+    from .msi_properties_py3 import MsiProperties
     from .base_image_dependency_py3 import BaseImageDependency
     from .task_step_properties_py3 import TaskStepProperties
     from .auth_info_py3 import AuthInfo
@@ -148,6 +150,8 @@ except (SyntaxError, ImportError):
     from .run_filter import RunFilter
     from .run_update_parameters import RunUpdateParameters
     from .run_get_log_result import RunGetLogResult
+    from .user_identity_properties import UserIdentityProperties
+    from .msi_properties import MsiProperties
     from .base_image_dependency import BaseImageDependency
     from .task_step_properties import TaskStepProperties
     from .auth_info import AuthInfo
@@ -206,6 +210,7 @@ from .container_registry_management_client_enums import (
     OS,
     Architecture,
     Variant,
+    ResourceIdentityType,
     TaskStatus,
     BaseImageDependencyType,
     SourceControlType,
@@ -270,6 +275,8 @@ __all__ = [
     'RunFilter',
     'RunUpdateParameters',
     'RunGetLogResult',
+    'UserIdentityProperties',
+    'MsiProperties',
     'BaseImageDependency',
     'TaskStepProperties',
     'AuthInfo',
@@ -327,6 +334,7 @@ __all__ = [
     'OS',
     'Architecture',
     'Variant',
+    'ResourceIdentityType',
     'TaskStatus',
     'BaseImageDependencyType',
     'SourceControlType',

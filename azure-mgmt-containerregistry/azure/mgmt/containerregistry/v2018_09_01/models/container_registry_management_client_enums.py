@@ -133,6 +133,14 @@ class Variant(str, Enum):
     v8 = "v8"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssignedUserAssigned"
+    none = "None"
+
+
 class TaskStatus(str, Enum):
 
     disabled = "Disabled"

@@ -32,6 +32,9 @@ class Task(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2018_09_01.models.MsiProperties
     :ivar provisioning_state: The provisioning state of the task. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -82,6 +85,7 @@ class Task(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'MsiProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'str'},
@@ -93,8 +97,9 @@ class Task(Resource):
         'credentials': {'key': 'properties.credentials', 'type': 'Credentials'},
     }
 
-    def __init__(self, *, location: str, platform, step, tags=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
+    def __init__(self, *, location: str, platform, step, tags=None, identity=None, status=None, agent_configuration=None, timeout: int=3600, trigger=None, credentials=None, **kwargs) -> None:
         super(Task, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
         self.status = status
