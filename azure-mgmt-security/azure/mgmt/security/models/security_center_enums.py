@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class PricingTier(str, Enum):
+
+    free = "Free"  #: Get free Azure security center experience with basic security features
+    standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
+
+
 class AlertNotifications(str, Enum):
 
     on = "On"  #: Get notifications on new alerts
@@ -22,12 +28,6 @@ class AlertsToAdmins(str, Enum):
 
     on = "On"  #: Send notification on new alerts to the subscription's admins
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
-
-
-class PricingTier(str, Enum):
-
-    free = "Free"  #: Get free Azure security center experience with basic security features
-    standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
 
 
 class AutoProvision(str, Enum):
