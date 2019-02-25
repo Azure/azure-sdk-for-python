@@ -39,7 +39,7 @@ from .operation_paged import OperationPaged
 from .spatial_anchors_account_paged import SpatialAnchorsAccountPaged
 from .mixed_reality_client_enums import (
     NameAvailability,
-    NameUnavailabileReason,
+    NameUnavailableReason,
 )
 
 __all__ = [
@@ -58,5 +58,5 @@ __all__ = [
     'OperationPaged',
     'SpatialAnchorsAccountPaged',
     'NameAvailability',
-    'NameUnavailabileReason',
+    'NameUnavailableReason',
 ]

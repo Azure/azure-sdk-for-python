@@ -18,7 +18,7 @@ class NameAvailability(str, Enum):
     false = "false"
 
 
-class NameUnavailabileReason(str, Enum):
+class NameUnavailableReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"

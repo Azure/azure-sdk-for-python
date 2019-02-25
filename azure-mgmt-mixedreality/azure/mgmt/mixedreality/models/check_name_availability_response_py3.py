@@ -23,8 +23,7 @@ class CheckNameAvailabilityResponse(Model):
      ~azure.mgmt.mixedreality.models.NameAvailability
     :param reason: Resource Name To Verify. Possible values include:
      'Invalid', 'AlreadyExists'
-    :type reason: str or
-     ~azure.mgmt.mixedreality.models.NameUnavailabileReason
+    :type reason: str or ~azure.mgmt.mixedreality.models.NameUnavailableReason
     :param message: detail message
     :type message: str
     """

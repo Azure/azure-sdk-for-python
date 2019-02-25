@@ -38,7 +38,7 @@ class SpatialAnchorsAccountsOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """List Spatial Anchors Accounts by Subscrption.
+        """List Spatial Anchors Accounts by Subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -490,7 +490,7 @@ class SpatialAnchorsAccountsOperations(object):
 
     def regenerate_keys(
             self, resource_group_name, spatial_anchors_account_name, serial=1, custom_headers=None, raw=False, **operation_config):
-        """Regenrate 1 Key of a Spatial Anchors Account.
+        """Regenerate 1 Key of a Spatial Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
