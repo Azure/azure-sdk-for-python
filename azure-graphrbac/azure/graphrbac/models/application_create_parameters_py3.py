@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from .application_py3 import Application
 
 
-class Application(DirectoryObject):
-    """Active Directory application information.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ApplicationCreateParameters
+class ApplicationCreateParameters(Application):
+    """Request parameters for creating a new application.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -174,41 +171,6 @@ class Application(DirectoryObject):
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'object_type': {'ApplicationCreateParameters': 'ApplicationCreateParameters'}
-    }
-
-    def __init__(self, **kwargs):
-        super(Application, self).__init__(**kwargs)
-        self.allow_guests_sign_in = kwargs.get('allow_guests_sign_in', None)
-        self.allow_passthrough_users = kwargs.get('allow_passthrough_users', None)
-        self.app_id = kwargs.get('app_id', None)
-        self.app_logo_url = kwargs.get('app_logo_url', None)
-        self.app_roles = kwargs.get('app_roles', None)
-        self.app_permissions = kwargs.get('app_permissions', None)
-        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.identifier_uris = kwargs.get('identifier_uris', None)
-        self.informational_urls = kwargs.get('informational_urls', None)
-        self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.known_client_applications = kwargs.get('known_client_applications', None)
-        self.logout_url = kwargs.get('logout_url', None)
-        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
-        self.oauth2_allow_url_path_matching = kwargs.get('oauth2_allow_url_path_matching', None)
-        self.oauth2_permissions = kwargs.get('oauth2_permissions', None)
-        self.oauth2_require_post_response = kwargs.get('oauth2_require_post_response', None)
-        self.org_restrictions = kwargs.get('org_restrictions', None)
-        self.optional_claims = kwargs.get('optional_claims', None)
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.pre_authorized_applications = kwargs.get('pre_authorized_applications', None)
-        self.public_client = kwargs.get('public_client', None)
-        self.publisher_domain = kwargs.get('publisher_domain', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.required_resource_access = kwargs.get('required_resource_access', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.sign_in_audience = kwargs.get('sign_in_audience', None)
-        self.www_homepage = kwargs.get('www_homepage', None)
-        self.object_type = 'Application'
+    def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_id: str=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+        super(ApplicationCreateParameters, self).__init__(additional_properties=additional_properties, allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_id=app_id, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, display_name=display_name, error_url=error_url, homepage=homepage, identifier_uris=identifier_uris, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
+        self.object_type = 'ApplicationCreateParameters'

@@ -41,7 +41,8 @@ class ServicePrincipalsOperations(object):
         """Creates a service principal in the directory.
 
         :param parameters: Parameters to create a service principal.
-        :type parameters: ~azure.graphrbac.models.ServicePrincipal
+        :type parameters:
+         ~azure.graphrbac.models.ServicePrincipalCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -76,7 +77,7 @@ class ServicePrincipalsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ServicePrincipal')
+        body_content = self._serialize.body(parameters, 'ServicePrincipalCreateParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)

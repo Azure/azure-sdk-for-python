@@ -15,6 +15,9 @@ from .directory_object_py3 import DirectoryObject
 class ServicePrincipal(DirectoryObject):
     """Active Directory service principal information.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ServicePrincipalCreateParameters
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -128,6 +131,10 @@ class ServicePrincipal(DirectoryObject):
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
         'service_principal_type': {'key': 'servicePrincipalType', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
+    }
+
+    _subtype_map = {
+        'object_type': {'ServicePrincipalCreateParameters': 'ServicePrincipalCreateParameters'}
     }
 
     def __init__(self, *, additional_properties=None, account_enabled: str=None, alternative_names=None, app_id: str=None, app_role_assignment_required: bool=None, app_roles=None, display_name: str=None, error_url: str=None, homepage: str=None, key_credentials=None, logout_url: str=None, password_credentials=None, preferred_token_signing_key_thumbprint: str=None, publisher_name: str=None, reply_urls=None, saml_metadata_url: str=None, service_principal_names=None, service_principal_type: str=None, tags=None, **kwargs) -> None:

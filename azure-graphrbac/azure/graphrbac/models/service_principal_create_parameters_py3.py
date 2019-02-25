@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from .service_principal_py3 import ServicePrincipal
 
 
-class ServicePrincipal(DirectoryObject):
-    """Active Directory service principal information.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ServicePrincipalCreateParameters
+class ServicePrincipalCreateParameters(ServicePrincipal):
+    """Request parameters for creating a new service principal.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -133,31 +130,6 @@ class ServicePrincipal(DirectoryObject):
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    _subtype_map = {
-        'object_type': {'ServicePrincipalCreateParameters': 'ServicePrincipalCreateParameters'}
-    }
-
-    def __init__(self, **kwargs):
-        super(ServicePrincipal, self).__init__(**kwargs)
-        self.account_enabled = kwargs.get('account_enabled', None)
-        self.alternative_names = kwargs.get('alternative_names', None)
-        self.app_display_name = None
-        self.app_id = kwargs.get('app_id', None)
-        self.app_owner_tenant_id = None
-        self.app_role_assignment_required = kwargs.get('app_role_assignment_required', None)
-        self.app_roles = kwargs.get('app_roles', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.logout_url = kwargs.get('logout_url', None)
-        self.oauth2_permissions = None
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.preferred_token_signing_key_thumbprint = kwargs.get('preferred_token_signing_key_thumbprint', None)
-        self.publisher_name = kwargs.get('publisher_name', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.service_principal_names = kwargs.get('service_principal_names', None)
-        self.service_principal_type = kwargs.get('service_principal_type', None)
-        self.tags = kwargs.get('tags', None)
-        self.object_type = 'ServicePrincipal'
+    def __init__(self, *, additional_properties=None, account_enabled: str=None, alternative_names=None, app_id: str=None, app_role_assignment_required: bool=None, app_roles=None, display_name: str=None, error_url: str=None, homepage: str=None, key_credentials=None, logout_url: str=None, password_credentials=None, preferred_token_signing_key_thumbprint: str=None, publisher_name: str=None, reply_urls=None, saml_metadata_url: str=None, service_principal_names=None, service_principal_type: str=None, tags=None, **kwargs) -> None:
+        super(ServicePrincipalCreateParameters, self).__init__(additional_properties=additional_properties, account_enabled=account_enabled, alternative_names=alternative_names, app_id=app_id, app_role_assignment_required=app_role_assignment_required, app_roles=app_roles, display_name=display_name, error_url=error_url, homepage=homepage, key_credentials=key_credentials, logout_url=logout_url, password_credentials=password_credentials, preferred_token_signing_key_thumbprint=preferred_token_signing_key_thumbprint, publisher_name=publisher_name, reply_urls=reply_urls, saml_metadata_url=saml_metadata_url, service_principal_names=service_principal_names, service_principal_type=service_principal_type, tags=tags, **kwargs)
+        self.object_type = 'ServicePrincipalCreateParameters'

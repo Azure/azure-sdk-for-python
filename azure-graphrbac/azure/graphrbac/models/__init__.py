@@ -23,6 +23,7 @@ try:
     from .password_credential_py3 import PasswordCredential
     from .resource_access_py3 import ResourceAccess
     from .required_resource_access_py3 import RequiredResourceAccess
+    from .application_create_parameters_py3 import ApplicationCreateParameters
     from .app_role_py3 import AppRole
     from .application_py3 import Application
     from .add_owner_parameters_py3 import AddOwnerParameters
@@ -34,6 +35,7 @@ try:
     from .group_get_member_groups_parameters_py3 import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters_py3 import CheckGroupMembershipParameters
     from .check_group_membership_result_py3 import CheckGroupMembershipResult
+    from .service_principal_create_parameters_py3 import ServicePrincipalCreateParameters
     from .service_principal_py3 import ServicePrincipal
     from .password_profile_py3 import PasswordProfile
     from .user_base_py3 import UserBase
@@ -59,6 +61,7 @@ except (SyntaxError, ImportError):
     from .password_credential import PasswordCredential
     from .resource_access import ResourceAccess
     from .required_resource_access import RequiredResourceAccess
+    from .application_create_parameters import ApplicationCreateParameters
     from .app_role import AppRole
     from .application import Application
     from .add_owner_parameters import AddOwnerParameters
@@ -70,6 +73,7 @@ except (SyntaxError, ImportError):
     from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters import CheckGroupMembershipParameters
     from .check_group_membership_result import CheckGroupMembershipResult
+    from .service_principal_create_parameters import ServicePrincipalCreateParameters
     from .service_principal import ServicePrincipal
     from .password_profile import PasswordProfile
     from .user_base import UserBase
@@ -109,6 +113,7 @@ __all__ = [
     'PasswordCredential',
     'ResourceAccess',
     'RequiredResourceAccess',
+    'ApplicationCreateParameters',
     'AppRole',
     'Application',
     'AddOwnerParameters',
@@ -120,6 +125,7 @@ __all__ = [
     'GroupGetMemberGroupsParameters',
     'CheckGroupMembershipParameters',
     'CheckGroupMembershipResult',
+    'ServicePrincipalCreateParameters',
     'ServicePrincipal',
     'PasswordProfile',
     'UserBase',

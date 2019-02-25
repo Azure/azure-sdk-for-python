@@ -15,6 +15,9 @@ from .directory_object_py3 import DirectoryObject
 class Application(DirectoryObject):
     """Active Directory application information.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ApplicationCreateParameters
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -169,6 +172,10 @@ class Application(DirectoryObject):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'object_type': {'ApplicationCreateParameters': 'ApplicationCreateParameters'}
     }
 
     def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_id: str=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:

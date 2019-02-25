@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from .service_principal import ServicePrincipal
 
 
-class ServicePrincipal(DirectoryObject):
-    """Active Directory service principal information.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ServicePrincipalCreateParameters
+class ServicePrincipalCreateParameters(ServicePrincipal):
+    """Request parameters for creating a new service principal.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -133,31 +130,6 @@ class ServicePrincipal(DirectoryObject):
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    _subtype_map = {
-        'object_type': {'ServicePrincipalCreateParameters': 'ServicePrincipalCreateParameters'}
-    }
-
     def __init__(self, **kwargs):
-        super(ServicePrincipal, self).__init__(**kwargs)
-        self.account_enabled = kwargs.get('account_enabled', None)
-        self.alternative_names = kwargs.get('alternative_names', None)
-        self.app_display_name = None
-        self.app_id = kwargs.get('app_id', None)
-        self.app_owner_tenant_id = None
-        self.app_role_assignment_required = kwargs.get('app_role_assignment_required', None)
-        self.app_roles = kwargs.get('app_roles', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.logout_url = kwargs.get('logout_url', None)
-        self.oauth2_permissions = None
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.preferred_token_signing_key_thumbprint = kwargs.get('preferred_token_signing_key_thumbprint', None)
-        self.publisher_name = kwargs.get('publisher_name', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.service_principal_names = kwargs.get('service_principal_names', None)
-        self.service_principal_type = kwargs.get('service_principal_type', None)
-        self.tags = kwargs.get('tags', None)
-        self.object_type = 'ServicePrincipal'
+        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
+        self.object_type = 'ServicePrincipalCreateParameters'
