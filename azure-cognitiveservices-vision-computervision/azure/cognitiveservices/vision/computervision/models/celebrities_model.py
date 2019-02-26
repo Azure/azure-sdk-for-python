@@ -30,8 +30,8 @@ class CelebritiesModel(Model):
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
     }
 
-    def __init__(self, name=None, confidence=None, face_rectangle=None):
-        super(CelebritiesModel, self).__init__()
-        self.name = name
-        self.confidence = confidence
-        self.face_rectangle = face_rectangle
+    def __init__(self, **kwargs):
+        super(CelebritiesModel, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.confidence = kwargs.get('confidence', None)
+        self.face_rectangle = kwargs.get('face_rectangle', None)

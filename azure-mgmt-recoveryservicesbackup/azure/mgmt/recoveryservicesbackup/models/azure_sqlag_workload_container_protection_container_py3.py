@@ -40,6 +40,12 @@ class AzureSQLAGWorkloadContainerProtectionContainer(AzureWorkloadContainer):
     :param extended_info: Additional details of a workload container.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureWorkloadContainerExtendedInfo
+    :param workload_type: Workload type for which registration was sent.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """
 
     _validation = {
@@ -55,8 +61,9 @@ class AzureSQLAGWorkloadContainerProtectionContainer(AzureWorkloadContainer):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadContainerExtendedInfo'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
     }
 
-    def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, source_resource_id: str=None, last_updated_time=None, extended_info=None, **kwargs) -> None:
-        super(AzureSQLAGWorkloadContainerProtectionContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, source_resource_id=source_resource_id, last_updated_time=last_updated_time, extended_info=extended_info, **kwargs)
+    def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, source_resource_id: str=None, last_updated_time=None, extended_info=None, workload_type=None, **kwargs) -> None:
+        super(AzureSQLAGWorkloadContainerProtectionContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, source_resource_id=source_resource_id, last_updated_time=last_updated_time, extended_info=extended_info, workload_type=workload_type, **kwargs)
         self.container_type = 'SQLAGWorkLoadContainer'

@@ -42,6 +42,6 @@ class StorageContainer(SubResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(StorageContainer, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageContainer, self).__init__(**kwargs)
         self.last_modified_time = None

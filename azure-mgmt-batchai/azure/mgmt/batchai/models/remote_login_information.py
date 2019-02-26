@@ -15,20 +15,21 @@ from msrest.serialization import Model
 class RemoteLoginInformation(Model):
     """Contains remote login details to SSH/RDP to a compute node in cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param node_id: Required. Id of the compute node
-    :type node_id: str
-    :param ip_address: Required. ip address
-    :type ip_address: str
-    :param port: Required. port number.
-    :type port: float
+    :ivar node_id: Id of the compute node
+    :vartype node_id: str
+    :ivar ip_address: ip address
+    :vartype ip_address: str
+    :ivar port: port number.
+    :vartype port: float
     """
 
     _validation = {
-        'node_id': {'required': True},
-        'ip_address': {'required': True},
-        'port': {'required': True},
+        'node_id': {'readonly': True},
+        'ip_address': {'readonly': True},
+        'port': {'readonly': True},
     }
 
     _attribute_map = {
@@ -39,6 +40,6 @@ class RemoteLoginInformation(Model):
 
     def __init__(self, **kwargs):
         super(RemoteLoginInformation, self).__init__(**kwargs)
-        self.node_id = kwargs.get('node_id', None)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.port = kwargs.get('port', None)
+        self.node_id = None
+        self.ip_address = None
+        self.port = None

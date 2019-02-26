@@ -54,12 +54,13 @@ class Resource(Model):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, kind=None, etag=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.location = location
+        self.location = kwargs.get('location', None)
         self.type = None
-        self.tags = tags
-        self.sku = sku
-        self.kind = kind
-        self.etag = etag
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
+        self.etag = kwargs.get('etag', None)

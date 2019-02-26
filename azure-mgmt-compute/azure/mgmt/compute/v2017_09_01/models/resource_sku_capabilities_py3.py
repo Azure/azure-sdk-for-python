@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceSkuCapabilities(Model):
-    """Describes The SKU capabilites object.
+    """Describes The SKU capabilities object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

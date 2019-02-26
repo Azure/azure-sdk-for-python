@@ -19,10 +19,10 @@ class PropertyMetadata(Model):
      Following are the possible values. Possible values include: 'Invalid',
      'Binary', 'Int64', 'Double', 'String', 'Guid'
     :type type_id: str or ~azure.servicefabric.models.PropertyValueKind
-    :param custom_type_id: The property's custom type id.
+    :param custom_type_id: The property's custom type ID.
     :type custom_type_id: str
     :param parent: The name of the parent Service Fabric Name for the
-     property. It could be thought of as the namespace/table under which the
+     property. It could be thought of as the name-space/table under which the
      property exists.
     :type parent: str
     :param size_in_bytes: The length of the serialized property value.

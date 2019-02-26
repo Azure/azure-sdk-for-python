@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ResourceManagementClient(MultiApiClientMixin):
+class ResourceManagementClient(MultiApiClientMixin, SDKClient):
     """Provides operations for working with resources and resource groups.
 
     :ivar config: Configuration for client.
@@ -68,7 +68,7 @@ class ResourceManagementClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2018-02-01'
+    DEFAULT_API_VERSION='2018-05-01'
     _PROFILE_TAG = "azure.mgmt.resource.resources.ResourceManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -78,16 +78,13 @@ class ResourceManagementClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = ResourceManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ResourceManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = ResourceManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -103,6 +100,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.resources.v2016_09_01.models>`
            * 2017-05-10: :mod:`v2017_05_10.models<azure.mgmt.resource.resources.v2017_05_10.models>`
            * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.resource.resources.v2018_02_01.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.resources.v2018_05_01.models>`
         """
         if api_version == '2016-02-01':
             from .v2016_02_01 import models
@@ -116,6 +114,9 @@ class ResourceManagementClient(MultiApiClientMixin):
         elif api_version == '2018-02-01':
             from .v2018_02_01 import models
             return models
+        elif api_version == '2018-05-01':
+            from .v2018_05_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
     @property
@@ -126,6 +127,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentOperations>`
            * 2017-05-10: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentOperations>`
            * 2018-02-01: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2018_02_01.operations.DeploymentOperations>`
+           * 2018-05-01: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2018_05_01.operations.DeploymentOperations>`
         """
         api_version = self._get_api_version('deployment_operations')
         if api_version == '2016-02-01':
@@ -136,6 +138,8 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import DeploymentOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DeploymentOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import DeploymentOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -148,6 +152,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentsOperations>`
            * 2017-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentsOperations>`
            * 2018-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2018_02_01.operations.DeploymentsOperations>`
+           * 2018-05-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2018_05_01.operations.DeploymentsOperations>`
         """
         api_version = self._get_api_version('deployments')
         if api_version == '2016-02-01':
@@ -158,6 +163,21 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import DeploymentsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import DeploymentsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import DeploymentsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2018-05-01: :class:`Operations<azure.mgmt.resource.resources.v2018_05_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2018-05-01':
+            from .v2018_05_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -170,6 +190,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ProvidersOperations>`
            * 2017-05-10: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ProvidersOperations>`
            * 2018-02-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2018_02_01.operations.ProvidersOperations>`
+           * 2018-05-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2018_05_01.operations.ProvidersOperations>`
         """
         api_version = self._get_api_version('providers')
         if api_version == '2016-02-01':
@@ -180,6 +201,8 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import ProvidersOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ProvidersOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import ProvidersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -192,6 +215,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ResourceGroupsOperations>`
            * 2017-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ResourceGroupsOperations>`
            * 2018-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2018_02_01.operations.ResourceGroupsOperations>`
+           * 2018-05-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2018_05_01.operations.ResourceGroupsOperations>`
         """
         api_version = self._get_api_version('resource_groups')
         if api_version == '2016-02-01':
@@ -202,6 +226,8 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import ResourceGroupsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ResourceGroupsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import ResourceGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -214,6 +240,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ResourcesOperations>`
            * 2017-05-10: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ResourcesOperations>`
            * 2018-02-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2018_02_01.operations.ResourcesOperations>`
+           * 2018-05-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2018_05_01.operations.ResourcesOperations>`
         """
         api_version = self._get_api_version('resources')
         if api_version == '2016-02-01':
@@ -224,6 +251,8 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import ResourcesOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import ResourcesOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import ResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -236,6 +265,7 @@ class ResourceManagementClient(MultiApiClientMixin):
            * 2016-09-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.TagsOperations>`
            * 2017-05-10: :class:`TagsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.TagsOperations>`
            * 2018-02-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2018_02_01.operations.TagsOperations>`
+           * 2018-05-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2018_05_01.operations.TagsOperations>`
         """
         api_version = self._get_api_version('tags')
         if api_version == '2016-02-01':
@@ -246,6 +276,8 @@ class ResourceManagementClient(MultiApiClientMixin):
             from .v2017_05_10.operations import TagsOperations as OperationClass
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import TagsOperations as OperationClass
+        elif api_version == '2018-05-01':
+            from .v2018_05_01.operations import TagsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

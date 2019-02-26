@@ -15,11 +15,15 @@ from msrest.serialization import Model
 class CreateOrUpdateFirewallRuleParameters(Model):
     """The parameters used to create a new firewall rule.
 
-    :param start_ip_address: The start IP address for the firewall rule. This
-     can be either ipv4 or ipv6. Start and End should be in the same protocol.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_ip_address: Required. The start IP address for the firewall
+     rule. This can be either ipv4 or ipv6. Start and End should be in the same
+     protocol.
     :type start_ip_address: str
-    :param end_ip_address: The end IP address for the firewall rule. This can
-     be either ipv4 or ipv6. Start and End should be in the same protocol.
+    :param end_ip_address: Required. The end IP address for the firewall rule.
+     This can be either ipv4 or ipv6. Start and End should be in the same
+     protocol.
     :type end_ip_address: str
     """
 
@@ -33,7 +37,7 @@ class CreateOrUpdateFirewallRuleParameters(Model):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address, end_ip_address):
-        super(CreateOrUpdateFirewallRuleParameters, self).__init__()
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, **kwargs):
+        super(CreateOrUpdateFirewallRuleParameters, self).__init__(**kwargs)
+        self.start_ip_address = kwargs.get('start_ip_address', None)
+        self.end_ip_address = kwargs.get('end_ip_address', None)

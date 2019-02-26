@@ -16,7 +16,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2","name":"azurebotservicee60013a2","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T18%3A36%3A34.9983667Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"056d9ad9-17a9-4cc7-aebb-43bf6f293a08","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af511","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a11","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
@@ -49,7 +49,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel","name":"azurebotservicee60013a2/EmailChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"8148c55803b448c0dab50af27c73b1084/2/2018
         6:36:42 PM\"","location":"global","properties":{"properties":{"emailAddress":"swagatm2@outlook.com","password":"Botuser123@","isEnabled":true},"etag":"W/\"8148c55803b448c0dab50af27c73b1084/2/2018
@@ -80,7 +80,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2018-07-12
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel","name":"azurebotservicee60013a2/EmailChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"c319754c4cd79482a41125d9543e108b4/2/2018
         6:36:43 PM\"","location":"global","properties":{"properties":{"emailAddress":"swagatm2@outlook.com","password":"Botuser123@","isEnabled":true},"etag":"W/\"c319754c4cd79482a41125d9543e108b4/2/2018
@@ -113,7 +113,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2018-07-12
   response:
     body: {string: ''}
     headers:
@@ -140,7 +140,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2018-07-12
   response:
     body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel''
         under resource group ''pythonsdkbote60013a2'' was not found."}}'}
@@ -167,7 +167,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2018-07-12
   response:
     body: {string: '{"error":{"code":"UnknownError","message":"message: The remote
         server returned an error: (412) Precondition Failed. original trace:    at
@@ -237,7 +237,7 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2018-07-12
   response:
     body: {string: ''}
     headers:

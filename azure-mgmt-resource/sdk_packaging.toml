@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-resource"
+package_pprint_name = "Resource Management"
+package_doc_id = "resources"
+is_stable = true

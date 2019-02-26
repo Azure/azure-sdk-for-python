@@ -1,0 +1,231 @@
+interactions:
+- request:
+    body: '{"location": "global", "sku": {"name": "Free"}, "kind": "Bot", "properties":
+      {"displayName": "this is a test bot", "description": "this is a description
+      for a test bot", "endpoint": "https://bing.com/messages/", "msaAppId": "056d9ad9-17a9-4cc7-aebb-43bf6f293a08",
+      "developerAppInsightKey": "59513bad-10a7-4d41-b4d0-b1c34c6af511", "developerAppInsightsApiKey":
+      "w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11", "developerAppInsightsApplicationId":
+      "cf03484e-3fdb-4b5e-9ad7-94bde32e5a19"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['481']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd?api-version=2018-07-12
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd","name":"azurebotservice4f7115bd","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-07-31T20%3A45%3A36.2560922Z''\"","location":"global","sku":{"name":""},"kind":"Bot","tags":{},"properties":{"displayName":"this
+        is a test bot","description":"this is a description for a test bot","iconUrl":"//bot-framework.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"056d9ad9-17a9-4cc7-aebb-43bf6f293a08","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af511","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a19","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['957']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 31 Jul 2018 20:45:41 GMT']
+      etag: [W/"datetime'2018-07-31T20%3A45%3A36.2560922Z'"]
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "DirectLineChannel",
+      "properties": {"sites": [{"siteName": "default", "isEnabled": true, "isV1Enabled":
+      false, "isV3Enabled": true}]}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['188']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel?api-version=2018-07-12
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel","name":"azurebotservice4f7115bd/DirectLineChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"2b47e15fbec0d1d1b222623dda5d66307/31/2018
+        8:45:44 PM\"","location":"global","properties":{"properties":{"DirectLineEmbedCode":null,"sites":[{"siteId":"3tzNpMpYn-k","siteName":"default","key":"3tzNpMpYn-k.cwA.rQk.ZU7eLP6D3DvlcRAf_0ZUQXn_hnyZ-2L-w3V3JEMmFm4","key2":"3tzNpMpYn-k.cwA.Dy8.BdYdlVv68RdNBvrLC2y69Yi5vkE4KsQbOv2voUzn2lI","isEnabled":true,"isV1Enabled":true,"isV3Enabled":true}]},"etag":"W/\"2b47e15fbec0d1d1b222623dda5d66307/31/2018
+        8:45:44 PM\"","channelName":"DirectLineChannel","location":"global","provisioningState":"Accepted"}}'}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['846']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 31 Jul 2018 20:45:44 GMT']
+      etag: ['W/"2b47e15fbec0d1d1b222623dda5d66307/31/2018 8:45:44 PM"']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel?api-version=2018-07-12
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel","name":"azurebotservice4f7115bd/DirectLineChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"d1d47c925d692cda5e3914543f8978407/31/2018
+        8:45:45 PM\"","location":"global","properties":{"properties":{"DirectLineEmbedCode":null,"sites":[{"siteId":"3tzNpMpYn-k","siteName":"default","key":"","key2":"","isEnabled":true,"isV1Enabled":true,"isV3Enabled":true}]},"etag":"W/\"d1d47c925d692cda5e3914543f8978407/31/2018
+        8:45:45 PM\"","channelName":"DirectLineChannel","location":"global","provisioningState":"Succeeded"}}'}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['721']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 31 Jul 2018 20:45:44 GMT']
+      etag: ['W/"d1d47c925d692cda5e3914543f8978407/31/2018 8:45:45 PM"']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel/listChannelWithKeys?api-version=2018-07-12
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel","location":"global","properties":{"properties":{"DirectLineEmbedCode":null,"sites":[{"siteId":"3tzNpMpYn-k","siteName":"default","key":"3tzNpMpYn-k.cwA.rQk.ZU7eLP6D3DvlcRAf_0ZUQXn_hnyZ-2L-w3V3JEMmFm4","key2":"3tzNpMpYn-k.cwA.Dy8.BdYdlVv68RdNBvrLC2y69Yi5vkE4KsQbOv2voUzn2lI","isEnabled":true,"isV1Enabled":true,"isV3Enabled":true}]},"etag":"W/\"2b47e15fbec0d1d1b222623dda5d66307/31/2018
+        8:45:46 PM\"","channelName":"DirectLineChannel","location":"global"},"provisioningState":"Succeeded","entityTag":"W/\"222fd4d12b031d841b4b6be1ee3a6bcd7/31/2018
+        8:45:46 PM\"","changedTime":"0001-01-01T00:00:00Z"}'}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['787']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 31 Jul 2018 20:45:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel?api-version=2018-07-12
+  response:
+    body: {string: ''}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 31 Jul 2018 20:45:48 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-deletes: ['14997']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel?api-version=2018-07-12
+  response:
+    body: {string: '{"error":{"code":"ResourceNotFound","message":"The resource with
+        identifier ''/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd/channels/DirectLineChannel''
+        is not found."}}'}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['276']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 31 Jul 2018 20:45:49 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-botservice/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot4f7115bd/providers/Microsoft.BotService/botServices/azurebotservice4f7115bd?api-version=2018-07-12
+  response:
+    body: {string: ''}
+    headers:
+      access-control-expose-headers: [Request-Context]
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Tue, 31 Jul 2018 20:45:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:073a6f92-8483-496a-9629-2ea276066cce']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-deletes: ['14999']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

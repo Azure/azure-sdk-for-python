@@ -24,7 +24,6 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
     def test_container(self, resource_group, location):
         container_name = self.get_resource_name('pycontainer')
         
-        # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
         async_create = self.cs_client.container_services.create_or_update(
             resource_group.name,
             container_name,
@@ -53,7 +52,6 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
                     }
                 },
             },
-            retries=0
         )
         container = async_create.result()
 

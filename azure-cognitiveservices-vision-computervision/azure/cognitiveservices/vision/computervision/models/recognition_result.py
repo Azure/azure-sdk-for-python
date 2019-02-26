@@ -24,6 +24,6 @@ class RecognitionResult(Model):
         'lines': {'key': 'lines', 'type': '[Line]'},
     }
 
-    def __init__(self, lines=None):
-        super(RecognitionResult, self).__init__()
-        self.lines = lines
+    def __init__(self, **kwargs):
+        super(RecognitionResult, self).__init__(**kwargs)
+        self.lines = kwargs.get('lines', None)

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .preset import Preset
+from .preset_py3 import Preset
 
 
 class StandardEncoderPreset(Preset):

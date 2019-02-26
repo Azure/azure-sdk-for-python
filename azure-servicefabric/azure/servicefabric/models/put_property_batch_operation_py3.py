@@ -25,7 +25,7 @@ class PutPropertyBatchOperation(PropertyBatchOperation):
     :type kind: str
     :param value: Required. Describes a Service Fabric property value.
     :type value: ~azure.servicefabric.models.PropertyValue
-    :param custom_type_id: The property's custom type id. Using this property,
+    :param custom_type_id: The property's custom type ID. Using this property,
      the user is able to tag the type of the value of the property.
     :type custom_type_id: str
     """

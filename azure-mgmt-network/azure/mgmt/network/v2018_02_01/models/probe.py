@@ -26,10 +26,10 @@ class Probe(SubResource):
     :vartype load_balancing_rules:
      list[~azure.mgmt.network.v2018_02_01.models.SubResource]
     :param protocol: Required. The protocol of the end point. Possible values
-     are: 'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required
-     for the probe to be successful. If 'Http' is specified, a 200 OK response
-     from the specifies URI is required for the probe to be successful.
-     Possible values include: 'Http', 'Tcp'
+     are: 'Http', 'Tcp' or 'Https'. If 'Tcp' is specified, a received ACK is
+     required for the probe to be successful. If 'Http' or 'Https' is
+     specified, a 200 OK response from the specifies URI is required for the
+     probe to be successful. Possible values include: 'Http', 'Tcp', 'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2018_02_01.models.ProbeProtocol
     :param port: Required. The port for communicating the probe. Possible

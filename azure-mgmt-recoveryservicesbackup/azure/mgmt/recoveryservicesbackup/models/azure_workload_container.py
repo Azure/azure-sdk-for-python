@@ -45,6 +45,12 @@ class AzureWorkloadContainer(ProtectionContainer):
     :param extended_info: Additional details of a workload container.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureWorkloadContainerExtendedInfo
+    :param workload_type: Workload type for which registration was sent.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """
 
     _validation = {
@@ -60,6 +66,7 @@ class AzureWorkloadContainer(ProtectionContainer):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadContainerExtendedInfo'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -71,4 +78,5 @@ class AzureWorkloadContainer(ProtectionContainer):
         self.source_resource_id = kwargs.get('source_resource_id', None)
         self.last_updated_time = kwargs.get('last_updated_time', None)
         self.extended_info = kwargs.get('extended_info', None)
+        self.workload_type = kwargs.get('workload_type', None)
         self.container_type = 'AzureWorkloadContainer'

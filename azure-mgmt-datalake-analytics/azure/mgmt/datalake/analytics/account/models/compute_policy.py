@@ -59,8 +59,8 @@ class ComputePolicy(SubResource):
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(ComputePolicy, self).__init__()
+    def __init__(self, **kwargs):
+        super(ComputePolicy, self).__init__(**kwargs)
         self.object_id = None
         self.object_type = None
         self.max_degree_of_parallelism_per_job = None

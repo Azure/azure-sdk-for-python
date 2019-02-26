@@ -107,9 +107,9 @@ try:
     from .virtual_machine_scale_set_instance_view_py3 import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .virtual_machine_health_status_py3 import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status_py3 import RollingUpgradeRunningStatus
     from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
     from .api_error_base_py3 import ApiErrorBase
@@ -239,9 +239,9 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .virtual_machine_health_status import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
     from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
     from .api_error_base import ApiErrorBase
@@ -411,9 +411,9 @@ __all__ = [
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
-    'VirtualMachineScaleSetVM',
     'VirtualMachineHealthStatus',
     'VirtualMachineScaleSetVMInstanceView',
+    'VirtualMachineScaleSetVM',
     'RollingUpgradeRunningStatus',
     'RollingUpgradeProgressInfo',
     'ApiErrorBase',

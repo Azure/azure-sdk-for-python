@@ -21,16 +21,20 @@ class OperationDisplay(Model):
     :type resource: str
     :param operation: Type of operation: get, read, delete, etc.
     :type operation: str
+    :param description: Description of the operation.
+    :type description: str
     """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, **kwargs) -> None:
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
+        self.description = description

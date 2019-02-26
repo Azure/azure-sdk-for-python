@@ -77,8 +77,8 @@ class DataLakeStoreAccountBasic(Resource):
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DataLakeStoreAccountBasic, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataLakeStoreAccountBasic, self).__init__(**kwargs)
         self.account_id = None
         self.provisioning_state = None
         self.state = None

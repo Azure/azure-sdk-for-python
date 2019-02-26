@@ -15,6 +15,8 @@ from .dataset_storage_format import DatasetStorageFormat
 class OrcFormat(DatasetStorageFormat):
     """The data stored in Optimized Row Columnar (ORC) format.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -24,7 +26,7 @@ class OrcFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -32,6 +34,13 @@ class OrcFormat(DatasetStorageFormat):
         'type': {'required': True},
     }
 
-    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
-        super(OrcFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OrcFormat, self).__init__(**kwargs)
         self.type = 'OrcFormat'

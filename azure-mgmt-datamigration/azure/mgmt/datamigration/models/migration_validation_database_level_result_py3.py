@@ -44,7 +44,7 @@ class MigrationValidationDatabaseLevelResult(Model):
      ~azure.mgmt.datamigration.models.QueryAnalysisValidationResult
     :ivar status: Current status of validation at the database level. Possible
      values include: 'Default', 'NotStarted', 'Initialized', 'InProgress',
-     'Completed', 'CompletedWithIssues', 'Failed', 'Stopped'
+     'Completed', 'CompletedWithIssues', 'Stopped', 'Failed'
     :vartype status: str or ~azure.mgmt.datamigration.models.ValidationStatus
     """
 
