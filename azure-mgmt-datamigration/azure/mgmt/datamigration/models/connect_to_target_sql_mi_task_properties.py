@@ -27,6 +27,9 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     :param input: Task input
@@ -40,6 +43,7 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
     _validation = {
         'errors': {'readonly': True},
         'state': {'readonly': True},
+        'commands': {'readonly': True},
         'task_type': {'required': True},
         'output': {'readonly': True},
     }
@@ -47,6 +51,7 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'input': {'key': 'input', 'type': 'ConnectToTargetSqlMITaskInput'},
         'output': {'key': 'output', 'type': '[ConnectToTargetSqlMITaskOutput]'},

@@ -38,6 +38,14 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(Model):
      account provided.
     :vartype backup_storage_account_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
+    :ivar existing_backup_errors: Errors associated with existing backup
+     files.
+    :vartype existing_backup_errors:
+     list[~azure.mgmt.datamigration.models.ReportableException]
+    :param database_backup_info: Information about backup files when existing
+     backup mode is used.
+    :type database_backup_info:
+     ~azure.mgmt.datamigration.models.DatabaseBackupInfo
     """
 
     _validation = {
@@ -47,6 +55,7 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(Model):
         'backup_folder_errors': {'readonly': True},
         'backup_share_credentials_errors': {'readonly': True},
         'backup_storage_account_errors': {'readonly': True},
+        'existing_backup_errors': {'readonly': True},
     }
 
     _attribute_map = {
@@ -56,9 +65,11 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(Model):
         'backup_folder_errors': {'key': 'backupFolderErrors', 'type': '[ReportableException]'},
         'backup_share_credentials_errors': {'key': 'backupShareCredentialsErrors', 'type': '[ReportableException]'},
         'backup_storage_account_errors': {'key': 'backupStorageAccountErrors', 'type': '[ReportableException]'},
+        'existing_backup_errors': {'key': 'existingBackupErrors', 'type': '[ReportableException]'},
+        'database_backup_info': {'key': 'databaseBackupInfo', 'type': 'DatabaseBackupInfo'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, database_backup_info=None, **kwargs) -> None:
         super(ValidateMigrationInputSqlServerSqlMITaskOutput, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -66,3 +77,5 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(Model):
         self.backup_folder_errors = None
         self.backup_share_credentials_errors = None
         self.backup_storage_account_errors = None
+        self.existing_backup_errors = None
+        self.database_backup_info = database_backup_info

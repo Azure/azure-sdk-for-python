@@ -16,27 +16,31 @@ class JobPropertiesExecutionInfo(Model):
     """Contains information about the execution of a job in the Azure Batch
     service.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param start_time: Required. The time at which the job started running.
-     'Running' corresponds to the running state. If the job has been restarted
-     or retried, this is the most recent time at which the job started running.
+    :ivar start_time: The time at which the job started running. 'Running'
+     corresponds to the running state. If the job has been restarted or
+     retried, this is the most recent time at which the job started running.
      This property is present only for job that are in the running or completed
      state.
-    :type start_time: datetime
-    :param end_time: The time at which the job completed. This property is
-     only returned if the job is in completed state.
-    :type end_time: datetime
-    :param exit_code: The exit code of the job. This property is only returned
+    :vartype start_time: datetime
+    :ivar end_time: The time at which the job completed. This property is only
+     returned if the job is in completed state.
+    :vartype end_time: datetime
+    :ivar exit_code: The exit code of the job. This property is only returned
      if the job is in completed state.
-    :type exit_code: int
-    :param errors: Contains details of various errors encountered by the
+    :vartype exit_code: int
+    :ivar errors: Contains details of various errors encountered by the
      service during job execution.
-    :type errors: list[~azure.mgmt.batchai.models.BatchAIError]
+    :vartype errors: list[~azure.mgmt.batchai.models.BatchAIError]
     """
 
     _validation = {
-        'start_time': {'required': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'exit_code': {'readonly': True},
+        'errors': {'readonly': True},
     }
 
     _attribute_map = {
@@ -48,7 +52,7 @@ class JobPropertiesExecutionInfo(Model):
 
     def __init__(self, **kwargs):
         super(JobPropertiesExecutionInfo, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.exit_code = kwargs.get('exit_code', None)
-        self.errors = kwargs.get('errors', None)
+        self.start_time = None
+        self.end_time = None
+        self.exit_code = None
+        self.errors = None

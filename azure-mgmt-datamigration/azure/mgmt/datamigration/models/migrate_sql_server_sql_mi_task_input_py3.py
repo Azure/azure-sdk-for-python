@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_migration_task_input import SqlMigrationTaskInput
+from .sql_migration_task_input_py3 import SqlMigrationTaskInput
 
 
 class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
@@ -39,6 +39,11 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
     :param backup_blob_share: Required. SAS URI of Azure Storage Account
      Container to be used for storing backup files.
     :type backup_blob_share: ~azure.mgmt.datamigration.models.BlobShare
+    :param backup_mode: Backup Mode to specify whether to use existing backup
+     or create new backup. If using existing backups, backup file paths are
+     required to be provided in selectedDatabases. Possible values include:
+     'CreateBackup', 'ExistingBackup'
+    :type backup_mode: str or ~azure.mgmt.datamigration.models.BackupMode
     """
 
     _validation = {
@@ -56,12 +61,14 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'selected_agent_jobs': {'key': 'selectedAgentJobs', 'type': '[str]'},
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
+        'backup_mode': {'key': 'backupMode', 'type': 'str'},
     }
 
-    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, selected_logins=None, selected_agent_jobs=None, backup_file_share=None, **kwargs) -> None:
+    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, selected_logins=None, selected_agent_jobs=None, backup_file_share=None, backup_mode=None, **kwargs) -> None:
         super(MigrateSqlServerSqlMITaskInput, self).__init__(source_connection_info=source_connection_info, target_connection_info=target_connection_info, **kwargs)
         self.selected_databases = selected_databases
         self.selected_logins = selected_logins
         self.selected_agent_jobs = selected_agent_jobs
         self.backup_file_share = backup_file_share
         self.backup_blob_share = backup_blob_share
+        self.backup_mode = backup_mode

@@ -12,6 +12,20 @@
 from enum import Enum
 
 
+class CommandState(str, Enum):
+
+    unknown = "Unknown"
+    accepted = "Accepted"
+    running = "Running"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class SqlSourcePlatform(str, Enum):
+
+    sql_on_prem = "SqlOnPrem"
+
+
 class AuthenticationType(str, Enum):
 
     none = "None"
@@ -19,6 +33,84 @@ class AuthenticationType(str, Enum):
     sql_authentication = "SqlAuthentication"
     active_directory_integrated = "ActiveDirectoryIntegrated"
     active_directory_password = "ActiveDirectoryPassword"
+
+
+class MongoDbErrorType(str, Enum):
+
+    error = "Error"
+    validation_error = "ValidationError"
+    warning = "Warning"
+
+
+class MongoDbMigrationState(str, Enum):
+
+    not_started = "NotStarted"
+    validating_input = "ValidatingInput"
+    initializing = "Initializing"
+    restarting = "Restarting"
+    copying = "Copying"
+    initial_replay = "InitialReplay"
+    replaying = "Replaying"
+    finalizing = "Finalizing"
+    complete = "Complete"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
+class MongoDbShardKeyOrder(str, Enum):
+
+    forward = "Forward"
+    reverse = "Reverse"
+    hashed = "Hashed"
+
+
+class MongoDbReplication(str, Enum):
+
+    disabled = "Disabled"
+    one_time = "OneTime"
+    continuous = "Continuous"
+
+
+class BackupType(str, Enum):
+
+    database = "Database"
+    transaction_log = "TransactionLog"
+    file = "File"
+    differential_database = "DifferentialDatabase"
+    differential_file = "DifferentialFile"
+    partial = "Partial"
+    differential_partial = "DifferentialPartial"
+
+
+class BackupMode(str, Enum):
+
+    create_backup = "CreateBackup"
+    existing_backup = "ExistingBackup"
+
+
+class SyncTableMigrationState(str, Enum):
+
+    before_load = "BEFORE_LOAD"
+    full_load = "FULL_LOAD"
+    completed = "COMPLETED"
+    canceled = "CANCELED"
+    error = "ERROR"
+    failed = "FAILED"
+
+
+class SyncDatabaseMigrationReportingState(str, Enum):
+
+    undefined = "UNDEFINED"
+    configuring = "CONFIGURING"
+    initialiazing = "INITIALIAZING"
+    starting = "STARTING"
+    running = "RUNNING"
+    ready_to_complete = "READY_TO_COMPLETE"
+    completing = "COMPLETING"
+    complete = "COMPLETE"
+    cancelling = "CANCELLING"
+    cancelled = "CANCELLED"
+    failed = "FAILED"
 
 
 class ValidationStatus(str, Enum):
@@ -29,8 +121,8 @@ class ValidationStatus(str, Enum):
     in_progress = "InProgress"
     completed = "Completed"
     completed_with_issues = "CompletedWithIssues"
-    failed = "Failed"
     stopped = "Stopped"
+    failed = "Failed"
 
 
 class Severity(str, Enum):
@@ -152,6 +244,15 @@ class ServerLevelPermissionsGroup(str, Enum):
 
     default = "Default"
     migration_from_sql_server_to_azure_db = "MigrationFromSqlServerToAzureDB"
+    migration_from_sql_server_to_azure_mi = "MigrationFromSqlServerToAzureMI"
+    migration_from_my_sql_to_azure_db_for_my_sql = "MigrationFromMySQLToAzureDBForMySQL"
+
+
+class MongoDbClusterType(str, Enum):
+
+    blob_container = "BlobContainer"
+    cosmos_db = "CosmosDb"
+    mongo_db = "MongoDb"
 
 
 class TaskState(str, Enum):
@@ -184,12 +285,18 @@ class ProjectTargetPlatform(str, Enum):
 
     sqldb = "SQLDB"
     sqlmi = "SQLMI"
+    azure_db_for_my_sql = "AzureDbForMySql"
+    azure_db_for_postgre_sql = "AzureDbForPostgreSql"
+    mongo_db = "MongoDb"
     unknown = "Unknown"
 
 
 class ProjectSourcePlatform(str, Enum):
 
     sql = "SQL"
+    my_sql = "MySQL"
+    postgre_sql = "PostgreSql"
+    mongo_db = "MongoDb"
     unknown = "Unknown"
 
 
@@ -228,6 +335,42 @@ class ResourceSkuCapacityScaleType(str, Enum):
     automatic = "Automatic"
     manual = "Manual"
     none = "None"
+
+
+class MySqlTargetPlatformType(str, Enum):
+
+    azure_db_for_my_sql = "AzureDbForMySQL"
+
+
+class SchemaMigrationOption(str, Enum):
+
+    none = "None"
+    extract_from_source = "ExtractFromSource"
+    use_storage_file = "UseStorageFile"
+
+
+class SchemaMigrationStage(str, Enum):
+
+    not_started = "NotStarted"
+    validating_inputs = "ValidatingInputs"
+    collecting_objects = "CollectingObjects"
+    downloading_script = "DownloadingScript"
+    generating_script = "GeneratingScript"
+    uploading_script = "UploadingScript"
+    deploying_schema = "DeployingSchema"
+    completed = "Completed"
+    completed_with_warnings = "CompletedWithWarnings"
+    failed = "Failed"
+
+
+class DataMigrationResultCode(str, Enum):
+
+    initial = "Initial"
+    completed = "Completed"
+    object_not_exists_in_source = "ObjectNotExistsInSource"
+    object_not_exists_in_target = "ObjectNotExistsInTarget"
+    target_object_is_inaccessible = "TargetObjectIsInaccessible"
+    fatal_error = "FatalError"
 
 
 class ErrorType(str, Enum):

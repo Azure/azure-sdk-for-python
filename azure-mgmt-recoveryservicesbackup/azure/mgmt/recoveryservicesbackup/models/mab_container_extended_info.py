@@ -21,7 +21,7 @@ class MabContainerExtendedInfo(Model):
      container. Possible values include: 'Invalid', 'VM', 'FileFolder',
      'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM',
      'SystemState', 'Client', 'GenericDataSource', 'SQLDataBase',
-     'AzureFileShare'
+     'AzureFileShare', 'SAPHanaDatabase'
     :type backup_item_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.BackupItemType
     :param backup_items: List of backup items associated with this container.

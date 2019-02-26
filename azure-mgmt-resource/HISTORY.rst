@@ -3,6 +3,55 @@
 Release History
 ===============
 
+2.1.0 (2019-02-01)
+++++++++++++++++++
+
+**Features on Policy**
+
+- New API version for Policy 2018-05-01
+- Model PolicyAssignment has a new parameter location
+- Model PolicyAssignment has a new parameter identity
+
+2.0.0 (2018-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Identity class has now a user_assigned_identities attribute
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+2.0.0rc2 (2018-06-13)
++++++++++++++++++++++
+
+**Features on Policy**
+
+- New API version for Policy 2018-03-01. This a merge of 2017-06-01-preview and 2016-12-01 and has no external API breaking.
+
+**Features on Resources**
+
+- Resources new Api Version 2018-05-01
+- Model Deployment has a new parameter location
+- Model DeploymentExtended has a new parameter location
+- Added operation DeploymentsOperations.export_template_at_subscription_scope
+- Added operation DeploymentsOperations.get_at_subscription_scope
+- Added operation DeploymentsOperations.cancel_at_subscription_scope
+- Added operation DeploymentsOperations.delete_at_subscription_scope
+- Added operation DeploymentsOperations.create_or_update_at_subscription_scope
+- Added operation DeploymentsOperations.validate_at_subscription_scope
+- Added operation DeploymentsOperations.check_existence_at_subscription_scope
+- Added operation DeploymentsOperations.list_at_subscription_scope
+- Added operation DeploymentOperations.get_at_subscription_scope
+- Added operation DeploymentOperations.list_at_subscription_scope
+
+**Breaking changes on Resources**
+
+- Operation DeploymentsOperations.create_or_update lost its ignored "location" parameter.
+- Operation DeploymentsOperations.validate lost its ignored "location" parameter.
+
+**Common features**
+
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
 2.0.0rc1 (2018-04-23)
 +++++++++++++++++++++
 
@@ -24,7 +73,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -91,8 +140,8 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 **Disclaimer**
 
-- We removed the "filter" parameter of policy_definitions.list method. 
-  However, we don't upgrade the  major version of the package, since this parameter has no meaning 
+- We removed the "filter" parameter of policy_definitions.list method.
+  However, we don't upgrade the  major version of the package, since this parameter has no meaning
   for the RestAPI and there is no way any Python users would have been able to use it anyway.
 
 1.1.0 (2017-05-15)

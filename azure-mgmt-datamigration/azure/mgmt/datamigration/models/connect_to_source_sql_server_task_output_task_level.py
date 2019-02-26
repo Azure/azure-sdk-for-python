@@ -32,6 +32,9 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
     :vartype logins: dict[str, str]
     :ivar agent_jobs: Source agent jobs as a map from agent job name to id.
     :vartype agent_jobs: dict[str, str]
+    :ivar database_tde_certificate_mapping: Mapping from database name to TDE
+     certificate name, if applicable
+    :vartype database_tde_certificate_mapping: dict[str, str]
     :ivar source_server_version: Source server version
     :vartype source_server_version: str
     :ivar source_server_brand_version: Source server brand version
@@ -47,6 +50,7 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         'databases': {'readonly': True},
         'logins': {'readonly': True},
         'agent_jobs': {'readonly': True},
+        'database_tde_certificate_mapping': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server_brand_version': {'readonly': True},
         'validation_errors': {'readonly': True},
@@ -56,8 +60,9 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
-        'logins': {'key': 'Logins', 'type': '{str}'},
-        'agent_jobs': {'key': 'AgentJobs', 'type': '{str}'},
+        'logins': {'key': 'logins', 'type': '{str}'},
+        'agent_jobs': {'key': 'agentJobs', 'type': '{str}'},
+        'database_tde_certificate_mapping': {'key': 'databaseTdeCertificateMapping', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
@@ -68,6 +73,7 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         self.databases = None
         self.logins = None
         self.agent_jobs = None
+        self.database_tde_certificate_mapping = None
         self.source_server_version = None
         self.source_server_brand_version = None
         self.validation_errors = None

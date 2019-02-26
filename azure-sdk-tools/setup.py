@@ -4,6 +4,27 @@ from setuptools import setup, find_packages
 # This is a "fake" package, meaning it's not supposed to be released but used
 # locally with "pip install -e"
 
+DEPENDENCIES = [
+    # Packaging
+    'packaging',
+    'wheel',
+    'Jinja2',
+    'pytoml',
+    'json-delta>=2.0',
+    'azure-devtools[ci_tools]>=1.1.0',
+    # Tests
+    'pytest-cov',
+    'pytest>=3.5.1',
+    # 'azure-devtools>=0.4.1' override by packaging needs
+    'readme_renderer',
+    'azure-storage-blob',
+    'azure-storage-file',
+    'azure-storage-common',
+    'pyopenssl',
+    'azure-mgmt-resource',
+    'azure-mgmt-storage'
+]
+
 setup(
     name = "azure-sdk-tools",
     version = "0.0.0",
@@ -11,5 +32,14 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     packages=find_packages(),
-    long_description="Specific tools for Azure SDK for Python testing"
+    long_description="Specific tools for Azure SDK for Python testing",
+    install_requires=DEPENDENCIES,
+    entry_points = {
+        'console_scripts': [
+            'generate_package=packaging_tools.generate_package:generate_main',
+        ],
+    },
+    extras_require={
+        ":python_version>='3.5'": ['pytest-asyncio>=0.9.0']
+    }
 )

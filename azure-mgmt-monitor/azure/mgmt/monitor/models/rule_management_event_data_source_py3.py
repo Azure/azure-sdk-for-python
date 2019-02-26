@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .rule_data_source import RuleDataSource
+from .rule_data_source_py3 import RuleDataSource
 
 
 class RuleManagementEventDataSource(RuleDataSource):

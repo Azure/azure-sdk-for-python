@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_info import EventInfo
+from .event_info_py3 import EventInfo
 
 
 class Event(EventInfo):

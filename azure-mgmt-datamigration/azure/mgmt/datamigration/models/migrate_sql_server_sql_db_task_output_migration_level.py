@@ -45,6 +45,9 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
     :ivar database_summary: Summary of database results in the migration
     :vartype database_summary: dict[str,
      ~azure.mgmt.datamigration.models.DatabaseSummaryResult]
+    :param migration_validation_result: Migration Validation Results
+    :type migration_validation_result:
+     ~azure.mgmt.datamigration.models.MigrationValidationResult
     :param migration_report_result: Migration Report Result, provides unique
      url for downloading your migration report.
     :type migration_report_result:
@@ -91,6 +94,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'message': {'key': 'message', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'database_summary': {'key': 'databaseSummary', 'type': '{DatabaseSummaryResult}'},
+        'migration_validation_result': {'key': 'migrationValidationResult', 'type': 'MigrationValidationResult'},
         'migration_report_result': {'key': 'migrationReportResult', 'type': 'MigrationReportResult'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
@@ -109,6 +113,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         self.message = None
         self.databases = None
         self.database_summary = None
+        self.migration_validation_result = kwargs.get('migration_validation_result', None)
         self.migration_report_result = kwargs.get('migration_report_result', None)
         self.source_server_version = None
         self.source_server_brand_version = None

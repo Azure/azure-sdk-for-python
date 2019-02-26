@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class Operation(Model):
     """An operation for Azure Container Instance service.
 
-    :param name: The name of the operation.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the operation.
     :type name: str
-    :param display: The display information of the operation.
+    :param display: Required. The display information of the operation.
     :type display: ~azure.mgmt.containerinstance.models.OperationDisplay
     :param origin: The intended executor of the operation. Possible values
      include: 'User', 'System'
@@ -36,8 +38,8 @@ class Operation(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, name, display, origin=None):
-        super(Operation, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)

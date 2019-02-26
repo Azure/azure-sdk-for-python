@@ -20,12 +20,17 @@ class CsmPublishingProfileOptions(Model):
      WebDeploy -- default
      Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
     :type format: str or ~azure.mgmt.web.models.PublishingProfileFormat
+    :param include_disaster_recovery_endpoints: Include the DisasterRecover
+     endpoint if true
+    :type include_disaster_recovery_endpoints: bool
     """
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},
+        'include_disaster_recovery_endpoints': {'key': 'includeDisasterRecoveryEndpoints', 'type': 'bool'},
     }
 
-    def __init__(self, format=None):
-        super(CsmPublishingProfileOptions, self).__init__()
-        self.format = format
+    def __init__(self, **kwargs):
+        super(CsmPublishingProfileOptions, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
+        self.include_disaster_recovery_endpoints = kwargs.get('include_disaster_recovery_endpoints', None)

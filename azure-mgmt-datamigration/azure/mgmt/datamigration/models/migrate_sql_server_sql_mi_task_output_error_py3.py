@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
+from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
 
 
 class MigrateSqlServerSqlMITaskOutputError(MigrateSqlServerSqlMITaskOutput):

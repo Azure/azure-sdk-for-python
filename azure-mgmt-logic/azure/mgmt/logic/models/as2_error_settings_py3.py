@@ -32,7 +32,7 @@ class AS2ErrorSettings(Model):
 
     _attribute_map = {
         'suspend_duplicate_message': {'key': 'suspendDuplicateMessage', 'type': 'bool'},
-        'resend_if_mdn_not_received': {'key': 'resendIfMdnNotReceived', 'type': 'bool'},
+        'resend_if_mdn_not_received': {'key': 'resendIfMDNNotReceived', 'type': 'bool'},
     }
 
     def __init__(self, *, suspend_duplicate_message: bool, resend_if_mdn_not_received: bool, **kwargs) -> None:

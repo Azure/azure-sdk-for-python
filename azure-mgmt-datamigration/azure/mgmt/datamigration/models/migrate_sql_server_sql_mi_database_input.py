@@ -26,6 +26,9 @@ class MigrateSqlServerSqlMIDatabaseInput(Model):
     :param backup_file_share: Backup file share information for backing up
      this database.
     :type backup_file_share: ~azure.mgmt.datamigration.models.FileShare
+    :param backup_file_paths: The list of backup files to be used in case of
+     existing backups.
+    :type backup_file_paths: list[str]
     """
 
     _validation = {
@@ -37,6 +40,7 @@ class MigrateSqlServerSqlMIDatabaseInput(Model):
         'name': {'key': 'name', 'type': 'str'},
         'restore_database_name': {'key': 'restoreDatabaseName', 'type': 'str'},
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
+        'backup_file_paths': {'key': 'backupFilePaths', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -44,3 +48,4 @@ class MigrateSqlServerSqlMIDatabaseInput(Model):
         self.name = kwargs.get('name', None)
         self.restore_database_name = kwargs.get('restore_database_name', None)
         self.backup_file_share = kwargs.get('backup_file_share', None)
+        self.backup_file_paths = kwargs.get('backup_file_paths', None)

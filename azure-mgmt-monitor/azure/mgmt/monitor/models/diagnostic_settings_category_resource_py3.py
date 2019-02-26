@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_only_resource import ProxyOnlyResource
+from .proxy_only_resource_py3 import ProxyOnlyResource
 
 
 class DiagnosticSettingsCategoryResource(ProxyOnlyResource):

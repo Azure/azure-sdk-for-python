@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .connection_info import ConnectionInfo
+from .connection_info_py3 import ConnectionInfo
 
 
 class SqlConnectionInfo(ConnectionInfo):
@@ -39,6 +39,9 @@ class SqlConnectionInfo(ConnectionInfo):
     :param trust_server_certificate: Whether to trust the server certificate.
      Default value: False .
     :type trust_server_certificate: bool
+    :param platform: Server platform type for connection. Possible values
+     include: 'SqlOnPrem'
+    :type platform: str or ~azure.mgmt.datamigration.models.SqlSourcePlatform
     """
 
     _validation = {
@@ -55,13 +58,15 @@ class SqlConnectionInfo(ConnectionInfo):
         'encrypt_connection': {'key': 'encryptConnection', 'type': 'bool'},
         'additional_settings': {'key': 'additionalSettings', 'type': 'str'},
         'trust_server_certificate': {'key': 'trustServerCertificate', 'type': 'bool'},
+        'platform': {'key': 'platform', 'type': 'str'},
     }
 
-    def __init__(self, *, data_source: str, user_name: str=None, password: str=None, authentication=None, encrypt_connection: bool=True, additional_settings: str=None, trust_server_certificate: bool=False, **kwargs) -> None:
+    def __init__(self, *, data_source: str, user_name: str=None, password: str=None, authentication=None, encrypt_connection: bool=True, additional_settings: str=None, trust_server_certificate: bool=False, platform=None, **kwargs) -> None:
         super(SqlConnectionInfo, self).__init__(user_name=user_name, password=password, **kwargs)
         self.data_source = data_source
         self.authentication = authentication
         self.encrypt_connection = encrypt_connection
         self.additional_settings = additional_settings
         self.trust_server_certificate = trust_server_certificate
+        self.platform = platform
         self.type = 'SqlConnectionInfo'

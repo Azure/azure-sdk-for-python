@@ -17,10 +17,22 @@ class ProjectTaskProperties(Model):
     by current client, this object is returned.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ValidateMigrationInputSqlServerSqlMITaskProperties,
+    sub-classes are: GetTdeCertificatesSqlTaskProperties,
+    ValidateMongoDbTaskProperties,
+    ValidateMigrationInputSqlServerSqlMITaskProperties,
+    ValidateMigrationInputSqlServerSqlDbSyncTaskProperties,
+    MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties,
+    MigrateMySqlAzureDbForMySqlSyncTaskProperties,
+    MigrateSqlServerSqlDbSyncTaskProperties,
     MigrateSqlServerSqlDbTaskProperties, MigrateSqlServerSqlMITaskProperties,
-    GetUserTablesSqlTaskProperties, ConnectToTargetSqlDbTaskProperties,
-    ConnectToTargetSqlMITaskProperties, ConnectToSourceSqlServerTaskProperties
+    MigrateMongoDbTaskProperties, ConnectToTargetAzureDbForMySqlTaskProperties,
+    ConnectToTargetSqlMITaskProperties, GetUserTablesSqlSyncTaskProperties,
+    GetUserTablesSqlTaskProperties, ConnectToTargetSqlSqlDbSyncTaskProperties,
+    ConnectToTargetSqlDbTaskProperties,
+    ConnectToSourceSqlServerSyncTaskProperties,
+    ConnectToSourceSqlServerTaskProperties, ConnectToMongoDbTaskProperties,
+    ConnectToSourceMySqlTaskProperties,
+    MigrateSchemaSqlServerSqlDbTaskProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -33,6 +45,9 @@ class ProjectTaskProperties(Model):
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     """
@@ -40,21 +55,24 @@ class ProjectTaskProperties(Model):
     _validation = {
         'errors': {'readonly': True},
         'state': {'readonly': True},
+        'commands': {'readonly': True},
         'task_type': {'required': True},
     }
 
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'task_type': {'key': 'taskType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'task_type': {'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
+        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties'}
     }
 
     def __init__(self, **kwargs):
         super(ProjectTaskProperties, self).__init__(**kwargs)
         self.errors = None
         self.state = None
+        self.commands = None
         self.task_type = None

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
+from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
 
 
 class ConnectToSourceSqlServerTaskOutputDatabaseLevel(ConnectToSourceSqlServerTaskOutput):

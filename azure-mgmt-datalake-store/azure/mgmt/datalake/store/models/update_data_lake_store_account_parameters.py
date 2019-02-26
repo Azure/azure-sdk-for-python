@@ -28,6 +28,10 @@ class UpdateDataLakeStoreAccountParameters(Model):
      Data Lake Store account.
     :type firewall_rules:
      list[~azure.mgmt.datalake.store.models.UpdateFirewallRuleWithAccountParameters]
+    :param virtual_network_rules: The list of virtual network rules associated
+     with this Data Lake Store account.
+    :type virtual_network_rules:
+     list[~azure.mgmt.datalake.store.models.UpdateVirtualNetworkRuleWithAccountParameters]
     :param firewall_state: The current state of the IP address firewall for
      this Data Lake Store account. Disabling the firewall does not remove
      existing rules, they will just be ignored until the firewall is
@@ -62,6 +66,7 @@ class UpdateDataLakeStoreAccountParameters(Model):
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'UpdateEncryptionConfig'},
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[UpdateFirewallRuleWithAccountParameters]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[UpdateVirtualNetworkRuleWithAccountParameters]'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[UpdateTrustedIdProviderWithAccountParameters]'},
@@ -69,14 +74,15 @@ class UpdateDataLakeStoreAccountParameters(Model):
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
     }
 
-    def __init__(self, tags=None, default_group=None, encryption_config=None, firewall_rules=None, firewall_state=None, firewall_allow_azure_ips=None, trusted_id_providers=None, trusted_id_provider_state=None, new_tier=None):
-        super(UpdateDataLakeStoreAccountParameters, self).__init__()
-        self.tags = tags
-        self.default_group = default_group
-        self.encryption_config = encryption_config
-        self.firewall_rules = firewall_rules
-        self.firewall_state = firewall_state
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips
-        self.trusted_id_providers = trusted_id_providers
-        self.trusted_id_provider_state = trusted_id_provider_state
-        self.new_tier = new_tier
+    def __init__(self, **kwargs):
+        super(UpdateDataLakeStoreAccountParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.default_group = kwargs.get('default_group', None)
+        self.encryption_config = kwargs.get('encryption_config', None)
+        self.firewall_rules = kwargs.get('firewall_rules', None)
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.firewall_state = kwargs.get('firewall_state', None)
+        self.firewall_allow_azure_ips = kwargs.get('firewall_allow_azure_ips', None)
+        self.trusted_id_providers = kwargs.get('trusted_id_providers', None)
+        self.trusted_id_provider_state = kwargs.get('trusted_id_provider_state', None)
+        self.new_tier = kwargs.get('new_tier', None)

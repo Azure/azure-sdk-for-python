@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_item_migration_summary_result import DataItemMigrationSummaryResult
+from .data_item_migration_summary_result_py3 import DataItemMigrationSummaryResult
 
 
 class DatabaseSummaryResult(DataItemMigrationSummaryResult):

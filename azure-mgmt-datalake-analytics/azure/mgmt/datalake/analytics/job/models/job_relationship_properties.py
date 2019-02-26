@@ -16,22 +16,24 @@ class JobRelationshipProperties(Model):
     """Job relationship information properties including pipeline information,
     correlation information, etc.
 
-    :param pipeline_id: the job relationship pipeline identifier (a GUID).
+    All required parameters must be populated in order to send to Azure.
+
+    :param pipeline_id: The job relationship pipeline identifier (a GUID).
     :type pipeline_id: str
-    :param pipeline_name: the friendly name of the job relationship pipeline,
+    :param pipeline_name: The friendly name of the job relationship pipeline,
      which does not need to be unique.
     :type pipeline_name: str
-    :param pipeline_uri: the pipeline uri, unique, links to the originating
+    :param pipeline_uri: The pipeline uri, unique, links to the originating
      service for this pipeline.
     :type pipeline_uri: str
-    :param run_id: the run identifier (a GUID), unique identifier of the
+    :param run_id: The run identifier (a GUID), unique identifier of the
      iteration of this pipeline.
     :type run_id: str
-    :param recurrence_id: the recurrence identifier (a GUID), unique per
-     activity/script, regardless of iterations. This is something to link
+    :param recurrence_id: Required. The recurrence identifier (a GUID), unique
+     per activity/script, regardless of iterations. This is something to link
      different occurrences of the same job together.
     :type recurrence_id: str
-    :param recurrence_name: the recurrence name, user friendly name for the
+    :param recurrence_name: The recurrence name, user friendly name for the
      correlation between jobs.
     :type recurrence_name: str
     """
@@ -51,11 +53,11 @@ class JobRelationshipProperties(Model):
         'recurrence_name': {'key': 'recurrenceName', 'type': 'str'},
     }
 
-    def __init__(self, recurrence_id, pipeline_id=None, pipeline_name=None, pipeline_uri=None, run_id=None, recurrence_name=None):
-        super(JobRelationshipProperties, self).__init__()
-        self.pipeline_id = pipeline_id
-        self.pipeline_name = pipeline_name
-        self.pipeline_uri = pipeline_uri
-        self.run_id = run_id
-        self.recurrence_id = recurrence_id
-        self.recurrence_name = recurrence_name
+    def __init__(self, **kwargs):
+        super(JobRelationshipProperties, self).__init__(**kwargs)
+        self.pipeline_id = kwargs.get('pipeline_id', None)
+        self.pipeline_name = kwargs.get('pipeline_name', None)
+        self.pipeline_uri = kwargs.get('pipeline_uri', None)
+        self.run_id = kwargs.get('run_id', None)
+        self.recurrence_id = kwargs.get('recurrence_id', None)
+        self.recurrence_name = kwargs.get('recurrence_name', None)

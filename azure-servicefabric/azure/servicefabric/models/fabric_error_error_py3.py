@@ -65,6 +65,7 @@ class FabricErrorError(Model):
      - "FABRIC_E_BACKUP_NOT_ENABLED"
      - "FABRIC_E_BACKUP_POLICY_NOT_EXISTING"
      - "FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING"
+     - "FABRIC_E_IMAGEBUILDER_RESERVED_DIRECTORY_ERROR"
      - Possible values of the error code for HTTP status code 409 (Conflict)
      - "FABRIC_E_APPLICATION_TYPE_ALREADY_EXISTS"
      - "FABRIC_E_APPLICATION_ALREADY_EXISTS"
@@ -97,6 +98,11 @@ class FabricErrorError(Model):
      Server Error)
      - "FABRIC_E_NODE_IS_UP"
      - "E_FAIL"
+     - "FABRIC_E_SINGLE_INSTANCE_APPLICATION_ALREADY_EXISTS"
+     - "FABRIC_E_SINGLE_INSTANCE_APPLICATION_NOT_FOUND"
+     - "FABRIC_E_VOLUME_ALREADY_EXISTS"
+     - "ABRIC_E_VOLUME_NOT_FOUND"
+     - "SerializationError"
      - Possible values of the error code for HTTP status code 503 (Service
      Unavailable)
      - "FABRIC_E_NO_WRITE_QUORUM"
@@ -162,7 +168,11 @@ class FabricErrorError(Model):
      'FABRIC_E_FAULT_ANALYSIS_SERVICE_NOT_EXISTING',
      'FABRIC_E_BACKUP_IN_PROGRESS', 'FABRIC_E_RESTORE_IN_PROGRESS',
      'FABRIC_E_BACKUP_POLICY_ALREADY_EXISTING',
-     'FABRIC_E_INVALID_SERVICE_SCALING_POLICY', 'E_INVALIDARG'
+     'FABRIC_E_INVALID_SERVICE_SCALING_POLICY', 'E_INVALIDARG',
+     'FABRIC_E_SINGLE_INSTANCE_APPLICATION_ALREADY_EXISTS',
+     'FABRIC_E_SINGLE_INSTANCE_APPLICATION_NOT_FOUND',
+     'FABRIC_E_VOLUME_ALREADY_EXISTS', 'FABRIC_E_VOLUME_NOT_FOUND',
+     'SerializationError', 'FABRIC_E_IMAGEBUILDER_RESERVED_DIRECTORY_ERROR'
     :type code: str or ~azure.servicefabric.models.FabricErrorCodes
     :param message: Error message.
     :type message: str

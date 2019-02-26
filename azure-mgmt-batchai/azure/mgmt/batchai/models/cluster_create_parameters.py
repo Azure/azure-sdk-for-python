@@ -17,10 +17,6 @@ class ClusterCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The region in which to create the cluster.
-    :type location: str
-    :param tags: The user specified tags associated with the Cluster.
-    :type tags: dict[str, str]
     :param vm_size: Required. The size of the virtual machines in the cluster.
      All virtual machines in a cluster are the same size. For information about
      available VM sizes for clusters using images from the Virtual Machines
@@ -50,14 +46,11 @@ class ClusterCreateParameters(Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'vm_size': {'required': True},
         'user_account_settings': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
         'vm_priority': {'key': 'properties.vmPriority', 'type': 'VmPriority'},
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
@@ -69,8 +62,6 @@ class ClusterCreateParameters(Model):
 
     def __init__(self, **kwargs):
         super(ClusterCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.vm_size = kwargs.get('vm_size', None)
         self.vm_priority = kwargs.get('vm_priority', "dedicated")
         self.scale_settings = kwargs.get('scale_settings', None)

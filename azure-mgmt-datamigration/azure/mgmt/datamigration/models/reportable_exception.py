@@ -17,6 +17,8 @@ class ReportableException(Model):
 
     :param message: Error message
     :type message: str
+    :param actionable_message: Actionable steps for this exception
+    :type actionable_message: str
     :param file_path: The path to the file where exception occurred
     :type file_path: str
     :param line_number: The line number where exception occurred
@@ -30,6 +32,7 @@ class ReportableException(Model):
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
+        'actionable_message': {'key': 'actionableMessage', 'type': 'str'},
         'file_path': {'key': 'filePath', 'type': 'str'},
         'line_number': {'key': 'lineNumber', 'type': 'str'},
         'h_result': {'key': 'hResult', 'type': 'int'},
@@ -39,6 +42,7 @@ class ReportableException(Model):
     def __init__(self, **kwargs):
         super(ReportableException, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
+        self.actionable_message = kwargs.get('actionable_message', None)
         self.file_path = kwargs.get('file_path', None)
         self.line_number = kwargs.get('line_number', None)
         self.h_result = kwargs.get('h_result', None)

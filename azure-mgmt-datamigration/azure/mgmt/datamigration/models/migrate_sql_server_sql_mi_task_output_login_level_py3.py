@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
+from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
 
 
 class MigrateSqlServerSqlMITaskOutputLoginLevel(MigrateSqlServerSqlMITaskOutput):
@@ -64,7 +64,7 @@ class MigrateSqlServerSqlMITaskOutputLoginLevel(MigrateSqlServerSqlMITaskOutput)
         'result_type': {'key': 'resultType', 'type': 'str'},
         'login_name': {'key': 'loginName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'LoginMigrationStage'},
+        'stage': {'key': 'stage', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
         'message': {'key': 'message', 'type': 'str'},

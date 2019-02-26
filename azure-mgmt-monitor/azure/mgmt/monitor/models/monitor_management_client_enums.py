@@ -134,6 +134,47 @@ class Sensitivity(str, Enum):
     high = "High"
 
 
+class Enabled(str, Enum):
+
+    true = "true"
+    false = "false"
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    deploying = "Deploying"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
+class QueryType(str, Enum):
+
+    result_count = "ResultCount"
+
+
+class ConditionalOperator(str, Enum):
+
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+
+
+class MetricTriggerType(str, Enum):
+
+    consecutive = "Consecutive"
+    total = "Total"
+
+
+class AlertSeverity(str, Enum):
+
+    zero = "0"
+    one = "1"
+    two = "2"
+    three = "3"
+    four = "4"
+
+
 class ResultType(str, Enum):
 
     data = "Data"

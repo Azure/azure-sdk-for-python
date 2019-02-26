@@ -3,6 +3,54 @@
 Release History
 ===============
 
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
+0.10.0 (2018-10-18)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseVulnerabilityAssessment has a new parameter storage_account_access_key
+- Model ManagedInstanceUpdate has a new parameter dns_zone_partner
+- Model ManagedInstanceUpdate has a new parameter collation
+- Model ManagedInstanceUpdate has a new parameter dns_zone
+- Model ManagedInstance has a new parameter dns_zone_partner
+- Model ManagedInstance has a new parameter collation
+- Model ManagedInstance has a new parameter dns_zone
+- Added operation BackupShortTermRetentionPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseVulnerabilityAssessmentsOperations
+- Added operation group ExtendedDatabaseBlobAuditingPoliciesOperations
+- Added operation group TdeCertificatesOperations
+- Added operation group ManagedInstanceKeysOperations
+- Added operation group ServerBlobAuditingPoliciesOperations
+- Added operation group ManagedInstanceEncryptionProtectorsOperations
+- Added operation group ExtendedServerBlobAuditingPoliciesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentScansOperations
+- Added operation group ManagedInstanceTdeCertificatesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+
+**Breaking changes**
+
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.9.1 (2018-05-24)
 ++++++++++++++++++
 

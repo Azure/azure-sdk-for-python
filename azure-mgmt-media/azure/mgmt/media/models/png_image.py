@@ -62,7 +62,7 @@ class PngImage(Image):
         'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'StretchMode'},
+        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
         'start': {'key': 'start', 'type': 'str'},
         'step': {'key': 'step', 'type': 'str'},
         'range': {'key': 'range', 'type': 'str'},

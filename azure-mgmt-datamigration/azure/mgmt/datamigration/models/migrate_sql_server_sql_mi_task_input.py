@@ -39,6 +39,11 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
     :param backup_blob_share: Required. SAS URI of Azure Storage Account
      Container to be used for storing backup files.
     :type backup_blob_share: ~azure.mgmt.datamigration.models.BlobShare
+    :param backup_mode: Backup Mode to specify whether to use existing backup
+     or create new backup. If using existing backups, backup file paths are
+     required to be provided in selectedDatabases. Possible values include:
+     'CreateBackup', 'ExistingBackup'
+    :type backup_mode: str or ~azure.mgmt.datamigration.models.BackupMode
     """
 
     _validation = {
@@ -56,6 +61,7 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'selected_agent_jobs': {'key': 'selectedAgentJobs', 'type': '[str]'},
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
+        'backup_mode': {'key': 'backupMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -65,3 +71,4 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         self.selected_agent_jobs = kwargs.get('selected_agent_jobs', None)
         self.backup_file_share = kwargs.get('backup_file_share', None)
         self.backup_blob_share = kwargs.get('backup_blob_share', None)
+        self.backup_mode = kwargs.get('backup_mode', None)

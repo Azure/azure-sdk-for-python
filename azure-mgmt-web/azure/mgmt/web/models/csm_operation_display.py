@@ -32,9 +32,9 @@ class CsmOperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None, description=None):
-        super(CsmOperationDisplay, self).__init__()
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+    def __init__(self, **kwargs):
+        super(CsmOperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)

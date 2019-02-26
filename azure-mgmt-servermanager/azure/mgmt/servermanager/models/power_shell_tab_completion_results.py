@@ -17,12 +17,13 @@ class PowerShellTabCompletionResults(Model):
     through.
 
     :param results:
-    :type results: list of str
+    :type results: list[str]
     """
 
     _attribute_map = {
         'results': {'key': 'results', 'type': '[str]'},
     }
 
-    def __init__(self, results=None):
-        self.results = results
+    def __init__(self, **kwargs):
+        super(PowerShellTabCompletionResults, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)

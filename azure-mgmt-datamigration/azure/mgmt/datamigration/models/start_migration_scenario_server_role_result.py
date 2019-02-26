@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class StartMigrationScenarioServerRoleResult(Model):
-    """StartMigrationScenarioServerRoleResult.
+    """Server role migration result.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
