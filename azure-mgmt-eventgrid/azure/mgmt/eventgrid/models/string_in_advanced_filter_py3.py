@@ -17,11 +17,12 @@ class StringInAdvancedFilter(AdvancedFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: The Key value
+    :param key: The field/property in the event based on which you want to
+     filter.
     :type key: str
     :param operator_type: Required. Constant filled by server.
     :type operator_type: str
-    :param values: The set of filter values
+    :param values: The set of filter values.
     :type values: list[str]
     """
 

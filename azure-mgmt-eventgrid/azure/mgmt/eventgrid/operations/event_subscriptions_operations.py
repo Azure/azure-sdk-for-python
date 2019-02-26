@@ -544,7 +544,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -627,7 +627,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -712,7 +712,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -800,7 +800,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -883,7 +883,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -971,7 +971,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1058,7 +1058,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1149,7 +1149,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1242,7 +1242,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1332,7 +1332,7 @@ class EventSubscriptionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if label is not None:
-                    query_parameters['LABEL'] = self._serialize.query("label", label, 'str')
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
