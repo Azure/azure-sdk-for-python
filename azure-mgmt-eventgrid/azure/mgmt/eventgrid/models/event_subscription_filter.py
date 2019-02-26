@@ -26,7 +26,7 @@ class EventSubscriptionFilter(Model):
     :type subject_ends_with: str
     :param included_event_types: A list of applicable event types that need to
      be part of the event subscription. If it is desired to subscribe to all
-     event types, set the IncludedEventTypes to null.
+     default event types, set the IncludedEventTypes to null.
     :type included_event_types: list[str]
     :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
      SubjectEndsWith properties of the filter
