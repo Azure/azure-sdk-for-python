@@ -47,7 +47,7 @@ class Pricing(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'pricing_tier': {'key': 'properties.pricingTier', 'type': 'str'},
-        'free_trial_remaining_time': {'key': 'properties.FreeTrialRemainingTime', 'type': 'duration'},
+        'free_trial_remaining_time': {'key': 'properties.freeTrialRemainingTime', 'type': 'duration'},
     }
 
     def __init__(self, **kwargs):
