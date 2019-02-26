@@ -45,7 +45,7 @@ class Alert(Resource):
      (Active, Blocked etc.)
     :vartype action_taken: str
     :ivar reported_severity: Estimated severity of this alert. Possible values
-     include: 'Silent', 'Information', 'Low', 'High'
+     include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
     :ivar compromised_entity: The entity that the incident happened on
