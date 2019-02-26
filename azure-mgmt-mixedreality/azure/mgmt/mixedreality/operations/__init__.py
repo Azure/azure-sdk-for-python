@@ -9,4 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.4.0"
+from .operations import Operations
+from .spatial_anchors_accounts_operations import SpatialAnchorsAccountsOperations
+
+__all__ = [
+    'Operations',
+    'SpatialAnchorsAccountsOperations',
+]
