@@ -13,11 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
-import uuid
 from .operations.operations import Operations
 from .operations.subscription_operation_operations import SubscriptionOperationOperations
 from .operations.subscription_factory_operations import SubscriptionFactoryOperations
@@ -34,18 +29,14 @@ class SubscriptionClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription Id.
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -55,7 +46,6 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class SubscriptionClient(SDKClient):
@@ -78,15 +68,13 @@ class SubscriptionClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription Id.
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = SubscriptionClientConfiguration(credentials, subscription_id, base_url)
+        self.config = SubscriptionClientConfiguration(credentials, base_url)
         super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -103,125 +91,3 @@ class SubscriptionClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def cancel_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Cancels the subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CanceledSubscriptionId or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.CanceledSubscriptionId or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        api_version = "2018-11-01-preview"
-
-        # Construct URL
-        url = self.cancel_subscription.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('CanceledSubscriptionId', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    cancel_subscription.metadata = {'url': '/providers/Microsoft.Subscription/subscriptions/{subscriptionId}/cancel'}
-
-    def rename_subscription(
-            self, subscription_name=None, custom_headers=None, raw=False, **operation_config):
-        """Renames the subscription.
-
-        :param subscription_name: New subscription name
-        :type subscription_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RenamedSubscriptionId or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.RenamedSubscriptionId or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        body = models.SubscriptionName(subscription_name=subscription_name)
-
-        api_version = "2018-11-01-preview"
-
-        # Construct URL
-        url = self.rename_subscription.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'SubscriptionName')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RenamedSubscriptionId', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    rename_subscription.metadata = {'url': '/providers/Microsoft.Subscription/subscriptions/{subscriptionId}/rename'}
