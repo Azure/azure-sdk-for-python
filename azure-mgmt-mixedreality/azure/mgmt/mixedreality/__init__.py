@@ -9,4 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.4.0"
+from .mixed_reality_client import MixedRealityClient
+from .version import VERSION
+
+__all__ = ['MixedRealityClient']
+
+__version__ = VERSION
+
