@@ -42,6 +42,7 @@ from .sync_agents_operations import SyncAgentsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
+from .virtual_clusters_operations import VirtualClustersOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -123,6 +124,7 @@ __all__ = [
     'SyncGroupsOperations',
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
+    'VirtualClustersOperations',
     'VirtualNetworkRulesOperations',
     'ExtendedDatabaseBlobAuditingPoliciesOperations',
     'ExtendedServerBlobAuditingPoliciesOperations',

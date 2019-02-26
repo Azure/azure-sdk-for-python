@@ -46,6 +46,7 @@ from .operations.sync_agents_operations import SyncAgentsOperations
 from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
+from .operations.virtual_clusters_operations import VirtualClustersOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .operations.extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -200,6 +201,8 @@ class SqlManagementClient(SDKClient):
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
     :ivar subscription_usages: SubscriptionUsages operations
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
+    :ivar virtual_clusters: VirtualClusters operations
+    :vartype virtual_clusters: azure.mgmt.sql.operations.VirtualClustersOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPolicies operations
@@ -377,6 +380,8 @@ class SqlManagementClient(SDKClient):
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_usages = SubscriptionUsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_clusters = VirtualClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
