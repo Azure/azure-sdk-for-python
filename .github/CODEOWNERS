@@ -4,6 +4,7 @@
 
 /azure-applicationinsights/ @alexeldeib
 /azure-batch/ @annatisch @matthchr
+/azure-cognitiveservices-vision-customvision/ @areddish
 /azure-keyvault/ @schaabs
 /azure-loganalytics/ @alexeldeib
 /azure-mgmt-batch/ @annatisch @matthchr
