@@ -35,6 +35,7 @@ try:
     from .hybrid_connection_py3 import HybridConnection
     from .deleted_site_py3 import DeletedSite
     from .proxy_only_resource_py3 import ProxyOnlyResource
+    from .managed_service_identity_user_assigned_identities_value_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
     from .managed_service_identity_py3 import ManagedServiceIdentity
     from .geo_distribution_py3 import GeoDistribution
     from .slot_swap_status_py3 import SlotSwapStatus
@@ -259,6 +260,7 @@ except (SyntaxError, ImportError):
     from .hybrid_connection import HybridConnection
     from .deleted_site import DeletedSite
     from .proxy_only_resource import ProxyOnlyResource
+    from .managed_service_identity_user_assigned_identities_value import ManagedServiceIdentityUserAssignedIdentitiesValue
     from .managed_service_identity import ManagedServiceIdentity
     from .geo_distribution import GeoDistribution
     from .slot_swap_status import SlotSwapStatus
@@ -603,6 +605,7 @@ __all__ = [
     'HybridConnection',
     'DeletedSite',
     'ProxyOnlyResource',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
     'ManagedServiceIdentity',
     'GeoDistribution',
     'SlotSwapStatus',
