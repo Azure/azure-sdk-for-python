@@ -31,8 +31,8 @@ class Occlusion(Model):
         'mouth_occluded': {'key': 'mouthOccluded', 'type': 'bool'},
     }
 
-    def __init__(self, forehead_occluded=None, eye_occluded=None, mouth_occluded=None):
-        super(Occlusion, self).__init__()
-        self.forehead_occluded = forehead_occluded
-        self.eye_occluded = eye_occluded
-        self.mouth_occluded = mouth_occluded
+    def __init__(self, **kwargs):
+        super(Occlusion, self).__init__(**kwargs)
+        self.forehead_occluded = kwargs.get('forehead_occluded', None)
+        self.eye_occluded = kwargs.get('eye_occluded', None)
+        self.mouth_occluded = kwargs.get('mouth_occluded', None)

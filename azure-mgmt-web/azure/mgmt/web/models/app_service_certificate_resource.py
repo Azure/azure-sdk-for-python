@@ -19,13 +19,15 @@ class AppServiceCertificateResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
     :ivar type: Resource type.
     :vartype type: str
@@ -65,8 +67,8 @@ class AppServiceCertificateResource(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, location, kind=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
-        super(AppServiceCertificateResource, self).__init__(kind=kind, location=location, tags=tags)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateResource, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None

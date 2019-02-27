@@ -26,26 +26,28 @@ class StreamingLocatorContentKey(Model):
      'CommonEncryptionCenc', 'CommonEncryptionCbcs', 'EnvelopeEncryption'
     :vartype type: str or
      ~azure.mgmt.media.models.StreamingLocatorContentKeyType
-    :param label: Label of Content Key
-    :type label: str
-    :param value: Value of  of Content Key
+    :param label_reference_in_streaming_policy: Label of Content Key as
+     specified in the Streaming Policy
+    :type label_reference_in_streaming_policy: str
+    :param value: Value of Content Key
     :type value: str
     :ivar policy_name: ContentKeyPolicy used by Content Key
     :vartype policy_name: str
-    :param tracks: Tracks which use this Content Key
-    :type tracks: list[~azure.mgmt.media.models.TrackSelection]
+    :ivar tracks: Tracks which use this Content Key
+    :vartype tracks: list[~azure.mgmt.media.models.TrackSelection]
     """
 
     _validation = {
         'id': {'required': True},
         'type': {'readonly': True},
         'policy_name': {'readonly': True},
+        'tracks': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'StreamingLocatorContentKeyType'},
-        'label': {'key': 'label', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'label_reference_in_streaming_policy': {'key': 'labelReferenceInStreamingPolicy', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
         'policy_name': {'key': 'policyName', 'type': 'str'},
         'tracks': {'key': 'tracks', 'type': '[TrackSelection]'},
@@ -55,7 +57,7 @@ class StreamingLocatorContentKey(Model):
         super(StreamingLocatorContentKey, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.type = None
-        self.label = kwargs.get('label', None)
+        self.label_reference_in_streaming_policy = kwargs.get('label_reference_in_streaming_policy', None)
         self.value = kwargs.get('value', None)
         self.policy_name = None
-        self.tracks = kwargs.get('tracks', None)
+        self.tracks = None

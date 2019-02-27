@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class ManagedArtifact(Model):
     """The managed artifact.
 
-    :param id: The managed artifact id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The managed artifact id.
     :type id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

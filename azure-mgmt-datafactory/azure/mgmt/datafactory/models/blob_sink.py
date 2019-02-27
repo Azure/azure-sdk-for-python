@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class BlobSink(CopySink):
     """A copy activity Azure Blob sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class BlobSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param blob_writer_overwrite_files: Blob writer overwrite files. Type:
      boolean (or Expression with resultType boolean).
@@ -66,10 +68,10 @@ class BlobSink(CopySink):
         'copy_behavior': {'key': 'copyBehavior', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, blob_writer_overwrite_files=None, blob_writer_date_time_format=None, blob_writer_add_header=None, copy_behavior=None):
-        super(BlobSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.blob_writer_overwrite_files = blob_writer_overwrite_files
-        self.blob_writer_date_time_format = blob_writer_date_time_format
-        self.blob_writer_add_header = blob_writer_add_header
-        self.copy_behavior = copy_behavior
+    def __init__(self, **kwargs):
+        super(BlobSink, self).__init__(**kwargs)
+        self.blob_writer_overwrite_files = kwargs.get('blob_writer_overwrite_files', None)
+        self.blob_writer_date_time_format = kwargs.get('blob_writer_date_time_format', None)
+        self.blob_writer_add_header = kwargs.get('blob_writer_add_header', None)
+        self.copy_behavior = kwargs.get('copy_behavior', None)
         self.type = 'BlobSink'

@@ -63,8 +63,8 @@ class MSDeployStatus(ProxyOnlyResource):
         'complete': {'key': 'properties.complete', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None):
-        super(MSDeployStatus, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(MSDeployStatus, self).__init__(**kwargs)
         self.deployer = None
         self.provisioning_state = None
         self.start_time = None

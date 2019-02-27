@@ -18,7 +18,8 @@ class RegionalReplicationStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar region: The region where the gallery image version is published to.
+    :ivar region: The region to which the gallery Image Version is being
+     replicated to.
     :vartype region: str
     :ivar state: This is the regional replication state. Possible values
      include: 'Unknown', 'Replicating', 'Completed', 'Failed'
