@@ -28,6 +28,8 @@ class RunOutput(SubResource):
     :vartype type: str
     :param artifact_id: The resource id of the artifact.
     :type artifact_id: str
+    :param artifact_location: The URL location of the artifact.
+    :type artifact_location: str
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Creating', 'Succeeded', 'Failed', 'Deleting'
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.enum
@@ -45,10 +47,12 @@ class RunOutput(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'artifact_id': {'key': 'properties.artifactId', 'type': 'str'},
+        'artifact_location': {'key': 'properties.artifactLocation', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(RunOutput, self).__init__(**kwargs)
         self.artifact_id = kwargs.get('artifact_id', None)
+        self.artifact_location = kwargs.get('artifact_location', None)
         self.provisioning_state = None

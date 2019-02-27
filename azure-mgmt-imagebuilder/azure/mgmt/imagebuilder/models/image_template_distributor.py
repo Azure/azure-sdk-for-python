@@ -17,7 +17,7 @@ class ImageTemplateDistributor(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageTemplateManagedImageDistributor,
-    ImageTemplateSharedImageDistributor
+    ImageTemplateSharedImageDistributor, ImageTemplateVhdDistributor
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,7 +43,7 @@ class ImageTemplateDistributor(Model):
     }
 
     _subtype_map = {
-        'type': {'managedImage': 'ImageTemplateManagedImageDistributor', 'sharedImage': 'ImageTemplateSharedImageDistributor'}
+        'type': {'ManagedImage': 'ImageTemplateManagedImageDistributor', 'SharedImage': 'ImageTemplateSharedImageDistributor', 'VHD': 'ImageTemplateVhdDistributor'}
     }
 
     def __init__(self, **kwargs):

@@ -20,8 +20,8 @@ class ImageTemplateIsoSource(ImageTemplateSource):
 
     :param type: Required. Constant filled by server.
     :type type: str
-    :param source_uri: Required. URL to get the ISO image. This URL has to be
-     accessible to the resource provider at the time of the imageTemplate
+    :param source_uri: Required. URI to get the ISO image. This URI has to be
+     accessible to the resource provider at the time of the image template
      creation.
     :type source_uri: str
     :param sha256_checksum: Required. SHA256 Checksum of the ISO image.

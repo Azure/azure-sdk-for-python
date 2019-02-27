@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class InnerError(Model):
     """Inner error details.
 
-    :param exceptiontype: The exception type.
-    :type exceptiontype: str
-    :param errordetail: The internal error message or exception dump.
-    :type errordetail: str
+    :param exception_type: The exception type.
+    :type exception_type: str
+    :param error_detail: The internal error message or exception dump.
+    :type error_detail: str
     """
 
     _attribute_map = {
-        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
-        'errordetail': {'key': 'errordetail', 'type': 'str'},
+        'exception_type': {'key': 'exceptionType', 'type': 'str'},
+        'error_detail': {'key': 'errorDetail', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(InnerError, self).__init__(**kwargs)
-        self.exceptiontype = kwargs.get('exceptiontype', None)
-        self.errordetail = kwargs.get('errordetail', None)
+        self.exception_type = kwargs.get('exception_type', None)
+        self.error_detail = kwargs.get('error_detail', None)

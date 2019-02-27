@@ -27,7 +27,7 @@ class ImageBuilderClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
+     Microsoft Azure subscription. The subscription Id forms part of the URI
      for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -67,7 +67,7 @@ class ImageBuilderClient(SDKClient):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
+     Microsoft Azure subscription. The subscription Id forms part of the URI
      for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -80,7 +80,7 @@ class ImageBuilderClient(SDKClient):
         super(ImageBuilderClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-02-01-preview'
+        self.api_version = '2019-02-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

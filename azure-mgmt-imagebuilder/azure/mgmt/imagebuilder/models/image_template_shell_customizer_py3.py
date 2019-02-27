@@ -13,7 +13,7 @@ from .image_template_customizer_py3 import ImageTemplateCustomizer
 
 
 class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
-    """Runs a shell script during the customization phase.
+    """Runs a shell script during the customization phase (Linux).
 
     All required parameters must be populated in order to send to Azure.
 
@@ -40,4 +40,4 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     def __init__(self, *, name: str=None, script: str=None, **kwargs) -> None:
         super(ImageTemplateShellCustomizer, self).__init__(name=name, **kwargs)
         self.script = script
-        self.type = 'shell'
+        self.type = 'Shell'

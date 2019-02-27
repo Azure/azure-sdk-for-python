@@ -51,4 +51,4 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         super(ImageTemplateSharedImageDistributor, self).__init__(**kwargs)
         self.gallery_image_id = kwargs.get('gallery_image_id', None)
         self.replication_regions = kwargs.get('replication_regions', None)
-        self.type = 'sharedImage'
+        self.type = 'SharedImage'
