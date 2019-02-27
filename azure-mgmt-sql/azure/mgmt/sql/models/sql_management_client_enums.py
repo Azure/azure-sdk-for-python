@@ -325,6 +325,13 @@ class IdentityType(str, Enum):
     system_assigned = "SystemAssigned"
 
 
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
 class OperationOrigin(str, Enum):
 
     user = "user"
@@ -663,6 +670,12 @@ class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
 
     master = "master"
     default = "default"
+
+
+class SensitivityLabelSource(str, Enum):
+
+    current = "current"
+    recommended = "recommended"
 
 
 class CapabilityGroup(str, Enum):
