@@ -40,7 +40,7 @@ class VirtualNetworkGatewayConnection(Resource):
     :type local_network_gateway2:
      ~azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway
     :param connection_type: Gateway connection type. Possible values are:
-     'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
+     'IPsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayConnectionType

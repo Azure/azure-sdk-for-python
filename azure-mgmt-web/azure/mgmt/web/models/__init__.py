@@ -36,6 +36,7 @@ try:
     from .deleted_site_py3 import DeletedSite
     from .proxy_only_resource_py3 import ProxyOnlyResource
     from .managed_service_identity_py3 import ManagedServiceIdentity
+    from .geo_distribution_py3 import GeoDistribution
     from .slot_swap_status_py3 import SlotSwapStatus
     from .cloning_info_py3 import CloningInfo
     from .hosting_environment_profile_py3 import HostingEnvironmentProfile
@@ -144,6 +145,7 @@ try:
     from .resource_name_availability_request_py3 import ResourceNameAvailabilityRequest
     from .sku_infos_py3 import SkuInfos
     from .source_control_py3 import SourceControl
+    from .validate_container_settings_request_py3 import ValidateContainerSettingsRequest
     from .validate_request_py3 import ValidateRequest
     from .validate_response_error_py3 import ValidateResponseError
     from .validate_response_py3 import ValidateResponse
@@ -182,6 +184,7 @@ try:
     from .migrate_my_sql_status_py3 import MigrateMySqlStatus
     from .relay_service_connection_entity_py3 import RelayServiceConnectionEntity
     from .network_features_py3 import NetworkFeatures
+    from .network_trace_py3 import NetworkTrace
     from .perf_mon_sample_py3 import PerfMonSample
     from .perf_mon_set_py3 import PerfMonSet
     from .perf_mon_response_py3 import PerfMonResponse
@@ -257,6 +260,7 @@ except (SyntaxError, ImportError):
     from .deleted_site import DeletedSite
     from .proxy_only_resource import ProxyOnlyResource
     from .managed_service_identity import ManagedServiceIdentity
+    from .geo_distribution import GeoDistribution
     from .slot_swap_status import SlotSwapStatus
     from .cloning_info import CloningInfo
     from .hosting_environment_profile import HostingEnvironmentProfile
@@ -365,6 +369,7 @@ except (SyntaxError, ImportError):
     from .resource_name_availability_request import ResourceNameAvailabilityRequest
     from .sku_infos import SkuInfos
     from .source_control import SourceControl
+    from .validate_container_settings_request import ValidateContainerSettingsRequest
     from .validate_request import ValidateRequest
     from .validate_response_error import ValidateResponseError
     from .validate_response import ValidateResponse
@@ -403,6 +408,7 @@ except (SyntaxError, ImportError):
     from .migrate_my_sql_status import MigrateMySqlStatus
     from .relay_service_connection_entity import RelayServiceConnectionEntity
     from .network_features import NetworkFeatures
+    from .network_trace import NetworkTrace
     from .perf_mon_sample import PerfMonSample
     from .perf_mon_set import PerfMonSet
     from .perf_mon_response import PerfMonResponse
@@ -526,6 +532,7 @@ from .web_site_management_client_enums import (
     HostType,
     UsageState,
     SiteAvailabilityState,
+    RedundancyMode,
     StatusOptions,
     DomainStatus,
     AzureResourceType,
@@ -597,6 +604,7 @@ __all__ = [
     'DeletedSite',
     'ProxyOnlyResource',
     'ManagedServiceIdentity',
+    'GeoDistribution',
     'SlotSwapStatus',
     'CloningInfo',
     'HostingEnvironmentProfile',
@@ -705,6 +713,7 @@ __all__ = [
     'ResourceNameAvailabilityRequest',
     'SkuInfos',
     'SourceControl',
+    'ValidateContainerSettingsRequest',
     'ValidateRequest',
     'ValidateResponseError',
     'ValidateResponse',
@@ -743,6 +752,7 @@ __all__ = [
     'MigrateMySqlStatus',
     'RelayServiceConnectionEntity',
     'NetworkFeatures',
+    'NetworkTrace',
     'PerfMonSample',
     'PerfMonSet',
     'PerfMonResponse',
@@ -865,6 +875,7 @@ __all__ = [
     'HostType',
     'UsageState',
     'SiteAvailabilityState',
+    'RedundancyMode',
     'StatusOptions',
     'DomainStatus',
     'AzureResourceType',
