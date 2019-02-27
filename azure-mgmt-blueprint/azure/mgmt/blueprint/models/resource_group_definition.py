@@ -31,6 +31,8 @@ class ResourceGroupDefinition(Model):
     :param depends_on: Artifacts which need to be deployed before this
      resource group.
     :type depends_on: list[str]
+    :param tags: Tags to be assigned to this resource group.
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -48,6 +50,7 @@ class ResourceGroupDefinition(Model):
         'description': {'key': 'metadata.description', 'type': 'str'},
         'strong_type': {'key': 'metadata.strongType', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[str]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -58,3 +61,4 @@ class ResourceGroupDefinition(Model):
         self.description = kwargs.get('description', None)
         self.strong_type = kwargs.get('strong_type', None)
         self.depends_on = kwargs.get('depends_on', None)
+        self.tags = kwargs.get('tags', None)
