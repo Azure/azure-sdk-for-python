@@ -22,19 +22,24 @@ class PipelineRunInvokedBy(Model):
     :vartype name: str
     :ivar id: The ID of the entity that started the run.
     :vartype id: str
+    :ivar invoked_by_type: The type of the entity that started the run.
+    :vartype invoked_by_type: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
+        'invoked_by_type': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'invoked_by_type': {'key': 'invokedByType', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PipelineRunInvokedBy, self).__init__()
+    def __init__(self, **kwargs):
+        super(PipelineRunInvokedBy, self).__init__(**kwargs)
         self.name = None
         self.id = None
+        self.invoked_by_type = None

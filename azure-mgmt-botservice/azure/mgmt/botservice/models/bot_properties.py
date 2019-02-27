@@ -18,17 +18,19 @@ class BotProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param display_name: The Name of the bot
+    All required parameters must be populated in order to send to Azure.
+
+    :param display_name: Required. The Name of the bot
     :type display_name: str
     :param description: The description of the bot
     :type description: str
     :param icon_url: The Icon Url of the bot
     :type icon_url: str
-    :param endpoint: The bot's endpoint
+    :param endpoint: Required. The bot's endpoint
     :type endpoint: str
     :ivar endpoint_version: The bot's endpoint version
     :vartype endpoint_version: str
-    :param msa_app_id: Microsoft App Id for the bot
+    :param msa_app_id: Required. Microsoft App Id for the bot
     :type msa_app_id: str
     :ivar configured_channels: Collection of channels for which the bot is
      configured
@@ -74,17 +76,18 @@ class BotProperties(Model):
         'luis_key': {'key': 'luisKey', 'type': 'str'},
     }
 
-    def __init__(self, display_name, endpoint, msa_app_id, description=None, icon_url=None, developer_app_insight_key=None, developer_app_insights_api_key=None, developer_app_insights_application_id=None, luis_app_ids=None, luis_key=None):
-        self.display_name = display_name
-        self.description = description
-        self.icon_url = icon_url
-        self.endpoint = endpoint
+    def __init__(self, **kwargs):
+        super(BotProperties, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.icon_url = kwargs.get('icon_url', None)
+        self.endpoint = kwargs.get('endpoint', None)
         self.endpoint_version = None
-        self.msa_app_id = msa_app_id
+        self.msa_app_id = kwargs.get('msa_app_id', None)
         self.configured_channels = None
         self.enabled_channels = None
-        self.developer_app_insight_key = developer_app_insight_key
-        self.developer_app_insights_api_key = developer_app_insights_api_key
-        self.developer_app_insights_application_id = developer_app_insights_application_id
-        self.luis_app_ids = luis_app_ids
-        self.luis_key = luis_key
+        self.developer_app_insight_key = kwargs.get('developer_app_insight_key', None)
+        self.developer_app_insights_api_key = kwargs.get('developer_app_insights_api_key', None)
+        self.developer_app_insights_application_id = kwargs.get('developer_app_insights_application_id', None)
+        self.luis_app_ids = kwargs.get('luis_app_ids', None)
+        self.luis_key = kwargs.get('luis_key', None)

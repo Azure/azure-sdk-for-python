@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .action import Action
+from .action_py3 import Action
 
 
 class SqlRuleAction(Action):

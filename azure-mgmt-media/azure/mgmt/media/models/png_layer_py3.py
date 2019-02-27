@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .layer import Layer
+from .layer_py3 import Layer
 
 
 class PngLayer(Layer):

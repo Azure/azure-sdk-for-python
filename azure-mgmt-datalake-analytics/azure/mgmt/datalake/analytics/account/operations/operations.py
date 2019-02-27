@@ -22,7 +22,7 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
 
@@ -53,7 +53,7 @@ class Operations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.DataLakeAnalytics/operations'
+        url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -88,3 +88,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.DataLakeAnalytics/operations'}

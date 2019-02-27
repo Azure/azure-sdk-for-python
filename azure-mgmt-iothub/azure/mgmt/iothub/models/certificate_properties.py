@@ -30,6 +30,8 @@ class CertificateProperties(Model):
     :vartype created: datetime
     :ivar updated: The certificate's last update date and time.
     :vartype updated: datetime
+    :param certificate: The certificate content
+    :type certificate: str
     """
 
     _validation = {
@@ -48,6 +50,7 @@ class CertificateProperties(Model):
         'is_verified': {'key': 'isVerified', 'type': 'bool'},
         'created': {'key': 'created', 'type': 'rfc-1123'},
         'updated': {'key': 'updated', 'type': 'rfc-1123'},
+        'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -58,3 +61,4 @@ class CertificateProperties(Model):
         self.is_verified = None
         self.created = None
         self.updated = None
+        self.certificate = kwargs.get('certificate', None)

@@ -42,6 +42,6 @@ class StorageAccountInformation(SubResource):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(StorageAccountInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageAccountInformation, self).__init__(**kwargs)
         self.suffix = None

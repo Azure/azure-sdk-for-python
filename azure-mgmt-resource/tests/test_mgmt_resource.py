@@ -189,10 +189,10 @@ class MgmtResourceTest(AzureMgmtTestCase):
             new_group_name
         )
         async_delete.wait()
-        
+
 
     @ResourceGroupPreparer()
-    def test_deployments(self, resource_group, location):
+    def test_deployments_basic(self, resource_group, location):
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestdeployment")
@@ -376,7 +376,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
                 deployment_params,
             )
         cloud_error = err.exception
-        self.assertTrue(cloud_error.message)        
+        self.assertTrue(cloud_error.message)
 
     def test_provider_locations(self):
         result_get = self.resource_client.providers.get('Microsoft.Web')

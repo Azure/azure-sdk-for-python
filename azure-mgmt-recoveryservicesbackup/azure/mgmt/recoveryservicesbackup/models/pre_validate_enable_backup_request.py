@@ -20,15 +20,15 @@ class PreValidateEnableBackupRequest(Model):
     2. VM is already protected
     3. Any VM related configuration passed in properties.
 
-    :param resource_type: Container Type - VM, SQLPaaS, DPM etc. Possible
-     values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
-     'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+    :param resource_type: ProtectedItem Type- VM, SqlDataBase, AzureFileShare
+     etc. Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
     :type resource_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
-    :param resource_id: Entire ARM VM Id
+    :param resource_id: ARM Virtual Machine Id
     :type resource_id: str
-    :param vault_id: Entire vault id of the resource
+    :param vault_id: ARM id of the Recovery Services Vault
     :type vault_id: str
     :param properties: Configuration of VM if any needs to be validated like
      OS type etc

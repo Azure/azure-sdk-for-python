@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .build_step_properties_update_parameters import BuildStepPropertiesUpdateParameters
+from .build_step_properties_update_parameters_py3 import BuildStepPropertiesUpdateParameters
 
 
 class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):

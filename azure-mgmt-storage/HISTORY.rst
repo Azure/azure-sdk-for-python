@@ -3,6 +3,63 @@
 Release History
 ===============
 
+3.1.1 (2019-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix #4013 - "use_sub_domain" should be "use_sub_domain_name"
+
+3.1.0 (2018-11-15)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter geo_replication_stats
+- Model StorageAccount has a new parameter failover_in_progress
+- Added operation StorageAccountsOperations.failover
+- Added operation group BlobServicesOperations
+- Operation StorageAccountsOperations.get_properties now support expand parameter
+
+3.0.0 (2018-09-27)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter enable_azure_files_aad_integration
+- Model StorageAccountCreateParameters has a new parameter enable_azure_files_aad_integration
+- Model StorageAccountUpdateParameters has a new parameter enable_azure_files_aad_integration
+- Added operation group ManagementPoliciesOperations. This is considered preview and breaking changes might happen.
+
+**Breaking changes**
+
+- "usage" has been renamed "usages", and the "list" operation has been replaced by "list_by_location".
+  Ability to make usage requests locally is not available anymore.
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+
+2.0.0 (2018-08-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Set the signed resource as optional instead of required
+
+2.0.0rc4 (2018-06-26)
++++++++++++++++++++++
+
+**Features (2018-02-01/2018-03-01-preview)**
+
+Support HDFS feature and web endpoint in Account properties
+
+- Model StorageAccountCreateParameters has a new parameter is_hns_enabled
+- Model Endpoints has a new parameter web
+- Model Endpoints has a new parameter dfs
+- Model StorageAccount has a new parameter is_hns_enabled
+
 2.0.0rc3 (2018-05-30)
 +++++++++++++++++++++
 

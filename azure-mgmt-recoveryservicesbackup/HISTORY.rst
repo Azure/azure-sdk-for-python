@@ -3,6 +3,39 @@
 Release History
 ===============
 
+0.3.0 (2018-06-27)
+++++++++++++++++++
+
+**Features**
+
+- SAP HANA contract changes (new filters added to existing API's.). This feature is still in development phase and not open for usage yet.
+- Instant RP field added in create policy.
+- Comments added for some contracts.
+
+**Python details**
+
+- Model DPMProtectedItem has a new parameter create_mode
+- Model MabFileFolderProtectedItem has a new parameter create_mode
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter create_mode
+- Model AzureWorkloadContainer has a new parameter workload_type
+- Model AzureIaaSVMProtectionPolicy has a new parameter instant_rp_retention_range_in_days
+- Model AzureFileshareProtectedItem has a new parameter create_mode
+- Model AzureSQLAGWorkloadContainerProtectionContainer has a new parameter workload_type
+- Model AzureSqlProtectedItem has a new parameter create_mode
+- Model AzureIaaSVMJobExtendedInfo has a new parameter internal_property_bag
+- Model KeyAndSecretDetails has a new parameter encryption_mechanism
+- Model AzureIaaSVMProtectedItem has a new parameter create_mode
+- Model AzureVMAppContainerProtectionContainer has a new parameter workload_type
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter create_mode
+- Model IaasVMRecoveryPoint has a new parameter os_type
+- Model ProtectionPolicyQueryObject has a new parameter workload_type
+- Model AzureIaaSComputeVMProtectedItem has a new parameter create_mode
+- Model Settings has a new parameter is_compression
+- Model GenericProtectedItem has a new parameter create_mode
+- Model AzureWorkloadJob has a new parameter workload_type
+- Model ProtectedItem has a new parameter create_mode
+- Operation ProtectionContainersOperations.inquire has a new "filter" parameter
+
 0.2.0 (2018-05-25)
 ++++++++++++++++++
 
@@ -28,7 +61,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

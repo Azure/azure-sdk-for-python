@@ -21,6 +21,9 @@ class ContainerSettings(Model):
      from.
     :type image_source_registry:
      ~azure.mgmt.batchai.models.ImageSourceRegistry
+    :param shm_size: Size of /dev/shm. Please refer to docker documentation
+     for supported argument formats.
+    :type shm_size: str
     """
 
     _validation = {
@@ -29,8 +32,10 @@ class ContainerSettings(Model):
 
     _attribute_map = {
         'image_source_registry': {'key': 'imageSourceRegistry', 'type': 'ImageSourceRegistry'},
+        'shm_size': {'key': 'shmSize', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ContainerSettings, self).__init__(**kwargs)
         self.image_source_registry = kwargs.get('image_source_registry', None)
+        self.shm_size = kwargs.get('shm_size', None)

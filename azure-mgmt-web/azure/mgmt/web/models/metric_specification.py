@@ -65,20 +65,20 @@ class MetricSpecification(Model):
         'availabilities': {'key': 'availabilities', 'type': '[MetricAvailability]'},
     }
 
-    def __init__(self, name=None, display_name=None, display_description=None, unit=None, aggregation_type=None, supports_instance_level_aggregation=None, enable_regional_mdm_account=None, source_mdm_account=None, source_mdm_namespace=None, metric_filter_pattern=None, fill_gap_with_zero=None, is_internal=None, dimensions=None, category=None, availabilities=None):
-        super(MetricSpecification, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.aggregation_type = aggregation_type
-        self.supports_instance_level_aggregation = supports_instance_level_aggregation
-        self.enable_regional_mdm_account = enable_regional_mdm_account
-        self.source_mdm_account = source_mdm_account
-        self.source_mdm_namespace = source_mdm_namespace
-        self.metric_filter_pattern = metric_filter_pattern
-        self.fill_gap_with_zero = fill_gap_with_zero
-        self.is_internal = is_internal
-        self.dimensions = dimensions
-        self.category = category
-        self.availabilities = availabilities
+    def __init__(self, **kwargs):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supports_instance_level_aggregation = kwargs.get('supports_instance_level_aggregation', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.metric_filter_pattern = kwargs.get('metric_filter_pattern', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.is_internal = kwargs.get('is_internal', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.category = kwargs.get('category', None)
+        self.availabilities = kwargs.get('availabilities', None)

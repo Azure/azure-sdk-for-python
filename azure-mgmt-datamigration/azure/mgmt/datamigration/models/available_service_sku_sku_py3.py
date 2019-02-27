@@ -21,8 +21,8 @@ class AvailableServiceSkuSku(Model):
     :type family: str
     :param size: SKU size
     :type size: str
-    :param tier: The tier of the SKU, such as "Free", "Basic", "Standard", or
-     "Premium"
+    :param tier: The tier of the SKU, such as "Basic", "General Purpose", or
+     "Business Critical"
     :type tier: str
     """
 
