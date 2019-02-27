@@ -44,7 +44,7 @@ class PeerExpressRouteCircuitConnection(SubResource):
      the express route circuit connection.
     :type auth_resource_guid: str
     :ivar provisioning_state: Provisioning state of the peer express route
-     circuit connection resource. Possible values are: 'Succeded', 'Updating',
+     circuit connection resource. Possible values are: 'Succeeded', 'Updating',
      'Deleting', and 'Failed'.
     :vartype provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
