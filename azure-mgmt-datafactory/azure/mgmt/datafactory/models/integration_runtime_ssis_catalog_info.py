@@ -28,10 +28,8 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
     :type catalog_admin_password: ~azure.mgmt.datafactory.models.SecureString
     :param catalog_pricing_tier: The pricing tier for the catalog database.
      The valid values could be found in
-     https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
-     values include: 'Basic', 'Standard', 'Premium', 'PremiumRS'
-    :type catalog_pricing_tier: str or
-     ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
+     https://azure.microsoft.com/en-us/pricing/details/sql-database/
+    :type catalog_pricing_tier: str
     """
 
     _validation = {

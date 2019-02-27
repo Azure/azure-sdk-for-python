@@ -459,14 +459,6 @@ class ManagedIntegrationRuntimeNodeStatus(str, Enum):
     unavailable = "Unavailable"
 
 
-class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-    premium_rs = "PremiumRS"
-
-
 class IntegrationRuntimeLicenseType(str, Enum):
 
     base_price = "BasePrice"
