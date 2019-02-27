@@ -39,7 +39,8 @@ class ManagedServiceIdentityType(str, Enum):
 class AssignmentLockMode(str, Enum):
 
     none = "None"
-    all_resources = "AllResources"
+    all_resources_read_only = "AllResourcesReadOnly"
+    all_resources_do_not_delete = "AllResourcesDoNotDelete"
 
 
 class AssignmentProvisioningState(str, Enum):
