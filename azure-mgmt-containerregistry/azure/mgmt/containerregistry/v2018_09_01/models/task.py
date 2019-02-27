@@ -34,7 +34,7 @@ class Task(Resource):
     :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2018_09_01.models.MsiProperties
+     ~azure.mgmt.containerregistry.v2018_09_01.models.IdentityProperties
     :ivar provisioning_state: The provisioning state of the task. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -85,7 +85,7 @@ class Task(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'MsiProperties'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'str'},

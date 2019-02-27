@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class MsiProperties(Model):
-    """Identity for the resource.
+class IdentityProperties(Model):
+    """Managed identity for the resource.
 
     :param principal_id: The principal ID of resource identity.
     :type principal_id: str
@@ -39,9 +39,9 @@ class MsiProperties(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
     }
 
-    def __init__(self, **kwargs):
-        super(MsiProperties, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+    def __init__(self, *, principal_id: str=None, tenant_id: str=None, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(IdentityProperties, self).__init__(**kwargs)
+        self.principal_id = principal_id
+        self.tenant_id = tenant_id
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities

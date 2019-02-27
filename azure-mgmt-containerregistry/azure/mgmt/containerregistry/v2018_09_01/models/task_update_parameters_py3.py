@@ -17,7 +17,7 @@ class TaskUpdateParameters(Model):
 
     :param identity: Identity for the resource.
     :type identity:
-     ~azure.mgmt.containerregistry.v2018_09_01.models.MsiProperties
+     ~azure.mgmt.containerregistry.v2018_09_01.models.IdentityProperties
     :param status: The current status of task. Possible values include:
      'Disabled', 'Enabled'
     :type status: str or
@@ -46,7 +46,7 @@ class TaskUpdateParameters(Model):
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'MsiProperties'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformUpdateParameters'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
