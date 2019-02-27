@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .intangible import Intangible
+from .intangible_py3 import Intangible
 
 
 class StructuredValue(Intangible):

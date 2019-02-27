@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class ActivityDependency(Model):
     """Activity dependency information.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param activity: Activity name.
+    :param activity: Required. Activity name.
     :type activity: str
-    :param dependency_conditions: Match-Condition for the dependency.
+    :param dependency_conditions: Required. Match-Condition for the
+     dependency.
     :type dependency_conditions: list[str or
      ~azure.mgmt.datafactory.models.DependencyCondition]
     """
@@ -36,8 +39,8 @@ class ActivityDependency(Model):
         'dependency_conditions': {'key': 'dependencyConditions', 'type': '[str]'},
     }
 
-    def __init__(self, activity, dependency_conditions, additional_properties=None):
-        super(ActivityDependency, self).__init__()
-        self.additional_properties = additional_properties
-        self.activity = activity
-        self.dependency_conditions = dependency_conditions
+    def __init__(self, **kwargs):
+        super(ActivityDependency, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.activity = kwargs.get('activity', None)
+        self.dependency_conditions = kwargs.get('dependency_conditions', None)

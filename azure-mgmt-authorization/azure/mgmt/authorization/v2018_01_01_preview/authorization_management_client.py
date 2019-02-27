@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .operations.permissions_operations import PermissionsOperations
 from .operations.role_assignments_operations import RoleAssignmentsOperations
+from .operations.permissions_operations import PermissionsOperations
 from .operations.role_definitions_operations import RoleDefinitionsOperations
 from . import models
 
@@ -53,17 +53,17 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
 
 class AuthorizationManagementClient(SDKClient):
-    """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.
+    """AuthorizationManagementClient
 
     :ivar config: Configuration for client.
     :vartype config: AuthorizationManagementClientConfiguration
 
     :ivar provider_operations_metadata: ProviderOperationsMetadata operations
     :vartype provider_operations_metadata: azure.mgmt.authorization.v2018_01_01_preview.operations.ProviderOperationsMetadataOperations
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.mgmt.authorization.v2018_01_01_preview.operations.PermissionsOperations
     :ivar role_assignments: RoleAssignments operations
     :vartype role_assignments: azure.mgmt.authorization.v2018_01_01_preview.operations.RoleAssignmentsOperations
+    :ivar permissions: Permissions operations
+    :vartype permissions: azure.mgmt.authorization.v2018_01_01_preview.operations.PermissionsOperations
     :ivar role_definitions: RoleDefinitions operations
     :vartype role_definitions: azure.mgmt.authorization.v2018_01_01_preview.operations.RoleDefinitionsOperations
 
@@ -88,9 +88,9 @@ class AuthorizationManagementClient(SDKClient):
 
         self.provider_operations_metadata = ProviderOperationsMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.permissions = PermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.role_assignments = RoleAssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.role_definitions = RoleDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DeviceTwinInfo(Model):
-    """Information about the device twin, which is the cloud represenation of
+    """Information about the device twin, which is the cloud representation of
     application device metadata.
 
     :param authentication_type: Authentication type used for this device:

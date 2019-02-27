@@ -115,6 +115,7 @@ try:
     from .effective_network_security_group_list_result_py3 import EffectiveNetworkSecurityGroupListResult
     from .effective_route_py3 import EffectiveRoute
     from .effective_route_list_result_py3 import EffectiveRouteListResult
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .network_watcher_py3 import NetworkWatcher
     from .topology_parameters_py3 import TopologyParameters
     from .topology_association_py3 import TopologyAssociation
@@ -172,6 +173,14 @@ try:
     from .connection_monitor_result_py3 import ConnectionMonitorResult
     from .connection_state_snapshot_py3 import ConnectionStateSnapshot
     from .connection_monitor_query_result_py3 import ConnectionMonitorQueryResult
+    from .traffic_query_py3 import TrafficQuery
+    from .network_configuration_diagnostic_parameters_py3 import NetworkConfigurationDiagnosticParameters
+    from .matched_rule_py3 import MatchedRule
+    from .network_security_rules_evaluation_result_py3 import NetworkSecurityRulesEvaluationResult
+    from .evaluated_network_security_group_py3 import EvaluatedNetworkSecurityGroup
+    from .network_security_group_result_py3 import NetworkSecurityGroupResult
+    from .network_configuration_diagnostic_result_py3 import NetworkConfigurationDiagnosticResult
+    from .network_configuration_diagnostic_response_py3 import NetworkConfigurationDiagnosticResponse
     from .operation_display_py3 import OperationDisplay
     from .availability_py3 import Availability
     from .dimension_py3 import Dimension
@@ -330,6 +339,7 @@ except (SyntaxError, ImportError):
     from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
     from .effective_route import EffectiveRoute
     from .effective_route_list_result import EffectiveRouteListResult
+    from .error_response import ErrorResponse, ErrorResponseException
     from .network_watcher import NetworkWatcher
     from .topology_parameters import TopologyParameters
     from .topology_association import TopologyAssociation
@@ -387,6 +397,14 @@ except (SyntaxError, ImportError):
     from .connection_monitor_result import ConnectionMonitorResult
     from .connection_state_snapshot import ConnectionStateSnapshot
     from .connection_monitor_query_result import ConnectionMonitorQueryResult
+    from .traffic_query import TrafficQuery
+    from .network_configuration_diagnostic_parameters import NetworkConfigurationDiagnosticParameters
+    from .matched_rule import MatchedRule
+    from .network_security_rules_evaluation_result import NetworkSecurityRulesEvaluationResult
+    from .evaluated_network_security_group import EvaluatedNetworkSecurityGroup
+    from .network_security_group_result import NetworkSecurityGroupResult
+    from .network_configuration_diagnostic_result import NetworkConfigurationDiagnosticResult
+    from .network_configuration_diagnostic_response import NetworkConfigurationDiagnosticResponse
     from .operation_display import OperationDisplay
     from .availability import Availability
     from .dimension import Dimension
@@ -673,6 +691,7 @@ __all__ = [
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
+    'ErrorResponse', 'ErrorResponseException',
     'NetworkWatcher',
     'TopologyParameters',
     'TopologyAssociation',
@@ -730,6 +749,14 @@ __all__ = [
     'ConnectionMonitorResult',
     'ConnectionStateSnapshot',
     'ConnectionMonitorQueryResult',
+    'TrafficQuery',
+    'NetworkConfigurationDiagnosticParameters',
+    'MatchedRule',
+    'NetworkSecurityRulesEvaluationResult',
+    'EvaluatedNetworkSecurityGroup',
+    'NetworkSecurityGroupResult',
+    'NetworkConfigurationDiagnosticResult',
+    'NetworkConfigurationDiagnosticResponse',
     'OperationDisplay',
     'Availability',
     'Dimension',

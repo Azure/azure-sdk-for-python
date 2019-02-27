@@ -15,10 +15,16 @@ from msrest.serialization import Model
 class RoleAssignmentCreateParameters(Model):
     """Role assignment create parameters.
 
-    :param properties: Role assignment properties.
+    All required parameters must be populated in order to send to Azure.
+
+    :param properties: Required. Role assignment properties.
     :type properties:
      ~azure.mgmt.authorization.v2015_07_01.models.RoleAssignmentProperties
     """
+
+    _validation = {
+        'properties': {'required': True},
+    }
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'RoleAssignmentProperties'},

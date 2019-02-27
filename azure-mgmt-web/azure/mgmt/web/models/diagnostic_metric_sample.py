@@ -46,11 +46,11 @@ class DiagnosticMetricSample(Model):
         'is_aggregated': {'key': 'isAggregated', 'type': 'bool'},
     }
 
-    def __init__(self, timestamp=None, role_instance=None, total=None, maximum=None, minimum=None, is_aggregated=None):
-        super(DiagnosticMetricSample, self).__init__()
-        self.timestamp = timestamp
-        self.role_instance = role_instance
-        self.total = total
-        self.maximum = maximum
-        self.minimum = minimum
-        self.is_aggregated = is_aggregated
+    def __init__(self, **kwargs):
+        super(DiagnosticMetricSample, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.role_instance = kwargs.get('role_instance', None)
+        self.total = kwargs.get('total', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.minimum = kwargs.get('minimum', None)
+        self.is_aggregated = kwargs.get('is_aggregated', None)

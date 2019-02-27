@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RecurrenceScheduleOccurrence(Model):
-    """The recurrence schedule occurence.
+    """The recurrence schedule occurrence.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -31,8 +31,8 @@ class RecurrenceScheduleOccurrence(Model):
         'occurrence': {'key': 'occurrence', 'type': 'int'},
     }
 
-    def __init__(self, additional_properties=None, day=None, occurrence=None):
-        super(RecurrenceScheduleOccurrence, self).__init__()
-        self.additional_properties = additional_properties
-        self.day = day
-        self.occurrence = occurrence
+    def __init__(self, **kwargs):
+        super(RecurrenceScheduleOccurrence, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.day = kwargs.get('day', None)
+        self.occurrence = kwargs.get('occurrence', None)

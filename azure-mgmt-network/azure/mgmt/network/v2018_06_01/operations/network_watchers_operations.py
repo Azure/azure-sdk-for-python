@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -59,7 +58,8 @@ class NetworkWatchersOperations(object):
         :return: NetworkWatcher or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.network.v2018_06_01.models.NetworkWatcher or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -93,9 +93,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -127,7 +125,8 @@ class NetworkWatchersOperations(object):
         :return: NetworkWatcher or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.network.v2018_06_01.models.NetworkWatcher or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -157,9 +156,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -203,9 +200,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -228,7 +223,8 @@ class NetworkWatchersOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -270,7 +266,8 @@ class NetworkWatchersOperations(object):
         :return: NetworkWatcher or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.network.v2018_06_01.models.NetworkWatcher or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         parameters = models.TagsObject(tags=tags)
 
@@ -306,9 +303,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -336,7 +331,8 @@ class NetworkWatchersOperations(object):
         :return: An iterator like instance of NetworkWatcher
         :rtype:
          ~azure.mgmt.network.v2018_06_01.models.NetworkWatcherPaged[~azure.mgmt.network.v2018_06_01.models.NetworkWatcher]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -372,9 +368,7 @@ class NetworkWatchersOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -401,7 +395,8 @@ class NetworkWatchersOperations(object):
         :return: An iterator like instance of NetworkWatcher
         :rtype:
          ~azure.mgmt.network.v2018_06_01.models.NetworkWatcherPaged[~azure.mgmt.network.v2018_06_01.models.NetworkWatcher]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -436,9 +431,7 @@ class NetworkWatchersOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -473,7 +466,8 @@ class NetworkWatchersOperations(object):
         :return: Topology or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.network.v2018_06_01.models.Topology or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_topology.metadata['url']
@@ -507,9 +501,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -558,9 +550,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -599,7 +589,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.VerificationIPFlowResult]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.VerificationIPFlowResult]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._verify_ip_flow_initial(
             resource_group_name=resource_group_name,
@@ -663,9 +654,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -703,7 +692,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.NextHopResult]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.NextHopResult]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_next_hop_initial(
             resource_group_name=resource_group_name,
@@ -769,9 +759,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -808,7 +796,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.SecurityGroupViewResult]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.SecurityGroupViewResult]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_vm_security_rules_initial(
             resource_group_name=resource_group_name,
@@ -872,9 +861,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -912,7 +899,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.TroubleshootingResult]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.TroubleshootingResult]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_troubleshooting_initial(
             resource_group_name=resource_group_name,
@@ -978,9 +966,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1017,7 +1003,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.TroubleshootingResult]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.TroubleshootingResult]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_troubleshooting_result_initial(
             resource_group_name=resource_group_name,
@@ -1081,9 +1068,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1123,7 +1108,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.FlowLogInformation]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.FlowLogInformation]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._set_flow_log_configuration_initial(
             resource_group_name=resource_group_name,
@@ -1189,9 +1175,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1230,7 +1214,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.FlowLogInformation]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.FlowLogInformation]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_flow_log_status_initial(
             resource_group_name=resource_group_name,
@@ -1294,9 +1279,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1337,7 +1320,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.ConnectivityInformation]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.ConnectivityInformation]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._check_connectivity_initial(
             resource_group_name=resource_group_name,
@@ -1401,9 +1385,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1443,7 +1425,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.AzureReachabilityReport]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.AzureReachabilityReport]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._get_azure_reachability_report_initial(
             resource_group_name=resource_group_name,
@@ -1507,9 +1490,7 @@ class NetworkWatchersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1549,7 +1530,8 @@ class NetworkWatchersOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.AvailableProvidersList]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.AvailableProvidersList]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
         """
         raw_result = self._list_available_providers_initial(
             resource_group_name=resource_group_name,
@@ -1577,3 +1559,113 @@ class NetworkWatchersOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     list_available_providers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/availableProvidersList'}
+
+
+    def _get_network_configuration_diagnostic_initial(
+            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, **operation_config):
+        parameters = models.NetworkConfigurationDiagnosticParameters(target_resource_id=target_resource_id, queries=queries)
+
+        # Construct URL
+        url = self.get_network_configuration_diagnostic.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'NetworkConfigurationDiagnosticParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkConfigurationDiagnosticResponse', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('NetworkConfigurationDiagnosticResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_network_configuration_diagnostic(
+            self, resource_group_name, network_watcher_name, target_resource_id, queries, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Get network configuration diagnostic.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_watcher_name: The name of the network watcher.
+        :type network_watcher_name: str
+        :param target_resource_id: The ID of the target resource to perform
+         network configuration diagnostic. Valid options are VM,
+         NetworkInterface, VMSS/NetworkInterface and Application Gateway.
+        :type target_resource_id: str
+        :param queries: List of traffic queries.
+        :type queries:
+         list[~azure.mgmt.network.v2018_06_01.models.TrafficQuery]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         NetworkConfigurationDiagnosticResponse or
+         ClientRawResponse<NetworkConfigurationDiagnosticResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2018_06_01.models.NetworkConfigurationDiagnosticResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2018_06_01.models.NetworkConfigurationDiagnosticResponse]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.network.v2018_06_01.models.ErrorResponseException>`
+        """
+        raw_result = self._get_network_configuration_diagnostic_initial(
+            resource_group_name=resource_group_name,
+            network_watcher_name=network_watcher_name,
+            target_resource_id=target_resource_id,
+            queries=queries,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('NetworkConfigurationDiagnosticResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    get_network_configuration_diagnostic.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/networkConfigurationDiagnostic'}

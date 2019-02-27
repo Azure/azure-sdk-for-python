@@ -19,8 +19,8 @@ class MigrateSqlServerSqlServerDatabaseInput(Model):
     :type name: str
     :param restore_database_name: Name of the database at destination
     :type restore_database_name: str
-    :param backup_file_share: Backup file share information for this database.
-    :type backup_file_share: ~azure.mgmt.datamigration.models.FileShare
+    :param backup_and_restore_folder: The backup and restore folder
+    :type backup_and_restore_folder: str
     :param database_files: The list of database files
     :type database_files:
      list[~azure.mgmt.datamigration.models.DatabaseFileInput]
@@ -29,13 +29,13 @@ class MigrateSqlServerSqlServerDatabaseInput(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'restore_database_name': {'key': 'restoreDatabaseName', 'type': 'str'},
-        'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
+        'backup_and_restore_folder': {'key': 'backupAndRestoreFolder', 'type': 'str'},
         'database_files': {'key': 'databaseFiles', 'type': '[DatabaseFileInput]'},
     }
 
-    def __init__(self, *, name: str=None, restore_database_name: str=None, backup_file_share=None, database_files=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, restore_database_name: str=None, backup_and_restore_folder: str=None, database_files=None, **kwargs) -> None:
         super(MigrateSqlServerSqlServerDatabaseInput, self).__init__(**kwargs)
         self.name = name
         self.restore_database_name = restore_database_name
-        self.backup_file_share = backup_file_share
+        self.backup_and_restore_folder = backup_and_restore_folder
         self.database_files = database_files

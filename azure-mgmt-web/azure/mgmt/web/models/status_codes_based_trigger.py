@@ -35,10 +35,10 @@ class StatusCodesBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, status=None, sub_status=None, win32_status=None, count=None, time_interval=None):
-        super(StatusCodesBasedTrigger, self).__init__()
-        self.status = status
-        self.sub_status = sub_status
-        self.win32_status = win32_status
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, **kwargs):
+        super(StatusCodesBasedTrigger, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.sub_status = kwargs.get('sub_status', None)
+        self.win32_status = kwargs.get('win32_status', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)

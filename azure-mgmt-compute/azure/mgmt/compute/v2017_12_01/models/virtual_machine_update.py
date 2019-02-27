@@ -53,7 +53,7 @@ class VirtualMachineUpdate(UpdateResource):
      availability. For more information about availability sets, see [Manage
      the availability of virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-     <br><br> For more information on Azure planned maintainance, see [Planned
+     <br><br> For more information on Azure planned maintenance, see [Planned
      maintenance for virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
@@ -64,7 +64,7 @@ class VirtualMachineUpdate(UpdateResource):
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVMInstanceView
+     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system. <br><br> Possible values are:
@@ -102,7 +102,7 @@ class VirtualMachineUpdate(UpdateResource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},

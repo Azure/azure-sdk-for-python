@@ -16,7 +16,7 @@ class ApiEntityReference(Model):
     """The API entity reference.
 
     :param id: The ARM resource id in the form of
-     /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
     :type id: str
     """
 
