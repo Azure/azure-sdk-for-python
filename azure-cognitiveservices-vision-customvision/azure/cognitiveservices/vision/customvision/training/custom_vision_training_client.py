@@ -1915,7 +1915,7 @@ class CustomVisionTrainingClient(SDKClient):
     update_project.metadata = {'url': '/projects/{projectId}'}
 
     def train_project(
-            self, project_id, training_type=None, reserved_budget_in_hours=None, force_train=None, notification_email_address=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, custom_headers=None, raw=False, **operation_config):
         """Queues project for training.
 
         :param project_id: The project id.
