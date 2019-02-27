@@ -64,7 +64,7 @@ class MediaObject(CreativeWork):
     :ivar content_size: Size of the media object content. Use format "value
      unit" (e.g., "1024 B").
     :vartype content_size: str
-    :ivar encoding_format: Encoding format (e.g., mp3, mp4, jpeg, etc).
+    :ivar encoding_format: Encoding format (e.g., png, gif, jpeg, etc).
     :vartype encoding_format: str
     :ivar host_page_display_url: Display URL of the page that hosts the media
      object.

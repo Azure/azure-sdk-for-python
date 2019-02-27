@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class StreamingPolicy(ProxyResource):
@@ -37,7 +37,7 @@ class StreamingPolicy(ProxyResource):
     :param common_encryption_cbcs: Configuration of CommonEncryptionCbcs
     :type common_encryption_cbcs:
      ~azure.mgmt.media.models.CommonEncryptionCbcs
-    :param no_encryption: Configuations of NoEncryption
+    :param no_encryption: Configurations of NoEncryption
     :type no_encryption: ~azure.mgmt.media.models.NoEncryption
     """
 

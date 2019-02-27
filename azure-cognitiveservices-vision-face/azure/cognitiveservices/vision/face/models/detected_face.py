@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class DetectedFace(Model):
     """Detected Face object.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param face_id:
     :type face_id: str
-    :param face_rectangle:
+    :param face_rectangle: Required.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.face.models.FaceRectangle
     :param face_landmarks:
@@ -39,9 +41,9 @@ class DetectedFace(Model):
         'face_attributes': {'key': 'faceAttributes', 'type': 'FaceAttributes'},
     }
 
-    def __init__(self, face_rectangle, face_id=None, face_landmarks=None, face_attributes=None):
-        super(DetectedFace, self).__init__()
-        self.face_id = face_id
-        self.face_rectangle = face_rectangle
-        self.face_landmarks = face_landmarks
-        self.face_attributes = face_attributes
+    def __init__(self, **kwargs):
+        super(DetectedFace, self).__init__(**kwargs)
+        self.face_id = kwargs.get('face_id', None)
+        self.face_rectangle = kwargs.get('face_rectangle', None)
+        self.face_landmarks = kwargs.get('face_landmarks', None)
+        self.face_attributes = kwargs.get('face_attributes', None)

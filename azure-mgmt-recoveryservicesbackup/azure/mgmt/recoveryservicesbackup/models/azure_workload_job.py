@@ -38,6 +38,8 @@ class AzureWorkloadJob(Job):
     :type activity_id: str
     :param job_type: Required. Constant filled by server.
     :type job_type: str
+    :param workload_type: Workload type of the job
+    :type workload_type: str
     :param duration: Time elapsed during the execution of this job.
     :type duration: timedelta
     :param actions_info: Gets or sets the state/actions applicable on this job
@@ -65,6 +67,7 @@ class AzureWorkloadJob(Job):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'activity_id': {'key': 'activityId', 'type': 'str'},
         'job_type': {'key': 'jobType', 'type': 'str'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
         'duration': {'key': 'duration', 'type': 'duration'},
         'actions_info': {'key': 'actionsInfo', 'type': '[JobSupportedAction]'},
         'error_details': {'key': 'errorDetails', 'type': '[AzureWorkloadErrorInfo]'},
@@ -73,6 +76,7 @@ class AzureWorkloadJob(Job):
 
     def __init__(self, **kwargs):
         super(AzureWorkloadJob, self).__init__(**kwargs)
+        self.workload_type = kwargs.get('workload_type', None)
         self.duration = kwargs.get('duration', None)
         self.actions_info = kwargs.get('actions_info', None)
         self.error_details = kwargs.get('error_details', None)

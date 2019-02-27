@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ImageTagRegion(Model):
-    """ImageTagRegion.
+    """Defines an image region relevant to the ImageTag.
 
     All required parameters must be populated in order to send to Azure.
 

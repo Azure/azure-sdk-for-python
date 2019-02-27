@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.6.0 (2018-06-15)
+++++++++++++++++++
+
+**Features**
+
+- Catalog_ListTableFragments
+- Catalog_PreviewTable
+- Catalog_PreviewTablePartition
+    
+**General breaking changes**
+
+The general breaking changes described in 0.5.0 for account now applies to job and catalog as well.
+
 0.5.0 (2018-06-14)
 ++++++++++++++++++
 
@@ -10,7 +23,7 @@ Release History
 
 - Client class can be used as a context manager to keep the underlying HTTP session open for performance
 
-**General Breaking changes**
+**General Breaking changes (account only)**
 
 This version uses a next-generation code generator that *might* introduce breaking changes.
 

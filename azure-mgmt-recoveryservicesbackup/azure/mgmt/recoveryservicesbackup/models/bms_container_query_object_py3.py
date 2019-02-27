@@ -28,7 +28,8 @@ class BMSContainerQueryObject(Model):
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
      'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter',
      'VMAppContainer', 'SQLAGWorkLoadContainer', 'StorageContainer',
-     'GenericContainer'
+     'GenericContainer', 'SqlCluster', 'ExchangeDAG', 'SharepointFarm',
+     'HyperVCluster', 'WindowsClient'
     :type container_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.ContainerType
     :param backup_engine_name: Backup engine name

@@ -51,13 +51,14 @@ class MabJob(Job):
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
      'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter',
      'VMAppContainer', 'SQLAGWorkLoadContainer', 'StorageContainer',
-     'GenericContainer'
+     'GenericContainer', 'SqlCluster', 'ExchangeDAG', 'SharepointFarm',
+     'HyperVCluster', 'WindowsClient'
     :type mab_server_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.MabServerType
     :param workload_type: Workload type of backup item. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
      'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
-     'SQLDataBase', 'AzureFileShare'
+     'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
     :type workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param error_details: The errors.

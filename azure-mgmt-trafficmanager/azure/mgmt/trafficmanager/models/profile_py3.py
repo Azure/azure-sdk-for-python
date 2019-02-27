@@ -21,7 +21,7 @@ class Profile(TrackedResource):
     :param name: The name of the resource
     :type name: str
     :param type: The type of the resource. Ex-
-     Microsoft.Network/trafficmanagerProfiles.
+     Microsoft.Network/trafficManagerProfiles.
     :type type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -33,7 +33,7 @@ class Profile(TrackedResource):
      ~azure.mgmt.trafficmanager.models.ProfileStatus
     :param traffic_routing_method: The traffic routing method of the Traffic
      Manager profile. Possible values include: 'Performance', 'Priority',
-     'Weighted', 'Geographic'
+     'Weighted', 'Geographic', 'MultiValue', 'Subnet'
     :type traffic_routing_method: str or
      ~azure.mgmt.trafficmanager.models.TrafficRoutingMethod
     :param dns_config: The DNS settings of the Traffic Manager profile.
@@ -49,6 +49,9 @@ class Profile(TrackedResource):
      Manage profile. Possible values include: 'Enabled', 'Disabled'
     :type traffic_view_enrollment_status: str or
      ~azure.mgmt.trafficmanager.models.TrafficViewEnrollmentStatus
+    :param max_return: Maximum number of endpoints to be returned for
+     MultiValue routing type.
+    :type max_return: long
     """
 
     _attribute_map = {
@@ -63,9 +66,10 @@ class Profile(TrackedResource):
         'monitor_config': {'key': 'properties.monitorConfig', 'type': 'MonitorConfig'},
         'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
         'traffic_view_enrollment_status': {'key': 'properties.trafficViewEnrollmentStatus', 'type': 'str'},
+        'max_return': {'key': 'properties.maxReturn', 'type': 'long'},
     }
 
-    def __init__(self, *, id: str=None, name: str=None, type: str=None, tags=None, location: str=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, traffic_view_enrollment_status=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, tags=None, location: str=None, profile_status=None, traffic_routing_method=None, dns_config=None, monitor_config=None, endpoints=None, traffic_view_enrollment_status=None, max_return: int=None, **kwargs) -> None:
         super(Profile, self).__init__(id=id, name=name, type=type, tags=tags, location=location, **kwargs)
         self.profile_status = profile_status
         self.traffic_routing_method = traffic_routing_method
@@ -73,3 +77,4 @@ class Profile(TrackedResource):
         self.monitor_config = monitor_config
         self.endpoints = endpoints
         self.traffic_view_enrollment_status = traffic_view_enrollment_status
+        self.max_return = max_return

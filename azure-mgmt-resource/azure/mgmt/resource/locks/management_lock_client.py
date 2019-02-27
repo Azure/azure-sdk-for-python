@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLockClient(MultiApiClientMixin):
+class ManagementLockClient(MultiApiClientMixin, SDKClient):
     """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
     :ivar config: Configuration for client.
@@ -78,16 +78,13 @@ class ManagementLockClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
         super(ManagementLockClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
@@ -110,6 +107,19 @@ class ManagementLockClient(MultiApiClientMixin):
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
+    @property
+    def authorization_operations(self):
+        """Instance depends on the API version:
+
+           * 2016-09-01: :class:`AuthorizationOperations<azure.mgmt.resource.locks.v2016_09_01.operations.AuthorizationOperations>`
+        """
+        api_version = self._get_api_version('authorization_operations')
+        if api_version == '2016-09-01':
+            from .v2016_09_01.operations import AuthorizationOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
     @property
     def management_locks(self):
         """Instance depends on the API version:

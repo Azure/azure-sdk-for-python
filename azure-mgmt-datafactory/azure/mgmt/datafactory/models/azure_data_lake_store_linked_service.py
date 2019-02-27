@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureDataLakeStoreLinkedService(LinkedService):
     """Azure Data Lake Store linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class AzureDataLakeStoreLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param data_lake_store_uri: Data Lake Store service URI. Type: string (or
-     Expression with resultType string).
+    :param data_lake_store_uri: Required. Data Lake Store service URI. Type:
+     string (or Expression with resultType string).
     :type data_lake_store_uri: object
     :param service_principal_id: The ID of the application used to
      authenticate against the Azure Data Lake Store account. Type: string (or
@@ -83,14 +85,14 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, data_lake_store_uri, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, tenant=None, account_name=None, subscription_id=None, resource_group_name=None, encrypted_credential=None):
-        super(AzureDataLakeStoreLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.data_lake_store_uri = data_lake_store_uri
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.tenant = tenant
-        self.account_name = account_name
-        self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureDataLakeStoreLinkedService, self).__init__(**kwargs)
+        self.data_lake_store_uri = kwargs.get('data_lake_store_uri', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.account_name = kwargs.get('account_name', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDataLakeStore'

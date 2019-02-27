@@ -11,8 +11,10 @@
 
 from .operations import Operations
 from .signal_roperations import SignalROperations
+from .usages_operations import UsagesOperations
 
 __all__ = [
     'Operations',
     'SignalROperations',
+    'UsagesOperations',
 ]

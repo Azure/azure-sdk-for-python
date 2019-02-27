@@ -21,12 +21,15 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param errors: Array of errors. This is ignored if submitted.
-    :type errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :ivar errors: Array of errors. This is ignored if submitted.
+    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     :param input: Task input
@@ -38,7 +41,9 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
     """
 
     _validation = {
+        'errors': {'readonly': True},
         'state': {'readonly': True},
+        'commands': {'readonly': True},
         'task_type': {'required': True},
         'output': {'readonly': True},
     }
@@ -46,13 +51,14 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'input': {'key': 'input', 'type': 'MigrateSqlServerSqlDbTaskInput'},
         'output': {'key': 'output', 'type': '[MigrateSqlServerSqlDbTaskOutput]'},
     }
 
-    def __init__(self, *, errors=None, input=None, **kwargs) -> None:
-        super(MigrateSqlServerSqlDbTaskProperties, self).__init__(errors=errors, **kwargs)
+    def __init__(self, *, input=None, **kwargs) -> None:
+        super(MigrateSqlServerSqlDbTaskProperties, self).__init__(**kwargs)
         self.input = input
         self.output = None
         self.task_type = 'Migrate.SqlServer.SqlDb'

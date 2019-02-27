@@ -45,6 +45,12 @@ class AzureWorkloadContainer(ProtectionContainer):
     :param extended_info: Additional details of a workload container.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureWorkloadContainerExtendedInfo
+    :param workload_type: Workload type for which registration was sent.
+     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
+     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     """
 
     _validation = {
@@ -60,15 +66,17 @@ class AzureWorkloadContainer(ProtectionContainer):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadContainerExtendedInfo'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
     }
 
     _subtype_map = {
         'container_type': {'SQLAGWorkLoadContainer': 'AzureSQLAGWorkloadContainerProtectionContainer', 'VMAppContainer': 'AzureVMAppContainerProtectionContainer'}
     }
 
-    def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, source_resource_id: str=None, last_updated_time=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, friendly_name: str=None, backup_management_type=None, registration_status: str=None, health_status: str=None, source_resource_id: str=None, last_updated_time=None, extended_info=None, workload_type=None, **kwargs) -> None:
         super(AzureWorkloadContainer, self).__init__(friendly_name=friendly_name, backup_management_type=backup_management_type, registration_status=registration_status, health_status=health_status, **kwargs)
         self.source_resource_id = source_resource_id
         self.last_updated_time = last_updated_time
         self.extended_info = extended_info
+        self.workload_type = workload_type
         self.container_type = 'AzureWorkloadContainer'

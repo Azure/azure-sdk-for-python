@@ -19,7 +19,7 @@ class ReservationProperties(Model):
     sending a request.
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off',
@@ -36,11 +36,8 @@ class ReservationProperties(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param quantity: Quantity of the SKUs that are part of the Reservation.
     :type quantity: int
-    :param provisioning_state: Possible values include: 'Creating',
-     'PendingResourceHold', 'ConfirmedResourceHold', 'PendingBilling',
-     'ConfirmedBilling', 'Created', 'Succeeded', 'Cancelled', 'Expired',
-     'BillingFailed', 'Failed', 'Split', 'Merged'
-    :type provisioning_state: str or ~azure.mgmt.reservations.models.enum
+    :param provisioning_state: Current state of the reservation.
+    :type provisioning_state: str
     :param effective_date_time: DateTime of the Reservation starting when this
      version is effective from.
     :type effective_date_time: datetime

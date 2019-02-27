@@ -45,8 +45,8 @@ class Acl(Model):
         'permission': {'key': 'permission', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Acl, self).__init__()
+    def __init__(self, **kwargs):
+        super(Acl, self).__init__(**kwargs)
         self.ace_type = None
         self.principal_id = None
         self.permission = None

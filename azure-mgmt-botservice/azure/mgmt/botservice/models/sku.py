@@ -18,7 +18,9 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The sku name. Possible values include: 'F0', 'S1'
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The sku name. Possible values include: 'F0', 'S1'
     :type name: str or ~azure.mgmt.botservice.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Free', 'Standard'
@@ -35,6 +37,7 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None

@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-mgmt-eventgrid"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "EventGrid Management"
+package_doc_id = "event-grid"
+is_stable = false
+is_arm = true

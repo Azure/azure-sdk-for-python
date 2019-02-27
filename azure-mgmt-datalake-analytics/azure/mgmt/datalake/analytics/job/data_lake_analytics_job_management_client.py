@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -50,7 +50,7 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
         self.adla_job_dns_suffix = adla_job_dns_suffix
 
 
-class DataLakeAnalyticsJobManagementClient(object):
+class DataLakeAnalyticsJobManagementClient(SDKClient):
     """Creates an Azure Data Lake Analytics job client.
 
     :ivar config: Configuration for client.
@@ -75,7 +75,7 @@ class DataLakeAnalyticsJobManagementClient(object):
             self, credentials, adla_job_dns_suffix):
 
         self.config = DataLakeAnalyticsJobManagementClientConfiguration(credentials, adla_job_dns_suffix)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataLakeAnalyticsJobManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-09-01-preview'
