@@ -27,14 +27,14 @@ class LastDetectResponse(Model):
     :type expected_value: float
     :param upper_margin: Required. Upper margin of the latest point.
      UpperMargin is used to calculate upperBoundary, which equals to
-     expectedValue + (100 - sensitivity)*upperMargin. If the value of latest
+     expectedValue + (100 - marginScale)*upperMargin. If the value of latest
      point is between upperBoundary and lowerBoundary, it should be treated as
-     normal value. By adjusting sensitivity value, anomaly status of latest
+     normal value. By adjusting marginScale value, anomaly status of latest
      point can be changed.
     :type upper_margin: float
     :param lower_margin: Required. Lower margin of the latest point.
      LowerMargin is used to calculate lowerBoundary, which equals to
-     expectedValue - (100 - sensitivity)*lowerMargin.
+     expectedValue - (100 - marginScale)*lowerMargin.
     :type lower_margin: float
     :param is_anomaly: Required. Anomaly status of the latest point, true
      means the latest point is an anomaly either in negative direction or

@@ -26,14 +26,14 @@ class EntireDetectResponse(Model):
     :type expected_values: list[float]
     :param upper_margins: Required. UpperMargins contain upper margin of each
      input point. UpperMargin is used to calculate upperBoundary, which equals
-     to expectedValue + (100 - sensitivity)*upperMargin. Anomalies in response
+     to expectedValue + (100 - marginScale)*upperMargin. Anomalies in response
      can be filtered by upperBoundary and lowerBoundary. By adjusting
-     sensitivity value, less significant anomalies can be filtered in client
+     marginScale value, less significant anomalies can be filtered in client
      side. The index of the array is consistent with the input series.
     :type upper_margins: list[float]
     :param lower_margins: Required. LowerMargins contain lower margin of each
      input point. LowerMargin is used to calculate lowerBoundary, which equals
-     to expectedValue - (100 - sensitivity)*lowerMargin. Points between the
+     to expectedValue - (100 - marginScale)*lowerMargin. Points between the
      boundary can be marked as normal ones in client side. The index of the
      array is consistent with the input series.
     :type lower_margins: list[float]
