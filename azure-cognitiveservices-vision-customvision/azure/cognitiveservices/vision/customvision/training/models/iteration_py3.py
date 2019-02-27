@@ -22,9 +22,6 @@ class Iteration(Model):
     :vartype id: str
     :param name: Gets or sets the name of the iteration.
     :type name: str
-    :param is_default: Gets or sets a value indicating whether the iteration
-     is the default iteration for the project.
-    :type is_default: bool
     :ivar status: Gets the current iteration status.
     :vartype status: str
     :ivar created: Gets the time this iteration was completed.
@@ -33,7 +30,7 @@ class Iteration(Model):
     :vartype last_modified: datetime
     :ivar trained_at: Gets the time this iteration was last modified.
     :vartype trained_at: datetime
-    :ivar project_id: Gets The project id. of the iteration.
+    :ivar project_id: Gets the project id of the iteration.
     :vartype project_id: str
     :ivar exportable: Whether the iteration can be exported to another format
      for download.
@@ -45,6 +42,15 @@ class Iteration(Model):
      Possible values include: 'Multiclass', 'Multilabel'
     :vartype classification_type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.Classifier
+    :ivar training_type: Gets the training type of the iteration. Possible
+     values include: 'Regular', 'Advanced'
+    :vartype training_type: str or
+     ~azure.cognitiveservices.vision.customvision.training.models.TrainingType
+    :ivar reserved_budget_in_hours: Gets the reserved baking budget for the
+     iteration.
+    :vartype reserved_budget_in_hours: int
+    :ivar publish_name: Name of the published model.
+    :vartype publish_name: str
     """
 
     _validation = {
@@ -57,12 +63,14 @@ class Iteration(Model):
         'exportable': {'readonly': True},
         'domain_id': {'readonly': True},
         'classification_type': {'readonly': True},
+        'training_type': {'readonly': True},
+        'reserved_budget_in_hours': {'readonly': True},
+        'publish_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'str'},
         'created': {'key': 'created', 'type': 'iso-8601'},
         'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
@@ -71,13 +79,15 @@ class Iteration(Model):
         'exportable': {'key': 'exportable', 'type': 'bool'},
         'domain_id': {'key': 'domainId', 'type': 'str'},
         'classification_type': {'key': 'classificationType', 'type': 'str'},
+        'training_type': {'key': 'trainingType', 'type': 'str'},
+        'reserved_budget_in_hours': {'key': 'reservedBudgetInHours', 'type': 'int'},
+        'publish_name': {'key': 'publishName', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, is_default: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, **kwargs) -> None:
         super(Iteration, self).__init__(**kwargs)
         self.id = None
         self.name = name
-        self.is_default = is_default
         self.status = None
         self.created = None
         self.last_modified = None
@@ -86,3 +96,6 @@ class Iteration(Model):
         self.exportable = None
         self.domain_id = None
         self.classification_type = None
+        self.training_type = None
+        self.reserved_budget_in_hours = None
+        self.publish_name = None

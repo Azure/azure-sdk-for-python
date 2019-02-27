@@ -79,7 +79,7 @@ class CustomVisionError(Model):
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
      'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorInvalid'
     :type code: str or
-     ~azure.cognitiveservices.vision.customvision.prediction.models.CustomVisionErrorCodes
+     ~azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorCodes
     :param message: Required. A message explaining the error reported by the
      service.
     :type message: str

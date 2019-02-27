@@ -27,15 +27,15 @@ class StoredImagePrediction(Model):
     :vartype original_image_uri: str
     :ivar domain: Domain used for the prediction.
     :vartype domain: str
-    :ivar id:
+    :ivar id: Prediction Id.
     :vartype id: str
-    :ivar project:
+    :ivar project: Project Id.
     :vartype project: str
-    :ivar iteration:
+    :ivar iteration: Iteration Id.
     :vartype iteration: str
-    :ivar created:
+    :ivar created: Date this prediction was created.
     :vartype created: datetime
-    :ivar predictions:
+    :ivar predictions: List of predictions.
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     """

@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class BoundingBox(Model):
-    """BoundingBox.
+    """Bounding box that defines a region of an image.
 
-    :param left:
+    :param left: Coordinate of the left boundary.
     :type left: float
-    :param top:
+    :param top: Coordinate of the top boundary.
     :type top: float
-    :param width:
+    :param width: Width.
     :type width: float
-    :param height:
+    :param height: Height.
     :type height: float
     """
 

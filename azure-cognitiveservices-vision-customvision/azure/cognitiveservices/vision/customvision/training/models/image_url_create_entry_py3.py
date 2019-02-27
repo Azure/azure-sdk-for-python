@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ImageUrlCreateEntry(Model):
     """ImageUrlCreateEntry.
 
-    :param url:
+    :param url: Url of the image.
     :type url: str
     :param tag_ids:
     :type tag_ids: list[str]

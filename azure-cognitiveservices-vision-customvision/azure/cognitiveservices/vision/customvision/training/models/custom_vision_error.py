@@ -79,7 +79,7 @@ class CustomVisionError(Model):
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
      'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorInvalid'
     :type code: str or
-     ~azure.cognitiveservices.vision.customvision.prediction.models.CustomVisionErrorCodes
+     ~azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorCodes
     :param message: Required. A message explaining the error reported by the
      service.
     :type message: str
@@ -95,10 +95,10 @@ class CustomVisionError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, code, message: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CustomVisionError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class CustomVisionErrorException(HttpOperationError):

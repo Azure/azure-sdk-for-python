@@ -18,7 +18,7 @@ class Project(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets The project id.
+    :ivar id: Gets the project id.
     :vartype id: str
     :param name: Gets or sets the name of the project.
     :type name: str
@@ -29,10 +29,12 @@ class Project(Model):
      ~azure.cognitiveservices.vision.customvision.training.models.ProjectSettings
     :ivar created: Gets the date this project was created.
     :vartype created: datetime
-    :ivar last_modified: Gets the date this project was last modified.
+    :ivar last_modified: Gets the date this project was last modifed.
     :vartype last_modified: datetime
-    :ivar thumbnail_uri: Gets the thumbnail url representing the project.
+    :ivar thumbnail_uri: Gets the thumbnail url representing the image.
     :vartype thumbnail_uri: str
+    :ivar dr_mode_enabled: Gets if the DR mode is on.
+    :vartype dr_mode_enabled: bool
     """
 
     _validation = {
@@ -40,6 +42,7 @@ class Project(Model):
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
         'thumbnail_uri': {'readonly': True},
+        'dr_mode_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,6 +53,7 @@ class Project(Model):
         'created': {'key': 'created', 'type': 'iso-8601'},
         'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
         'thumbnail_uri': {'key': 'thumbnailUri', 'type': 'str'},
+        'dr_mode_enabled': {'key': 'drModeEnabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -61,3 +65,4 @@ class Project(Model):
         self.created = None
         self.last_modified = None
         self.thumbnail_uri = None
+        self.dr_mode_enabled = None

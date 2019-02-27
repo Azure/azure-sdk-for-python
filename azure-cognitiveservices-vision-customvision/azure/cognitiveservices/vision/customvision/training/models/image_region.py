@@ -26,13 +26,13 @@ class ImageRegion(Model):
     :vartype created: datetime
     :param tag_id: Id of the tag associated with this region.
     :type tag_id: str
-    :param left:
+    :param left: Coordinate of the left boundary.
     :type left: float
-    :param top:
+    :param top: Coordinate of the top boundary.
     :type top: float
-    :param width:
+    :param width: Width.
     :type width: float
-    :param height:
+    :param height: Height.
     :type height: float
     """
 
