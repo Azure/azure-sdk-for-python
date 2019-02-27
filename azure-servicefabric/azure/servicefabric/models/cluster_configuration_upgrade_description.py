@@ -17,10 +17,14 @@ class ClusterConfigurationUpgradeDescription(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cluster_config: Required. The cluster configuration.
+    :param cluster_config: Required. The cluster configuration as a JSON
+     string. For example, [this
+     file](https://github.com/Azure-Samples/service-fabric-dotnet-standalone-cluster-configuration/blob/master/Samples/ClusterConfig.Unsecure.DevCluster.json)
+     contains JSON describing the [nodes and other properties of the
+     cluster](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-manifest).
     :type cluster_config: str
     :param health_check_retry_timeout: The length of time between attempts to
-     perform a health checks if the application or cluster is not healthy.
+     perform health checks if the application or cluster is not healthy.
      Default value: "PT0H0M0S" .
     :type health_check_retry_timeout: timedelta
     :param health_check_wait_duration_in_seconds: The length of time to wait
@@ -28,8 +32,8 @@ class ClusterConfigurationUpgradeDescription(Model):
      process. Default value: "PT0H0M0S" .
     :type health_check_wait_duration_in_seconds: timedelta
     :param health_check_stable_duration_in_seconds: The length of time that
-     the application or cluster must remain healthy. Default value: "PT0H0M0S"
-     .
+     the application or cluster must remain healthy before the upgrade proceeds
+     to the next upgrade domain. Default value: "PT0H0M0S" .
     :type health_check_stable_duration_in_seconds: timedelta
     :param upgrade_domain_timeout_in_seconds: The timeout for the upgrade
      domain. Default value: "PT0H0M0S" .

@@ -23,6 +23,8 @@ class PartitionAnalysisEvent(PartitionEvent):
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -50,6 +52,7 @@ class PartitionAnalysisEvent(PartitionEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -61,7 +64,7 @@ class PartitionAnalysisEvent(PartitionEvent):
         'kind': {'PartitionPrimaryMoveAnalysis': 'PartitionPrimaryMoveAnalysisEvent'}
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, has_correlated_events: bool=None, **kwargs) -> None:
-        super(PartitionAnalysisEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, metadata, category: str=None, has_correlated_events: bool=None, **kwargs) -> None:
+        super(PartitionAnalysisEvent, self).__init__(event_instance_id=event_instance_id, category=category, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, **kwargs)
         self.metadata = metadata
         self.kind = 'PartitionAnalysisEvent'

@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class ImagePurchasePlan(Model):
-    """Describes the gallery image purchase plan. This is used by marketplace
-    images.
+    """Describes the gallery Image Definition purchase plan. This is used by
+    marketplace images.
 
     :param name: The plan ID.
     :type name: str

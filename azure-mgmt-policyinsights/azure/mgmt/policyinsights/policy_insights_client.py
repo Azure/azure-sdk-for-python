@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.policy_tracked_resources_operations import PolicyTrackedResourcesOperations
+from .operations.remediations_operations import RemediationsOperations
 from .operations.policy_events_operations import PolicyEventsOperations
 from .operations.policy_states_operations import PolicyStatesOperations
 from .operations.operations import Operations
@@ -52,6 +54,10 @@ class PolicyInsightsClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: PolicyInsightsClientConfiguration
 
+    :ivar policy_tracked_resources: PolicyTrackedResources operations
+    :vartype policy_tracked_resources: azure.mgmt.policyinsights.operations.PolicyTrackedResourcesOperations
+    :ivar remediations: Remediations operations
+    :vartype remediations: azure.mgmt.policyinsights.operations.RemediationsOperations
     :ivar policy_events: PolicyEvents operations
     :vartype policy_events: azure.mgmt.policyinsights.operations.PolicyEventsOperations
     :ivar policy_states: PolicyStates operations
@@ -72,10 +78,13 @@ class PolicyInsightsClient(SDKClient):
         super(PolicyInsightsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-04-04'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.policy_tracked_resources = PolicyTrackedResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.remediations = RemediationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.policy_events = PolicyEventsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policy_states = PolicyStatesOperations(

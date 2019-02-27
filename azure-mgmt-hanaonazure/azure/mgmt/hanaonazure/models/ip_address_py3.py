@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IpAddress(Model):
-    """Specifies the IP address of the network interaface.
+    """Specifies the IP address of the network interface.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

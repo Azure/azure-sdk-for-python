@@ -17,6 +17,12 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param context_path: The URL(absolute or relative) of the source context
+     for the task step.
+    :type context_path: str
+    :param context_access_token: The token (git PAT or SAS token of storage
+     account blob) associated with the context for a step.
+    :type context_access_token: str
     :param type: Required. Constant filled by server.
     :type type: str
     :param image_names: The fully qualified image names including the
@@ -35,11 +41,8 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
-    :param context_path: The URL(absolute or relative) of the source context
-     for the build task.
-     If it is relative, the context will be relative to the source repository
-     URL of the build task.
-    :type context_path: str
+    :param target: The name of the target build stage for the docker build.
+    :type target: str
     """
 
     _validation = {
@@ -47,21 +50,23 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
     }
 
     _attribute_map = {
+        'context_path': {'key': 'contextPath', 'type': 'str'},
+        'context_access_token': {'key': 'contextAccessToken', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'image_names': {'key': 'imageNames', 'type': '[str]'},
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, *, image_names=None, is_push_enabled: bool=None, no_cache: bool=None, docker_file_path: str=None, arguments=None, context_path: str=None, **kwargs) -> None:
-        super(DockerBuildStepUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, image_names=None, is_push_enabled: bool=None, no_cache: bool=None, docker_file_path: str=None, arguments=None, target: str=None, **kwargs) -> None:
+        super(DockerBuildStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
         self.docker_file_path = docker_file_path
         self.arguments = arguments
-        self.context_path = context_path
+        self.target = target
         self.type = 'Docker'

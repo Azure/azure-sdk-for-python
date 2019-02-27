@@ -29,6 +29,7 @@ try:
     from .virtual_machine_image_py3 import VirtualMachineImage
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
+    from .virtual_machine_reimage_parameters_py3 import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters_py3 import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result_py3 import VirtualMachineCaptureResult
     from .plan_py3 import Plan
@@ -38,6 +39,7 @@ try:
     from .key_vault_key_reference_py3 import KeyVaultKeyReference
     from .disk_encryption_settings_py3 import DiskEncryptionSettings
     from .virtual_hard_disk_py3 import VirtualHardDisk
+    from .diff_disk_settings_py3 import DiffDiskSettings
     from .managed_disk_parameters_py3 import ManagedDiskParameters
     from .os_disk_py3 import OSDisk
     from .data_disk_py3 import DataDisk
@@ -102,6 +104,8 @@ try:
     from .virtual_machine_scale_set_vm_profile_py3 import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile_py3 import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set_py3 import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters_py3 import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters_py3 import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update_py3 import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids_py3 import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -193,6 +197,7 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image import VirtualMachineImage
     from .usage_name import UsageName
     from .usage import Usage
+    from .virtual_machine_reimage_parameters import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result import VirtualMachineCaptureResult
     from .plan import Plan
@@ -202,6 +207,7 @@ except (SyntaxError, ImportError):
     from .key_vault_key_reference import KeyVaultKeyReference
     from .disk_encryption_settings import DiskEncryptionSettings
     from .virtual_hard_disk import VirtualHardDisk
+    from .diff_disk_settings import DiffDiskSettings
     from .managed_disk_parameters import ManagedDiskParameters
     from .os_disk import OSDisk
     from .data_disk import DataDisk
@@ -266,6 +272,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_vm_profile import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -341,8 +349,8 @@ from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
-from .image_paged import ImagePaged
 from .virtual_machine_paged import VirtualMachinePaged
+from .image_paged import ImagePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .upgrade_operation_historical_status_info_paged import UpgradeOperationHistoricalStatusInfoPaged
@@ -356,11 +364,13 @@ from .disk_paged import DiskPaged
 from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
+    AvailabilitySetSkuTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
     DiskCreateOptionTypes,
     StorageAccountTypes,
+    DiffDiskOptions,
     PassNames,
     ComponentNames,
     SettingNames,
@@ -409,6 +419,7 @@ __all__ = [
     'VirtualMachineImage',
     'UsageName',
     'Usage',
+    'VirtualMachineReimageParameters',
     'VirtualMachineCaptureParameters',
     'VirtualMachineCaptureResult',
     'Plan',
@@ -418,6 +429,7 @@ __all__ = [
     'KeyVaultKeyReference',
     'DiskEncryptionSettings',
     'VirtualHardDisk',
+    'DiffDiskSettings',
     'ManagedDiskParameters',
     'OSDisk',
     'DataDisk',
@@ -482,6 +494,8 @@ __all__ = [
     'VirtualMachineScaleSetVMProfile',
     'VirtualMachineScaleSetUpdateVMProfile',
     'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetVMReimageParameters',
+    'VirtualMachineScaleSetReimageParameters',
     'VirtualMachineScaleSetUpdate',
     'VirtualMachineScaleSetVMInstanceIDs',
     'VirtualMachineScaleSetVMInstanceRequiredIDs',
@@ -557,8 +571,8 @@ __all__ = [
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
-    'ImagePaged',
     'VirtualMachinePaged',
+    'ImagePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'UpgradeOperationHistoricalStatusInfoPaged',
@@ -571,11 +585,13 @@ __all__ = [
     'DiskPaged',
     'SnapshotPaged',
     'StatusLevelTypes',
+    'AvailabilitySetSkuTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',
     'DiskCreateOptionTypes',
     'StorageAccountTypes',
+    'DiffDiskOptions',
     'PassNames',
     'ComponentNames',
     'SettingNames',
