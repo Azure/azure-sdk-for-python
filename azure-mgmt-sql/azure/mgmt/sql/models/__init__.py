@@ -79,6 +79,8 @@ try:
     from .sync_group_py3 import SyncGroup
     from .sync_member_py3 import SyncMember
     from .subscription_usage_py3 import SubscriptionUsage
+    from .virtual_cluster_py3 import VirtualCluster
+    from .virtual_cluster_update_py3 import VirtualClusterUpdate
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .extended_database_blob_auditing_policy_py3 import ExtendedDatabaseBlobAuditingPolicy
     from .extended_server_blob_auditing_policy_py3 import ExtendedServerBlobAuditingPolicy
@@ -229,6 +231,8 @@ except (SyntaxError, ImportError):
     from .sync_group import SyncGroup
     from .sync_member import SyncMember
     from .subscription_usage import SubscriptionUsage
+    from .virtual_cluster import VirtualCluster
+    from .virtual_cluster_update import VirtualClusterUpdate
     from .virtual_network_rule import VirtualNetworkRule
     from .extended_database_blob_auditing_policy import ExtendedDatabaseBlobAuditingPolicy
     from .extended_server_blob_auditing_policy import ExtendedServerBlobAuditingPolicy
@@ -344,6 +348,7 @@ from .sync_group_log_properties_paged import SyncGroupLogPropertiesPaged
 from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
+from .virtual_cluster_paged import VirtualClusterPaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_vulnerability_assessment_paged import DatabaseVulnerabilityAssessmentPaged
 from .job_agent_paged import JobAgentPaged
@@ -521,6 +526,8 @@ __all__ = [
     'SyncGroup',
     'SyncMember',
     'SubscriptionUsage',
+    'VirtualCluster',
+    'VirtualClusterUpdate',
     'VirtualNetworkRule',
     'ExtendedDatabaseBlobAuditingPolicy',
     'ExtendedServerBlobAuditingPolicy',
@@ -636,6 +643,7 @@ __all__ = [
     'SyncGroupPaged',
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
+    'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
