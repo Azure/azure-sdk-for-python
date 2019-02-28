@@ -21,7 +21,7 @@ class ContainerServiceNetworkProfile(Model):
     :type network_plugin: str or
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.NetworkPlugin
     :param network_policy: Network policy used for building Kubernetes
-     network. Possible values include: 'calico'
+     network. Possible values include: 'calico', 'azure'
     :type network_policy: str or
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.NetworkPolicy
     :param pod_cidr: A CIDR notation IP range from which to assign pod IPs

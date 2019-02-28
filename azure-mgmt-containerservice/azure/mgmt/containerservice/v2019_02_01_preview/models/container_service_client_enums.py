@@ -217,3 +217,4 @@ class NetworkPlugin(str, Enum):
 class NetworkPolicy(str, Enum):
 
     calico = "calico"
+    azure = "azure"
