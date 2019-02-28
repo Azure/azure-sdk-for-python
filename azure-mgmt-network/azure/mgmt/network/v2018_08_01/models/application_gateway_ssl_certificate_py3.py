@@ -24,7 +24,8 @@ class ApplicationGatewaySslCertificate(SubResource):
      applicable in PUT request.
     :type password: str
     :param public_cert_data: Base-64 encoded Public cert data corresponding to
-     pfx specified in data. Only applicable in GET request.
+     pfx specified in data. It is encoded using PKCS7. Only applicable in GET
+     request.
     :type public_cert_data: str
     :param provisioning_state: Provisioning state of the SSL certificate
      resource Possible values are: 'Updating', 'Deleting', and 'Failed'.
