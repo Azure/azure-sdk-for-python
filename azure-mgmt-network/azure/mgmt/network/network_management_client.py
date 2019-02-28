@@ -1267,28 +1267,6 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def interface_endpoints(self):
-        """Instance depends on the API version:
-
-           * 2018-08-01: :class:`InterfaceEndpointsOperations<azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations>`
-           * 2018-10-01: :class:`InterfaceEndpointsOperations<azure.mgmt.network.v2018_10_01.operations.InterfaceEndpointsOperations>`
-           * 2018-11-01: :class:`InterfaceEndpointsOperations<azure.mgmt.network.v2018_11_01.operations.InterfaceEndpointsOperations>`
-           * 2018-12-01: :class:`InterfaceEndpointsOperations<azure.mgmt.network.v2018_12_01.operations.InterfaceEndpointsOperations>`
-        """
-        api_version = self._get_api_version('interface_endpoints')
-        if api_version == '2018-08-01':
-            from .v2018_08_01.operations import InterfaceEndpointsOperations as OperationClass
-        elif api_version == '2018-10-01':
-            from .v2018_10_01.operations import InterfaceEndpointsOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import InterfaceEndpointsOperations as OperationClass
-        elif api_version == '2018-12-01':
-            from .v2018_12_01.operations import InterfaceEndpointsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def load_balancer_backend_address_pools(self):
         """Instance depends on the API version:
 

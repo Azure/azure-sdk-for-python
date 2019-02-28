@@ -14,8 +14,6 @@ try:
     from .sub_resource_py3 import SubResource
     from .application_security_group_py3 import ApplicationSecurityGroup
     from .security_rule_py3 import SecurityRule
-    from .endpoint_service_py3 import EndpointService
-    from .interface_endpoint_py3 import InterfaceEndpoint
     from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
     from .network_interface_py3 import NetworkInterface
     from .network_security_group_py3 import NetworkSecurityGroup
@@ -301,8 +299,6 @@ except (SyntaxError, ImportError):
     from .sub_resource import SubResource
     from .application_security_group import ApplicationSecurityGroup
     from .security_rule import SecurityRule
-    from .endpoint_service import EndpointService
-    from .interface_endpoint import InterfaceEndpoint
     from .network_interface_dns_settings import NetworkInterfaceDnsSettings
     from .network_interface import NetworkInterface
     from .network_security_group import NetworkSecurityGroup
@@ -601,7 +597,6 @@ from .express_route_cross_connection_peering_paged import ExpressRouteCrossConne
 from .express_route_ports_location_paged import ExpressRoutePortsLocationPaged
 from .express_route_port_paged import ExpressRoutePortPaged
 from .express_route_link_paged import ExpressRouteLinkPaged
-from .interface_endpoint_paged import InterfaceEndpointPaged
 from .load_balancer_paged import LoadBalancerPaged
 from .backend_address_pool_paged import BackendAddressPoolPaged
 from .frontend_ip_configuration_paged import FrontendIPConfigurationPaged
@@ -748,8 +743,6 @@ __all__ = [
     'SubResource',
     'ApplicationSecurityGroup',
     'SecurityRule',
-    'EndpointService',
-    'InterfaceEndpoint',
     'NetworkInterfaceDnsSettings',
     'NetworkInterface',
     'NetworkSecurityGroup',
@@ -1048,7 +1041,6 @@ __all__ = [
     'ExpressRoutePortsLocationPaged',
     'ExpressRoutePortPaged',
     'ExpressRouteLinkPaged',
-    'InterfaceEndpointPaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',

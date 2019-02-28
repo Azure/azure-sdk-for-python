@@ -38,7 +38,6 @@ from .operations.express_route_connections_operations import ExpressRouteConnect
 from .operations.express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
 from .operations.express_route_ports_operations import ExpressRoutePortsOperations
 from .operations.express_route_links_operations import ExpressRouteLinksOperations
-from .operations.interface_endpoints_operations import InterfaceEndpointsOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
 from .operations.load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .operations.load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -168,8 +167,6 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_ports: azure.mgmt.network.v2018_08_01.operations.ExpressRoutePortsOperations
     :ivar express_route_links: ExpressRouteLinks operations
     :vartype express_route_links: azure.mgmt.network.v2018_08_01.operations.ExpressRouteLinksOperations
-    :ivar interface_endpoints: InterfaceEndpoints operations
-    :vartype interface_endpoints: azure.mgmt.network.v2018_08_01.operations.InterfaceEndpointsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2018_08_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -322,8 +319,6 @@ class NetworkManagementClient(SDKClient):
         self.express_route_ports = ExpressRoutePortsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_links = ExpressRouteLinksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.interface_endpoints = InterfaceEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)

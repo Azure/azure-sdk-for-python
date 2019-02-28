@@ -35,10 +35,6 @@ class NetworkInterface(Resource):
      resource.
     :type network_security_group:
      ~azure.mgmt.network.v2018_10_01.models.NetworkSecurityGroup
-    :ivar interface_endpoint: A reference to the interface endpoint to which
-     the network interface is linked.
-    :vartype interface_endpoint:
-     ~azure.mgmt.network.v2018_10_01.models.InterfaceEndpoint
     :param ip_configurations: A list of IPConfigurations of the network
      interface.
     :type ip_configurations:
@@ -78,7 +74,6 @@ class NetworkInterface(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'virtual_machine': {'readonly': True},
-        'interface_endpoint': {'readonly': True},
         'hosted_workloads': {'readonly': True},
     }
 
@@ -90,7 +85,6 @@ class NetworkInterface(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
-        'interface_endpoint': {'key': 'properties.interfaceEndpoint', 'type': 'InterfaceEndpoint'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'tap_configurations': {'key': 'properties.tapConfigurations', 'type': '[NetworkInterfaceTapConfiguration]'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
@@ -108,7 +102,6 @@ class NetworkInterface(Resource):
         super(NetworkInterface, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_machine = None
         self.network_security_group = network_security_group
-        self.interface_endpoint = None
         self.ip_configurations = ip_configurations
         self.tap_configurations = tap_configurations
         self.dns_settings = dns_settings

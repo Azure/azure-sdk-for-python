@@ -30,7 +30,6 @@ from .express_route_connections_operations import ExpressRouteConnectionsOperati
 from .express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
 from .express_route_ports_operations import ExpressRoutePortsOperations
 from .express_route_links_operations import ExpressRouteLinksOperations
-from .interface_endpoints_operations import InterfaceEndpointsOperations
 from .load_balancers_operations import LoadBalancersOperations
 from .load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from .load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -100,7 +99,6 @@ __all__ = [
     'ExpressRoutePortsLocationsOperations',
     'ExpressRoutePortsOperations',
     'ExpressRouteLinksOperations',
-    'InterfaceEndpointsOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',
     'LoadBalancerFrontendIPConfigurationsOperations',
