@@ -11,6 +11,7 @@
 
 try:
     from .pricing_py3 import Pricing
+    from .pricing_list_py3 import PricingList
     from .asc_location_py3 import AscLocation
     from .resource_py3 import Resource
     from .security_contact_py3 import SecurityContact
@@ -65,6 +66,7 @@ try:
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
 except (SyntaxError, ImportError):
     from .pricing import Pricing
+    from .pricing_list import PricingList
     from .asc_location import AscLocation
     from .resource import Resource
     from .security_contact import SecurityContact
@@ -117,7 +119,6 @@ except (SyntaxError, ImportError):
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
-from .pricing_paged import PricingPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
@@ -151,6 +152,7 @@ from .security_center_enums import (
 
 __all__ = [
     'Pricing',
+    'PricingList',
     'AscLocation',
     'Resource',
     'SecurityContact',
@@ -203,7 +205,6 @@ __all__ = [
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
-    'PricingPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',

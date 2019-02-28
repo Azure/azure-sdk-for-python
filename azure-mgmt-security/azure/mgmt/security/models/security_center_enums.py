@@ -44,9 +44,9 @@ class SettingKind(str, Enum):
 
 class ReportedSeverity(str, Enum):
 
-    silent = "Silent"
-    information = "Information"
+    informational = "Informational"
     low = "Low"
+    medium = "Medium"
     high = "High"
 
 
