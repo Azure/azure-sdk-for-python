@@ -100,6 +100,18 @@ class CustomHttpsProvisioningSubstate(str, Enum):
     certificate_deleted = "CertificateDeleted"
 
 
+class ProtocolType(str, Enum):
+
+    server_name_indication = "ServerNameIndication"
+    ip_based = "IPBased"
+
+
+class CertificateType(str, Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+
+
 class ResourceType(str, Enum):
 
     microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"
