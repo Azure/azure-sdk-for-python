@@ -1,6 +1,6 @@
 # Azure Cognitive Services Computer Vision SDK for Python
 
-The Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. Computer Vision algorithms analyze the content of an image in different ways, depending on the visual features you're interested in. For example, Computer Vision can determine if an image contains adult or racy content, find all the faces in an image, get handwritten or printed text. This service works with popular image formats, such as JPEG and PNG. 
+The Computer Vision service provides developers with access to advanced algorithms for processing images and returning information. Computer Vision algorithms analyze the content of an image in different ways, depending on the visual features you're interested in.
 
 You can use Computer Vision in your application to:
 
@@ -22,7 +22,7 @@ Looking for more documentation?
 If you need a Computer Vision API account, you can create one with this [Azure CLI][azure_cli] command:
 
 ```Bash
-RES_REGION=westeurope 
+RES_REGION=westeurope
 RES_GROUP=<resourcegroup-name>
 ACCT_NAME=<computervision-account-name>
 
@@ -60,7 +60,7 @@ pip install azure-cognitiveservices-vision-computervision
 
 Once you create your Computer Vision resource, you need its **region**, and one of its **account keys** to instantiate the client object.
 
-Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient] client object. 
+Use these values when you create the instance of the [ComputerVisionAPI][ref_computervisionclient] client object.
 
 ### Get credentials
 
@@ -104,9 +104,9 @@ client = ComputerVisionAPI(region, credentials)
 
 Once you've initialized a [ComputerVisionAPI][ref_computervisionclient] client object, you can:
 
-* Analyze an image: You can analyze an image for certain features such as faces, colors, tags.   
+* Analyze an image: You can analyze an image for certain features such as faces, colors, tags.
 * Generate thumbnails: Create a custom JPEG image to use as a thumbnail of the original image.
-* Get description of an image: Get a description of the image based on its subject domain. 
+* Get description of an image: Get a description of the image based on its subject domain.
 
 For more information about this service, see [What is Computer Vision?][computervision_docs].
 
@@ -147,11 +147,11 @@ for x in models.models_property:
 
 ### Analyze an image by domain
 
-You can analyze an image by subject domain with [`analyze_image_by_domain`][ref_computervisionclient_analyze_image_by_domain]. Get the [list of supported subject domains](#get-subject-domain-list) in order to use the correct domain name.  
+You can analyze an image by subject domain with [`analyze_image_by_domain`][ref_computervisionclient_analyze_image_by_domain]. Get the [list of supported subject domains](#get-subject-domain-list) in order to use the correct domain name.
 
 ```Python
 domain = "landmarks"
-url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Broadway_and_Times_Square_by_night.jpg/450px-Broadway_and_Times_Square_by_night.jpg"
+url = "https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg"
 language = "en"
 
 analysis = client.analyze_image_by_domain(domain, url, language)
@@ -180,9 +180,13 @@ for caption in analysis.captions:
 
 ### Get text from image
 
-You can get any handwritten or printed text from an image. This requires two calls to the SDK: [`recognize_text`][ref_computervisionclient_recognize_text] and [`get_text_operation_result`][ref_computervisionclient_get_text_operation_result]. The call to recognize_text is asynchronous. In the results of the get_text_operation_result call, you need to check if the first call completed with [`TextOperationStatusCodes`][ref_computervision_model_textoperationstatuscodes] before extracting the text data. The results include the text as well as the bounding box coordinates for the text. 
+You can get any handwritten or printed text from an image. This requires two calls to the SDK: [`recognize_text`][ref_computervisionclient_recognize_text] and [`get_text_operation_result`][ref_computervisionclient_get_text_operation_result]. The call to recognize_text is asynchronous. In the results of the get_text_operation_result call, you need to check if the first call completed with [`TextOperationStatusCodes`][ref_computervision_model_textoperationstatuscodes] before extracting the text data. The results include the text as well as the bounding box coordinates for the text.
 
 ```Python
+# import models
+from azure.cognitiveservices.vision.computervision.models import TextRecognitionMode
+from azure.cognitiveservices.vision.computervision.models import TextOperationStatusCodes
+
 url = "https://azurecomcdn.azureedge.net/cvt-1979217d3d0d31c5c87cbd991bccfee2d184b55eeb4081200012bdaf6a65601a/images/shared/cognitive-services-demos/read-text/read-1-thumbnail.png"
 mode = TextRecognitionMode.handwritten
 raw = True
@@ -210,7 +214,7 @@ if result.status == TextOperationStatusCodes.succeeded:
 
 ### Generate thumbnail
 
-You can generate a thumbnail (JPG) of an image with [`generate_thumbnail`][ref_computervisionclient_generate_thumbnail]. The thumbnail does not need to be in the same proportions as the original image. 
+You can generate a thumbnail (JPG) of an image with [`generate_thumbnail`][ref_computervisionclient_generate_thumbnail]. The thumbnail does not need to be in the same proportions as the original image.
 
 This example uses the [Pillow][pypi_pillow] package to save the new thumbnail image locally.
 
