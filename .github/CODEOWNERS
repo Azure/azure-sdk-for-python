@@ -13,6 +13,7 @@
 /azure-mgmt-consumption/ @sandeepnl
 /azure-mgmt-containerinstance/ @samkreter @xizhamsft
 /azure-mgmt-containerregistry/ @djyou 
+/azure-mgmt-containerservice/ @mboersma
 /azure-mgmt-cosmosdb/ @dmakwana
 /azure-mgmt-datafactory/ @hvermis
 /azure-mgmt-datalake-analytics/ @ro-joowan
