@@ -9,83 +9,127 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .service_principal import ServicePrincipal
 
 
-class ServicePrincipalCreateParameters(Model):
+class ServicePrincipalCreateParameters(ServicePrincipal):
     """Request parameters for creating a new service principal.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param account_enabled: Whether the account is enabled
-    :type account_enabled: bool
-    :param app_id: Required. application Id
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar deletion_timestamp: The time at which the directory object was
+     deleted.
+    :vartype deletion_timestamp: datetime
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param account_enabled: whether or not the service principal account is
+     enabled
+    :type account_enabled: str
+    :param alternative_names: altenative names
+    :type alternative_names: list[str]
+    :ivar app_display_name: The display name exposed by the associated
+     application.
+    :vartype app_display_name: str
+    :param app_id: The application ID.
     :type app_id: str
+    :ivar app_owner_tenant_id:
+    :vartype app_owner_tenant_id: str
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
      issue a user or access token to the application.
     :type app_role_assignment_required: bool
-    :param display_name: The display name for the service principal.
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
+    :param display_name: The display name of the service principal.
     :type display_name: str
-    :param error_url:
+    :param error_url: A URL provided by the author of the associated
+     application to report errors when using the application.
     :type error_url: str
     :param homepage: The URL to the homepage of the associated application.
     :type homepage: str
-    :param key_credentials: A collection of KeyCredential objects.
+    :param key_credentials: The collection of key credentials associated with
+     the service principal.
     :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
-    :param password_credentials: A collection of PasswordCredential objects
+    :param logout_url: A URL provided by the author of the associated
+     application to logout
+    :type logout_url: str
+    :ivar oauth2_permissions: The OAuth 2.0 permissions exposed by the
+     associated application.
+    :vartype oauth2_permissions:
+     list[~azure.graphrbac.models.OAuth2Permission]
+    :param password_credentials: The collection of password credentials
+     associated with the service principal.
     :type password_credentials:
      list[~azure.graphrbac.models.PasswordCredential]
-    :param publisher_name: The display name of the tenant in which the
-     associated application is specified.
+    :param preferred_token_signing_key_thumbprint: The thubmbprint of
+     preferred certificate to sign the token
+    :type preferred_token_signing_key_thumbprint: str
+    :param publisher_name: The publisher's name of the associated application
     :type publisher_name: str
-    :param reply_urls: A collection of reply URLs for the service principal.
+    :param reply_urls: The URLs that user tokens are sent to for sign in with
+     the associated application.  The redirect URIs that the oAuth 2.0
+     authorization code and access tokens are sent to for the associated
+     application.
     :type reply_urls: list[str]
-    :param saml_metadata_url:
+    :param saml_metadata_url: The URL to the SAML metadata of the associated
+     application
     :type saml_metadata_url: str
     :param service_principal_names: A collection of service principal names.
     :type service_principal_names: list[str]
-    :param tags:
+    :param service_principal_type: the type of the servie principal
+    :type service_principal_type: str
+    :param tags: Optional list of tags that you can apply to your service
+     principals. Not nullable.
     :type tags: list[str]
     """
 
     _validation = {
-        'app_id': {'required': True},
+        'object_id': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
+        'app_display_name': {'readonly': True},
+        'app_owner_tenant_id': {'readonly': True},
+        'oauth2_permissions': {'readonly': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'alternative_names': {'key': 'alternativeNames', 'type': '[str]'},
+        'app_display_name': {'key': 'appDisplayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'app_owner_tenant_id': {'key': 'appOwnerTenantId', 'type': 'str'},
         'app_role_assignment_required': {'key': 'appRoleAssignmentRequired', 'type': 'bool'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
+        'logout_url': {'key': 'logoutUrl', 'type': 'str'},
+        'oauth2_permissions': {'key': 'oauth2Permissions', 'type': '[OAuth2Permission]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
+        'preferred_token_signing_key_thumbprint': {'key': 'preferredTokenSigningKeyThumbprint', 'type': 'str'},
         'publisher_name': {'key': 'publisherName', 'type': 'str'},
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
+        'service_principal_type': {'key': 'servicePrincipalType', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.account_enabled = kwargs.get('account_enabled', None)
-        self.app_id = kwargs.get('app_id', None)
-        self.app_role_assignment_required = kwargs.get('app_role_assignment_required', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.publisher_name = kwargs.get('publisher_name', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.service_principal_names = kwargs.get('service_principal_names', None)
-        self.tags = kwargs.get('tags', None)
+        self.object_type = 'ServicePrincipalCreateParameters'

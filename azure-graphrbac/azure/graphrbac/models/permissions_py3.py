@@ -20,6 +20,8 @@ class Permissions(Model):
     :param client_id: The objectId of the Service Principal associated with
      the app
     :type client_id: str
+    :param object_id: The objectId of the permission grant
+    :type object_id: str
     :param consent_type: Typically set to AllPrincipals
     :type consent_type: str
     :param principal_id: Set to null if AllPrincipals is set
@@ -37,6 +39,7 @@ class Permissions(Model):
     _attribute_map = {
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
         'consent_type': {'key': 'consentType', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'object'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
@@ -45,10 +48,11 @@ class Permissions(Model):
         'expiry_time': {'key': 'expiryTime', 'type': 'str'},
     }
 
-    def __init__(self, *, odatatype: str=None, client_id: str=None, consent_type: str=None, principal_id=None, resource_id: str=None, scope: str=None, start_time: str=None, expiry_time: str=None, **kwargs) -> None:
+    def __init__(self, *, odatatype: str=None, client_id: str=None, object_id: str=None, consent_type: str=None, principal_id=None, resource_id: str=None, scope: str=None, start_time: str=None, expiry_time: str=None, **kwargs) -> None:
         super(Permissions, self).__init__(**kwargs)
         self.odatatype = odatatype
         self.client_id = client_id
+        self.object_id = object_id
         self.consent_type = consent_type
         self.principal_id = principal_id
         self.resource_id = resource_id

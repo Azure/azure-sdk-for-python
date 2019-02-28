@@ -284,7 +284,7 @@ class ApplicationsOperations(object):
         :param application_object_id: Application object ID.
         :type application_object_id: str
         :param parameters: Parameters to update an existing application.
-        :type parameters: ~azure.graphrbac.models.ApplicationUpdateParameters
+        :type parameters: ~azure.graphrbac.models.Application
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -318,7 +318,7 @@ class ApplicationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ApplicationUpdateParameters')
+        body_content = self._serialize.body(parameters, 'Application')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
