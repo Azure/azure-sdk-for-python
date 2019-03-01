@@ -1,4 +1,4 @@
-graft tests
+recursive-include tests *.py *.yaml
 include *.rst
 {%- for init_name in init_names %}
 include {{ init_name }}
