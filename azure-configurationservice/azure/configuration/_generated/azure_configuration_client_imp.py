@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from .azure_configuration_service_client import AzConfigServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -17,6 +17,7 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 import uuid
 from . import models
+from .utils import get_endpoint_from_connection_string
 
 
 class AzureConfigurationClientImpConfiguration(AzureConfiguration):
@@ -24,45 +25,40 @@ class AzureConfigurationClientImpConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param connection_string: Contains 'endpoint', 'id' and 'secret', where id and secret are credentials
+    :type connection_string: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, connection_string):
 
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'http://localhost'
+        if connection_string is None:
+            raise ValueError("Parameter 'connection_string' must not be None.")
+        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
 
         super(AzureConfigurationClientImpConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-configurationservice/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
-        self.credentials = credentials
+        self.connection_string = connection_string
 
 
 class AzureConfigurationClientImp(object):
-    """Represents an azconfig client
+    """Implementation of AzConfig client
 
     :ivar config: Configuration for client.
-    :vartype config: AzureConfigurationClientImpConfiguration
+    :vartype config: AzureConfigurationClientConfiguration
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param connection_string: Credentials needed for the client to connect to Azure.
+    :type connection_string: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, connection_string):
 
-        self.config = AzureConfigurationClientImpConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = AzureConfigurationClientImpConfiguration(connection_string)
+        self._client = AzConfigServiceClient(self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
