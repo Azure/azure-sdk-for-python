@@ -30,6 +30,7 @@ from .operations.available_endpoint_services_operations import AvailableEndpoint
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuit_connections_operations import ExpressRouteCircuitConnectionsOperations
+from .operations.peer_express_route_circuit_connections_operations import PeerExpressRouteCircuitConnectionsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
@@ -153,6 +154,8 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_circuit_peerings: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitPeeringsOperations
     :ivar express_route_circuit_connections: ExpressRouteCircuitConnections operations
     :vartype express_route_circuit_connections: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitConnectionsOperations
+    :ivar peer_express_route_circuit_connections: PeerExpressRouteCircuitConnections operations
+    :vartype peer_express_route_circuit_connections: azure.mgmt.network.v2018_12_01.operations.PeerExpressRouteCircuitConnectionsOperations
     :ivar express_route_circuits: ExpressRouteCircuits operations
     :vartype express_route_circuits: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
@@ -309,6 +312,8 @@ class NetworkManagementClient(SDKClient):
         self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_connections = ExpressRouteCircuitConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.peer_express_route_circuit_connections = PeerExpressRouteCircuitConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)

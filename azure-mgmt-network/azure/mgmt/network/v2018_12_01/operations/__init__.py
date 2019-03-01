@@ -21,6 +21,7 @@ from .available_endpoint_services_operations import AvailableEndpointServicesOpe
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuit_connections_operations import ExpressRouteCircuitConnectionsOperations
+from .peer_express_route_circuit_connections_operations import PeerExpressRouteCircuitConnectionsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
@@ -91,6 +92,7 @@ __all__ = [
     'ExpressRouteCircuitAuthorizationsOperations',
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitConnectionsOperations',
+    'PeerExpressRouteCircuitConnectionsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
     'ExpressRouteCrossConnectionsOperations',
