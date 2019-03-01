@@ -48,7 +48,7 @@ class AzureConfigurationClientImp(object):
     """Implementation of AzConfig client
 
     :ivar config: Configuration for client.
-    :vartype config: AzureConfigurationClientConfiguration
+    :vartype config: AzureConfigurationClientImpConfiguration
 
     :param connection_string: Credentials needed for the client to connect to Azure.
     :type connection_string: str
