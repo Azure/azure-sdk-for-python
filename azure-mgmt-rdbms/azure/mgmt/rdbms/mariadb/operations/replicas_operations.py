@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class LogFilesOperations(object):
-    """LogFilesOperations operations.
+class ReplicasOperations(object):
+    """ReplicasOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,7 @@ class LogFilesOperations(object):
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """List all the log files in a given server.
+        """List all the replicas for a given server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -52,9 +52,9 @@ class LogFilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of LogFile
+        :return: An iterator like instance of Server
         :rtype:
-         ~azure.mgmt.rdbms.mariadb.models.LogFilePaged[~azure.mgmt.rdbms.mariadb.models.LogFile]
+         ~azure.mgmt.rdbms.mariadb.models.ServerPaged[~azure.mgmt.rdbms.mariadb.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -99,12 +99,12 @@ class LogFilesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.LogFilePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ServerPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.LogFilePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ServerPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMariaDB/servers/{serverName}/logFiles'}
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMariaDB/servers/{serverName}/replicas'}
