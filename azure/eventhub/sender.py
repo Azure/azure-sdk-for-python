@@ -52,6 +52,7 @@ class Sender(object):
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
         if partition:
             self.target += "/Partitions/" + partition
@@ -93,9 +94,7 @@ class Sender(object):
         while not self._handler.client_ready():
             time.sleep(0.05)
 
-    def reconnect(self):
-        """If the Sender was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+    def _reconnect(self):
         # pylint: disable=protected-access
         self._handler.close()
         unsent_events = self._handler.pending_messages
@@ -112,6 +111,7 @@ class Sender(object):
             self._handler.open()
             self._handler.queue_message(*unsent_events)
             self._handler.wait()
+            return True
         except errors.TokenExpired as shutdown:
             log.info("Sender disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
@@ -120,35 +120,38 @@ class Sender(object):
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("Sender detached. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Sender reconnect failed. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Sender reconnect failed. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("Sender detached. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Sender reconnect failed. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Sender reconnect failed. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.AMQPConnectionError as shutdown:
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("Sender couldn't authenticate. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Sender connection error (%r). Shutting down.", e)
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Sender connection error (%r). Shutting down.", e)
+            error = EventHubError(str(shutdown))
+            self.close(exception=error)
+            raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Sender Reconnect failed: {}".format(e))
             self.close(exception=error)
             raise error
+
+    def reconnect(self):
+        """If the Sender was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        while not self._reconnect():
+            time.sleep(self.reconnect_backoff)
 
     def get_handler_state(self):
         """

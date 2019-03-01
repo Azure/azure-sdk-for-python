@@ -49,6 +49,7 @@ class AsyncReceiver(Receiver):
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.reconnect_backoff = 1
         self.redirected = None
         self.error = None
         self.properties = None
@@ -107,9 +108,7 @@ class AsyncReceiver(Receiver):
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
 
-    async def reconnect_async(self):  # pylint: disable=too-many-statements
-        """If the Receiver was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+    async def _reconnect_async(self):  # pylint: disable=too-many-statements
         # pylint: disable=protected-access
         alt_creds = {
             "username": self.client._auth_config.get("iot_username"),
@@ -134,6 +133,7 @@ class AsyncReceiver(Receiver):
             await self._handler.open_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
+            return True
         except errors.TokenExpired as shutdown:
             log.info("AsyncReceiver disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
@@ -142,35 +142,38 @@ class AsyncReceiver(Receiver):
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncReceiver detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncReceiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncReceiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("AsyncReceiver detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncReceiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncReceiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except errors.AMQPConnectionError as shutdown:
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("AsyncReceiver couldn't authenticate. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncReceiver connection error (%r). Shutting down.", e)
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncReceiver connection error (%r). Shutting down.", e)
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Receiver reconnect failed: {}".format(e))
             await self.close_async(exception=error)
             raise error
+
+    async def reconnect_async(self):
+        """If the Receiver was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        while not await self._reconnect_async():
+            await asyncio.sleep(self.reconnect_backoff)
 
     async def has_started(self):
         """

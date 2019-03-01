@@ -3,7 +3,7 @@ pytest-asyncio>=0.8.0; python_version > '3.4'
 azure-servicebus==0.50.0
 docutils>=0.14
 pygments>=2.2.0
-pylint==2.1.1; python_version >= '3.4'
+pylint==2.3.0; python_version >= '3.4'
 pylint==1.8.4; python_version < '3.4'
 behave==1.2.6
 wheel

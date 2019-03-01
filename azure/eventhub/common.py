@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 
 import datetime
-import time
+import calendar
 import json
 
 import six
@@ -288,7 +288,7 @@ class Offset(object):
         """
         operator = ">=" if self.inclusive else ">"
         if isinstance(self.value, datetime.datetime):
-            timestamp = (time.mktime(self.value.timetuple()) * 1000) + (self.value.microsecond/1000)
+            timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
         if isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')

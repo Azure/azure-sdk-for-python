@@ -123,7 +123,7 @@ class EventHubClientAsync(EventHubClient):
             if failed and len(failed) == len(self.clients):
                 log.warning("%r: All clients failed to start.", self.container_id)
                 raise failed[0]
-            elif failed:
+            if failed:
                 log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
             elif redirects:
                 await self._handle_redirect(redirects)

@@ -55,6 +55,7 @@ class AsyncSender(Sender):
         self.auto_reconnect = auto_reconnect
         self.timeout = send_timeout
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
         self.redirected = None
         self.error = None
@@ -100,9 +101,7 @@ class AsyncSender(Sender):
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
 
-    async def reconnect_async(self):
-        """If the Receiver was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+    async def _reconnect_async(self):
         await self._handler.close_async()
         unsent_events = self._handler.pending_messages
         self._handler = SendClientAsync(
@@ -119,6 +118,7 @@ class AsyncSender(Sender):
             await self._handler.open_async()
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
+            return True
         except errors.TokenExpired as shutdown:
             log.info("AsyncSender disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
@@ -127,35 +127,38 @@ class AsyncSender(Sender):
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncSender reconnect failed. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncSender reconnect failed. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncSender reconnect failed. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncSender reconnect failed. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except errors.AMQPConnectionError as shutdown:
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("AsyncSender couldn't authenticate. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncSender connection error (%r). Shutting down.", e)
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
+                return False
+            log.info("AsyncSender connection error (%r). Shutting down.", e)
+            error = EventHubError(str(shutdown), shutdown)
+            await self.close_async(exception=error)
+            raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Sender reconnect failed: {}".format(e))
             await self.close_async(exception=error)
             raise error
+
+    async def reconnect_async(self):
+        """If the Receiver was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        while not await self._reconnect_async():
+            await asyncio.sleep(self.reconnect_backoff)
 
     async def has_started(self):
         """

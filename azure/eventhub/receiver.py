@@ -47,6 +47,7 @@ class Receiver(object):
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.reconnect_backoff = 1
         self.properties = None
         self.redirected = None
         self.error = None
@@ -103,9 +104,7 @@ class Receiver(object):
         while not self._handler.client_ready():
             time.sleep(0.05)
 
-    def reconnect(self):  # pylint: disable=too-many-statements
-        """If the Receiver was disconnected from the service with
-        a retryable error - attempt to reconnect."""
+    def _reconnect(self):  # pylint: disable=too-many-statements
         # pylint: disable=protected-access
         alt_creds = {
             "username": self.client._auth_config.get("iot_username"),
@@ -129,6 +128,7 @@ class Receiver(object):
             self._handler.open()
             while not self._handler.client_ready():
                 time.sleep(0.05)
+            return True
         except errors.TokenExpired as shutdown:
             log.info("Receiver disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
@@ -137,35 +137,38 @@ class Receiver(object):
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("Receiver detached. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Receiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("Receiver detached. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Receiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
         except errors.AMQPConnectionError as shutdown:
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("Receiver couldn't authenticate. Attempting reconnect.")
-                self.reconnect()
-            else:
-                log.info("Receiver connection error (%r). Shutting down.", e)
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
+                return False
+            log.info("Receiver connection error (%r). Shutting down.", e)
+            error = EventHubError(str(shutdown))
+            self.close(exception=error)
+            raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Receiver reconnect failed: {}".format(e))
             self.close(exception=error)
             raise error
+
+    def reconnect(self):
+        """If the Receiver was disconnected from the service with
+        a retryable error - attempt to reconnect."""
+        while not self._reconnect():
+            time.sleep(self.reconnect_backoff)
 
     def get_handler_state(self):
         """

@@ -29,7 +29,6 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the lease store already exists or was created successfully, `False` if not.
         :rtype: bool
         """
-        pass
 
     @abstractmethod
     async def delete_lease_store_async(self):
@@ -39,7 +38,6 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the lease store was deleted successfully, `False` if not.
         :rtype: bool
         """
-        pass
 
     async def get_lease_async(self, partition_id):
         """
@@ -51,7 +49,6 @@ class AbstractLeaseManager(ABC):
         :return: Lease info for the partition, or `None`.
         :rtype:
         """
-        pass
 
     @abstractmethod
     def get_all_leases(self):
@@ -62,7 +59,6 @@ class AbstractLeaseManager(ABC):
         :return: A list of lease info.
         :rtype:
         """
-        pass
 
     @abstractmethod
     async def create_lease_if_not_exists_async(self, partition_id):
@@ -74,7 +70,6 @@ class AbstractLeaseManager(ABC):
         :type parition_id: str
         :return: The existing or newly-created lease info for the partition.
         """
-        pass
 
     @abstractmethod
     async def delete_lease_async(self, lease):
@@ -85,7 +80,6 @@ class AbstractLeaseManager(ABC):
         :param lease: The lease to be deleted.
         :type lease: ~azure.eventprocessorhost.lease.Lease
         """
-        pass
 
     @abstractmethod
     async def acquire_lease_async(self, lease):
@@ -99,7 +93,6 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the lease was acquired successfully, `False` if not.
         :rtype: bool
         """
-        pass
 
     @abstractmethod
     async def renew_lease_async(self, lease):
@@ -113,7 +106,6 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the lease was renewed successfully, `False` if not.
         :rtype: bool
         """
-        pass
 
     @abstractmethod
     async def release_lease_async(self, lease):
@@ -126,7 +118,6 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the lease was released successfully, `False` if not.
         :rtype: bool
         """
-        pass
 
     @abstractmethod
     async def update_lease_async(self, lease):
@@ -141,4 +132,3 @@ class AbstractLeaseManager(ABC):
         :return: `True` if the updated was performed successfully, `False` if not.
         :rtype: bool
         """
-        pass

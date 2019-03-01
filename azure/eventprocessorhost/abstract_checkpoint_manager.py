@@ -25,7 +25,6 @@ class AbstractCheckpointManager(ABC):
          if there was a failure.
         :rtype: bool
         """
-        pass
 
     @abstractmethod
     async def get_checkpoint_async(self, partition_id):
@@ -38,7 +37,6 @@ class AbstractCheckpointManager(ABC):
         :return: Given partition checkpoint info, or `None` if none has been previously stored.
         :rtype: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
-        pass
 
     @abstractmethod
     async def create_checkpoint_if_not_exists_async(self, partition_id):
@@ -51,7 +49,6 @@ class AbstractCheckpointManager(ABC):
         :return: The checkpoint for the given partition, whether newly created or already existing.
         :rtype: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
-        pass
 
     @abstractmethod
     async def update_checkpoint_async(self, lease, checkpoint):
@@ -63,7 +60,6 @@ class AbstractCheckpointManager(ABC):
         :param checkpoint: offset/sequeceNumber to update the store with.
         :type checkpoint: ~azure.eventprocessorhost.checkpoint.Checkpoint
         """
-        pass
 
     @abstractmethod
     async def delete_checkpoint_async(self, partition_id):
@@ -74,4 +70,3 @@ class AbstractCheckpointManager(ABC):
         :param partition_id: The ID of a given parition.
         :type partition_id: str
         """
-        pass

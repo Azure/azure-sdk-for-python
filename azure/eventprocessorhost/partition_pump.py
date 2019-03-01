@@ -80,7 +80,6 @@ class PartitionPump():
         """
         Event handler for on open event.
         """
-        pass
 
     def is_closing(self):
         """
@@ -129,7 +128,6 @@ class PartitionPump():
         :param reason: The reason for the shutdown.
         :type reason: str
         """
-        pass
 
     async def process_events_async(self, events):
         """

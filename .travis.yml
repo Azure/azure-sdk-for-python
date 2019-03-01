@@ -17,7 +17,6 @@ matrix:
       script:
         - pytest
         - python ./setup.py check -r -s
-        - pylint --ignore=async_ops azure.eventhub
     - os: linux
       python: "3.5"
       script: 

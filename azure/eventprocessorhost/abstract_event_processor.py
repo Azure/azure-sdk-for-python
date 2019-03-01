@@ -21,7 +21,6 @@ class AbstractEventProcessor(ABC):
         :param context: Information about the partition
         :type context: ~azure.eventprocessorhost.partition_context.PartitionContext
         """
-        pass
 
     @abstractmethod
     async def close_async(self, context, reason):
@@ -33,7 +32,6 @@ class AbstractEventProcessor(ABC):
         :param reason: The reason for closing.
         :type reason: str
         """
-        pass
 
     @abstractmethod
     async def process_events_async(self, context, messages):
@@ -46,7 +44,6 @@ class AbstractEventProcessor(ABC):
         :param messages: The events to be processed.
         :type messages: list[~azure.eventhub.common.EventData]
         """
-        pass
 
     @abstractmethod
     async def process_error_async(self, context, error):
@@ -59,4 +56,3 @@ class AbstractEventProcessor(ABC):
         :type context: ~azure.eventprocessorhost.partition_context.PartitionContext
         :param error: The error that occured.
         """
-        pass

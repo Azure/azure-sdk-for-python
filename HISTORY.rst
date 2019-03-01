@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.3.1 (2019-02-28)
+++++++++++++++++++
+
+**BugFixes**
+
+- Fixed bug where datetime offset filter was using a local timestamp rather than UTC.
+- Fixed stackoverflow error in continuous connection reconnect attempts.
+
+
 1.3.0 (2019-01-29)
 ++++++++++++++++++
 
