@@ -49,9 +49,13 @@ class BudgetsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope..
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -125,9 +129,13 @@ class BudgetsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope..
         :type scope: str
         :param budget_name: Budget Name.
         :type budget_name: str
@@ -199,9 +207,13 @@ class BudgetsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope..
         :type scope: str
         :param budget_name: Budget Name.
         :type budget_name: str
@@ -278,9 +290,13 @@ class BudgetsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
+         for EnrollmentAccount scope,
          '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
+         for Management Group scope,
+         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
+         for billingProfile scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
+         for invoiceSection scope..
         :type scope: str
         :param budget_name: Budget Name.
         :type budget_name: str
