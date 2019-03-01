@@ -107,7 +107,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
-    :param availability_zones: Availability zones for nodes
+    :param availability_zones: (PREVIEW) Availability zones for nodes
     :type availability_zones: list[str]
     """
 
