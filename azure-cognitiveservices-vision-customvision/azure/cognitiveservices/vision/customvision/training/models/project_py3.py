@@ -29,7 +29,7 @@ class Project(Model):
      ~azure.cognitiveservices.vision.customvision.training.models.ProjectSettings
     :ivar created: Gets the date this project was created.
     :vartype created: datetime
-    :ivar last_modified: Gets the date this project was last modifed.
+    :ivar last_modified: Gets the date this project was last modified.
     :vartype last_modified: datetime
     :ivar thumbnail_uri: Gets the thumbnail url representing the project.
     :vartype thumbnail_uri: str

@@ -7,11 +7,11 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['86']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus2/checkNameAvailability?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2018-12-01
   response:
     body: {string: '{"nameAvailable":false,"reason":"Invalid","message":"Account name
         must be at least 3 characters and at most 24 characters."}'}
@@ -19,7 +19,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['124']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 15:40:58 GMT']
+      date: ['Sun, 13 Jan 2019 21:47:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -27,29 +27,29 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 200, message: OK}
 - request:
-    body: '{"name": "pythonsdktest", "type": "Microsoft.Batch/batchAccounts"}'
+    body: '{"name": "sdktest2", "type": "Microsoft.Batch/batchAccounts"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['66']
+      Content-Length: ['61']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/brazilsouth/checkNameAvailability?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2018-12-01
   response:
     body: {string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An
-        account named ''pythonsdktest'' is already in use."}'}
+        account named ''sdktest2'' is already in use."}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['112']
+      content-length: ['107']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 15:40:58 GMT']
+      date: ['Sun, 13 Jan 2019 21:47:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -57,7 +57,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 200, message: OK}
 - request:
     body: '{"name": "batch938911e5", "type": "Microsoft.Batch/batchAccounts"}'
@@ -67,18 +67,18 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['66']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/eastus2/checkNameAvailability?api-version=2017-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2018-12-01
   response:
     body: {string: '{"nameAvailable":true}'}
     headers:
       cache-control: [no-cache]
       content-length: ['22']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 07 Nov 2017 15:41:00 GMT']
+      date: ['Sun, 13 Jan 2019 21:47:58 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -86,6 +86,6 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
     status: {code: 200, message: OK}
 version: 1

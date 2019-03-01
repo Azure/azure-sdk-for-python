@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.6.0 (2019-02-26)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ServersOperations.restart
+
 1.5.0 (2018-10-30)
 ++++++++++++++++++
 

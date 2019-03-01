@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .action import Action
+from .action_py3 import Action
 
 
 class ImageAction(Action):
-    """ImageAction.
+    """Defines an image action.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageEntityAction, ImageModuleAction, ImageRecipesAction,

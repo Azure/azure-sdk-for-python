@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class SKUCapability(Model):
-    """The capability information in the specified sku, including file encryption,
-    network acls, change notification, etc.
+    """The capability information in the specified SKU, including file encryption,
+    network ACLs, change notification, etc.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: The name of capability, The capability information in the
-     specified sku, including file encryption, network acls, change
+     specified SKU, including file encryption, network ACLs, change
      notification, etc.
     :vartype name: str
     :ivar value: A string value to indicate states of given capability.

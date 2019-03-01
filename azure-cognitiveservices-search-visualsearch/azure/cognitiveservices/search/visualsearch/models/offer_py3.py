@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .thing import Thing
+from .thing_py3 import Thing
 
 
 class Offer(Thing):

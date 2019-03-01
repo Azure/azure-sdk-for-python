@@ -25,6 +25,6 @@ class SharedPublicIpAddressConfigurationFragment(Model):
         'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRuleFragment]'},
     }
 
-    def __init__(self, inbound_nat_rules=None):
-        super(SharedPublicIpAddressConfigurationFragment, self).__init__()
-        self.inbound_nat_rules = inbound_nat_rules
+    def __init__(self, **kwargs):
+        super(SharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
+        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)

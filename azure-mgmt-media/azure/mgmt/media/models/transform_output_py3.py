@@ -41,8 +41,8 @@ class TransformOutput(Model):
     }
 
     _attribute_map = {
-        'on_error': {'key': 'onError', 'type': 'OnErrorType'},
-        'relative_priority': {'key': 'relativePriority', 'type': 'Priority'},
+        'on_error': {'key': 'onError', 'type': 'str'},
+        'relative_priority': {'key': 'relativePriority', 'type': 'str'},
         'preset': {'key': 'preset', 'type': 'Preset'},
     }
 
