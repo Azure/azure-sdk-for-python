@@ -110,6 +110,7 @@ try:
     from .express_route_circuit_stats_py3 import ExpressRouteCircuitStats
     from .express_route_connection_id_py3 import ExpressRouteConnectionId
     from .express_route_circuit_connection_py3 import ExpressRouteCircuitConnection
+    from .peer_express_route_circuit_connection_py3 import PeerExpressRouteCircuitConnection
     from .express_route_circuit_peering_py3 import ExpressRouteCircuitPeering
     from .route_filter_py3 import RouteFilter
     from .ipv6_express_route_circuit_peering_config_py3 import Ipv6ExpressRouteCircuitPeeringConfig
@@ -397,6 +398,7 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_stats import ExpressRouteCircuitStats
     from .express_route_connection_id import ExpressRouteConnectionId
     from .express_route_circuit_connection import ExpressRouteCircuitConnection
+    from .peer_express_route_circuit_connection import PeerExpressRouteCircuitConnection
     from .express_route_circuit_peering import ExpressRouteCircuitPeering
     from .route_filter import RouteFilter
     from .ipv6_express_route_circuit_peering_config import Ipv6ExpressRouteCircuitPeeringConfig
@@ -594,6 +596,7 @@ from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_connection_paged import ExpressRouteCircuitConnectionPaged
+from .peer_express_route_circuit_connection_paged import PeerExpressRouteCircuitConnectionPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
@@ -844,6 +847,7 @@ __all__ = [
     'ExpressRouteCircuitStats',
     'ExpressRouteConnectionId',
     'ExpressRouteCircuitConnection',
+    'PeerExpressRouteCircuitConnection',
     'ExpressRouteCircuitPeering',
     'RouteFilter',
     'Ipv6ExpressRouteCircuitPeeringConfig',
@@ -1041,6 +1045,7 @@ __all__ = [
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitConnectionPaged',
+    'PeerExpressRouteCircuitConnectionPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
