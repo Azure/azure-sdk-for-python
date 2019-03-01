@@ -114,7 +114,8 @@ class AgentPool(SubResource):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
-    :param availability_zones: (PREVIEW) Availability zones for nodes
+    :param availability_zones: (PREVIEW) Availability zones for nodes. Must
+     use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
     """
 
