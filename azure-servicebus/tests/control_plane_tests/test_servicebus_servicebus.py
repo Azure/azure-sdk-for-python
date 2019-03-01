@@ -104,6 +104,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.sbs.create_subscription(topic_name, subscription_name, None, True)
 
     #--Test cases for service bus service -------------------------------------
+
     def test_create_service_bus_missing_arguments(self):
         # Arrange
         if AZURE_SERVICEBUS_NAMESPACE in os.environ:
