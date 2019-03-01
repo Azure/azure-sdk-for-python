@@ -32,7 +32,7 @@ if sys.version_info[0] < 3:
 
 setup(
     name='azure-cognitiveservices-vision-nspkg',
-    version='3.0.0',
+    version='3.0.1',
     description='Microsoft Azure Cognitive Services Vision Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
