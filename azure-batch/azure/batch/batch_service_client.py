@@ -45,7 +45,7 @@ class BatchServiceClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if batch_url is None:
             raise ValueError("Parameter 'batch_url' must not be None.")
-        base_url = '{batchUrl}'
+        base_url = '{}'.format(batch_url)
 
         super(BatchServiceClientConfiguration, self).__init__(base_url)
 
