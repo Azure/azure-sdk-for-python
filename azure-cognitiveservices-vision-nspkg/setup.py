@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import sys
 from setuptools import setup
 
 # azure v0.x is not compatible with this package
