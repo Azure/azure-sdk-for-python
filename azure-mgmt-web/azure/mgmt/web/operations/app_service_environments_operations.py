@@ -954,7 +954,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_inbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/inboundnetworkdependenciesendpoints'}
+    get_inbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/inboundNetworkDependenciesEndpoints'}
 
     def list_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -2023,7 +2023,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_outbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/outboundnetworkdependenciesendpoints'}
+    get_outbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/outboundNetworkDependenciesEndpoints'}
 
     def reboot(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):

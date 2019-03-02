@@ -16,7 +16,7 @@ class EndpointDependency(Model):
     """A domain name that a service is reached at, including details of the
     current connection status.
 
-    :param domain_name: The Domain Name of the dependency.
+    :param domain_name: The domain name of the dependency.
     :type domain_name: str
     :param endpoint_details: The IP Addresses and Ports used when connecting
      to DomainName.
