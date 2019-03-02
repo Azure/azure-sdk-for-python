@@ -67,6 +67,7 @@ try:
     from .replication_summary_py3 import ReplicationSummary
     from .replication_status_py3 import ReplicationStatus
     from .result_py3 import Result
+    from .risky_ip_blob_uri_py3 import RiskyIPBlobUri
     from .run_profiles_py3 import RunProfiles
     from .service_configuration_py3 import ServiceConfiguration
     from .service_properties_py3 import ServiceProperties
@@ -133,6 +134,7 @@ except (SyntaxError, ImportError):
     from .replication_summary import ReplicationSummary
     from .replication_status import ReplicationStatus
     from .result import Result
+    from .risky_ip_blob_uri import RiskyIPBlobUri
     from .run_profiles import RunProfiles
     from .service_configuration import ServiceConfiguration
     from .service_properties import ServiceProperties
@@ -156,6 +158,7 @@ from .merged_export_error_paged import MergedExportErrorPaged
 from .export_status_paged import ExportStatusPaged
 from .alert_feedback_paged import AlertFeedbackPaged
 from .error_report_users_entry_paged import ErrorReportUsersEntryPaged
+from .risky_ip_blob_uri_paged import RiskyIPBlobUriPaged
 from .connector_paged import ConnectorPaged
 from .global_configuration_paged import GlobalConfigurationPaged
 from .ad_hybrid_health_service_enums import (
@@ -230,6 +233,7 @@ __all__ = [
     'ReplicationSummary',
     'ReplicationStatus',
     'Result',
+    'RiskyIPBlobUri',
     'RunProfiles',
     'ServiceConfiguration',
     'ServiceProperties',
@@ -253,6 +257,7 @@ __all__ = [
     'ExportStatusPaged',
     'AlertFeedbackPaged',
     'ErrorReportUsersEntryPaged',
+    'RiskyIPBlobUriPaged',
     'ConnectorPaged',
     'GlobalConfigurationPaged',
     'MonitoringLevel',
