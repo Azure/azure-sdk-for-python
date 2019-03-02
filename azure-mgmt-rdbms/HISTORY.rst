@@ -3,6 +3,42 @@
 Release History
 ===============
 
+1.6.0 (2019-02-26)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ServersOperations.restart
+
+1.5.0 (2018-10-30)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group VirtualNetworkRulesOperations for MariaDB
+
+1.4.1 (2018-10-16)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 1.4.0. No code change.
+
+1.4.0 (2018-10-11)
+++++++++++++++++++
+
+**Features**
+
+- Model Server has a new parameter replication_role
+- Model Server has a new parameter master_server_id
+- Model Server has a new parameter replica_capacity
+- Model ServerUpdateParameters has a new parameter replication_role
+- Added operation group ReplicasOperations
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 1.3.0 (2018-09-13)
 ++++++++++++++++++
 

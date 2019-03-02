@@ -97,21 +97,24 @@ class GalleryImageVersionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, gallery_image_version, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a gallery image version.
+        """Create or update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version is to be created.
         :type gallery_image_name: str
-        :param gallery_image_version_name: The name of the gallery image
-         version. Needs to follow semantic version name pattern: The allowed
-         characters are digit and period. Digits must be within the range of a
-         32-bit integer. Format: <MajorVersion>.<MinorVersion>.<Patch>
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be created. Needs to follow semantic version name pattern:
+         The allowed characters are digit and period. Digits must be within the
+         range of a 32-bit integer. Format:
+         <MajorVersion>.<MinorVersion>.<Patch>
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or
-         update gallery image version operation.
+         update gallery Image Version operation.
         :type gallery_image_version:
          ~azure.mgmt.compute.v2018_06_01.models.GalleryImageVersion
         :param dict custom_headers: headers that will be added to the request
@@ -158,16 +161,18 @@ class GalleryImageVersionsOperations(object):
 
     def get(
             self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves information about a gallery image version.
+        """Retrieves information about a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version resides.
         :type gallery_image_name: str
-        :param gallery_image_version_name: The name of the gallery image
-         version.
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be retrieved.
         :type gallery_image_version_name: str
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'ReplicationStatus'
@@ -273,16 +278,18 @@ class GalleryImageVersionsOperations(object):
 
     def delete(
             self, resource_group_name, gallery_name, gallery_image_name, gallery_image_version_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a gallery image version.
+        """Delete a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the gallery Image Definition in
+         which the Image Version resides.
         :type gallery_image_name: str
-        :param gallery_image_version_name: The name of the gallery image
-         version.
+        :param gallery_image_version_name: The name of the gallery Image
+         Version to be deleted.
         :type gallery_image_version_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -321,13 +328,15 @@ class GalleryImageVersionsOperations(object):
 
     def list_by_gallery_image(
             self, resource_group_name, gallery_name, gallery_image_name, custom_headers=None, raw=False, **operation_config):
-        """List gallery image versions under a gallery image.
+        """List gallery Image Versions in a gallery Image Definition.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the gallery.
+        :param gallery_name: The name of the Shared Image Gallery in which the
+         Image Definition resides.
         :type gallery_name: str
-        :param gallery_image_name: The name of the gallery image.
+        :param gallery_image_name: The name of the Shared Image Gallery Image
+         Definition from which the Image Versions are to be listed.
         :type gallery_image_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -15,12 +15,20 @@ from msrest.serialization import Model
 class QueryFailureError(Model):
     """Error definition.
 
-    :param code: Service specific error code which serves as the substatus for
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Service specific error code which serves as the substatus for
      the HTTP error code.
-    :type code: str
-    :param message: Description of the error.
-    :type message: str
+    :vartype code: str
+    :ivar message: Description of the error.
+    :vartype message: str
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -29,5 +37,5 @@ class QueryFailureError(Model):
 
     def __init__(self, **kwargs):
         super(QueryFailureError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = None
+        self.message = None

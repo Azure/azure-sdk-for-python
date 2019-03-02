@@ -19,7 +19,7 @@ class AvailabilitySet(Resource):
     information about availability sets, see [Manage the availability of
     virtual
     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    <br><br> For more information on Azure planned maintainance, see [Planned
+    <br><br> For more information on Azure planned maintenance, see [Planned
     maintenance for virtual machines in
     Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
     <br><br> Currently, a VM can only be added to availability set at creation
@@ -51,7 +51,10 @@ class AvailabilitySet(Resource):
     :ivar statuses: The resource status information.
     :vartype statuses:
      list[~azure.mgmt.compute.v2018_06_01.models.InstanceViewStatus]
-    :param sku: Sku of the availability set
+    :param sku: Sku of the availability set, only name is required to be set.
+     See AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for
+     virtual machines with managed disks and 'Classic' for virtual machines
+     with unmanaged disks. Default value is 'Classic'.
     :type sku: ~azure.mgmt.compute.v2018_06_01.models.Sku
     """
 

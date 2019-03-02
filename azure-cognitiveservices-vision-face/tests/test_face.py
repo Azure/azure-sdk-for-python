@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 from os.path import dirname, join, realpath
 
-from azure.cognitiveservices.vision.face import FaceAPI
+from azure.cognitiveservices.vision.face import FaceClient
 from azure.cognitiveservices.vision.face.models import Gender
 from msrest.authentication import CognitiveServicesCredentials
 
@@ -48,14 +48,14 @@ class FaceTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        face_api = FaceAPI("westus2", credentials=credentials)
+        face_client = FaceClient("https://westus2.api.cognitive.microsoft.com", credentials=credentials)
         with open(join(CWD, "facefindsimilar.queryface.jpg"), "rb") as face_fd:
-            result = face_api.face.detect_with_stream(
+            result = face_client.face.detect_with_stream(
                 face_fd,
                 return_face_attributes=['age','gender','headPose','smile','facialHair','glasses','emotion','hair','makeup','occlusion','accessories','blur','exposure','noise']
             )
 
         detected = result[0]
-        self.assertEquals(detected.face_attributes.age, 52.4)
-        self.assertEquals(detected.face_attributes.gender, Gender.female)
-        self.assertEquals(detected.face_attributes.emotion.happiness, 1.0)
+        self.assertEqual(detected.face_attributes.age, 52.4)
+        self.assertEqual(detected.face_attributes.gender, Gender.female)
+        self.assertEqual(detected.face_attributes.emotion.happiness, 1.0)

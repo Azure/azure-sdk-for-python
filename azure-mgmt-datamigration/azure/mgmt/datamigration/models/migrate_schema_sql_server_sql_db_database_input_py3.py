@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class MigrateSchemaSqlServerSqlDbDatabaseInput(Model):
     """Database input for migrate schema Sql Server to Azure SQL Server scenario.
 
+    :param name: Name of source database
+    :type name: str
     :param target_database_name: Name of target database
     :type target_database_name: str
     :param schema_setting: Database schema migration settings
@@ -23,11 +25,13 @@ class MigrateSchemaSqlServerSqlDbDatabaseInput(Model):
     """
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'target_database_name': {'key': 'targetDatabaseName', 'type': 'str'},
         'schema_setting': {'key': 'schemaSetting', 'type': 'SchemaMigrationSetting'},
     }
 
-    def __init__(self, *, target_database_name: str=None, schema_setting=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, target_database_name: str=None, schema_setting=None, **kwargs) -> None:
         super(MigrateSchemaSqlServerSqlDbDatabaseInput, self).__init__(**kwargs)
+        self.name = name
         self.target_database_name = target_database_name
         self.schema_setting = schema_setting

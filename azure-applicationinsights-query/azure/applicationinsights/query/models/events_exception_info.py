@@ -33,7 +33,7 @@ class EventsExceptionInfo(Model):
     :type outer_type: str
     :param outer_method: The outer method of the exception
     :type outer_method: str
-    :param outer_assembly: The outer assmebly of the exception
+    :param outer_assembly: The outer assembly of the exception
     :type outer_assembly: str
     :param outer_message: The outer message of the exception
     :type outer_message: str

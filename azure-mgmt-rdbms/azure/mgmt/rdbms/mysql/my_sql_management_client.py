@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
+from .operations.replicas_operations import ReplicasOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
@@ -67,6 +68,8 @@ class MySQLManagementClient(SDKClient):
 
     :ivar servers: Servers operations
     :vartype servers: azure.mgmt.rdbms.mysql.operations.ServersOperations
+    :ivar replicas: Replicas operations
+    :vartype replicas: azure.mgmt.rdbms.mysql.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.rdbms.mysql.operations.FirewallRulesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
@@ -107,6 +110,8 @@ class MySQLManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)

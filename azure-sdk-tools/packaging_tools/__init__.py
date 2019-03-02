@@ -1,3 +1,4 @@
+from contextlib import suppress
 import logging
 import os
 from pathlib import Path
@@ -23,9 +24,26 @@ def build_config(config : Dict[str, Any]) -> Dict[str, str]:
         result["classifier"] = "Development Status :: 4 - Beta"
     # Manage the nspkg
     package_name = result["package_name"]
-    result["package_nspkg"] = package_name[:package_name.rindex('-')]+"-nspkg"
+    result["package_nspkg"] = result.pop(
+        "package_nspkg",
+        package_name[:package_name.rindex('-')]+"-nspkg"
+    )
     # ARM?
     result['is_arm'] = result.pop("is_arm", True)
+
+    # Do I need msrestazure for this package?
+    result['need_msrestazure'] = result.pop("need_msrestazure", True)
+
+    # Pre-compute some Jinja variable that are complicated to do inside the templates
+    package_parts = result["package_nspkg"][:-len('-nspkg')].split('-')
+    result['nspkg_names'] = [
+        ".".join(package_parts[:i+1])
+        for i in range(len(package_parts))
+    ]
+    result['init_names'] = [
+        "/".join(package_parts[:i+1])+"/__init__.py"
+        for i in range(len(package_parts))
+    ]
 
     # Return result
     return result
@@ -86,15 +104,13 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
 
         # __init__.py is a weird one
         if template_name == "__init__.py":
-            split_package_name = package_name.split("-")
+            split_package_name = package_name.split("-")[:-1]
             for i in range(len(split_package_name)):
                 init_path = Path(output_folder).joinpath(
                     package_name,
                     *split_package_name[:i+1],
                     template_name
                 )
-                if init_path.exists():
-                    break
                 with open(init_path, "w") as fd:
                     fd.write(result)
 
@@ -102,5 +118,9 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
 
         with open(future_filepath, "w") as fd:
             fd.write(result)
+    # azure_bdist_wheel had been removed, but need to delete it manually
+    with suppress(FileNotFoundError):
+        (Path(output_folder) / package_name / "azure_bdist_wheel.py").unlink()
+
 
     _LOGGER.info("Template done %s", package_name)

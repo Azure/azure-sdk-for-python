@@ -229,7 +229,7 @@ class MetricsOperations(object):
 
     def get_metadata(
             self, app_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve metric metatadata.
+        """Retrieve metric metadata.
 
         Gets metadata describing the available metrics.
 

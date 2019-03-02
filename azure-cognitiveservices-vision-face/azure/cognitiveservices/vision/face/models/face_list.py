@@ -15,11 +15,13 @@ from .name_and_user_data_contract import NameAndUserDataContract
 class FaceList(NameAndUserDataContract):
     """Face list object.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param name: User defined name, maximum length is 128.
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
-    :param face_list_id: FaceListId of the target face list.
+    :param face_list_id: Required. FaceListId of the target face list.
     :type face_list_id: str
     :param persisted_faces: Persisted faces within the face list.
     :type persisted_faces:
@@ -39,7 +41,7 @@ class FaceList(NameAndUserDataContract):
         'persisted_faces': {'key': 'persistedFaces', 'type': '[PersistedFace]'},
     }
 
-    def __init__(self, face_list_id, name=None, user_data=None, persisted_faces=None):
-        super(FaceList, self).__init__(name=name, user_data=user_data)
-        self.face_list_id = face_list_id
-        self.persisted_faces = persisted_faces
+    def __init__(self, **kwargs):
+        super(FaceList, self).__init__(**kwargs)
+        self.face_list_id = kwargs.get('face_list_id', None)
+        self.persisted_faces = kwargs.get('persisted_faces', None)
