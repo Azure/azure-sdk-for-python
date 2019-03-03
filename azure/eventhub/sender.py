@@ -137,7 +137,7 @@ class Sender(object):
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("Sender couldn't authenticate. Attempting reconnect.")
                 return False
-            log.info("Sender connection error (%r). Shutting down.", e)
+            log.info("Sender connection error (%r). Shutting down.", shutdown)
             error = EventHubError(str(shutdown))
             self.close(exception=error)
             raise error

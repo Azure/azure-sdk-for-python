@@ -144,8 +144,8 @@ class AsyncSender(Sender):
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                 log.info("AsyncSender couldn't authenticate. Attempting reconnect.")
                 return False
-            log.info("AsyncSender connection error (%r). Shutting down.", e)
-            error = EventHubError(str(shutdown), shutdown)
+            log.info("AsyncSender connection error (%r). Shutting down.", shutdown)
+            error = EventHubError(str(shutdown))
             await self.close_async(exception=error)
             raise error
         except Exception as e:
