@@ -25,8 +25,12 @@ class ManagedServiceIdentity(Model):
     :vartype tenant_id: str
     :ivar principal_id: Principal Id of managed service identity.
     :vartype principal_id: str
-    :param identity_ids: Array of UserAssigned managed service identities.
-    :type identity_ids: list[str]
+    :param user_assigned_identities: The list of user assigned identities
+     associated with the resource. The user identity dictionary key references
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.web.models.ManagedServiceIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -38,7 +42,7 @@ class ManagedServiceIdentity(Model):
         'type': {'key': 'type', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
-        'identity_ids': {'key': 'identityIds', 'type': '[str]'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ManagedServiceIdentityUserAssignedIdentitiesValue}'},
     }
 
     def __init__(self, **kwargs):
@@ -46,4 +50,4 @@ class ManagedServiceIdentity(Model):
         self.type = kwargs.get('type', None)
         self.tenant_id = None
         self.principal_id = None
-        self.identity_ids = kwargs.get('identity_ids', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
