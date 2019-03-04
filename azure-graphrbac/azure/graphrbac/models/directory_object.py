@@ -16,7 +16,7 @@ class DirectoryObject(Model):
     """Represents an Azure Active Directory object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Application, ADGroup, ServicePrincipal, User
+    sub-classes are: ApplicationBase, ADGroup, ServicePrincipal, User
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -49,7 +49,7 @@ class DirectoryObject(Model):
     }
 
     _subtype_map = {
-        'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
+        'object_type': {'ApplicationBase': 'ApplicationBase', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
     }
 
     def __init__(self, **kwargs):

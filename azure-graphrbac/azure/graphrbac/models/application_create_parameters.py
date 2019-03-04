@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application import Application
+from .application_base import ApplicationBase
 
 
-class ApplicationCreateParameters(Application):
+class ApplicationCreateParameters(ApplicationBase):
     """Request parameters for creating a new application.
 
     Variables are only populated by the server, and will be ignored when
@@ -36,8 +36,6 @@ class ApplicationCreateParameters(Application):
     :param allow_passthrough_users: Indicates that the application supports
      pass through users who have no presence in the resource tenant.
     :type allow_passthrough_users: bool
-    :param app_id: The application ID.
-    :type app_id: str
     :param app_logo_url: The url for the application logo image stored in a
      CDN.
     :type app_logo_url: str
@@ -140,7 +138,6 @@ class ApplicationCreateParameters(Application):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
-        'app_id': {'key': 'appId', 'type': 'str'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
         'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},

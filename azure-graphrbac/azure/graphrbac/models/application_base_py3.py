@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_base_py3 import ApplicationBase
+from .directory_object_py3 import DirectoryObject
 
 
-class Application(ApplicationBase):
-    """Active Directory application information.
+class ApplicationBase(DirectoryObject):
+    """Common properties used by GET, POST and PATCH.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ApplicationCreateParameters, ApplicationUpdateParameters,
+    Application
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -123,8 +127,6 @@ class Application(ApplicationBase):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
-    :param app_id: The application ID.
-    :type app_id: str
     """
 
     _validation = {
@@ -168,10 +170,42 @@ class Application(ApplicationBase):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, app_id: str=None, **kwargs) -> None:
-        super(Application, self).__init__(additional_properties=additional_properties, allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, display_name=display_name, error_url=error_url, homepage=homepage, identifier_uris=identifier_uris, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
-        self.app_id = app_id
-        self.object_type = 'Application'
+    _subtype_map = {
+        'object_type': {'ApplicationCreateParameters': 'ApplicationCreateParameters', 'ApplicationUpdateParameters': 'ApplicationUpdateParameters', 'Application': 'Application'}
+    }
+
+    def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+        super(ApplicationBase, self).__init__(additional_properties=additional_properties, **kwargs)
+        self.allow_guests_sign_in = allow_guests_sign_in
+        self.allow_passthrough_users = allow_passthrough_users
+        self.app_logo_url = app_logo_url
+        self.app_roles = app_roles
+        self.app_permissions = app_permissions
+        self.available_to_other_tenants = available_to_other_tenants
+        self.display_name = display_name
+        self.error_url = error_url
+        self.homepage = homepage
+        self.identifier_uris = identifier_uris
+        self.informational_urls = informational_urls
+        self.is_device_only_auth_supported = is_device_only_auth_supported
+        self.key_credentials = key_credentials
+        self.known_client_applications = known_client_applications
+        self.logout_url = logout_url
+        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+        self.oauth2_allow_url_path_matching = oauth2_allow_url_path_matching
+        self.oauth2_permissions = oauth2_permissions
+        self.oauth2_require_post_response = oauth2_require_post_response
+        self.org_restrictions = org_restrictions
+        self.optional_claims = optional_claims
+        self.password_credentials = password_credentials
+        self.pre_authorized_applications = pre_authorized_applications
+        self.public_client = public_client
+        self.publisher_domain = publisher_domain
+        self.reply_urls = reply_urls
+        self.required_resource_access = required_resource_access
+        self.saml_metadata_url = saml_metadata_url
+        self.sign_in_audience = sign_in_audience
+        self.www_homepage = www_homepage
+        self.object_type = 'ApplicationBase'
