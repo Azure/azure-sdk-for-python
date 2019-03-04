@@ -75,10 +75,10 @@ class AzureConfigurationClientImp(object):
 
         :param label: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type label: list[str]
+        :type label: str
         :param key: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type key: list[str]
+        :type key: str
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
@@ -621,10 +621,10 @@ class AzureConfigurationClientImp(object):
 
         :param label: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type label: list[str]
+        :type label: str
         :param key: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type key: list[str]
+        :type key: str
         :param fields: Specify which fields to return
         :type fields: list[str]
         :param accept_date_time: Obtain representation of the result related
@@ -649,9 +649,9 @@ class AzureConfigurationClientImp(object):
                 # Construct parameters
                 query_parameters = {}
                 if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, '[str]', div=',', max_items=5)
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
                 if key is not None:
-                    query_parameters['key'] = self._serialize.query("key", key, '[str]', div=',')
+                    query_parameters['key'] = self._serialize.query("key", key, 'str')
                 if fields is not None:
                     query_parameters['fields'] = self._serialize.query("fields", fields, '[str]', div=',')
 
