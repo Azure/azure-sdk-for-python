@@ -60,8 +60,8 @@ class ManagedCluster(Resource):
     :param enable_rbac: Whether to enable Kubernetes Role-Based Access
      Control.
     :type enable_rbac: bool
-    :param enable_pod_security_policy: Whether to enable Kubernetes Pod
-     security policy.
+    :param enable_pod_security_policy: (PREVIEW) Whether to enable Kubernetes
+     Pod security policy.
     :type enable_pod_security_policy: bool
     :param network_profile: Profile of network configuration.
     :type network_profile:
@@ -69,8 +69,8 @@ class ManagedCluster(Resource):
     :param aad_profile: Profile of Azure Active Directory configuration.
     :type aad_profile:
      ~azure.mgmt.containerservice.v2019_02_01_preview.models.ManagedClusterAADProfile
-    :param api_server_authorized_ip_ranges: Authorized IP Ranges to kubernetes
-     API server.
+    :param api_server_authorized_ip_ranges: (PREVIEW) Authorized IP Ranges to
+     kubernetes API server.
     :type api_server_authorized_ip_ranges: list[str]
     """
 

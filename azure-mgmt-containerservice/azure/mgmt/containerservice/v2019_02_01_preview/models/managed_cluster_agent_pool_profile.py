@@ -107,7 +107,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
-    :param availability_zones: Availability zones for nodes
+    :param availability_zones: (PREVIEW) Availability zones for nodes. Must
+     use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
