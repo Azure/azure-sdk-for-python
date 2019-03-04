@@ -21,12 +21,12 @@ class TextOperationResult(Model):
      ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
     :param recognition_result:
     :type recognition_result:
-     ~azure.cognitiveservices.vision.computervision.models.RecognitionResult
+     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResult
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'TextOperationStatusCodes'},
-        'recognition_result': {'key': 'recognitionResult', 'type': 'RecognitionResult'},
+        'recognition_result': {'key': 'recognitionResult', 'type': 'TextRecognitionResult'},
     }
 
     def __init__(self, *, status=None, recognition_result=None, **kwargs) -> None:

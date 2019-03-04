@@ -45,8 +45,9 @@ try:
     from .celebrity_results_py3 import CelebrityResults
     from .word_py3 import Word
     from .line_py3 import Line
-    from .recognition_result_py3 import RecognitionResult
+    from .text_recognition_result_py3 import TextRecognitionResult
     from .text_operation_result_py3 import TextOperationResult
+    from .read_operation_result_py3 import ReadOperationResult
 except (SyntaxError, ImportError):
     from .face_rectangle import FaceRectangle
     from .celebrities_model import CelebritiesModel
@@ -83,11 +84,14 @@ except (SyntaxError, ImportError):
     from .celebrity_results import CelebrityResults
     from .word import Word
     from .line import Line
-    from .recognition_result import RecognitionResult
+    from .text_recognition_result import TextRecognitionResult
     from .text_operation_result import TextOperationResult
+    from .read_operation_result import ReadOperationResult
 from .computer_vision_client_enums import (
     Gender,
     TextOperationStatusCodes,
+    TextRecognitionResultConfidenceClass,
+    TextRecognitionResultDimensionUnit,
     OcrLanguages,
     VisualFeatureTypes,
     TextRecognitionMode,
@@ -130,10 +134,13 @@ __all__ = [
     'CelebrityResults',
     'Word',
     'Line',
-    'RecognitionResult',
+    'TextRecognitionResult',
     'TextOperationResult',
+    'ReadOperationResult',
     'Gender',
     'TextOperationStatusCodes',
+    'TextRecognitionResultConfidenceClass',
+    'TextRecognitionResultDimensionUnit',
     'OcrLanguages',
     'VisualFeatureTypes',
     'TextRecognitionMode',
