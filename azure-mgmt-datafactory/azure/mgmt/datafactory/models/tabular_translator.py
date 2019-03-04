@@ -15,14 +15,22 @@ from .copy_translator import CopyTranslator
 class TabularTranslator(CopyTranslator):
     """A copy activity tabular translator.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param column_mappings: Column mappings. Type: string (or Expression with
-     resultType string).
+    :param column_mappings: Column mappings. Example: "UserId: MyUserId,
+     Group: MyGroup, Name: MyName" Type: string (or Expression with resultType
+     string).
     :type column_mappings: object
+    :param schema_mapping: The schema mapping to map between tabular data and
+     hierarchical data. Example: {"Column1": "$.Column1", "Column2":
+     "$.Column2.Property1", "Column3": "$.Column2.Property2"}. Type: object (or
+     Expression with resultType object).
+    :type schema_mapping: object
     """
 
     _validation = {
@@ -33,9 +41,11 @@ class TabularTranslator(CopyTranslator):
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'column_mappings': {'key': 'columnMappings', 'type': 'object'},
+        'schema_mapping': {'key': 'schemaMapping', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, column_mappings=None):
-        super(TabularTranslator, self).__init__(additional_properties=additional_properties)
-        self.column_mappings = column_mappings
+    def __init__(self, **kwargs):
+        super(TabularTranslator, self).__init__(**kwargs)
+        self.column_mappings = kwargs.get('column_mappings', None)
+        self.schema_mapping = kwargs.get('schema_mapping', None)
         self.type = 'TabularTranslator'

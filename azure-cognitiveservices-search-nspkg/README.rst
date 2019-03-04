@@ -6,7 +6,7 @@ This is the Microsoft Azure Cognitive Services Search namespace package.
 This package is not intended to be installed directly by the end user.
 
 Since version 3.0, this is Python 2 package only, Python 3.x SDKs will use `PEP420 <https://www.python.org/dev/peps/pep-0420/>` as namespace package strategy.
-This package will use `python_requires` to enforce Python 2 installation. This implies that you might see this package on Python 3 environment if you have pip < 9.0 or setuptools < 24.2.0.
+To avoid issues with package servers that does not support `python_requires`, a Python 3 package is installed but is empty.
 
 It provides the necessary files for other packages to extend the azure.cognitiveservices.search namespace.
 

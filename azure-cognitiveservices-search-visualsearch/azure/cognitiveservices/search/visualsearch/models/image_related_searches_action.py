@@ -13,7 +13,7 @@ from .image_action import ImageAction
 
 
 class ImageRelatedSearchesAction(ImageAction):
-    """ImageRelatedSearchesAction.
+    """Defines an related search action.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

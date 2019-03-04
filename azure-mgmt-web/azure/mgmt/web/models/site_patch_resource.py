@@ -90,6 +90,9 @@ class SitePatchResource(ProxyOnlyResource):
      authentication (TLS mutual authentication); otherwise, <code>false</code>.
      Default is <code>false</code>.
     :type client_cert_enabled: bool
+    :param client_cert_exclusion_paths: client certificate authentication
+     comma-separated exclusion paths
+    :type client_cert_exclusion_paths: str
     :param host_names_disabled: <code>true</code> to disable the public
      hostnames of the app; otherwise, <code>false</code>.
      If <code>true</code>, the app is only accessible via API management
@@ -131,6 +134,14 @@ class SitePatchResource(ProxyOnlyResource):
      requests. Issues redirect for
      http requests
     :type https_only: bool
+    :param redundancy_mode: Site redundancy mode. Possible values include:
+     'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
+    :type redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+    :ivar in_progress_operation_id: Specifies an operation id if this site has
+     a pending operation.
+    :vartype in_progress_operation_id: str
+    :param geo_distributions: GeoDistributions for this site
+    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
     """
 
     _validation = {
@@ -154,6 +165,7 @@ class SitePatchResource(ProxyOnlyResource):
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
         'slot_swap_status': {'readonly': True},
+        'in_progress_operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -181,6 +193,7 @@ class SitePatchResource(ProxyOnlyResource):
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
+        'client_cert_exclusion_paths': {'key': 'properties.clientCertExclusionPaths', 'type': 'str'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
         'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
@@ -194,6 +207,9 @@ class SitePatchResource(ProxyOnlyResource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
+        'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
+        'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
     }
 
     def __init__(self, **kwargs):
@@ -218,6 +234,7 @@ class SitePatchResource(ProxyOnlyResource):
         self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
         self.client_affinity_enabled = kwargs.get('client_affinity_enabled', None)
         self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.client_cert_exclusion_paths = kwargs.get('client_cert_exclusion_paths', None)
         self.host_names_disabled = kwargs.get('host_names_disabled', None)
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
@@ -231,3 +248,6 @@ class SitePatchResource(ProxyOnlyResource):
         self.default_host_name = None
         self.slot_swap_status = None
         self.https_only = kwargs.get('https_only', None)
+        self.redundancy_mode = kwargs.get('redundancy_mode', None)
+        self.in_progress_operation_id = None
+        self.geo_distributions = kwargs.get('geo_distributions', None)

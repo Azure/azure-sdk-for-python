@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Secutiry Center Management Client Library.
+This is the Microsoft Azure Security Center Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -17,7 +17,7 @@ For a more complete set of Azure libraries, see the `azure <https://pypi.python.
 Usage
 =====
 
-For code examples, see `Secutiry Center Management
+For code examples, see `Security Center Management
 <https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 

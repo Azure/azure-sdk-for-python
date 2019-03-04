@@ -188,7 +188,7 @@ class DisasterRecoveryConfigsOperations(object):
         :param alias: The Disaster Recovery configuration name
         :type alias: str
         :param partner_namespace: ARM Id of the Primary/Secondary eventhub
-         namespace name, which is part of GEO DR pairning
+         namespace name, which is part of GEO DR pairing
         :type partner_namespace: str
         :param alternate_name: Alternate name specified when alias and
          namespace names are same.
@@ -434,7 +434,7 @@ class DisasterRecoveryConfigsOperations(object):
 
     def fail_over(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
-        """envokes GEO DR failover and reconfigure the alias to point to the
+        """Invokes GEO DR failover and reconfigure the alias to point to the
         secondary namespace.
 
         :param resource_group_name: Name of the resource group within the

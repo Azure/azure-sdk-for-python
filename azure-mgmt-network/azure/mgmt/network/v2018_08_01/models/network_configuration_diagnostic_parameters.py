@@ -21,21 +21,29 @@ class NetworkConfigurationDiagnosticParameters(Model):
      perform network configuration diagnostic. Valid options are VM,
      NetworkInterface, VMSS/NetworkInterface and Application Gateway.
     :type target_resource_id: str
-    :param queries: Required. List of traffic queries.
-    :type queries: list[~azure.mgmt.network.v2018_08_01.models.TrafficQuery]
+    :param verbosity_level: Verbosity level. Accepted values are 'Normal',
+     'Minimum', 'Full'. Possible values include: 'Normal', 'Minimum', 'Full'
+    :type verbosity_level: str or
+     ~azure.mgmt.network.v2018_08_01.models.VerbosityLevel
+    :param profiles: Required. List of network configuration diagnostic
+     profiles.
+    :type profiles:
+     list[~azure.mgmt.network.v2018_08_01.models.NetworkConfigurationDiagnosticProfile]
     """
 
     _validation = {
         'target_resource_id': {'required': True},
-        'queries': {'required': True},
+        'profiles': {'required': True},
     }
 
     _attribute_map = {
         'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
-        'queries': {'key': 'queries', 'type': '[TrafficQuery]'},
+        'verbosity_level': {'key': 'verbosityLevel', 'type': 'str'},
+        'profiles': {'key': 'profiles', 'type': '[NetworkConfigurationDiagnosticProfile]'},
     }
 
     def __init__(self, **kwargs):
         super(NetworkConfigurationDiagnosticParameters, self).__init__(**kwargs)
         self.target_resource_id = kwargs.get('target_resource_id', None)
-        self.queries = kwargs.get('queries', None)
+        self.verbosity_level = kwargs.get('verbosity_level', None)
+        self.profiles = kwargs.get('profiles', None)

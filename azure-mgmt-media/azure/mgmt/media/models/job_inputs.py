@@ -13,7 +13,7 @@ from .job_input import JobInput
 
 
 class JobInputs(JobInput):
-    """Describes a list of of inputs to a Job.
+    """Describes a list of inputs to a Job.
 
     All required parameters must be populated in order to send to Azure.
 
