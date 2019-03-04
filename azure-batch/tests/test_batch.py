@@ -408,8 +408,8 @@ class BatchTest(AzureMgmtTestCase):
             pool = client.pool.get(batch_pool.name)
         # It looks like there has test framework issue, it couldn't find the correct recording frame
         # So in live mode, target-decicate is 0, and target low pri is 2
-        self.assertEqual(pool.target_dedicated_nodes, 2)
-        self.assertEqual(pool.target_low_priority_nodes, 0)
+        self.assertEqual(pool.target_dedicated_nodes, 0)
+        self.assertEqual(pool.target_low_priority_nodes, 2)
 
         # Test Get All Pools Lifetime Statistics
         stats = client.pool.get_all_lifetime_statistics()

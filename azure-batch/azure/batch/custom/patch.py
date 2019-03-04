@@ -47,7 +47,6 @@ class _TaskWorkflowManager(object):
         self.errors = collections.deque()
 
         # synchronized through lock variables
-        self.error = None  # Only written once all threads have completed
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
         self.tasks_to_add = collections.deque(tasks_to_add)
 
