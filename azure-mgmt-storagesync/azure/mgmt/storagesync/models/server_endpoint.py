@@ -39,12 +39,12 @@ class ServerEndpoint(ProxyResource):
     :type friendly_name: str
     :param server_resource_id: Server Resource Id.
     :type server_resource_id: str
-    :param provisioning_state: ServerEndpoint Provisioning State
-    :type provisioning_state: str
-    :param last_workflow_id: ServerEndpoint lastWorkflowId
-    :type last_workflow_id: str
-    :param last_operation_name: Resource Last Operation Name
-    :type last_operation_name: str
+    :ivar provisioning_state: ServerEndpoint Provisioning State
+    :vartype provisioning_state: str
+    :ivar last_workflow_id: ServerEndpoint lastWorkflowId
+    :vartype last_workflow_id: str
+    :ivar last_operation_name: Resource Last Operation Name
+    :vartype last_operation_name: str
     :ivar sync_status: Server Endpoint sync status
     :vartype sync_status:
      ~azure.mgmt.storagesync.models.ServerEndpointSyncStatus
@@ -67,6 +67,9 @@ class ServerEndpoint(ProxyResource):
         'type': {'readonly': True},
         'volume_free_space_percent': {'maximum': 100, 'minimum': 0},
         'tier_files_older_than_days': {'maximum': 2147483647, 'minimum': 0},
+        'provisioning_state': {'readonly': True},
+        'last_workflow_id': {'readonly': True},
+        'last_operation_name': {'readonly': True},
         'sync_status': {'readonly': True},
         'offline_data_transfer_storage_account_resource_id': {'readonly': True},
         'offline_data_transfer_storage_account_tenant_id': {'readonly': True},
@@ -100,9 +103,9 @@ class ServerEndpoint(ProxyResource):
         self.tier_files_older_than_days = kwargs.get('tier_files_older_than_days', None)
         self.friendly_name = kwargs.get('friendly_name', None)
         self.server_resource_id = kwargs.get('server_resource_id', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.last_workflow_id = kwargs.get('last_workflow_id', None)
-        self.last_operation_name = kwargs.get('last_operation_name', None)
+        self.provisioning_state = None
+        self.last_workflow_id = None
+        self.last_operation_name = None
         self.sync_status = None
         self.offline_data_transfer = kwargs.get('offline_data_transfer', None)
         self.offline_data_transfer_storage_account_resource_id = None

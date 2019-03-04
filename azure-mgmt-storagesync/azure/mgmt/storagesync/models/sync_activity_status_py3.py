@@ -18,26 +18,28 @@ class SyncActivityStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar timestamp: Timestamp when properties were updated
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar timestamp: Required. Timestamp when properties were updated
     :vartype timestamp: datetime
-    :ivar per_item_error_count: Per item error count
+    :ivar per_item_error_count: Required. Per item error count
     :vartype per_item_error_count: long
-    :ivar applied_item_count: Applied item count.
+    :ivar applied_item_count: Required. Applied item count.
     :vartype applied_item_count: long
     :ivar total_item_count: Total item count (if available)
     :vartype total_item_count: long
-    :ivar applied_bytes: Applied bytes
+    :ivar applied_bytes: Required. Applied bytes
     :vartype applied_bytes: long
     :ivar total_bytes: Total bytes (if available)
     :vartype total_bytes: long
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'per_item_error_count': {'readonly': True},
-        'applied_item_count': {'readonly': True},
+        'timestamp': {'required': True, 'readonly': True},
+        'per_item_error_count': {'required': True, 'readonly': True},
+        'applied_item_count': {'required': True, 'readonly': True},
         'total_item_count': {'readonly': True},
-        'applied_bytes': {'readonly': True},
+        'applied_bytes': {'required': True, 'readonly': True},
         'total_bytes': {'readonly': True},
     }
 

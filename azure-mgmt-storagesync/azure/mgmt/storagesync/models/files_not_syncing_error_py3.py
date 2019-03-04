@@ -18,20 +18,22 @@ class FilesNotSyncingError(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar error_code: Error code (HResult)
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error_code: Required. Error code (HResult)
     :vartype error_code: int
-    :ivar persistent_count: Count of persistent files not syncing with the
-     specified error code
+    :ivar persistent_count: Required. Count of persistent files not syncing
+     with the specified error code
     :vartype persistent_count: long
-    :ivar transient_count: Count of transient files not syncing with the
-     specified error code
+    :ivar transient_count: Required. Count of transient files not syncing with
+     the specified error code
     :vartype transient_count: long
     """
 
     _validation = {
-        'error_code': {'readonly': True},
-        'persistent_count': {'readonly': True},
-        'transient_count': {'readonly': True},
+        'error_code': {'required': True, 'readonly': True},
+        'persistent_count': {'required': True, 'readonly': True},
+        'transient_count': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {

@@ -18,14 +18,17 @@ class SyncSessionStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar last_sync_result: Last sync result (HResult)
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar last_sync_result: Required. Last sync result (HResult)
     :vartype last_sync_result: int
-    :ivar last_sync_timestamp: Last sync timestamp
+    :ivar last_sync_timestamp: Required. Last sync timestamp
     :vartype last_sync_timestamp: datetime
     :ivar last_sync_success_timestamp: Last sync success timestamp
     :vartype last_sync_success_timestamp: datetime
-    :param last_sync_per_item_error_count: Last sync per item error count.
-    :type last_sync_per_item_error_count: long
+    :ivar last_sync_per_item_error_count: Required. Last sync per item error
+     count.
+    :vartype last_sync_per_item_error_count: long
     :ivar persistent_files_not_syncing_count: Count of persistent files not
      syncing. Reserved for future use.
     :vartype persistent_files_not_syncing_count: long
@@ -39,9 +42,10 @@ class SyncSessionStatus(Model):
     """
 
     _validation = {
-        'last_sync_result': {'readonly': True},
-        'last_sync_timestamp': {'readonly': True},
+        'last_sync_result': {'required': True, 'readonly': True},
+        'last_sync_timestamp': {'required': True, 'readonly': True},
         'last_sync_success_timestamp': {'readonly': True},
+        'last_sync_per_item_error_count': {'required': True, 'readonly': True},
         'persistent_files_not_syncing_count': {'readonly': True},
         'transient_files_not_syncing_count': {'readonly': True},
         'files_not_syncing_errors': {'readonly': True},
@@ -62,7 +66,7 @@ class SyncSessionStatus(Model):
         self.last_sync_result = None
         self.last_sync_timestamp = None
         self.last_sync_success_timestamp = None
-        self.last_sync_per_item_error_count = kwargs.get('last_sync_per_item_error_count', None)
+        self.last_sync_per_item_error_count = None
         self.persistent_files_not_syncing_count = None
         self.transient_files_not_syncing_count = None
         self.files_not_syncing_errors = None
