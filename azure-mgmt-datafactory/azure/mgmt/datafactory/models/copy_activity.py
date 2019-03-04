@@ -15,27 +15,31 @@ from .execution_activity import ExecutionActivity
 class CopyActivity(ExecutionActivity):
     """Copy activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param source: Copy activity source.
+    :param source: Required. Copy activity source.
     :type source: ~azure.mgmt.datafactory.models.CopySource
-    :param sink: Copy activity sink.
+    :param sink: Required. Copy activity sink.
     :type sink: ~azure.mgmt.datafactory.models.CopySink
-    :param translator: Copy activity translator. If not specificed, tabular
+    :param translator: Copy activity translator. If not specified, tabular
      translator is used.
     :type translator: ~azure.mgmt.datafactory.models.CopyTranslator
     :param enable_staging: Specifies whether to copy data via an interim
@@ -49,10 +53,10 @@ class CopyActivity(ExecutionActivity):
      the source or sink to avoid overloading the data store. Type: integer (or
      Expression with resultType integer), minimum: 0.
     :type parallel_copies: object
-    :param cloud_data_movement_units: Maximum number of cloud data movement
-     units that can be used to perform this data movement. Type: integer (or
+    :param data_integration_units: Maximum number of data integration units
+     that can be used to perform this data movement. Type: integer (or
      Expression with resultType integer), minimum: 0.
-    :type cloud_data_movement_units: object
+    :type data_integration_units: object
     :param enable_skip_incompatible_row: Whether to skip incompatible row.
      Default value is false. Type: boolean (or Expression with resultType
      boolean).
@@ -79,6 +83,7 @@ class CopyActivity(ExecutionActivity):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
@@ -88,24 +93,24 @@ class CopyActivity(ExecutionActivity):
         'enable_staging': {'key': 'typeProperties.enableStaging', 'type': 'object'},
         'staging_settings': {'key': 'typeProperties.stagingSettings', 'type': 'StagingSettings'},
         'parallel_copies': {'key': 'typeProperties.parallelCopies', 'type': 'object'},
-        'cloud_data_movement_units': {'key': 'typeProperties.cloudDataMovementUnits', 'type': 'object'},
+        'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, name, source, sink, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None):
-        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.source = source
-        self.sink = sink
-        self.translator = translator
-        self.enable_staging = enable_staging
-        self.staging_settings = staging_settings
-        self.parallel_copies = parallel_copies
-        self.cloud_data_movement_units = cloud_data_movement_units
-        self.enable_skip_incompatible_row = enable_skip_incompatible_row
-        self.redirect_incompatible_row_settings = redirect_incompatible_row_settings
-        self.inputs = inputs
-        self.outputs = outputs
+    def __init__(self, **kwargs):
+        super(CopyActivity, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.sink = kwargs.get('sink', None)
+        self.translator = kwargs.get('translator', None)
+        self.enable_staging = kwargs.get('enable_staging', None)
+        self.staging_settings = kwargs.get('staging_settings', None)
+        self.parallel_copies = kwargs.get('parallel_copies', None)
+        self.data_integration_units = kwargs.get('data_integration_units', None)
+        self.enable_skip_incompatible_row = kwargs.get('enable_skip_incompatible_row', None)
+        self.redirect_incompatible_row_settings = kwargs.get('redirect_incompatible_row_settings', None)
+        self.inputs = kwargs.get('inputs', None)
+        self.outputs = kwargs.get('outputs', None)
         self.type = 'Copy'

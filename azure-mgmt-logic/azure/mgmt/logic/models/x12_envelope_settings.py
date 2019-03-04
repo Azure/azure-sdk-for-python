@@ -135,9 +135,9 @@ class X12EnvelopeSettings(Model):
         'transaction_set_control_number_prefix': {'key': 'transactionSetControlNumberPrefix', 'type': 'str'},
         'transaction_set_control_number_suffix': {'key': 'transactionSetControlNumberSuffix', 'type': 'str'},
         'overwrite_existing_transaction_set_control_number': {'key': 'overwriteExistingTransactionSetControlNumber', 'type': 'bool'},
-        'group_header_date_format': {'key': 'groupHeaderDateFormat', 'type': 'X12DateFormat'},
-        'group_header_time_format': {'key': 'groupHeaderTimeFormat', 'type': 'X12TimeFormat'},
-        'usage_indicator': {'key': 'usageIndicator', 'type': 'UsageIndicator'},
+        'group_header_date_format': {'key': 'groupHeaderDateFormat', 'type': 'str'},
+        'group_header_time_format': {'key': 'groupHeaderTimeFormat', 'type': 'str'},
+        'usage_indicator': {'key': 'usageIndicator', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

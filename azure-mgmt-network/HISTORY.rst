@@ -3,6 +3,78 @@
 Release History
 ===============
 
+2.6.0rc1 (2019-02-15)
++++++++++++++++++++++
+
+**Features**
+
+- Model AzureFirewall has a new parameter threat_intel_mode
+- Model ApplicationGatewayRewriteRule has a new parameter conditions
+- Model ApplicationGatewayRewriteRule has a new parameter rule_sequence
+- Model ApplicationGatewayAutoscaleConfiguration has a new parameter max_capacity
+- Added operation SubnetsOperations.prepare_network_policies
+
+2.5.1 (2019-01-15)
+++++++++++++++++++
+
+**Features**
+
+- Add missing ddos_custom_policies operations
+
+2.5.0 (2019-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model PublicIPAddress has a new parameter ddos_settings
+- Added operation ApplicationGatewaysOperations.list_available_request_headers
+- Added operation ApplicationGatewaysOperations.list_available_server_variables
+- Added operation ApplicationGatewaysOperations.list_available_response_headers
+- Added operation ApplicationSecurityGroupsOperations.update_tags
+
+2.4.0 (2018-11-27)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewaySslCertificate has a new parameter key_vault_secret_id
+- Model ApplicationGatewayRequestRoutingRule has a new parameter rewrite_rule_set
+- Model FlowLogInformation has a new parameter format
+- Model ApplicationGateway has a new parameter identity
+- Model ApplicationGateway has a new parameter rewrite_rule_sets
+- Model TrafficAnalyticsConfigurationProperties has a new parameter traffic_analytics_interval
+- Model ApplicationGatewayPathRule has a new parameter rewrite_rule_set
+- Model ApplicationGatewayUrlPathMap has a new parameter default_rewrite_rule_set
+
+**Breaking changes**
+
+- Model ApplicationGatewayTrustedRootCertificate no longer has parameter keyvault_secret_id (replaced by key_vault_secret_id)
+
+2.3.0 (2018-11-07)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter exclusions
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter file_upload_limit_in_mb
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter max_request_body_size_in_kb
+- Model ApplicationGatewayHttpListener has a new parameter custom_error_configurations
+- Model ExpressRouteCircuit has a new parameter bandwidth_in_gbps
+- Model ExpressRouteCircuit has a new parameter stag
+- Model ExpressRouteCircuit has a new parameter express_route_port
+- Model EvaluatedNetworkSecurityGroup has a new parameter applied_to
+- Model NetworkConfigurationDiagnosticResult has a new parameter profile
+- Model ApplicationGateway has a new parameter custom_error_configurations
+- Added operation group LoadBalancerOutboundRulesOperations
+- Added operation group ExpressRouteLinksOperations
+- Added operation group ExpressRoutePortsOperations
+- Added operation group ExpressRoutePortsLocationsOperations
+
+**Breaking changes**
+
+- Model NetworkConfigurationDiagnosticResult no longer has parameter traffic_query
+- Operation NetworkWatchersOperations.get_network_configuration_diagnostic has a new signature (no longer takes target_resource_id, queries, but a NetworkConfigurationDiagnosticParameters instance)
+
 2.2.1 (2018-09-14)
 ++++++++++++++++++
 

@@ -28,12 +28,15 @@ class Resource(Model):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
+    :ivar e_tag: Etag identifies change in the resource.
+    :vartype e_tag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'e_tag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,12 +45,14 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(Resource, self).__init__()
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.e_tag = None

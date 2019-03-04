@@ -22,7 +22,7 @@ class PoolOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class PoolOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -93,6 +93,10 @@ class PoolOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list_usage_metrics.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -189,6 +193,10 @@ class PoolOperations(object):
 
         # Construct URL
         url = self.get_all_lifetime_statistics.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -276,6 +284,10 @@ class PoolOperations(object):
 
         # Construct URL
         url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -368,6 +380,10 @@ class PoolOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -483,6 +499,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -578,6 +595,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.exists.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -684,6 +702,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -802,6 +821,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -895,6 +915,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.disable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1016,6 +1037,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.enable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1123,6 +1145,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.evaluate_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1238,6 +1261,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1351,6 +1375,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.stop_resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1448,6 +1473,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.update_properties.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1495,133 +1521,6 @@ class PoolOperations(object):
             })
             return client_raw_response
     update_properties.metadata = {'url': '/pools/{poolId}/updateproperties'}
-
-    def upgrade_os(
-            self, pool_id, target_os_version, pool_upgrade_os_options=None, custom_headers=None, raw=False, **operation_config):
-        """Upgrades the operating system of the specified pool.
-
-        During an upgrade, the Batch service upgrades each compute node in the
-        pool. When a compute node is chosen for upgrade, any tasks running on
-        that node are removed from the node and returned to the queue to be
-        rerun later (or on a different compute node). The node will be
-        unavailable until the upgrade is complete. This operation results in
-        temporarily reduced pool capacity as nodes are taken out of service to
-        be upgraded. Although the Batch service tries to avoid upgrading all
-        compute nodes at the same time, it does not guarantee to do this
-        (particularly on small pools); therefore, the pool may be temporarily
-        unavailable to run tasks. When this operation runs, the pool state
-        changes to upgrading. When all compute nodes have finished upgrading,
-        the pool state returns to active. While the upgrade is in progress, the
-        pool's currentOSVersion reflects the OS version that nodes are
-        upgrading from, and targetOSVersion reflects the OS version that nodes
-        are upgrading to. Once the upgrade is complete, currentOSVersion is
-        updated to reflect the OS version now running on all nodes. This
-        operation can only be invoked on pools created with the
-        cloudServiceConfiguration property.
-
-        :param pool_id: The ID of the pool to upgrade.
-        :type pool_id: str
-        :param target_os_version: The Azure Guest OS version to be installed
-         on the virtual machines in the pool.
-        :type target_os_version: str
-        :param pool_upgrade_os_options: Additional parameters for the
-         operation
-        :type pool_upgrade_os_options:
-         ~azure.batch.models.PoolUpgradeOsOptions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
-        """
-        timeout = None
-        if pool_upgrade_os_options is not None:
-            timeout = pool_upgrade_os_options.timeout
-        client_request_id = None
-        if pool_upgrade_os_options is not None:
-            client_request_id = pool_upgrade_os_options.client_request_id
-        return_client_request_id = None
-        if pool_upgrade_os_options is not None:
-            return_client_request_id = pool_upgrade_os_options.return_client_request_id
-        ocp_date = None
-        if pool_upgrade_os_options is not None:
-            ocp_date = pool_upgrade_os_options.ocp_date
-        if_match = None
-        if pool_upgrade_os_options is not None:
-            if_match = pool_upgrade_os_options.if_match
-        if_none_match = None
-        if pool_upgrade_os_options is not None:
-            if_none_match = pool_upgrade_os_options.if_none_match
-        if_modified_since = None
-        if pool_upgrade_os_options is not None:
-            if_modified_since = pool_upgrade_os_options.if_modified_since
-        if_unmodified_since = None
-        if pool_upgrade_os_options is not None:
-            if_unmodified_since = pool_upgrade_os_options.if_unmodified_since
-        pool_upgrade_os_parameter = models.PoolUpgradeOSParameter(target_os_version=target_os_version)
-
-        # Construct URL
-        url = self.upgrade_os.metadata['url']
-        path_format_arguments = {
-            'poolId': self._serialize.url("pool_id", pool_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-        if client_request_id is not None:
-            header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-        if return_client_request_id is not None:
-            header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
-        if ocp_date is not None:
-            header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
-        if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-
-        # Construct body
-        body_content = self._serialize.body(pool_upgrade_os_parameter, 'PoolUpgradeOSParameter')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.BatchErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'client-request-id': 'str',
-                'request-id': 'str',
-                'ETag': 'str',
-                'Last-Modified': 'rfc-1123',
-                'DataServiceId': 'str',
-            })
-            return client_raw_response
-    upgrade_os.metadata = {'url': '/pools/{poolId}/upgradeos'}
 
     def remove_nodes(
             self, pool_id, node_remove_parameter, pool_remove_nodes_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1678,6 +1577,7 @@ class PoolOperations(object):
         # Construct URL
         url = self.remove_nodes.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

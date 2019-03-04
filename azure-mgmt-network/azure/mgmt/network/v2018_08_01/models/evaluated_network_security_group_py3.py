@@ -20,6 +20,9 @@ class EvaluatedNetworkSecurityGroup(Model):
 
     :param network_security_group_id: Network security group ID.
     :type network_security_group_id: str
+    :param applied_to: Resource ID of nic or subnet to which network security
+     group is applied.
+    :type applied_to: str
     :param matched_rule:
     :type matched_rule: ~azure.mgmt.network.v2018_08_01.models.MatchedRule
     :ivar rules_evaluation_result: List of network security rules evaluation
@@ -34,12 +37,14 @@ class EvaluatedNetworkSecurityGroup(Model):
 
     _attribute_map = {
         'network_security_group_id': {'key': 'networkSecurityGroupId', 'type': 'str'},
+        'applied_to': {'key': 'appliedTo', 'type': 'str'},
         'matched_rule': {'key': 'matchedRule', 'type': 'MatchedRule'},
         'rules_evaluation_result': {'key': 'rulesEvaluationResult', 'type': '[NetworkSecurityRulesEvaluationResult]'},
     }
 
-    def __init__(self, *, network_security_group_id: str=None, matched_rule=None, **kwargs) -> None:
+    def __init__(self, *, network_security_group_id: str=None, applied_to: str=None, matched_rule=None, **kwargs) -> None:
         super(EvaluatedNetworkSecurityGroup, self).__init__(**kwargs)
         self.network_security_group_id = network_security_group_id
+        self.applied_to = applied_to
         self.matched_rule = matched_rule
         self.rules_evaluation_result = None

@@ -135,9 +135,9 @@ class X12EnvelopeSettings(Model):
         'transaction_set_control_number_prefix': {'key': 'transactionSetControlNumberPrefix', 'type': 'str'},
         'transaction_set_control_number_suffix': {'key': 'transactionSetControlNumberSuffix', 'type': 'str'},
         'overwrite_existing_transaction_set_control_number': {'key': 'overwriteExistingTransactionSetControlNumber', 'type': 'bool'},
-        'group_header_date_format': {'key': 'groupHeaderDateFormat', 'type': 'X12DateFormat'},
-        'group_header_time_format': {'key': 'groupHeaderTimeFormat', 'type': 'X12TimeFormat'},
-        'usage_indicator': {'key': 'usageIndicator', 'type': 'UsageIndicator'},
+        'group_header_date_format': {'key': 'groupHeaderDateFormat', 'type': 'str'},
+        'group_header_time_format': {'key': 'groupHeaderTimeFormat', 'type': 'str'},
+        'usage_indicator': {'key': 'usageIndicator', 'type': 'str'},
     }
 
     def __init__(self, *, control_standards_id: int, use_control_standards_id_as_repetition_character: bool, sender_application_id: str, receiver_application_id: str, control_version_number: str, interchange_control_number_lower_bound: int, interchange_control_number_upper_bound: int, rollover_interchange_control_number: bool, enable_default_group_headers: bool, group_control_number_lower_bound: int, group_control_number_upper_bound: int, rollover_group_control_number: bool, group_header_agency_code: str, group_header_version: str, transaction_set_control_number_lower_bound: int, transaction_set_control_number_upper_bound: int, rollover_transaction_set_control_number: bool, overwrite_existing_transaction_set_control_number: bool, group_header_date_format, group_header_time_format, usage_indicator, functional_group_id: str=None, transaction_set_control_number_prefix: str=None, transaction_set_control_number_suffix: str=None, **kwargs) -> None:

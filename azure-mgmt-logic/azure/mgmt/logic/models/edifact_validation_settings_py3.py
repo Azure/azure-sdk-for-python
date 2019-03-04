@@ -70,11 +70,11 @@ class EdifactValidationSettings(Model):
         'interchange_control_number_validity_days': {'key': 'interchangeControlNumberValidityDays', 'type': 'int'},
         'check_duplicate_group_control_number': {'key': 'checkDuplicateGroupControlNumber', 'type': 'bool'},
         'check_duplicate_transaction_set_control_number': {'key': 'checkDuplicateTransactionSetControlNumber', 'type': 'bool'},
-        'validate_edi_types': {'key': 'validateEdiTypes', 'type': 'bool'},
-        'validate_xsd_types': {'key': 'validateXsdTypes', 'type': 'bool'},
+        'validate_edi_types': {'key': 'validateEDITypes', 'type': 'bool'},
+        'validate_xsd_types': {'key': 'validateXSDTypes', 'type': 'bool'},
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
-        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
+        'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'str'},
     }
 
     def __init__(self, *, validate_character_set: bool, check_duplicate_interchange_control_number: bool, interchange_control_number_validity_days: int, check_duplicate_group_control_number: bool, check_duplicate_transaction_set_control_number: bool, validate_edi_types: bool, validate_xsd_types: bool, allow_leading_and_trailing_spaces_and_zeroes: bool, trim_leading_and_trailing_spaces_and_zeroes: bool, trailing_separator_policy, **kwargs) -> None:

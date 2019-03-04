@@ -22,7 +22,7 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
     :param name: The name of the resource
     :type name: str
     :param type: The type of the resource. Ex-
-     Microsoft.Network/trafficmanagerProfiles.
+     Microsoft.Network/trafficManagerProfiles.
     :type type: str
     :param geographic_hierarchy: The region at the root of the hierarchy from
      all the regions in the hierarchy can be retrieved.

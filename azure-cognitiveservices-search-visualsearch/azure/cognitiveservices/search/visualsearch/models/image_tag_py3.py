@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .thing import Thing
+from .thing_py3 import Thing
 
 
 class ImageTag(Thing):
-    """ImageTag.
+    """A visual search tag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

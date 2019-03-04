@@ -25,7 +25,7 @@ class ListContainerSasInput(Model):
     """
 
     _attribute_map = {
-        'permissions': {'key': 'permissions', 'type': 'AssetContainerPermission'},
+        'permissions': {'key': 'permissions', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
     }
 
