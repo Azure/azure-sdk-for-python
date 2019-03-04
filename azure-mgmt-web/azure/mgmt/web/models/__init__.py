@@ -225,9 +225,13 @@ try:
     from .address_response_py3 import AddressResponse
     from .app_service_environment_resource_py3 import AppServiceEnvironmentResource
     from .app_service_environment_patch_resource_py3 import AppServiceEnvironmentPatchResource
+    from .endpoint_detail_py3 import EndpointDetail
+    from .endpoint_dependency_py3 import EndpointDependency
     from .hosting_environment_diagnostics_py3 import HostingEnvironmentDiagnostics
+    from .inbound_environment_endpoint_py3 import InboundEnvironmentEndpoint
     from .metric_availabilily_py3 import MetricAvailabilily
     from .metric_definition_py3 import MetricDefinition
+    from .outbound_environment_endpoint_py3 import OutboundEnvironmentEndpoint
     from .sku_info_py3 import SkuInfo
     from .usage_py3 import Usage
     from .worker_pool_resource_py3 import WorkerPoolResource
@@ -450,9 +454,13 @@ except (SyntaxError, ImportError):
     from .address_response import AddressResponse
     from .app_service_environment_resource import AppServiceEnvironmentResource
     from .app_service_environment_patch_resource import AppServiceEnvironmentPatchResource
+    from .endpoint_detail import EndpointDetail
+    from .endpoint_dependency import EndpointDependency
     from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
+    from .inbound_environment_endpoint import InboundEnvironmentEndpoint
     from .metric_availabilily import MetricAvailabilily
     from .metric_definition import MetricDefinition
+    from .outbound_environment_endpoint import OutboundEnvironmentEndpoint
     from .sku_info import SkuInfo
     from .usage import Usage
     from .worker_pool_resource import WorkerPoolResource
@@ -795,9 +803,13 @@ __all__ = [
     'AddressResponse',
     'AppServiceEnvironmentResource',
     'AppServiceEnvironmentPatchResource',
+    'EndpointDetail',
+    'EndpointDependency',
     'HostingEnvironmentDiagnostics',
+    'InboundEnvironmentEndpoint',
     'MetricAvailabilily',
     'MetricDefinition',
+    'OutboundEnvironmentEndpoint',
     'SkuInfo',
     'Usage',
     'WorkerPoolResource',
