@@ -87,15 +87,21 @@ class AzureConfigurationClient(object):
         return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
     
     def update_key_value(
-            self, key_value, key, label="%00", custom_headers=None):
+            self, key, value=None, content_type=None, tags=None, etag=None, label="%00", custom_headers=None):
         """Update a KeyValue.
 
         Update a KeyValue.
 
-        :param key_value:
-        :type key_value: ~azure.configurationservice.models.KeyValue
         :param key: string
         :type key: str
+        :param value:
+        :type value: str
+        :param content_type:
+        :type content_type: str
+        :param tags:
+        :type tags: dict
+        :param etag:
+        :type etag: str
         :param label:
         :type label: str
         :param dict custom_headers: headers that will be added to the request
@@ -103,7 +109,25 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
+        current_key_value = self._client.get_key_value(key, label)
+        if current_key_value is None:
+            #TODO throw exception
+            return None
+        if etag is not None:
+            if_match = {'If-Match': etag}
+        else:
+            if_match = {'If-Match': '*'}
+        if custom_headers is None:
+            custom_headers = if_match
+        elif custom_headers.get('If-Match', '*') == '*':
+            custom_headers.update(if_match)
+        if value is not None:
+            current_key_value.value = value
+        if content_type is not None:
+            current_key_value.content_type = content_type
+        if tags is not None:
+            current_key_value.tags = tags
+        return self._client.create_or_update_key_value(current_key_value, key, label, custom_headers)
     
     def set_key_value(
             self, key_value, key, label="%00", custom_headers=None):
