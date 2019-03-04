@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureSearchLinkedService(LinkedService):
     """Linked service for Windows Azure Search Service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class AzureSearchLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param url: URL for Azure Search service. Type: string (or Expression with
-     resultType string).
+    :param url: Required. URL for Azure Search service. Type: string (or
+     Expression with resultType string).
     :type url: object
     :param key: Admin Key for Azure Search service
     :type key: ~azure.mgmt.datafactory.models.SecretBase
@@ -59,9 +61,9 @@ class AzureSearchLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, key=None, encrypted_credential=None):
-        super(AzureSearchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.url = url
-        self.key = key
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureSearchLinkedService, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.key = kwargs.get('key', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureSearch'

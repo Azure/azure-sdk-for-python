@@ -385,7 +385,7 @@ class Helpers(object):
             if f.file_type == models.FileType.file:
                 v = requests.get(f.download_url).content
                 actual[f.name] = v if isinstance(v, six.string_types) else v.decode()
-        test.assertEquals(sorted(actual.keys()), sorted(expected.keys()))
+        test.assertEqual(sorted(actual.keys()), sorted(expected.keys()))
         for k, v in expected.items():
             a = actual[k]
             if a is None and v is None:
@@ -396,7 +396,7 @@ class Helpers(object):
             if a is None:
                 test.fail('Expected {0} to be a file, got a directory'.format(k))
             if isinstance(v, six.string_types):
-                test.assertEquals(v, a, k + "expected {0} got {1}".format(v, a))
+                test.assertEqual(v, a, k + "expected {0} got {1}".format(v, a))
             else:
                 test.assertRegexpMatches(actual.get(k), v, k)
         if output_directory_id == Helpers.STANDARD_OUTPUT_DIRECTORY_ID and not execution_log_found:

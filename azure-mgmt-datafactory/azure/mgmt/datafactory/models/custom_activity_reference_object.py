@@ -27,7 +27,7 @@ class CustomActivityReferenceObject(Model):
         'datasets': {'key': 'datasets', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, linked_services=None, datasets=None):
-        super(CustomActivityReferenceObject, self).__init__()
-        self.linked_services = linked_services
-        self.datasets = datasets
+    def __init__(self, **kwargs):
+        super(CustomActivityReferenceObject, self).__init__(**kwargs)
+        self.linked_services = kwargs.get('linked_services', None)
+        self.datasets = kwargs.get('datasets', None)

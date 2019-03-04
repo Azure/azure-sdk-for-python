@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .structured_value import StructuredValue
+from .structured_value_py3 import StructuredValue
 
 
 class NormalizedQuadrilateral(StructuredValue):

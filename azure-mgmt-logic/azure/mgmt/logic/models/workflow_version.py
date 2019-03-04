@@ -67,7 +67,7 @@ class WorkflowVersion(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'WorkflowState'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},

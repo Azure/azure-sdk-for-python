@@ -37,14 +37,15 @@ class ManagementLockObject(Model):
     :vartype id: str
     :ivar type: The resource type of the lock - Microsoft.Authorization/locks.
     :vartype type: str
-    :param name: The name of the lock.
-    :type name: str
+    :ivar name: The name of the lock.
+    :vartype name: str
     """
 
     _validation = {
         'level': {'required': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -56,11 +57,11 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, level, notes: str=None, owners=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, level, notes: str=None, owners=None, **kwargs) -> None:
         super(ManagementLockObject, self).__init__(**kwargs)
         self.level = level
         self.notes = notes
         self.owners = owners
         self.id = None
         self.type = None
-        self.name = name
+        self.name = None
