@@ -58,6 +58,7 @@ class ExportPlatform(str, Enum):
     tensor_flow = "TensorFlow"
     docker_file = "DockerFile"
     onnx = "ONNX"
+    vaidk = "VAIDK"
 
 
 class ExportStatus(str, Enum):
@@ -95,6 +96,7 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_project_unknown_domain = "BadRequestProjectUnknownDomain"
     bad_request_project_unknown_classification = "BadRequestProjectUnknownClassification"
     bad_request_project_unsupported_domain_type_change = "BadRequestProjectUnsupportedDomainTypeChange"
+    bad_request_project_unsupported_export_platform = "BadRequestProjectUnsupportedExportPlatform"
     bad_request_iteration_name = "BadRequestIterationName"
     bad_request_iteration_name_not_unique = "BadRequestIterationNameNotUnique"
     bad_request_iteration_description = "BadRequestIterationDescription"

@@ -19,7 +19,7 @@ class Export(Model):
     sending a request.
 
     :ivar platform: Platform of the export. Possible values include: 'CoreML',
-     'TensorFlow', 'DockerFile', 'ONNX'
+     'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
     :vartype platform: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
     :ivar status: Status of the export. Possible values include: 'Exporting',

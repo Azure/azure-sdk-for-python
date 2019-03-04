@@ -69,14 +69,14 @@ class CustomVisionPredictionClient(SDKClient):
 
 
     def classify_image_url(
-            self, project_id, name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image url and saves the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
@@ -101,7 +101,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -138,17 +138,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    classify_image_url.metadata = {'url': '/{projectId}/classify/models/{name}/url'}
+    classify_image_url.metadata = {'url': '/{projectId}/classify/models/{publishedModelName}/url'}
 
     def classify_image(
-            self, project_id, name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image and saves the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param image_data: Binary image data.
         :type image_data: Generator
         :param application: Optional. Specifies the name of application using
@@ -171,7 +171,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -210,17 +210,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    classify_image.metadata = {'url': '/{projectId}/classify/models/{name}/image'}
+    classify_image.metadata = {'url': '/{projectId}/classify/models/{publishedModelName}/image'}
 
     def classify_image_url_with_no_store(
-            self, project_id, name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image url without saving the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
@@ -245,7 +245,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -282,17 +282,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    classify_image_url_with_no_store.metadata = {'url': '/{projectId}/classify/models/{name}/url/nostore'}
+    classify_image_url_with_no_store.metadata = {'url': '/{projectId}/classify/models/{publishedModelName}/url/nostore'}
 
     def classify_image_with_no_store(
-            self, project_id, name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image without saving the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param image_data: Binary image data.
         :type image_data: Generator
         :param application: Optional. Specifies the name of application using
@@ -315,7 +315,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -354,17 +354,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    classify_image_with_no_store.metadata = {'url': '/{projectId}/classify/models/{name}/image/nostore'}
+    classify_image_with_no_store.metadata = {'url': '/{projectId}/classify/models/{publishedModelName}/image/nostore'}
 
     def detect_image_url(
-            self, project_id, name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image url and saves the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
@@ -389,7 +389,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -426,17 +426,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_image_url.metadata = {'url': '/{projectId}/detect/models/{name}/url'}
+    detect_image_url.metadata = {'url': '/{projectId}/detect/models/{publishedModelName}/url'}
 
     def detect_image(
-            self, project_id, name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image and saves the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param image_data: Binary image data.
         :type image_data: Generator
         :param application: Optional. Specifies the name of application using
@@ -459,7 +459,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -498,17 +498,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_image.metadata = {'url': '/{projectId}/detect/models/{name}/image'}
+    detect_image.metadata = {'url': '/{projectId}/detect/models/{publishedModelName}/image'}
 
     def detect_image_url_with_no_store(
-            self, project_id, name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image url without saving the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
@@ -533,7 +533,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -570,17 +570,17 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_image_url_with_no_store.metadata = {'url': '/{projectId}/detect/models/{name}/url/nostore'}
+    detect_image_url_with_no_store.metadata = {'url': '/{projectId}/detect/models/{publishedModelName}/url/nostore'}
 
     def detect_image_with_no_store(
-            self, project_id, name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_model_name, image_data, application=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image without saving the result.
 
         :param project_id: The project id.
         :type project_id: str
-        :param name: Specifies the name of the model to evaluate against.
-         The default iteration for the project will be used when not specified.
-        :type name: str
+        :param published_model_name: Specifies the name of the model to
+         evaluate against.
+        :type published_model_name: str
         :param image_data: Binary image data.
         :type image_data: Generator
         :param application: Optional. Specifies the name of application using
@@ -603,7 +603,7 @@ class CustomVisionPredictionClient(SDKClient):
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'projectId': self._serialize.url("project_id", project_id, 'str'),
-            'name': self._serialize.url("name", name, 'str')
+            'publishedModelName': self._serialize.url("published_model_name", published_model_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -642,4 +642,4 @@ class CustomVisionPredictionClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    detect_image_with_no_store.metadata = {'url': '/{projectId}/detect/models/{name}/image/nostore'}
+    detect_image_with_no_store.metadata = {'url': '/{projectId}/detect/models/{publishedModelName}/image/nostore'}

@@ -35,6 +35,8 @@ class Iteration(Model):
     :ivar exportable: Whether the iteration can be exported to another format
      for download.
     :vartype exportable: bool
+    :ivar exportable_to: A set of platforms this iteration can export to.
+    :vartype exportable_to: list[str]
     :ivar domain_id: Get or sets a guid of the domain the iteration has been
      trained on.
     :vartype domain_id: str
@@ -61,6 +63,7 @@ class Iteration(Model):
         'trained_at': {'readonly': True},
         'project_id': {'readonly': True},
         'exportable': {'readonly': True},
+        'exportable_to': {'readonly': True},
         'domain_id': {'readonly': True},
         'classification_type': {'readonly': True},
         'training_type': {'readonly': True},
@@ -77,6 +80,7 @@ class Iteration(Model):
         'trained_at': {'key': 'trainedAt', 'type': 'iso-8601'},
         'project_id': {'key': 'projectId', 'type': 'str'},
         'exportable': {'key': 'exportable', 'type': 'bool'},
+        'exportable_to': {'key': 'exportableTo', 'type': '[str]'},
         'domain_id': {'key': 'domainId', 'type': 'str'},
         'classification_type': {'key': 'classificationType', 'type': 'str'},
         'training_type': {'key': 'trainingType', 'type': 'str'},
@@ -94,6 +98,7 @@ class Iteration(Model):
         self.trained_at = None
         self.project_id = None
         self.exportable = None
+        self.exportable_to = None
         self.domain_id = None
         self.classification_type = None
         self.training_type = None
