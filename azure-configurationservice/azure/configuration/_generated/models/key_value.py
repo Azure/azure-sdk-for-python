@@ -46,7 +46,7 @@ class KeyValue(Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'key': {'key': 'key', 'type': 'str'},
         'label': {'key': 'label', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        'content_type': {'key': 'content_type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
         'last_modified': {'key': 'last_modified', 'type': 'iso-8601'},
         'locked': {'key': 'locked', 'type': 'bool'},

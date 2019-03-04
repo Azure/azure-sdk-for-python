@@ -103,11 +103,11 @@ class AzureConfigurationClientImp(object):
                 # Construct parameters
                 query_parameters = {}
                 if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, '[str]', div=',', max_items=5)
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
                 if key is not None:
-                    query_parameters['key'] = self._serialize.query("key", key, '[str]', div=',')
+                    query_parameters['key'] = self._serialize.query("key", key, 'str')
                 if fields is not None:
-                    query_parameters['fields'] = self._serialize.query("fields", fields, '[str]', div=',')
+                    query_parameters['fields'] = self._serialize.query("fields", fields, 'str', div=',')
 
             else:
                 url = next_link

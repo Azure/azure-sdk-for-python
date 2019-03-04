@@ -79,6 +79,11 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        if_none_match = {'If-None-Match':'*'}
+        if custom_headers is None:
+            custom_headers = if_none_match
+        elif custom_headers.get('If-None-Match', '*') == '*':
+            custom_headers.update(if_none_match)
         return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
     
     def update_key_value(
@@ -86,6 +91,25 @@ class AzureConfigurationClient(object):
         """Update a KeyValue.
 
         Update a KeyValue.
+
+        :param key_value:
+        :type key_value: ~azure.configurationservice.models.KeyValue
+        :param key: string
+        :type key: str
+        :param label:
+        :type label: str
+        :param dict custom_headers: headers that will be added to the request
+        :return: KeyValue
+        :rtype: ~azure.configurationservice.models.KeyValue
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
+    
+    def set_key_value(
+            self, key_value, key, label="%00", custom_headers=None):
+        """Set a KeyValue.
+
+        Create or update a KeyValue.
 
         :param key_value:
         :type key_value: ~azure.configurationservice.models.KeyValue
