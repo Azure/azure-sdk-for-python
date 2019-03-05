@@ -513,9 +513,11 @@ from .csm_usage_quota_paged import CsmUsageQuotaPaged
 from .web_job_paged import WebJobPaged
 from .app_service_environment_resource_paged import AppServiceEnvironmentResourcePaged
 from .stamp_capacity_paged import StampCapacityPaged
+from .inbound_environment_endpoint_paged import InboundEnvironmentEndpointPaged
 from .worker_pool_resource_paged import WorkerPoolResourcePaged
 from .sku_info_paged import SkuInfoPaged
 from .usage_paged import UsagePaged
+from .outbound_environment_endpoint_paged import OutboundEnvironmentEndpointPaged
 from .app_service_plan_paged import AppServicePlanPaged
 from .str_paged import StrPaged
 from .hybrid_connection_paged import HybridConnectionPaged
@@ -862,9 +864,11 @@ __all__ = [
     'WebJobPaged',
     'AppServiceEnvironmentResourcePaged',
     'StampCapacityPaged',
+    'InboundEnvironmentEndpointPaged',
     'WorkerPoolResourcePaged',
     'SkuInfoPaged',
     'UsagePaged',
+    'OutboundEnvironmentEndpointPaged',
     'AppServicePlanPaged',
     'StrPaged',
     'HybridConnectionPaged',
