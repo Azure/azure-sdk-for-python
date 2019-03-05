@@ -18,16 +18,13 @@ class SyncSessionStatus(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar last_sync_result: Required. Last sync result (HResult)
+    :ivar last_sync_result: Last sync result (HResult)
     :vartype last_sync_result: int
-    :ivar last_sync_timestamp: Required. Last sync timestamp
+    :ivar last_sync_timestamp: Last sync timestamp
     :vartype last_sync_timestamp: datetime
     :ivar last_sync_success_timestamp: Last sync success timestamp
     :vartype last_sync_success_timestamp: datetime
-    :ivar last_sync_per_item_error_count: Required. Last sync per item error
-     count.
+    :ivar last_sync_per_item_error_count: Last sync per item error count.
     :vartype last_sync_per_item_error_count: long
     :ivar persistent_files_not_syncing_count: Count of persistent files not
      syncing. Reserved for future use.
@@ -42,10 +39,10 @@ class SyncSessionStatus(Model):
     """
 
     _validation = {
-        'last_sync_result': {'required': True, 'readonly': True},
-        'last_sync_timestamp': {'required': True, 'readonly': True},
+        'last_sync_result': {'readonly': True},
+        'last_sync_timestamp': {'readonly': True},
         'last_sync_success_timestamp': {'readonly': True},
-        'last_sync_per_item_error_count': {'required': True, 'readonly': True},
+        'last_sync_per_item_error_count': {'readonly': True},
         'persistent_files_not_syncing_count': {'readonly': True},
         'transient_files_not_syncing_count': {'readonly': True},
         'files_not_syncing_errors': {'readonly': True},
