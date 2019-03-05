@@ -10,8 +10,12 @@
 # --------------------------------------------------------------------------
 
 from .azure_configuration_client import AzureConfigurationClient
+from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 from . import _generated
 
-__all__ = ['AzureConfigurationClient']
+__all__ = [
+    'AzureConfigurationClient',
+    'AzConfigRequestsCredentialsPolicy'
+    ]
 
 

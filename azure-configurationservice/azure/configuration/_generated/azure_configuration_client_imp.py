@@ -17,9 +17,9 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 import uuid
 from . import models
-from .utils import get_endpoint_from_connection_string
+from .. import utils
 
-from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from .. import azure_configuration_requests
 from msrest.pipeline.requests import (
     PipelineRequestsHTTPSender,
     RequestsPatchSession
@@ -43,7 +43,7 @@ class AzureConfigurationClientImpConfiguration(AzureConfiguration):
 
         if connection_string is None:
             raise ValueError("Parameter 'connection_string' must not be None.")
-        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        base_url = "https://" + utils.get_endpoint_from_connection_string(connection_string)
 
         super(AzureConfigurationClientImpConfiguration, self).__init__(base_url)
 
@@ -82,7 +82,7 @@ class AzureConfigurationClientImp(object):
             self.config.http_logger_policy  # HTTP request/response log
         ]
 
-        policies.insert(1, AzConfigRequestsCredentialsPolicy(self.config))  # Set credentials for requests based session
+        policies.insert(1, azure_configuration_requests.AzConfigRequestsCredentialsPolicy(self.config))  # Set credentials for requests based session
 
         return Pipeline(
             policies,
