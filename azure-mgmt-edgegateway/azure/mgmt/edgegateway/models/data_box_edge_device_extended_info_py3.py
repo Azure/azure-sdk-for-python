@@ -18,21 +18,17 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
     :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :param integrity_key: Required. The Channel Integrity Key (CIK) of the
-     device.
-    :type integrity_key: str
-    :param encryption_key_thumbprint: The certificate thumbprint that was used
-     to encrypt the Channel Integrity Key (CIK).
+    :param encryption_key_thumbprint: The digital signature of encrypted
+     certificate.
     :type encryption_key_thumbprint: str
-    :param encryption_key: The Channel Integrity Key (CIK) of the device.
+    :param encryption_key: The public part of the encryption certificate.
+     Client uses this to encrypt any secret.
     :type encryption_key: str
     :ivar resource_key: The Resource ID of the Resource.
     :vartype resource_key: str
@@ -42,7 +38,6 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'integrity_key': {'required': True},
         'resource_key': {'readonly': True},
     }
 
@@ -50,15 +45,13 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'integrity_key': {'key': 'properties.integrityKey', 'type': 'str'},
         'encryption_key_thumbprint': {'key': 'properties.encryptionKeyThumbprint', 'type': 'str'},
         'encryption_key': {'key': 'properties.encryptionKey', 'type': 'str'},
         'resource_key': {'key': 'properties.resourceKey', 'type': 'str'},
     }
 
-    def __init__(self, *, integrity_key: str, encryption_key_thumbprint: str=None, encryption_key: str=None, **kwargs) -> None:
+    def __init__(self, *, encryption_key_thumbprint: str=None, encryption_key: str=None, **kwargs) -> None:
         super(DataBoxEdgeDeviceExtendedInfo, self).__init__(**kwargs)
-        self.integrity_key = integrity_key
         self.encryption_key_thumbprint = encryption_key_thumbprint
         self.encryption_key = encryption_key
         self.resource_key = None

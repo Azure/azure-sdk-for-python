@@ -18,7 +18,9 @@ class PeriodicTimerSourceInfo(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param start_time: Required. The time of the day that results in a valid
-     trigger. Schedule is computed with reference to the time specified.
+     trigger. Schedule is computed with reference to the time specified upto
+     seconds. If timezone is not specified the time will considered to be in
+     device timezone. The value will always be returned as UTC time.
     :type start_time: datetime
     :param schedule: Required. Periodic frequency at which timer event needs
      to be raised. Supports daily, hourly, minutes, and seconds.
