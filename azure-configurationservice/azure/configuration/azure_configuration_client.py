@@ -13,7 +13,7 @@ class AzureConfigurationClient(object):
     def __init__(
             self, connection_string):
 
-        self._client = _generated.AzureConfigurationClientImp(connection_string)
+        self._client = _generated.AzureConfigurationClientImp(None, connection_string)
     
     def list_key_values(
             self, label=None, key=None, accept_date_time=None, fields=None, custom_headers=None):

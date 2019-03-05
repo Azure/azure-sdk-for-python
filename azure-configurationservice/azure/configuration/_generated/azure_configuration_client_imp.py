@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_configuration_service_client import AzConfigServiceClient
+from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -19,6 +19,15 @@ import uuid
 from . import models
 from .utils import get_endpoint_from_connection_string
 
+from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from msrest.pipeline.requests import (
+    PipelineRequestsHTTPSender,
+    RequestsPatchSession
+)
+from msrest.pipeline import Request, Pipeline
+from msrest.universal_http.requests import (
+    RequestsHTTPSender,
+)
 
 class AzureConfigurationClientImpConfiguration(AzureConfiguration):
     """Configuration for AzureConfigurationClientImp
@@ -55,16 +64,30 @@ class AzureConfigurationClientImp(object):
     """
 
     def __init__(
-            self, connection_string):
+            self, credentials, connection_string):
 
         self.config = AzureConfigurationClientImpConfiguration(connection_string)
-        self._client = AzConfigServiceClient(self.config)
+        self._client = ServiceClient(credentials, self.config)
+        self._client.config.pipeline = self._create_azconfig_pipeline()
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+    def _create_azconfig_pipeline(self):
+        policies = [
+            self.config.user_agent_policy,  # UserAgent policy
+            RequestsPatchSession(),         # Support deprecated operation config at the session level
+            self.config.http_logger_policy  # HTTP request/response log
+        ]
+
+        policies.insert(1, AzConfigRequestsCredentialsPolicy(self.config))  # Set credentials for requests based session
+
+        return Pipeline(
+            policies,
+            PipelineRequestsHTTPSender(RequestsHTTPSender(self.config))  # Send HTTP request using requests
+        )
 
     def list_key_values(
             self, label=None, key=None, accept_date_time=None, fields=None, custom_headers=None, raw=False, **operation_config):
