@@ -26,16 +26,16 @@ class TextOperationStatusCodes(str, Enum):
     succeeded = "Succeeded"
 
 
-class TextRecognitionResultConfidenceClass(str, Enum):
-
-    high = "High"
-    low = "Low"
-
-
 class TextRecognitionResultDimensionUnit(str, Enum):
 
     pixel = "pixel"
     inch = "inch"
+
+
+class TextRecognitionResultConfidenceClass(str, Enum):
+
+    high = "High"
+    low = "Low"
 
 
 class OcrLanguages(str, Enum):

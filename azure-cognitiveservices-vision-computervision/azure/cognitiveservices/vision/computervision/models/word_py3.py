@@ -13,15 +13,16 @@ from msrest.serialization import Model
 
 
 class Word(Model):
-    """Word.
+    """Json object representing a recognized word.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param bounding_box: Required.
+    :param bounding_box: Required. Bounding box of a recognized word.
     :type bounding_box: list[int]
-    :param text: Required.
+    :param text: Required. The text content of the word.
     :type text: str
-    :param confidence: Possible values include: 'High', 'Low'
+    :param confidence: Qualitative confidence measure. Possible values
+     include: 'High', 'Low'
     :type confidence: str or
      ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultConfidenceClass
     """
