@@ -39,11 +39,11 @@ class SnapshotsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         """List snapshots.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -68,7 +68,7 @@ class SnapshotsOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                     'poolName': self._serialize.url("pool_name", pool_name, 'str'),
                     'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -111,14 +111,14 @@ class SnapshotsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots'}
 
     def get(
-            self, resource_group, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
         """Get a snapshot.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -142,7 +142,7 @@ class SnapshotsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
@@ -181,16 +181,16 @@ class SnapshotsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
 
     def _create_initial(
-            self, body, resource_group, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
@@ -235,13 +235,13 @@ class SnapshotsOperations(object):
         return deserialized
 
     def create(
-            self, body, resource_group, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a snapshot.
 
         :param body: Snapshot object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.Snapshot
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -266,7 +266,7 @@ class SnapshotsOperations(object):
         """
         raw_result = self._create_initial(
             body=body,
-            resource_group=resource_group,
+            resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
@@ -292,14 +292,14 @@ class SnapshotsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
     def update(
-            self, resource_group, account_name, pool_name, volume_name, snapshot_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Patch a snapshot.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -327,7 +327,7 @@ class SnapshotsOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
@@ -370,16 +370,16 @@ class SnapshotsOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
 
     def _delete_initial(
-            self, resource_group, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
             'poolName': self._serialize.url("pool_name", pool_name, 'str'),
             'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
@@ -412,11 +412,11 @@ class SnapshotsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete snapshot.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -438,7 +438,7 @@ class SnapshotsOperations(object):
          :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
         """
         raw_result = self._delete_initial(
-            resource_group=resource_group,
+            resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
@@ -460,4 +460,4 @@ class SnapshotsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
