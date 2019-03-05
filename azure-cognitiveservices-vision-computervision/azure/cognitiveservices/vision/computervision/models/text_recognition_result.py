@@ -17,7 +17,7 @@ class TextRecognitionResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param page: The page number of the recognition result.
+    :param page: The 1-based page number of the recognition result.
     :type page: int
     :param clockwise_orientation: The orientation of the image in degrees in
      the clockwise direction. Range between [0, 360).
