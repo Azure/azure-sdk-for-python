@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_base import ApplicationBase
+from .directory_object import DirectoryObject
 
 
-class Application(ApplicationBase):
+class Application(DirectoryObject):
     """Active Directory application information.
 
     Variables are only populated by the server, and will be ignored when
@@ -30,6 +30,8 @@ class Application(ApplicationBase):
     :vartype deletion_timestamp: datetime
     :param object_type: Required. Constant filled by server.
     :type object_type: str
+    :param app_id: The application ID.
+    :type app_id: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -123,8 +125,6 @@ class Application(ApplicationBase):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
-    :param app_id: The application ID.
-    :type app_id: str
     """
 
     _validation = {
@@ -138,6 +138,7 @@ class Application(ApplicationBase):
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
+        'app_id': {'key': 'appId', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
@@ -168,10 +169,39 @@ class Application(ApplicationBase):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Application, self).__init__(**kwargs)
         self.app_id = kwargs.get('app_id', None)
+        self.allow_guests_sign_in = kwargs.get('allow_guests_sign_in', None)
+        self.allow_passthrough_users = kwargs.get('allow_passthrough_users', None)
+        self.app_logo_url = kwargs.get('app_logo_url', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.app_permissions = kwargs.get('app_permissions', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.error_url = kwargs.get('error_url', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
+        self.informational_urls = kwargs.get('informational_urls', None)
+        self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.known_client_applications = kwargs.get('known_client_applications', None)
+        self.logout_url = kwargs.get('logout_url', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.oauth2_allow_url_path_matching = kwargs.get('oauth2_allow_url_path_matching', None)
+        self.oauth2_permissions = kwargs.get('oauth2_permissions', None)
+        self.oauth2_require_post_response = kwargs.get('oauth2_require_post_response', None)
+        self.org_restrictions = kwargs.get('org_restrictions', None)
+        self.optional_claims = kwargs.get('optional_claims', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.pre_authorized_applications = kwargs.get('pre_authorized_applications', None)
+        self.public_client = kwargs.get('public_client', None)
+        self.publisher_domain = kwargs.get('publisher_domain', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)
+        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
+        self.sign_in_audience = kwargs.get('sign_in_audience', None)
+        self.www_homepage = kwargs.get('www_homepage', None)
         self.object_type = 'Application'

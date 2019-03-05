@@ -15,21 +15,6 @@ from .application_base import ApplicationBase
 class ApplicationCreateParameters(ApplicationBase):
     """Request parameters for creating a new application.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -125,17 +110,7 @@ class ApplicationCreateParameters(ApplicationBase):
     :type www_homepage: str
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-        'object_type': {'required': True},
-    }
-
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
@@ -170,4 +145,3 @@ class ApplicationCreateParameters(ApplicationBase):
 
     def __init__(self, **kwargs):
         super(ApplicationCreateParameters, self).__init__(**kwargs)
-        self.object_type = 'ApplicationCreateParameters'

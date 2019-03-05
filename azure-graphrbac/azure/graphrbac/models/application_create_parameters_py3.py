@@ -15,21 +15,6 @@ from .application_base_py3 import ApplicationBase
 class ApplicationCreateParameters(ApplicationBase):
     """Request parameters for creating a new application.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -125,17 +110,7 @@ class ApplicationCreateParameters(ApplicationBase):
     :type www_homepage: str
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-        'object_type': {'required': True},
-    }
-
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
@@ -168,6 +143,5 @@ class ApplicationCreateParameters(ApplicationBase):
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
-        super(ApplicationCreateParameters, self).__init__(additional_properties=additional_properties, allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, display_name=display_name, error_url=error_url, homepage=homepage, identifier_uris=identifier_uris, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
-        self.object_type = 'ApplicationCreateParameters'
+    def __init__(self, *, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+        super(ApplicationCreateParameters, self).__init__(allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, display_name=display_name, error_url=error_url, homepage=homepage, identifier_uris=identifier_uris, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)

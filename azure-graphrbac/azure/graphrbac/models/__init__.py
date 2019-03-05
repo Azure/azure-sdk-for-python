@@ -37,7 +37,9 @@ try:
     from .group_get_member_groups_parameters_py3 import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters_py3 import CheckGroupMembershipParameters
     from .check_group_membership_result_py3 import CheckGroupMembershipResult
+    from .service_principal_base_py3 import ServicePrincipalBase
     from .service_principal_create_parameters_py3 import ServicePrincipalCreateParameters
+    from .service_principal_update_parameters_py3 import ServicePrincipalUpdateParameters
     from .service_principal_py3 import ServicePrincipal
     from .password_profile_py3 import PasswordProfile
     from .user_base_py3 import UserBase
@@ -77,7 +79,9 @@ except (SyntaxError, ImportError):
     from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
     from .check_group_membership_parameters import CheckGroupMembershipParameters
     from .check_group_membership_result import CheckGroupMembershipResult
+    from .service_principal_base import ServicePrincipalBase
     from .service_principal_create_parameters import ServicePrincipalCreateParameters
+    from .service_principal_update_parameters import ServicePrincipalUpdateParameters
     from .service_principal import ServicePrincipal
     from .password_profile import PasswordProfile
     from .user_base import UserBase
@@ -131,7 +135,9 @@ __all__ = [
     'GroupGetMemberGroupsParameters',
     'CheckGroupMembershipParameters',
     'CheckGroupMembershipResult',
+    'ServicePrincipalBase',
     'ServicePrincipalCreateParameters',
+    'ServicePrincipalUpdateParameters',
     'ServicePrincipal',
     'PasswordProfile',
     'UserBase',

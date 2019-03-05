@@ -178,7 +178,8 @@ class ServicePrincipalsOperations(object):
         :param object_id: The object ID of the service principal to delete.
         :type object_id: str
         :param parameters: Parameters to update a service principal.
-        :type parameters: ~azure.graphrbac.models.ServicePrincipal
+        :type parameters:
+         ~azure.graphrbac.models.ServicePrincipalUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -212,7 +213,7 @@ class ServicePrincipalsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ServicePrincipal')
+        body_content = self._serialize.body(parameters, 'ServicePrincipalUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

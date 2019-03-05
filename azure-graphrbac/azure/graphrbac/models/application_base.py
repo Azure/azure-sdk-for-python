@@ -9,31 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from msrest.serialization import Model
 
 
-class ApplicationBase(DirectoryObject):
-    """Common properties used by GET, POST and PATCH.
+class ApplicationBase(Model):
+    """Active Directive Application common properties shared among GET, POST and
+    PATCH.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ApplicationCreateParameters, ApplicationUpdateParameters,
-    Application
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -129,17 +111,7 @@ class ApplicationBase(DirectoryObject):
     :type www_homepage: str
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-        'object_type': {'required': True},
-    }
-
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
@@ -170,10 +142,6 @@ class ApplicationBase(DirectoryObject):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'object_type': {'ApplicationCreateParameters': 'ApplicationCreateParameters', 'ApplicationUpdateParameters': 'ApplicationUpdateParameters', 'Application': 'Application'}
     }
 
     def __init__(self, **kwargs):
@@ -208,4 +176,3 @@ class ApplicationBase(DirectoryObject):
         self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
         self.sign_in_audience = kwargs.get('sign_in_audience', None)
         self.www_homepage = kwargs.get('www_homepage', None)
-        self.object_type = 'ApplicationBase'

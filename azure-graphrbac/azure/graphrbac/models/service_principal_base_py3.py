@@ -9,13 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_principal_base import ServicePrincipalBase
+from msrest.serialization import Model
 
 
-class ServicePrincipalCreateParameters(ServicePrincipalBase):
-    """Request parameters for creating a new service principal.
-
-    All required parameters must be populated in order to send to Azure.
+class ServicePrincipalBase(Model):
+    """Active Directory service principal common perperties shared among GET, POST
+    and PATCH.
 
     :param key_credentials: The collection of key credentials associated with
      the service principal.
@@ -32,13 +31,7 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
     :param tags: Optional list of tags that you can apply to your service
      principals. Not nullable.
     :type tags: list[str]
-    :param app_id: Required. The application ID.
-    :type app_id: str
     """
-
-    _validation = {
-        'app_id': {'required': True},
-    }
 
     _attribute_map = {
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
@@ -46,9 +39,12 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
         'service_principal_type': {'key': 'servicePrincipalType', 'type': 'str'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'app_id': {'key': 'appId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
-        self.app_id = kwargs.get('app_id', None)
+    def __init__(self, *, key_credentials=None, password_credentials=None, service_principal_type: str=None, account_enabled: str=None, tags=None, **kwargs) -> None:
+        super(ServicePrincipalBase, self).__init__(**kwargs)
+        self.key_credentials = key_credentials
+        self.password_credentials = password_credentials
+        self.service_principal_type = service_principal_type
+        self.account_enabled = account_enabled
+        self.tags = tags

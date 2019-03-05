@@ -12,10 +12,8 @@
 from .service_principal_base import ServicePrincipalBase
 
 
-class ServicePrincipalCreateParameters(ServicePrincipalBase):
-    """Request parameters for creating a new service principal.
-
-    All required parameters must be populated in order to send to Azure.
+class ServicePrincipalUpdateParameters(ServicePrincipalBase):
+    """Request parameters for update an existing service principal.
 
     :param key_credentials: The collection of key credentials associated with
      the service principal.
@@ -32,13 +30,7 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
     :param tags: Optional list of tags that you can apply to your service
      principals. Not nullable.
     :type tags: list[str]
-    :param app_id: Required. The application ID.
-    :type app_id: str
     """
-
-    _validation = {
-        'app_id': {'required': True},
-    }
 
     _attribute_map = {
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
@@ -46,9 +38,7 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
         'service_principal_type': {'key': 'servicePrincipalType', 'type': 'str'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'app_id': {'key': 'appId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
-        self.app_id = kwargs.get('app_id', None)
+        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)

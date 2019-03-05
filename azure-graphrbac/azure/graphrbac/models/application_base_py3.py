@@ -9,31 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object_py3 import DirectoryObject
+from msrest.serialization import Model
 
 
-class ApplicationBase(DirectoryObject):
-    """Common properties used by GET, POST and PATCH.
+class ApplicationBase(Model):
+    """Active Directive Application common properties shared among GET, POST and
+    PATCH.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ApplicationCreateParameters, ApplicationUpdateParameters,
-    Application
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -129,17 +111,7 @@ class ApplicationBase(DirectoryObject):
     :type www_homepage: str
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-        'object_type': {'required': True},
-    }
-
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
@@ -172,12 +144,8 @@ class ApplicationBase(DirectoryObject):
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'object_type': {'ApplicationCreateParameters': 'ApplicationCreateParameters', 'ApplicationUpdateParameters': 'ApplicationUpdateParameters', 'Application': 'Application'}
-    }
-
-    def __init__(self, *, additional_properties=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
-        super(ApplicationBase, self).__init__(additional_properties=additional_properties, **kwargs)
+    def __init__(self, *, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+        super(ApplicationBase, self).__init__(**kwargs)
         self.allow_guests_sign_in = allow_guests_sign_in
         self.allow_passthrough_users = allow_passthrough_users
         self.app_logo_url = app_logo_url
@@ -208,4 +176,3 @@ class ApplicationBase(DirectoryObject):
         self.saml_metadata_url = saml_metadata_url
         self.sign_in_audience = sign_in_audience
         self.www_homepage = www_homepage
-        self.object_type = 'ApplicationBase'
