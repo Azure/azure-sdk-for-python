@@ -312,7 +312,7 @@ class MarketplaceAgreementsOperations(object):
 
     def get_agreement(
             self, publisher_id, offer_id, plan_id, custom_headers=None, raw=False, **operation_config):
-        """Get marketplace agreements.
+        """Get marketplace agreement.
 
         :param publisher_id: Publisher identifier string of image being
          deployed.
@@ -378,7 +378,7 @@ class MarketplaceAgreementsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """List marketplace agreements.
+        """List marketplace agreements in the subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
