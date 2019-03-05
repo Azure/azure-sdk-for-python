@@ -24,25 +24,25 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. The identity type. Default value: "SystemAssigned" .
-    :vartype type: str
+    :param type: Required. The identity type. Possible values include: 'None',
+     'SystemAssigned'
+    :type type: str or ~azure.mgmt.search.models.IdentityType
     """
 
     _validation = {
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'IdentityType'},
     }
-
-    type = "SystemAssigned"
 
     def __init__(self, **kwargs):
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = kwargs.get('type', None)

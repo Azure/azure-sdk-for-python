@@ -50,6 +50,12 @@ class ProvisioningState(str, Enum):
     failed = "failed"
 
 
+class IdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+
+
 class AdminKeyKind(str, Enum):
 
     primary = "primary"
