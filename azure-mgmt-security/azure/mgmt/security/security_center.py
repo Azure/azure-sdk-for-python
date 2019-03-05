@@ -28,7 +28,6 @@ from .operations.alerts_operations import AlertsOperations
 from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from .operations.adaptive_network_controls_operations import AdaptiveNetworkControlsOperations
 from .operations.topology_operations import TopologyOperations
 from .operations.allowed_connections_operations import AllowedConnectionsOperations
 from . import models
@@ -108,8 +107,6 @@ class SecurityCenter(SDKClient):
     :vartype jit_network_access_policies: azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
     :ivar external_security_solutions: ExternalSecuritySolutions operations
     :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
-    :ivar adaptive_network_controls: AdaptiveNetworkControls operations
-    :vartype adaptive_network_controls: azure.mgmt.security.operations.AdaptiveNetworkControlsOperations
     :ivar topology: Topology operations
     :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar allowed_connections: AllowedConnections operations
@@ -165,8 +162,6 @@ class SecurityCenter(SDKClient):
         self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.external_security_solutions = ExternalSecuritySolutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.adaptive_network_controls = AdaptiveNetworkControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topology = TopologyOperations(
             self._client, self.config, self._serialize, self._deserialize)
