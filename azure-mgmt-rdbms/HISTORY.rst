@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.7.0 (2019-03-01)
+++++++++++++++++++
+
+**Features (MariaDB only)**
+
+- Model ServerUpdateParameters has a new parameter replication_role
+- Model Server has a new parameter master_server_id
+- Model Server has a new parameter replica_capacity
+- Model Server has a new parameter replication_role
+- Added operation ServersOperations.restart
+- Added operation group ReplicasOperations
+
 1.6.0 (2019-02-26)
 ++++++++++++++++++
 
