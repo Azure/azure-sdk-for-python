@@ -22,12 +22,13 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = [] 
 
-def prep_and_run_tests(targeted_packages, python_version):
+def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
+    command_array.extend(test_res)
     command_array.extend(targeted_packages)
     run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES)
 
@@ -43,10 +44,18 @@ if __name__ == '__main__':
     parser.add_argument(
         'glob_string',
         nargs='?',
-        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+        help = ('A comma separated list of glob strings that will target the top level directories that contain packages.'
                 'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'))
+
+    parser.add_argument(
+        '--junitxml',
+        dest = 'test_results',
+        help = ('The folder where the test results will be stored in xml format.'
+                'Example: --junitxml="junit/test-results.xml"'))
 
     args = parser.parse_args()
     targeted_packages = process_glob_string(args.glob_string, root_dir)
-
-    prep_and_run_tests(targeted_packages, args.python_version)
+    test_results_arg = []
+    if args.test_results:
+        test_results_arg.extend(['--junitxml', args.test_results])
+    prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
