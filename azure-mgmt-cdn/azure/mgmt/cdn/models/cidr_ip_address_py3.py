@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class CidrIpAddress(Model):
     """CIDR Ip address.
 
-    :param base_ip_address: Ip adress itself.
+    :param base_ip_address: Ip address itself.
     :type base_ip_address: str
     :param prefix_length: The length of the prefix of the ip address.
     :type prefix_length: int
