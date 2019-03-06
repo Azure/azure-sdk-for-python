@@ -24,9 +24,10 @@
 
 from hashlib import sha256
 import hmac
-import azure.cosmos.http_constants as http_constants
 import six
 import base64
+
+from . import http_constants
 
 def GetAuthorizationHeader(cosmos_client_connection,
                            verb,

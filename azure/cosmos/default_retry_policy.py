@@ -21,7 +21,7 @@
 
 """Internal class for connection reset retry policy implementation in the Azure Cosmos database service.
 """
-import azure.cosmos.http_constants as http_constants
+from . import http_constants
 
 class _DefaultRetryPolicy(object):
 

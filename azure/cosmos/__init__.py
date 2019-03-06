@@ -6,6 +6,8 @@ __all__ = ["CosmosClient", "Database", "Container", "Item"]
 
 
 from .query_iterator import QueryResultIterator
+from .cosmos_client_connection import CosmosClientConnection
+from .errors import HTTPFailure
 
 from typing import (
     Any,
@@ -24,9 +26,6 @@ from typing import (
 DatabaseId = Union["Database", Dict[str, Any], str]
 ContainerId = Union["Container", Dict[str, Any], str]
 
-from .cosmos_client_connection import CosmosClientConnection
-from .errors import HTTPFailure
-
 
 class User:
     pass
@@ -42,7 +41,8 @@ class PartitionKey(dict):
     :ivar kind: What kind of partition key is being defined
     """
 
-    def __init__(self, path: "str", kind: "str" = "Hash"):
+    def __init__(self, path, kind="Hash"):
+        # (str, str) -> None
         self.path = path
         self.kind = kind
 
@@ -55,11 +55,13 @@ class PartitionKey(dict):
         self["kind"] = value
 
     @property
-    def path(self) -> "str":
+    def path(self):
+        # () -> str
         return self["paths"][0]
 
     @path.setter
-    def path(self, value: "str"):
+    def path(self, value):
+        # (str) -> None
         self["paths"] = [value]
 
 
@@ -77,9 +79,8 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(
-        self, url: "str", key, consistency_level="Session", connection_policy=None
-    ):
+    def __init__(self, url, key, consistency_level="Session", connection_policy=None):
+        # type: (str, str, str, Any) -> None
         """ Instantiate a new CosmosClient.
 
         :param url: The URL of the Cosmos DB account.
@@ -102,9 +103,10 @@ class CosmosClient:
         )
 
     @staticmethod
-    def _get_database_link(database_or_id: DatabaseId) -> "str":
+    def _get_database_link(database_or_id):
+        # type: (DatabaseId) -> str
         if isinstance(database_or_id, str):
-            return f"dbs/{database_or_id}"
+            return "dbs/{}".format(database_or_id)
         try:
             return cast("Database", database_or_id).database_link
         except AttributeError:
@@ -114,19 +116,19 @@ class CosmosClient:
             database_id = database_or_id
         else:
             database_id = cast("Dict[str, str]", database_or_id)["id"]
-        return f"dbs/{database_id}"
+        return "dbs/{}".format(database_id)
 
     def create_database(
         self,
-        id: "str",
-        *,
+        id,
         consistency_level=None,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Database":
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+    ):
+        # type: (str, str, bool, str, AccessCondition, bool, bool) -> Database
         """Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
@@ -151,13 +153,13 @@ class CosmosClient:
 
     def get_database(
         self,
-        database: DatabaseId,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Database":
+        database,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (DatabaseId, bool, str, Dict[str, Any], bool) -> Database
         """
         Retrieve an existing database with the ID (name) `id`.
 
@@ -168,7 +170,7 @@ class CosmosClient:
         :raise `HTTPFailure`: If the given database couldn't be retrieved.
         """
         database_link = CosmosClient._get_database_link(database)
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
@@ -192,15 +194,15 @@ class CosmosClient:
 
     def list_databases(
         self,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        enable_cross_partition_query: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Iterable[Database]":
+        disable_ru_per_minute_usage=None,
+        enable_cross_partition_query=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Database]
         """
         List the databases in a Cosmos DB SQL database account.
 
@@ -210,7 +212,7 @@ class CosmosClient:
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
@@ -226,26 +228,28 @@ class CosmosClient:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        yield from [
+        for database in [
             Database(self.client_connection, properties["id"], properties=properties)
-            for properties in self.client_connection.ReadDatabases(options=request_options)
-        ]
+            for properties in self.client_connection.ReadDatabases(
+                options=request_options
+            )
+        ]:
+            yield database
 
     def list_database_properties(
         self,
-        query: "Optional[str]" = None,
-        parameters: "Optional[str]" = None,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        enable_cross_partition_query: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Iterable[Union[Dict, Any], Any]":
-
-        request_options: "Dict[str, Any]" = {}
+        query=None,
+        parameters=None,
+        disable_ru_per_minute_usage=None,
+        enable_cross_partition_query=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (str, str, bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Union[Dict[str, Any], Any]]
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
@@ -268,7 +272,11 @@ class CosmosClient:
             # the headers were misleading)
             # This needs to change for "real" implementation
             results = iter(
-                list(self.client_connection.QueryDatabases(query, options=request_options))
+                list(
+                    self.client_connection.QueryDatabases(
+                        query, options=request_options
+                    )
+                )
             )
         else:
             results = iter(
@@ -284,15 +292,15 @@ class CosmosClient:
 
     def delete_database(
         self,
-        database: DatabaseId,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
+        database,
+        disable_ru_per_minute_usage=None,
+        max_degree_parallelism=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
     ):
+        # type: (DatabaseId, bool, str, int, Dict[str, Any], AccessCondition, bool) -> None
         """
         Delete the database with the given ID (name).
 
@@ -305,7 +313,7 @@ class CosmosClient:
         :raise HTTPFailure: If the database couldn't be deleted.
         """
 
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if max_degree_parallelism is not None:
@@ -323,7 +331,7 @@ class CosmosClient:
         self.client_connection.DeleteDatabase(database_link, options=request_options)
 
 
-class Database:
+class Database(object):
     """ Represents an Azure Cosmos DB SQL API database.
 
     A database contains one or more containers, each of which can contain items,
@@ -346,14 +354,8 @@ class Database:
     * `_users`:	The addressable path of the users resource.
     """
 
-    def __init__(
-        self,
-        client_connection: "CosmosClientConnection",
-        id: "str",
-        *,
-        properties: "Optional[Dict[str, Any]]" = None,
-        response_metadata: "Optional[ResponseMetadata]" = None,
-    ):
+    def __init__(self, client_connection, id, properties=None, response_metadata=None):
+        # type: (CosmosClientConnection, str, Dict[str, Any], ResponseMetadata) -> None
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
         :param str id: ID (name) of the database.
@@ -364,30 +366,31 @@ class Database:
         self.response_metadata = response_metadata
         self.database_link = CosmosClient._get_database_link(id)
 
-    def _get_container_link(self, container_or_id: ContainerId) -> "str":
+    def _get_container_link(self, container_or_id):
+        # type: (ContainerId) -> str
         if isinstance(container_or_id, str):
-            return f"{self.database_link}/colls/{container_or_id}"
+            return "{}/colls/{}".format(self.database_link, container_or_id)
         try:
             return cast("Container", container_or_id).collection_link
         except AttributeError:
             pass
         container_id = cast("Dict[str, str]", container_or_id)["id"]
-        return f"{self.database_link}/colls/{container_id}"
+        return "{}/colls/{}".format(self.database_link, container_id)
 
     def create_container(
         self,
-        id: str,
-        partition_key: "PartitionKey",
-        *,
-        indexing_policy: "Optional[Dict[str, Any]]" = None,
-        default_ttl: "int" = None,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-        offer_throughput: "Optional[int]" = None,
-    ) -> "Container":
+        id,
+        partition_key,
+        indexing_policy=None,
+        default_ttl=None,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+        offer_throughput=None,
+    ):
+        # type: (str, PartitionKey, Dict[str, Any], int, bool, str, Dict[str, Any], AccessCondition, bool, int) -> Container
         """
         Create a new container with the given ID (name).
 
@@ -423,7 +426,7 @@ class Database:
             :name: create_container_with_settings
 
         """
-        definition: "Dict[str, Any]" = dict(id=id)
+        definition = dict(id=id)  # type: Dict[str, Any]
         if partition_key:
             definition["partitionKey"] = partition_key
         if indexing_policy:
@@ -431,7 +434,7 @@ class Database:
         if default_ttl:
             definition["defaultTtl"] = default_ttl
 
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
@@ -452,15 +455,15 @@ class Database:
 
     def delete_container(
         self,
-        container: ContainerId,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
+        container,
+        disable_ru_per_minute_usage=None,
+        max_degree_parallelism=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
     ):
+        # type: (ContainerId, bool, int, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Delete the container
 
         :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, or :class:`Container` instance.
@@ -470,7 +473,7 @@ class Database:
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if max_degree_parallelism is not None:
@@ -489,13 +492,13 @@ class Database:
 
     def get_container(
         self,
-        container: ContainerId,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Container":
+        container,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (ContainerId, bool, str, Dict[str, Any], bool) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, or a :class:`Container` instance.
@@ -514,7 +517,7 @@ class Database:
             :name: get_container
 
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
@@ -537,14 +540,14 @@ class Database:
 
     def list_containers(
         self,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Iterable[Container]":
+        disable_ru_per_minute_usage=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (bool, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
         """ List the containers in the database.
 
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
@@ -562,7 +565,7 @@ class Database:
             :name: list_containers
 
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if max_degree_parallelism is not None:
@@ -576,25 +579,26 @@ class Database:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        yield from [
+        for container in [
             Container(self.client_connection, self, container["id"], container)
             for container in self.client_connection.ReadContainers(
                 database_link=self.database_link, options=request_options
             )
-        ]
+        ]:
+            yield container
 
     def list_container_properties(
         self,
-        *,
-        query: "str" = None,
-        parameters: "str" = None,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
+        query=None,
+        parameters=None,
+        disable_ru_per_minute_usage=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
     ):
+        # type: (str, str, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
         """List properties for containers in the current database
 
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
@@ -604,7 +608,7 @@ class Database:
         :param populate_query_metrics: Enable returning query metrics in response headers.
 
     """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
@@ -627,23 +631,24 @@ class Database:
         )
 
         return QueryResultIterator(
-            result, metadata=ResponseMetadata(self.client_connection.last_response_headers)
+            result,
+            metadata=ResponseMetadata(self.client_connection.last_response_headers),
         )
 
     def reset_container_properties(
         self,
-        container: "Union[str, Container]",
-        partition_key: "PartitionKey",
-        *,
+        container,
+        partition_key,
         indexing_policy=None,
         default_ttl=None,
         conflict_resolution_policy=None,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
     ):
+        # type: (Union[str, Container], PartitionKey, str, int, str, bool, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.
@@ -664,7 +669,7 @@ class Database:
         """
         container_id = getattr(container, "id", container)
 
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
@@ -682,19 +687,22 @@ class Database:
                 "id": container_id,
                 "partitionKey": partition_key,
                 "indexingPolicy": indexing_policy,
-                "defaultTtl": int(default_ttl),
+                "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
             }.items()
             if value is not None
         }
-        collection_link = f"{self.database_link}/colls/{container_id}"
+        collection_link = "{}/colls/{}".format(self.database_link, container_id)
         self.client_connection.ReplaceContainer(
             collection_link, collection=parameters, options=request_options
         )
 
-    def get_user_link(self, id_or_user: "Union[User, str]") -> "str":
+    def get_user_link(self, id_or_user):
+        # type: (Union[User, str]) -> str
         user_link = getattr(
-            id_or_user, "user_link", f"{self.database_link}/users/{id_or_user}"
+            id_or_user,
+            "user_link",
+            "{}/users/{}".format(self.database_link, id_or_user),
         )
         return user_link
 
@@ -715,7 +723,9 @@ class Database:
 
         """
         database = cast("Database", self)
-        return database.client_connection.CreateUser(database.database_link, user, options)
+        return database.client_connection.CreateUser(
+            database.database_link, user, options
+        )
 
     def get_user(self, id):
         """ Get the specified user from the database.
@@ -729,9 +739,11 @@ class Database:
         """ Get all database users.
         """
         database = cast("Database", self)
-        yield from [User(user) for user in database.client_connection.ReadUsers()]
+        for user in [User(user) for user in database.client_connection.ReadUsers()]:
+            yield user
 
-    def list_user_properties(self, query: "str" = None, parameters=None):
+    def list_user_properties(self, query=None, parameters=None):
+        # type: (str, Any) -> List[User]
         pass
 
     def delete_user(self, user):
@@ -748,7 +760,8 @@ class Item(dict):
     The Item must include an `id` key with a value that uniquely identifies the item within the container.
     """
 
-    def __init__(self, headers: "Dict[str, Any]", data: "Dict[str, Any]"):
+    def __init__(self, headers, data):
+        # type: (Dict[str, Any], Dict[str, Any]) -> None
         super().__init__()
         self.response_headers = headers
         self.update(data)
@@ -768,37 +781,31 @@ class Container:
 
     """
 
-    def __init__(
-        self,
-        client_connection: "ClientContext",
-        database: "Union[Database, str]",
-        id: "str",
-        properties: "Optional[Dict[str, Any]]" = None,
-    ):
+    def __init__(self, client_connection, database, id, properties=None):
+        # type: (CosmosClientConnection, Union[Database, str], str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.session_token = None
         self.id = id
         self.properties = properties
         database_link = CosmosClient._get_database_link(database)
-        self.collection_link = f"{database_link}/colls/{self.id}"
+        self.collection_link = "{}/colls/{}".format(database_link, self.id)
 
-    def _get_document_link(
-        self, item_or_link: "Union[str, Dict[str, Any], Item]"
-    ) -> "str":
+    def _get_document_link(self, item_or_link):
+        # type: (Union[Dict[str, Any], str, Item]) -> str
         if isinstance(item_or_link, str):
-            return f"{self.collection_link}/docs/{item_or_link}"
+            return "{}/docs/{}".format(self.collection_link, item_or_link)
         return cast("str", cast("Item", item_or_link)["_self"])
 
     def get_item(
         self,
-        id: "str",
-        partition_key: "str",
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Item":
+        id,
+        partition_key,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (str, str, bool, str, Dict[str, Any], bool) -> Item
         """
         Get the item identified by `id`.
 
@@ -820,7 +827,7 @@ class Container:
         """
         doc_link = self._get_document_link(id)
 
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = partition_key
         if disable_ru_per_minute_usage is not None:
@@ -841,15 +848,15 @@ class Container:
 
     def list_items(
         self,
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        enable_cross_partition_query: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Iterable[Item]":
+        disable_ru_per_minute_usage=None,
+        enable_cross_partition_query=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Item]
         """ List all items in the container.
 
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
@@ -859,7 +866,7 @@ class Container:
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
@@ -879,7 +886,8 @@ class Container:
             collection_link=self.collection_link, feed_options=request_options
         )
         headers = self.client_connection.last_response_headers
-        yield from [Item(headers=headers, data=item) for item in items]
+        for item in [Item(headers=headers, data=item) for item in items]:
+            yield item
 
     def query_items_change_feed(self, options=None):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
@@ -888,22 +896,23 @@ class Container:
             self.collection_link, options=options
         )
         headers = self.client_connection.last_response_headers
-        yield from [Item(headers, item) for item in items]
+        for item in items:
+            yield Item(headers, item)
 
     def query_items(
         self,
-        query: "str",
-        parameters: "Optional[List]" = None,
-        *,
-        partition_key: "Optional[str]" = None,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        enable_cross_partition_query: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        max_item_count: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "QueryResultIterator":
+        query,
+        parameters=None,
+        partition_key=None,
+        disable_ru_per_minute_usage=None,
+        enable_cross_partition_query=None,
+        max_degree_parallelism=None,
+        max_item_count=None,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+    ):
+        # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool) -> QueryResultIterator
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -938,7 +947,7 @@ class Container:
             :name: query_items_param
 
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
@@ -969,15 +978,15 @@ class Container:
 
     def replace_item(
         self,
-        item: "Union[Item, str]",
-        body: "Dict[str, Any]",
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Item":
+        item,
+        body,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+    ):
+        # type: (Union[Item, str], Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Item
         """ Replaces the specified item if it exists in the container.
 
         :param body: A dict-like object representing the item to replace.
@@ -988,7 +997,7 @@ class Container:
         :raises `HTTPFailure`:
         """
         item_link = self._get_document_link(item)
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
@@ -1007,14 +1016,14 @@ class Container:
 
     def upsert_item(
         self,
-        body: "Dict[str, Any]",
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Item":
+        body,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+    ):
+        # type: (Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Item
         """ Insert or update the specified item.
 
         :param body: A dict-like object representing the item to update or insert.
@@ -1026,7 +1035,7 @@ class Container:
 
         If the item already exists in the container, it is replaced. If it does not, it is inserted.
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
@@ -1046,14 +1055,14 @@ class Container:
 
     def create_item(
         self,
-        body: "Dict[str, Any]",
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "Item":
+        body,
+        disable_ru_per_minute_usage=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+    ):
+        # type: (Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Item
         """ Create an item in the container.
 
         :param body: A dict-like object representing the item to create.
@@ -1067,7 +1076,7 @@ class Container:
         To update or replace an existing item, use the :func:`Container.upsert_item` method.
 
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
@@ -1089,16 +1098,16 @@ class Container:
 
     def delete_item(
         self,
-        item: "Union[Item, Dict[str, Any], str]",
-        partition_key: "str",
-        *,
-        disable_ru_per_minute_usage: "Optional[bool]" = None,
-        max_degree_parallelism: "Optional[int]" = None,
-        session_token: "Optional[str]" = None,
-        initial_headers: "Optional[Dict[str, Any]]" = None,
-        access_condition: "Optional[AccessCondition]" = None,
-        populate_query_metrics: "Optional[bool]" = None,
-    ) -> "None":
+        item,
+        partition_key,
+        disable_ru_per_minute_usage=None,
+        max_degree_parallelism=None,
+        session_token=None,
+        initial_headers=None,
+        access_condition=None,
+        populate_query_metrics=None,
+    ):
+        # type: (Union[Item, Dict[str, Any], str], str, bool, int, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Delete the specified item from the container.
 
         :param item: The :class:`Item` to delete from the container.
@@ -1111,7 +1120,7 @@ class Container:
         :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
 
         """
-        request_options: "Dict[str, Any]" = {}
+        request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = partition_key
         if disable_ru_per_minute_usage is not None:

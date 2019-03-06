@@ -29,11 +29,11 @@ import uuid
 import urllib
 import binascii
 
-import azure.cosmos.auth as auth
-import azure.cosmos.documents as documents
-import azure.cosmos.http_constants as http_constants
-import azure.cosmos.constants as constants
-import azure.cosmos.runtime_constants as runtime_constants
+from . import auth
+from . import documents
+from . import http_constants
+from . import constants
+from . import runtime_constants
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote

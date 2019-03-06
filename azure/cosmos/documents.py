@@ -22,7 +22,7 @@
 """AzureDocument classes and enums for the Azure Cosmos database service.
 """
 
-import azure.cosmos.retry_options as retry_options
+from . import retry_options
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.

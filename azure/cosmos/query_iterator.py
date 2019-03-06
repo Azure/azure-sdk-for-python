@@ -1,7 +1,9 @@
-import collections.abc
-
-
-class QueryResultIterator(collections.abc.Iterator):
+try:
+    from collections.abc import Iterator
+except ImportError:
+    from collections import Iterator
+    
+class QueryResultIterator(Iterator):
     """ Iterator over query results from Azure Cosmos SQL DB
 
     The type of each item returned by the iterator depends on the specific
@@ -18,3 +20,5 @@ class QueryResultIterator(collections.abc.Iterator):
 
     def __iter__(self):
         return self
+
+    next = __next__

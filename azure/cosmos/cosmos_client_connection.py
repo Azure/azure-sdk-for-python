@@ -21,22 +21,21 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-
 import requests
 
 import six
-import azure.cosmos.base as base
-import azure.cosmos.documents as documents
-import azure.cosmos.constants as constants
-import azure.cosmos.http_constants as http_constants
-import azure.cosmos.query_iterable as query_iterable
-import azure.cosmos.runtime_constants as runtime_constants
-import azure.cosmos.request_object as request_object
-import azure.cosmos.synchronized_request as synchronized_request
-import azure.cosmos.global_endpoint_manager as global_endpoint_manager
-import azure.cosmos.routing.routing_map_provider as routing_map_provider
-import azure.cosmos.session as session
-import azure.cosmos.utils as utils
+from . import base
+from . import documents
+from . import constants
+from . import http_constants
+from . import query_iterable
+from . import runtime_constants
+from . import request_object
+from . import synchronized_request
+from . import global_endpoint_manager
+from .routing import routing_map_provider as routing_map_provider
+from . import session
+from . import utils
 
 class CosmosClientConnection(object):
     """Represents a document client.
