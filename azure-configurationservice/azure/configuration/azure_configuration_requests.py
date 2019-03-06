@@ -23,38 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
-import logging
-import threading
-from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-import warnings
-
-from oauthlib import oauth2
-import requests
-from requests.models import CONTENT_CHUNK_SIZE
-
-from urllib3 import Retry  # Needs requests 2.16 at least to be safe
-
-from msrest.exceptions import (
-    TokenExpiredError,
-    ClientRequestError,
-    raise_with_traceback
-)
-from msrest.universal_http import ClientRequest, ClientResponse
-from msrest.universal_http.requests import BasicRequestsHTTPSender
-from msrest.pipeline import HTTPSender, HTTPPolicy, Response, Request
+from msrest.pipeline import HTTPPolicy
 
 from .utils import parse_connection_string, get_current_utc_time
 import hashlib
 import base64
 import hmac
-
-_LOGGER = logging.getLogger(__name__)
-
 
 class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.

@@ -1,4 +1,14 @@
 from . import _generated
+from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from msrest.pipeline.requests import (
+    PipelineRequestsHTTPSender,
+    RequestsPatchSession
+)
+
+from msrest.pipeline import Request, Pipeline
+from msrest.universal_http.requests import (
+    RequestsHTTPSender,
+)
 
 class AzureConfigurationClient(object):
     """Represents an azconfig client
@@ -14,7 +24,22 @@ class AzureConfigurationClient(object):
             self, connection_string):
 
         self._client = _generated.AzureConfigurationClientImp(None, connection_string)
+        self._client._client.config.pipeline = self._create_azconfig_pipeline()
     
+    def _create_azconfig_pipeline(self):
+        policies = [
+            self._client.config.user_agent_policy,  # UserAgent policy
+            RequestsPatchSession(),         # Support deprecated operation config at the session level
+            self._client.config.http_logger_policy  # HTTP request/response log
+        ]
+
+        policies.insert(1, AzConfigRequestsCredentialsPolicy(self._client.config))  # Set credentials for requests based session
+
+        return Pipeline(
+            policies,
+            PipelineRequestsHTTPSender(RequestsHTTPSender(self._client.config))  # Send HTTP request using requests
+        )
+
     def list_key_values(
             self, label=None, key=None, accept_date_time=None, fields=None, custom_headers=None):
         """List key values.
