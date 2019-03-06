@@ -225,7 +225,7 @@ class OrdersOperations(object):
             self, device_name, order, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an order.
 
-        :param device_name: The order details of a device.
+        :param device_name: The device name.
         :type device_name: str
         :param order: The order to be created or updated.
         :type order: ~azure.mgmt.edgegateway.models.Order
