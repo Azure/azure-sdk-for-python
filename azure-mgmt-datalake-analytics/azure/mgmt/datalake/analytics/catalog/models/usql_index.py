@@ -27,7 +27,7 @@ class USqlIndex(Model):
      ~azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo
     :param partition_function: partition function ID for the index.
     :type partition_function: str
-    :param partition_key_list: the list of partion keys in the index
+    :param partition_key_list: the list of partition keys in the index
     :type partition_key_list: list[str]
     :param stream_names: the list of full paths to the streams that contain
      this index in the DataLake account.

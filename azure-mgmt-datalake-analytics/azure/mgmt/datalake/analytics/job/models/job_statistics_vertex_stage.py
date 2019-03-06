@@ -32,7 +32,7 @@ class JobStatisticsVertexStage(Model):
     :ivar duplicate_discard_count: The number of duplicates that were
      discarded.
     :vartype duplicate_discard_count: int
-    :ivar failed_count: The number of failures that occured in this stage.
+    :ivar failed_count: The number of failures that occurred in this stage.
     :vartype failed_count: int
     :ivar max_vertex_data_read: The maximum amount of data read in a single
      vertex, in bytes.

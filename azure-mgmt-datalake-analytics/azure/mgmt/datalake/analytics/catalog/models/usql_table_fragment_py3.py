@@ -29,6 +29,8 @@ class USqlTableFragment(Model):
     :type row_count: long
     :param create_date: the creation time of the table fragment.
     :type create_date: datetime
+    :param stream_path: the relative path for the table fragment location.
+    :type stream_path: str
     """
 
     _attribute_map = {
@@ -38,9 +40,10 @@ class USqlTableFragment(Model):
         'size': {'key': 'size', 'type': 'long'},
         'row_count': {'key': 'rowCount', 'type': 'long'},
         'create_date': {'key': 'createDate', 'type': 'iso-8601'},
+        'stream_path': {'key': 'streamPath', 'type': 'str'},
     }
 
-    def __init__(self, *, parent_id: str=None, fragment_id: str=None, index_id: int=None, size: int=None, row_count: int=None, create_date=None, **kwargs) -> None:
+    def __init__(self, *, parent_id: str=None, fragment_id: str=None, index_id: int=None, size: int=None, row_count: int=None, create_date=None, stream_path: str=None, **kwargs) -> None:
         super(USqlTableFragment, self).__init__(**kwargs)
         self.parent_id = parent_id
         self.fragment_id = fragment_id
@@ -48,3 +51,4 @@ class USqlTableFragment(Model):
         self.size = size
         self.row_count = row_count
         self.create_date = create_date
+        self.stream_path = stream_path
