@@ -11,6 +11,8 @@ matrix:
   allow_failures:
     - python: "nightly"
   fast_finish: true
+before_install:	
+  - if [[ -n "$TRAVIS_TAG" && "$TRAVIS_PYTHON_VERSION" != "3.6" ]]; then travis_terminate 0; fi; # Deploy on 3.6  
 install:
   - python scripts/dev_setup.py
 script: 
