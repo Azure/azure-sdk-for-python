@@ -9,5 +9,33 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.4.0"
+from enum import Enum
 
+
+class SkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class SkuTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class IPAction(str, Enum):
+
+    accept = "Accept"
+    reject = "Reject"
+
+
+class NetworkRuleIPAction(str, Enum):
+
+    allow = "Allow"
+
+
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"

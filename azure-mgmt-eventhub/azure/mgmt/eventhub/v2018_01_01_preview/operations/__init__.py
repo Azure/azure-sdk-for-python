@@ -9,5 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.4.0"
+from .operations import Operations
+from .clusters_operations import ClustersOperations
+from .configuration_operations import ConfigurationOperations
+from .namespaces_operations import NamespacesOperations
 
+__all__ = [
+    'Operations',
+    'ClustersOperations',
+    'ConfigurationOperations',
+    'NamespacesOperations',
+]
