@@ -203,6 +203,9 @@ sdist/
 develop-eggs/
 .installed.cfg
 
+## ignore mypy cache
+.mypy_cache/
+
 ## ignore pypi credential config file
 config.pypirc
 
