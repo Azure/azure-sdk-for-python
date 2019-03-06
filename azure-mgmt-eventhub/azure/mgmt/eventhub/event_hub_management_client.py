@@ -52,7 +52,7 @@ class EventHubManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class EventHubManagementClient(SDKClient):
+class EventHubManagementClient(MultiApiClientMixin, SDKClient):
     """Azure Event Hubs client
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
