@@ -611,7 +611,7 @@ class LargeFaceListOperations(object):
         if user_data is not None:
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
-            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
+            query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}
