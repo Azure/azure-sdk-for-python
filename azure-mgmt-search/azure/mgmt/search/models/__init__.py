@@ -42,6 +42,7 @@ from .search_management_client_enums import (
     HostingMode,
     SearchServiceStatus,
     ProvisioningState,
+    IdentityType,
     AdminKeyKind,
 )
 
@@ -65,5 +66,6 @@ __all__ = [
     'HostingMode',
     'SearchServiceStatus',
     'ProvisioningState',
+    'IdentityType',
     'AdminKeyKind',
 ]
