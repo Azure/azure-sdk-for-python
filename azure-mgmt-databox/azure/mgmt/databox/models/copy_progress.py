@@ -23,8 +23,8 @@ class CopyProgress(Model):
     :vartype storage_account_name: str
     :ivar account_id: Id of the account where the data needs to be uploaded.
     :vartype account_id: str
-    :ivar bytes_sent_to_cloud: Amount of data uploaded by the job as of now.
-    :vartype bytes_sent_to_cloud: long
+    :ivar bytes_sent_to_cloud:
+    :vartype bytes_sent_to_cloud: str
     :ivar total_bytes_to_process: Total amount of data to be processed by the
      job.
     :vartype total_bytes_to_process: long
@@ -47,7 +47,7 @@ class CopyProgress(Model):
     _attribute_map = {
         'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
         'account_id': {'key': 'accountId', 'type': 'str'},
-        'bytes_sent_to_cloud': {'key': 'bytesSentToCloud', 'type': 'long'},
+        'bytes_sent_to_cloud': {'key': 'bytesSentToCloud', 'type': 'str'},
         'total_bytes_to_process': {'key': 'totalBytesToProcess', 'type': 'long'},
         'files_processed': {'key': 'filesProcessed', 'type': 'long'},
         'total_files_to_process': {'key': 'totalFilesToProcess', 'type': 'long'},
