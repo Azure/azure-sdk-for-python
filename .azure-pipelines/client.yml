@@ -42,7 +42,7 @@ jobs:
           artifactName: packages
 
   - job: 'Analyze'
-
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
     dependsOn:
       - 'Build'
 
@@ -85,6 +85,8 @@ jobs:
           artifactName: reports
 
   - job: 'Generic_Tests'
+  
+    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     dependsOn:
       - 'Build'
@@ -170,7 +172,9 @@ jobs:
   - job: Test_Alpha_Python
 
     timeoutInMinutes: 90
-    condition: eq(variables['long_running_tests'], True)
+    
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+
     dependsOn:
       - 'Build'
 
@@ -202,9 +206,11 @@ jobs:
   - job: Test_PyPy
 
     timeoutInMinutes: 90
-    condition: eq(variables['long_running_tests'], True)
+
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+    
     dependsOn:
-      - 'Build'
+      - 'Test_Alpha_Python'
 
     pool:
       vmImage: 'ubuntu-16.04'
