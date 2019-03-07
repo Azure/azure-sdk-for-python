@@ -61,7 +61,6 @@ class ServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -76,8 +75,9 @@ class ServicesOperations(object):
         body_content = self._serialize.body(service, 'SearchService')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -210,7 +210,6 @@ class ServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -225,8 +224,9 @@ class ServicesOperations(object):
         body_content = self._serialize.body(service, 'SearchService')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -290,7 +290,7 @@ class ServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -301,8 +301,8 @@ class ServicesOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -365,6 +365,7 @@ class ServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -375,8 +376,8 @@ class ServicesOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204, 404]:
             exp = CloudError(response)
@@ -435,7 +436,7 @@ class ServicesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -446,8 +447,9 @@ class ServicesOperations(object):
                 header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -466,80 +468,6 @@ class ServicesOperations(object):
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices'}
-
-    def list_by_subscription(
-            self, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all Search services in the given subscription.
-
-        :param search_management_request_options: Additional parameters for
-         the operation
-        :type search_management_request_options:
-         ~azure.mgmt.search.models.SearchManagementRequestOptions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SearchService
-        :rtype:
-         ~azure.mgmt.search.models.SearchServicePaged[~azure.mgmt.search.models.SearchService]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        client_request_id = None
-        if search_management_request_options is not None:
-            client_request_id = search_management_request_options.client_request_id
-
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-            if client_request_id is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Search/searchServices'}
 
     def check_name_availability(
             self, name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -584,7 +512,6 @@ class ServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -599,8 +526,9 @@ class ServicesOperations(object):
         body_content = self._serialize.body(check_name_availability_input, 'CheckNameAvailabilityInput')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

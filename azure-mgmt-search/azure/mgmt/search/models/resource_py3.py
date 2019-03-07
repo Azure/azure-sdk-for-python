@@ -32,8 +32,6 @@ class Resource(Model):
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
     :type tags: dict[str, str]
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.search.models.Identity
     """
 
     _validation = {
@@ -48,14 +46,12 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = location
         self.tags = tags
-        self.identity = identity
