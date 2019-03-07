@@ -24,9 +24,9 @@ class Diagnostics(Model):
      'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated', 'UserWarning'
     :vartype severity: str or
      ~azure.mgmt.datalake.analytics.job.models.SeverityTypes
-    :ivar line_number: The line number the error occured on.
+    :ivar line_number: The line number the error occurred on.
     :vartype line_number: int
-    :ivar column_number: The column where the error occured.
+    :ivar column_number: The column where the error occurred.
     :vartype column_number: int
     :ivar start: The starting index of the error.
     :vartype start: int

@@ -27,9 +27,15 @@ class CreateJobParameters(BaseJobParameters):
     :param name: Required. The friendly name of the job to submit.
     :type name: str
     :param degree_of_parallelism: The degree of parallelism to use for this
-     job. This must be greater than 0, if set to less than 0 it will default to
-     1. Default value: 1 .
+     job. At most one of degreeOfParallelism and degreeOfParallelismPercent
+     should be specified. If none, a default value of 1 will be used for
+     degreeOfParallelism. Default value: 1 .
     :type degree_of_parallelism: int
+    :param degree_of_parallelism_percent: the degree of parallelism in
+     percentage used for this job. At most one of degreeOfParallelism and
+     degreeOfParallelismPercent should be specified. If none, a default value
+     of 1 will be used for degreeOfParallelism.
+    :type degree_of_parallelism_percent: float
     :param priority: The priority value to use for the current job. Lower
      numbers have a higher priority. By default, a job has a priority of 1000.
      This must be greater than 0.
@@ -54,6 +60,7 @@ class CreateJobParameters(BaseJobParameters):
         'properties': {'key': 'properties', 'type': 'CreateJobProperties'},
         'name': {'key': 'name', 'type': 'str'},
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
+        'degree_of_parallelism_percent': {'key': 'degreeOfParallelismPercent', 'type': 'float'},
         'priority': {'key': 'priority', 'type': 'int'},
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
@@ -63,6 +70,7 @@ class CreateJobParameters(BaseJobParameters):
         super(CreateJobParameters, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.degree_of_parallelism = kwargs.get('degree_of_parallelism', 1)
+        self.degree_of_parallelism_percent = kwargs.get('degree_of_parallelism_percent', None)
         self.priority = kwargs.get('priority', None)
         self.log_file_patterns = kwargs.get('log_file_patterns', None)
         self.related = kwargs.get('related', None)

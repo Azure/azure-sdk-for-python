@@ -41,6 +41,8 @@ class JobState(str, Enum):
     starting = "Starting"
     paused = "Paused"
     waiting_for_capacity = "WaitingForCapacity"
+    yielded = "Yielded"
+    finalizing = "Finalizing"
 
 
 class JobResult(str, Enum):
