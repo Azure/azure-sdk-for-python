@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.4.0"
+from msrest.serialization import Model
 
+
+class Subnet(Model):
+    """Properties supplied for Subnet.
+
+    :param id: Resource ID of Virtual Network Subnet
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Subnet, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

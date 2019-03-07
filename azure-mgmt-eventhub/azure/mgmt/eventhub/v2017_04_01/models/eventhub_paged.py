@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.4.0"
+from msrest.paging import Paged
 
+
+class EventhubPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Eventhub <azure.mgmt.eventhub.v2017_04_01.models.Eventhub>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Eventhub]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EventhubPaged, self).__init__(*args, **kwargs)
