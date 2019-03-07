@@ -32,8 +32,6 @@ class SearchService(Resource):
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
     :type tags: dict[str, str]
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.search.models.Identity
     :param replica_count: The number of replicas in the Search service. If
      specified, it must be a value between 1 and 12 inclusive for standard SKUs
      or between 1 and 3 inclusive for basic SKU. Default value: 1 .
@@ -103,7 +101,6 @@ class SearchService(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
         'replica_count': {'key': 'properties.replicaCount', 'type': 'int'},
         'partition_count': {'key': 'properties.partitionCount', 'type': 'int'},
         'hosting_mode': {'key': 'properties.hostingMode', 'type': 'HostingMode'},
@@ -113,8 +110,8 @@ class SearchService(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, identity=None, replica_count: int=1, partition_count: int=1, hosting_mode="default", sku=None, **kwargs) -> None:
-        super(SearchService, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, replica_count: int=1, partition_count: int=1, hosting_mode="default", sku=None, **kwargs) -> None:
+        super(SearchService, self).__init__(location=location, tags=tags, **kwargs)
         self.replica_count = replica_count
         self.partition_count = partition_count
         self.hosting_mode = hosting_mode
