@@ -3,6 +3,14 @@
 Release History
 ===============
 
+2.4.0 (2019-03-06)
+++++++++++++++++++
+
+**Features**
+
+- MultiApi support for 2015-08-01, 2017-04-01 and 2018-01-01-preview
+- 2017-04-01 is the default API version
+
 2.3.0 (2019-02-04)
 ++++++++++++++++++
 

@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.4.0"
+from msrest.paging import Paged
 
+
+class ClusterPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Cluster <azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Cluster]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ClusterPaged, self).__init__(*args, **kwargs)
