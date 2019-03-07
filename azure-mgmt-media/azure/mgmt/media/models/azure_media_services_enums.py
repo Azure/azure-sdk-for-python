@@ -106,6 +106,12 @@ class AacAudioProfile(str, Enum):
     he_aac_v2 = "HeAacV2"  #: Specifies that the output audio is to be encoded into HE-AAC v2 profile.
 
 
+class AnalysisResolution(str, Enum):
+
+    source_resolution = "SourceResolution"
+    standard_definition = "StandardDefinition"
+
+
 class StretchMode(str, Enum):
 
     none = "None"  #: Strictly respect the output resolution without considering the pixel aspect ratio or display aspect ratio of the input video.
