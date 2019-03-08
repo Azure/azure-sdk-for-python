@@ -20,10 +20,12 @@
 #SOFTWARE.
 
 import unittest
+import pytest
 from azure.cosmos.routing.routing_map_provider import _SmartRoutingMapProvider
 from azure.cosmos.routing.routing_map_provider import _CollectionRoutingMap
 from azure.cosmos.routing import routing_range as routing_range
- 
+
+@pytest.mark.usefixtures("teardown")
 class RoutingMapProviderTests(unittest.TestCase):
 
     class MockedCosmosClient(object):

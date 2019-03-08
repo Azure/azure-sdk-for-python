@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 import unittest
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
@@ -34,6 +35,7 @@ import test.test_config as test_config
 #      To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class RoutingMapEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """
@@ -41,17 +43,8 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'sample database'
-
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
+    collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)['_self']
 
     @classmethod
     def setUpClass(cls):
@@ -62,88 +55,19 @@ class RoutingMapEndToEndTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    @classmethod
-    def tearDownClass(cls):
-        RoutingMapEndToEndTests.cleanUpTestDatabase()
-
-    def setUp(self):
-        RoutingMapEndToEndTests.cleanUpTestDatabase()
-        
-        self.client = cosmos_client.CosmosClient(RoutingMapEndToEndTests.host, {'masterKey': RoutingMapEndToEndTests.masterKey}, RoutingMapEndToEndTests.connectionPolicy)
-        self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
-        self.created_collection = self.create_collection(self.client, self.created_db)
-        self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
-        
-        # sanity check:
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
-        self.assertGreaterEqual(len(partition_key_ranges), 5)
-        
     def test_read_partition_key_ranges(self):
-        
-        collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(collection_link))
+        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
         #"the number of expected partition ranges returned from the emulator is 5."
         self.assertEqual(5, len(partition_key_ranges))
         
     def test_routing_map_provider(self):
-        
-        collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(collection_link))
+        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
 
         routing_mp = _PartitionKeyRangeCache(self.client)
-        overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(collection_link, routing_range._Range("", "FF", True, False))
+        overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(self.collection_link, routing_range._Range("", "FF", True, False))
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 
-    def create_collection(self, client, created_db):
-
-        collection_definition = {  
-           'id':'sample collection',
-           'indexingPolicy':{  
-              'includedPaths':[  
-                 {  
-                    'path':'/',
-                    'indexes':[  
-                       {  
-                          'kind':'Range',
-                          'dataType':'Number'
-                       },
-                       {  
-                          'kind':'Range',
-                          'dataType':'String'
-                       }
-                    ]
-                 }
-              ]
-           },
-           'partitionKey':{  
-              'paths':[  
-                 '/id'
-              ],
-              'kind':documents.PartitionKind.Hash
-           }
-        }
-        
-        collection_options = { 'offerThroughput': 30000 }
-
-        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
-                                collection_definition, 
-                                collection_options)
-
-        return created_collection
-
-    def GetDatabaseLink(self, database, is_name_based=True):
-        if is_name_based:
-            return 'dbs/' + database['id']
-        else:
-            return database['_self']
-
-    def GetDocumentCollectionLink(self, database, document_collection, is_name_based=True):
-        if is_name_based:
-            return self.GetDatabaseLink(database) + '/colls/' + document_collection['id']
-        else:
-            return document_collection['_self']
-        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

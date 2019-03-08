@@ -1,6 +1,7 @@
 import unittest
 import uuid
 import threading
+import pytest
 from time import sleep
 
 from azure.cosmos.http_constants import ResourceType
@@ -26,6 +27,7 @@ class RefreshThread(threading.Thread):
     def run(self):
         self.endpoint_manager.force_refresh(None)
 
+@pytest.mark.usefixtures("teardown")
 class LocationCacheTest(unittest.TestCase):
 
     DEFAULT_ENDPOINT = "https://default.documents.azure.com"

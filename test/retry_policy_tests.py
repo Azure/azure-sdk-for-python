@@ -21,6 +21,7 @@
 
 import unittest
 import uuid
+import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -34,17 +35,16 @@ import test.test_config as test_config
   
 #  	Most test cases in this file create collections in your Azure Cosmos account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
-  
+
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class Test_retry_policy_tests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    test_db_name = 'sample database' 
-    test_coll_name = 'sample collection ' + str(uuid.uuid4())
     counter = 0
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -69,37 +69,9 @@ class Test_retry_policy_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    @classmethod
-    def tearDownClass(cls):
-        client = cosmos_client.CosmosClient(cls.host, 
-                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
-
-    def setUp(self):
-        self.client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, Test_retry_policy_tests.connectionPolicy)
-
-        # Create the test database only when it's not already present
-        query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_db_name + '\'')
-        it = iter(query_iterable)
-        
-        self.created_db = next(it, None)
-        if self.created_db is None:
-            self.created_db = self.client.CreateDatabase({'id' : Test_retry_policy_tests.test_db_name})
-
-        # Create the test collection only when it's not already present
-        query_iterable = self.client.QueryContainers(self.created_db['_self'], 'SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_coll_name + '\'')
-        it = iter(query_iterable)
-        
-        self.created_collection = next(it, None)
-        if self.created_collection is None:
-            self.created_collection = self.client.CreateContainer(self.created_db['_self'], {'id' : Test_retry_policy_tests.test_coll_name})
-
-        self.retry_after_in_milliseconds = 1000
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
+        cls.retry_after_in_milliseconds = 1000
 
     def test_resource_throttle_retry_policy_default_retry_after(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy

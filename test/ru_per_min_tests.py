@@ -20,6 +20,8 @@
 # SOFTWARE.
 
 import unittest
+import uuid
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import query_iterable
@@ -36,6 +38,8 @@ import test.test_config as test_config
 #      To Run the test, replace the two member fields (masterKey and host) with
 #      values
 #   associated with your Azure Cosmos account.
+
+@pytest.mark.usefixtures("teardown")
 class RuPerMinTests(unittest.TestCase):
     """RuPerMinTests Tests.
     """
@@ -43,17 +47,8 @@ class RuPerMinTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'sample database'
-    
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
+    created_db = test_config._test_config.create_database_if_not_exist(client)
 
     @classmethod
     def setUpClass(cls):
@@ -65,20 +60,6 @@ class RuPerMinTests(unittest.TestCase):
             raise Exception("You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-            
-        RuPerMinTests.cleanUpTestDatabase()
-        
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })
-        
-    @classmethod
-    def tearDownClass(cls):
-        RuPerMinTests.cleanUpTestDatabase()
-
-    def setUp(self):
-        colls = list(self.client.ReadContainers(self.created_db['_self']))
-        for col in colls:
-            self.client.DeleteContainer(RuPerMinTests.GetDocumentCollectionLink(self.created_db, col))
 
     def _query_offers(self, collection_self_link):
         offers = list(self.client.ReadOffers())
@@ -87,13 +68,10 @@ class RuPerMinTests(unittest.TestCase):
                 return o
         return None
 
-    def test_create_collection_with_ru_pm(self):        
+    def test_create_collection_with_ru_pm(self):
         # create an ru pm collection
-
-        databae_link = self.GetDatabaseLink(self.created_db)
-
         collection_definition = {
-            'id' : "sample col"
+            'id' : "test_create_collection_with_ru_pm collection" + str(uuid.uuid4())
         }
 
         options = {
@@ -102,42 +80,38 @@ class RuPerMinTests(unittest.TestCase):
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
         self.assertEqual(offer['offerType'], "Invalid")
         self.assertIsNotNone(offer['content'])
+        self.client.DeleteContainer(created_collection['_self'])
 
     def test_create_collection_without_ru_pm(self):        
         # create a non ru pm collection
-
-        databae_link = self.GetDatabaseLink(self.created_db)
-
         collection_definition = {
-            'id' : "sample col"
+            'id' : "test_create_collection_without_ru_pm collection" + str(uuid.uuid4())
         }
 
         options = {
-            'offerEnableRUPerMinuteThroughput': True,
+            'offerEnableRUPerMinuteThroughput': False,
             'offerVersion': "V2",
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
         self.assertEqual(offer['offerType'], "Invalid")
         self.assertIsNotNone(offer['content'])
+        self.client.DeleteContainer(created_collection['_self'])
 
     def test_create_collection_disable_ru_pm_on_request(self):        
         # create a non ru pm collection
-
-        databae_link = self.GetDatabaseLink(self.created_db)
-
         collection_definition = {
-            'id' : "sample col"
+            'id' : "test_create_collection_disable_ru_pm_on_request collection" + str(uuid.uuid4())
         }
 
         options = {
@@ -145,7 +119,7 @@ class RuPerMinTests(unittest.TestCase):
             'offerThroughput': 400
         }
 
-        created_collection = self.client.CreateContainer(databae_link, collection_definition, options)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition, options)
 
         offer = self._query_offers(created_collection['_self'])
         self.assertIsNotNone(offer)
@@ -158,31 +132,10 @@ class RuPerMinTests(unittest.TestCase):
         }
 
         doc = {
-            'id' : 'test_doc'
+            'id' : 'test_doc' + str(uuid.uuid4())
         }
         self.client.CreateItem(created_collection['_self'], doc, request_options)
-
-
-    @classmethod
-    def GetDatabaseLink(cls, database, is_name_based=True):
-        if is_name_based:
-            return 'dbs/' + database['id']
-        else:
-            return database['_self']
-
-    @classmethod
-    def GetDocumentCollectionLink(cls, database, document_collection, is_name_based=True):
-        if is_name_based:
-            return cls.GetDatabaseLink(database) + '/colls/' + document_collection['id']
-        else:
-            return document_collection['_self']
-
-    @classmethod
-    def GetDocumentLink(cls, database, document_collection, document, is_name_based=True):
-        if is_name_based:
-            return cls.GetDocumentCollectionLink(database, document_collection) + '/docs/' + document['id']
-        else:
-            return document['_self']
+        self.client.DeleteContainer(created_collection['_self'])
 
 if __name__ == "__main__":
 

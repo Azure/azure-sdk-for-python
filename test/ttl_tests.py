@@ -20,7 +20,9 @@
 #SOFTWARE.
 
 import unittest
+import uuid
 import time
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
@@ -36,6 +38,7 @@ import test.test_config as test_config
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
     """
@@ -43,7 +46,8 @@ class Test_ttl_tests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'sample database'
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
+    created_db = test_config._test_config.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -67,59 +71,45 @@ class Test_ttl_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    def setUp(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, 
-                                                {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_ttl_tests.testDbName + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
-
     def test_collection_and_document_ttl_values(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
-
-        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
-        
-        collection_definition = {'id' : 'sample collection1',
+        collection_definition = {'id' : 'test_collection_and_document_ttl_values1' + str(uuid.uuid4()),
                                  'defaultTtl' : 5
                                  }
 
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
         self.assertEqual(created_collection['defaultTtl'], collection_definition['defaultTtl'])
         
-        collection_definition['id'] = 'sample collection2'
+        collection_definition['id'] = 'test_collection_and_document_ttl_values2' + str(uuid.uuid4())
         collection_definition['defaultTtl'] = None
 
         # None is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateContainer,
-            created_db['_self'],
+            self.client.CreateContainer,
+            self.created_db['_self'],
             collection_definition)
 
-        collection_definition['id'] = 'sample collection3'
+        collection_definition['id'] = 'test_collection_and_document_ttl_values3' + str(uuid.uuid4())
         collection_definition['defaultTtl'] = 0
 
         # 0 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateContainer,
-            created_db['_self'],
+            self.client.CreateContainer,
+            self.created_db['_self'],
             collection_definition)
 
-        collection_definition['id'] = 'sample collection4'
+        collection_definition['id'] = 'test_collection_and_document_ttl_values4' + str(uuid.uuid4())
         collection_definition['defaultTtl'] = -10
 
         # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateContainer,
-            created_db['_self'],
+            self.client.CreateContainer,
+            self.created_db['_self'],
             collection_definition)
 
-        document_definition = { 'id': 'doc1',
+        document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value',
                                 'ttl' : 0}
@@ -127,85 +117,83 @@ class Test_ttl_tests(unittest.TestCase):
         # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateItem,
+            self.client.CreateItem,
             created_collection['_self'],
             document_definition)
 
-        document_definition['id'] = 'doc2'
+        document_definition['id'] = 'doc2' + str(uuid.uuid4())
         document_definition['ttl'] = None
 
         # None is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateItem,
+            self.client.CreateItem,
             created_collection['_self'],
             document_definition)
 
-        document_definition['id'] = 'doc3'
+        document_definition['id'] = 'doc3' + str(uuid.uuid4())
         document_definition['ttl'] = -10
         
         # -10 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            client.CreateItem,
+            self.client.CreateItem,
             created_collection['_self'],
             document_definition)
 
-    def test_document_ttl_with_positive_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        self.client.DeleteContainer(created_collection['_self'])
 
-        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
-        
-        collection_definition = {'id' : 'sample collection',
+    def test_document_ttl_with_positive_defaultTtl(self):
+        collection_definition = {'id' : 'test_document_ttl_with_positive_defaultTtl collection' + str(uuid.uuid4()),
                                  'defaultTtl' : 5
                                  }
         
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
 
-        document_definition = { 'id': 'doc1',
+        document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(7)
         
         # the created document should be gone now as it's ttl value would be same as defaultTtl value of the collection
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.ReadItem,
+            self.client.ReadItem,
             created_document['_self'])
 
-        document_definition['id'] = 'doc2'
+        document_definition['id'] = 'doc2' + str(uuid.uuid4())
         document_definition['ttl'] = -1
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(5)
 
         # the created document should NOT be gone as it's ttl value is set to -1(never expire) which overrides the collections's defaultTtl value
-        read_document = client.ReadItem(created_document['_self'])
+        read_document = self.client.ReadItem(created_document['_self'])
         self.assertEqual(created_document['id'], read_document['id'])
 
-        document_definition['id'] = 'doc3'
+        document_definition['id'] = 'doc3' + str(uuid.uuid4())
         document_definition['ttl'] = 2
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(4)
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(5)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.ReadItem,
+            self.client.ReadItem,
             created_document['_self'])
 
-        document_definition['id'] = 'doc4'
+        document_definition['id'] = 'doc4' + str(uuid.uuid4())
         document_definition['ttl'] = 8
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(6)
 
         # the created document should NOT be gone as it's ttl value is set to 8 which overrides the collections's defaultTtl value(5)
-        read_document = client.ReadItem(created_document['_self'])
+        read_document = self.client.ReadItem(created_document['_self'])
         self.assertEqual(created_document['id'], read_document['id'])
 
         time.sleep(4)
@@ -213,112 +201,106 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document should be gone now as we have waited for (6+4) secs which is greater than documents's ttl value of 8
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.ReadItem,
+            self.client.ReadItem,
             created_document['_self'])
 
-    def test_document_ttl_with_negative_one_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        self.client.DeleteContainer(created_collection['_self'])
 
-        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
-        
-        collection_definition = {'id' : 'sample collection',
+    def test_document_ttl_with_negative_one_defaultTtl(self):
+        collection_definition = {'id' : 'test_document_ttl_with_negative_one_defaultTtl collection' + str(uuid.uuid4()),
                                  'defaultTtl' : -1
                                  }
         
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
 
-        document_definition = { 'id': 'doc1',
+        document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value'}
 
         # the created document's ttl value would be -1 inherited from the collection's defaultTtl and this document will never expire
-        created_document1 = client.CreateItem(created_collection['_self'], document_definition)
+        created_document1 = self.client.CreateItem(created_collection['_self'], document_definition)
 
         # This document is also set to never expire explicitly
-        document_definition['id'] = 'doc2'
+        document_definition['id'] = 'doc2' + str(uuid.uuid4())
         document_definition['ttl'] = -1
-        created_document2 = client.CreateItem(created_collection['_self'], document_definition)
+        created_document2 = self.client.CreateItem(created_collection['_self'], document_definition)
 
-        document_definition['id'] = 'doc3'
+        document_definition['id'] = 'doc3' + str(uuid.uuid4())
         document_definition['ttl'] = 2
-        created_document3 = client.CreateItem(created_collection['_self'], document_definition)
+        created_document3 = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(4)
 
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(-1)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.ReadItem,
+            self.client.ReadItem,
             created_document3['_self'])
 
         # The documents with id doc1 and doc2 will never expire
-        read_document = client.ReadItem(created_document1['_self'])
+        read_document = self.client.ReadItem(created_document1['_self'])
         self.assertEqual(created_document1['id'], read_document['id'])
 
-        read_document = client.ReadItem(created_document2['_self'])
+        read_document = self.client.ReadItem(created_document2['_self'])
         self.assertEqual(created_document2['id'], read_document['id'])
 
+        self.client.DeleteContainer(created_collection['_self'])
+
     def test_document_ttl_with_no_defaultTtl(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
-
-        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
+        collection_definition = {'id' : 'test_document_ttl_with_no_defaultTtl collection' + str(uuid.uuid4()) }
         
-        collection_definition = {'id' : 'sample collection' }
-        
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
 
-        document_definition = { 'id': 'doc1',
+        document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value',
                                 'ttl' : 5}
 
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(7)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level(no defaultTtl property defined)
-        read_document = client.ReadItem(created_document['_self'])
+        read_document = self.client.ReadItem(created_document['_self'])
         self.assertEqual(created_document['id'], read_document['id'])
 
-    def test_document_ttl_misc(self):
-        client = cosmos_client.CosmosClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey}, Test_ttl_tests.connectionPolicy)
+        self.client.DeleteContainer(created_collection['_self'])
 
-        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
-        
-        collection_definition = {'id' : 'sample collection',
+    def test_document_ttl_misc(self):
+        collection_definition = {'id' : 'test_document_ttl_misc collection' + str(uuid.uuid4()),
                                  'defaultTtl' : 8
                                  }
         
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition)
+        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
 
-        document_definition = { 'id': 'doc1',
+        document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
                                 'key': 'value'}
 
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
 
         time.sleep(10)
 
         # the created document cannot be deleted since it should already be gone now
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.DeleteItem,
+            self.client.DeleteItem,
             created_document['_self'])
 
         # We can create a document with the same id after the ttl time has expired
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = self.client.CreateItem(created_collection['_self'], document_definition)
         self.assertEqual(created_document['id'], document_definition['id'])
 
         time.sleep(3)
 
         # Upsert the document after 3 secs to reset the document's ttl
         document_definition['key'] = 'value2'
-        upserted_docment = client.UpsertItem(created_collection['_self'], document_definition)
+        upserted_docment = self.client.UpsertItem(created_collection['_self'], document_definition)
 
         time.sleep(7)
 
         # Upserted document still exists after 10 secs from document creation time(with collection's defaultTtl set to 8) since it's ttl was reset after 3 secs by upserting it
-        read_document = client.ReadItem(upserted_docment['_self'])
+        read_document = self.client.ReadItem(upserted_docment['_self'])
         self.assertEqual(upserted_docment['id'], read_document['id'])
 
         time.sleep(3)
@@ -326,10 +308,10 @@ class Test_ttl_tests(unittest.TestCase):
         # the upserted document should be gone now after 10 secs from the last write(upsert) of the document
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            client.ReadItem,
+            self.client.ReadItem,
             upserted_docment['_self'])
 
-        documents = list(client.QueryItems(
+        documents = list(self.client.QueryItems(
         created_collection['_self'],
         {
             'query': 'SELECT * FROM root r'
@@ -339,16 +321,18 @@ class Test_ttl_tests(unittest.TestCase):
 
         # Removes defaultTtl property from collection to disable ttl at collection level
         collection_definition.pop('defaultTtl')
-        replaced_collection = client.ReplaceContainer(created_collection['_self'], collection_definition)
+        replaced_collection = self.client.ReplaceContainer(created_collection['_self'], collection_definition)
 
-        document_definition['id'] = 'doc2'
-        created_document = client.CreateItem(replaced_collection['_self'], document_definition)
+        document_definition['id'] = 'doc2' + str(uuid.uuid4())
+        created_document = self.client.CreateItem(replaced_collection['_self'], document_definition)
 
         time.sleep(5)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level
-        read_document = client.ReadItem(created_document['_self'])
+        read_document = self.client.ReadItem(created_document['_self'])
         self.assertEqual(created_document['id'], read_document['id'])
+
+        self.client.DeleteContainer(created_collection['_self'])
     
 if __name__ == '__main__':
     try:
