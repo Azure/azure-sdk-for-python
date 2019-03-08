@@ -1,0 +1,2 @@
+trio
+aiohttp>=3.0
