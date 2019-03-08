@@ -77,7 +77,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        "requests~=2.16",
+        "requests>=2.18.4",
         "certifi>=2017.4.17",
     ],
     extras_require={
