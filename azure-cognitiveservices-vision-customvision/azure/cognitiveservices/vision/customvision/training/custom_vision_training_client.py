@@ -398,8 +398,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
-        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=64, min_items=0)
+        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -515,7 +515,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',')
+        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',', max_items=64, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -589,11 +589,11 @@ class CustomVisionTrainingClient(SDKClient):
         if iteration_id is not None:
             query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -672,7 +672,7 @@ class CustomVisionTrainingClient(SDKClient):
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -739,7 +739,7 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if image_ids is not None:
-            query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
+            query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=256, min_items=0)
         if iteration_id is not None:
             query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
 
@@ -779,7 +779,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         :param project_id: The project id.
         :type project_id: str
-        :param image_data: Binary image data.
+        :param image_data: Binary image data. Supported formats are JPEG, GIF,
+         PNG, and BMP. Supports images up to 6MB.
         :type image_data: Generator
         :param tag_ids: The tags ids with which to tag each image. Limited to
          20.
@@ -807,7 +808,7 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -870,7 +871,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
+        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=256, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -1188,7 +1189,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['ids'] = self._serialize.query("ids", ids, '[str]', div=',')
+        query_parameters['ids'] = self._serialize.query("ids", ids, '[str]', div=',', max_items=64, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -1283,7 +1284,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         :param project_id: The project id.
         :type project_id: str
-        :param image_data: Binary image data.
+        :param image_data: Binary image data. Supported formats are JPEG, GIF,
+         PNG, and BMP. Supports images up to 6MB.
         :type image_data: Generator
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1529,11 +1531,11 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -1919,6 +1921,81 @@ class CustomVisionTrainingClient(SDKClient):
         return deserialized
     update_project.metadata = {'url': '/projects/{projectId}'}
 
+    def train_project(
+            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, custom_headers=None, raw=False, **operation_config):
+        """Queues project for training.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param training_type: The type of training to use to train the project
+         (default: Regular). Possible values include: 'Regular', 'Advanced'
+        :type training_type: str
+        :param reserved_budget_in_hours: The number of hours reserved as
+         budget for training (if applicable).
+        :type reserved_budget_in_hours: int
+        :param force_train: Whether to force train even if dataset and
+         configuration does not change (default: false).
+        :type force_train: bool
+        :param notification_email_address: The email address to send
+         notification to when training finishes (default: null).
+        :type notification_email_address: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Iteration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
+        """
+        # Construct URL
+        url = self.train_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if training_type is not None:
+            query_parameters['trainingType'] = self._serialize.query("training_type", training_type, 'str')
+        if reserved_budget_in_hours is not None:
+            query_parameters['reservedBudgetInHours'] = self._serialize.query("reserved_budget_in_hours", reserved_budget_in_hours, 'int')
+        if force_train is not None:
+            query_parameters['forceTrain'] = self._serialize.query("force_train", force_train, 'bool')
+        if notification_email_address is not None:
+            query_parameters['notificationEmailAddress'] = self._serialize.query("notification_email_address", notification_email_address, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.CustomVisionErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Iteration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    train_project.metadata = {'url': '/projects/{projectId}/train'}
+
     def get_iterations(
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Get iterations for the project.
@@ -2146,91 +2223,16 @@ class CustomVisionTrainingClient(SDKClient):
         return deserialized
     update_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
-    def train_project(
-            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, custom_headers=None, raw=False, **operation_config):
-        """Queues project for training.
-
-        :param project_id: The project id.
-        :type project_id: str
-        :param training_type: The type of training to use to train the project
-         (default: Regular). Possible values include: 'Regular', 'Advanced'
-        :type training_type: str
-        :param reserved_budget_in_hours: The number of hours reserved as
-         budget for training (if applicable).
-        :type reserved_budget_in_hours: int
-        :param force_train: Whether to force train even if dataset and
-         configuration does not change (default: false).
-        :type force_train: bool
-        :param notification_email_address: The email address to send
-         notification to when training finishes (default: null).
-        :type notification_email_address: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Iteration or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
-        """
-        # Construct URL
-        url = self.train_project.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if training_type is not None:
-            query_parameters['trainingType'] = self._serialize.query("training_type", training_type, 'str')
-        if reserved_budget_in_hours is not None:
-            query_parameters['reservedBudgetInHours'] = self._serialize.query("reserved_budget_in_hours", reserved_budget_in_hours, 'int')
-        if force_train is not None:
-            query_parameters['forceTrain'] = self._serialize.query("force_train", force_train, 'bool')
-        if notification_email_address is not None:
-            query_parameters['notificationEmailAddress'] = self._serialize.query("notification_email_address", notification_email_address, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.CustomVisionErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Iteration', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    train_project.metadata = {'url': '/projects/{projectId}/train'}
-
     def publish_iteration(
-            self, project_id, iteration_id, name, prediction_id, custom_headers=None, raw=False, **operation_config):
+            self, project_id, iteration_id, publish_name, prediction_id, custom_headers=None, raw=False, **operation_config):
         """Publish a specific iteration.
 
         :param project_id: The project id.
         :type project_id: str
         :param iteration_id: The iteration id.
         :type iteration_id: str
-        :param name: The updated iteration name.
-        :type name: str
+        :param publish_name: The name to give the published iteration.
+        :type publish_name: str
         :param prediction_id: The id of the prediction resource to publish to.
         :type prediction_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -2254,7 +2256,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['name'] = self._serialize.query("name", name, 'str')
+        query_parameters['publishName'] = self._serialize.query("publish_name", publish_name, 'str')
         query_parameters['predictionId'] = self._serialize.query("prediction_id", prediction_id, 'str')
 
         # Construct headers
@@ -2406,7 +2408,7 @@ class CustomVisionTrainingClient(SDKClient):
         :param iteration_id: The iteration id.
         :type iteration_id: str
         :param platform: The target platform. Possible values include:
-         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
+         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
         :type platform: str
         :param flavor: The flavor of the target platform. Possible values
          include: 'Linux', 'Windows', 'ONNX10', 'ONNX12', 'ARM'
