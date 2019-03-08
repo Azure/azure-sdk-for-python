@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import uuid
+import pytest
 from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
@@ -10,40 +12,15 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.synchronized_request as synchronized_request
 import azure.cosmos.retry_utility as retry_utility
 
+@pytest.mark.usefixtures("teardown")
 class SessionTests(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'testDatabase'
-    testCollectionName = 'testCollection'
-
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        global client
-        client = cosmos_client.CosmosClient(cls.host,
-                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
-        it = iter(query_iterable)
-
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.cleanUpTestDatabase()
-
-    def setUp(self):
-        global created_collection
-
-        self.cleanUpTestDatabase()
-        created_db = client.CreateDatabase({ 'id': self.testDbName })
-
-        collection_definition = { 'id': self.testCollectionName, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
-        collection_options = { 'offerThroughput': 10100 }
-        created_collection = client.CreateContainer(created_db['_self'], collection_definition, collection_options)
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
+    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
 
     def _MockRequest(self, global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body):
         if HttpHeaders.SessionToken in request_options['headers']:
@@ -55,12 +32,12 @@ class SessionTests(unittest.TestCase):
     def test_session_token_not_sent_for_master_resource_ops (self):
         self._OriginalRequest = synchronized_request._Request
         synchronized_request._Request = self._MockRequest
-        created_document = client.CreateItem(created_collection['_self'], {'id': '1', 'pk': 'mypk'})
-        client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
+        created_document = self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        self.client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
         self.assertNotEqual(self.last_session_token_sent, None)
-        client.ReadContainer(created_collection['_self'])
+        self.client.ReadContainer(self.created_collection['_self'])
         self.assertEqual(self.last_session_token_sent, None)
-        client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
+        self.client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
         self.assertNotEqual(self.last_session_token_sent, None)
         synchronized_request._Request = self._OriginalRequest
 
@@ -68,14 +45,14 @@ class SessionTests(unittest.TestCase):
         raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
 
     def test_clear_session_token(self):
-        created_document = client.CreateItem(created_collection['_self'], {'id': '1', 'pk': 'mypk'})
+        created_document = self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
-            client.ReadItem(created_document['_self'])
+            self.client.ReadItem(created_document['_self'])
         except errors.HTTPFailure as e:
-            self.assertEqual(client.session.get_session_token(created_collection['_self']), "")
+            self.assertEqual(self.client.session.get_session_token(self.created_collection['_self']), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
@@ -89,7 +66,7 @@ class SessionTests(unittest.TestCase):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
         try:
-            client.CreateItem(created_collection['_self'], {'id': '1', 'pk': 'mypk'})
+            self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
             self.fail()
         except errors.HTTPFailure as e:
             self.assertEqual(e._http_error_message, "Could not parse the received session token: 2")

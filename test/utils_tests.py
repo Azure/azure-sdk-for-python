@@ -20,10 +20,12 @@
 #SOFTWARE.
 
 import unittest
+import pytest
 import azure.cosmos.utils as utils
 import platform
 import azure.cosmos.http_constants as http_constants
 
+@pytest.mark.usefixtures("teardown")
 class UtilsTests(unittest.TestCase):
     """Utils Tests
     """

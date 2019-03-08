@@ -21,6 +21,7 @@
 
 import unittest
 import uuid
+import pytest
 from six.moves import xrange
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
@@ -36,6 +37,7 @@ import test.test_config as test_config
 #      To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """
@@ -43,17 +45,6 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'sample database'
-
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
 
     @classmethod
     def setUpClass(cls):
@@ -64,31 +55,31 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    @classmethod
-    def tearDownClass(cls):
-        QueryExecutionContextEndToEndTests.cleanUpTestDatabase()
-
-    def setUp(self):
-        QueryExecutionContextEndToEndTests.cleanUpTestDatabase()
-        
-        self.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host, {'masterKey': QueryExecutionContextEndToEndTests.masterKey}, QueryExecutionContextEndToEndTests.connectionPolicy)
-        self.created_db = self.client.CreateDatabase({ 'id': 'sample database' })        
-        self.created_collection = self.create_collection(self.client, self.created_db)
-        self.collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
-        
-        # sanity check:
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
-        self.assertGreaterEqual(len(partition_key_ranges), 1)
+        cls.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host,
+                                                 {'masterKey': QueryExecutionContextEndToEndTests.masterKey},
+                                                 QueryExecutionContextEndToEndTests.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = cls.create_collection(cls.client, cls.created_db)
+        cls.collection_link = cls.created_collection['_self']
+        cls.document_definitions = []
 
         # create a document using the document definition
-        self.document_definitions = []
         for i in xrange(20):
             d = {'id' : str(i),
                  'name': 'sample document',
                  'spam': 'eggs' + str(i),
                  'key': 'value'}
-            self.document_definitions.append(d)
-        self.insert_doc(self.client, self.created_db, self.collection_link, self.document_definitions)
+            cls.document_definitions.append(d)
+        cls.insert_doc(cls.client, cls.created_db, cls.collection_link, cls.document_definitions)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.DeleteContainer(cls.collection_link)
+
+    def setUp(self):
+        # sanity check:
+        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        self.assertGreaterEqual(len(partition_key_ranges), 1)
 
         # sanity check: read documents after creation
         queried_docs = list(self.client.ReadItems(self.collection_link))
@@ -209,10 +200,11 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         
         # no more results will be returned
         self.assertEqual(ex.fetch_next_block(), [])
-        
-    def create_collection(self, client, created_db):
 
-        collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()), 
+    @classmethod
+    def create_collection(cls, client, created_db):
+
+        collection_definition = {   'id': 'query_execution_context_tests collection ' + str(uuid.uuid4()),
                                     'partitionKey': 
                                     {   
                                         'paths': ['/id'],
@@ -222,13 +214,14 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         
         collection_options = {  }
 
-        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
+        created_collection = client.CreateContainer(created_db['_self'],
                                 collection_definition, 
                                 collection_options)
 
         return created_collection
 
-    def insert_doc(self, client, created_db, collection_link, document_definitions):
+    @classmethod
+    def insert_doc(cls, client, created_db, collection_link, document_definitions):
         # create a document using the document definition
         created_docs = []
         for d in document_definitions:

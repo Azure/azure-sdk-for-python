@@ -2,6 +2,7 @@ import json
 import os.path
 import unittest
 import uuid
+import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -12,39 +13,14 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
 import test.test_config as test_config
 
+@pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):
 
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    test_db_name = 'sample database' 
-    test_coll_name = 'sample collection ' + str(uuid.uuid4())
     counter = 0
     last_headers = []
-
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        global client
-        client = cosmos_client.CosmosClient(cls.host,
-                                                {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
-        it = iter(query_iterable)
-
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
-
-    @classmethod
-    def tearDownClass(cls):
-        MultiMasterTests.cleanUpTestDatabase()
-
-    def setUp(self):
-        MultiMasterTests.cleanUpTestDatabase()
-        self.created_db = client.CreateDatabase({ 'id': self.test_db_name })
-
-        collection_definition = { 'id': self.test_coll_name, 'partitionKey': {'paths': ['/pk'],'kind': 'Hash'} }
-        collection_options = { 'offerThroughput': 10100 }
-        self.created_collection = client.CreateContainer(self.created_db['_self'], collection_definition, collection_options)
 
     def test_tentative_writes_header_present(self):
         self.last_headers = []
@@ -63,18 +39,19 @@ class MultiMasterTests(unittest.TestCase):
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
         client = cosmos_client.CosmosClient(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, connectionPolicy)
-
-        document_definition = { 'id': 'doc',
+        
+        created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
+        document_definition = { 'id': 'doc' + str(uuid.uuid4()),
                                 'pk': 'pk',
                                 'name': 'sample document',
                                 'operation': 'insertion'}
-        created_document = client.CreateItem(self.created_collection['_self'], document_definition)
+        created_document = client.CreateItem(created_collection['_self'], document_definition)
 
         sproc_definition = {
-            'id': 'sample sproc',
+            'id': 'sample sproc' + str(uuid.uuid4()),
             'serverScript': 'function() {var x = 10;}'
         }
-        sproc = client.CreateStoredProcedure(self.created_collection['_self'], sproc_definition)
+        sproc = client.CreateStoredProcedure(created_collection['_self'], sproc_definition)
 
         client.ExecuteStoredProcedure(sproc['_self'], None, {'partitionKey':'pk'})
 
@@ -84,7 +61,7 @@ class MultiMasterTests(unittest.TestCase):
         replaced_document = client.ReplaceItem(created_document['_self'], created_document)
 
         replaced_document['operation'] = 'upsert'
-        upserted_document = client.UpsertItem(self.created_collection['_self'], replaced_document)
+        upserted_document = client.UpsertItem(created_collection['_self'], replaced_document)
 
         client.DeleteItem(upserted_document['_self'], {'partitionKey':'pk'})
 
