@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import unittest
 import uuid
+import pytest
 
 from six import with_metaclass
 from six.moves import xrange
@@ -39,26 +40,10 @@ class _config:
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
-    TEST_DATABASE_NAME = 'testDb'
     DOCUMENTS_COUNT = 400
     DOCS_WITH_SAME_PARTITION_KEY = 200
     docs_with_numeric_id = 0
     sum = 0
-
-
-class _helper:
-    @classmethod
-    def clean_up_database(cls):
-        client = cosmos_client_connection.CosmosClientConnection(_config.host,
-                                                {'masterKey': _config.master_key}, _config.connection_policy)
-        query_iterable = client.QueryDatabases(
-            'SELECT * FROM root r WHERE r.id=\'{}\''.format(_config.TEST_DATABASE_NAME))
-        it = iter(query_iterable)
-
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
-
 
 class AggregateQueryTestSequenceMeta(type):
     def __new__(mcs, name, bases, dict):
@@ -75,11 +60,9 @@ class AggregateQueryTestSequenceMeta(type):
                     "'masterKey' and 'host' at the top of this class to run the "
                     "tests.")
 
-            _helper.clean_up_database()
-
             mcs.client = cosmos_client_connection.CosmosClientConnection(_config.host,
                                                         {'masterKey': _config.master_key}, _config.connection_policy)
-            created_db = mcs.client.CreateDatabase({'id': _config.TEST_DATABASE_NAME})
+            created_db = test_config._test_config.create_database_if_not_exist(mcs.client)
             created_collection = _create_collection(mcs.client, created_db)
             mcs.collection_link = _get_collection_link(created_db, created_collection)
 
@@ -160,7 +143,7 @@ class AggregateQueryTestSequenceMeta(type):
 
         def _create_collection(client, created_db):
             collection_definition = {
-                'id': 'sample collection ' + str(uuid.uuid4()),
+                'id': 'aggregate tests collection ' + str(uuid.uuid4()),
                 'indexingPolicy': {
                     'includedPaths': [
                         {
@@ -218,13 +201,12 @@ class AggregateQueryTestSequenceMeta(type):
         _setup()
         _generate_test_configs()
         _run_all()
+
         return type.__new__(mcs, name, bases, dict)
 
-class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
-    @classmethod
-    def tearDownClass(cls):
-        _helper.clean_up_database()
 
+@pytest.mark.usefixtures("teardown")
+class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
     def _execute_query_and_validate_results(self, client, collection_link, query, expected):
         print('Running test with query: ' + query)
 

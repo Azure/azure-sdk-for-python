@@ -24,6 +24,7 @@ import time
 # from types import *
 
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.base as base
@@ -32,6 +33,7 @@ import azure.cosmos.constants as constants
 import azure.cosmos.session as session
 import test.test_config as test_config
 
+@pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):
     # this test doesn't need real credentials, or connection to server
     host = test_config._test_config.host

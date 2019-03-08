@@ -21,6 +21,7 @@
 
 import unittest
 import uuid
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 from azure.cosmos import query_iterable
@@ -36,6 +37,7 @@ import test.test_config as test_config
 #      To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
     """
@@ -43,17 +45,6 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    testDbName = 'sample database'
-    
-    @classmethod
-    def cleanUpTestDatabase(cls):
-        client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
-        it = iter(query_iterable)
-        
-        test_db = next(it, None)
-        if test_db is not None:
-            client.DeleteDatabase(test_db['_self'])
 
     @classmethod
     def setUpClass(cls):
@@ -67,10 +58,8 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
-        CrossPartitionTopOrderByTest.cleanUpTestDatabase()
-        
         cls.client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.created_db = cls.client.CreateDatabase({ 'id': 'sample database' })        
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
 
@@ -85,15 +74,14 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  'spam2': 'eggs' + str(i) if (i == 3) else i,
                  'boolVar': (i % 2 == 0),
                  'number': 1.1 * i
-                 
                  }
             cls.document_definitions.append(d)
 
         CrossPartitionTopOrderByTest.insert_doc()
-        
+
     @classmethod
     def tearDownClass(cls):
-        CrossPartitionTopOrderByTest.cleanUpTestDatabase()
+        cls.client.DeleteContainer(cls.collection_link)
 
     def setUp(self):
         
@@ -399,7 +387,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 
         # an order by query
         query = {
-                'query': 'SELECT * FROM root r order by r.spam2',
+                'query': 'SELECT * FROM root r order by r.spam2 DESC',
         }    
         
         options = {} 
@@ -409,7 +397,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         def get_order_by_key(r):
             return r['id']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
-    
+
         # validates the results size and order
         try:
             self.execute_query_and_validate_results(query, options, expected_ordered_ids)
@@ -558,7 +546,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     def create_collection(self, client, created_db):
 
         collection_definition = {  
-           'id': 'sample collection ' + str(uuid.uuid4()),
+           'id': 'orderby_tests collection ' + str(uuid.uuid4()),
            'indexingPolicy':{  
               'includedPaths':[  
                  {  

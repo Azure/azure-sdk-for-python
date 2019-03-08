@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 import unittest
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import test.test_config as test_config
@@ -31,6 +32,7 @@ else:
 from threading import Thread
 from requests.exceptions import ProxyError
 
+@pytest.mark.usefixtures("teardown")
 class CustomRequestHandler(BaseHTTPRequestHandler):
     database_name = None
     def _set_headers(self):

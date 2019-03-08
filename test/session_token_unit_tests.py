@@ -1,10 +1,12 @@
 import unittest
 import uuid
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import pytest
 import azure.cosmos.documents as documents
 from azure.cosmos.vector_session_token import VectorSessionToken
 from azure.cosmos.errors import CosmosError
 
+@pytest.mark.usefixtures("teardown")
 class SessionTokenUnitTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
     def test_validate_successful_session_token_parsing(self):

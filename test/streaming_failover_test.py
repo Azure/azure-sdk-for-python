@@ -1,5 +1,6 @@
 import unittest
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from requests.exceptions import ConnectionError
@@ -10,6 +11,7 @@ from azure.cosmos.request_object import _RequestObject
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
+@pytest.mark.usefixtures("teardown")
 class TestStreamingFailover(unittest.TestCase):
 
     DEFAULT_ENDPOINT = "https://geotest.documents.azure.com:443/"
@@ -83,6 +85,9 @@ class TestStreamingFailover(unittest.TestCase):
             raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Request is not permitted in this region", {HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
 
     def test_retry_policy_does_not_mark_null_locations_unavailable(self):
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_get_database_account
+
         client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': self.MASTER_KEY}, None, documents.ConsistencyLevel.Eventual)
         endpoint_manager = global_endpoint_manager._GlobalEndpointManager(client)
 
@@ -115,6 +120,7 @@ class TestStreamingFailover(unittest.TestCase):
 
         endpoint_manager.mark_endpoint_unavailable_for_read = self.original_mark_endpoint_unavailable_for_read_function
         endpoint_manager.mark_endpoint_unavailable_for_write = self.original_mark_endpoint_unavailable_for_write_function
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
 
     def _mock_mark_endpoint_unavailable_for_read(self, endpoint):
         self._read_counter += 1

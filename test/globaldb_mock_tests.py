@@ -21,6 +21,7 @@
 
 import unittest
 import json
+import pytest
 
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
@@ -103,8 +104,7 @@ class MockGlobalEndpointManager:
 
         return write_endpoint, read_endpoint
 
-
-
+@pytest.mark.usefixtures("teardown")
 class Test_globaldb_mock_tests(unittest.TestCase):
     
     host = test_config._test_config.global_host

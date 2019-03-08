@@ -24,6 +24,7 @@ import six
 
 import unittest
 import time
+import pytest
 
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
@@ -42,6 +43,7 @@ import test.test_config as test_config
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+@pytest.mark.usefixtures("teardown")
 class Test_globaldb_tests(unittest.TestCase):
 
     host = test_config._test_config.global_host
