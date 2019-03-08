@@ -1,62 +1,237 @@
-# Variables: 
+# Variables:
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'codecov-python-repository-token' Is the codecov.io repository token.
+#  'long_running_tests' Is a boolean indicating that the long-running tests should be executed.
 
 trigger:
-- master
+  - master
+
+variables:
+  PythonVersion: '3.6'
 
 jobs:
-- job: 'Build_Target_Packages'
+  - job: 'Build'
 
-  pool:
-    vmImage: 'ubuntu-16.04'  
+    pool:
+      vmImage: 'ubuntu-16.04'
 
-  steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.6'
-    inputs:
-      versionSpec: 3.6
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
 
-  - script: |
-     pip install wheel
+      - script: |
+          pip install wheel setuptools pathlib twine readme-renderer[md]
+        displayName: 'Prep Environment'
 
-    displayName: 'Prep Environment, Install Packages'
+      - task: PythonScript@0
+        displayName: 'Generate Packages'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/build_packages.py'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
 
-  - powershell: |
-     $inputFilterSet="$(build_targeting_string)"
-     
-     if ($inputFilterSet -eq "")
-     {
-         $inputFilterSet = "azure-*"
-     }
-     
-     foreach($inputFilter in $inputFilterSet.split(","))
-     {
-       $foldersToIterate = gci -Filter "$inputFilter"
-     
-       foreach ($folder in $foldersToIterate)
-       {
-         python3 ./build_package.py --dest "$(Build.ArtifactStagingDirectory)" "$folder"
-       }
-     }
-     
-    displayName: 'Generate Packages'
+      - script: |
+          twine check $(Build.ArtifactStagingDirectory)/*
+        displayName: 'Verify Readme'
 
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifacts'
+      - task: PublishBuildArtifacts@1
+        condition: succeededOrFailed()
+        displayName: 'Publish Artifacts'
+        inputs:
+          artifactName: packages
 
-- template: generic.test.yml
-  parameters:
-    name: Linux
-    vmImage: 'ubuntu-16.04'
+  - job: 'Analyze'
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+    dependsOn:
+      - 'Build'
 
-- template: generic.test.yml
-  parameters:
-    name: macOS
-    vmImage: 'macOS-10.13'
+    pool:
+      vmImage: 'ubuntu-16.04'
 
-- template: generic.test.yml
-  parameters:
-    name: Windows
-    vmImage: 'vs2017-win2016'
+    steps:
+      # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
+      - script: |
+          pip install setuptools wheel
+          sudo pip install doc-warden
+          ward scan -d $(Build.SourcesDirectory)
+        displayName: 'Verify Readmes'
 
-- template: specialcase.test.yml
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: '$(PythonVersion)'
+
+      - script: |
+          pip install wheel Jinja2
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        displayName: 'Analyze dependencies'
+        inputs:
+          scriptPath: 'scripts/analyze_deps.py'
+          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
+        # builds should be sufficient.
+        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
+        displayName: 'Component Detection'
+
+      - task: PublishBuildArtifacts@1
+        condition: succeededOrFailed()
+        displayName: 'Publish Report Artifacts'
+        inputs:
+          artifactName: reports
+
+  - job: 'Generic_Tests'
+  
+    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+
+    dependsOn:
+      - 'Build'
+
+    strategy:
+      matrix:
+        Linux_Python27:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '2.7'
+        Linux_Python34:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.4'
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        Linux_Python36:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.6'
+        Linux_Python37:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.7'
+        Windows_Python35:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
+          PythonVersion: '3.5'
+        MacOS_Python27:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.13'
+          PythonVersion: '2.7'
+
+    pool:
+      vmImage: '$(OSVmImage)'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: '$(PythonVersion)'
+
+      - script: |
+          pip install pathlib twine codecov beautifulsoup4
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        displayName: 'Setup and Run Tests'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+          arguments: '"$(build_targeting_string)" --junitxml="junit/test-results.xml"'
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: 'junit/test-results.xml'
+          testRunTitle: '$(OSName) Python $(PythonVersion)'
+
+      - script: |
+          coverage xml
+          coverage html
+        displayName: 'Generate Coverage XML'
+
+      - script: |
+          codecov -t $(codecov-python-repository-token)
+        displayName: 'Publish Code Cov'
+        condition: ne(variables['codecov-python-repository-token'], '')
+
+      - task: PythonScript@0
+        displayName: 'Inline CSS for Cobertura'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
+
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish Code Coverage to DevOps'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+          reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
+
+  - job: Test_Alpha_Python
+
+    timeoutInMinutes: 90
+    
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.7 For Build Tools'
+        inputs:
+          versionSpec: '3.7'
+
+      - script: |
+          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+          cd ~/
+          git clone https://github.com/python/cpython.git
+          cd cpython
+          mkdir debug
+          cd debug
+          ../configure --enable-optimizations --prefix=$HOME
+          make install
+          cd $(Build.SourcesDirectory)
+          PATH=/home/vsts/bin:$PATH
+          python3 -m ensurepip
+          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
+        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+        continueOnError: true
+
+  - job: Test_PyPy
+
+    timeoutInMinutes: 90
+
+    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+    
+    dependsOn:
+      - 'Test_Alpha_Python'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.7 For Build Tools'
+        inputs:
+          versionSpec: '3.7'
+
+      - script: |
+          pip install pathlib twine
+        displayName: 'Prep Environment'
+
+      - script: |
+          cd ~/
+          wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
+          tar xf pypy3-v6.0.0-linux64.tar.bz2
+          cd $(Build.SourcesDirectory)
+          PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
+          pypy3 -m ensurepip
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)"
+        displayName: 'Setup and Run Filtered Tests PyPy3'
+        continueOnError: true

@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 import io
 import logging
+import time
 import unittest
 
 import requests
@@ -23,8 +24,8 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'eastus2'
-EXISTING_BATCH_ACCOUNT = {'name': 'pythonsdktest', 'location': 'brazilsouth'}
+AZURE_LOCATION = 'westcentralus'
+EXISTING_BATCH_ACCOUNT = {'name': 'sdktest2', 'location': 'westcentralus'}
 
 
 class MgmtBatchTest(AzureMgmtTestCase):
@@ -42,7 +43,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        self.assertEqual(len(all_ops), 30)
+        self.assertEqual(len(all_ops), 35)
         self.assertEqual(all_ops[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
         self.assertEqual(all_ops[0].origin, 'system')
         self.assertEqual(all_ops[0].display.provider, 'Microsoft Batch')
@@ -51,7 +52,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 1)
+        self.assertEqual(quotas.account_quota, 3)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
@@ -77,6 +78,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @KeyVaultPreparer(location=AZURE_LOCATION)
     def test_mgmt_batch_byos_account(self, resource_group, location, keyvault):
+        if self.is_live:
+            keyvault = keyvault.result()
         batch_account = models.BatchAccountCreateParameters(
                 location=location,
                 pool_allocation_mode=models.PoolAllocationMode.user_subscription)
@@ -94,7 +97,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
                 location=location,
                 pool_allocation_mode=models.PoolAllocationMode.user_subscription,
                 key_vault_reference={'id': keyvault_id, 'url': keyvault_url})
-        creating =  self.mgmt_batch_client.batch_account.create(
+        creating = self.mgmt_batch_client.batch_account.create(
                 resource_group.name,
                 self._get_account_name(),
                 batch_account)
@@ -115,8 +118,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
         # Test Get Account
         account = self.mgmt_batch_client.batch_account.get(resource_group.name, account_name)
         self.assertEqual(account.dedicated_core_quota, 20)
-        self.assertEqual(account.low_priority_core_quota, 20)
-        self.assertEqual(account.pool_quota, 20)
+        self.assertEqual(account.low_priority_core_quota, 100)
+        self.assertEqual(account.pool_quota, 100)
         self.assertEqual(account.pool_allocation_mode.value, 'BatchService')
 
         # Test List Accounts by Resource Group
@@ -175,19 +178,19 @@ class MgmtBatchTest(AzureMgmtTestCase):
         application_id = 'my_application_id'
         application_name = 'my_application_name'
         application_ver = 'v1.0'
+        application_properties = models.Application(display_name=application_name, allow_updates=True)
         application = self.mgmt_batch_client.application.create(
-            resource_group.name, account_name, application_id,
-            allow_updated=True, display_name=application_name)
+            resource_group.name, account_name, application_id, parameters=application_properties)
         self.assertIsInstance(application, models.Application)
-        self.assertEqual(application.id, application_id)
-        self.assertEqual(application.display_name, application_name)
+        self.assertTrue(application_id in application.id)
+        self.assertTrue(application_name in application.display_name)
         self.assertTrue(application.allow_updates)
 
         # Test Mgmt Get Application
         application = self.mgmt_batch_client.application.get(resource_group.name, account_name, application_id)
         self.assertIsInstance(application, models.Application)
-        self.assertEqual(application.id, application_id)
-        self.assertEqual(application.display_name, application_name)
+        self.assertTrue(application_id in application.id)
+        self.assertTrue(application_name in application.display_name)
         self.assertTrue(application.allow_updates)
 
         # Test Mgmt List Applications
@@ -207,24 +210,25 @@ class MgmtBatchTest(AzureMgmtTestCase):
         # Test Activate Application Package
         response = self.mgmt_batch_client.application_package.activate(
             resource_group.name, account_name, application_id, application_ver, 'zip')
-        self.assertIsNone(response)
+        self.assertTrue(response.state == models.PackageState.active)
 
         # Test Update Application
-        params = models.ApplicationUpdateParameters(
+        params = models.Application(
             allow_updates=False,
             display_name='my_updated_name',
             default_version=application_ver
         )
         response = self.mgmt_batch_client.application.update(
             resource_group.name, account_name, application_id, params)
-        self.assertIsNone(response)
+        self.assertTrue(application_ver in response.default_version)
+        self.assertTrue('my_updated_name' in response.display_name)
+        self.assertFalse(response.allow_updates)
 
         # Test Get Application Package
         package_ref = self.mgmt_batch_client.application_package.get(
             resource_group.name, account_name, application_id, application_ver)
         self.assertIsInstance(package_ref, models.ApplicationPackage)
-        self.assertEqual(package_ref.id, application_id)
-        self.assertEqual(package_ref.version, application_ver)
+        self.assertTrue(application_id in package_ref.id)
         self.assertEqual(package_ref.format, 'zip')
         self.assertEqual(package_ref.state, models.PackageState.active)
 
@@ -297,7 +301,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
             ),
             start_task=models.StartTask(
                 command_line="cmd.exe /c \"echo hello world\"",
-                resource_files=[models.ResourceFile('https://blobsource.com', 'filename.txt')],
+                resource_files=[models.ResourceFile(http_url='https://blobsource.com', file_path='filename.txt')],
                 environment_settings=[models.EnvironmentSetting('ENV_VAR', 'env_value')],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(
@@ -375,7 +379,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
         # Test stop resizing
         with self.assertRaises(CloudError):
             self.mgmt_batch_client.pool.stop_resize(resource_group.name, batch_account.name, iaas_pool)
-
+        if self.is_live:
+            time.sleep(300)
         # Test disable auto-scale
         response = self.mgmt_batch_client.pool.disable_auto_scale(
             resource_group.name, batch_account.name, iaas_pool)
