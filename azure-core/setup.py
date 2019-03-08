@@ -86,7 +86,7 @@ setup(
         ":python_version<'3.5'": ['typing'],
         "async:python_version>='3.5'": [
             'aiohttp>=3.0',
-            'aiodns'
+            'aiodns>=2.0'
         ],
     }
 )
