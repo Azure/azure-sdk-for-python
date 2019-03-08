@@ -34,15 +34,11 @@ class ApplicationBase(Model):
     :param available_to_other_tenants: Whether the application is available to
      other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: The display name of the application.
-    :type display_name: str
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
     :param homepage: The home page of the application.
     :type homepage: str
-    :param identifier_uris: A collection of URIs for the application.
-    :type identifier_uris: list[str]
     :param informational_urls: urls with more informations of the application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
@@ -118,10 +114,8 @@ class ApplicationBase(Model):
         'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
-        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
         'is_device_only_auth_supported': {'key': 'isDeviceOnlyAuthSupported', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
@@ -152,10 +146,8 @@ class ApplicationBase(Model):
         self.app_roles = kwargs.get('app_roles', None)
         self.app_permissions = kwargs.get('app_permissions', None)
         self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
-        self.display_name = kwargs.get('display_name', None)
         self.error_url = kwargs.get('error_url', None)
         self.homepage = kwargs.get('homepage', None)
-        self.identifier_uris = kwargs.get('identifier_uris', None)
         self.informational_urls = kwargs.get('informational_urls', None)
         self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
         self.key_credentials = kwargs.get('key_credentials', None)

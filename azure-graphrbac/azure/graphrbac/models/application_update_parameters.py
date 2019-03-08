@@ -33,15 +33,11 @@ class ApplicationUpdateParameters(ApplicationBase):
     :param available_to_other_tenants: Whether the application is available to
      other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: The display name of the application.
-    :type display_name: str
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
     :param homepage: The home page of the application.
     :type homepage: str
-    :param identifier_uris: A collection of URIs for the application.
-    :type identifier_uris: list[str]
     :param informational_urls: urls with more informations of the application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
@@ -108,6 +104,10 @@ class ApplicationUpdateParameters(ApplicationBase):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
+    :param display_name: The display name of the application.
+    :type display_name: str
+    :param identifier_uris: A collection of URIs for the application.
+    :type identifier_uris: list[str]
     """
 
     _attribute_map = {
@@ -117,10 +117,8 @@ class ApplicationUpdateParameters(ApplicationBase):
         'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
-        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
         'is_device_only_auth_supported': {'key': 'isDeviceOnlyAuthSupported', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
@@ -141,7 +139,11 @@ class ApplicationUpdateParameters(ApplicationBase):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationUpdateParameters, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
