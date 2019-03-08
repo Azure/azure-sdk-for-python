@@ -12,6 +12,8 @@ variables:
 jobs:
   - job: 'Build'
 
+    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+
     pool:
       vmImage: 'ubuntu-16.04'
 
@@ -42,7 +44,9 @@ jobs:
           artifactName: packages
 
   - job: 'Analyze'
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+  
+    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+
     dependsOn:
       - 'Build'
 
