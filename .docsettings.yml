@@ -3,4 +3,12 @@ omitted_paths:
   - scripts/*
   - azure-mgmt-netapp/tests/*
 language: python
-root_check_enabled: True
+root_check_enabled: False
+required_readme_sections:
+  - "Azure .+ client library for Python"
+  - Getting started
+  - Key concepts
+  - Examples
+  - Troubleshooting
+  - Next steps
+  - Contributing
