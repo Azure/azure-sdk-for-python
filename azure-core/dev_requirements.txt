@@ -1,2 +1,3 @@
-trio
-aiohttp>=3.0
+trio; python_version >= '3.5'
+aiohttp>=3.0; python_version >= '3.5'
+aiodns>=2.0; python_version >= '3.5'
