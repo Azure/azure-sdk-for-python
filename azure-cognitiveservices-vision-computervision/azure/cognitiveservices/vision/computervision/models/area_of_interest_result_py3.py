@@ -12,12 +12,16 @@
 from msrest.serialization import Model
 
 
-class LandmarkResults(Model):
-    """Result of domain-specific classifications for the domain of landmarks.
+class AreaOfInterestResult(Model):
+    """Result of AreaOfInterest operation.
 
-    :param landmarks: List of landmarks recognized in the image.
-    :type landmarks:
-     list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar area_of_interest: A bounding box for an area of interest inside an
+     image.
+    :vartype area_of_interest:
+     ~azure.cognitiveservices.vision.computervision.models.BoundingRect
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -25,14 +29,18 @@ class LandmarkResults(Model):
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
     """
 
+    _validation = {
+        'area_of_interest': {'readonly': True},
+    }
+
     _attribute_map = {
-        'landmarks': {'key': 'landmarks', 'type': '[LandmarksModel]'},
+        'area_of_interest': {'key': 'areaOfInterest', 'type': 'BoundingRect'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, **kwargs):
-        super(LandmarkResults, self).__init__(**kwargs)
-        self.landmarks = kwargs.get('landmarks', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.metadata = kwargs.get('metadata', None)
+    def __init__(self, *, request_id: str=None, metadata=None, **kwargs) -> None:
+        super(AreaOfInterestResult, self).__init__(**kwargs)
+        self.area_of_interest = None
+        self.request_id = request_id
+        self.metadata = metadata

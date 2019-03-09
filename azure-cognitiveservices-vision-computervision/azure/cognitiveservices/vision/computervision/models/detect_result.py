@@ -12,12 +12,15 @@
 from msrest.serialization import Model
 
 
-class LandmarkResults(Model):
-    """Result of domain-specific classifications for the domain of landmarks.
+class DetectResult(Model):
+    """Result of a DetectImage call.
 
-    :param landmarks: List of landmarks recognized in the image.
-    :type landmarks:
-     list[~azure.cognitiveservices.vision.computervision.models.LandmarksModel]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar objects: An array of detected objects.
+    :vartype objects:
+     list[~azure.cognitiveservices.vision.computervision.models.DetectedObject]
     :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
@@ -25,14 +28,18 @@ class LandmarkResults(Model):
      ~azure.cognitiveservices.vision.computervision.models.ImageMetadata
     """
 
+    _validation = {
+        'objects': {'readonly': True},
+    }
+
     _attribute_map = {
-        'landmarks': {'key': 'landmarks', 'type': '[LandmarksModel]'},
+        'objects': {'key': 'objects', 'type': '[DetectedObject]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
     def __init__(self, **kwargs):
-        super(LandmarkResults, self).__init__(**kwargs)
-        self.landmarks = kwargs.get('landmarks', None)
+        super(DetectResult, self).__init__(**kwargs)
+        self.objects = None
         self.request_id = kwargs.get('request_id', None)
         self.metadata = kwargs.get('metadata', None)
