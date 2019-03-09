@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class Gender(str, Enum):
+
+    male = "Male"
+    female = "Female"
+
+
 class TextOperationStatusCodes(str, Enum):
 
     not_started = "Not Started"
@@ -20,38 +26,16 @@ class TextOperationStatusCodes(str, Enum):
     succeeded = "Succeeded"
 
 
-class Gender(str, Enum):
+class TextRecognitionResultDimensionUnit(str, Enum):
 
-    male = "Male"
-    female = "Female"
-
-
-class ComputerVisionErrorCodes(str, Enum):
-
-    invalid_image_url = "InvalidImageUrl"
-    invalid_image_format = "InvalidImageFormat"
-    invalid_image_size = "InvalidImageSize"
-    not_supported_visual_feature = "NotSupportedVisualFeature"
-    not_supported_image = "NotSupportedImage"
-    invalid_details = "InvalidDetails"
-    not_supported_language = "NotSupportedLanguage"
-    bad_argument = "BadArgument"
-    failed_to_process = "FailedToProcess"
-    timeout = "Timeout"
-    internal_server_error = "InternalServerError"
-    unspecified = "Unspecified"
-    storage_exception = "StorageException"
+    pixel = "pixel"
+    inch = "inch"
 
 
-class VisualFeatureTypes(str, Enum):
+class TextRecognitionResultConfidenceClass(str, Enum):
 
-    image_type = "ImageType"
-    faces = "Faces"
-    adult = "Adult"
-    categories = "Categories"
-    color = "Color"
-    tags = "Tags"
-    description = "Description"
+    high = "High"
+    low = "Low"
 
 
 class OcrLanguages(str, Enum):
@@ -85,26 +69,23 @@ class OcrLanguages(str, Enum):
     sk = "sk"
 
 
+class VisualFeatureTypes(str, Enum):
+
+    image_type = "ImageType"
+    faces = "Faces"
+    adult = "Adult"
+    categories = "Categories"
+    color = "Color"
+    tags = "Tags"
+    description = "Description"
+    objects = "Objects"
+    brands = "Brands"
+
+
 class TextRecognitionMode(str, Enum):
 
     handwritten = "Handwritten"
     printed = "Printed"
-
-
-class AzureRegions(str, Enum):
-
-    westus = "westus"
-    westeurope = "westeurope"
-    southeastasia = "southeastasia"
-    eastus2 = "eastus2"
-    westcentralus = "westcentralus"
-    westus2 = "westus2"
-    eastus = "eastus"
-    southcentralus = "southcentralus"
-    northeurope = "northeurope"
-    eastasia = "eastasia"
-    australiaeast = "australiaeast"
-    brazilsouth = "brazilsouth"
 
 
 class Details(str, Enum):
