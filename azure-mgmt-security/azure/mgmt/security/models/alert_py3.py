@@ -78,6 +78,8 @@ class Alert(Resource):
     :ivar workspace_arm_id: Azure resource ID of the workspace that the alert
      was reported to.
     :vartype workspace_arm_id: str
+    :ivar correlation_key: Correlation Key of the alert.
+    :vartype correlation_key: str
     """
 
     _validation = {
@@ -103,6 +105,7 @@ class Alert(Resource):
         'subscription_id': {'readonly': True},
         'instance_id': {'readonly': True},
         'workspace_arm_id': {'readonly': True},
+        'correlation_key': {'readonly': True},
     }
 
     _attribute_map = {
@@ -131,6 +134,7 @@ class Alert(Resource):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
         'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
         'workspace_arm_id': {'key': 'properties.workspaceArmId', 'type': 'str'},
+        'correlation_key': {'key': 'properties.correlationKey', 'type': 'str'},
     }
 
     def __init__(self, *, extended_properties=None, entities=None, confidence_reasons=None, **kwargs) -> None:
@@ -157,3 +161,4 @@ class Alert(Resource):
         self.subscription_id = None
         self.instance_id = None
         self.workspace_arm_id = None
+        self.correlation_key = None
