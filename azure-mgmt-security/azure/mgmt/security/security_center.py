@@ -17,9 +17,6 @@ from .operations.pricings_operations import PricingsOperations
 from .operations.security_contacts_operations import SecurityContactsOperations
 from .operations.workspace_settings_operations import WorkspaceSettingsOperations
 from .operations.auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
-from .operations.io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
-from .operations.io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
-from .operations.iot_security_solution_operations import IotSecuritySolutionOperations
 from .operations.compliances_operations import CompliancesOperations
 from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
 from .operations.settings_operations import SettingsOperations
@@ -88,12 +85,6 @@ class SecurityCenter(SDKClient):
     :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
     :ivar auto_provisioning_settings: AutoProvisioningSettings operations
     :vartype auto_provisioning_settings: azure.mgmt.security.operations.AutoProvisioningSettingsOperations
-    :ivar io_tsecurity_solutions: IoTSecuritySolutions operations
-    :vartype io_tsecurity_solutions: azure.mgmt.security.operations.IoTSecuritySolutionsOperations
-    :ivar io_tsecurity_solutions_resource_group: IoTSecuritySolutionsResourceGroup operations
-    :vartype io_tsecurity_solutions_resource_group: azure.mgmt.security.operations.IoTSecuritySolutionsResourceGroupOperations
-    :ivar iot_security_solution: IotSecuritySolution operations
-    :vartype iot_security_solution: azure.mgmt.security.operations.IotSecuritySolutionOperations
     :ivar compliances: Compliances operations
     :vartype compliances: azure.mgmt.security.operations.CompliancesOperations
     :ivar advanced_threat_protection: AdvancedThreatProtection operations
@@ -149,12 +140,6 @@ class SecurityCenter(SDKClient):
         self.workspace_settings = WorkspaceSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.auto_provisioning_settings = AutoProvisioningSettingsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions = IoTSecuritySolutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_resource_group = IoTSecuritySolutionsResourceGroupOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.iot_security_solution = IotSecuritySolutionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.compliances = CompliancesOperations(
             self._client, self.config, self._serialize, self._deserialize)

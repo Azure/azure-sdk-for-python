@@ -12,18 +12,23 @@
 from msrest.serialization import Model
 
 
-class TagsResource(Model):
-    """A container holding only the Tags for a resource, allowing the user to
-    update the tags.
+class PricingList(Model):
+    """List of pricing configurations response.
 
-    :param tags: Resource tags
-    :type tags: dict[str, str]
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of pricing configurations
+    :type value: list[~azure.mgmt.security.models.Pricing]
     """
 
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+    _validation = {
+        'value': {'required': True},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
-        super(TagsResource, self).__init__(**kwargs)
-        self.tags = tags
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Pricing]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PricingList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

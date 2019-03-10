@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class PricingTier(str, Enum):
+
+    free = "Free"  #: Get free Azure security center experience with basic security features
+    standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
+
+
 class AlertNotifications(str, Enum):
 
     on = "On"  #: Get notifications on new alerts
@@ -22,28 +28,6 @@ class AlertsToAdmins(str, Enum):
 
     on = "On"  #: Send notification on new alerts to the subscription's admins
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
-
-
-class PricingTier(str, Enum):
-
-    free = "Free"  #: Get free Azure security center experience with basic security features
-    standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
-
-
-class SecuritySolutionStatus(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ExportData(str, Enum):
-
-    raw_events = "RawEvents"  #: Agent raw events
-
-
-class DataSource(str, Enum):
-
-    twin_data = "TwinData"  #: Devices twin data
 
 
 class AutoProvision(str, Enum):
@@ -60,9 +44,9 @@ class SettingKind(str, Enum):
 
 class ReportedSeverity(str, Enum):
 
-    silent = "Silent"
-    information = "Information"
+    informational = "Informational"
     low = "Low"
+    medium = "Medium"
     high = "High"
 
 
