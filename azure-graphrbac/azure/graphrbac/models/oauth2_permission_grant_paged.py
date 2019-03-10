@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PermissionsPaged(Paged):
+class OAuth2PermissionGrantPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Permissions <azure.graphrbac.models.Permissions>` object
+    A paging container for iterating over a list of :class:`OAuth2PermissionGrant <azure.graphrbac.models.OAuth2PermissionGrant>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Permissions]'}
+        'current_page': {'key': 'value', 'type': '[OAuth2PermissionGrant]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PermissionsPaged, self).__init__(*args, **kwargs)
+        super(OAuth2PermissionGrantPaged, self).__init__(*args, **kwargs)

@@ -37,90 +37,20 @@ class OAuth2Operations(object):
 
         self.config = config
 
-    def get(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Queries OAuth2 permissions grants for the relevant SP ObjectId of an
-        app.
-
-        :param filter: This is the Service Principal ObjectId associated with
-         the app
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Permissions
-        :rtype:
-         ~azure.graphrbac.models.PermissionsPaged[~azure.graphrbac.models.Permissions]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.get.metadata['url']
-                path_format_arguments = {
-                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.PermissionsPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.PermissionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/{tenantID}/oauth2PermissionGrants'}
-
     def grant(
             self, body=None, custom_headers=None, raw=False, **operation_config):
         """Grants OAuth2 permissions for the relevant resource Ids of an app.
 
         :param body: The relevant app Service Principal Object Id and the
          Service Principal Object Id you want to grant.
-        :type body: ~azure.graphrbac.models.Permissions
+        :type body: ~azure.graphrbac.models.OAuth2PermissionGrant
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Permissions or ClientRawResponse if raw=true
-        :rtype: ~azure.graphrbac.models.Permissions or
+        :return: OAuth2PermissionGrant or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.OAuth2PermissionGrant or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -148,7 +78,7 @@ class OAuth2Operations(object):
 
         # Construct body
         if body is not None:
-            body_content = self._serialize.body(body, 'Permissions')
+            body_content = self._serialize.body(body, 'OAuth2PermissionGrant')
         else:
             body_content = None
 
@@ -164,7 +94,7 @@ class OAuth2Operations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Permissions', response)
+            deserialized = self._deserialize('OAuth2PermissionGrant', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

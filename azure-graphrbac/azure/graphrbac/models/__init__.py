@@ -50,7 +50,7 @@ try:
     from .user_get_member_groups_parameters_py3 import UserGetMemberGroupsParameters
     from .get_objects_parameters_py3 import GetObjectsParameters
     from .domain_py3 import Domain
-    from .permissions_py3 import Permissions
+    from .oauth2_permission_grant_py3 import OAuth2PermissionGrant
 except (SyntaxError, ImportError):
     from .informational_url import InformationalUrl
     from .oauth2_permission import OAuth2Permission
@@ -92,7 +92,7 @@ except (SyntaxError, ImportError):
     from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
     from .get_objects_parameters import GetObjectsParameters
     from .domain import Domain
-    from .permissions import Permissions
+    from .oauth2_permission_grant import OAuth2PermissionGrant
 from .directory_object_paged import DirectoryObjectPaged
 from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
@@ -102,9 +102,10 @@ from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
 from .domain_paged import DomainPaged
-from .permissions_paged import PermissionsPaged
+from .oauth2_permission_grant_paged import OAuth2PermissionGrantPaged
 from .graph_rbac_management_client_enums import (
     UserType,
+    ConsentType,
 )
 
 __all__ = [
@@ -148,7 +149,7 @@ __all__ = [
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
     'Domain',
-    'Permissions',
+    'OAuth2PermissionGrant',
     'DirectoryObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
@@ -158,6 +159,7 @@ __all__ = [
     'ServicePrincipalPaged',
     'UserPaged',
     'DomainPaged',
-    'PermissionsPaged',
+    'OAuth2PermissionGrantPaged',
     'UserType',
+    'ConsentType',
 ]

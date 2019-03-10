@@ -21,6 +21,7 @@ from .operations.service_principals_operations import ServicePrincipalsOperation
 from .operations.users_operations import UsersOperations
 from .operations.objects_operations import ObjectsOperations
 from .operations.domains_operations import DomainsOperations
+from .operations.oauth2_permission_grant_operations import OAuth2PermissionGrantOperations
 from .operations.oauth2_operations import OAuth2Operations
 from . import models
 
@@ -79,6 +80,8 @@ class GraphRbacManagementClient(SDKClient):
     :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar domains: Domains operations
     :vartype domains: azure.graphrbac.operations.DomainsOperations
+    :ivar oauth2_permission_grant: OAuth2PermissionGrant operations
+    :vartype oauth2_permission_grant: azure.graphrbac.operations.OAuth2PermissionGrantOperations
     :ivar oauth2: OAuth2 operations
     :vartype oauth2: azure.graphrbac.operations.OAuth2Operations
 
@@ -116,6 +119,8 @@ class GraphRbacManagementClient(SDKClient):
         self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.oauth2_permission_grant = OAuth2PermissionGrantOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.oauth2 = OAuth2Operations(
             self._client, self.config, self._serialize, self._deserialize)
