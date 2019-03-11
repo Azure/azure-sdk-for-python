@@ -26,8 +26,10 @@ try:
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_entity_py3 import OperationEntity
     from .check_sku_availability_parameter_py3 import CheckSkuAvailabilityParameter
+    from .check_domain_availability_parameter_py3 import CheckDomainAvailabilityParameter
     from .check_sku_availability_result_py3 import CheckSkuAvailabilityResult
     from .check_sku_availability_result_list_py3 import CheckSkuAvailabilityResultList
+    from .check_domain_availability_result_py3 import CheckDomainAvailabilityResult
     from .resource_sku_restriction_info_py3 import ResourceSkuRestrictionInfo
     from .resource_sku_restrictions_py3 import ResourceSkuRestrictions
     from .resource_sku_py3 import ResourceSku
@@ -48,8 +50,10 @@ except (SyntaxError, ImportError):
     from .operation_display_info import OperationDisplayInfo
     from .operation_entity import OperationEntity
     from .check_sku_availability_parameter import CheckSkuAvailabilityParameter
+    from .check_domain_availability_parameter import CheckDomainAvailabilityParameter
     from .check_sku_availability_result import CheckSkuAvailabilityResult
     from .check_sku_availability_result_list import CheckSkuAvailabilityResultList
+    from .check_domain_availability_result import CheckDomainAvailabilityResult
     from .resource_sku_restriction_info import ResourceSkuRestrictionInfo
     from .resource_sku_restrictions import ResourceSkuRestrictions
     from .resource_sku import ResourceSku
@@ -83,8 +87,10 @@ __all__ = [
     'OperationDisplayInfo',
     'OperationEntity',
     'CheckSkuAvailabilityParameter',
+    'CheckDomainAvailabilityParameter',
     'CheckSkuAvailabilityResult',
     'CheckSkuAvailabilityResultList',
+    'CheckDomainAvailabilityResult',
     'ResourceSkuRestrictionInfo',
     'ResourceSkuRestrictions',
     'ResourceSku',
