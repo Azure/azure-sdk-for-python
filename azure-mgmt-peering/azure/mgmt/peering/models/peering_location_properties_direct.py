@@ -19,7 +19,7 @@ class PeeringLocationPropertiesDirect(Model):
      peering location.
     :type peering_facilities:
      list[~azure.mgmt.peering.models.DirectPeeringFacility]
-    :param bandwidth_offers: The list of bandwidth offers avaiable at the
+    :param bandwidth_offers: The list of bandwidth offers available at the
      peering location.
     :type bandwidth_offers:
      list[~azure.mgmt.peering.models.PeeringBandwidthOffer]
