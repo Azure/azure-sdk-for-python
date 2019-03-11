@@ -1,14 +1,12 @@
 from . import _generated
 from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
-from msrest.pipeline.requests import (
-    PipelineRequestsHTTPSender,
-    RequestsPatchSession
-)
 
-from msrest.pipeline import Request, Pipeline
-from msrest.universal_http.requests import (
-    RequestsHTTPSender,
-)
+
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+from azure.core.pipeline.policies import UserAgentPolicy, NetworkTraceLoggingPolicy
+from azure.core.configuration import Configuration
+
 
 class AzureConfigurationClient(object):
     """Represents an azconfig client
@@ -28,16 +26,19 @@ class AzureConfigurationClient(object):
     
     def _create_azconfig_pipeline(self):
         policies = [
-            self._client.config.user_agent_policy,  # UserAgent policy
-            RequestsPatchSession(),         # Support deprecated operation config at the session level
-            self._client.config.http_logger_policy  # HTTP request/response log
+            UserAgentPolicy("azconfig"),  # UserAgent policy
+            AzConfigRequestsCredentialsPolicy(self._client.config)
         ]
 
-        policies.insert(1, AzConfigRequestsCredentialsPolicy(self._client.config))  # Set credentials for requests based session
+        config = Configuration()
+        config.connection.timeout = self._client.config.connection.timeout
+        config.connection.cert = self._client.config.connection.cert
+        config.connection.verify = self._client.config.connection.verify
+
 
         return Pipeline(
-            policies,
-            PipelineRequestsHTTPSender(RequestsHTTPSender(self._client.config))  # Send HTTP request using requests
+            RequestsTransport(config.connection),  # Send HTTP request using requests
+            policies
         )
 
     def list_key_values(
@@ -135,9 +136,6 @@ class AzureConfigurationClient(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         current_key_value = self._client.get_key_value(key, label)
-        if current_key_value is None:
-            #TODO throw exception
-            return None
         if etag is not None:
             if_match = {'If-Match': etag}
         else:

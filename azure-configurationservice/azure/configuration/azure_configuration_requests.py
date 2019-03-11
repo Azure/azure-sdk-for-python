@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from msrest.pipeline import HTTPPolicy
+from azure.core.pipeline.policies import HTTPPolicy
 
 from .utils import parse_connection_string, get_current_utc_time
 import hashlib
