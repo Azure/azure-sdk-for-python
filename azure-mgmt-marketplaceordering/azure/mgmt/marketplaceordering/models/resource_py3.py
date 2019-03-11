@@ -12,29 +12,34 @@
 from msrest.serialization import Model
 
 
-class ErrorResponseError(Model):
-    """The details of the error.
+class Resource(Model):
+    """ARM resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorResponseError, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
