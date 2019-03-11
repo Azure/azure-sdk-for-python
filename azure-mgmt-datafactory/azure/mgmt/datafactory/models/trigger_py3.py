@@ -35,6 +35,9 @@ class Trigger(Model):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -48,6 +51,7 @@ class Trigger(Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -55,9 +59,10 @@ class Trigger(Model):
         'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
-    def __init__(self, *, additional_properties=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, annotations=None, **kwargs) -> None:
         super(Trigger, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
         self.runtime_state = None
+        self.annotations = annotations
         self.type = None
