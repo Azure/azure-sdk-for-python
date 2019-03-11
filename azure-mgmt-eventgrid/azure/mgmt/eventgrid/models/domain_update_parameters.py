@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class RecognitionResult(Model):
-    """RecognitionResult.
+class DomainUpdateParameters(Model):
+    """Properties of the Domain update.
 
-    :param lines:
-    :type lines:
-     list[~azure.cognitiveservices.vision.computervision.models.Line]
+    :param tags: Tags of the domains resource
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'lines': {'key': 'lines', 'type': '[Line]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
-        super(RecognitionResult, self).__init__(**kwargs)
-        self.lines = kwargs.get('lines', None)
+        super(DomainUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

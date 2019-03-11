@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ImageCaption(Model):
     """An image caption, i.e. a brief description of what the image depicts.
 
-    :param text: The text of the caption
+    :param text: The text of the caption.
     :type text: str
-    :param confidence: The level of confidence the service has in the caption
+    :param confidence: The level of confidence the service has in the caption.
     :type confidence: float
     """
 

@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class RecognitionResult(Model):
-    """RecognitionResult.
+class DomainSharedAccessKeys(Model):
+    """Shared access keys of the Domain.
 
-    :param lines:
-    :type lines:
-     list[~azure.cognitiveservices.vision.computervision.models.Line]
+    :param key1: Shared access key1 for the domain.
+    :type key1: str
+    :param key2: Shared access key2 for the domain.
+    :type key2: str
     """
 
     _attribute_map = {
-        'lines': {'key': 'lines', 'type': '[Line]'},
+        'key1': {'key': 'key1', 'type': 'str'},
+        'key2': {'key': 'key2', 'type': 'str'},
     }
 
-    def __init__(self, *, lines=None, **kwargs) -> None:
-        super(RecognitionResult, self).__init__(**kwargs)
-        self.lines = lines
+    def __init__(self, *, key1: str=None, key2: str=None, **kwargs) -> None:
+        super(DomainSharedAccessKeys, self).__init__(**kwargs)
+        self.key1 = key1
+        self.key2 = key2

@@ -53,7 +53,7 @@ def print_message(message):
     _logger.debug("Partition Key: {}".format(message.partition_key))
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
-
+@pytest.mark.liveTest
 def test_session_by_session_client_conn_str_receive_handler_peeklock(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -80,7 +80,7 @@ def test_session_by_session_client_conn_str_receive_handler_peeklock(live_servic
 
     assert count == 3
 
-
+@pytest.mark.liveTest
 def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -113,7 +113,7 @@ def test_session_by_queue_client_conn_str_receive_handler_receiveanddelete(live_
         messages.append(message)
     assert len(messages) == 0
 
-
+@pytest.mark.liveTest
 def test_session_by_session_client_conn_str_receive_handler_with_stop(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -151,7 +151,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_stop(live_servi
     assert not session.running
     assert len(messages) == 6
 
-
+@pytest.mark.liveTest
 def test_session_by_session_client_conn_str_receive_handler_with_no_session(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -162,7 +162,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_no_session(live
     with pytest.raises(NoActiveSession):
         session.open()
 
-
+@pytest.mark.liveTest
 def test_session_by_session_client_conn_str_receive_handler_with_inactive_session(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -178,7 +178,7 @@ def test_session_by_session_client_conn_str_receive_handler_with_inactive_sessio
     assert not session.running
     assert len(messages) == 0
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -215,7 +215,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
                 message.renew_lock()
             message.complete()
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -257,7 +257,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
             message.complete()
     assert count == 10
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -291,7 +291,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_recei
         with pytest.raises(ServiceBusError):
             deferred = session.receive_deferred_messages(deferred_messages)
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_client(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -323,7 +323,7 @@ def test_session_by_servicebus_client_iter_messages_with_retrieve_deferred_clien
     with pytest.raises(ValueError):
         queue_client.settle_deferred_messages('completed', [message], session=session_id)
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_servicebus_config, session_queue):
 
     client = ServiceBusClient(
@@ -361,7 +361,7 @@ def test_session_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_s
             count += 1
     assert count == 10
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_browse_messages_client(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -387,7 +387,7 @@ def test_session_by_servicebus_client_browse_messages_client(live_servicebus_con
         with pytest.raises(TypeError):
             message.complete()
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_browse_messages_with_receiver(live_servicebus_config, session_queue):
 
     client = ServiceBusClient(
@@ -412,7 +412,7 @@ def test_session_by_servicebus_client_browse_messages_with_receiver(live_service
             with pytest.raises(TypeError):
                 message.complete()
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_renew_client_locks(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -453,7 +453,7 @@ def test_session_by_servicebus_client_renew_client_locks(live_servicebus_config,
             with pytest.raises(SessionLockExpired):
                 messages[2].complete()
 
-
+@pytest.mark.liveTest
 def test_session_by_conn_str_receive_handler_with_autolockrenew(live_servicebus_config, session_queue):
     session_id = str(uuid.uuid4())
     queue_client = QueueClient.from_connection_string(
@@ -503,7 +503,7 @@ def test_session_by_conn_str_receive_handler_with_autolockrenew(live_servicebus_
     renewer.shutdown()
     assert len(messages) == 2
 
-
+@pytest.mark.liveTest
 def test_session_message_connection_closed(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -526,7 +526,7 @@ def test_session_message_connection_closed(live_servicebus_config, session_queue
     with pytest.raises(MessageSettleFailed):
         messages[0].complete()
 
-
+@pytest.mark.liveTest
 def test_session_message_expiry(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -563,7 +563,7 @@ def test_session_message_expiry(live_servicebus_config, session_queue):
         #assert messages[0].header.delivery_count  # TODO confirm this with service
         messages[0].complete()
 
-
+@pytest.mark.liveTest
 def test_session_schedule_message(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -597,7 +597,7 @@ def test_session_schedule_message(live_servicebus_config, session_queue):
         assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
         assert len(messages) == 1
 
-
+@pytest.mark.liveTest
 def test_session_schedule_multiple_messages(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -636,7 +636,7 @@ def test_session_schedule_multiple_messages(live_servicebus_config, session_queu
         assert messages[0].scheduled_enqueue_time == messages[0].enqueued_time.replace(microsecond=0)
         assert len(messages) == 2
 
-
+@pytest.mark.liveTest
 def test_session_cancel_scheduled_messages(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -664,7 +664,7 @@ def test_session_cancel_scheduled_messages(live_servicebus_config, session_queue
             count += 1
         assert len(messages) == 0
 
-
+@pytest.mark.liveTest
 def test_session_get_set_state_with_receiver(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
@@ -688,7 +688,7 @@ def test_session_get_set_state_with_receiver(live_servicebus_config, session_que
             session.get_session_state()
     assert count == 3
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_list_sessions_with_receiver(live_servicebus_config, session_queue):
     client = ServiceBusClient(
         service_namespace=live_servicebus_config['hostname'],
@@ -716,7 +716,7 @@ def test_session_by_servicebus_client_list_sessions_with_receiver(live_servicebu
         assert len(current_sessions) == 5
         assert current_sessions == sessions
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_list_sessions_with_client(live_servicebus_config, session_queue):
 
     client = ServiceBusClient(
@@ -744,7 +744,7 @@ def test_session_by_servicebus_client_list_sessions_with_client(live_servicebus_
     assert len(current_sessions) == 5
     assert current_sessions == sessions
 
-
+@pytest.mark.liveTest
 def test_session_by_servicebus_client_session_pool(live_servicebus_config, session_queue):
     messages = []
     errors = []
