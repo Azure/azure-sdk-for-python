@@ -17,7 +17,8 @@ class NWRuleSetIpRules(Model):
 
     :param ip_mask: IP Mask
     :type ip_mask: str
-    :param action: The IP Filter Action. Possible values include: 'Allow'
+    :param action: The IP Filter Action. Possible values include: 'Allow'.
+     Default value: "Allow" .
     :type action: str or ~azure.mgmt.servicebus.models.NetworkRuleIPAction
     """
 
@@ -26,7 +27,7 @@ class NWRuleSetIpRules(Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    def __init__(self, *, ip_mask: str=None, action=None, **kwargs) -> None:
+    def __init__(self, *, ip_mask: str=None, action="Allow", **kwargs) -> None:
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = ip_mask
         self.action = action
