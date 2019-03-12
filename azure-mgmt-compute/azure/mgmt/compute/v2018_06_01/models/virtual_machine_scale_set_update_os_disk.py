@@ -22,6 +22,10 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
+    :param disk_size_gb: Specifies the size of the operating system disk in
+     gigabytes. This element can be used to overwrite the size of the disk in a
+     virtual machine image. <br><br> This value cannot be larger than 1023 GB
+    :type disk_size_gb: int
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not exist.
@@ -36,6 +40,7 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     _attribute_map = {
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
+        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
@@ -45,6 +50,7 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
         super(VirtualMachineScaleSetUpdateOSDisk, self).__init__(**kwargs)
         self.caching = kwargs.get('caching', None)
         self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
         self.image = kwargs.get('image', None)
         self.vhd_containers = kwargs.get('vhd_containers', None)
         self.managed_disk = kwargs.get('managed_disk', None)

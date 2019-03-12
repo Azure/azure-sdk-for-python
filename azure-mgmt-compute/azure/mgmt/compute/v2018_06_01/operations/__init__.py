@@ -15,9 +15,9 @@ from .virtual_machine_extension_images_operations import VirtualMachineExtension
 from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
 from .virtual_machine_images_operations import VirtualMachineImagesOperations
 from .usage_operations import UsageOperations
+from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .images_operations import ImagesOperations
-from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
@@ -27,6 +27,8 @@ from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOp
 from .galleries_operations import GalleriesOperations
 from .gallery_images_operations import GalleryImagesOperations
 from .gallery_image_versions_operations import GalleryImageVersionsOperations
+from .disks_operations import DisksOperations
+from .snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'Operations',
@@ -35,9 +37,9 @@ __all__ = [
     'VirtualMachineExtensionsOperations',
     'VirtualMachineImagesOperations',
     'UsageOperations',
+    'VirtualMachinesOperations',
     'VirtualMachineSizesOperations',
     'ImagesOperations',
-    'VirtualMachinesOperations',
     'VirtualMachineScaleSetsOperations',
     'VirtualMachineScaleSetExtensionsOperations',
     'VirtualMachineScaleSetRollingUpgradesOperations',
@@ -47,4 +49,6 @@ __all__ = [
     'GalleriesOperations',
     'GalleryImagesOperations',
     'GalleryImageVersionsOperations',
+    'DisksOperations',
+    'SnapshotsOperations',
 ]

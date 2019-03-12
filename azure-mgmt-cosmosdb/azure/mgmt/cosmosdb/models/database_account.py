@@ -77,6 +77,9 @@ class DatabaseAccount(Resource):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
     """
 
     _validation = {
@@ -110,6 +113,7 @@ class DatabaseAccount(Resource):
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -127,3 +131,4 @@ class DatabaseAccount(Resource):
         self.read_locations = None
         self.failover_policies = None
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)

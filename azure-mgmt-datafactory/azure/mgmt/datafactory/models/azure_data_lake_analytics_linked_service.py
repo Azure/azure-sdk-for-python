@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureDataLakeAnalyticsLinkedService(LinkedService):
     """Azure Data Lake Analytics linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param account_name: The Azure Data Lake Analytics account name. Type:
-     string (or Expression with resultType string).
+    :param account_name: Required. The Azure Data Lake Analytics account name.
+     Type: string (or Expression with resultType string).
     :type account_name: object
     :param service_principal_id: The ID of the application used to
      authenticate against the Azure Data Lake Analytics account. Type: string
@@ -41,8 +43,8 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
     :param service_principal_key: The Key of the application used to
      authenticate against the Azure Data Lake Analytics account.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
-    :param tenant: The name or ID of the tenant to which the service principal
-     belongs. Type: string (or Expression with resultType string).
+    :param tenant: Required. The name or ID of the tenant to which the service
+     principal belongs. Type: string (or Expression with resultType string).
     :type tenant: object
     :param subscription_id: Data Lake Analytics account subscription ID (if
      different from Data Factory account). Type: string (or Expression with
@@ -84,14 +86,14 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, account_name, tenant, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, subscription_id=None, resource_group_name=None, data_lake_analytics_uri=None, encrypted_credential=None):
-        super(AzureDataLakeAnalyticsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.account_name = account_name
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.tenant = tenant
-        self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.data_lake_analytics_uri = data_lake_analytics_uri
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureDataLakeAnalyticsLinkedService, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.data_lake_analytics_uri = kwargs.get('data_lake_analytics_uri', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDataLakeAnalytics'

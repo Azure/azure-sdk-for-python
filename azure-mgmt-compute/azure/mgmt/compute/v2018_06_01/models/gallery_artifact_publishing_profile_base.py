@@ -15,18 +15,26 @@ from msrest.serialization import Model
 class GalleryArtifactPublishingProfileBase(Model):
     """Describes the basic gallery artifact publishing profile.
 
-    :param regions: The regions where the artifact is going to be published.
-    :type regions: list[str]
-    :param source:
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_regions: The target regions where the Image Version is going
+     to be replicated to. This property is updatable.
+    :type target_regions:
+     list[~azure.mgmt.compute.v2018_06_01.models.TargetRegion]
+    :param source: Required.
     :type source: ~azure.mgmt.compute.v2018_06_01.models.GalleryArtifactSource
     """
 
+    _validation = {
+        'source': {'required': True},
+    }
+
     _attribute_map = {
-        'regions': {'key': 'regions', 'type': '[str]'},
+        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
         'source': {'key': 'source', 'type': 'GalleryArtifactSource'},
     }
 
     def __init__(self, **kwargs):
         super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
-        self.regions = kwargs.get('regions', None)
+        self.target_regions = kwargs.get('target_regions', None)
         self.source = kwargs.get('source', None)

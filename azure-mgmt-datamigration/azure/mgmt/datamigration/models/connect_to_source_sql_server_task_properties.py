@@ -21,12 +21,15 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param errors: Array of errors. This is ignored if submitted.
-    :type errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :ivar errors: Array of errors. This is ignored if submitted.
+    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
+    :ivar commands: Array of command properties.
+    :vartype commands:
+     list[~azure.mgmt.datamigration.models.CommandProperties]
     :param task_type: Required. Constant filled by server.
     :type task_type: str
     :param input: Task input
@@ -38,7 +41,9 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
     """
 
     _validation = {
+        'errors': {'readonly': True},
         'state': {'readonly': True},
+        'commands': {'readonly': True},
         'task_type': {'required': True},
         'output': {'readonly': True},
     }
@@ -46,6 +51,7 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
         'state': {'key': 'state', 'type': 'str'},
+        'commands': {'key': 'commands', 'type': '[CommandProperties]'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'input': {'key': 'input', 'type': 'ConnectToSourceSqlServerTaskInput'},
         'output': {'key': 'output', 'type': '[ConnectToSourceSqlServerTaskOutput]'},

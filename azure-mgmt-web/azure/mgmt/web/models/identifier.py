@@ -44,6 +44,6 @@ class Identifier(ProxyOnlyResource):
         'identifier_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, identifier_id=None):
-        super(Identifier, self).__init__(kind=kind)
-        self.identifier_id = identifier_id
+    def __init__(self, **kwargs):
+        super(Identifier, self).__init__(**kwargs)
+        self.identifier_id = kwargs.get('identifier_id', None)

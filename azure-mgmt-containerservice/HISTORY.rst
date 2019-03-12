@@ -3,6 +3,56 @@
 Release History
 ===============
 
+4.4.0 (2019-01-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ManagedClustersOperations.reset_service_principal_profile
+- Added operation ManagedClustersOperations.reset_aad_profile
+
+4.3.0 (2018-12-13)
+++++++++++++++++++
+
+**Features**
+
+- Support for Azure Profiles
+- OpenShift ManagedCluster (preview)
+
+This package also adds
+Preview version of ManagedCluster (AKS 2018-08-01-preview), this includes the following breaking changes and features, if you optin for this new API version:
+
+**Features**
+
+- Model ManagedClusterAgentPoolProfile has a new parameter type
+- Model ManagedClusterAgentPoolProfile has a new parameter max_count
+- Model ManagedClusterAgentPoolProfile has a new parameter enable_auto_scaling
+- Model ManagedClusterAgentPoolProfile has a new parameter min_count
+
+**Breaking changes**
+
+- Parameter count of model ManagedClusterAgentPoolProfile is now required
+- Model ManagedClusterAgentPoolProfile no longer has parameter storage_profile
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+4.2.2 (2018-08-09)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix invalid definition of CredentialResult
+
+4.2.1 (2018-08-08)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid regexp
+- Fix invalid definition of CredentialResult
+
 4.2.0 (2018-07-30)
 ++++++++++++++++++
 

@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.domains_operations import DomainsOperations
+from .operations.domain_topics_operations import DomainTopicsOperations
 from .operations.event_subscriptions_operations import EventSubscriptionsOperations
 from .operations.operations import Operations
 from .operations.topics_operations import TopicsOperations
@@ -60,6 +62,10 @@ class EventGridManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: EventGridManagementClientConfiguration
 
+    :ivar domains: Domains operations
+    :vartype domains: azure.mgmt.eventgrid.operations.DomainsOperations
+    :ivar domain_topics: DomainTopics operations
+    :vartype domain_topics: azure.mgmt.eventgrid.operations.DomainTopicsOperations
     :ivar event_subscriptions: EventSubscriptions operations
     :vartype event_subscriptions: azure.mgmt.eventgrid.operations.EventSubscriptionsOperations
     :ivar operations: Operations operations
@@ -86,10 +92,14 @@ class EventGridManagementClient(SDKClient):
         super(EventGridManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-05-01-preview'
+        self.api_version = '2019-02-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.domains = DomainsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.domain_topics = DomainTopicsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.event_subscriptions = EventSubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(

@@ -16,19 +16,19 @@ class ReplicaEvent(FabricEvent):
     """Represents the base for all Replica Events.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StatefulReplicaHealthReportCreatedEvent,
+    sub-classes are: StatefulReplicaNewHealthReportEvent,
     StatefulReplicaHealthReportExpiredEvent,
-    StatelessReplicaHealthReportCreatedEvent,
+    StatelessReplicaNewHealthReportEvent,
     StatelessReplicaHealthReportExpiredEvent,
-    ChaosRemoveReplicaFaultScheduledEvent,
-    ChaosRemoveReplicaFaultCompletedEvent,
-    ChaosRestartReplicaFaultScheduledEvent
+    ChaosReplicaRemovalScheduledEvent, ChaosReplicaRestartScheduledEvent
 
     All required parameters must be populated in order to send to Azure.
 
     :param event_instance_id: Required. The identifier for the FabricEvent
      instance.
     :type event_instance_id: str
+    :param category: The category of event.
+    :type category: str
     :param time_stamp: Required. The time event was logged.
     :type time_stamp: datetime
     :param has_correlated_events: Shows there is existing related events
@@ -62,6 +62,7 @@ class ReplicaEvent(FabricEvent):
 
     _attribute_map = {
         'event_instance_id': {'key': 'EventInstanceId', 'type': 'str'},
+        'category': {'key': 'Category', 'type': 'str'},
         'time_stamp': {'key': 'TimeStamp', 'type': 'iso-8601'},
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -70,7 +71,7 @@ class ReplicaEvent(FabricEvent):
     }
 
     _subtype_map = {
-        'kind': {'StatefulReplicaHealthReportCreated': 'StatefulReplicaHealthReportCreatedEvent', 'StatefulReplicaHealthReportExpired': 'StatefulReplicaHealthReportExpiredEvent', 'StatelessReplicaHealthReportCreated': 'StatelessReplicaHealthReportCreatedEvent', 'StatelessReplicaHealthReportExpired': 'StatelessReplicaHealthReportExpiredEvent', 'ChaosRemoveReplicaFaultScheduled': 'ChaosRemoveReplicaFaultScheduledEvent', 'ChaosRemoveReplicaFaultCompleted': 'ChaosRemoveReplicaFaultCompletedEvent', 'ChaosRestartReplicaFaultScheduled': 'ChaosRestartReplicaFaultScheduledEvent'}
+        'kind': {'StatefulReplicaNewHealthReport': 'StatefulReplicaNewHealthReportEvent', 'StatefulReplicaHealthReportExpired': 'StatefulReplicaHealthReportExpiredEvent', 'StatelessReplicaNewHealthReport': 'StatelessReplicaNewHealthReportEvent', 'StatelessReplicaHealthReportExpired': 'StatelessReplicaHealthReportExpiredEvent', 'ChaosReplicaRemovalScheduled': 'ChaosReplicaRemovalScheduledEvent', 'ChaosReplicaRestartScheduled': 'ChaosReplicaRestartScheduledEvent'}
     }
 
     def __init__(self, **kwargs):
