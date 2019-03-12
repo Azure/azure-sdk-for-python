@@ -18,19 +18,17 @@ class PredictionQueryResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar token: Required.
+    :ivar token:
     :vartype token:
      ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
-    :ivar results: Required.
+    :ivar results:
     :vartype results:
      list[~azure.cognitiveservices.vision.customvision.training.models.StoredImagePrediction]
     """
 
     _validation = {
-        'token': {'required': True, 'readonly': True},
-        'results': {'required': True, 'readonly': True},
+        'token': {'readonly': True},
+        'results': {'readonly': True},
     }
 
     _attribute_map = {

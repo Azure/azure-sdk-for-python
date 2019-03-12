@@ -18,19 +18,17 @@ class ImageCreateSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar is_batch_successful: Required. True if all of the images in the
-     batch were created successfully, otherwise false.
+    :ivar is_batch_successful: True if all of the images in the batch were
+     created successfully, otherwise false.
     :vartype is_batch_successful: bool
-    :ivar images: Required. List of the image creation results.
+    :ivar images: List of the image creation results.
     :vartype images:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageCreateResult]
     """
 
     _validation = {
-        'is_batch_successful': {'required': True, 'readonly': True},
-        'images': {'required': True, 'readonly': True},
+        'is_batch_successful': {'readonly': True},
+        'images': {'readonly': True},
     }
 
     _attribute_map = {

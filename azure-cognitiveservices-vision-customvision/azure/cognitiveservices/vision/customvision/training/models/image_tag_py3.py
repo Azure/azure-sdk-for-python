@@ -18,20 +18,18 @@ class ImageTag(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar tag_id: Required.
+    :ivar tag_id:
     :vartype tag_id: str
-    :ivar tag_name: Required.
+    :ivar tag_name:
     :vartype tag_name: str
-    :ivar created: Required.
+    :ivar created:
     :vartype created: datetime
     """
 
     _validation = {
-        'tag_id': {'required': True, 'readonly': True},
-        'tag_name': {'required': True, 'readonly': True},
-        'created': {'required': True, 'readonly': True},
+        'tag_id': {'readonly': True},
+        'tag_name': {'readonly': True},
+        'created': {'readonly': True},
     }
 
     _attribute_map = {

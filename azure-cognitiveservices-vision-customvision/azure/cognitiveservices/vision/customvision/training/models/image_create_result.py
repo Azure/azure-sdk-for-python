@@ -18,26 +18,24 @@ class ImageCreateResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar source_url: Required. Source URL of the image.
+    :ivar source_url: Source URL of the image.
     :vartype source_url: str
-    :ivar status: Required. Status of the image creation. Possible values
-     include: 'OK', 'OKDuplicate', 'ErrorSource', 'ErrorImageFormat',
-     'ErrorImageSize', 'ErrorStorage', 'ErrorLimitExceed',
-     'ErrorTagLimitExceed', 'ErrorRegionLimitExceed', 'ErrorUnknown',
+    :ivar status: Status of the image creation. Possible values include: 'OK',
+     'OKDuplicate', 'ErrorSource', 'ErrorImageFormat', 'ErrorImageSize',
+     'ErrorStorage', 'ErrorLimitExceed', 'ErrorTagLimitExceed',
+     'ErrorRegionLimitExceed', 'ErrorUnknown',
      'ErrorNegativeAndRegularTagOnSameImage'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateStatus
-    :ivar image: Required. The image.
+    :ivar image: The image.
     :vartype image:
      ~azure.cognitiveservices.vision.customvision.training.models.Image
     """
 
     _validation = {
-        'source_url': {'required': True, 'readonly': True},
-        'status': {'required': True, 'readonly': True},
-        'image': {'required': True, 'readonly': True},
+        'source_url': {'readonly': True},
+        'status': {'readonly': True},
+        'image': {'readonly': True},
     }
 
     _attribute_map = {

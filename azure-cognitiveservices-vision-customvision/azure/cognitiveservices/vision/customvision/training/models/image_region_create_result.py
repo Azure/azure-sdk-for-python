@@ -20,13 +20,13 @@ class ImageRegionCreateResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar image_id: Required.
+    :ivar image_id:
     :vartype image_id: str
-    :ivar region_id: Required.
+    :ivar region_id:
     :vartype region_id: str
-    :ivar tag_name: Required.
+    :ivar tag_name:
     :vartype tag_name: str
-    :ivar created: Required.
+    :ivar created:
     :vartype created: datetime
     :param tag_id: Required. Id of the tag associated with this region.
     :type tag_id: str
@@ -41,10 +41,10 @@ class ImageRegionCreateResult(Model):
     """
 
     _validation = {
-        'image_id': {'required': True, 'readonly': True},
-        'region_id': {'required': True, 'readonly': True},
-        'tag_name': {'required': True, 'readonly': True},
-        'created': {'required': True, 'readonly': True},
+        'image_id': {'readonly': True},
+        'region_id': {'readonly': True},
+        'tag_name': {'readonly': True},
+        'created': {'readonly': True},
         'tag_id': {'required': True},
         'left': {'required': True},
         'top': {'required': True},

@@ -18,21 +18,19 @@ class ImageRegionProposal(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar project_id: Required.
+    :ivar project_id:
     :vartype project_id: str
-    :ivar image_id: Required.
+    :ivar image_id:
     :vartype image_id: str
-    :ivar proposals: Required.
+    :ivar proposals:
     :vartype proposals:
      list[~azure.cognitiveservices.vision.customvision.training.models.RegionProposal]
     """
 
     _validation = {
-        'project_id': {'required': True, 'readonly': True},
-        'image_id': {'required': True, 'readonly': True},
-        'proposals': {'required': True, 'readonly': True},
+        'project_id': {'readonly': True},
+        'image_id': {'readonly': True},
+        'proposals': {'readonly': True},
     }
 
     _attribute_map = {

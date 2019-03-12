@@ -18,22 +18,20 @@ class ImagePerformance(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar predictions:
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
-    :ivar id: Required.
+    :ivar id:
     :vartype id: str
-    :ivar created: Required.
+    :ivar created:
     :vartype created: datetime
-    :ivar width: Required.
+    :ivar width:
     :vartype width: int
-    :ivar height: Required.
+    :ivar height:
     :vartype height: int
-    :ivar image_uri: Required.
+    :ivar image_uri:
     :vartype image_uri: str
-    :ivar thumbnail_uri: Required.
+    :ivar thumbnail_uri:
     :vartype thumbnail_uri: str
     :ivar tags:
     :vartype tags:
@@ -45,12 +43,12 @@ class ImagePerformance(Model):
 
     _validation = {
         'predictions': {'readonly': True},
-        'id': {'required': True, 'readonly': True},
-        'created': {'required': True, 'readonly': True},
-        'width': {'required': True, 'readonly': True},
-        'height': {'required': True, 'readonly': True},
-        'image_uri': {'required': True, 'readonly': True},
-        'thumbnail_uri': {'required': True, 'readonly': True},
+        'id': {'readonly': True},
+        'created': {'readonly': True},
+        'width': {'readonly': True},
+        'height': {'readonly': True},
+        'image_uri': {'readonly': True},
+        'thumbnail_uri': {'readonly': True},
         'tags': {'readonly': True},
         'regions': {'readonly': True},
     }

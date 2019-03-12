@@ -18,18 +18,16 @@ class RegionProposal(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar confidence: Required.
+    :ivar confidence:
     :vartype confidence: float
-    :ivar bounding_box: Required.
+    :ivar bounding_box:
     :vartype bounding_box:
      ~azure.cognitiveservices.vision.customvision.training.models.BoundingBox
     """
 
     _validation = {
-        'confidence': {'required': True, 'readonly': True},
-        'bounding_box': {'required': True, 'readonly': True},
+        'confidence': {'readonly': True},
+        'bounding_box': {'readonly': True},
     }
 
     _attribute_map = {

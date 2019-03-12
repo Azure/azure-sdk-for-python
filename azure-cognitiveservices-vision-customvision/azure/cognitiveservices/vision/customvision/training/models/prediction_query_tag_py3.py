@@ -18,20 +18,18 @@ class PredictionQueryTag(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required.
+    :ivar id:
     :vartype id: str
-    :ivar min_threshold: Required.
+    :ivar min_threshold:
     :vartype min_threshold: float
-    :ivar max_threshold: Required.
+    :ivar max_threshold:
     :vartype max_threshold: float
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
-        'min_threshold': {'required': True, 'readonly': True},
-        'max_threshold': {'required': True, 'readonly': True},
+        'id': {'readonly': True},
+        'min_threshold': {'readonly': True},
+        'max_threshold': {'readonly': True},
     }
 
     _attribute_map = {

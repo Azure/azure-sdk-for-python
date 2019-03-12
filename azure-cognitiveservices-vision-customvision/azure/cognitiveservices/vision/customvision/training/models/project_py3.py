@@ -20,7 +20,7 @@ class Project(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Gets the project id.
+    :ivar id: Gets the project id.
     :vartype id: str
     :param name: Required. Gets or sets the name of the project.
     :type name: str
@@ -29,26 +29,24 @@ class Project(Model):
     :param settings: Required. Gets or sets the project settings.
     :type settings:
      ~azure.cognitiveservices.vision.customvision.training.models.ProjectSettings
-    :ivar created: Required. Gets the date this project was created.
+    :ivar created: Gets the date this project was created.
     :vartype created: datetime
-    :ivar last_modified: Required. Gets the date this project was last
-     modified.
+    :ivar last_modified: Gets the date this project was last modified.
     :vartype last_modified: datetime
-    :ivar thumbnail_uri: Required. Gets the thumbnail url representing the
-     image.
+    :ivar thumbnail_uri: Gets the thumbnail url representing the image.
     :vartype thumbnail_uri: str
     :ivar dr_mode_enabled: Gets if the DR mode is on.
     :vartype dr_mode_enabled: bool
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
+        'id': {'readonly': True},
         'name': {'required': True},
         'description': {'required': True},
         'settings': {'required': True},
-        'created': {'required': True, 'readonly': True},
-        'last_modified': {'required': True, 'readonly': True},
-        'thumbnail_uri': {'required': True, 'readonly': True},
+        'created': {'readonly': True},
+        'last_modified': {'readonly': True},
+        'thumbnail_uri': {'readonly': True},
         'dr_mode_enabled': {'readonly': True},
     }
 
