@@ -18,31 +18,38 @@ class ImageRegionCreateResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar image_id:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar image_id: Required.
     :vartype image_id: str
-    :ivar region_id:
+    :ivar region_id: Required.
     :vartype region_id: str
-    :ivar tag_name:
+    :ivar tag_name: Required.
     :vartype tag_name: str
-    :ivar created:
+    :ivar created: Required.
     :vartype created: datetime
-    :param tag_id: Id of the tag associated with this region.
+    :param tag_id: Required. Id of the tag associated with this region.
     :type tag_id: str
-    :param left: Coordinate of the left boundary.
+    :param left: Required. Coordinate of the left boundary.
     :type left: float
-    :param top: Coordinate of the top boundary.
+    :param top: Required. Coordinate of the top boundary.
     :type top: float
-    :param width: Width.
+    :param width: Required. Width.
     :type width: float
-    :param height: Height.
+    :param height: Required. Height.
     :type height: float
     """
 
     _validation = {
-        'image_id': {'readonly': True},
-        'region_id': {'readonly': True},
-        'tag_name': {'readonly': True},
-        'created': {'readonly': True},
+        'image_id': {'required': True, 'readonly': True},
+        'region_id': {'required': True, 'readonly': True},
+        'tag_name': {'required': True, 'readonly': True},
+        'created': {'required': True, 'readonly': True},
+        'tag_id': {'required': True},
+        'left': {'required': True},
+        'top': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
     }
 
     _attribute_map = {
@@ -57,7 +64,7 @@ class ImageRegionCreateResult(Model):
         'height': {'key': 'height', 'type': 'float'},
     }
 
-    def __init__(self, *, tag_id: str=None, left: float=None, top: float=None, width: float=None, height: float=None, **kwargs) -> None:
+    def __init__(self, *, tag_id: str, left: float, top: float, width: float, height: float, **kwargs) -> None:
         super(ImageRegionCreateResult, self).__init__(**kwargs)
         self.image_id = None
         self.region_id = None

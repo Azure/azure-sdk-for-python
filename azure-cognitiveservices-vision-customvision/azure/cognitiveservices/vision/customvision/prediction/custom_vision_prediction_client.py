@@ -69,7 +69,7 @@ class CustomVisionPredictionClient(SDKClient):
 
 
     def classify_image_url(
-            self, project_id, published_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_name, url, application=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image url and saves the result.
 
         :param project_id: The project id.
@@ -77,11 +77,11 @@ class CustomVisionPredictionClient(SDKClient):
         :param published_name: Specifies the name of the model to evaluate
          against.
         :type published_name: str
+        :param url: Url of the image.
+        :type url: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
-        :param url: Url of the image.
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -214,7 +214,7 @@ class CustomVisionPredictionClient(SDKClient):
     classify_image.metadata = {'url': '/{projectId}/classify/iterations/{publishedName}/image'}
 
     def classify_image_url_with_no_store(
-            self, project_id, published_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_name, url, application=None, custom_headers=None, raw=False, **operation_config):
         """Classify an image url without saving the result.
 
         :param project_id: The project id.
@@ -222,11 +222,11 @@ class CustomVisionPredictionClient(SDKClient):
         :param published_name: Specifies the name of the model to evaluate
          against.
         :type published_name: str
+        :param url: Url of the image.
+        :type url: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
-        :param url: Url of the image.
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -359,7 +359,7 @@ class CustomVisionPredictionClient(SDKClient):
     classify_image_with_no_store.metadata = {'url': '/{projectId}/classify/iterations/{publishedName}/image/nostore'}
 
     def detect_image_url(
-            self, project_id, published_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_name, url, application=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image url and saves the result.
 
         :param project_id: The project id.
@@ -367,11 +367,11 @@ class CustomVisionPredictionClient(SDKClient):
         :param published_name: Specifies the name of the model to evaluate
          against.
         :type published_name: str
+        :param url: Url of the image.
+        :type url: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
-        :param url: Url of the image.
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -504,7 +504,7 @@ class CustomVisionPredictionClient(SDKClient):
     detect_image.metadata = {'url': '/{projectId}/detect/iterations/{publishedName}/image'}
 
     def detect_image_url_with_no_store(
-            self, project_id, published_name, application=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, published_name, url, application=None, custom_headers=None, raw=False, **operation_config):
         """Detect objects in an image url without saving the result.
 
         :param project_id: The project id.
@@ -512,11 +512,11 @@ class CustomVisionPredictionClient(SDKClient):
         :param published_name: Specifies the name of the model to evaluate
          against.
         :type published_name: str
+        :param url: Url of the image.
+        :type url: str
         :param application: Optional. Specifies the name of application using
          the endpoint.
         :type application: str
-        :param url: Url of the image.
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

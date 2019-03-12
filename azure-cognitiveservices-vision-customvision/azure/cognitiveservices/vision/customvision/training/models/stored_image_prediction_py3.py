@@ -18,38 +18,42 @@ class StoredImagePrediction(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resized_image_uri: The URI to the (resized) prediction image.
-    :vartype resized_image_uri: str
-    :ivar thumbnail_uri: The URI to the thumbnail of the original prediction
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resized_image_uri: Required. The URI to the (resized) prediction
      image.
+    :vartype resized_image_uri: str
+    :ivar thumbnail_uri: Required. The URI to the thumbnail of the original
+     prediction image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The URI to the original prediction image.
+    :ivar original_image_uri: Required. The URI to the original prediction
+     image.
     :vartype original_image_uri: str
-    :ivar domain: Domain used for the prediction.
+    :ivar domain: Required. Domain used for the prediction.
     :vartype domain: str
-    :ivar id: Prediction Id.
+    :ivar id: Required. Prediction Id.
     :vartype id: str
-    :ivar project: Project Id.
+    :ivar project: Required. Project Id.
     :vartype project: str
-    :ivar iteration: Iteration Id.
+    :ivar iteration: Required. Iteration Id.
     :vartype iteration: str
-    :ivar created: Date this prediction was created.
+    :ivar created: Required. Date this prediction was created.
     :vartype created: datetime
-    :ivar predictions: List of predictions.
+    :ivar predictions: Required. List of predictions.
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     """
 
     _validation = {
-        'resized_image_uri': {'readonly': True},
-        'thumbnail_uri': {'readonly': True},
-        'original_image_uri': {'readonly': True},
-        'domain': {'readonly': True},
-        'id': {'readonly': True},
-        'project': {'readonly': True},
-        'iteration': {'readonly': True},
-        'created': {'readonly': True},
-        'predictions': {'readonly': True},
+        'resized_image_uri': {'required': True, 'readonly': True},
+        'thumbnail_uri': {'required': True, 'readonly': True},
+        'original_image_uri': {'required': True, 'readonly': True},
+        'domain': {'required': True, 'readonly': True},
+        'id': {'required': True, 'readonly': True},
+        'project': {'required': True, 'readonly': True},
+        'iteration': {'required': True, 'readonly': True},
+        'created': {'required': True, 'readonly': True},
+        'predictions': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {

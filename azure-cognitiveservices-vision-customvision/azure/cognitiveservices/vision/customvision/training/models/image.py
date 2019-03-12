@@ -18,19 +18,24 @@ class Image(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Id of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Id of the image.
     :vartype id: str
-    :ivar created: Date the image was created.
+    :ivar created: Required. Date the image was created.
     :vartype created: datetime
-    :ivar width: Width of the image.
+    :ivar width: Required. Width of the image.
     :vartype width: int
-    :ivar height: Height of the image.
+    :ivar height: Required. Height of the image.
     :vartype height: int
-    :ivar resized_image_uri: The URI to the (resized) image used for training.
+    :ivar resized_image_uri: Required. The URI to the (resized) image used for
+     training.
     :vartype resized_image_uri: str
-    :ivar thumbnail_uri: The URI to the thumbnail of the original image.
+    :ivar thumbnail_uri: Required. The URI to the thumbnail of the original
+     image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The URI to the original uploaded image.
+    :ivar original_image_uri: Required. The URI to the original uploaded
+     image.
     :vartype original_image_uri: str
     :ivar tags: Tags associated with this image.
     :vartype tags:
@@ -41,13 +46,13 @@ class Image(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'created': {'readonly': True},
-        'width': {'readonly': True},
-        'height': {'readonly': True},
-        'resized_image_uri': {'readonly': True},
-        'thumbnail_uri': {'readonly': True},
-        'original_image_uri': {'readonly': True},
+        'id': {'required': True, 'readonly': True},
+        'created': {'required': True, 'readonly': True},
+        'width': {'required': True, 'readonly': True},
+        'height': {'required': True, 'readonly': True},
+        'resized_image_uri': {'required': True, 'readonly': True},
+        'thumbnail_uri': {'required': True, 'readonly': True},
+        'original_image_uri': {'required': True, 'readonly': True},
         'tags': {'readonly': True},
         'regions': {'readonly': True},
     }

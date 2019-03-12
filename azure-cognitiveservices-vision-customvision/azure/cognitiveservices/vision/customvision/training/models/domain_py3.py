@@ -18,25 +18,28 @@ class Domain(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id:
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required.
     :vartype id: str
-    :ivar name:
+    :ivar name: Required.
     :vartype name: str
-    :ivar type: Possible values include: 'Classification', 'ObjectDetection'
+    :ivar type: Required. Possible values include: 'Classification',
+     'ObjectDetection'
     :vartype type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.DomainType
-    :ivar exportable:
+    :ivar exportable: Required.
     :vartype exportable: bool
-    :ivar enabled:
+    :ivar enabled: Required.
     :vartype enabled: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'exportable': {'readonly': True},
-        'enabled': {'readonly': True},
+        'id': {'required': True, 'readonly': True},
+        'name': {'required': True, 'readonly': True},
+        'type': {'required': True, 'readonly': True},
+        'exportable': {'required': True, 'readonly': True},
+        'enabled': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {

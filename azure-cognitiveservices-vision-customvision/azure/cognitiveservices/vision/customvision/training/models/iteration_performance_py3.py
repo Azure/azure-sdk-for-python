@@ -18,29 +18,32 @@ class IterationPerformance(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar per_tag_performance: Gets the per-tag performance details for this
-     iteration.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar per_tag_performance: Required. Gets the per-tag performance details
+     for this iteration.
     :vartype per_tag_performance:
      list[~azure.cognitiveservices.vision.customvision.training.models.TagPerformance]
-    :ivar precision: Gets the precision.
+    :ivar precision: Required. Gets the precision.
     :vartype precision: float
-    :ivar precision_std_deviation: Gets the standard deviation for the
-     precision.
+    :ivar precision_std_deviation: Required. Gets the standard deviation for
+     the precision.
     :vartype precision_std_deviation: float
-    :ivar recall: Gets the recall.
+    :ivar recall: Required. Gets the recall.
     :vartype recall: float
-    :ivar recall_std_deviation: Gets the standard deviation for the recall.
+    :ivar recall_std_deviation: Required. Gets the standard deviation for the
+     recall.
     :vartype recall_std_deviation: float
     :ivar average_precision: Gets the average precision when applicable.
     :vartype average_precision: float
     """
 
     _validation = {
-        'per_tag_performance': {'readonly': True},
-        'precision': {'readonly': True},
-        'precision_std_deviation': {'readonly': True},
-        'recall': {'readonly': True},
-        'recall_std_deviation': {'readonly': True},
+        'per_tag_performance': {'required': True, 'readonly': True},
+        'precision': {'required': True, 'readonly': True},
+        'precision_std_deviation': {'required': True, 'readonly': True},
+        'recall': {'required': True, 'readonly': True},
+        'recall_std_deviation': {'required': True, 'readonly': True},
         'average_precision': {'readonly': True},
     }
 

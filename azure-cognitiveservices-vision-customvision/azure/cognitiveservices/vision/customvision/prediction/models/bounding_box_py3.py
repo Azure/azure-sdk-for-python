@@ -15,15 +15,24 @@ from msrest.serialization import Model
 class BoundingBox(Model):
     """Bounding box that defines a region of an image.
 
-    :param left: Coordinate of the left boundary.
+    All required parameters must be populated in order to send to Azure.
+
+    :param left: Required. Coordinate of the left boundary.
     :type left: float
-    :param top: Coordinate of the top boundary.
+    :param top: Required. Coordinate of the top boundary.
     :type top: float
-    :param width: Width.
+    :param width: Required. Width.
     :type width: float
-    :param height: Height.
+    :param height: Required. Height.
     :type height: float
     """
+
+    _validation = {
+        'left': {'required': True},
+        'top': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
+    }
 
     _attribute_map = {
         'left': {'key': 'left', 'type': 'float'},
@@ -32,7 +41,7 @@ class BoundingBox(Model):
         'height': {'key': 'height', 'type': 'float'},
     }
 
-    def __init__(self, *, left: float=None, top: float=None, width: float=None, height: float=None, **kwargs) -> None:
+    def __init__(self, *, left: float, top: float, width: float, height: float, **kwargs) -> None:
         super(BoundingBox, self).__init__(**kwargs)
         self.left = left
         self.top = top

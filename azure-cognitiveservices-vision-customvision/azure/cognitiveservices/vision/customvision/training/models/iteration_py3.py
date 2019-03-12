@@ -18,24 +18,28 @@ class Iteration(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the iteration.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Gets the id of the iteration.
     :vartype id: str
-    :param name: Gets or sets the name of the iteration.
+    :param name: Required. Gets or sets the name of the iteration.
     :type name: str
-    :ivar status: Gets the current iteration status.
+    :ivar status: Required. Gets the current iteration status.
     :vartype status: str
-    :ivar created: Gets the time this iteration was completed.
+    :ivar created: Required. Gets the time this iteration was completed.
     :vartype created: datetime
-    :ivar last_modified: Gets the time this iteration was last modified.
+    :ivar last_modified: Required. Gets the time this iteration was last
+     modified.
     :vartype last_modified: datetime
     :ivar trained_at: Gets the time this iteration was last modified.
     :vartype trained_at: datetime
-    :ivar project_id: Gets the project id of the iteration.
+    :ivar project_id: Required. Gets the project id of the iteration.
     :vartype project_id: str
-    :ivar exportable: Whether the iteration can be exported to another format
-     for download.
+    :ivar exportable: Required. Whether the iteration can be exported to
+     another format for download.
     :vartype exportable: bool
-    :ivar exportable_to: A set of platforms this iteration can export to.
+    :ivar exportable_to: Required. A set of platforms this iteration can
+     export to.
     :vartype exportable_to: list[str]
     :ivar domain_id: Get or sets a guid of the domain the iteration has been
      trained on.
@@ -44,31 +48,32 @@ class Iteration(Model):
      Possible values include: 'Multiclass', 'Multilabel'
     :vartype classification_type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.Classifier
-    :ivar training_type: Gets the training type of the iteration. Possible
-     values include: 'Regular', 'Advanced'
+    :ivar training_type: Required. Gets the training type of the iteration.
+     Possible values include: 'Regular', 'Advanced'
     :vartype training_type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.TrainingType
-    :ivar reserved_budget_in_hours: Gets the reserved baking budget for the
-     iteration.
+    :ivar reserved_budget_in_hours: Required. Gets the reserved advanced
+     training budget for the iteration.
     :vartype reserved_budget_in_hours: int
-    :ivar publish_name: Name of the published model.
+    :ivar publish_name: Required. Name of the published model.
     :vartype publish_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'status': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
+        'id': {'required': True, 'readonly': True},
+        'name': {'required': True},
+        'status': {'required': True, 'readonly': True},
+        'created': {'required': True, 'readonly': True},
+        'last_modified': {'required': True, 'readonly': True},
         'trained_at': {'readonly': True},
-        'project_id': {'readonly': True},
-        'exportable': {'readonly': True},
-        'exportable_to': {'readonly': True},
+        'project_id': {'required': True, 'readonly': True},
+        'exportable': {'required': True, 'readonly': True},
+        'exportable_to': {'required': True, 'readonly': True},
         'domain_id': {'readonly': True},
         'classification_type': {'readonly': True},
-        'training_type': {'readonly': True},
-        'reserved_budget_in_hours': {'readonly': True},
-        'publish_name': {'readonly': True},
+        'training_type': {'required': True, 'readonly': True},
+        'reserved_budget_in_hours': {'required': True, 'readonly': True},
+        'publish_name': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
@@ -88,7 +93,7 @@ class Iteration(Model):
         'publish_name': {'key': 'publishName', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(Iteration, self).__init__(**kwargs)
         self.id = None
         self.name = name

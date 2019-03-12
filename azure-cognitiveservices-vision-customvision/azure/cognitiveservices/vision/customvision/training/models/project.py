@@ -18,30 +18,37 @@ class Project(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the project id.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Required. Gets the project id.
     :vartype id: str
-    :param name: Gets or sets the name of the project.
+    :param name: Required. Gets or sets the name of the project.
     :type name: str
-    :param description: Gets or sets the description of the project.
+    :param description: Required. Gets or sets the description of the project.
     :type description: str
-    :param settings: Gets or sets the project settings.
+    :param settings: Required. Gets or sets the project settings.
     :type settings:
      ~azure.cognitiveservices.vision.customvision.training.models.ProjectSettings
-    :ivar created: Gets the date this project was created.
+    :ivar created: Required. Gets the date this project was created.
     :vartype created: datetime
-    :ivar last_modified: Gets the date this project was last modified.
+    :ivar last_modified: Required. Gets the date this project was last
+     modified.
     :vartype last_modified: datetime
-    :ivar thumbnail_uri: Gets the thumbnail url representing the image.
+    :ivar thumbnail_uri: Required. Gets the thumbnail url representing the
+     image.
     :vartype thumbnail_uri: str
     :ivar dr_mode_enabled: Gets if the DR mode is on.
     :vartype dr_mode_enabled: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'thumbnail_uri': {'readonly': True},
+        'id': {'required': True, 'readonly': True},
+        'name': {'required': True},
+        'description': {'required': True},
+        'settings': {'required': True},
+        'created': {'required': True, 'readonly': True},
+        'last_modified': {'required': True, 'readonly': True},
+        'thumbnail_uri': {'required': True, 'readonly': True},
         'dr_mode_enabled': {'readonly': True},
     }
 

@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class ImageUrl(Model):
     """Image url.
 
-    :param url: Url of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. Url of the image.
     :type url: str
     """
+
+    _validation = {
+        'url': {'required': True},
+    }
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},

@@ -1210,17 +1210,17 @@ class CustomVisionTrainingClient(SDKClient):
     delete_prediction.metadata = {'url': '/projects/{projectId}/predictions'}
 
     def quick_test_image_url(
-            self, project_id, iteration_id=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, url, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image url.
 
         :param project_id: The project to evaluate against.
         :type project_id: str
+        :param url: Url of the image.
+        :type url: str
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
          The default iteration for the project will be used when not specified.
         :type iteration_id: str
-        :param url: Url of the image.
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2158,7 +2158,7 @@ class CustomVisionTrainingClient(SDKClient):
     delete_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
     def update_iteration(
-            self, project_id, iteration_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, iteration_id, name, custom_headers=None, raw=False, **operation_config):
         """Update a specific iteration.
 
         :param project_id: Project id.
