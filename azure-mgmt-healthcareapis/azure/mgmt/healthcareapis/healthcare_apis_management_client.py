@@ -13,7 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.service_operations import ServiceOperations
 from .operations.services_operations import ServicesOperations
 from .operations.operations import Operations
 from .operations.operation_results_operations import OperationResultsOperations
@@ -59,8 +58,6 @@ class HealthcareApisManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: HealthcareApisManagementClientConfiguration
 
-    :ivar service: Service operations
-    :vartype service: azure.mgmt.healthcareapis.operations.ServiceOperations
     :ivar services: Services operations
     :vartype services: azure.mgmt.healthcareapis.operations.ServicesOperations
     :ivar operations: Operations operations
@@ -89,8 +86,6 @@ class HealthcareApisManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.service = ServiceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.services = ServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
