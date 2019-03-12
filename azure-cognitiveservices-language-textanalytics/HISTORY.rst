@@ -3,13 +3,18 @@
 Release History
 ===============
 
-0.2.0 (2018-11-09)
+0.2.0 (2019-03-12)
 ++++++++++++++++++
 
 **Features**
 
 - Client class can be used as a context manager to keep the underlying HTTP session open for performance
 - New method "entities"
+- Model KeyPhraseBatchResultItem has a new parameter statistics
+- Model KeyPhraseBatchResult has a new parameter statistics
+- Model LanguageBatchResult has a new parameter statistics
+- Model LanguageBatchResultItem has a new parameter statistics
+- Model SentimentBatchResult has a new parameter statistics
 
 **Breaking changes**
 
