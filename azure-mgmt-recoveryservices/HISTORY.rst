@@ -2,11 +2,6 @@
 
 Release History
 ===============
-0.1.1 (2019-03-12)
-++++++++++++++++++
-
-* Updating permissible versions of the msrestazure package to unblock `Azure/azure-cli#6973 <https://github.com/Azure/azure-cli/issues/6973>`_.
-
 0.3.0 (2018-05-25)
 ++++++++++++++++++
 
@@ -57,6 +52,11 @@ This version uses a next-generation code generator that *might* introduce breaki
 * blob_duration is now a str (from iso-8601)
 * "service_specification" is renamed "properties.service_specification"
 * Fix operations list
+
+0.1.1 (2019-03-12)
+++++++++++++++++++
+
+* Updating permissible versions of the msrestazure package to unblock `Azure/azure-cli#6973 <https://github.com/Azure/azure-cli/issues/6973>`_.
 
 0.1.0 (2017-07-20)
 ++++++++++++++++++
