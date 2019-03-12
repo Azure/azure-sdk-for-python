@@ -22,7 +22,7 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
-from .cosmos_client import CosmosClient
+from .cosmos_client_connection import CosmosClientConnection
 from .query_iterator import QueryResultIterator
 from .container import Container
 from . import ResponseMetadata
@@ -70,7 +70,7 @@ class Database(object):
         self.id = id
         self.properties = properties
         self.response_metadata = response_metadata
-        self.database_link = CosmosClient._get_database_link(id)
+        self.database_link = CosmosClientConnection._get_database_link(id)
 
     def _get_container_link(self, container_or_id):
         # type: (ContainerId) -> str
@@ -151,6 +151,8 @@ class Database(object):
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if offer_throughput is not None:
+            request_options["offerThroughput"] = offer_throughput
 
         data = self.client_connection.CreateContainer(
             database_link=self.database_link,
@@ -203,6 +205,8 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
+        populate_partition_key_range_statistics=None,
+        populate_quota_info=None
     ):
         # type: (ContainerId, bool, str, Dict[str, Any], bool) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
@@ -211,6 +215,8 @@ class Database(object):
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
+        :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
         :returns: :class:`Container`, if present in the container.
 
@@ -232,6 +238,10 @@ class Database(object):
             request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if populate_partition_key_range_statistics is not None:
+            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
+        if populate_quota_info is not None:
+            request_options["populateQuotaInfo"] = populate_quota_info
 
         collection_link = self._get_container_link(container)
         container_properties = self.client_connection.ReadContainer(
@@ -341,7 +351,7 @@ class Database(object):
             metadata=ResponseMetadata(self.client_connection.last_response_headers),
         )
 
-    def reset_container_properties(
+    def replace_container(
         self,
         container,
         partition_key,
@@ -399,8 +409,15 @@ class Database(object):
             if value is not None
         }
         collection_link = "{}/colls/{}".format(self.database_link, container_id)
-        self.client_connection.ReplaceContainer(
+        container_properties = self.client_connection.ReplaceContainer(
             collection_link, collection=parameters, options=request_options
+        )
+
+        return Container(
+            self.client_connection,
+            self,
+            container_properties["id"],
+            properties=container_properties,
         )
 
     def get_user_link(self, id_or_user):
@@ -457,3 +474,5 @@ class Database(object):
         """
         database = cast("Database", self)
         database.client_connection.DeleteUser(self.get_user_link(user))
+
+    #TODO: database level offer throughput

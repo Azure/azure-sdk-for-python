@@ -24,6 +24,7 @@
 import requests
 
 import six
+from typing import cast
 from . import base
 from . import documents
 from . import constants
@@ -2935,3 +2936,19 @@ class CosmosClientConnection(object):
         if is_session_consistency:
             # update session
             self.session.update_session(response_result, response_headers)
+
+    @staticmethod
+    def _get_database_link(database_or_id):
+        # type: (DatabaseId) -> str
+        if isinstance(database_or_id, str):
+            return "dbs/{}".format(database_or_id)
+        try:
+            return cast("Database", database_or_id).database_link
+        except AttributeError:
+            pass
+
+        if isinstance(database_or_id, str):
+            database_id = database_or_id
+        else:
+            database_id = cast("Dict[str, str]", database_or_id)["id"]
+        return "dbs/{}".format(database_id)

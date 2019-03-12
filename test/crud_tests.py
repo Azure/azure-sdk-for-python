@@ -51,7 +51,7 @@ import azure.cosmos.range as partition_range
 import test.test_config as test_config
 import test.test_partition_resolver as test_partition_resolver
 import azure.cosmos.base as base
-
+import test.conftest as conftest
 
 #IMPORTANT NOTES: 
   
@@ -71,7 +71,7 @@ class CRUDTests(unittest.TestCase):
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     client = cosmos_client_connection.CosmosClientConnection(host, {'masterKey': masterKey}, connectionPolicy)
-    databseForTest = configs.create_database_if_not_exist(client)
+    databaseForTest = configs.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -141,6 +141,10 @@ class CRUDTests(unittest.TestCase):
         # create two databases.
         db1 = self.client.CreateDatabase({ 'id': 'database 1' })
         db2 = self.client.CreateDatabase({ 'id': 'database 2' })
+
+        conftest.database_ids_to_delete.append(db1.id)
+        conftest.database_ids_to_delete.append(db2.id)
+
         # query with parameters.
         databases = list(self.client.QueryDatabases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
@@ -160,9 +164,6 @@ class CRUDTests(unittest.TestCase):
         databases = list(self.client.QueryDatabases('SELECT * FROM root r WHERE r.id="database 2"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
-        self.client.DeleteDatabase(db1['_self'])
-        self.client.DeleteDatabase(db2['_self'])
-
     def test_collection_crud_self_link(self):
         self._test_collection_crud(False)
 
@@ -170,7 +171,7 @@ class CRUDTests(unittest.TestCase):
         self._test_collection_crud(True)
 
     def _test_collection_crud(self, is_name_based):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         collections = list(self.client.ReadContainers(self.GetDatabaseLink(created_db, is_name_based)))
         # create a collection
         before_create_collections_count = len(collections)
@@ -217,7 +218,7 @@ class CRUDTests(unittest.TestCase):
 
     
     def test_partitioned_collection(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         collection_definition = {   'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
                                     'partitionKey': 
@@ -246,7 +247,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection))
 
     def test_partitioned_collection_quota(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
@@ -258,7 +259,7 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(self.client.last_response_headers.get("x-ms-resource-usage") != None)
 
     def test_partitioned_collection_partition_key_extraction(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         collection_definition = {   'id': 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4()),
                                     'partitionKey': 
@@ -341,7 +342,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection2))
         
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         collection_definition1 = {   'id': 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4()),
                                     'partitionKey': 
@@ -407,7 +408,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(parts, base.ParsePaths(paths))
 
     def test_partitioned_collection_document_crud_and_query(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
@@ -515,7 +516,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(documentlist))
 
     def test_partitioned_collection_permissions(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         collection_definition = {   'id': 'sample collection ' + str(uuid.uuid4()),
                                     'partitionKey': 
@@ -615,7 +616,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, read_collection))
 
     def test_partitioned_collection_execute_stored_procedure(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
 
@@ -684,7 +685,7 @@ class CRUDTests(unittest.TestCase):
                 """
                 return sum([len(chunk) for chunk in self._chunks])
 
-        db = self.databseForTest
+        db = self.databaseForTest
         collection_definition = {'id': 'test_partitioned_collection_attachment_crud_and_query ' + str(uuid.uuid4()),
                                  'partitionKey': {'paths': ['/id'],'kind': 'Hash'}}
 
@@ -870,7 +871,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(collection['_self'])
 
     def test_partitioned_collection_partition_key_value_types(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
 
@@ -928,7 +929,7 @@ class CRUDTests(unittest.TestCase):
             document_definition)
 
     def test_partitioned_collection_conflict_crud_and_query(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
@@ -1008,7 +1009,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_document_crud(self, is_name_based):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         # create collection
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read documents
@@ -1131,7 +1132,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_partitioning(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         
         # Create bunch of collections participating in partitioning
         collection0 = self.client.CreateContainer(
@@ -1267,7 +1268,7 @@ class CRUDTests(unittest.TestCase):
     # Partitioning test(with paging)
     def test_partition_paging(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         
         # Create bunch of collections participating in partitioning
         collection0 = self.client.CreateContainer(
@@ -1355,7 +1356,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(collection1['_self'])
         
     def test_hash_partition_resolver(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         
         # Create bunch of collections participating in partitioning
         collection0 = { 'id': 'coll_0 ' + str(uuid.uuid4()) }
@@ -1493,7 +1494,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_range_partition_resolver(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         
         # Create bunch of collections participating in partitioning
         collection0 = { 'id': 'coll_0' }
@@ -1564,7 +1565,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_document_upsert(self, is_name_based):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # create collection
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -1667,7 +1668,7 @@ class CRUDTests(unittest.TestCase):
         self._test_spatial_index(True)
         
     def _test_spatial_index(self, is_name_based):
-        db = self.databseForTest
+        db = self.databaseForTest
         # partial policy specified
         collection = self.client.CreateContainer(
             self.GetDatabaseLink(db, is_name_based),
@@ -1760,7 +1761,7 @@ class CRUDTests(unittest.TestCase):
         self.client.connection_policy.MediaReadMode = documents.MediaReadMode.Buffered
 
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # create document
@@ -1924,7 +1925,7 @@ class CRUDTests(unittest.TestCase):
                 return sum([len(chunk) for chunk in self._chunks])
 
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2059,7 +2060,7 @@ class CRUDTests(unittest.TestCase):
     def _test_user_crud(self, is_name_based):
         # Should do User CRUD operations successfully.
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # list users
         users = list(self.client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
         before_create_count = len(users)
@@ -2113,7 +2114,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_user_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # read users and check count
         users = list(self.client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
@@ -2172,7 +2173,7 @@ class CRUDTests(unittest.TestCase):
     def _test_permission_crud(self, is_name_based):
         # Should do Permission CRUD operations successfully
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create user
         user = self.client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' + str(uuid.uuid4())})
         # list permissions
@@ -2233,7 +2234,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_permission_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # create user
         user = self.client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' + str(uuid.uuid4())})
@@ -2322,7 +2323,7 @@ class CRUDTests(unittest.TestCase):
 
             """
             # create database
-            db = self.databseForTest
+            db = self.databaseForTest
             # create collection1
             collection1 = client.CreateContainer(
                 db['_self'], { 'id': 'test_authorization ' + str(uuid.uuid4()) })
@@ -2462,7 +2463,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_trigger_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read triggers
@@ -2537,7 +2538,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_trigger_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2623,7 +2624,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_udf_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read udfs
@@ -2687,7 +2688,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_udf_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2770,7 +2771,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_sproc_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read sprocs
@@ -2841,7 +2842,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_sproc_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2919,7 +2920,7 @@ class CRUDTests(unittest.TestCase):
                          'delete should keep the number of sprocs same')
 
     def test_scipt_logging_execute_stored_procedure(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
 
@@ -2966,7 +2967,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_collection_indexing_policy(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.client.CreateContainer(
             self.GetDatabaseLink(db, is_name_based),
@@ -3042,7 +3043,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_create_default_indexing_policy(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # no indexing policy specified
         collection = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based),
@@ -3152,7 +3153,7 @@ class CRUDTests(unittest.TestCase):
                 dict
 
             """
-            db = self.databseForTest
+            db = self.databaseForTest
             collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
             doc1 = client.CreateItem(
                 collection['_self'],
@@ -3311,7 +3312,7 @@ class CRUDTests(unittest.TestCase):
                         'property {property} should match'.format(property=property))
 
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collections
         collection1 = self.client.CreateContainer(
             self.GetDatabaseLink(db, is_name_based), { 'id': 'test_trigger_functionality 1 ' + str(uuid.uuid4()) })
@@ -3378,7 +3379,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_stored_procedure_functionality(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
 
@@ -3440,7 +3441,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_offer_read_and_query(self):
         # Create database.
-        db = self.databseForTest
+        db = self.databaseForTest
 
         offers = list(self.client.ReadOffers())
         initial_count = len(offers)
@@ -3493,7 +3494,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_offer_replace(self):
         # Create database.
-        db = self.databseForTest
+        db = self.databaseForTest
         # Create collection.
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         offers = self.GetCollectionOffers(self.client, collection['_rid'])
@@ -3530,7 +3531,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_collection_with_offer_type(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # create a collection
         offers = list(self.client.ReadOffers())
@@ -3583,7 +3584,7 @@ class CRUDTests(unittest.TestCase):
         self._test_index_progress_headers(True)
         
     def _test_index_progress_headers(self, is_name_based):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         consistent_coll = self.client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'test_index_progress_headers consistent_coll ' + str(uuid.uuid4()) })
         self.client.ReadContainer(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
         self.assertFalse(HttpHeaders.LazyIndexingProgress in self.client.last_response_headers)
@@ -3666,7 +3667,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_id_case_validation(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         uuid_string = str(uuid.uuid4())
         # pascalCase
@@ -3700,7 +3701,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_id_unicode_validation(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
         collection_definition1 = { 'id': u'हिन्दी भारत की राष्ट्रीय भाषा है' }

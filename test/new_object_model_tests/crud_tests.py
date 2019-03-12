@@ -39,6 +39,7 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
+import copy
 import azure.cosmos.base as base
 import azure.cosmos.consistent_hash_ring as consistent_hash_ring
 import azure.cosmos.documents as documents
@@ -55,7 +56,8 @@ import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.database import Database
 from azure.cosmos.container import Container
 from azure.cosmos.item import Item
-
+from azure.cosmos import PartitionKey
+import test.conftest as conftest
 
 # IMPORTANT NOTES:
 
@@ -74,8 +76,8 @@ class CRUDTests(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    databseForTest = configs.create_database_if_not_exist(client)
+    client = cosmos_client.CosmosClient(host, masterKey, "Session", connectionPolicy)
+    databaseForTest = configs.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -100,55 +102,52 @@ class CRUDTests(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey},
+        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
                                                                       self.connectionPolicy)
 
-    def test_database_crud_self_link(self):
-        self._test_database_crud(False)
-
-    def test_database_crud_name_based(self):
-        self._test_database_crud(True)
-
-    def _test_database_crud(self, is_name_based):
+    def test_database_crud(self):
         # read databases.
-        databases = list(self.client.ReadDatabases())
+        databases = list(self.client.list_databases())
         # create a database.
         before_create_databases_count = len(databases)
-        database_definition = {'id': str(uuid.uuid4())}
-        created_db = self.client.CreateDatabase(database_definition)
-        self.assertEqual(created_db['id'], database_definition['id'])
+        database_id = str(uuid.uuid4())
+        created_db = self.client.create_database(database_id)
+        self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.ReadDatabases())
+        databases = list(self.client.list_databases())
         self.assertEqual(len(databases),
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
         # query databases.
-        databases = list(self.client.QueryDatabases({
+        databases = list(self.client.list_database_properties({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
-                {'name': '@id', 'value': database_definition['id']}
+                {'name': '@id', 'value': database_id}
             ]
         }))
         self.assert_(databases,
                      'number of results for the query should be > 0')
 
         # read database.
-        self.client.ReadDatabase(self.GetDatabaseLink(created_db, is_name_based))
+        self.client.get_database(created_db.id)
 
         # delete database.
-        self.client.DeleteDatabase(self.GetDatabaseLink(created_db, is_name_based))
+        self.client.delete_database(created_db.id)
         # read database after deletion
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           self.client.ReadDatabase,
-                                           self.GetDatabaseLink(created_db, is_name_based))
+                                           self.client.get_database,
+                                           created_db.id)
 
-'''
     def test_sql_query_crud(self):
         # create two databases.
-        db1 = self.client.CreateDatabase({'id': 'database 1'})
-        db2 = self.client.CreateDatabase({'id': 'database 2'})
+        db1 = self.client.create_database('database 1')
+        db2 = self.client.create_database('database 2')
+
+        conftest.database_ids_to_delete.append(db1.id)
+        conftest.database_ids_to_delete.append(db2.id)
+
         # query with parameters.
-        databases = list(self.client.QueryDatabases({
+        databases = list(self.client.list_database_properties({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 {'name': '@id', 'value': 'database 1'}
@@ -157,76 +156,59 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
         # query without parameters.
-        databases = list(self.client.QueryDatabases({
+        databases = list(self.client.list_database_properties({
             'query': 'SELECT * FROM root r WHERE r.id="database non-existing"'
         }))
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.QueryDatabases('SELECT * FROM root r WHERE r.id="database 2"'))
+        databases = list(self.client.list_database_properties('SELECT * FROM root r WHERE r.id="database 2"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
-        self.client.DeleteDatabase(db1['_self'])
-        self.client.DeleteDatabase(db2['_self'])
-
-    def test_collection_crud_self_link(self):
-        self._test_collection_crud(False)
-
-    def test_collection_crud_name_based(self):
-        self._test_collection_crud(True)
-
-    def _test_collection_crud(self, is_name_based):
-        created_db = self.databseForTest
-        collections = list(self.client.ReadContainers(self.GetDatabaseLink(created_db, is_name_based)))
+    def test_collection_crud(self):
+        created_db = self.databaseForTest
+        collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
-        collection_definition = {'id': 'test_collection_crud ' + str(uuid.uuid4()),
-                                 'indexingPolicy': {'indexingMode': 'consistent'}}
-        created_collection = self.client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based),
-                                                         collection_definition)
-        self.assertEqual(collection_definition['id'], created_collection['id'])
-        self.assertEqual('consistent', created_collection['indexingPolicy']['indexingMode'])
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        collection_indexing_policy = {'indexingMode': 'consistent'}
+        created_collection = created_db.create_container(id=collection_id,
+                                                         indexing_policy=collection_indexing_policy,
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"))
+        self.assertEqual(collection_id, created_collection.id)
+        self.assertEqual('consistent', created_collection.properties['indexingPolicy']['indexingMode'])
 
         # read collections after creation
-        collections = list(self.client.ReadContainers(self.GetDatabaseLink(created_db, is_name_based)))
+        collections = list(created_db.list_containers())
         self.assertEqual(len(collections),
                          before_create_collections_count + 1,
                          'create should increase the number of collections')
         # query collections
-        collections = list(self.client.QueryContainers(
-            self.GetDatabaseLink(created_db, is_name_based),
+        collections = list(created_db.list_container_properties(
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
-                    {'name': '@id', 'value': collection_definition['id']}
+                    {'name': '@id', 'value': collection_id}
                 ]
             }))
         # Replacing indexing policy is allowed.
         lazy_policy = {'indexingMode': 'lazy'}
-        created_collection['indexingPolicy'] = lazy_policy
-        replaced_collection = self.client.ReplaceContainer(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based), created_collection)
-        self.assertEqual('lazy', replaced_collection['indexingPolicy']['indexingMode'])
-        # Replacing collection Id should fail.
-        change_collection = created_collection.copy()
-        change_collection['id'] = 'try_change_id'
-        self.__AssertHTTPFailureWithStatus(StatusCodes.BAD_REQUEST,
-                                           self.client.ReplaceContainer,
-                                           self.GetDocumentCollectionLink(created_db, created_collection,
-                                                                          is_name_based),
-                                           change_collection)
+        replaced_collection = created_db.replace_container(created_collection,
+                                                           partition_key=created_collection.properties['partitionKey'],
+                                                           indexing_policy=lazy_policy)
+        self.assertEqual('lazy', replaced_collection.properties['indexingPolicy']['indexingMode'])
 
         self.assertTrue(collections)
         # delete collection
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
+        created_db.delete_container(created_collection.id)
         # read collection after deletion
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           self.client.ReadContainer,
-                                           self.GetDocumentCollectionLink(created_db, created_collection,
-                                                                          is_name_based))
+                                           created_db.get_container,
+                                           created_collection.id)
 
+    #TODO: add fixture to remove container at the end of test
     def test_partitioned_collection(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
                                  'partitionKey':
@@ -236,38 +218,40 @@ class CRUDTests(unittest.TestCase):
                                      }
                                  }
 
-        options = {'offerThroughput': 10100}
+        offer_throughput = 10100
+        created_collection = created_db.create_container(id=collection_definition['id'],
+                                                        partition_key=collection_definition['partitionKey'],
+                                                        offer_throughput=offer_throughput)
 
-        created_collection = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                         collection_definition,
-                                                         options)
-
-        self.assertEqual(collection_definition.get('id'), created_collection.get('id'))
+        self.assertEqual(collection_definition.get('id'), created_collection.id)
         self.assertEqual(collection_definition.get('partitionKey').get('paths')[0],
-                         created_collection.get('partitionKey').get('paths')[0])
+                         created_collection.properties['partitionKey']['paths'][0])
         self.assertEqual(collection_definition.get('partitionKey').get('kind'),
-                         created_collection.get('partitionKey').get('kind'))
+                         created_collection.properties['partitionKey']['kind'])
 
-        offers = self.GetCollectionOffers(self.client, created_collection['_rid'])
+        expected_offer = created_collection.read_offer()
 
-        self.assertEqual(1, len(offers))
-        expected_offer = offers[0]
-        self.assertEqual(expected_offer.get('content').get('offerThroughput'), options.get('offerThroughput'))
+        self.assertIsNotNone(expected_offer)
 
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection))
+        self.assertEqual(expected_offer.offer_throughput, offer_throughput)
+
+        created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_quota(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
-        read_options = {'populatePartitionKeyRangeStatistics': True, 'populateQuotaInfo': True}
+        retrieved_collection = created_db.get_container(
+            container=created_collection.id,
+            populate_partition_key_range_statistics=True,
+            populate_quota_info=True
+        )
 
-        retrieved_collection = self.client.ReadContainer(created_collection.get('_self'), read_options)
+        self.assertIsNotNone(retrieved_collection.properties.get("statistics"))
+        self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-        self.assertTrue(retrieved_collection.get("statistics") != None)
-        self.assertTrue(self.client.last_response_headers.get("x-ms-resource-usage") != None)
-
+    '''
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databseForTest
 
@@ -3783,13 +3767,7 @@ class CRUDTests(unittest.TestCase):
 
         self.client.DeleteContainer(created_collection1['_self'])
         self.client.DeleteContainer(created_collection2['_self'])
-
-    def GetDatabaseLink(self, database, is_name_based=True):
-        if is_name_based:
-            return 'dbs/' + database['id']
-        else:
-            return database['_self']
-
+    '''
     def GetUserLink(self, database, user, is_name_based=True):
         if is_name_based:
             return self.GetDatabaseLink(database) + '/users/' + user['id']
@@ -3845,7 +3823,8 @@ class CRUDTests(unittest.TestCase):
         else:
             return conflict['_self']
 
-    def GetCollectionOffers(self, client, collection_rid):
+    def get_collection_offers(self, client, collection_rid):
+        # type: (CosmosClient) -> str
         return list(client.QueryOffers(
             {
                 'query': 'SELECT * FROM root r WHERE r.offerResourceId=@offerResourceId',
@@ -3854,7 +3833,6 @@ class CRUDTests(unittest.TestCase):
                 ]
             }))
 
-'''
 if __name__ == '__main__':
     try:
         unittest.main()

@@ -23,10 +23,11 @@
 """
 
 from .cosmos_client_connection import CosmosClientConnection
-from .cosmos_client import CosmosClient
 from .query_iterator import QueryResultIterator
 from .item import Item
 from . import ResponseMetadata
+from .errors import CosmosError
+from .offer import Offer
 
 from typing import (
     Any,
@@ -57,7 +58,7 @@ class Container:
         self.session_token = None
         self.id = id
         self.properties = properties
-        database_link = CosmosClient._get_database_link(database)
+        database_link = CosmosClientConnection._get_database_link(database)
         self.collection_link = "{}/colls/{}".format(database_link, self.id)
 
     def _get_document_link(self, item_or_link):
@@ -180,7 +181,7 @@ class Container:
         max_item_count=None,
         session_token=None,
         initial_headers=None,
-        populate_query_metrics=None,
+        populate_query_metrics=None
     ):
         # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool) -> QueryResultIterator
         """Return all results matching the given `query`.
@@ -410,6 +411,44 @@ class Container:
         self.client_connection.DeleteItem(
             document_link=document_link, options=request_options or None
         )
+
+    def read_offer(self):
+        container = self.client_connection.ReadContainer(self.collection_link)
+        link = container['_self']
+        query_spec = {
+                        'query': 'SELECT r.content FROM root r WHERE r.resource=@link',
+                        'parameters': [
+                            {'name': '@link', 'value': link}
+                        ]
+                     }
+        offers = list(self.client_connection.QueryOffers(query_spec))
+        if (len(offers) <= 0):
+            return None
+        data = offers[0]
+        return Offer(
+            offer_throughput=offers[0]['content']['offerThroughput'],
+            properties=offers[0])
+
+    def replace_throughput(self, throughput):
+        container = self.client_connection.ReadContainer(self.collection_link)
+        link = container['_self']
+        query_spec = {
+                        'query': 'SELECT r.content FROM root r WHERE r.resource=@link',
+                        'parameters': [
+                            {'name': '@link', 'value': link}
+                        ]
+                     }
+        offers = list(self.client_connection.QueryOffers(query_spec))
+        if (len(offers) <= 0):
+            return None
+        new_offer = offers[0].copy()
+        new_offer['content']['offerThoughput'] = throughput
+        data = self.client_connection.ReplaceOffer(
+            offer_link="offers/{}".format(offers[0]._self)
+        )
+        return Offer(
+            offer_throughput=data['content']['offerThroughput'],
+            properties=data)
 
     def list_stored_procedures(self, query):
         pass

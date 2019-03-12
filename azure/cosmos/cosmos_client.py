@@ -63,31 +63,15 @@ class CosmosClient:
             connection_policy=connection_policy,
         )
 
-    @staticmethod
-    def _get_database_link(database_or_id):
-        # type: (DatabaseId) -> str
-        if isinstance(database_or_id, str):
-            return "dbs/{}".format(database_or_id)
-        try:
-            return cast("Database", database_or_id).database_link
-        except AttributeError:
-            pass
-
-        if isinstance(database_or_id, str):
-            database_id = database_or_id
-        else:
-            database_id = cast("Dict[str, str]", database_or_id)["id"]
-        return "dbs/{}".format(database_id)
-
     def create_database(
         self,
         id,
-        consistency_level=None,
         disable_ru_per_minute_usage=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
+        offer_throughput=None
     ):
         # type: (str, str, bool, str, AccessCondition, bool, bool) -> Database
         """Create a new database with the given ID (name).
@@ -97,6 +81,7 @@ class CosmosClient:
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
         :returns: A :class:`Database` instance representing the new database.
         :raises `HTTPFailure`: If `fail_if_exists` is set to True and a database with the given ID already exists.
 
@@ -109,7 +94,22 @@ class CosmosClient:
             :name: create_database
 
         """
-        result = self.client_connection.CreateDatabase(database=dict(id=id))
+
+        request_options = {}  # type: Dict[str, Any]
+        if disable_ru_per_minute_usage is not None:
+            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
+        if session_token:
+            request_options["sessionToken"] = session_token
+        if initial_headers:
+            request_options["initialHeaders"] = initial_headers
+        if access_condition:
+            request_options["accessCondition"] = access_condition
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if offer_throughput is not None:
+            request_options["offerThroughput"] = offer_throughput
+
+        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options)
         return Database(self.client_connection, id=result["id"], properties=result)
 
     def get_database(
@@ -130,7 +130,7 @@ class CosmosClient:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :raise `HTTPFailure`: If the given database couldn't be retrieved.
         """
-        database_link = CosmosClient._get_database_link(database)
+        database_link = CosmosClientConnection._get_database_link(database)
         request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
@@ -281,6 +281,7 @@ class CosmosClient:
             request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if session_token:
             request_options["sessionToken"] = session_token
+            request_options["sessionToken"] = session_token
         if initial_headers:
             request_options["initialHeaders"] = initial_headers
         if access_condition:
@@ -288,5 +289,12 @@ class CosmosClient:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        database_link = CosmosClient._get_database_link(database)
+        database_link = CosmosClientConnection._get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options)
+
+    def get_database_account(self):
+        # type: () -> DatabaseAccount
+        """
+        Retrieve the database account information.
+        """
+        return self.client_connection.GetDatabaseAccount()
