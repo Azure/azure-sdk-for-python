@@ -57,7 +57,7 @@ class ManagedInstanceUpdate(Model):
      ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :param timezone_id: Id of the timezone. Allowed values are timezones
      supported by Windows.
-     Winodws keeps details on supported timezones, including the id, in
+     Windows keeps details on supported timezones, including the id, in
      registry under
      KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time
      Zones.
