@@ -78,7 +78,7 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
-        'msrestazure~=0.4.11',
+        'msrestazure>=0.4.11,<2.0.0',
         'azure-common~=1.1',
     ],
     cmdclass=cmdclass
