@@ -36,7 +36,8 @@ class OriginUpdateParameters(Model):
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
     }
 
-    def __init__(self, host_name=None, http_port=None, https_port=None):
-        self.host_name = host_name
-        self.http_port = http_port
-        self.https_port = https_port
+    def __init__(self, **kwargs):
+        super(OriginUpdateParameters, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)

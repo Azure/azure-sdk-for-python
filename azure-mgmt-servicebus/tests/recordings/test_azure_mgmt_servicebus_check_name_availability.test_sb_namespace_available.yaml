@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"name": "Testingthenamespacenameforpython"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['44']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServiceBus/CheckNameAvailability?api-version=2017-04-01
+  response:
+    body: {string: '{"nameAvailable":true,"reason":"None","message":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['53']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:30:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+version: 1

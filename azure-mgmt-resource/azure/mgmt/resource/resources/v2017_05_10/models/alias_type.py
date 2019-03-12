@@ -18,8 +18,8 @@ class AliasType(Model):
     :param name: The alias name.
     :type name: str
     :param paths: The paths for an alias.
-    :type paths: list of :class:`AliasPathType
-     <azure.mgmt.resource.resources.v2017_05_10.models.AliasPathType>`
+    :type paths:
+     list[~azure.mgmt.resource.resources.v2017_05_10.models.AliasPathType]
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class AliasType(Model):
         'paths': {'key': 'paths', 'type': '[AliasPathType]'},
     }
 
-    def __init__(self, name=None, paths=None):
-        self.name = name
-        self.paths = paths
+    def __init__(self, **kwargs):
+        super(AliasType, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.paths = kwargs.get('paths', None)

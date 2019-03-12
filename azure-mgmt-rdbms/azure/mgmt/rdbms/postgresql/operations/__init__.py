@@ -11,16 +11,24 @@
 
 from .servers_operations import ServersOperations
 from .firewall_rules_operations import FirewallRulesOperations
+from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .databases_operations import DatabasesOperations
 from .configurations_operations import ConfigurationsOperations
 from .log_files_operations import LogFilesOperations
+from .location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from .check_name_availability_operations import CheckNameAvailabilityOperations
+from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
 
 __all__ = [
     'ServersOperations',
     'FirewallRulesOperations',
+    'VirtualNetworkRulesOperations',
     'DatabasesOperations',
     'ConfigurationsOperations',
     'LogFilesOperations',
+    'LocationBasedPerformanceTierOperations',
+    'CheckNameAvailabilityOperations',
+    'ServerSecurityAlertPoliciesOperations',
     'Operations',
 ]

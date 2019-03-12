@@ -1,0 +1,88 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations?api-version=2018-06-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/408ddb33-6363-43b9-adbb-bb7ce22f2c10","etag":11,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":2,"provisioningState":"Succeeded","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:14:48.94503Z","lastUpdatedDateTime":"2018-06-14T21:14:49.8834267Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['741']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:19:50 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"quantities": [1, 1], "reservationId": "/providers/Microsoft.Capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/split?api-version=2018-06-01
+  response:
+    body: {string: '[{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/12ecbd0f-beb9-4766-a6db-38491a52b91f","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/12ecbd0f-beb9-4766-a6db-38491a52b91f","etag":2,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":1,"provisioningState":"Succeeded","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitSource":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}}},{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/57311468-7576-4da6-acd8-5eb1229ab770","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/57311468-7576-4da6-acd8-5eb1229ab770","etag":2,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":1,"provisioningState":"Succeeded","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitSource":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}}},{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/408ddb33-6363-43b9-adbb-bb7ce22f2c10","etag":14,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":2,"provisioningState":"Cancelled","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","extendedStatusInfo":{"statusCode":"Split","message":"This
+        reservation was split and is no longer active."},"lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitDestinations":["/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/12ecbd0f-beb9-4766-a6db-38491a52b91f","/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/57311468-7576-4da6-acd8-5eb1229ab770"]}}}]'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['2961']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:19:53 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/providers/Microsoft.Capacity/reservationorders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/split/operationresults/408ddb33-6363-43b9-adbb-bb7ce22f2c10_12?api-version=2018-06-01']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          7:39:49 PM"}']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationorders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/split/operationresults/408ddb33-6363-43b9-adbb-bb7ce22f2c10_12?api-version=2018-06-01
+  response:
+    body: {string: '[{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/12ecbd0f-beb9-4766-a6db-38491a52b91f","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/12ecbd0f-beb9-4766-a6db-38491a52b91f","etag":2,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":1,"provisioningState":"Succeeded","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitSource":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}}},{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/57311468-7576-4da6-acd8-5eb1229ab770","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/57311468-7576-4da6-acd8-5eb1229ab770","etag":2,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":1,"provisioningState":"Succeeded","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitSource":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}}},{"sku":{"name":"Standard_B1ms"},"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10","type":"Microsoft.Capacity/reservationOrders/reservations","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591/408ddb33-6363-43b9-adbb-bb7ce22f2c10","etag":14,"location":"westus","properties":{"appliedScopeType":"Shared","quantity":2,"provisioningState":"Cancelled","expiryDate":"2019-06-14","displayName":"PythonSDK_Test","effectiveDateTime":"2018-06-14T21:19:52.1125485Z","extendedStatusInfo":{"statusCode":"Split","message":"This
+        reservation was split and is no longer active."},"lastUpdatedDateTime":"2018-06-14T21:19:53.4006669Z","reservedResourceType":"VirtualMachines","instanceFlexibility":"On","skuDescription":"Standard_B1ms","splitProperties":{"splitDestinations":["/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/12ecbd0f-beb9-4766-a6db-38491a52b91f","/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/57311468-7576-4da6-acd8-5eb1229ab770"]}}}]'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['2961']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:20:05 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

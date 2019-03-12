@@ -1,12 +1,18 @@
 # Python cache
 __pycache__/
 *.pyc
+.pytest_cache
+.mypy_cache
+.cache
 
 # Virtual environment
 env*/
 
 # PTVS analysis
 .ptvs/
+
+# Coverage report
+**/.coverage
 
 # Build results
 bin/
@@ -22,7 +28,7 @@ build/
 # Test results
 TestResults/
 
-# Credentials 
+# Credentials
 credentials_real.json
 testsettings_local.json
 testsettings_local.cfg
@@ -37,6 +43,7 @@ app_creds_real.py
 *.user
 *.sln.docstates
 .vs/
+.vscode
 
 # Windows image file caches
 Thumbs.db
@@ -62,3 +69,5 @@ src/build
 
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
+
+code_reports

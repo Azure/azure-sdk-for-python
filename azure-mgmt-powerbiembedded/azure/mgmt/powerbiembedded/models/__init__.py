@@ -9,21 +9,38 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error_detail import ErrorDetail
-from .error import Error, ErrorException
-from .azure_sku import AzureSku
-from .workspace_collection import WorkspaceCollection
-from .workspace import Workspace
-from .display import Display
-from .operation import Operation
-from .operation_list import OperationList
-from .workspace_collection_access_keys import WorkspaceCollectionAccessKeys
-from .workspace_collection_access_key import WorkspaceCollectionAccessKey
-from .create_workspace_collection_request import CreateWorkspaceCollectionRequest
-from .update_workspace_collection_request import UpdateWorkspaceCollectionRequest
-from .check_name_request import CheckNameRequest
-from .check_name_response import CheckNameResponse
-from .migrate_workspace_collection_request import MigrateWorkspaceCollectionRequest
+try:
+    from .error_detail_py3 import ErrorDetail
+    from .error_py3 import Error, ErrorException
+    from .azure_sku_py3 import AzureSku
+    from .workspace_collection_py3 import WorkspaceCollection
+    from .workspace_py3 import Workspace
+    from .display_py3 import Display
+    from .operation_py3 import Operation
+    from .operation_list_py3 import OperationList
+    from .workspace_collection_access_keys_py3 import WorkspaceCollectionAccessKeys
+    from .workspace_collection_access_key_py3 import WorkspaceCollectionAccessKey
+    from .create_workspace_collection_request_py3 import CreateWorkspaceCollectionRequest
+    from .update_workspace_collection_request_py3 import UpdateWorkspaceCollectionRequest
+    from .check_name_request_py3 import CheckNameRequest
+    from .check_name_response_py3 import CheckNameResponse
+    from .migrate_workspace_collection_request_py3 import MigrateWorkspaceCollectionRequest
+except (SyntaxError, ImportError):
+    from .error_detail import ErrorDetail
+    from .error import Error, ErrorException
+    from .azure_sku import AzureSku
+    from .workspace_collection import WorkspaceCollection
+    from .workspace import Workspace
+    from .display import Display
+    from .operation import Operation
+    from .operation_list import OperationList
+    from .workspace_collection_access_keys import WorkspaceCollectionAccessKeys
+    from .workspace_collection_access_key import WorkspaceCollectionAccessKey
+    from .create_workspace_collection_request import CreateWorkspaceCollectionRequest
+    from .update_workspace_collection_request import UpdateWorkspaceCollectionRequest
+    from .check_name_request import CheckNameRequest
+    from .check_name_response import CheckNameResponse
+    from .migrate_workspace_collection_request import MigrateWorkspaceCollectionRequest
 from .workspace_collection_paged import WorkspaceCollectionPaged
 from .workspace_paged import WorkspacePaged
 from .power_bi_embedded_management_client_enums import (

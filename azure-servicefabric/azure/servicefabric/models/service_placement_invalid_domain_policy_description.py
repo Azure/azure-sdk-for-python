@@ -14,26 +14,28 @@ from .service_placement_policy_description import ServicePlacementPolicyDescript
 
 class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescription):
     """Describes the policy to be used for placement of a Service Fabric service
-    where a particular fault or upgrade domain should not be used for
-    placement of the instances or replicas of that service.
+    where a particular fault or upgrade domain should not be used for placement
+    of the instances or replicas of that service.
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
     :param domain_name: The name of the domain that should not be used for
      placement.
     :type domain_name: str
-    """ 
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'Type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
-    def __init__(self, domain_name=None):
-        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__()
-        self.domain_name = domain_name
-        self.Type = 'InvalidDomain'
+    def __init__(self, **kwargs):
+        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.type = 'InvalidDomain'

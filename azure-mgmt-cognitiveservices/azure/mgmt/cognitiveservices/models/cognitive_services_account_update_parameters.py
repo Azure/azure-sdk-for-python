@@ -16,13 +16,13 @@ class CognitiveServicesAccountUpdateParameters(Model):
     """The parameters to provide for the account.
 
     :param sku: Gets or sets the SKU of the resource.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -30,6 +30,7 @@ class CognitiveServicesAccountUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, sku=None, tags=None):
-        self.sku = sku
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccountUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)

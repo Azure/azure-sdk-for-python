@@ -26,6 +26,7 @@ class Day(Model):
         'is_last': {'key': 'isLast', 'type': 'bool'},
     }
 
-    def __init__(self, date_property=None, is_last=None):
-        self.date_property = date_property
-        self.is_last = is_last
+    def __init__(self, **kwargs):
+        super(Day, self).__init__(**kwargs)
+        self.date_property = kwargs.get('date_property', None)
+        self.is_last = kwargs.get('is_last', None)

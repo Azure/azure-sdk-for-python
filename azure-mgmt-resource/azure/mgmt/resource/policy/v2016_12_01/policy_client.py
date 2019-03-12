@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from .operations.policy_definitions_operations import PolicyDefinitionsOperations
+from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from . import models
 
 
@@ -38,30 +38,28 @@ class PolicyClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(PolicyClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('policyclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class PolicyClient(object):
+class PolicyClient(SDKClient):
     """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
 
-    :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
     :ivar policy_definitions: PolicyDefinitions operations
     :vartype policy_definitions: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations
+    :ivar policy_assignments: PolicyAssignments operations
+    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -75,14 +73,14 @@ class PolicyClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(PolicyClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.policy_assignments = PolicyAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.policy_definitions = PolicyDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

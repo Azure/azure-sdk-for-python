@@ -13,13 +13,15 @@ from msrest.serialization import Model
 
 
 class Port(Model):
-    """The port.
+    """The port exposed on the container group.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param protocol: The protocol associated with the port. Possible values
      include: 'TCP', 'UDP'
-    :type protocol: str or :class:`ContainerGroupNetworkProtocol
-     <azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol>`
-    :param port: The port.
+    :type protocol: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
+    :param port: Required. The port number.
     :type port: int
     """
 
@@ -32,6 +34,7 @@ class Port(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, port, protocol=None):
-        self.protocol = protocol
-        self.port = port
+    def __init__(self, **kwargs):
+        super(Port, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.port = kwargs.get('port', None)

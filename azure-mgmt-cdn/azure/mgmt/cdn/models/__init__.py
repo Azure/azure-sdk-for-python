@@ -9,32 +9,100 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sku import Sku
-from .profile import Profile
-from .profile_update_parameters import ProfileUpdateParameters
-from .sso_uri import SsoUri
-from .deep_created_origin import DeepCreatedOrigin
-from .endpoint import Endpoint
-from .geo_filter import GeoFilter
-from .endpoint_update_parameters import EndpointUpdateParameters
-from .purge_parameters import PurgeParameters
-from .load_parameters import LoadParameters
-from .origin import Origin
-from .origin_update_parameters import OriginUpdateParameters
-from .custom_domain import CustomDomain
-from .custom_domain_parameters import CustomDomainParameters
-from .validate_custom_domain_input import ValidateCustomDomainInput
-from .validate_custom_domain_output import ValidateCustomDomainOutput
-from .check_name_availability_input import CheckNameAvailabilityInput
-from .check_name_availability_output import CheckNameAvailabilityOutput
-from .resource_usage import ResourceUsage
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .cidr_ip_address import CidrIpAddress
-from .ip_address_group import IpAddressGroup
-from .edge_node import EdgeNode
-from .resource import Resource
-from .error_response import ErrorResponse, ErrorResponseException
+try:
+    from .sku_py3 import Sku
+    from .profile_py3 import Profile
+    from .profile_update_parameters_py3 import ProfileUpdateParameters
+    from .sso_uri_py3 import SsoUri
+    from .supported_optimization_types_list_result_py3 import SupportedOptimizationTypesListResult
+    from .deep_created_origin_py3 import DeepCreatedOrigin
+    from .endpoint_py3 import Endpoint
+    from .geo_filter_py3 import GeoFilter
+    from .delivery_rule_action_py3 import DeliveryRuleAction
+    from .delivery_rule_condition_py3 import DeliveryRuleCondition
+    from .delivery_rule_py3 import DeliveryRule
+    from .endpoint_properties_update_parameters_delivery_policy_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from .endpoint_update_parameters_py3 import EndpointUpdateParameters
+    from .url_path_condition_parameters_py3 import UrlPathConditionParameters
+    from .delivery_rule_url_path_condition_py3 import DeliveryRuleUrlPathCondition
+    from .url_file_extension_condition_parameters_py3 import UrlFileExtensionConditionParameters
+    from .delivery_rule_url_file_extension_condition_py3 import DeliveryRuleUrlFileExtensionCondition
+    from .cache_expiration_action_parameters_py3 import CacheExpirationActionParameters
+    from .delivery_rule_cache_expiration_action_py3 import DeliveryRuleCacheExpirationAction
+    from .purge_parameters_py3 import PurgeParameters
+    from .load_parameters_py3 import LoadParameters
+    from .origin_py3 import Origin
+    from .origin_update_parameters_py3 import OriginUpdateParameters
+    from .custom_domain_py3 import CustomDomain
+    from .custom_domain_parameters_py3 import CustomDomainParameters
+    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
+    from .cdn_certificate_source_parameters_py3 import CdnCertificateSourceParameters
+    from .cdn_managed_https_parameters_py3 import CdnManagedHttpsParameters
+    from .key_vault_certificate_source_parameters_py3 import KeyVaultCertificateSourceParameters
+    from .user_managed_https_parameters_py3 import UserManagedHttpsParameters
+    from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
+    from .validate_custom_domain_output_py3 import ValidateCustomDomainOutput
+    from .check_name_availability_input_py3 import CheckNameAvailabilityInput
+    from .check_name_availability_output_py3 import CheckNameAvailabilityOutput
+    from .validate_probe_input_py3 import ValidateProbeInput
+    from .validate_probe_output_py3 import ValidateProbeOutput
+    from .resource_usage_py3 import ResourceUsage
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .cidr_ip_address_py3 import CidrIpAddress
+    from .ip_address_group_py3 import IpAddressGroup
+    from .edge_node_py3 import EdgeNode
+    from .resource_py3 import Resource
+    from .tracked_resource_py3 import TrackedResource
+    from .proxy_resource_py3 import ProxyResource
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+except (SyntaxError, ImportError):
+    from .sku import Sku
+    from .profile import Profile
+    from .profile_update_parameters import ProfileUpdateParameters
+    from .sso_uri import SsoUri
+    from .supported_optimization_types_list_result import SupportedOptimizationTypesListResult
+    from .deep_created_origin import DeepCreatedOrigin
+    from .endpoint import Endpoint
+    from .geo_filter import GeoFilter
+    from .delivery_rule_action import DeliveryRuleAction
+    from .delivery_rule_condition import DeliveryRuleCondition
+    from .delivery_rule import DeliveryRule
+    from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from .endpoint_update_parameters import EndpointUpdateParameters
+    from .url_path_condition_parameters import UrlPathConditionParameters
+    from .delivery_rule_url_path_condition import DeliveryRuleUrlPathCondition
+    from .url_file_extension_condition_parameters import UrlFileExtensionConditionParameters
+    from .delivery_rule_url_file_extension_condition import DeliveryRuleUrlFileExtensionCondition
+    from .cache_expiration_action_parameters import CacheExpirationActionParameters
+    from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
+    from .purge_parameters import PurgeParameters
+    from .load_parameters import LoadParameters
+    from .origin import Origin
+    from .origin_update_parameters import OriginUpdateParameters
+    from .custom_domain import CustomDomain
+    from .custom_domain_parameters import CustomDomainParameters
+    from .custom_domain_https_parameters import CustomDomainHttpsParameters
+    from .cdn_certificate_source_parameters import CdnCertificateSourceParameters
+    from .cdn_managed_https_parameters import CdnManagedHttpsParameters
+    from .key_vault_certificate_source_parameters import KeyVaultCertificateSourceParameters
+    from .user_managed_https_parameters import UserManagedHttpsParameters
+    from .validate_custom_domain_input import ValidateCustomDomainInput
+    from .validate_custom_domain_output import ValidateCustomDomainOutput
+    from .check_name_availability_input import CheckNameAvailabilityInput
+    from .check_name_availability_output import CheckNameAvailabilityOutput
+    from .validate_probe_input import ValidateProbeInput
+    from .validate_probe_output import ValidateProbeOutput
+    from .resource_usage import ResourceUsage
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .cidr_ip_address import CidrIpAddress
+    from .ip_address_group import IpAddressGroup
+    from .edge_node import EdgeNode
+    from .resource import Resource
+    from .tracked_resource import TrackedResource
+    from .proxy_resource import ProxyResource
+    from .error_response import ErrorResponse, ErrorResponseException
 from .profile_paged import ProfilePaged
 from .resource_usage_paged import ResourceUsagePaged
 from .endpoint_paged import EndpointPaged
@@ -45,12 +113,16 @@ from .edge_node_paged import EdgeNodePaged
 from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
+    OptimizationType,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
+    CustomHttpsProvisioningSubstate,
+    ProtocolType,
+    CertificateType,
     ResourceType,
 )
 
@@ -59,20 +131,38 @@ __all__ = [
     'Profile',
     'ProfileUpdateParameters',
     'SsoUri',
+    'SupportedOptimizationTypesListResult',
     'DeepCreatedOrigin',
     'Endpoint',
     'GeoFilter',
+    'DeliveryRuleAction',
+    'DeliveryRuleCondition',
+    'DeliveryRule',
+    'EndpointPropertiesUpdateParametersDeliveryPolicy',
     'EndpointUpdateParameters',
+    'UrlPathConditionParameters',
+    'DeliveryRuleUrlPathCondition',
+    'UrlFileExtensionConditionParameters',
+    'DeliveryRuleUrlFileExtensionCondition',
+    'CacheExpirationActionParameters',
+    'DeliveryRuleCacheExpirationAction',
     'PurgeParameters',
     'LoadParameters',
     'Origin',
     'OriginUpdateParameters',
     'CustomDomain',
     'CustomDomainParameters',
+    'CustomDomainHttpsParameters',
+    'CdnCertificateSourceParameters',
+    'CdnManagedHttpsParameters',
+    'KeyVaultCertificateSourceParameters',
+    'UserManagedHttpsParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
+    'ValidateProbeInput',
+    'ValidateProbeOutput',
     'ResourceUsage',
     'OperationDisplay',
     'Operation',
@@ -80,6 +170,8 @@ __all__ = [
     'IpAddressGroup',
     'EdgeNode',
     'Resource',
+    'TrackedResource',
+    'ProxyResource',
     'ErrorResponse', 'ErrorResponseException',
     'ProfilePaged',
     'ResourceUsagePaged',
@@ -90,11 +182,15 @@ __all__ = [
     'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
+    'OptimizationType',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
+    'CustomHttpsProvisioningSubstate',
+    'ProtocolType',
+    'CertificateType',
     'ResourceType',
 ]

@@ -14,19 +14,30 @@ from .partition_information import PartitionInformation
 
 class SingletonPartitionInformation(PartitionInformation):
     """Information about a partition that is singleton. The services with
-    singletone partitioning scheme are effectively non-partitioned. They only
+    singleton partitioning scheme are effectively non-partitioned. They only
     have one partition.
 
-    :param id:
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     partition. This is a randomly generated GUID when the service was created.
+     The partition ID is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the IDs of its
+     partitions would be different.
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
-    """ 
+    :param service_partition_kind: Required. Constant filled by server.
+    :type service_partition_kind: str
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
-    def __init__(self, id=None):
-        super(SingletonPartitionInformation, self).__init__(id=id)
-        self.ServicePartitionKind = 'Singleton'
+    _attribute_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SingletonPartitionInformation, self).__init__(**kwargs)
+        self.service_partition_kind = 'Singleton'

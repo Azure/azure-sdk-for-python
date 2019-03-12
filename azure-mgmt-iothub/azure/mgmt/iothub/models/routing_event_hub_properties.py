@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class RoutingEventHubProperties(Model):
     """The properties related to an event hub endpoint.
 
-    :param connection_string: The connection string of the event hub endpoint.
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_string: Required. The connection string of the event hub
+     endpoint.
     :type connection_string: str
-    :param name: The name of the event hub endpoint. The name can only include
-     alphanumeric characters, periods, underscores, hyphens and has a maximum
-     length of 64 characters. The following names are reserved;  events,
-     operationsMonitoringEvents, fileNotifications, $default. Endpoint names
-     must be unique across endpoint types.
+    :param name: Required. The name that identifies this endpoint. The name
+     can only include alphanumeric characters, periods, underscores, hyphens
+     and has a maximum length of 64 characters. The following names are
+     reserved:  events, operationsMonitoringEvents, fileNotifications,
+     $default. Endpoint names must be unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the event hub
      endpoint.
@@ -33,7 +36,7 @@ class RoutingEventHubProperties(Model):
 
     _validation = {
         'connection_string': {'required': True},
-        'name': {'required': True, 'pattern': '^[A-Za-z0-9-._]{1,64}$'},
+        'name': {'required': True, 'pattern': r'^[A-Za-z0-9-._]{1,64}$'},
     }
 
     _attribute_map = {
@@ -43,8 +46,9 @@ class RoutingEventHubProperties(Model):
         'resource_group': {'key': 'resourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, connection_string, name, subscription_id=None, resource_group=None):
-        self.connection_string = connection_string
-        self.name = name
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
+    def __init__(self, **kwargs):
+        super(RoutingEventHubProperties, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.name = kwargs.get('name', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group = kwargs.get('resource_group', None)

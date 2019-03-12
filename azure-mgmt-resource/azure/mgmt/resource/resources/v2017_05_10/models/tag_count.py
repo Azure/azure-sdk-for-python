@@ -26,6 +26,7 @@ class TagCount(Model):
         'value': {'key': 'value', 'type': 'int'},
     }
 
-    def __init__(self, type=None, value=None):
-        self.type = type
-        self.value = value
+    def __init__(self, **kwargs):
+        super(TagCount, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', None)

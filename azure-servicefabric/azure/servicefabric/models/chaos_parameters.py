@@ -14,65 +14,66 @@ from msrest.serialization import Model
 
 class ChaosParameters(Model):
     """Defines all the parameters to configure a Chaos run.
-    .
 
     :param time_to_run_in_seconds: Total time (in seconds) for which Chaos
      will run before automatically stopping. The maximum allowed value is
-     4,294,967,295 (System.UInt32.MaxValue).
-     Depending on other time settings, the actual running time of Chaos can be
-     larger than the TimeToRunInSeconds.
-     To be conservative, we should expect Chaos to automatically stop after
-     (MaxClusterStabilizationTimeoutInSeconds + MaxConcurrentFaults *
-     WaitTimeBetweenFaultsInSeconds + WaitTimeBetweenIterationsInSeconds)
-     seconds.
-     . Default value: "4294967295" .
+     4,294,967,295 (System.UInt32.MaxValue). Default value: "4294967295" .
     :type time_to_run_in_seconds: str
-    :param max_cluster_stabilization_timeout_in_seconds: The maximum amount
-     of time to wait for all cluster entities to become stable and healthy.
-     Chaos executes in iterations and at the start of each iteration it
-     validates the health of cluster entities.
+    :param max_cluster_stabilization_timeout_in_seconds: The maximum amount of
+     time to wait for all cluster entities to become stable and healthy. Chaos
+     executes in iterations and at the start of each iteration it validates the
+     health of cluster entities.
      During validation if a cluster entity is not stable and healthy within
      MaxClusterStabilizationTimeoutInSeconds, Chaos generates a validation
-     failed event.
-     . Default value: 60 .
+     failed event. Default value: 60 .
     :type max_cluster_stabilization_timeout_in_seconds: long
-    :param max_concurrent_faults: MaxConcurrentFaults is the maximum number
-     of concurrent faults induced per iteration.
+    :param max_concurrent_faults: MaxConcurrentFaults is the maximum number of
+     concurrent faults induced per iteration.
      Chaos executes in iterations and two consecutive iterations are separated
      by a validation phase.
-     The higher the concurrency, the more aggressive the injection of faults
-     -- inducing more complex series of states to uncover bugs.
+     The higher the concurrency, the more aggressive the injection of faults,
+     leading to inducing more complex series of states to uncover bugs.
      The recommendation is to start with a value of 2 or 3 and to exercise
-     caution while moving up.
-     . Default value: 1 .
+     caution while moving up. Default value: 1 .
     :type max_concurrent_faults: long
     :param enable_move_replica_faults: Enables or disables the move primary
-     and move secondary faults.
-     . Default value: True .
+     and move secondary faults. Default value: True .
     :type enable_move_replica_faults: bool
-    :param wait_time_between_faults_in_seconds: Wait time (in seconds)
-     between consecutive faults within a single iteration.
+    :param wait_time_between_faults_in_seconds: Wait time (in seconds) between
+     consecutive faults within a single iteration.
      The larger the value, the lower the overlapping between faults and the
      simpler the sequence of state transitions that the cluster goes through.
      The recommendation is to start with a value between 1 and 5 and exercise
-     caution while moving up.
-     . Default value: 20 .
+     caution while moving up. Default value: 20 .
     :type wait_time_between_faults_in_seconds: long
     :param wait_time_between_iterations_in_seconds: Time-separation (in
      seconds) between two consecutive iterations of Chaos.
-     The larger the value, the lower the fault injection rate.
-     . Default value: 30 .
+     The larger the value, the lower the fault injection rate. Default value:
+     30 .
     :type wait_time_between_iterations_in_seconds: long
     :param cluster_health_policy: Passed-in cluster health policy is used to
-     validate health of the cluster in between Chaos iterations. If the
-     cluster health is in error, Chaos will wait for
-     ChaosParameters.WaitTimeBetweenIterationsInSeconds before the next check.
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
-    :param context:
-    :type context: :class:`ChaosContext
-     <azure.servicefabric.models.ChaosContext>`
-    """ 
+     validate health of the cluster in between Chaos iterations. If the cluster
+     health is in error or if an unexpected exception happens during fault
+     execution--to provide the cluster with some time to recuperate--Chaos will
+     wait for 30 minutes before the next health-check.
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
+    :param context: Describes a map, which is a collection of (string, string)
+     type key-value pairs. The map can be used to record information about
+     the Chaos run. There cannot be more than 100 such pairs and each string
+     (key or value) can be at most 4095 characters long.
+     This map is set by the starter of the Chaos run to optionally store the
+     context about the specific run.
+    :type context: ~azure.servicefabric.models.ChaosContext
+    :param chaos_target_filter: List of cluster entities to target for Chaos
+     faults.
+     This filter can be used to target Chaos faults only to certain node types
+     or only to certain application instances. If ChaosTargetFilter is not
+     used, Chaos faults all cluster entities.
+     If ChaosTargetFilter is used, Chaos faults only the entities that meet the
+     ChaosTargetFilter specification.
+    :type chaos_target_filter: ~azure.servicefabric.models.ChaosTargetFilter
+    """
 
     _validation = {
         'max_cluster_stabilization_timeout_in_seconds': {'maximum': 4294967295, 'minimum': 0},
@@ -90,14 +91,17 @@ class ChaosParameters(Model):
         'wait_time_between_iterations_in_seconds': {'key': 'WaitTimeBetweenIterationsInSeconds', 'type': 'long'},
         'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
         'context': {'key': 'Context', 'type': 'ChaosContext'},
+        'chaos_target_filter': {'key': 'ChaosTargetFilter', 'type': 'ChaosTargetFilter'},
     }
 
-    def __init__(self, time_to_run_in_seconds="4294967295", max_cluster_stabilization_timeout_in_seconds=60, max_concurrent_faults=1, enable_move_replica_faults=True, wait_time_between_faults_in_seconds=20, wait_time_between_iterations_in_seconds=30, cluster_health_policy=None, context=None):
-        self.time_to_run_in_seconds = time_to_run_in_seconds
-        self.max_cluster_stabilization_timeout_in_seconds = max_cluster_stabilization_timeout_in_seconds
-        self.max_concurrent_faults = max_concurrent_faults
-        self.enable_move_replica_faults = enable_move_replica_faults
-        self.wait_time_between_faults_in_seconds = wait_time_between_faults_in_seconds
-        self.wait_time_between_iterations_in_seconds = wait_time_between_iterations_in_seconds
-        self.cluster_health_policy = cluster_health_policy
-        self.context = context
+    def __init__(self, **kwargs):
+        super(ChaosParameters, self).__init__(**kwargs)
+        self.time_to_run_in_seconds = kwargs.get('time_to_run_in_seconds', "4294967295")
+        self.max_cluster_stabilization_timeout_in_seconds = kwargs.get('max_cluster_stabilization_timeout_in_seconds', 60)
+        self.max_concurrent_faults = kwargs.get('max_concurrent_faults', 1)
+        self.enable_move_replica_faults = kwargs.get('enable_move_replica_faults', True)
+        self.wait_time_between_faults_in_seconds = kwargs.get('wait_time_between_faults_in_seconds', 20)
+        self.wait_time_between_iterations_in_seconds = kwargs.get('wait_time_between_iterations_in_seconds', 30)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.context = kwargs.get('context', None)
+        self.chaos_target_filter = kwargs.get('chaos_target_filter', None)

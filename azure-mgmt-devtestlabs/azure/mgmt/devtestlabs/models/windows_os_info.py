@@ -18,13 +18,14 @@ class WindowsOsInfo(Model):
     :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped,
      SysprepRequested, SysprepApplied). Possible values include:
      'NonSysprepped', 'SysprepRequested', 'SysprepApplied'
-    :type windows_os_state: str or :class:`WindowsOsState
-     <azure.mgmt.devtestlabs.models.WindowsOsState>`
+    :type windows_os_state: str or
+     ~azure.mgmt.devtestlabs.models.WindowsOsState
     """
 
     _attribute_map = {
         'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
     }
 
-    def __init__(self, windows_os_state=None):
-        self.windows_os_state = windows_os_state
+    def __init__(self, **kwargs):
+        super(WindowsOsInfo, self).__init__(**kwargs)
+        self.windows_os_state = kwargs.get('windows_os_state', None)

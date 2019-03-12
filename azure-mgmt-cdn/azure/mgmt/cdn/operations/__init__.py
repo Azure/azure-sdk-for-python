@@ -13,6 +13,8 @@ from .profiles_operations import ProfilesOperations
 from .endpoints_operations import EndpointsOperations
 from .origins_operations import OriginsOperations
 from .custom_domains_operations import CustomDomainsOperations
+from .resource_usage_operations import ResourceUsageOperations
+from .operations import Operations
 from .edge_nodes_operations import EdgeNodesOperations
 
 __all__ = [
@@ -20,5 +22,7 @@ __all__ = [
     'EndpointsOperations',
     'OriginsOperations',
     'CustomDomainsOperations',
+    'ResourceUsageOperations',
+    'Operations',
     'EdgeNodesOperations',
 ]

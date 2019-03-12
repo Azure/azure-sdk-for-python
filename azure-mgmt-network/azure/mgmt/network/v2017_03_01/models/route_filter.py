@@ -27,15 +27,14 @@ class RouteFilter(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param rules: Collection of RouteFilterRules contained within a route
      filter.
-    :type rules: list of :class:`RouteFilterRule
-     <azure.mgmt.network.v2017_03_01.models.RouteFilterRule>`
+    :type rules: list[~azure.mgmt.network.v2017_03_01.models.RouteFilterRule]
     :ivar peerings: A collection of references to express route circuit
      peerings.
-    :vartype peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeering>`
+    :vartype peerings:
+     list[~azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
@@ -64,9 +63,9 @@ class RouteFilter(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, rules=None):
-        super(RouteFilter, self).__init__(id=id, location=location, tags=tags)
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(RouteFilter, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
         self.peerings = None
         self.provisioning_state = None
         self.etag = None

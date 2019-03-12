@@ -16,18 +16,22 @@ class PartitionHealthState(EntityHealthState):
     """Represents the health state of a partition, which contains the partition
     identifier and its aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param partition_id: The ID of the partition.
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param partition_id: Id of the partition whose health state is described
+     by this object.
     :type partition_id: str
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, partition_id=None):
-        super(PartitionHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(PartitionHealthState, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)

@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class DataLakeAnalyticsCatalogCredentialCreateParameters(Model):
     """Data Lake Analytics catalog credential creation parameters.
 
-    :param password: the password for the credential and user with access to
-     the data source.
+    All required parameters must be populated in order to send to Azure.
+
+    :param password: Required. the password for the credential and user with
+     access to the data source.
     :type password: str
-    :param uri: the URI identifier for the data source this credential can
-     connect to in the format <hostname>:<port>
+    :param uri: Required. the URI identifier for the data source this
+     credential can connect to in the format <hostname>:<port>
     :type uri: str
-    :param user_id: the object identifier for the user associated with this
-     credential with access to the data source.
+    :param user_id: Required. the object identifier for the user associated
+     with this credential with access to the data source.
     :type user_id: str
     """
 
@@ -38,7 +40,8 @@ class DataLakeAnalyticsCatalogCredentialCreateParameters(Model):
         'user_id': {'key': 'userId', 'type': 'str'},
     }
 
-    def __init__(self, password, uri, user_id):
-        self.password = password
-        self.uri = uri
-        self.user_id = user_id
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsCatalogCredentialCreateParameters, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)
+        self.uri = kwargs.get('uri', None)
+        self.user_id = kwargs.get('user_id', None)

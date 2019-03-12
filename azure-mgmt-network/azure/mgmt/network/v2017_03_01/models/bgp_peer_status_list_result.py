@@ -16,13 +16,13 @@ class BgpPeerStatusListResult(Model):
     """Response for list BGP peer status API service call.
 
     :param value: List of BGP peers
-    :type value: list of :class:`BgpPeerStatus
-     <azure.mgmt.network.v2017_03_01.models.BgpPeerStatus>`
+    :type value: list[~azure.mgmt.network.v2017_03_01.models.BgpPeerStatus]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[BgpPeerStatus]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(BgpPeerStatusListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

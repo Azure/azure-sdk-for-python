@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class PasswordCredential(Model):
     """Active Directory Password Credential information.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param start_date: Start date.
     :type start_date: datetime
     :param end_date: End date.
@@ -23,17 +26,24 @@ class PasswordCredential(Model):
     :type key_id: str
     :param value: Key value.
     :type value: str
+    :param custom_key_identifier: Custom Key Identifier
+    :type custom_key_identifier: bytearray
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
         'key_id': {'key': 'keyId', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'custom_key_identifier': {'key': 'customKeyIdentifier', 'type': 'bytearray'},
     }
 
-    def __init__(self, start_date=None, end_date=None, key_id=None, value=None):
-        self.start_date = start_date
-        self.end_date = end_date
-        self.key_id = key_id
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PasswordCredential, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.start_date = kwargs.get('start_date', None)
+        self.end_date = kwargs.get('end_date', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.value = kwargs.get('value', None)
+        self.custom_key_identifier = kwargs.get('custom_key_identifier', None)

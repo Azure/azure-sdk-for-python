@@ -22,8 +22,8 @@ class Provider(Model):
     :param registration_state: The registration state of the provider.
     :type registration_state: str
     :param resource_types: The collection of provider resource types.
-    :type resource_types: list of :class:`ProviderResourceType
-     <azure.mgmt.resource.resources.v2016_02_01.models.ProviderResourceType>`
+    :type resource_types:
+     list[~azure.mgmt.resource.resources.v2016_02_01.models.ProviderResourceType]
     """
 
     _attribute_map = {
@@ -33,8 +33,9 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None):
-        self.id = id
-        self.namespace = namespace
-        self.registration_state = registration_state
-        self.resource_types = resource_types
+    def __init__(self, **kwargs):
+        super(Provider, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.registration_state = kwargs.get('registration_state', None)
+        self.resource_types = kwargs.get('resource_types', None)

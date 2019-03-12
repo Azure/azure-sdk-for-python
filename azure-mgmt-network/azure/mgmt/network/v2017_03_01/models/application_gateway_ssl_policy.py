@@ -17,14 +17,14 @@ class ApplicationGatewaySslPolicy(Model):
 
     :param disabled_ssl_protocols: SSL protocols to be disabled on application
      gateway.
-    :type disabled_ssl_protocols: list of str or
-     :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewaySslProtocol>`
+    :type disabled_ssl_protocols: list[str or
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewaySslProtocol]
     """
 
     _attribute_map = {
         'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[str]'},
     }
 
-    def __init__(self, disabled_ssl_protocols=None):
-        self.disabled_ssl_protocols = disabled_ssl_protocols
+    def __init__(self, **kwargs):
+        super(ApplicationGatewaySslPolicy, self).__init__(**kwargs)
+        self.disabled_ssl_protocols = kwargs.get('disabled_ssl_protocols', None)

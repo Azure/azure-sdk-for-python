@@ -24,14 +24,14 @@ class PacketCaptureQueryStatusResult(Model):
     :param packet_capture_status: The status of the packet capture session.
      Possible values include: 'NotStarted', 'Running', 'Stopped', 'Error',
      'Unknown'
-    :type packet_capture_status: str or :class:`PcStatus
-     <azure.mgmt.network.v2016_09_01.models.PcStatus>`
+    :type packet_capture_status: str or
+     ~azure.mgmt.network.v2016_09_01.models.PcStatus
     :param stop_reason: The reason the current packet capture session was
      stopped.
     :type stop_reason: str
     :param packet_capture_error: List of errors of packet capture session.
-    :type packet_capture_error: list of str or :class:`PcError
-     <azure.mgmt.network.v2016_09_01.models.PcError>`
+    :type packet_capture_error: list[str or
+     ~azure.mgmt.network.v2016_09_01.models.PcError]
     """
 
     _attribute_map = {
@@ -43,10 +43,11 @@ class PacketCaptureQueryStatusResult(Model):
         'packet_capture_error': {'key': 'packetCaptureError', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, id=None, capture_start_time=None, packet_capture_status=None, stop_reason=None, packet_capture_error=None):
-        self.name = name
-        self.id = id
-        self.capture_start_time = capture_start_time
-        self.packet_capture_status = packet_capture_status
-        self.stop_reason = stop_reason
-        self.packet_capture_error = packet_capture_error
+    def __init__(self, **kwargs):
+        super(PacketCaptureQueryStatusResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.capture_start_time = kwargs.get('capture_start_time', None)
+        self.packet_capture_status = kwargs.get('packet_capture_status', None)
+        self.stop_reason = kwargs.get('stop_reason', None)
+        self.packet_capture_error = kwargs.get('packet_capture_error', None)

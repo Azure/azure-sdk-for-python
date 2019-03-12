@@ -27,7 +27,7 @@ class ArmTemplate(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar display_name: The display name of the ARM template.
     :vartype display_name: str
     :ivar description: The description of the ARM template.
@@ -42,9 +42,10 @@ class ArmTemplate(Resource):
     :vartype created_date: datetime
     :ivar parameters_value_files_info: File name and parameter values
      information from all azuredeploy.*.parameters.json for the ARM template.
-    :vartype parameters_value_files_info: list of
-     :class:`ParametersValueFileInfo
-     <azure.mgmt.devtestlabs.models.ParametersValueFileInfo>`
+    :vartype parameters_value_files_info:
+     list[~azure.mgmt.devtestlabs.models.ParametersValueFileInfo]
+    :ivar enabled: Whether or not ARM template is enabled for use by lab user.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -58,6 +59,7 @@ class ArmTemplate(Resource):
         'contents': {'readonly': True},
         'created_date': {'readonly': True},
         'parameters_value_files_info': {'readonly': True},
+        'enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -73,10 +75,11 @@ class ArmTemplate(Resource):
         'contents': {'key': 'properties.contents', 'type': 'object'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'parameters_value_files_info': {'key': 'properties.parametersValueFilesInfo', 'type': '[ParametersValueFileInfo]'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(ArmTemplate, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ArmTemplate, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.publisher = None
@@ -84,3 +87,4 @@ class ArmTemplate(Resource):
         self.contents = None
         self.created_date = None
         self.parameters_value_files_info = None
+        self.enabled = None

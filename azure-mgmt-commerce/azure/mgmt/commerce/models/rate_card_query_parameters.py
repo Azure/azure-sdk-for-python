@@ -46,6 +46,7 @@ class RateCardQueryParameters(Model):
     }
 
     def __init__(self, offer_durable_id, currency, locale, region_info):
+        super(RateCardQueryParameters, self).__init__()
         self.offer_durable_id = offer_durable_id
         self.currency = currency
         self.locale = locale

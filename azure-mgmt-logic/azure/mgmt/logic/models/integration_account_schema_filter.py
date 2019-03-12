@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class IntegrationAccountSchemaFilter(Model):
     """The integration account schema filter for odata query.
 
-    :param schema_type: The schema type of integration account schema.
-     Possible values include: 'NotSpecified', 'Xml'
-    :type schema_type: str or :class:`SchemaType
-     <azure.mgmt.logic.models.SchemaType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param schema_type: Required. The schema type of integration account
+     schema. Possible values include: 'NotSpecified', 'Xml'
+    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
     """
 
     _validation = {
@@ -26,8 +27,9 @@ class IntegrationAccountSchemaFilter(Model):
     }
 
     _attribute_map = {
-        'schema_type': {'key': 'schemaType', 'type': 'SchemaType'},
+        'schema_type': {'key': 'schemaType', 'type': 'str'},
     }
 
-    def __init__(self, schema_type):
-        self.schema_type = schema_type
+    def __init__(self, **kwargs):
+        super(IntegrationAccountSchemaFilter, self).__init__(**kwargs)
+        self.schema_type = kwargs.get('schema_type', None)

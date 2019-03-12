@@ -19,8 +19,8 @@ class OperationDefinition(Model):
     :type name: str
     :param display: The display information for the container registry
      operation.
-    :type display: :class:`OperationDisplayDefinition
-     <azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition>`
+    :type display:
+     ~azure.mgmt.containerregistry.v2017_03_01.models.OperationDisplayDefinition
     """
 
     _attribute_map = {
@@ -28,6 +28,7 @@ class OperationDefinition(Model):
         'display': {'key': 'display', 'type': 'OperationDisplayDefinition'},
     }
 
-    def __init__(self, name=None, display=None):
-        self.name = name
-        self.display = display
+    def __init__(self, **kwargs):
+        super(OperationDefinition, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)

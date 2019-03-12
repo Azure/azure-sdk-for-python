@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SubnetPaged(Paged):
     """
-    A paging container for iterating over a list of Subnet object
+    A paging container for iterating over a list of :class:`Subnet <azure.mgmt.network.v2017_03_01.models.Subnet>` object
     """
 
     _attribute_map = {

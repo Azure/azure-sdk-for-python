@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServiceTierAdvisorPaged(Paged):
     """
-    A paging container for iterating over a list of ServiceTierAdvisor object
+    A paging container for iterating over a list of :class:`ServiceTierAdvisor <azure.mgmt.sql.models.ServiceTierAdvisor>` object
     """
 
     _attribute_map = {

@@ -15,19 +15,27 @@ from msrest.serialization import Model
 class ManagementLockObject(Model):
     """Management lock information.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param level: The lock level of the management lock. Possible values
      include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :type level: str or :class:`LockLevel
-     <azure.mgmt.resource.locks.v2015_01_01.models.LockLevel>`
+    :type level: str or
+     ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
     :param notes: The notes of the management lock.
     :type notes: str
-    :param id: The Id of the lock.
-    :type id: str
-    :param type: The type of the lock.
-    :type type: str
+    :ivar id: The Id of the lock.
+    :vartype id: str
+    :ivar type: The type of the lock.
+    :vartype type: str
     :param name: The name of the lock.
     :type name: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'level': {'key': 'properties.level', 'type': 'str'},
@@ -37,9 +45,10 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level=None, notes=None, id=None, type=None, name=None):
-        self.level = level
-        self.notes = notes
-        self.id = id
-        self.type = type
-        self.name = name
+    def __init__(self, **kwargs):
+        super(ManagementLockObject, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.notes = kwargs.get('notes', None)
+        self.id = None
+        self.type = None
+        self.name = kwargs.get('name', None)

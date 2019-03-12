@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ExpressRouteCircuitArpTablePaged(Paged):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitArpTable object
+    A paging container for iterating over a list of :class:`ExpressRouteCircuitArpTable <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitArpTable>` object
     """
 
     _attribute_map = {

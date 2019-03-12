@@ -16,25 +16,32 @@ class ReplicaInfo(Model):
     """Information about the identity, status, health, node name, uptime, and
     other details about the replica.
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param node_name: The name of the node.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceReplicaInfo, StatelessServiceInstanceInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param replica_status: The status of a replica of a service. Possible
+     values include: 'Invalid', 'InBuild', 'Standby', 'Ready', 'Down',
+     'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.ReplicaStatus
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -43,17 +50,18 @@ class ReplicaInfo(Model):
         'node_name': {'key': 'NodeName', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServiceReplicaInfo', 'Stateless': 'StatelessServiceInstanceInfo'}
+        'service_kind': {'Stateful': 'StatefulServiceReplicaInfo', 'Stateless': 'StatelessServiceInstanceInfo'}
     }
 
-    def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None):
-        self.replica_status = replica_status
-        self.health_state = health_state
-        self.node_name = node_name
-        self.address = address
-        self.last_in_build_duration_in_seconds = last_in_build_duration_in_seconds
-        self.ServiceKind = None
+    def __init__(self, **kwargs):
+        super(ReplicaInfo, self).__init__(**kwargs)
+        self.replica_status = kwargs.get('replica_status', None)
+        self.health_state = kwargs.get('health_state', None)
+        self.node_name = kwargs.get('node_name', None)
+        self.address = kwargs.get('address', None)
+        self.last_in_build_duration_in_seconds = kwargs.get('last_in_build_duration_in_seconds', None)
+        self.service_kind = None

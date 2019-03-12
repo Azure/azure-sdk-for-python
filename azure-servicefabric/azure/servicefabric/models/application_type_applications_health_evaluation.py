@@ -15,24 +15,30 @@ from .health_evaluation import HealthEvaluation
 class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for applications of a particular application
     type. The application type applications evaluation can be returned when
-    cluster health evaluation returns unhealthy aggregated health state,
-    either Error or Warning. It contains health evaluations for each
-    unhealthy application of the included application type that impacted
-    current aggregated health state.
+    cluster health evaluation returns unhealthy aggregated health state, either
+    Error or Warning. It contains health evaluations for each unhealthy
+    application of the included application type that impacted current
+    aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    :param application_type_name: Name of the application type.
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param application_type_name: The application type name as defined in the
+     application manifest.
     :type application_type_name: str
     :param max_percent_unhealthy_applications: Maximum allowed percentage of
-     unhealthy applications for the application type, specified as an entry
-     in ApplicationTypeHealthPolicyMap.
+     unhealthy applications for the application type, specified as an entry in
+     ApplicationTypeHealthPolicyMap.
     :type max_percent_unhealthy_applications: int
     :param total_count: Total number of applications of the application type
      found in the health store.
@@ -41,28 +47,28 @@ class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
      the aggregated health state. Includes all the unhealthy
      ApplicationHealthEvaluation of this application type that impacted the
      aggregated health.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'application_type_name': {'key': 'ApplicationTypeName', 'type': 'str'},
         'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
         'total_count': {'key': 'TotalCount', 'type': 'long'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, application_type_name=None, max_percent_unhealthy_applications=None, total_count=None, unhealthy_evaluations=None):
-        super(ApplicationTypeApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.application_type_name = application_type_name
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'ApplicationTypeApplications'
+    def __init__(self, **kwargs):
+        super(ApplicationTypeApplicationsHealthEvaluation, self).__init__(**kwargs)
+        self.application_type_name = kwargs.get('application_type_name', None)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'ApplicationTypeApplications'

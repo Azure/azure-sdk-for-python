@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class RegenerateKeyParameters(Model):
     """Regenerate key parameters.
 
-    :param key_name: key name to generate (Key1|Key2). Possible values
-     include: 'Key1', 'Key2'
-    :type key_name: str or :class:`KeyName
-     <azure.mgmt.cognitiveservices.models.KeyName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. key name to generate (Key1|Key2). Possible
+     values include: 'Key1', 'Key2'
+    :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
     """
+
+    _validation = {
+        'key_name': {'required': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
     }
 
-    def __init__(self, key_name=None):
-        self.key_name = key_name
+    def __init__(self, **kwargs):
+        super(RegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)

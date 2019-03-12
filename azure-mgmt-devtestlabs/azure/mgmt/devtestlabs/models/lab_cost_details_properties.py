@@ -21,8 +21,7 @@ class LabCostDetailsProperties(Model):
     :type cost: float
     :param cost_type: The type of the cost. Possible values include:
      'Unavailable', 'Reported', 'Projected'
-    :type cost_type: str or :class:`CostType
-     <azure.mgmt.devtestlabs.models.CostType>`
+    :type cost_type: str or ~azure.mgmt.devtestlabs.models.CostType
     """
 
     _attribute_map = {
@@ -31,7 +30,8 @@ class LabCostDetailsProperties(Model):
         'cost_type': {'key': 'costType', 'type': 'str'},
     }
 
-    def __init__(self, date_property=None, cost=None, cost_type=None):
-        self.date_property = date_property
-        self.cost = cost
-        self.cost_type = cost_type
+    def __init__(self, **kwargs):
+        super(LabCostDetailsProperties, self).__init__(**kwargs)
+        self.date_property = kwargs.get('date_property', None)
+        self.cost = kwargs.get('cost', None)
+        self.cost_type = kwargs.get('cost_type', None)

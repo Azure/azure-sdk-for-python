@@ -9,43 +9,52 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class TransparentDataEncryptionActivity(SubResource):
+class TransparentDataEncryptionActivity(ProxyResource):
     """Represents a database transparent data encryption Scan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar status: The status of the database. Possible values include:
      'Encrypting', 'Decrypting'
-    :vartype status: str or :class:`TransparentDataEncryptionActivityStatus
-     <azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus>`
+    :vartype status: str or
+     ~azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus
     :ivar percent_complete: The percent complete of the transparent data
      encryption scan for a database.
     :vartype percent_complete: float
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
         'status': {'readonly': True},
         'percent_complete': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'percent_complete': {'key': 'properties.percentComplete', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(TransparentDataEncryptionActivity, self).__init__()
+    def __init__(self, **kwargs):
+        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
+        self.location = None
         self.status = None
         self.percent_complete = None

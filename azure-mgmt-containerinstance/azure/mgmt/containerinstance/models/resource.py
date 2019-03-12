@@ -18,23 +18,22 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource id.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: The resource location.
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -45,9 +44,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

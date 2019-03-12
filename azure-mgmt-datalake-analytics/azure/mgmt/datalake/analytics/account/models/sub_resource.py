@@ -13,22 +13,22 @@ from msrest.serialization import Model
 
 
 class SubResource(Model):
-    """The Sub Resource model definition.
+    """The resource model definition for a nested resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource identifier.
     :vartype id: str
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
     :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -38,7 +38,8 @@ class SubResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name):
+    def __init__(self, **kwargs):
+        super(SubResource, self).__init__(**kwargs)
         self.id = None
-        self.name = name
+        self.name = None
         self.type = None

@@ -28,8 +28,8 @@ class AppServiceCertificate(Model):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
-    :vartype provisioning_state: str or :class:`KeyVaultSecretStatus
-     <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -42,7 +42,8 @@ class AppServiceCertificate(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, key_vault_id=None, key_vault_secret_name=None):
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificate, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None

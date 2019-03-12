@@ -19,18 +19,20 @@ class AppServiceCertificateResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -41,13 +43,15 @@ class AppServiceCertificateResource(Resource):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
-    :vartype provisioning_state: str or :class:`KeyVaultSecretStatus
-     <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.KeyVaultSecretStatus
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -63,8 +67,8 @@ class AppServiceCertificateResource(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
-        super(AppServiceCertificateResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateResource, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None

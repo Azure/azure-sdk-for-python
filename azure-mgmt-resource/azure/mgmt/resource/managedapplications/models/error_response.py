@@ -14,8 +14,8 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error reponse indicates ARM appliance is not able to process the incoming
-    request. The reason is provided in the error message.
+    """Error response indicates managed application is not able to process the
+    incoming request. The reason is provided in the error message.
 
     :param http_status: Http status code.
     :type http_status: str
@@ -31,10 +31,11 @@ class ErrorResponse(Model):
         'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, http_status=None, error_code=None, error_message=None):
-        self.http_status = http_status
-        self.error_code = error_code
-        self.error_message = error_message
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.http_status = kwargs.get('http_status', None)
+        self.error_code = kwargs.get('error_code', None)
+        self.error_message = kwargs.get('error_message', None)
 
 
 class ErrorResponseException(HttpOperationError):

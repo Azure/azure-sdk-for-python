@@ -18,15 +18,15 @@ class AutoscaleNotification(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar operation: the operation associated with the notification and its
-     value must be "scale". Default value: "Scale" .
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operation: Required. the operation associated with the notification
+     and its value must be "scale". Default value: "Scale" .
     :vartype operation: str
     :param email: the email notification.
-    :type email: :class:`EmailNotification
-     <azure.mgmt.monitor.models.EmailNotification>`
+    :type email: ~azure.mgmt.monitor.models.EmailNotification
     :param webhooks: the collection of webhook notifications.
-    :type webhooks: list of :class:`WebhookNotification
-     <azure.mgmt.monitor.models.WebhookNotification>`
+    :type webhooks: list[~azure.mgmt.monitor.models.WebhookNotification]
     """
 
     _validation = {
@@ -41,6 +41,7 @@ class AutoscaleNotification(Model):
 
     operation = "Scale"
 
-    def __init__(self, email=None, webhooks=None):
-        self.email = email
-        self.webhooks = webhooks
+    def __init__(self, **kwargs):
+        super(AutoscaleNotification, self).__init__(**kwargs)
+        self.email = kwargs.get('email', None)
+        self.webhooks = kwargs.get('webhooks', None)

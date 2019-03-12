@@ -19,7 +19,7 @@ class IPAddressAvailabilityResult(Model):
     :type available: bool
     :param available_ip_addresses: Contains other available private IP
      addresses if the asked for address is taken.
-    :type available_ip_addresses: list of str
+    :type available_ip_addresses: list[str]
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class IPAddressAvailabilityResult(Model):
         'available_ip_addresses': {'key': 'availableIPAddresses', 'type': '[str]'},
     }
 
-    def __init__(self, available=None, available_ip_addresses=None):
-        self.available = available
-        self.available_ip_addresses = available_ip_addresses
+    def __init__(self, **kwargs):
+        super(IPAddressAvailabilityResult, self).__init__(**kwargs)
+        self.available = kwargs.get('available', None)
+        self.available_ip_addresses = kwargs.get('available_ip_addresses', None)

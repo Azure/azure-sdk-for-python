@@ -17,8 +17,7 @@ class EntityId(Model):
 
     :param name: the name of the external table associated with this database,
      schema and table.
-    :type name: :class:`DdlName
-     <azure.mgmt.datalake.analytics.catalog.models.DdlName>`
+    :type name: ~azure.mgmt.datalake.analytics.catalog.models.DdlName
     :param version: the version of the external data source.
     :type version: str
     """
@@ -28,6 +27,7 @@ class EntityId(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None):
-        self.name = name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(EntityId, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)

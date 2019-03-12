@@ -9,7 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .provider_operations import ProviderOperations
 from .labs_operations import LabsOperations
+from .operations import Operations
 from .global_schedules_operations import GlobalSchedulesOperations
 from .artifact_sources_operations import ArtifactSourcesOperations
 from .arm_templates_operations import ArmTemplatesOperations
@@ -27,12 +29,16 @@ from .users_operations import UsersOperations
 from .disks_operations import DisksOperations
 from .environments_operations import EnvironmentsOperations
 from .secrets_operations import SecretsOperations
+from .service_fabrics_operations import ServiceFabricsOperations
+from .service_fabric_schedules_operations import ServiceFabricSchedulesOperations
 from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
 from .virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
+    'ProviderOperations',
     'LabsOperations',
+    'Operations',
     'GlobalSchedulesOperations',
     'ArtifactSourcesOperations',
     'ArmTemplatesOperations',
@@ -50,6 +56,8 @@ __all__ = [
     'DisksOperations',
     'EnvironmentsOperations',
     'SecretsOperations',
+    'ServiceFabricsOperations',
+    'ServiceFabricSchedulesOperations',
     'VirtualMachinesOperations',
     'VirtualMachineSchedulesOperations',
     'VirtualNetworksOperations',

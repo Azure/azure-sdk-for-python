@@ -30,7 +30,7 @@ class USqlExternalDataSource(CatalogItem):
     :type provider_string: str
     :param pushdown_types: the list of types to push down from the external
      data source.
-    :type pushdown_types: list of str
+    :type pushdown_types: list[str]
     """
 
     _attribute_map = {
@@ -43,10 +43,10 @@ class USqlExternalDataSource(CatalogItem):
         'pushdown_types': {'key': 'pushdownTypes', 'type': '[str]'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, name=None, provider=None, provider_string=None, pushdown_types=None):
-        super(USqlExternalDataSource, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.name = name
-        self.provider = provider
-        self.provider_string = provider_string
-        self.pushdown_types = pushdown_types
+    def __init__(self, **kwargs):
+        super(USqlExternalDataSource, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.name = kwargs.get('name', None)
+        self.provider = kwargs.get('provider', None)
+        self.provider_string = kwargs.get('provider_string', None)
+        self.pushdown_types = kwargs.get('pushdown_types', None)

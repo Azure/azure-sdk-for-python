@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class TrustedIdProviderPaged(Paged):
     """
-    A paging container for iterating over a list of TrustedIdProvider object
+    A paging container for iterating over a list of :class:`TrustedIdProvider <azure.mgmt.datalake.store.models.TrustedIdProvider>` object
     """
 
     _attribute_map = {

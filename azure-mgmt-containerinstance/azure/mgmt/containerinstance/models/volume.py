@@ -13,25 +13,38 @@ from msrest.serialization import Model
 
 
 class Volume(Model):
-    """The volume.
+    """The properties of the volume.
 
-    :param name: The volume name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the volume.
     :type name: str
-    :param azure_file: The Azure file volume.
-    :type azure_file: :class:`AzureFileVolume
-     <azure.mgmt.containerinstance.models.AzureFileVolume>`
+    :param azure_file: The Azure File volume.
+    :type azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
+    :param empty_dir: The empty directory volume.
+    :type empty_dir: object
+    :param secret: The secret volume.
+    :type secret: dict[str, str]
+    :param git_repo: The git repo volume.
+    :type git_repo: ~azure.mgmt.containerinstance.models.GitRepoVolume
     """
 
     _validation = {
         'name': {'required': True},
-        'azure_file': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'azure_file': {'key': 'azureFile', 'type': 'AzureFileVolume'},
+        'empty_dir': {'key': 'emptyDir', 'type': 'object'},
+        'secret': {'key': 'secret', 'type': '{str}'},
+        'git_repo': {'key': 'gitRepo', 'type': 'GitRepoVolume'},
     }
 
-    def __init__(self, name, azure_file):
-        self.name = name
-        self.azure_file = azure_file
+    def __init__(self, **kwargs):
+        super(Volume, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.azure_file = kwargs.get('azure_file', None)
+        self.empty_dir = kwargs.get('empty_dir', None)
+        self.secret = kwargs.get('secret', None)
+        self.git_repo = kwargs.get('git_repo', None)

@@ -15,19 +15,23 @@ from msrest.serialization import Model
 class ResolvedServicePartition(Model):
     """Information about a service partition and its associated endpoints.
 
-    :param name:
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The full name of the service with 'fabric:' URI
+     scheme.
     :type name: str
-    :param partition_information: A representation of the resolved partition.
-    :type partition_information: :class:`PartitionInformation
-     <azure.servicefabric.models.PartitionInformation>`
-    :param endpoints:
-    :type endpoints: list of :class:`ResolvedServiceEndpoint
-     <azure.servicefabric.models.ResolvedServiceEndpoint>`
-    :param version: The version of this resolved service partition result.
-     This version should be passed in the next time the ResolveService call
-     is made via the PreviousRspVersion query parameter.
+    :param partition_information: Required. A representation of the resolved
+     partition.
+    :type partition_information:
+     ~azure.servicefabric.models.PartitionInformation
+    :param endpoints: Required. List of resolved service endpoints of a
+     service partition.
+    :type endpoints: list[~azure.servicefabric.models.ResolvedServiceEndpoint]
+    :param version: Required. The version of this resolved service partition
+     result. This version should be passed in the next time the ResolveService
+     call is made via the PreviousRspVersion query parameter.
     :type version: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
@@ -43,8 +47,9 @@ class ResolvedServicePartition(Model):
         'version': {'key': 'Version', 'type': 'str'},
     }
 
-    def __init__(self, name, partition_information, endpoints, version):
-        self.name = name
-        self.partition_information = partition_information
-        self.endpoints = endpoints
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ResolvedServicePartition, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.partition_information = kwargs.get('partition_information', None)
+        self.endpoints = kwargs.get('endpoints', None)
+        self.version = kwargs.get('version', None)

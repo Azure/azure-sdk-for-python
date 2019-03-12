@@ -18,12 +18,13 @@ class AddressSpace(Model):
 
     :param address_prefixes: A list of address blocks reserved for this
      virtual network in CIDR notation.
-    :type address_prefixes: list of str
+    :type address_prefixes: list[str]
     """
 
     _attribute_map = {
         'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
     }
 
-    def __init__(self, address_prefixes=None):
-        self.address_prefixes = address_prefixes
+    def __init__(self, **kwargs):
+        super(AddressSpace, self).__init__(**kwargs)
+        self.address_prefixes = kwargs.get('address_prefixes', None)

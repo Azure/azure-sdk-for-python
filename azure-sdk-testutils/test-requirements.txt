@@ -1,6 +1,0 @@
--r ../requirements.txt
-
-coverage
-nose
-azure-devtools>=0.4.1
-vcrpy

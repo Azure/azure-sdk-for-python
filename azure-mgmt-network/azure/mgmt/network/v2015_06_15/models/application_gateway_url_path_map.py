@@ -20,15 +20,15 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :type id: str
     :param default_backend_address_pool: Default backend address pool resource
      of URL path map.
-    :type default_backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type default_backend_address_pool:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param default_backend_http_settings: Default backend http settings
      resource of URL path map.
-    :type default_backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type default_backend_http_settings:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param path_rules: Path rule of URL path map resource.
-    :type path_rules: list of :class:`ApplicationGatewayPathRule
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayPathRule>`
+    :type path_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayPathRule]
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -50,11 +50,11 @@ class ApplicationGatewayUrlPathMap(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, default_backend_address_pool=None, default_backend_http_settings=None, path_rules=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayUrlPathMap, self).__init__(id=id)
-        self.default_backend_address_pool = default_backend_address_pool
-        self.default_backend_http_settings = default_backend_http_settings
-        self.path_rules = path_rules
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayUrlPathMap, self).__init__(**kwargs)
+        self.default_backend_address_pool = kwargs.get('default_backend_address_pool', None)
+        self.default_backend_http_settings = kwargs.get('default_backend_http_settings', None)
+        self.path_rules = kwargs.get('path_rules', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

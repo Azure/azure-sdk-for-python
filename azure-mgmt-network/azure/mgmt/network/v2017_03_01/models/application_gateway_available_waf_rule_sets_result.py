@@ -16,13 +16,14 @@ class ApplicationGatewayAvailableWafRuleSetsResult(Model):
     """Response for ApplicationGatewayAvailableWafRuleSets API service call.
 
     :param value: The list of application gateway rule sets.
-    :type value: list of :class:`ApplicationGatewayFirewallRuleSet
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallRuleSet>`
+    :type value:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallRuleSet]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApplicationGatewayFirewallRuleSet]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

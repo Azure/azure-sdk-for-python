@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-loganalytics"
+package_pprint_name = "Log Analytics"
+package_doc_id = ""
+is_stable = false
+is_arm = false

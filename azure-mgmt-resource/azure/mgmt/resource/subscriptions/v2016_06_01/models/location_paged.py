@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LocationPaged(Paged):
     """
-    A paging container for iterating over a list of Location object
+    A paging container for iterating over a list of :class:`Location <azure.mgmt.resource.subscriptions.v2016_06_01.models.Location>` object
     """
 
     _attribute_map = {

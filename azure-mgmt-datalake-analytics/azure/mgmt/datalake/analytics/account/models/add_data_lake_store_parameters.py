@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class AddDataLakeStoreParameters(Model):
-    """Additional Data Lake Store parameters.
+    """The parameters used to add a new Data Lake Store account.
 
-    :param suffix: the optional suffix for the Data Lake Store account.
+    :param suffix: The optional suffix for the Data Lake Store account.
     :type suffix: str
     """
 
@@ -23,5 +23,6 @@ class AddDataLakeStoreParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, suffix=None):
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(AddDataLakeStoreParameters, self).__init__(**kwargs)
+        self.suffix = kwargs.get('suffix', None)

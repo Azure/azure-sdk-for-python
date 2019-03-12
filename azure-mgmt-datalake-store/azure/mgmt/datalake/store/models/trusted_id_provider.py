@@ -13,25 +13,26 @@ from .sub_resource import SubResource
 
 
 class TrustedIdProvider(SubResource):
-    """Data Lake Store Trusted Identity Provider information.
+    """Data Lake Store trusted identity provider information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource identifier.
     :vartype id: str
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
     :vartype type: str
-    :param id_provider: The URL of this trusted identity provider
-    :type id_provider: str
+    :ivar id_provider: The URL of this trusted identity provider.
+    :vartype id_provider: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'id_provider': {'required': True},
+        'id_provider': {'readonly': True},
     }
 
     _attribute_map = {
@@ -41,6 +42,6 @@ class TrustedIdProvider(SubResource):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, id_provider, name=None):
-        super(TrustedIdProvider, self).__init__(name=name)
-        self.id_provider = id_provider
+    def __init__(self, **kwargs):
+        super(TrustedIdProvider, self).__init__(**kwargs)
+        self.id_provider = None

@@ -13,20 +13,27 @@ from .partition_safety_check import PartitionSafetyCheck
 
 
 class WaitForReconfigurationSafetyCheck(PartitionSafetyCheck):
-    """Safety check that waits for the current reconfiguration of the partition
-    to be completed before starting an upgrade.
+    """Safety check that waits for the current reconfiguration of the partition to
+    be completed before starting an upgrade.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(WaitForReconfigurationSafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'WaitForReconfiguration'
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WaitForReconfigurationSafetyCheck, self).__init__(**kwargs)
+        self.kind = 'WaitForReconfiguration'

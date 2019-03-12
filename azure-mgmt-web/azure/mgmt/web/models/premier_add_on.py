@@ -18,39 +18,37 @@ class PremierAddOn(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param sku: SKU.
+    :type tags: dict[str, str]
+    :param sku: Premier add on SKU.
     :type sku: str
-    :param product: Product.
+    :param product: Premier add on Product.
     :type product: str
-    :param vendor: Vendor.
+    :param vendor: Premier add on Vendor.
     :type vendor: str
-    :param premier_add_on_name: Name.
-    :type premier_add_on_name: str
-    :param premier_add_on_location: Location.
-    :type premier_add_on_location: str
-    :param premier_add_on_tags: Tags.
-    :type premier_add_on_tags: dict
-    :param marketplace_publisher: Marketplace publisher.
+    :param marketplace_publisher: Premier add on Marketplace publisher.
     :type marketplace_publisher: str
-    :param marketplace_offer: Marketplace offer.
+    :param marketplace_offer: Premier add on Marketplace offer.
     :type marketplace_offer: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,20 +61,14 @@ class PremierAddOn(Resource):
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_name': {'key': 'properties.name', 'type': 'str'},
-        'premier_add_on_location': {'key': 'properties.location', 'type': 'str'},
-        'premier_add_on_tags': {'key': 'properties.tags', 'type': '{str}'},
         'marketplace_publisher': {'key': 'properties.marketplacePublisher', 'type': 'str'},
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_name=None, premier_add_on_location=None, premier_add_on_tags=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOn, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.premier_add_on_name = premier_add_on_name
-        self.premier_add_on_location = premier_add_on_location
-        self.premier_add_on_tags = premier_add_on_tags
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOn, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)

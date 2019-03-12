@@ -15,15 +15,18 @@ from msrest.serialization import Model
 class ApplicationGatewayFirewallRuleGroup(Model):
     """A web application firewall rule group.
 
-    :param rule_group_name: The name of the web application firewall rule
-     group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_group_name: Required. The name of the web application firewall
+     rule group.
     :type rule_group_name: str
     :param description: The description of the web application firewall rule
      group.
     :type description: str
-    :param rules: The rules of the web application firewall rule group.
-    :type rules: list of :class:`ApplicationGatewayFirewallRule
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallRule>`
+    :param rules: Required. The rules of the web application firewall rule
+     group.
+    :type rules:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallRule]
     """
 
     _validation = {
@@ -37,7 +40,8 @@ class ApplicationGatewayFirewallRuleGroup(Model):
         'rules': {'key': 'rules', 'type': '[ApplicationGatewayFirewallRule]'},
     }
 
-    def __init__(self, rule_group_name, rules, description=None):
-        self.rule_group_name = rule_group_name
-        self.description = description
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayFirewallRuleGroup, self).__init__(**kwargs)
+        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.description = kwargs.get('description', None)
+        self.rules = kwargs.get('rules', None)

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,29 +21,34 @@ class EdgeNodesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2016-10-02. Constant value: "2016-10-02".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-10-12".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-10-02"
+        self.api_version = "2017-10-12"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the edge nodes of a CDN service.
+        """Edgenodes are the global Point of Presence (POP) locations used to
+        deliver CDN content to end users.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EdgeNodePaged <azure.mgmt.cdn.models.EdgeNodePaged>`
+        :return: An iterator like instance of EdgeNode
+        :rtype:
+         ~azure.mgmt.cdn.models.EdgeNodePaged[~azure.mgmt.cdn.models.EdgeNode]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -51,7 +56,7 @@ class EdgeNodesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Cdn/edgenodes'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -63,7 +68,7 @@ class EdgeNodesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -72,9 +77,8 @@ class EdgeNodesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -90,3 +94,4 @@ class EdgeNodesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Cdn/edgenodes'}

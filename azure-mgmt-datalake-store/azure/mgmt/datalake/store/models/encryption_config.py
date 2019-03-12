@@ -15,15 +15,16 @@ from msrest.serialization import Model
 class EncryptionConfig(Model):
     """The encryption configuration for the account.
 
-    :param type: The type of encryption configuration being used. Currently
-     the only supported types are 'UserManaged' and 'ServiceManaged'. Possible
-     values include: 'UserManaged', 'ServiceManaged'
-    :type type: str or :class:`EncryptionConfigType
-     <azure.mgmt.datalake.store.models.EncryptionConfigType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of encryption configuration being used.
+     Currently the only supported types are 'UserManaged' and 'ServiceManaged'.
+     Possible values include: 'UserManaged', 'ServiceManaged'
+    :type type: str or ~azure.mgmt.datalake.store.models.EncryptionConfigType
     :param key_vault_meta_info: The Key Vault information for connecting to
      user managed encryption keys.
-    :type key_vault_meta_info: :class:`KeyVaultMetaInfo
-     <azure.mgmt.datalake.store.models.KeyVaultMetaInfo>`
+    :type key_vault_meta_info:
+     ~azure.mgmt.datalake.store.models.KeyVaultMetaInfo
     """
 
     _validation = {
@@ -35,6 +36,7 @@ class EncryptionConfig(Model):
         'key_vault_meta_info': {'key': 'keyVaultMetaInfo', 'type': 'KeyVaultMetaInfo'},
     }
 
-    def __init__(self, type, key_vault_meta_info=None):
-        self.type = type
-        self.key_vault_meta_info = key_vault_meta_info
+    def __init__(self, **kwargs):
+        super(EncryptionConfig, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.key_vault_meta_info = kwargs.get('key_vault_meta_info', None)

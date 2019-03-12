@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RouteFilterRulePaged(Paged):
     """
-    A paging container for iterating over a list of RouteFilterRule object
+    A paging container for iterating over a list of :class:`RouteFilterRule <azure.mgmt.network.v2016_12_01.models.RouteFilterRule>` object
     """
 
     _attribute_map = {

@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class RecurrenceScheduleOccurrence(Model):
-    """The recurrence schedule occurence.
+    """The recurrence schedule occurrence.
 
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    :type day: str or :class:`DayOfWeek <azure.mgmt.logic.models.DayOfWeek>`
+    :type day: str or ~azure.mgmt.logic.models.DayOfWeek
     :param occurrence: The occurrence.
     :type occurrence: int
     """
@@ -27,6 +27,7 @@ class RecurrenceScheduleOccurrence(Model):
         'occurrence': {'key': 'occurrence', 'type': 'int'},
     }
 
-    def __init__(self, day=None, occurrence=None):
-        self.day = day
-        self.occurrence = occurrence
+    def __init__(self, **kwargs):
+        super(RecurrenceScheduleOccurrence, self).__init__(**kwargs)
+        self.day = kwargs.get('day', None)
+        self.occurrence = kwargs.get('occurrence', None)

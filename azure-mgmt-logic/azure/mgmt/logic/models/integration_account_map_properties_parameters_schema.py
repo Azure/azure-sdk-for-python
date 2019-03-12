@@ -23,5 +23,6 @@ class IntegrationAccountMapPropertiesParametersSchema(Model):
         'ref': {'key': 'ref', 'type': 'str'},
     }
 
-    def __init__(self, ref=None):
-        self.ref = ref
+    def __init__(self, **kwargs):
+        super(IntegrationAccountMapPropertiesParametersSchema, self).__init__(**kwargs)
+        self.ref = kwargs.get('ref', None)

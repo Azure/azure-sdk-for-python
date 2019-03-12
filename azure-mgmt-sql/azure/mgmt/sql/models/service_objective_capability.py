@@ -18,55 +18,61 @@ class ServiceObjectiveCapability(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The service objective name.
-    :vartype name: str
-    :ivar status: The status of the service objective. Possible values
-     include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
-    :ivar unit: Unit type used to measure service objective performance level.
-     Possible values include: 'DTU'
-    :vartype unit: str or :class:`PerformanceLevelUnit
-     <azure.mgmt.sql.models.PerformanceLevelUnit>`
-    :ivar value: Performance level value.
-    :vartype value: int
     :ivar id: The unique ID of the service objective.
     :vartype id: str
-    :ivar supported_max_sizes: The list of supported maximum database sizes
-     for this service objective.
-    :vartype supported_max_sizes: list of :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
-    :ivar included_max_size: The included (free) max size for this service
-     level objective.
-    :vartype included_max_size: :class:`MaxSizeCapability
-     <azure.mgmt.sql.models.MaxSizeCapability>`
+    :ivar name: The service objective name.
+    :vartype name: str
+    :ivar supported_max_sizes: The list of supported maximum database sizes.
+    :vartype supported_max_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeRangeCapability]
+    :ivar performance_level: The performance level.
+    :vartype performance_level:
+     ~azure.mgmt.sql.models.PerformanceLevelCapability
+    :ivar sku: The sku.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar supported_license_types: List of supported license types.
+    :vartype supported_license_types:
+     list[~azure.mgmt.sql.models.LicenseTypeCapability]
+    :ivar included_max_size: The included (free) max size.
+    :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'unit': {'readonly': True},
-        'value': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'supported_max_sizes': {'readonly': True},
+        'performance_level': {'readonly': True},
+        'sku': {'readonly': True},
+        'supported_license_types': {'readonly': True},
         'included_max_size': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'CapabilityStatus'},
-        'unit': {'key': 'performanceLevel.unit', 'type': 'PerformanceLevelUnit'},
-        'value': {'key': 'performanceLevel.value', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
-        'supported_max_sizes': {'key': 'supportedMaxSizes', 'type': '[MaxSizeCapability]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_max_sizes': {'key': 'supportedMaxSizes', 'type': '[MaxSizeRangeCapability]'},
+        'performance_level': {'key': 'performanceLevel', 'type': 'PerformanceLevelCapability'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'supported_license_types': {'key': 'supportedLicenseTypes', 'type': '[LicenseTypeCapability]'},
         'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.name = None
-        self.status = None
-        self.unit = None
-        self.value = None
+    def __init__(self, **kwargs):
+        super(ServiceObjectiveCapability, self).__init__(**kwargs)
         self.id = None
+        self.name = None
         self.supported_max_sizes = None
+        self.performance_level = None
+        self.sku = None
+        self.supported_license_types = None
         self.included_max_size = None
+        self.status = None
+        self.reason = kwargs.get('reason', None)

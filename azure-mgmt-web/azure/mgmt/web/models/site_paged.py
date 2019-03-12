@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SitePaged(Paged):
     """
-    A paging container for iterating over a list of Site object
+    A paging container for iterating over a list of :class:`Site <azure.mgmt.web.models.Site>` object
     """
 
     _attribute_map = {

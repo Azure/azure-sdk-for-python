@@ -15,20 +15,20 @@ from .entity_health_state_chunk import EntityHealthStateChunk
 class NodeHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a node, which contains the node name
     and its aggregated health state.
-    .
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param node_name: The name of the node.
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'node_name': {'key': 'NodeName', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, node_name=None):
-        super(NodeHealthStateChunk, self).__init__(health_state=health_state)
-        self.node_name = node_name
+    def __init__(self, **kwargs):
+        super(NodeHealthStateChunk, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)

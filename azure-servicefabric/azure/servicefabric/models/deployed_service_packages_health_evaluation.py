@@ -16,17 +16,22 @@ class DeployedServicePackagesHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for deployed service packages, containing
     health evaluations for each unhealthy deployed service package that
     impacted current aggregated health state. Can be returned when evaluating
-    deployed application health and the aggregated health state is either
-    Error or Warning.
+    deployed application health and the aggregated health state is either Error
+    or Warning.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param total_count: Total number of deployed service packages of the
      deployed application in the health store.
     :type total_count: long
@@ -34,24 +39,24 @@ class DeployedServicePackagesHealthEvaluation(HealthEvaluation):
      the aggregated health state. Includes all the unhealthy
      DeployedServicePackageHealthEvaluation that impacted the aggregated
      health.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'total_count': {'key': 'TotalCount', 'type': 'long'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, total_count=None, unhealthy_evaluations=None):
-        super(DeployedServicePackagesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'DeployedServicePackages'
+    def __init__(self, **kwargs):
+        super(DeployedServicePackagesHealthEvaluation, self).__init__(**kwargs)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'DeployedServicePackages'

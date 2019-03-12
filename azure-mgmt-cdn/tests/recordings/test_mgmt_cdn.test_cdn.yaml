@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: '{"name": "pyarmcdn67e608eb", "type": "Microsoft.Cdn/Profiles/Endpoints"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['72']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.4.28
+          msrest_azure/0.4.31 azure-mgmt-cdn/3.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2017-10-12
+  response:
+    body: {string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\
+        \n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['57']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 25 May 2018 19:24:53 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

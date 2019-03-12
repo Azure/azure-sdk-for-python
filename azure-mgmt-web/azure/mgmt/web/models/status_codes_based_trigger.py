@@ -17,11 +17,11 @@ class StatusCodesBasedTrigger(Model):
 
     :param status: HTTP status code.
     :type status: int
-    :param sub_status: SubStatus.
+    :param sub_status: Request Sub Status.
     :type sub_status: int
     :param win32_status: Win32 error code.
     :type win32_status: int
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str
@@ -35,9 +35,10 @@ class StatusCodesBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, status=None, sub_status=None, win32_status=None, count=None, time_interval=None):
-        self.status = status
-        self.sub_status = sub_status
-        self.win32_status = win32_status
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, **kwargs):
+        super(StatusCodesBasedTrigger, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.sub_status = kwargs.get('sub_status', None)
+        self.win32_status = kwargs.get('win32_status', None)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)

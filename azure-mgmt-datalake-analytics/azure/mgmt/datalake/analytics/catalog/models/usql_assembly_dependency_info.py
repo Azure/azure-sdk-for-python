@@ -16,13 +16,13 @@ class USqlAssemblyDependencyInfo(Model):
     """A Data Lake Analytics catalog U-SQL dependency information item.
 
     :param entity_id: the EntityId of the dependency.
-    :type entity_id: :class:`EntityId
-     <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
+    :type entity_id: ~azure.mgmt.datalake.analytics.catalog.models.EntityId
     """
 
     _attribute_map = {
         'entity_id': {'key': 'entityId', 'type': 'EntityId'},
     }
 
-    def __init__(self, entity_id=None):
-        self.entity_id = entity_id
+    def __init__(self, **kwargs):
+        super(USqlAssemblyDependencyInfo, self).__init__(**kwargs)
+        self.entity_id = kwargs.get('entity_id', None)

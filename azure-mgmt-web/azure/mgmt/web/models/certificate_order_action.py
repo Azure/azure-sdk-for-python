@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class CertificateOrderAction(Resource):
+class CertificateOrderAction(ProxyOnlyResource):
     """Certificate order action.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,46 +20,42 @@ class CertificateOrderAction(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param certificate_order_action_type: Action type. Possible values
-     include: 'CertificateIssued', 'CertificateOrderCanceled',
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar action_type: Action type. Possible values include:
+     'CertificateIssued', 'CertificateOrderCanceled',
      'CertificateOrderCreated', 'CertificateRevoked',
      'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
      'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
      'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
-    :type certificate_order_action_type: str or
-     :class:`CertificateOrderActionType
-     <azure.mgmt.web.models.CertificateOrderActionType>`
-    :param created_at: Time at which the certificate action was performed.
-    :type created_at: datetime
+    :vartype action_type: str or
+     ~azure.mgmt.web.models.CertificateOrderActionType
+    :ivar created_at: Time at which the certificate action was performed.
+    :vartype created_at: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'action_type': {'readonly': True},
+        'created_at': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'certificate_order_action_type': {'key': 'properties.type', 'type': 'CertificateOrderActionType'},
+        'action_type': {'key': 'properties.actionType', 'type': 'CertificateOrderActionType'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificate_order_action_type=None, created_at=None):
-        super(CertificateOrderAction, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.certificate_order_action_type = certificate_order_action_type
-        self.created_at = created_at
+    def __init__(self, **kwargs):
+        super(CertificateOrderAction, self).__init__(**kwargs)
+        self.action_type = None
+        self.created_at = None

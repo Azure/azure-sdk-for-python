@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SkuInfoPaged(Paged):
     """
-    A paging container for iterating over a list of SkuInfo object
+    A paging container for iterating over a list of :class:`SkuInfo <azure.mgmt.web.models.SkuInfo>` object
     """
 
     _attribute_map = {

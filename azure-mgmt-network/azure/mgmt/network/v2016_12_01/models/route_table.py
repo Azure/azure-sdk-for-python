@@ -27,13 +27,11 @@ class RouteTable(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param routes: Collection of routes contained within a route table.
-    :type routes: list of :class:`Route
-     <azure.mgmt.network.v2016_12_01.models.Route>`
+    :type routes: list[~azure.mgmt.network.v2016_12_01.models.Route]
     :ivar subnets: A collection of references to subnets.
-    :vartype subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2016_12_01.models.Subnet>`
+    :vartype subnets: list[~azure.mgmt.network.v2016_12_01.models.Subnet]
     :param provisioning_state: The provisioning state of the resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -60,9 +58,9 @@ class RouteTable(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, routes=None, provisioning_state=None, etag=None):
-        super(RouteTable, self).__init__(id=id, location=location, tags=tags)
-        self.routes = routes
+    def __init__(self, **kwargs):
+        super(RouteTable, self).__init__(**kwargs)
+        self.routes = kwargs.get('routes', None)
         self.subnets = None
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

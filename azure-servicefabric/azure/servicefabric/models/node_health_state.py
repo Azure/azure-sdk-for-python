@@ -16,14 +16,18 @@ class NodeHealthState(EntityHealthState):
     """Represents the health state of a node, which contains the node identifier
     and its aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param name: The name of the node.
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param name: The name of a Service Fabric node.
     :type name: str
-    :param id:
-    :type id: :class:`NodeId <azure.servicefabric.models.NodeId>`
-    """ 
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     node. Node Id is deterministically generated from node name.
+    :type id: ~azure.servicefabric.models.NodeId
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
@@ -31,7 +35,7 @@ class NodeHealthState(EntityHealthState):
         'id': {'key': 'Id', 'type': 'NodeId'},
     }
 
-    def __init__(self, aggregated_health_state=None, name=None, id=None):
-        super(NodeHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.name = name
-        self.id = id
+    def __init__(self, **kwargs):
+        super(NodeHealthState, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)

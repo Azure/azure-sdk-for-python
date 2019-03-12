@@ -16,13 +16,14 @@ class CheckSkuAvailabilityResultList(Model):
     """Check SKU availability result list.
 
     :param value: Check SKU availability result list.
-    :type value: list of :class:`CheckSkuAvailabilityResult
-     <azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult>`
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[CheckSkuAvailabilityResult]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CheckSkuAvailabilityResultList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

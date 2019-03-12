@@ -22,18 +22,17 @@ class SubnetOverrideFragment(Model):
     :param use_in_vm_creation_permission: Indicates whether this subnet can be
      used during virtual machine creation (i.e. Allow, Deny). Possible values
      include: 'Default', 'Deny', 'Allow'
-    :type use_in_vm_creation_permission: str or :class:`UsagePermissionType
-     <azure.mgmt.devtestlabs.models.UsagePermissionType>`
+    :type use_in_vm_creation_permission: str or
+     ~azure.mgmt.devtestlabs.models.UsagePermissionType
     :param use_public_ip_address_permission: Indicates whether public IP
      addresses can be assigned to virtual machines on this subnet (i.e. Allow,
      Deny). Possible values include: 'Default', 'Deny', 'Allow'
-    :type use_public_ip_address_permission: str or :class:`UsagePermissionType
-     <azure.mgmt.devtestlabs.models.UsagePermissionType>`
+    :type use_public_ip_address_permission: str or
+     ~azure.mgmt.devtestlabs.models.UsagePermissionType
     :param shared_public_ip_address_configuration: Properties that virtual
      machines on this subnet will share.
     :type shared_public_ip_address_configuration:
-     :class:`SubnetSharedPublicIpAddressConfigurationFragment
-     <azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfigurationFragment>`
+     ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfigurationFragment
     :param virtual_network_pool_name: The virtual network pool associated with
      this subnet.
     :type virtual_network_pool_name: str
@@ -48,10 +47,11 @@ class SubnetOverrideFragment(Model):
         'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None, lab_subnet_name=None, use_in_vm_creation_permission=None, use_public_ip_address_permission=None, shared_public_ip_address_configuration=None, virtual_network_pool_name=None):
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.use_in_vm_creation_permission = use_in_vm_creation_permission
-        self.use_public_ip_address_permission = use_public_ip_address_permission
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-        self.virtual_network_pool_name = virtual_network_pool_name
+    def __init__(self, **kwargs):
+        super(SubnetOverrideFragment, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
+        self.use_in_vm_creation_permission = kwargs.get('use_in_vm_creation_permission', None)
+        self.use_public_ip_address_permission = kwargs.get('use_public_ip_address_permission', None)
+        self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)
+        self.virtual_network_pool_name = kwargs.get('virtual_network_pool_name', None)

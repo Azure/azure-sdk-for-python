@@ -17,8 +17,7 @@ class ManagementEventAggregationCondition(Model):
 
     :param operator: the condition operator. Possible values include:
      'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'
-    :type operator: str or :class:`ConditionOperator
-     <azure.mgmt.monitor.models.ConditionOperator>`
+    :type operator: str or ~azure.mgmt.monitor.models.ConditionOperator
     :param threshold: The threshold value that activates the alert.
     :type threshold: float
     :param window_size: the period of time (in ISO 8601 duration format) that
@@ -33,7 +32,8 @@ class ManagementEventAggregationCondition(Model):
         'window_size': {'key': 'windowSize', 'type': 'duration'},
     }
 
-    def __init__(self, operator=None, threshold=None, window_size=None):
-        self.operator = operator
-        self.threshold = threshold
-        self.window_size = window_size
+    def __init__(self, **kwargs):
+        super(ManagementEventAggregationCondition, self).__init__(**kwargs)
+        self.operator = kwargs.get('operator', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.window_size = kwargs.get('window_size', None)

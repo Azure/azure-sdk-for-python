@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class HostNameBindingPaged(Paged):
     """
-    A paging container for iterating over a list of HostNameBinding object
+    A paging container for iterating over a list of :class:`HostNameBinding <azure.mgmt.web.models.HostNameBinding>` object
     """
 
     _attribute_map = {

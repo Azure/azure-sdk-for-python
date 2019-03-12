@@ -18,12 +18,13 @@ class DhcpOptions(Model):
     options.
 
     :param dns_servers: The list of DNS servers IP addresses.
-    :type dns_servers: list of str
+    :type dns_servers: list[str]
     """
 
     _attribute_map = {
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, dns_servers=None):
-        self.dns_servers = dns_servers
+    def __init__(self, **kwargs):
+        super(DhcpOptions, self).__init__(**kwargs)
+        self.dns_servers = kwargs.get('dns_servers', None)

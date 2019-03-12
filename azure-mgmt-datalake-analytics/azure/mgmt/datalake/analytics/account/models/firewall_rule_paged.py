@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class FirewallRulePaged(Paged):
     """
-    A paging container for iterating over a list of FirewallRule object
+    A paging container for iterating over a list of :class:`FirewallRule <azure.mgmt.datalake.analytics.account.models.FirewallRule>` object
     """
 
     _attribute_map = {

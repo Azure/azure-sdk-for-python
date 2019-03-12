@@ -13,21 +13,28 @@ from .partition_safety_check import PartitionSafetyCheck
 
 
 class WaitForPrimarySwapSafetyCheck(PartitionSafetyCheck):
-    """Safety check that waits for the primary replica to be moved out of the
-    node before starting an upgrade to ensure the avaiability of the primary
+    """Safety check that waits for the primary replica to be moved out of the node
+    before starting an upgrade to ensure the availability of the primary
     replica for the partition.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(WaitForPrimarySwapSafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'WaitForPrimarySwap'
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WaitForPrimarySwapSafetyCheck, self).__init__(**kwargs)
+        self.kind = 'WaitForPrimarySwap'

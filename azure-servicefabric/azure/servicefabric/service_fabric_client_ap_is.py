@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from .operations.mesh_secret_operations import MeshSecretOperations
+from .operations.mesh_secret_value_operations import MeshSecretValueOperations
+from .operations.mesh_volume_operations import MeshVolumeOperations
+from .operations.mesh_network_operations import MeshNetworkOperations
+from .operations.mesh_application_operations import MeshApplicationOperations
+from .operations.mesh_service_operations import MeshServiceOperations
+from .operations.mesh_code_package_operations import MeshCodePackageOperations
+from .operations.mesh_service_replica_operations import MeshServiceReplicaOperations
+from .operations.mesh_gateway_operations import MeshGatewayOperations
 from . import models
 
 
@@ -23,51 +32,85 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
-    :type credentials: :mod:`A msrest Authentication
-     object<msrest.authentication>`
+    :type credentials: None
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, base_url=None, filepath=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
             base_url = 'http://localhost:19080'
 
-        super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url, filepath)
+        super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('servicefabricclientapis/{}'.format(VERSION))
+        self.add_user_agent('azure-servicefabric/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class ServiceFabricClientAPIs(object):
+class ServiceFabricClientAPIs(SDKClient):
     """Service Fabric REST Client APIs allows management of Service Fabric clusters, applications and services.
 
     :ivar config: Configuration for client.
     :vartype config: ServiceFabricClientAPIsConfiguration
 
+    :ivar mesh_secret: MeshSecret operations
+    :vartype mesh_secret: azure.servicefabric.operations.MeshSecretOperations
+    :ivar mesh_secret_value: MeshSecretValue operations
+    :vartype mesh_secret_value: azure.servicefabric.operations.MeshSecretValueOperations
+    :ivar mesh_volume: MeshVolume operations
+    :vartype mesh_volume: azure.servicefabric.operations.MeshVolumeOperations
+    :ivar mesh_network: MeshNetwork operations
+    :vartype mesh_network: azure.servicefabric.operations.MeshNetworkOperations
+    :ivar mesh_application: MeshApplication operations
+    :vartype mesh_application: azure.servicefabric.operations.MeshApplicationOperations
+    :ivar mesh_service: MeshService operations
+    :vartype mesh_service: azure.servicefabric.operations.MeshServiceOperations
+    :ivar mesh_code_package: MeshCodePackage operations
+    :vartype mesh_code_package: azure.servicefabric.operations.MeshCodePackageOperations
+    :ivar mesh_service_replica: MeshServiceReplica operations
+    :vartype mesh_service_replica: azure.servicefabric.operations.MeshServiceReplicaOperations
+    :ivar mesh_gateway: MeshGateway operations
+    :vartype mesh_gateway: azure.servicefabric.operations.MeshGatewayOperations
+
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
-    :type credentials: :mod:`A msrest Authentication
-     object<msrest.authentication>`
+    :type credentials: None
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, base_url=None, filepath=None):
+            self, credentials, base_url=None):
 
-        self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url, filepath)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url)
+        super(ServiceFabricClientAPIs, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '6.4.0.36'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.mesh_secret = MeshSecretOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_secret_value = MeshSecretValueOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_volume = MeshVolumeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_network = MeshNetworkOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_application = MeshApplicationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_service = MeshServiceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_code_package = MeshCodePackageOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_service_replica = MeshServiceReplicaOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mesh_gateway = MeshGatewayOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def get_cluster_manifest(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -76,38 +119,36 @@ class ServiceFabricClientAPIs(object):
         Get the Service Fabric cluster manifest. The cluster manifest contains
         properties of the cluster that include different node types on the
         cluster,
-        security configurations, fault and upgrade domain topologies etc.
+        security configurations, fault, and upgrade domain topologies, etc.
         These properties are specified as part of the ClusterConfig.JSON file
-        while deploying a stand alone cluster. However, most of the
-        information in the cluster manifest
+        while deploying a stand-alone cluster. However, most of the information
+        in the cluster manifest
         is generated internally by service fabric during cluster deployment in
-        other deployment scenarios (for e.g when using azuer portal).
+        other deployment scenarios (e.g. when using Azure portal).
         The contents of the cluster manifest are for informational purposes
         only and users are not expected to take a dependency on the format of
         the file contents or its interpretation.
-        .
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterManifest
-         <azure.servicefabric.models.ClusterManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterManifest'
+        url = self.get_cluster_manifest.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -117,13 +158,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -138,18 +179,17 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_manifest.metadata = {'url': '/$/GetClusterManifest'}
 
     def get_cluster_health(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster.
 
-        Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
-        Similarly, use NodesHealthStateFilter and
-        ApplicationsHealthStateFilter to filter the collection of nodes and
-        applications returned based on their aggregated health state.
-        .
+        Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
+        to filter the collection of nodes and applications returned based on
+        their aggregated health state.
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -158,15 +198,14 @@ class ServiceFabricClientAPIs(object):
          following health states. Only nodes that match the filter are
          returned. All nodes are used to evaluate the aggregated health state.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -186,16 +225,15 @@ class ServiceFabricClientAPIs(object):
          match the filter are returned.
          All applications are used to evaluate the aggregated health state. If
          not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -207,20 +245,19 @@ class ServiceFabricClientAPIs(object):
         :type applications_health_state_filter: int
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -230,27 +267,43 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
+        :param include_system_application_health_statistics: Indicates whether
+         the health statistics should include the fabric:/System application
+         health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the health
+         statistics include the entities that belong to the fabric:/System
+         application.
+         Otherwise, the query result includes health statistics only for user
+         applications.
+         The health statistics must be included in the query result for this
+         parameter to be applied.
+        :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealth'
+        url = self.get_cluster_health.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -261,18 +314,22 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
         if events_health_state_filter is not None:
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+        if include_system_application_health_statistics is not None:
+            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -287,21 +344,19 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health.metadata = {'url': '/$/GetClusterHealth'}
 
     def get_cluster_health_using_policy(
-            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of a Service Fabric cluster using the specified
-        policy.
+            self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the health of a Service Fabric cluster using the specified policy.
 
-        Gets the health of a Service Fabric cluster.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the cluster based on the health state.
-        Similarly, use NodesHealthStateFilter and
-        ApplicationsHealthStateFilter to filter the collection of nodes and
-        applications returned based on their aggregated health state.
+        Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
+        to filter the collection of nodes and applications returned based on
+        their aggregated health state.
         Use ClusterHealthPolicies to override the health policies used to
         evaluate the health.
-        .
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -310,15 +365,14 @@ class ServiceFabricClientAPIs(object):
          following health states. Only nodes that match the filter are
          returned. All nodes are used to evaluate the aggregated health state.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of nodes
          with HealthState value of OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -338,16 +392,15 @@ class ServiceFabricClientAPIs(object):
          match the filter are returned.
          All applications are used to evaluate the aggregated health state. If
          not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
+         The state values are flag-based enumeration, so the value could be a
          combination of these values obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -359,20 +412,19 @@ class ServiceFabricClientAPIs(object):
         :type applications_health_state_filter: int
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -382,27 +434,51 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
+        :param include_system_application_health_statistics: Indicates whether
+         the health statistics should include the fabric:/System application
+         health statistics. False by default.
+         If IncludeSystemApplicationHealthStatistics is set to true, the health
+         statistics include the entities that belong to the fabric:/System
+         application.
+         Otherwise, the query result includes health statistics only for user
+         applications.
+         The health statistics must be included in the query result for this
+         parameter to be applied.
+        :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
-        :param application_health_policy_map:
-        :type application_health_policy_map: list of
-         :class:`ApplicationHealthPolicyMapItem
-         <azure.servicefabric.models.ApplicationHealthPolicyMapItem>`
-        :param cluster_health_policy:
-        :type cluster_health_policy: :class:`ClusterHealthPolicy
-         <azure.servicefabric.models.ClusterHealthPolicy>`
+        :param application_health_policy_map: Defines a map that contains
+         specific application health policies for different applications.
+         Each entry specifies as key the application name and as value an
+         ApplicationHealthPolicy used to evaluate the application health.
+         If an application is not specified in the map, the application health
+         evaluation uses the ApplicationHealthPolicy found in its application
+         manifest or the default application health policy (if no health policy
+         is defined in the manifest).
+         The map is empty by default.
+        :type application_health_policy_map:
+         list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
+        :param cluster_health_policy: Defines a health policy used to evaluate
+         the health of the cluster or of a cluster node.
+        :type cluster_health_policy:
+         ~azure.servicefabric.models.ClusterHealthPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -410,10 +486,10 @@ class ServiceFabricClientAPIs(object):
         if application_health_policy_map is not None or cluster_health_policy is not None:
             cluster_health_policies = models.ClusterHealthPolicies(application_health_policy_map=application_health_policy_map, cluster_health_policy=cluster_health_policy)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealth'
+        url = self.get_cluster_health_using_policy.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -424,11 +500,16 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ApplicationsHealthStateFilter'] = self._serialize.query("applications_health_state_filter", applications_health_state_filter, 'int')
         if events_health_state_filter is not None:
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
+        if include_system_application_health_statistics is not None:
+            query_parameters['IncludeSystemApplicationHealthStatistics'] = self._serialize.query("include_system_application_health_statistics", include_system_application_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -440,9 +521,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -457,6 +537,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_using_policy.metadata = {'url': '/$/GetClusterHealth'}
 
     def get_cluster_health_chunk(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -465,32 +546,30 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric cluster using health chunks.
         Includes the aggregated health state of the cluster, but none of the
         cluster entities.
-        To expand the cluster health and get the health state of all or some
-        of the entities, use the POST URI and specify the cluster health
-        chunk query description.
-        .
+        To expand the cluster health and get the health state of all or some of
+        the entities, use the POST URI and specify the cluster health chunk
+        query description.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterHealthChunk or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealthChunk or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealthChunk'
+        url = self.get_cluster_health_chunk.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -500,13 +579,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -521,14 +600,15 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_chunk.metadata = {'url': '/$/GetClusterHealthChunk'}
 
     def get_cluster_health_chunk_using_policy_and_advanced_filters(
             self, cluster_health_chunk_query_description=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric cluster using health chunks.
 
         Gets the health of a Service Fabric cluster using health chunks. The
-        health evaluation is done based on the input cluster health chunk
-        query description.
+        health evaluation is done based on the input cluster health chunk query
+        description.
         The query description allows users to specify health policies for
         evaluating the cluster and its children.
         Users can specify very flexible filters to select which cluster
@@ -539,7 +619,6 @@ class ServiceFabricClientAPIs(object):
         specified name, and for this application, return
         only services that are in Error or Warning, and all partitions and
         replicas for one of these services.
-        .
 
         :param cluster_health_chunk_query_description: Describes the cluster
          and application health policies used to evaluate the cluster health
@@ -549,43 +628,41 @@ class ServiceFabricClientAPIs(object):
          evaluation uses the cluster health policy defined in the cluster
          manifest or the default cluster health policy.
          By default, each application is evaluated using its specific
-         application health policy, defined in the application manifest, or
-         the default health policy, if no policy is defined in manifest.
-         If the application health policy map is specified, and it has an
-         entry for an application, the specified application health policy
+         application health policy, defined in the application manifest, or the
+         default health policy, if no policy is defined in manifest.
+         If the application health policy map is specified, and it has an entry
+         for an application, the specified application health policy
          is used to evaluate the application health.
          Users can specify very flexible filters to select which cluster
          entities to include in response. The selection can be done based on
          the entities health state and based on the hierarchy.
-         The query can return multi-level children of the entities based on
-         the specified filters. For example, it can return one application
-         with a specified name, and for this application, return
+         The query can return multi-level children of the entities based on the
+         specified filters. For example, it can return one application with a
+         specified name, and for this application, return
          only services that are in Error or Warning, and all partitions and
          replicas for one of these services.
         :type cluster_health_chunk_query_description:
-         :class:`ClusterHealthChunkQueryDescription
-         <azure.servicefabric.models.ClusterHealthChunkQueryDescription>`
+         ~azure.servicefabric.models.ClusterHealthChunkQueryDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterHealthChunk or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealthChunk or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealthChunk'
+        url = self.get_cluster_health_chunk_using_policy_and_advanced_filters.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -595,6 +672,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -606,9 +684,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -623,9 +700,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_chunk_using_policy_and_advanced_filters.metadata = {'url': '/$/GetClusterHealthChunk'}
 
     def report_cluster_health(
-            self, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric cluster.
 
         Sends a health report on a Service Fabric cluster. The report must
@@ -638,39 +716,59 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetClusterHealth and check that the report appears in the
-        HealthEvents section.
-        .
+        GetClusterHealth and check that the report appears in the HealthEvents
+        section.
 
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/ReportClusterHealth'
+        url = self.report_cluster_health.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -684,9 +782,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -694,6 +791,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_cluster_health.metadata = {'url': '/$/ReportClusterHealth'}
 
     def get_provisioned_fabric_code_version_info_list(
             self, code_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -707,26 +805,25 @@ class ServiceFabricClientAPIs(object):
         :param code_version: The product version of Service Fabric.
         :type code_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`FabricCodeVersionInfo
-         <azure.servicefabric.models.FabricCodeVersionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricCodeVersionInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetProvisionedCodeVersions'
+        url = self.get_provisioned_fabric_code_version_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -738,13 +835,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -759,39 +856,39 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_provisioned_fabric_code_version_info_list.metadata = {'url': '/$/GetProvisionedCodeVersions'}
 
     def get_provisioned_fabric_config_version_info_list(
             self, config_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of fabric config versions that are provisioned in a
-        Service Fabric cluster.
+        """Gets a list of fabric config versions that are provisioned in a Service
+        Fabric cluster.
 
         Gets a list of information about fabric config versions that are
-        provisioned in the cluster. The parameter ConfigVersion can be used
-        to optionally filter the output to only that particular version.
+        provisioned in the cluster. The parameter ConfigVersion can be used to
+        optionally filter the output to only that particular version.
 
         :param config_version: The config version of Service Fabric.
         :type config_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`FabricConfigVersionInfo
-         <azure.servicefabric.models.FabricConfigVersionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricConfigVersionInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetProvisionedConfigVersions'
+        url = self.get_provisioned_fabric_config_version_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -803,13 +900,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -824,36 +921,36 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_provisioned_fabric_config_version_info_list.metadata = {'url': '/$/GetProvisionedConfigVersions'}
 
     def get_cluster_upgrade_progress(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the progress of the current cluster upgrade.
 
-        Gets the current progress of the ongoing cluster upgrade. If no
-        upgrade is currently in progress, gets the last state of the previous
-        cluster upgrade.
+        Gets the current progress of the ongoing cluster upgrade. If no upgrade
+        is currently in progress, get the last state of the previous cluster
+        upgrade.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ClusterUpgradeProgressObject
-         <azure.servicefabric.models.ClusterUpgradeProgressObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterUpgradeProgressObject or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterUpgradeProgressObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetUpgradeProgress'
+        url = self.get_cluster_upgrade_progress.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -863,13 +960,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -884,40 +981,298 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_upgrade_progress.metadata = {'url': '/$/GetUpgradeProgress'}
 
-    def get_aad_metadata(
-            self, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the Azure Active Directory metadata used for secured connection
-        to cluster.
+    def get_cluster_configuration(
+            self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the Service Fabric standalone cluster configuration.
 
-        Gets the Azure Active Directory metadata used for secured connection
-        to cluster.
-        This API is not supposed to be called separately. It provides
-        information needed to set up an Azure Active Directory secured
-        connection with a Service Fabric cluster.
-        .
+        The cluster configuration contains properties of the cluster that
+        include different node types on the cluster,
+        security configurations, fault, and upgrade domain topologies, etc.
 
+        :param configuration_api_version: The API version of the Standalone
+         cluster json configuration.
+        :type configuration_api_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AadMetadataObject
-         <azure.servicefabric.models.AadMetadataObject>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterConfiguration or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterConfiguration or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "1.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetAadMetadata'
+        url = self.get_cluster_configuration.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ConfigurationApiVersion'] = self._serialize.query("configuration_api_version", configuration_api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_configuration.metadata = {'url': '/$/GetClusterConfiguration'}
+
+    def get_cluster_configuration_upgrade_status(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the cluster configuration upgrade status of a Service Fabric
+        standalone cluster.
+
+        Get the cluster configuration upgrade status details of a Service
+        Fabric standalone cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ClusterConfigurationUpgradeStatusInfo or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_cluster_configuration_upgrade_status.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterConfigurationUpgradeStatusInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_configuration_upgrade_status.metadata = {'url': '/$/GetClusterConfigurationUpgradeStatus'}
+
+    def get_upgrade_orchestration_service_state(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the service state of Service Fabric Upgrade Orchestration Service.
+
+        Get the service state of Service Fabric Upgrade Orchestration Service.
+        This API is internally used for support purposes.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpgradeOrchestrationServiceState or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.UpgradeOrchestrationServiceState
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_upgrade_orchestration_service_state.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UpgradeOrchestrationServiceState', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_upgrade_orchestration_service_state.metadata = {'url': '/$/GetUpgradeOrchestrationServiceState'}
+
+    def set_upgrade_orchestration_service_state(
+            self, timeout=60, service_state=None, custom_headers=None, raw=False, **operation_config):
+        """Update the service state of Service Fabric Upgrade Orchestration
+        Service.
+
+        Update the service state of Service Fabric Upgrade Orchestration
+        Service. This API is internally used for support purposes.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param service_state: The state of Service Fabric Upgrade
+         Orchestration Service.
+        :type service_state: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpgradeOrchestrationServiceStateSummary or ClientRawResponse
+         if raw=true
+        :rtype:
+         ~azure.servicefabric.models.UpgradeOrchestrationServiceStateSummary or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        upgrade_orchestration_service_state = models.UpgradeOrchestrationServiceState(service_state=service_state)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.set_upgrade_orchestration_service_state.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(upgrade_orchestration_service_state, 'UpgradeOrchestrationServiceState')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UpgradeOrchestrationServiceStateSummary', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    set_upgrade_orchestration_service_state.metadata = {'url': '/$/SetUpgradeOrchestrationServiceState'}
+
+    def provision_cluster(
+            self, timeout=60, code_file_path=None, cluster_manifest_file_path=None, custom_headers=None, raw=False, **operation_config):
+        """Provision the code or configuration packages of a Service Fabric
+        cluster.
+
+        Validate and provision the code or configuration packages of a Service
+        Fabric cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param code_file_path: The cluster code package file path.
+        :type code_file_path: str
+        :param cluster_manifest_file_path: The cluster manifest file path.
+        :type cluster_manifest_file_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        provision_fabric_description = models.ProvisionFabricDescription(code_file_path=code_file_path, cluster_manifest_file_path=cluster_manifest_file_path)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.provision_cluster.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -931,9 +1286,414 @@ class ServiceFabricClientAPIs(object):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(provision_fabric_description, 'ProvisionFabricDescription')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    provision_cluster.metadata = {'url': '/$/Provision'}
+
+    def unprovision_cluster(
+            self, timeout=60, code_version=None, config_version=None, custom_headers=None, raw=False, **operation_config):
+        """Unprovision the code or configuration packages of a Service Fabric
+        cluster.
+
+        It is supported to unprovision code and configuration separately.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param code_version: The cluster code package version.
+        :type code_version: str
+        :param config_version: The cluster manifest version.
+        :type config_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        unprovision_fabric_description = models.UnprovisionFabricDescription(code_version=code_version, config_version=config_version)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.unprovision_cluster.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(unprovision_fabric_description, 'UnprovisionFabricDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    unprovision_cluster.metadata = {'url': '/$/Unprovision'}
+
+    def rollback_cluster_upgrade(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Roll back the upgrade of a Service Fabric cluster.
+
+        Roll back the code or configuration upgrade of a Service Fabric
+        cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.rollback_cluster_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    rollback_cluster_upgrade.metadata = {'url': '/$/RollbackUpgrade'}
+
+    def resume_cluster_upgrade(
+            self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Make the cluster upgrade move on to the next upgrade domain.
+
+        Make the cluster code or configuration upgrade move on to the next
+        upgrade domain if appropriate.
+
+        :param upgrade_domain: The next upgrade domain for this cluster
+         upgrade.
+        :type upgrade_domain: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        resume_cluster_upgrade_description = models.ResumeClusterUpgradeDescription(upgrade_domain=upgrade_domain)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.resume_cluster_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(resume_cluster_upgrade_description, 'ResumeClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_cluster_upgrade.metadata = {'url': '/$/MoveToNextUpgradeDomain'}
+
+    def start_cluster_upgrade(
+            self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Start upgrading the code or configuration version of a Service Fabric
+        cluster.
+
+        Validate the supplied upgrade parameters and start upgrading the code
+        or configuration version of a Service Fabric cluster if the parameters
+        are valid.
+
+        :param start_cluster_upgrade_description: Describes the parameters for
+         starting a cluster upgrade.
+        :type start_cluster_upgrade_description:
+         ~azure.servicefabric.models.StartClusterUpgradeDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.start_cluster_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(start_cluster_upgrade_description, 'StartClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    start_cluster_upgrade.metadata = {'url': '/$/Upgrade'}
+
+    def start_cluster_configuration_upgrade(
+            self, cluster_configuration_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Start upgrading the configuration of a Service Fabric standalone
+        cluster.
+
+        Validate the supplied configuration upgrade parameters and start
+        upgrading the cluster configuration if the parameters are valid.
+
+        :param cluster_configuration_upgrade_description: Parameters for a
+         standalone cluster configuration upgrade.
+        :type cluster_configuration_upgrade_description:
+         ~azure.servicefabric.models.ClusterConfigurationUpgradeDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.start_cluster_configuration_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(cluster_configuration_upgrade_description, 'ClusterConfigurationUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    start_cluster_configuration_upgrade.metadata = {'url': '/$/StartClusterConfigurationUpgrade'}
+
+    def update_cluster_upgrade(
+            self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Update the upgrade parameters of a Service Fabric cluster upgrade.
+
+        Update the upgrade parameters used during a Service Fabric cluster
+        upgrade.
+
+        :param update_cluster_upgrade_description: Parameters for updating a
+         cluster upgrade.
+        :type update_cluster_upgrade_description:
+         ~azure.servicefabric.models.UpdateClusterUpgradeDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.update_cluster_upgrade.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(update_cluster_upgrade_description, 'UpdateClusterUpgradeDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update_cluster_upgrade.metadata = {'url': '/$/UpdateUpgrade'}
+
+    def get_aad_metadata(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the Azure Active Directory metadata used for secured connection to
+        cluster.
+
+        Gets the Azure Active Directory metadata used for secured connection to
+        cluster.
+        This API is not supposed to be called separately. It provides
+        information needed to set up an Azure Active Directory secured
+        connection with a Service Fabric cluster.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AadMetadataObject or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.AadMetadataObject or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_aad_metadata.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -948,68 +1708,117 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_aad_metadata.metadata = {'url': '/$/GetAadMetadata'}
 
-    def get_node_info_list(
-            self, continuation_token=None, node_status_filter="default", timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of nodes in the Service Fabric cluster.
+    def get_cluster_version(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the current Service Fabric cluster version.
 
-        The Nodes endpoint returns information about the nodes in the Service
-        Fabric Cluster. The respons include the name, status, id, health,
-        uptime and other details about the node.
+        If a cluster upgrade is happening, then this API will return the lowest
+        (older) version of the current and target cluster runtime versions.
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
-        :type continuation_token: str
-        :param node_status_filter: Allows filtering the nodes based on the
-         NodeStatus. Only the nodes that are matching the specified filter
-         value will be returned. The filter value can be one of the following.
-         - default - This filter value will match all of the nodes excepts
-         the ones with with status as Unknown or Removed.
-         - all - This filter value will match all of the nodes.
-         - up - This filter value will match nodes that are Up.
-         - down - This filter value will match nodes that are Down.
-         - enabling - This filter value will match nodes that are in the
-         process of being enabled with status as Enabling.
-         - disabling - This filter value will match nodes that are in the
-         process of being disabled with status as Disabling.
-         - disabled - This filter value will match nodes that are Disabled.
-         - unknown - This filter value will match nodes whose status is
-         Unknown. A node would be in Unknown state if Service Fabric does not
-         have authoritative information about that node. This can happen if
-         the system learns about a node at runtime.
-         - removed - This filter value will match nodes whose status is
-         Removed. These are the nodes that are removed from the cluster using
-         the RemoveNodeState API.
-         . Possible values include: 'default', 'all', 'up', 'down',
-         'enabling', 'disabling', 'disabled', 'unknown', 'removed'
-        :type node_status_filter: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedNodeInfoList
-         <azure.servicefabric.models.PagedNodeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ClusterVersion or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterVersion or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.4"
 
         # Construct URL
-        url = '/Nodes'
+        url = self.get_cluster_version.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterVersion', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_version.metadata = {'url': '/$/GetClusterVersion'}
+
+    def get_node_info_list(
+            self, continuation_token=None, node_status_filter="default", max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of nodes in the Service Fabric cluster.
+
+        The response includes the name, status, ID, health, uptime, and other
+        details about the nodes.
+
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param node_status_filter: Allows filtering the nodes based on the
+         NodeStatus. Only the nodes that are matching the specified filter
+         value will be returned. The filter value can be one of the following.
+         Possible values include: 'default', 'all', 'up', 'down', 'enabling',
+         'disabling', 'disabled', 'unknown', 'removed'
+        :type node_status_filter: str or
+         ~azure.servicefabric.models.NodeStatusFilter
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedNodeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedNodeInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.3"
+
+        # Construct URL
+        url = self.get_node_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1018,18 +1827,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
         if node_status_filter is not None:
             query_parameters['NodeStatusFilter'] = self._serialize.query("node_status_filter", node_status_filter, 'str')
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1044,37 +1855,38 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_info_list.metadata = {'url': '/Nodes'}
 
     def get_node_info(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of nodes in the Service Fabric cluster.
+        """Gets the information about a specific node in the Service Fabric
+        cluster.
 
-        Gets the information about a specific node in the Service Fabric
-        Cluster.The respons include the name, status, id, health, uptime and
-        other details about the node.
+        The response includes the name, status, ID, health, uptime, and other
+        details about the node.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NodeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}'
+        url = self.get_node_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1088,13 +1900,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1109,34 +1921,34 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_info.metadata = {'url': '/Nodes/{nodeName}'}
 
     def get_node_health(
             self, node_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric node.
 
         Gets the health of a Service Fabric node. Use EventsHealthStateFilter
-        to filter the collection of health events reported on the node based
-        on the health state. If the node that you specify by name does not
-        exist in the health store, this returns an error.
+        to filter the collection of health events reported on the node based on
+        the health state. If the node that you specify by name does not exist
+        in the health store, this returns an error.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -1147,25 +1959,25 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NodeHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetHealth'
+        url = self.get_node_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1181,13 +1993,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1202,37 +2014,37 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_health.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
 
     def get_node_health_using_policy(
             self, node_name, events_health_state_filter=0, cluster_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of a Service Fabric node, by using the specified
-        health policy.
+        """Gets the health of a Service Fabric node, by using the specified health
+        policy.
 
         Gets the health of a Service Fabric node. Use EventsHealthStateFilter
-        to filter the collection of health events reported on the node based
-        on the health state. Use ClusterHealthPolicy in the POST body to
-        override the health policies used to evaluate the health. If the node
-        that you specify by name does not exist in the health store, this
-        returns an error.
+        to filter the collection of health events reported on the node based on
+        the health state. Use ClusterHealthPolicy in the POST body to override
+        the health policies used to evaluate the health. If the node that you
+        specify by name does not exist in the health store, this returns an
+        error.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -1244,30 +2056,30 @@ class ServiceFabricClientAPIs(object):
         :type events_health_state_filter: int
         :param cluster_health_policy: Describes the health policies used to
          evaluate the health of a cluster or node. If not present, the health
-         evaluation uses the health policy from cluster manifest or the
-         default health policy.
-        :type cluster_health_policy: :class:`ClusterHealthPolicy
-         <azure.servicefabric.models.ClusterHealthPolicy>`
+         evaluation uses the health policy from cluster manifest or the default
+         health policy.
+        :type cluster_health_policy:
+         ~azure.servicefabric.models.ClusterHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NodeHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetHealth'
+        url = self.get_node_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1283,6 +2095,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -1294,9 +2107,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1311,14 +2123,15 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
 
     def report_node_health(
-            self, node_name, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric node.
 
         Reports health state of the specified Service Fabric node. The report
-        must contain the information about the source of the health report
-        and property on which it is reported.
+        must contain the information about the source of the health report and
+        property on which it is reported.
         The report is sent to a Service Fabric gateway node, which forwards to
         the health store.
         The report may be accepted by the gateway, but rejected by the health
@@ -1328,35 +2141,53 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetNodeHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/ReportHealth'
+        url = self.report_node_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1365,6 +2196,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -1378,9 +2211,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1388,36 +2220,37 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_node_health.metadata = {'url': '/Nodes/{nodeName}/$/ReportHealth'}
 
     def get_node_load_info(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the load information of a Service Fabric node.
 
-        Gets the load information of a Service Fabric node.
+        Retrieves the load information of a Service Fabric node for all the
+        metrics that have load or capacity defined.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeLoadInfo
-         <azure.servicefabric.models.NodeLoadInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NodeLoadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeLoadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetLoadInformation'
+        url = self.get_node_load_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1431,13 +2264,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1452,6 +2285,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_load_info.metadata = {'url': '/Nodes/{nodeName}/$/GetLoadInformation'}
 
     def disable_node(
             self, node_name, timeout=60, deactivation_intent=None, custom_headers=None, raw=False, **operation_config):
@@ -1460,48 +2294,43 @@ class ServiceFabricClientAPIs(object):
 
         Deactivate a Service Fabric cluster node with the specified
         deactivation intent. Once the deactivation is in progress, the
-        deactivation intent can be increased, but not decreased (for example,
-        a node which is was deactivated with the Pause intent can be
-        deactivated further with Restart, but not the other way around. Nodes
-        may be reactivated using the Activate a node operation any time after
-        they are deactivated. If the deactivation is not complete this will
-        cancel the deactivation. A node which goes down and comes back up
-        while deactivated will still need to be reactivated before services
-        will be placed on that node.
+        deactivation intent can be increased, but not decreased (for example, a
+        node that is deactivated with the Pause intent can be deactivated
+        further with Restart, but not the other way around. Nodes may be
+        reactivated using the Activate a node operation any time after they are
+        deactivated. If the deactivation is not complete, this will cancel the
+        deactivation. A node that goes down and comes back up while deactivated
+        will still need to be reactivated before services will be placed on
+        that node.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param deactivation_intent: Describes the intent or reason for
-         deactivating the node. The possible values are following.
-         - Pause - Indicates that the node should be paused. The value is 1.
-         - Restart - Indicates that the intent is for the node to be
-         restarted after a short period of time. The value is 2.
-         - RemoveData - Indicates the intent is for the node to remove data.
-         The value is 3.
-         . Possible values include: 'Pause', 'Restart', 'RemoveData'
-        :type deactivation_intent: str
+         deactivating the node. The possible values are following. Possible
+         values include: 'Pause', 'Restart', 'RemoveData'
+        :type deactivation_intent: str or
+         ~azure.servicefabric.models.DeactivationIntent
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         deactivation_intent_description = models.DeactivationIntentDescription(deactivation_intent=deactivation_intent)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Deactivate'
+        url = self.disable_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1523,9 +2352,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(deactivation_intent_description, 'DeactivationIntentDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1533,38 +2361,38 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    disable_node.metadata = {'url': '/Nodes/{nodeName}/$/Deactivate'}
 
     def enable_node(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Activate a Service Fabric cluster node which is currently deactivated.
+        """Activate a Service Fabric cluster node that is currently deactivated.
 
-        Activates a Service Fabric cluster node which is currently
-        deactivated. Once activated, the node will again become a viable
-        target for placing new replicas, and any deactivated replicas
-        remaining on the node will be reactivated.
+        Activates a Service Fabric cluster node that is currently deactivated.
+        Once activated, the node will again become a viable target for placing
+        new replicas, and any deactivated replicas remaining on the node will
+        be reactivated.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Activate'
+        url = self.enable_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1578,13 +2406,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1592,44 +2419,43 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    enable_node.metadata = {'url': '/Nodes/{nodeName}/$/Activate'}
 
     def remove_node_state(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Notifies Service Fabric that the persisted state on a node has been
         permanently removed or lost.
 
-        Notifies Service Fabric that the persisted state on a node has been
-        permanently removed or lost.  This implies that it is not possible to
-        recover the persisted state of that node. This generally happens if a
-        hard disk has been wiped clean, or if a hard disk crashes. The node
-        has to be down for this operation to be successful. This operation
-        lets Service Fabric know that the replicas on that node no longer
-        exist, and that Service Fabric should stop waiting for those replicas
-        to come back up. Do not run this cmdlet if the state on the node has
-        not been removed and the node can comes back up with its state intact.
+        This implies that it is not possible to recover the persisted state of
+        that node. This generally happens if a hard disk has been wiped clean,
+        or if a hard disk crashes. The node has to be down for this operation
+        to be successful. This operation lets Service Fabric know that the
+        replicas on that node no longer exist, and that Service Fabric should
+        stop waiting for those replicas to come back up. Do not run this cmdlet
+        if the state on the node has not been removed and the node can come
+        back up with its state intact.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/RemoveNodeState'
+        url = self.remove_node_state.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1643,13 +2469,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1657,143 +2482,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-    def start_node(
-            self, node_name, node_instance_id="0", timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Starts a Service Fabric cluster node.
-
-        Starts a Service Fabric cluster node that is already stopped.
-
-        :param node_name: The name of the node.
-        :type node_name: str
-        :param node_instance_id: The instance id of the node that is stopped.
-         If instance id is specified the node is started only if it matches
-         with the current instance of the stopped node. A default value of
-         "0" would match any instance id. The instance id can be obtained
-         using get node query.
-        :type node_instance_id: str
-        :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
-        :type timeout: long
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
-        """
-        start_node_description = models.StartNodeDescription(node_instance_id=node_instance_id)
-
-        api_version = "3.0"
-
-        # Construct URL
-        url = '/Nodes/{nodeName}/$/Start'
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(start_node_description, 'StartNodeDescription')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.FabricErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def stop_node(
-            self, node_name, node_instance_id="0", timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Stops a Service Fabric cluster node.
-
-        Stops a Service Fabric cluster node that is in a started state. The
-        node will stay down until start node is called.
-
-        :param node_name: The name of the node.
-        :type node_name: str
-        :param node_instance_id: The instance id of the target node. If
-         instance id is specified the node is stopped only if it matches with
-         the current instance of the node. A default value of "0" would match
-         any instance id. The instance id can be obtained using get node
-         query.
-        :type node_instance_id: str
-        :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
-        :type timeout: long
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
-        """
-        stop_node_description = models.StopNodeDescription(node_instance_id=node_instance_id)
-
-        api_version = "3.0"
-
-        # Construct URL
-        url = '/Nodes/{nodeName}/$/Stop'
-        path_format_arguments = {
-            'nodeName': self._serialize.url("node_name", node_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(stop_node_description, 'StopNodeDescription')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.FabricErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
+    remove_node_state.metadata = {'url': '/Nodes/{nodeName}/$/RemoveNodeState'}
 
     def restart_node(
             self, node_name, node_instance_id="0", timeout=60, create_fabric_dump="False", custom_headers=None, raw=False, **operation_config):
@@ -1803,38 +2492,37 @@ class ServiceFabricClientAPIs(object):
 
         :param node_name: The name of the node.
         :type node_name: str
-        :param node_instance_id: The instance id of the target node. If
-         instance id is specified the node is restarted only if it matches
-         with the current instance of the node. A default value of "0" would
-         match any instance id. The instance id can be obtained using get
-         node query.
+        :param node_instance_id: The instance ID of the target node. If
+         instance ID is specified the node is restarted only if it matches with
+         the current instance of the node. A default value of "0" would match
+         any instance ID. The instance ID can be obtained using get node query.
         :type node_instance_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
-        :param create_fabric_dump: Specify True to create a dump of the
-         fabric node process. This is case sensitive. Possible values
-         include: 'False', 'True'
-        :type create_fabric_dump: str
+        :param create_fabric_dump: Specify True to create a dump of the fabric
+         node process. This is case-sensitive. Possible values include:
+         'False', 'True'
+        :type create_fabric_dump: str or
+         ~azure.servicefabric.models.CreateFabricDump
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         restart_node_description = models.RestartNodeDescription(node_instance_id=node_instance_id, create_fabric_dump=create_fabric_dump)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Restart'
+        url = self.restart_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1856,9 +2544,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(restart_node_description, 'RestartNodeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1866,71 +2553,84 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_node.metadata = {'url': '/Nodes/{nodeName}/$/Restart'}
 
     def get_application_type_info_list(
-            self, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster.
 
         Returns the information about the application types that are
         provisioned or in the process of being provisioned in the Service
-        Fabric cluster. Each version of an application type is returned as
-        one application type. The response includes the name, version, status
-        and other details about the application type. This is a paged query,
+        Fabric cluster. Each version of an application type is returned as one
+        application type. The response includes the name, version, status, and
+        other details about the application type. This is a paged query,
         meaning that if not all of the application types fit in a page, one
-        page of results is returned as well as a continuation token which can
-        be used to get the next page. For example, if there are 10
-        application types but a page only fits the first 3 application types,
-        or if max results is set to 3, then 3 is returned. To access the rest
-        of the results, retrieve subsequent pages by using the returned
-        continuation token in the next query. An empty continuation token is
-        returned if there are no subsequent pages.
+        page of results is returned as well as a continuation token, which can
+        be used to get the next page. For example, if there are 10 application
+        types but a page only fits the first three application types, or if max
+        results is set to 3, then three is returned. To access the rest of the
+        results, retrieve subsequent pages by using the returned continuation
+        token in the next query. An empty continuation token is returned if
+        there are no subsequent pages.
 
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param application_type_definition_kind_filter: Used to filter on
+         ApplicationTypeDefinitionKind which is the mechanism used to define a
+         Service Fabric application type.
+         - Default - Default value, which performs the same function as
+         selecting "All". The value is 0.
+         - All - Filter that matches input with any
+         ApplicationTypeDefinitionKind value. The value is 65535.
+         - ServiceFabricApplicationPackage - Filter that matches input with
+         ApplicationTypeDefinitionKind value ServiceFabricApplicationPackage.
+         The value is 1.
+         - Compose - Filter that matches input with
+         ApplicationTypeDefinitionKind value Compose. The value is 2.
+        :type application_type_definition_kind_filter: int
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedApplicationTypeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationTypeInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes'
+        url = self.get_application_type_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_type_definition_kind_filter is not None:
+            query_parameters['ApplicationTypeDefinitionKindFilter'] = self._serialize.query("application_type_definition_kind_filter", application_type_definition_kind_filter, 'int')
         if exclude_application_parameters is not None:
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
@@ -1942,15 +2642,15 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -1963,73 +2663,73 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_type_info_list.metadata = {'url': '/ApplicationTypes'}
 
     def get_application_type_info_list_by_name(
-            self, application_type_name, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_name, application_type_version=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster
         matching exactly the specified name.
 
         Returns the information about the application types that are
         provisioned or in the process of being provisioned in the Service
-        Fabric cluster. These results are of application types whose name
-        match exactly the one specified as the parameter, and which comply
-        with the given query parameters. All versions of the application type
-        matching the application type name are returned, with each version
-        returned as one application type. The response includes the name,
-        version, status and other details about the application type. This is
-        a paged query, meaning that if not all of the application types fit
-        in a page, one page of results is returned as well as a continuation
-        token which can be used to get the next page. For example, if there
-        are 10 application types but a page only fits the first 3 application
-        types, or if max results is set to 3, then 3 is returned. To access
-        the rest of the results, retrieve subsequent pages by using the
-        returned continuation token in the next query. An empty continuation
-        token is returned if there are no subsequent pages.
+        Fabric cluster. These results are of application types whose name match
+        exactly the one specified as the parameter, and which comply with the
+        given query parameters. All versions of the application type matching
+        the application type name are returned, with each version returned as
+        one application type. The response includes the name, version, status,
+        and other details about the application type. This is a paged query,
+        meaning that if not all of the application types fit in a page, one
+        page of results is returned as well as a continuation token, which can
+        be used to get the next page. For example, if there are 10 application
+        types but a page only fits the first three application types, or if max
+        results is set to 3, then three is returned. To access the rest of the
+        results, retrieve subsequent pages by using the returned continuation
+        token in the next query. An empty continuation token is returned if
+        there are no subsequent pages.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param application_type_version: The version of the application type.
+        :type application_type_version: str
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedApplicationTypeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationTypeInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}'
+        url = self.get_application_type_info_list_by_name.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2038,6 +2738,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_type_version is not None:
+            query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
         if exclude_application_parameters is not None:
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
@@ -2049,15 +2751,15 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -2070,41 +2772,45 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_type_info_list_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}'}
 
     def provision_application_type(
-            self, application_type_build_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, provision_application_type_description_base_required_body_param, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Provisions or registers a Service Fabric application type with the
-        cluster.
+        cluster using the '.sfpkg' package in the external store or using the
+        application package in the image store.
 
-        Provisions or registers a Service Fabric application type with the
-        cluster. This is required before any new applications can be
-        instantiated.
+        Provisions a Service Fabric application type with the cluster. The
+        provision is required before any new applications can be instantiated.
+        The provision operation can be performed either on the application
+        package specified by the relativePathInImageStore, or by using the URI
+        of the external '.sfpkg'.
 
-        :param application_type_build_path: The relative image store path to
-         the application package.
-        :type application_type_build_path: str
+        :param
+         provision_application_type_description_base_required_body_param: The
+         base type of provision application type description which supports
+         either image store-based provision or external store-based provision.
+        :type provision_application_type_description_base_required_body_param:
+         ~azure.servicefabric.models.ProvisionApplicationTypeDescriptionBase
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        application_type_image_store_path = models.ApplicationTypeImageStorePath(application_type_build_path=application_type_build_path)
-
-        api_version = "3.0"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/ApplicationTypes/$/Provision'
+        url = self.provision_application_type.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -2119,57 +2825,63 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_type_image_store_path, 'ApplicationTypeImageStorePath')
+        body_content = self._serialize.body(provision_application_type_description_base_required_body_param, 'ProvisionApplicationTypeDescriptionBase')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    provision_application_type.metadata = {'url': '/ApplicationTypes/$/Provision'}
 
     def unprovision_application_type(
-            self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_name, application_type_version, timeout=60, async_parameter=None, custom_headers=None, raw=False, **operation_config):
         """Removes or unregisters a Service Fabric application type from the
         cluster.
 
-        Removes or unregisters a Service Fabric application type from the
-        cluster. This operation can only be performed if all application
-        instance of the application type has been deleted. Once the
-        application type is unregistered, no new application instance can be
-        created for this particular application type.
+        This operation can only be performed if all application instances of
+        the application type have been deleted. Once the application type is
+        unregistered, no new application instances can be created for this
+        particular application type.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
-        :param application_type_version: The application type version.
+        :param application_type_version: The version of the application type
+         as defined in the application manifest.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
+        :param async_parameter: The flag indicating whether or not unprovision
+         should occur asynchronously. When set to true, the unprovision
+         operation returns when the request is accepted by the system, and the
+         unprovision operation continues without any timeout limit. The default
+         value is false. However, we recommend setting it to true for large
+         application packages that were provisioned.
+        :type async_parameter: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        application_type_image_store_version = models.ApplicationTypeImageStoreVersion(application_type_version=application_type_version)
+        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(application_type_version=application_type_version, async_property=async_parameter)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/Unprovision'
+        url = self.unprovision_application_type.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2188,19 +2900,19 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_type_image_store_version, 'ApplicationTypeImageStoreVersion')
+        body_content = self._serialize.body(unprovision_application_type_description_info, 'UnprovisionApplicationTypeDescriptionInfo')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    unprovision_application_type.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/Unprovision'}
 
     def get_service_type_info_list(
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2210,36 +2922,33 @@ class ServiceFabricClientAPIs(object):
 
         Gets the list containing the information about service types that are
         supported by a provisioned application type in a Service Fabric
-        cluster. The response includes the name of the service type, the name
-        and version of the service manifest the type is defined in, kind
-        (stateless or stateless) of the service type and other information
-        about it.
+        cluster. The provided application type must exist. Otherwise, a 404
+        status is returned.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`ServiceTypeInfo
-         <azure.servicefabric.models.ServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'
+        url = self.get_service_type_info_list.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2254,13 +2963,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2275,6 +2984,83 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_type_info_list.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'}
+
+    def get_service_type_info_by_name(
+            self, application_type_name, application_type_version, service_type_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the information about a specific service type that is supported by
+        a provisioned application type in a Service Fabric cluster.
+
+        Gets the information about a specific service type that is supported by
+        a provisioned application type in a Service Fabric cluster. The
+        provided application type must exist. Otherwise, a 404 status is
+        returned. A 204 response is returned if the specified service type is
+        not found in the cluster.
+
+        :param application_type_name: The name of the application type.
+        :type application_type_name: str
+        :param application_type_version: The version of the application type.
+        :type application_type_version: str
+        :param service_type_name: Specifies the name of a Service Fabric
+         service type.
+        :type service_type_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ServiceTypeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceTypeInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_service_type_info_by_name.metadata['url']
+        path_format_arguments = {
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'serviceTypeName': self._serialize.url("service_type_name", service_type_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServiceTypeInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_type_info_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes/{serviceTypeName}'}
 
     def get_service_manifest(
             self, application_type_name, application_type_version, service_manifest_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2288,30 +3074,28 @@ class ServiceFabricClientAPIs(object):
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceTypeManifest
-         <azure.servicefabric.models.ServiceTypeManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceTypeManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceTypeManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'
+        url = self.get_service_manifest.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2327,13 +3111,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2348,6 +3132,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'}
 
     def get_deployed_service_type_info_list(
             self, node_name, application_id, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2357,7 +3142,7 @@ class ServiceFabricClientAPIs(object):
         Gets the list containing the information about service types from the
         applications deployed on a node in a Service Fabric cluster. The
         response includes the name of the service type, its registration
-        status, the code package that registered it and activation id of the
+        status, the code package that registered it and activation ID of the
         service package.
 
         :param node_name: The name of the node.
@@ -2365,6 +3150,11 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_manifest_name: The name of the service manifest to
          filter the list of deployed service type information. If specified,
@@ -2372,26 +3162,25 @@ class ServiceFabricClientAPIs(object):
          that are defined in this service manifest.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'
+        url = self.get_deployed_service_type_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -2408,13 +3197,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2429,22 +3218,30 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_type_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'}
 
     def get_deployed_service_type_info_by_name(
             self, node_name, application_id, service_type_name, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a specified service type of the application
         deployed on a node in a Service Fabric cluster.
 
-        Gets the information about a specified service type of the application
-        deployed on a node in a Service Fabric cluster. The response includes
-        the name of the service type, its registration status, the code
-        package that registered it and activation id of the service package.
+        Gets the list containing the information about a specific service type
+        from the applications deployed on a node in a Service Fabric cluster.
+        The response includes the name of the service type, its registration
+        status, the code package that registered it and activation ID of the
+        service package. Each entry represents one activation of a service
+        type, differentiated by the activation ID.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_type_name: Specifies the name of a Service Fabric
          service type.
@@ -2455,26 +3252,25 @@ class ServiceFabricClientAPIs(object):
          that are defined in this service manifest.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'
+        url = self.get_deployed_service_type_info_by_name.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -2492,27 +3288,28 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DeployedServiceTypeInfo', response)
+            deserialized = self._deserialize('[DeployedServiceTypeInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_deployed_service_type_info_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'}
 
     def create_application(
             self, application_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2520,30 +3317,29 @@ class ServiceFabricClientAPIs(object):
 
         Creates a Service Fabric application using the specified description.
 
-        :param application_description: Describes the application to be
-         created.
-        :type application_description: :class:`ApplicationDescription
-         <azure.servicefabric.models.ApplicationDescription>`
+        :param application_description: Description for creating an
+         application.
+        :type application_description:
+         ~azure.servicefabric.models.ApplicationDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/$/Create'
+        url = self.create_application.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -2561,9 +3357,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(application_description, 'ApplicationDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2571,51 +3366,55 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_application.metadata = {'url': '/Applications/$/Create'}
 
     def delete_application(
             self, application_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing Service Fabric application.
 
-        Deletes an existing Service Fabric application. An application must be
-        created before it can be deleted. Deleting an application will delete
-        all services that are part of that application. By default Service
-        Fabric will try to close service replicas in a graceful manner and
-        then delete the service. However if service is having issues closing
-        the replica gracefully, the delete operation may take a long time or
-        get stuck. Use the optional ForceRemove flag to skip the graceful
-        close sequence and forcefully delete the application and all of the
-        its services.
+        An application must be created before it can be deleted. Deleting an
+        application will delete all services that are part of that application.
+        By default, Service Fabric will try to close service replicas in a
+        graceful manner and then delete the service. However, if a service is
+        having issues closing the replica gracefully, the delete operation may
+        take a long time or get stuck. Use the optional ForceRemove flag to
+        skip the graceful close sequence and forcefully delete the application
+        and all of its services.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/Delete'
+        url = self.delete_application.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -2631,13 +3430,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2645,79 +3443,180 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_application.metadata = {'url': '/Applications/{applicationId}/$/Delete'}
 
-    def get_application_info_list(
-            self, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of applications created in the Service Fabric cluster
-        that match filters specified as the parameter.
+    def get_application_load_info(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets load information about a Service Fabric application.
 
-        Gets the information about the applications that were created or in
-        the process of being created in the Service Fabric cluster and match
-        filters specified as the parameter. The response includes the name,
-        type, status, parameters and other details about the application. If
-        the applications do not fit in a page, one page of results is
-        returned as well as a continuation token which can be used to get the
-        next page.
+        Returns the load information about the application that was created or
+        in the process of being created in the Service Fabric cluster and whose
+        name matches the one specified as the parameter. The response includes
+        the name, minimum nodes, maximum nodes, the number of nodes the
+        application is occupying currently, and application load metric
+        information about the application.
 
-        :param application_type_name: The application type name used to
-         filter the applications to query for. This value should not contain
-         the application type version.
-        :type application_type_name: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
-        :type exclude_application_parameters: bool
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
-        :type continuation_token: str
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedApplicationInfoList
-         <azure.servicefabric.models.PagedApplicationInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationLoadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationLoadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications'
+        url = self.get_application_load_info.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplicationLoadInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_load_info.metadata = {'url': '/Applications/{applicationId}/$/GetLoadInformation'}
+
+    def get_application_info_list(
+            self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of applications created in the Service Fabric cluster
+        that match the specified filters.
+
+        Gets the information about the applications that were created or in the
+        process of being created in the Service Fabric cluster and match the
+        specified filters. The response includes the name, type, status,
+        parameters, and other details about the application. If the
+        applications do not fit in a page, one page of results is returned as
+        well as a continuation token, which can be used to get the next page.
+        Filters ApplicationTypeName and ApplicationDefinitionKindFilter cannot
+        be specified at the same time.
+
+        :param application_definition_kind_filter: Used to filter on
+         ApplicationDefinitionKind, which is the mechanism used to define a
+         Service Fabric application.
+         - Default - Default value, which performs the same function as
+         selecting "All". The value is 0.
+         - All - Filter that matches input with any ApplicationDefinitionKind
+         value. The value is 65535.
+         - ServiceFabricApplicationDescription - Filter that matches input with
+         ApplicationDefinitionKind value ServiceFabricApplicationDescription.
+         The value is 1.
+         - Compose - Filter that matches input with ApplicationDefinitionKind
+         value Compose. The value is 2.
+        :type application_definition_kind_filter: int
+        :param application_type_name: The application type name used to filter
+         the applications to query for. This value should not contain the
+         application type version.
+        :type application_type_name: str
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
+        :type exclude_application_parameters: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedApplicationInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.1"
+
+        # Construct URL
+        url = self.get_application_info_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if application_definition_kind_filter is not None:
+            query_parameters['ApplicationDefinitionKindFilter'] = self._serialize.query("application_definition_kind_filter", application_definition_kind_filter, 'int')
         if application_type_name is not None:
             query_parameters['ApplicationTypeName'] = self._serialize.query("application_type_name", application_type_name, 'str')
         if exclude_application_parameters is not None:
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
             query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2732,6 +3631,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_info_list.metadata = {'url': '/Applications'}
 
     def get_application_info(
             self, application_id, exclude_application_parameters=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2739,38 +3639,42 @@ class ServiceFabricClientAPIs(object):
 
         Returns the information about the application that was created or in
         the process of being created in the Service Fabric cluster and whose
-        name matches the one specified as the parameter. The response
-        includes the name, type, status, parameters and other details about
-        the application.
+        name matches the one specified as the parameter. The response includes
+        the name, type, status, parameters, and other details about the
+        application.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param exclude_application_parameters: The flag that specifies
-         whether application parameters will be excluded from the result.
+        :param exclude_application_parameters: The flag that specifies whether
+         application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationInfo
-         <azure.servicefabric.models.ApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}'
+        url = self.get_application_info.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -2786,13 +3690,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2807,35 +3711,40 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_info.metadata = {'url': '/Applications/{applicationId}'}
 
     def get_application_health(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the service fabric application.
 
-        Returns the heath state of the service fabric application. The
-        response reports either Ok, Error or Warning health state. If the
-        entity is not found in the helath store, it will return Error.
+        Returns the heath state of the service fabric application. The response
+        reports either Ok, Error or Warning health state. If the entity is not
+        found in the health store, it will return Error.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -2846,23 +3755,22 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param deployed_applications_health_state_filter: Allows filtering of
-         the deployed applications health state objects returned in the
-         result of application health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states. Only deployed applications that
-         match the filter will be returned.\\
+         the deployed applications health state objects returned in the result
+         of application health query based on their health state.
+         The possible values for this parameter include integer value of one of
+         the following health states. Only deployed applications that match the
+         filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value could be a
+         combination of these values, obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -2875,20 +3783,20 @@ class ServiceFabricClientAPIs(object):
         :param services_health_state_filter: Allows filtering of the services
          health state objects returned in the result of services health query
          based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
+         The possible values for this parameter include integer value of one of
+         the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values,
          obtained using bitwise 'OR' operator. For example, if the provided
-         value is 6 then health state of services with HealthState value of
-         OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn�t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         value is 6 then health state of services with HealthState value of OK
+         (2) and Warning (4) will be returned.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -2898,27 +3806,32 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type services_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetHealth'
+        url = self.get_application_health.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -2933,18 +3846,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
         if services_health_state_filter is not None:
             query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2959,38 +3874,43 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_health.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
 
     def get_application_health_using_policy(
-            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of a Service Fabric application using the specified
         policy.
 
         Gets the health of a Service Fabric application. Use
         EventsHealthStateFilter to filter the collection of health events
         reported on the node based on the health state. Use
-        ClusterHealthPolicies to override the health policies used to
-        evaluate the health.
+        ClusterHealthPolicies to override the health policies used to evaluate
+        the health.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3001,23 +3921,22 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param deployed_applications_health_state_filter: Allows filtering of
-         the deployed applications health state objects returned in the
-         result of application health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states. Only deployed applications that
-         match the filter will be returned.\\
+         the deployed applications health state objects returned in the result
+         of application health query based on their health state.
+         The possible values for this parameter include integer value of one of
+         the following health states. Only deployed applications that match the
+         filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value could be a
+         combination of these values, obtained using bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of deployed
          applications with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3030,20 +3949,20 @@ class ServiceFabricClientAPIs(object):
         :param services_health_state_filter: Allows filtering of the services
          health state objects returned in the result of services health query
          based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
+         The possible values for this parameter include integer value of one of
+         the following health states.
          Only services that match the filter are returned. All services are
          used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values,
          obtained using bitwise 'OR' operator. For example, if the provided
-         value is 6 then health state of services with HealthState value of
-         OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn�t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         value is 6 then health state of services with HealthState value of OK
+         (2) and Warning (4) will be returned.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3053,33 +3972,38 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type services_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param application_health_policy: Describes the health policies used
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetHealth'
+        url = self.get_application_health_using_policy.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3094,11 +4018,14 @@ class ServiceFabricClientAPIs(object):
             query_parameters['DeployedApplicationsHealthStateFilter'] = self._serialize.query("deployed_applications_health_state_filter", deployed_applications_health_state_filter, 'int')
         if services_health_state_filter is not None:
             query_parameters['ServicesHealthStateFilter'] = self._serialize.query("services_health_state_filter", services_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -3110,9 +4037,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3127,9 +4053,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_health_using_policy.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
 
     def report_application_health(
-            self, application_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric application.
 
         Reports health state of the specified Service Fabric application. The
@@ -3141,40 +4068,63 @@ class ServiceFabricClientAPIs(object):
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, run
-        GetApplicationHealth and check that the report appears in the
+        To see whether the report was applied in the health store, get
+        application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/ReportHealth'
+        url = self.report_application_health.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3183,6 +4133,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3196,9 +4148,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3206,6 +4157,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_application_health.metadata = {'url': '/Applications/{applicationId}/$/ReportHealth'}
 
     def start_application_upgrade(
             self, application_id, application_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3217,32 +4169,35 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param application_upgrade_description: Describes the parameters for
-         an application upgrade.
+        :param application_upgrade_description: Parameters for an application
+         upgrade.
         :type application_upgrade_description:
-         :class:`ApplicationUpgradeDescription
-         <azure.servicefabric.models.ApplicationUpgradeDescription>`
+         ~azure.servicefabric.models.ApplicationUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/Upgrade'
+        url = self.start_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3264,9 +4219,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(application_upgrade_description, 'ApplicationUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3274,6 +4228,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/Upgrade'}
 
     def get_application_upgrade(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3285,28 +4240,33 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationUpgradeProgressInfo
-         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationUpgradeProgressInfo or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationUpgradeProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetUpgradeProgress'
+        url = self.get_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3320,13 +4280,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3341,45 +4301,49 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/GetUpgradeProgress'}
 
     def update_application_upgrade(
             self, application_id, application_upgrade_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Updates an ongoing application upgrade in the Service Fabric cluster.
 
         Updates the parameters of an ongoing application upgrade from the ones
-        specified at the time of starting the application upgrade. This may
-        be required to mitigate stuck application upgrades due to incorrect
+        specified at the time of starting the application upgrade. This may be
+        required to mitigate stuck application upgrades due to incorrect
         parameters or issues in the application to make progress.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param application_upgrade_update_description: Describes the
-         parameters for updating an existing application upgrade.
+        :param application_upgrade_update_description: Parameters for updating
+         an existing application upgrade.
         :type application_upgrade_update_description:
-         :class:`ApplicationUpgradeUpdateDescription
-         <azure.servicefabric.models.ApplicationUpgradeUpdateDescription>`
+         ~azure.servicefabric.models.ApplicationUpgradeUpdateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/UpdateUpgrade'
+        url = self.update_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3401,9 +4365,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(application_upgrade_update_description, 'ApplicationUpgradeUpdateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3411,6 +4374,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/UpdateUpgrade'}
 
     def resume_application_upgrade(
             self, application_id, upgrade_domain_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3425,32 +4389,36 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param upgrade_domain_name: The name of the upgrade domain in which
-         to resume the upgrade.
+        :param upgrade_domain_name: The name of the upgrade domain in which to
+         resume the upgrade.
         :type upgrade_domain_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
         resume_application_upgrade_description = models.ResumeApplicationUpgradeDescription(upgrade_domain_name=upgrade_domain_name)
 
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'
+        url = self.resume_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3472,9 +4440,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(resume_application_upgrade_description, 'ResumeApplicationUpgradeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3482,43 +4449,47 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    resume_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'}
 
     def rollback_application_upgrade(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Starts rolling back the currently on-going upgrade of an application
-        in the Service Fabric cluster.
+        """Starts rolling back the currently on-going upgrade of an application in
+        the Service Fabric cluster.
 
         Starts rolling back the current application upgrade to the previous
-        version. This API can only be used to rollback the current
-        in-progress upgrade that is rolling forward to new version. If the
-        application is not currently being upgraded use
-        StartApplicationUpgrade API to upgrade it to desired version
-        including rolling back to a previous version.
+        version. This API can only be used to roll back the current in-progress
+        upgrade that is rolling forward to new version. If the application is
+        not currently being upgraded use StartApplicationUpgrade API to upgrade
+        it to desired version, including rolling back to a previous version.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/RollbackUpgrade'
+        url = self.rollback_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3532,13 +4503,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3546,36 +4516,66 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    rollback_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/RollbackUpgrade'}
 
     def get_deployed_application_info_list(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, timeout=60, include_health_state=False, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications deployed on a Service Fabric node.
 
-        Gets the list of applications deployed on a Service Fabric node.
+        Gets the list of applications deployed on a Service Fabric node. The
+        results do not include information about deployed system applications
+        unless explicitly queried for by ID. Results encompass deployed
+        applications in active, activating, and downloading states. This query
+        requires that the node name corresponds to a node on the cluster. The
+        query fails if the provided node name does not point to any active
+        Service Fabric nodes on the cluster.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
+        :param include_health_state: Include the health state of an entity.
+         If this parameter is false or not specified, then the health state
+         returned is "Unknown".
+         When set to true, the query goes in parallel to the node and the
+         health system service before the results are merged.
+         As a result, the query is more expensive and may take a longer time.
+        :type include_health_state: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedDeployedApplicationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedDeployedApplicationInfoList
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.1"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications'
+        url = self.get_deployed_application_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -3586,16 +4586,22 @@ class ServiceFabricClientAPIs(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if include_health_state is not None:
+            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3603,49 +4609,65 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedApplicationInfo]', response)
+            deserialized = self._deserialize('PagedDeployedApplicationInfoList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_deployed_application_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications'}
 
     def get_deployed_application_info(
-            self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, timeout=60, include_health_state=False, custom_headers=None, raw=False, **operation_config):
         """Gets the information about an application deployed on a Service Fabric
         node.
 
-        Gets the information about an application deployed on a Service Fabric
-        node.
+        This query returns system application information if the application ID
+        provided is for system application. Results encompass deployed
+        applications in active, activating, and downloading states. This query
+        requires that the node name corresponds to a node on the cluster. The
+        query fails if the provided node name does not point to any active
+        Service Fabric nodes on the cluster.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
+        :param include_health_state: Include the health state of an entity.
+         If this parameter is false or not specified, then the health state
+         returned is "Unknown".
+         When set to true, the query goes in parallel to the node and the
+         health system service before the results are merged.
+         As a result, the query is more expensive and may take a longer time.
+        :type include_health_state: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedApplicationInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.1"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}'
+        url = self.get_deployed_application_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -3657,16 +4679,18 @@ class ServiceFabricClientAPIs(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if include_health_state is not None:
+            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3681,9 +4705,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_info.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}'}
 
     def get_deployed_application_health(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about health of an application deployed on a
         Service Fabric node.
 
@@ -3699,23 +4724,27 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3725,26 +4754,25 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
-        :param deployed_service_packages_health_state_filter: Allows
-         filtering of the deployed service package health state objects
-         returned in the result of deployed application health query based on
-         their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only deployed service packages that match the filter are returned.
-         All deployed service packages are used to evaluate the aggregated
-         health state of the deployed application.
+        :param deployed_service_packages_health_state_filter: Allows filtering
+         of the deployed service package health state objects returned in the
+         result of deployed application health query based on their health
+         state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only deployed service packages that match the filter are returned. All
+         deployed service packages are used to evaluate the aggregated health
+         state of the deployed application.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value can be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value can be a
+         combination of these values, obtained using the bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3754,27 +4782,32 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type deployed_service_packages_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
+        url = self.get_deployed_application_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -3788,18 +4821,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if deployed_service_packages_health_state_filter is not None:
             query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3814,9 +4849,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
 
     def get_deployed_application_health_using_policy(
-            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about health of an application deployed on a
         Service Fabric node. using the specified policy.
 
@@ -3828,33 +4864,36 @@ class ServiceFabricClientAPIs(object):
         optionally filter for DeployedServicePackageHealth children based on
         health state. Use ApplicationHealthPolicy to optionally override the
         health policies used to evaluate the health. This API only uses
-        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The
-        rest of the fields are ignored while evaluating the health of the
-        deployed application.
-        .
+        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
+        of the fields are ignored while evaluating the health of the deployed
+        application.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3864,26 +4903,25 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type events_health_state_filter: int
-        :param deployed_service_packages_health_state_filter: Allows
-         filtering of the deployed service package health state objects
-         returned in the result of deployed application health query based on
-         their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only deployed service packages that match the filter are returned.
-         All deployed service packages are used to evaluate the aggregated
-         health state of the deployed application.
+        :param deployed_service_packages_health_state_filter: Allows filtering
+         of the deployed service package health state objects returned in the
+         result of deployed application health query based on their health
+         state.
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only deployed service packages that match the filter are returned. All
+         deployed service packages are used to evaluate the aggregated health
+         state of the deployed application.
          If not specified, all entries are returned.
-         The state values are flag based enumeration, so the value can be a
-         combination of these value obtained using bitwise 'OR' operator.
+         The state values are flag-based enumeration, so the value can be a
+         combination of these values, obtained using the bitwise 'OR' operator.
          For example, if the provided value is 6 then health state of service
          packages with HealthState value of OK (2) and Warning (4) are
          returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -3897,29 +4935,34 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
+        url = self.get_deployed_application_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -3933,11 +4976,14 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if deployed_service_packages_health_state_filter is not None:
             query_parameters['DeployedServicePackagesHealthStateFilter'] = self._serialize.query("deployed_service_packages_health_state_filter", deployed_service_packages_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -3949,9 +4995,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3966,9 +5011,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
 
     def report_deployed_application_health(
-            self, node_name, application_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric application deployed on a
         Service Fabric node.
 
@@ -3981,42 +5027,65 @@ class ServiceFabricClientAPIs(object):
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, get
-        deployed application health and check that the report appears in the
+        To see whether the report was applied in the health store, get deployed
+        application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'
+        url = self.report_deployed_application_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -4026,6 +5095,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -4039,9 +5110,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4049,39 +5119,38 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'}
 
     def get_application_manifest(
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the manifest describing an application type.
 
-        Gets the manifest describing an application type. The response
-        contains the application manifest XML as a string.
+        The response contains the application manifest XML as a string.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationTypeManifest
-         <azure.servicefabric.models.ApplicationTypeManifest>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationTypeManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationTypeManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'
+        url = self.get_application_manifest.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -4096,13 +5165,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4117,52 +5186,56 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'}
 
     def get_service_info_list(
             self, application_id, service_type_name=None, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about all services belonging to the application
-        specified by the application id.
+        specified by the application ID.
 
-        Returns the information about all services belonging to the
-        application specified by the application id.
+        Returns the information about all services belonging to the application
+        specified by the application ID.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_type_name: The service type name used to filter the
          services to query for.
         :type service_type_name: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedServiceInfoList
-         <azure.servicefabric.models.PagedServiceInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedServiceInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedServiceInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices'
+        url = self.get_service_info_list.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4180,13 +5253,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4201,42 +5274,53 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_info_list.metadata = {'url': '/Applications/{applicationId}/$/GetServices'}
 
     def get_service_info(
             self, application_id, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the information about the specific service belonging to a Service
-        Fabric application.
+        """Gets the information about the specific service belonging to the
+        Service Fabric application.
 
-        Returns the information about specified service belonging to the
+        Returns the information about the specified service belonging to the
         specified Service Fabric application.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceInfo <azure.servicefabric.models.ServiceInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/{serviceId}'
+        url = self.get_service_info.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
@@ -4251,13 +5335,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4272,38 +5356,44 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_info.metadata = {'url': '/Applications/{applicationId}/$/GetServices/{serviceId}'}
 
     def get_application_name_info(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric application for a service.
 
-        The GetApplicationName endpoint returns the name of the application
-        for the specified service.
+        Gets the name of the application for the specified service. A 404
+        FABRIC_E_SERVICE_DOES_NOT_EXIST error is returned if a service with the
+        provided service ID does not exist.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationNameInfo
-         <azure.servicefabric.models.ApplicationNameInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationNameInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationNameInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetApplicationName'
+        url = self.get_application_name_info.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4317,13 +5407,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4338,40 +5428,50 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_name_info.metadata = {'url': '/Services/{serviceId}/$/GetApplicationName'}
 
     def create_service(
             self, application_id, service_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates the specified service.
+        """Creates the specified Service Fabric service.
 
-        Creates the specified service.
+        This api allows creating a new Service Fabric stateless or stateful
+        service under a specified Service Fabric application. The description
+        for creating the service includes partitioning information and optional
+        properties for placement and load balancing. Some of the properties can
+        later be modified using `UpdateService` API.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
-        :param service_description: The configuration for the service.
-        :type service_description: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>`
+        :param service_description: The information necessary to create a
+         service.
+        :type service_description:
+         ~azure.servicefabric.models.ServiceDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/$/Create'
+        url = self.create_service.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4393,9 +5493,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(service_description, 'ServiceDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4403,45 +5502,51 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_service.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/Create'}
 
     def create_service_from_template(
             self, application_id, service_from_template_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates a Service Fabric service from the service template defined in
-        the application manifest.
+        """Creates a Service Fabric service from the service template.
 
         Creates a Service Fabric service from the service template defined in
-        the application manifest.
+        the application manifest. A service template contains the properties
+        that will be same for the service instance of the same type. The API
+        allows overriding the properties that are usually different for
+        different services of the same service type.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_from_template_description: Describes the service that
          needs to be created from the template defined in the application
          manifest.
         :type service_from_template_description:
-         :class:`ServiceFromTemplateDescription
-         <azure.servicefabric.models.ServiceFromTemplateDescription>`
+         ~azure.servicefabric.models.ServiceFromTemplateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'
+        url = self.create_service_from_template.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4463,9 +5568,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(service_from_template_description, 'ServiceFromTemplateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4473,48 +5577,52 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_service_from_template.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'}
 
     def delete_service(
             self, service_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing Service Fabric service.
 
-        Deletes an existing Service Fabric service. A service must be created
-        before it can be deleted. By default Service Fabric will try to close
-        service replicas in a graceful manner and then delete the service.
-        However if service is having issues closing the replica gracefully,
-        the delete operation may take a long time or get stuck. Use the
-        optional ForceRemove flag to skip the graceful close sequence and
-        forcefully delete the service.
+        A service must be created before it can be deleted. By default, Service
+        Fabric will try to close service replicas in a graceful manner and then
+        delete the service. However, if the service is having issues closing
+        the replica gracefully, the delete operation may take a long time or
+        get stuck. Use the optional ForceRemove flag to skip the graceful close
+        sequence and forcefully delete the service.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/Delete'
+        url = self.delete_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4530,13 +5638,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4544,40 +5651,55 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_service.metadata = {'url': '/Services/{serviceId}/$/Delete'}
 
     def update_service(
             self, service_id, service_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Updates the specified service using the given update description.
+        """Updates a Service Fabric service using the specified update
+        description.
 
-        Updates the specified service using the given update description.
+        This API allows updating properties of a running Service Fabric
+        service. The set of properties that can be updated are a subset of the
+        properties that were specified at the time of creating the service. The
+        current set of properties can be obtained using `GetServiceDescription`
+        API. Note that updating the properties of a running service is
+        different than upgrading your application using
+        `StartApplicationUpgrade` API. The upgrade is a long running background
+        operation that involves moving the application from one version to
+        another, one upgrade domain at a time, whereas update applies the new
+        properties immediately to the service.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
-        :param service_update_description: The updated configuration for the
-         service.
-        :type service_update_description: :class:`ServiceUpdateDescription
-         <azure.servicefabric.models.ServiceUpdateDescription>`
+        :param service_update_description: The information necessary to update
+         a service.
+        :type service_update_description:
+         ~azure.servicefabric.models.ServiceUpdateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/Update'
+        url = self.update_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4599,9 +5721,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(service_update_description, 'ServiceUpdateDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4609,6 +5730,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_service.metadata = {'url': '/Services/{serviceId}/$/Update'}
 
     def get_service_description(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4617,30 +5739,34 @@ class ServiceFabricClientAPIs(object):
         Gets the description of an existing Service Fabric service. A service
         must be created before its description can be obtained.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetDescription'
+        url = self.get_service_description.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4654,13 +5780,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4675,9 +5801,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_description.metadata = {'url': '/Services/{serviceId}/$/GetDescription'}
 
     def get_service_health(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric service.
 
         Gets the health information of the specified service.
@@ -4686,28 +5813,31 @@ class ServiceFabricClientAPIs(object):
         Use PartitionsHealthStateFilter to filter the collection of partitions
         returned.
         If you specify a service that does not exist in the health store, this
-        cmdlet returns an error.
-        .
+        request returns an error.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4720,20 +5850,20 @@ class ServiceFabricClientAPIs(object):
         :param partitions_health_state_filter: Allows filtering of the
          partitions health state objects returned in the result of service
          health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only partitions that match the filter are returned. All partitions
-         are used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only partitions that match the filter are returned. All partitions are
+         used to evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         value
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4743,27 +5873,32 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type partitions_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetHealth'
+        url = self.get_service_health.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4776,18 +5911,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if partitions_health_state_filter is not None:
             query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4802,9 +5939,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_health.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
 
     def get_service_health_using_policy(
-            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric service, by using the
         specified health policy.
 
@@ -4819,28 +5957,31 @@ class ServiceFabricClientAPIs(object):
         Use PartitionsHealthStateFilter to filter the collection of partitions
         returned.
         If you specify a service that does not exist in the health store, this
-        cmdlet returns an error.
-        .
+        request returns an error.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4853,20 +5994,20 @@ class ServiceFabricClientAPIs(object):
         :param partitions_health_state_filter: Allows filtering of the
          partitions health state objects returned in the result of service
          health query based on their health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only partitions that match the filter are returned. All partitions
-         are used to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these value
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only partitions that match the filter are returned. All partitions are
+         used to evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         value
          obtained using bitwise 'OR' operator. For example, if the provided
          value is 6 then health state of partitions with HealthState value of
          OK (2) and Warning (4) will be returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
+         - Default - Default value. Matches any HealthState. The value is zero.
          - None - Filter that doesn't match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -4880,29 +6021,34 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetHealth'
+        url = self.get_service_health_using_policy.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -4915,11 +6061,14 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if partitions_health_state_filter is not None:
             query_parameters['PartitionsHealthStateFilter'] = self._serialize.query("partitions_health_state_filter", partitions_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -4931,9 +6080,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4948,9 +6096,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_health_using_policy.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
 
     def report_service_health(
-            self, service_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, service_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric service.
 
         Reports health state of the specified Service Fabric service. The
@@ -4963,38 +6112,61 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetServiceHealth and check that the report appears in the
-        HealthEvents section.
-        .
+        GetServiceHealth and check that the report appears in the HealthEvents
+        section.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/ReportHealth'
+        url = self.report_service_health.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5003,6 +6175,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -5016,9 +6190,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5026,58 +6199,69 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_service_health.metadata = {'url': '/Services/{serviceId}/$/ReportHealth'}
 
     def resolve_service(
             self, service_id, partition_key_type=None, partition_key_value=None, previous_rsp_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resolve a Service Fabric partition.
 
-        Resolve a Service Fabric service partition, to get the endpoints of
-        the service replicas.
+        Resolve a Service Fabric service partition to get the endpoints of the
+        service replicas.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_key_type: Key type for the partition. This parameter
          is required if the partition scheme for the service is Int64Range or
          Named. The possible values are following.
-         - None (1) - Indicates that the the PartitionKeyValue parameter is
-         not specified. This is valid for the partitions with partitioning
-         scheme as Singleton. This is the default value. The value is 1.
-         - Int64Range (2) - Indicates that the the PartitionKeyValue parameter
-         is an int64 partition key. This is valid for the partitions with
+         - None (1) - Indicates that the PartitionKeyValue parameter is not
+         specified. This is valid for the partitions with partitioning scheme
+         as Singleton. This is the default value. The value is 1.
+         - Int64Range (2) - Indicates that the PartitionKeyValue parameter is
+         an int64 partition key. This is valid for the partitions with
          partitioning scheme as Int64Range. The value is 2.
-         - Named (3) - Indicates that the the PartitionKeyValue parameter is a
-         name of the partition. This is valid for the partitions with
-         partitioning scheme as Named. The value is 3.
+         - Named (3) - Indicates that the PartitionKeyValue parameter is a name
+         of the partition. This is valid for the partitions with partitioning
+         scheme as Named. The value is 3.
         :type partition_key_type: int
         :param partition_key_value: Partition key. This is required if the
          partition scheme for the service is Int64Range or Named.
+         This is not the partition ID, but rather, either the integer key
+         value, or the name of the partition ID.
+         For example, if your service is using ranged partitions from 0 to 10,
+         then they PartitionKeyValue would be an
+         integer in that range. Query service description to see the range or
+         name.
         :type partition_key_value: str
         :param previous_rsp_version: The value in the Version field of the
          response that was received previously. This is required if the user
-         knows that the result that was got previously is stale.
+         knows that the result that was gotten previously is stale.
         :type previous_rsp_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResolvedServicePartition
-         <azure.servicefabric.models.ResolvedServicePartition>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResolvedServicePartition or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ResolvedServicePartition or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/ResolvePartition'
+        url = self.resolve_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5097,13 +6281,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5118,49 +6302,53 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    resolve_service.metadata = {'url': '/Services/{serviceId}/$/ResolvePartition'}
 
     def get_partition_info_list(
             self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of partitions of a Service Fabric service.
 
-        Gets the list of partitions of a Service Fabric service. The response
-        include the partition id, partitioning scheme information, keys
-        supported by the partition, status, health and other details about
-        the partition.
+        The response includes the partition ID, partitioning scheme
+        information, keys supported by the partition, status, health, and other
+        details about the partition.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedServicePartitionInfoList
-         <azure.servicefabric.models.PagedServicePartitionInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedServicePartitionInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedServicePartitionInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.4"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetPartitions'
+        url = self.get_partition_info_list.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5176,13 +6364,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5197,39 +6385,39 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_info_list.metadata = {'url': '/Services/{serviceId}/$/GetPartitions'}
 
     def get_partition_info(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a Service Fabric partition.
 
-        The Partitions endpoint returns information about the specified
-        partition. The response include the partition id, partitioning scheme
-        information, keys supported by the partition, status, health and
-        other details about the partition.
+        Gets the information about the specified partition. The response
+        includes the partition ID, partitioning scheme information, keys
+        supported by the partition, status, health, and other details about the
+        partition.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServicePartitionInfo
-         <azure.servicefabric.models.ServicePartitionInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServicePartitionInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServicePartitionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}'
+        url = self.get_partition_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5243,13 +6431,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5264,37 +6452,37 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_info.metadata = {'url': '/Partitions/{partitionId}'}
 
     def get_service_name_info(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric service for a partition.
 
-        The GetServiceName endpoint returns the name of the service for the
-        specified partition.
+        Gets name of the service for the specified partition. A 404 error is
+        returned if the partition ID does not exist in the cluster.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceNameInfo
-         <azure.servicefabric.models.ServiceNameInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceNameInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceNameInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetServiceName'
+        url = self.get_service_name_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5308,13 +6496,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5329,38 +6517,36 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_name_info.metadata = {'url': '/Partitions/{partitionId}/$/GetServiceName'}
 
     def get_partition_health(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the health of the specified Service Fabric partition.
 
-        Gets the health information of the specified partition.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the service based on the health state.
         Use ReplicasHealthStateFilter to filter the collection of
         ReplicaHealthState objects on the partition.
         If you specify a partition that does not exist in the health store,
-        this cmdlet returns an error.
-        .
+        this request returns an error.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5374,19 +6560,17 @@ class ServiceFabricClientAPIs(object):
          of ReplicaHealthState objects on the partition. The value can be
          obtained from members or bitwise operations on members of
          HealthStateFilter. Only replicas that match the filter will be
-         returned. All replicas will be used to evaluate the aggregated
-         health state. If not specified, all entries will be returned.The
-         state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator. For
-         example, If the provided value is 6 then all of the events with
-         HealthState value of OK (2) and Warning (4) will be returned. The
-         possible values for this parameter include integer value of one of
-         the following health states.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         returned. All replicas will be used to evaluate the aggregated health
+         state. If not specified, all entries will be returned.The state values
+         are flag-based enumeration, so the value could be a combination of
+         these values obtained using bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) will be returned. The possible values for this
+         parameter include integer value of one of the following health states.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5396,27 +6580,32 @@ class ServiceFabricClientAPIs(object):
          - All - Filter that matches input with any HealthState value. The
          value is 65535.
         :type replicas_health_state_filter: int
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetHealth'
+        url = self.get_partition_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5429,18 +6618,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if replicas_health_state_filter is not None:
             query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5455,11 +6646,12 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
 
     def get_partition_health_using_policy(
-            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the health of the specified Service Fabric partition, by using
-        the specified health policy.
+            self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the health of the specified Service Fabric partition, by using the
+        specified health policy.
 
         Gets the health information of the specified partition.
         If the application health policy is specified, the health evaluation
@@ -5474,27 +6666,25 @@ class ServiceFabricClientAPIs(object):
         ApplicationHealthPolicy in the POST body to override the health
         policies used to evaluate the health.
         If you specify a partition that does not exist in the health store,
-        this cmdlet returns an error.
-        .
+        this request returns an error.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5508,19 +6698,17 @@ class ServiceFabricClientAPIs(object):
          of ReplicaHealthState objects on the partition. The value can be
          obtained from members or bitwise operations on members of
          HealthStateFilter. Only replicas that match the filter will be
-         returned. All replicas will be used to evaluate the aggregated
-         health state. If not specified, all entries will be returned.The
-         state values are flag based enumeration, so the value could be a
-         combination of these value obtained using bitwise 'OR' operator. For
-         example, If the provided value is 6 then all of the events with
-         HealthState value of OK (2) and Warning (4) will be returned. The
-         possible values for this parameter include integer value of one of
-         the following health states.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         returned. All replicas will be used to evaluate the aggregated health
+         state. If not specified, all entries will be returned.The state values
+         are flag-based enumeration, so the value could be a combination of
+         these values obtained using bitwise 'OR' operator. For example, If the
+         provided value is 6 then all of the events with HealthState value of
+         OK (2) and Warning (4) will be returned. The possible values for this
+         parameter include integer value of one of the following health states.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -5534,29 +6722,34 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
+        :param exclude_health_statistics: Indicates whether the health
+         statistics should be returned as part of the query result. False by
+         default.
+         The statistics show the number of children entities in health state
+         Ok, Warning, and Error.
+        :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetHealth'
+        url = self.get_partition_health_using_policy.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5569,11 +6762,14 @@ class ServiceFabricClientAPIs(object):
             query_parameters['EventsHealthStateFilter'] = self._serialize.query("events_health_state_filter", events_health_state_filter, 'int')
         if replicas_health_state_filter is not None:
             query_parameters['ReplicasHealthStateFilter'] = self._serialize.query("replicas_health_state_filter", replicas_health_state_filter, 'int')
+        if exclude_health_statistics is not None:
+            query_parameters['ExcludeHealthStatistics'] = self._serialize.query("exclude_health_statistics", exclude_health_statistics, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -5585,9 +6781,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5602,9 +6797,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
 
     def report_partition_health(
-            self, partition_id, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric partition.
 
         Reports health state of the specified Service Fabric partition. The
@@ -5619,35 +6815,53 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetPartitionHealth and check that the report appears in the
         HealthEvents section.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/ReportHealth'
+        url = self.report_partition_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5656,6 +6870,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -5669,9 +6885,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5679,40 +6894,40 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/ReportHealth'}
 
     def get_partition_load_information(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the load of the specified Service Fabric partition.
+        """Gets the load information of the specified Service Fabric partition.
 
-        Returns information about the specified partition.
-        The response includes a list of load information.
-        Each information includes load metric name, value and last reported
+        Returns information about the load of a specified partition.
+        The response includes a list of load reports for a Service Fabric
+        partition.
+        Each report includes the load metric name, value, and last reported
         time in UTC.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionLoadInformation
-         <azure.servicefabric.models.PartitionLoadInformation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionLoadInformation or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionLoadInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetLoadInformation'
+        url = self.get_partition_load_information.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5726,13 +6941,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5747,6 +6962,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_load_information.metadata = {'url': '/Partitions/{partitionId}/$/GetLoadInformation'}
 
     def reset_partition_load(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5758,25 +6974,24 @@ class ServiceFabricClientAPIs(object):
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/ResetLoad'
+        url = self.reset_partition_load.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5790,13 +7005,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5804,14 +7018,13 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    reset_partition_load.metadata = {'url': '/Partitions/{partitionId}/$/ResetLoad'}
 
     def recover_partition(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover a specific partition which is currently stuck in quorum loss.
+        recover a specific partition that is currently stuck in quorum loss.
 
-        Indicates to the Service Fabric cluster that it should attempt to
-        recover a specific partition which is currently stuck in quorum loss.
         This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
@@ -5819,25 +7032,24 @@ class ServiceFabricClientAPIs(object):
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/Recover'
+        url = self.recover_partition.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -5851,13 +7063,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5865,42 +7076,46 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_partition.metadata = {'url': '/Partitions/{partitionId}/$/Recover'}
 
     def recover_service_partitions(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum
-        loss.
+        recover the specified service that is currently stuck in quorum loss.
 
         Indicates to the Service Fabric cluster that it should attempt to
-        recover the specified service which is currently stuck in quorum
-        loss. This operation should only be performed if it is known that the
+        recover the specified service that is currently stuck in quorum loss.
+        This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Services/$/{serviceId}/$/GetPartitions/$/Recover'
+        url = self.recover_service_partitions.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5914,13 +7129,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5928,38 +7142,38 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_service_partitions.metadata = {'url': '/Services/$/{serviceId}/$/GetPartitions/$/Recover'}
 
     def recover_system_partitions(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Indicates to the Service Fabric cluster that it should attempt to
-        recover the system services which are currently stuck in quorum loss.
+        recover the system services that are currently stuck in quorum loss.
 
         Indicates to the Service Fabric cluster that it should attempt to
-        recover the system services which are currently stuck in quorum loss.
+        recover the system services that are currently stuck in quorum loss.
         This operation should only be performed if it is known that the
         replicas that are down cannot be recovered. Incorrect use of this API
         can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/RecoverSystemPartitions'
+        url = self.recover_system_partitions.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -5969,13 +7183,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5983,6 +7196,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_system_partitions.metadata = {'url': '/$/RecoverSystemPartitions'}
 
     def recover_all_partitions(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5990,32 +7204,29 @@ class ServiceFabricClientAPIs(object):
         recover any services (including system services) which are currently
         stuck in quorum loss.
 
-        Indicates to the Service Fabric cluster that it should attempt to
-        recover any services (including system services) which are currently
-        stuck in quorum loss. This operation should only be performed if it
-        is known that the replicas that are down cannot be recovered.
-        Incorrect use of this API can cause potential data loss.
+        This operation should only be performed if it is known that the
+        replicas that are down cannot be recovered. Incorrect use of this API
+        can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/RecoverAllPartitions'
+        url = self.recover_all_partitions.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -6025,13 +7236,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6039,6 +7249,451 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_all_partitions.metadata = {'url': '/$/RecoverAllPartitions'}
+
+    def create_repair_task(
+            self, repair_task, custom_headers=None, raw=False, **operation_config):
+        """Creates a new repair task.
+
+        For clusters that have the Repair Manager Service configured,
+        this API provides a way to create repair tasks that run automatically
+        or manually.
+        For repair tasks that run automatically, an appropriate repair executor
+        must be running for each repair action to run automatically.
+        These are currently only available in specially-configured Azure Cloud
+        Services.
+        To create a manual repair task, provide the set of impacted node names
+        and the
+        expected impact. When the state of the created repair task changes to
+        approved,
+        you can safely perform repair actions on those nodes.
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param repair_task: Describes the repair task to be created or
+         updated.
+        :type repair_task: ~azure.servicefabric.models.RepairTask
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.create_repair_task.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task, 'RepairTask')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_repair_task.metadata = {'url': '/$/CreateRepairTask'}
+
+    def cancel_repair_task(
+            self, repair_task_cancel_description, custom_headers=None, raw=False, **operation_config):
+        """Requests the cancellation of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param repair_task_cancel_description: Describes the repair task to be
+         cancelled.
+        :type repair_task_cancel_description:
+         ~azure.servicefabric.models.RepairTaskCancelDescription
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.cancel_repair_task.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_cancel_description, 'RepairTaskCancelDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    cancel_repair_task.metadata = {'url': '/$/CancelRepairTask'}
+
+    def delete_repair_task(
+            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes a completed repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param task_id: The ID of the completed repair task to be deleted.
+        :type task_id: str
+        :param version: The current version number of the repair task. If
+         non-zero, then the request will only succeed if this value matches the
+         actual current version of the repair task. If zero, then no version
+         check is performed.
+        :type version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        repair_task_delete_description = models.RepairTaskDeleteDescription(task_id=task_id, version=version)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.delete_repair_task.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_delete_description, 'RepairTaskDeleteDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_repair_task.metadata = {'url': '/$/DeleteRepairTask'}
+
+    def get_repair_task_list(
+            self, task_id_filter=None, state_filter=None, executor_filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of repair tasks matching the given filters.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param task_id_filter: The repair task ID prefix to be matched.
+        :type task_id_filter: str
+        :param state_filter: A bitwise-OR of the following values, specifying
+         which task states should be included in the result list.
+         - 1 - Created
+         - 2 - Claimed
+         - 4 - Preparing
+         - 8 - Approved
+         - 16 - Executing
+         - 32 - Restoring
+         - 64 - Completed
+        :type state_filter: int
+        :param executor_filter: The name of the repair executor whose claimed
+         tasks should be included in the list.
+        :type executor_filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.RepairTask] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_repair_task_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if task_id_filter is not None:
+            query_parameters['TaskIdFilter'] = self._serialize.query("task_id_filter", task_id_filter, 'str')
+        if state_filter is not None:
+            query_parameters['StateFilter'] = self._serialize.query("state_filter", state_filter, 'int')
+        if executor_filter is not None:
+            query_parameters['ExecutorFilter'] = self._serialize.query("executor_filter", executor_filter, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[RepairTask]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_repair_task_list.metadata = {'url': '/$/GetRepairTaskList'}
+
+    def force_approve_repair_task(
+            self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
+        """Forces the approval of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param task_id: The ID of the repair task.
+        :type task_id: str
+        :param version: The current version number of the repair task. If
+         non-zero, then the request will only succeed if this value matches the
+         actual current version of the repair task. If zero, then no version
+         check is performed.
+        :type version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        repair_task_approve_description = models.RepairTaskApproveDescription(task_id=task_id, version=version)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.force_approve_repair_task.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_approve_description, 'RepairTaskApproveDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    force_approve_repair_task.metadata = {'url': '/$/ForceApproveRepairTask'}
+
+    def update_repair_task_health_policy(
+            self, repair_task_update_health_policy_description, custom_headers=None, raw=False, **operation_config):
+        """Updates the health policy of the given repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param repair_task_update_health_policy_description: Describes the
+         repair task healthy policy to be updated.
+        :type repair_task_update_health_policy_description:
+         ~azure.servicefabric.models.RepairTaskUpdateHealthPolicyDescription
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.update_repair_task_health_policy.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task_update_health_policy_description, 'RepairTaskUpdateHealthPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_repair_task_health_policy.metadata = {'url': '/$/UpdateRepairTaskHealthPolicy'}
+
+    def update_repair_execution_state(
+            self, repair_task, custom_headers=None, raw=False, **operation_config):
+        """Updates the execution state of a repair task.
+
+        This API supports the Service Fabric platform; it is not meant to be
+        used directly from your code.
+
+        :param repair_task: Describes the repair task to be created or
+         updated.
+        :type repair_task: ~azure.servicefabric.models.RepairTask
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.update_repair_execution_state.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(repair_task, 'RepairTask')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RepairTaskUpdateInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_repair_execution_state.metadata = {'url': '/$/UpdateRepairExecutionState'}
 
     def get_replica_info_list(
             self, partition_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6046,41 +7701,39 @@ class ServiceFabricClientAPIs(object):
         partition.
 
         The GetReplicas endpoint returns information about the replicas of the
-        specified partition. The respons include the id, role, status,
+        specified partition. The response includes the ID, role, status,
         health, node name, uptime, and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedReplicaInfoList
-         <azure.servicefabric.models.PagedReplicaInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedReplicaInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedReplicaInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas'
+        url = self.get_replica_info_list.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6096,13 +7749,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6117,47 +7770,39 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_info_list.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas'}
 
     def get_replica_info(
-            self, partition_id, replica_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a replica of a Service Fabric partition.
 
-        The respons include the id, role, status, health, node name, uptime,
+        The response includes the ID, role, status, health, node name, uptime,
         and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param replica_id: The identifier of the replica.
         :type replica_id: str
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
-        :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ReplicaInfo <azure.servicefabric.models.ReplicaInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ReplicaInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'
+        url = self.get_replica_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -6167,20 +7812,18 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6195,6 +7838,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_info.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'}
 
     def get_replica_health(
             self, partition_id, replica_id, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6204,7 +7848,6 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric replica.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the replica based on the health state.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6212,20 +7855,19 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6236,26 +7878,25 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ReplicaHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
+        url = self.get_replica_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -6272,13 +7913,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6293,6 +7934,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
 
     def get_replica_health_using_policy(
             self, partition_id, replica_id, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6305,10 +7947,8 @@ class ServiceFabricClientAPIs(object):
         reported on the cluster based on the health state.
         Use ApplicationHealthPolicy to optionally override the health policies
         used to evaluate the health. This API only uses
-        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The
-        rest of the fields are ignored while evaluating the health of the
-        replica.
-        .
+        'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
+        of the fields are ignored while evaluating the health of the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6316,20 +7956,19 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6343,29 +7982,28 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ReplicaHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
+        url = self.get_replica_health_using_policy.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -6382,6 +8020,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -6393,9 +8032,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6410,9 +8048,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
 
     def report_replica_health(
-            self, partition_id, replica_id, health_information, service_kind="Stateful", timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, replica_id, health_information, replica_health_report_service_kind="Stateful", immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric replica.
 
         Reports health state of the specified Service Fabric replica. The
@@ -6425,48 +8064,63 @@ class ServiceFabricClientAPIs(object):
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
         To see whether the report was applied in the health store, run
-        GetReplicaHealth and check that the report appears in the
-        HealthEvents section.
-        .
+        GetReplicaHealth and check that the report appears in the HealthEvents
+        section.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param replica_id: The identifier of the replica.
         :type replica_id: str
-        :param service_kind: The kind of service replica (Stateless or
-         Stateful) for which the health is being reported. Following are the
-         possible values.
-         - Stateless - Does not use Service Fabric to make its state highly
-         available or reliable. The value is 1
-         - Stateful - Uses Service Fabric to make its state or part of its
-         state highly available and reliable. The value is 2.
-         . Possible values include: 'Stateless', 'Stateful'
-        :type service_kind: str
+        :param replica_health_report_service_kind: The kind of service replica
+         (Stateless or Stateful) for which the health is being reported.
+         Following are the possible values. Possible values include:
+         'Stateless', 'Stateful'
+        :type replica_health_report_service_kind: str or
+         ~azure.servicefabric.models.ReplicaHealthReportServiceKind
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'
+        url = self.report_replica_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -6476,7 +8130,9 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ServiceKind'] = self._serialize.query("service_kind", service_kind, 'str')
+        query_parameters['ReplicaHealthReportServiceKind'] = self._serialize.query("replica_health_report_service_kind", replica_health_report_service_kind, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -6490,9 +8146,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6500,51 +8155,55 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'}
 
     def get_deployed_service_replica_info_list(
             self, node_name, application_id, partition_id=None, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of replicas deployed on a Service Fabric node.
 
         Gets the list containing the information about replicas deployed on a
-        Service Fabric node. The information include partition id, replica
-        id, status of the replica, name of the service, name of the service
-        type and other information. Use PartitionId or ServiceManifestName
-        query parameters to return information about the deployed replicas
-        matching the specified values for those parameters.
+        Service Fabric node. The information include partition ID, replica ID,
+        status of the replica, name of the service, name of the service type,
+        and other information. Use PartitionId or ServiceManifestName query
+        parameters to return information about the deployed replicas matching
+        the specified values for those parameters.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedServiceReplicaInfo
-         <azure.servicefabric.models.DeployedServiceReplicaInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceReplicaInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'
+        url = self.get_deployed_service_replica_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -6563,13 +8222,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6584,15 +8243,16 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_replica_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'}
 
     def get_deployed_service_replica_detail_info(
             self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the details of replica deployed on a Service Fabric node.
 
         Gets the details of the replica deployed on a Service Fabric node. The
-        information include service kind, service name, current service
-        operation, current service operation start date time, partition id,
-        replica/instance id, reported load and other information.
+        information includes service kind, service name, current service
+        operation, current service operation start date time, partition ID,
+        replica/instance ID, reported load, and other information.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -6601,26 +8261,26 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedServiceReplicaDetailInfo or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServiceReplicaDetailInfo
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'
+        url = self.get_deployed_service_replica_detail_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -6636,13 +8296,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6657,6 +8317,78 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_replica_detail_info.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'}
+
+    def get_deployed_service_replica_detail_info_by_partition_id(
+            self, node_name, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of replica deployed on a Service Fabric node.
+
+        Gets the details of the replica deployed on a Service Fabric node. The
+        information includes service kind, service name, current service
+        operation, current service operation start date time, partition ID,
+        replica/instance ID, reported load, and other information.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeployedServiceReplicaDetailInfo or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServiceReplicaDetailInfo
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_deployed_service_replica_detail_info_by_partition_id.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeployedServiceReplicaDetailInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deployed_service_replica_detail_info_by_partition_id.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'}
 
     def restart_replica(
             self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6674,25 +8406,24 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'
+        url = self.restart_replica.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -6708,13 +8439,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6722,21 +8452,21 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'}
 
     def remove_replica(
             self, node_name, partition_id, replica_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Removes a service replica running on a node.
 
         This API simulates a Service Fabric replica failure by removing a
-        replica from a Service Fabric cluster. The removal closes the
-        replica, transitions the replica to the role None, and then removes
-        all of the state information of the replica from the cluster. This
-        API tests the replica state removal path, and simulates the report
-        fault permanent path through client APIs. Warning - There are no
-        safety checks performed when this API is used. Incorrect use of this
-        API can lead to data loss for stateful services.In addition, the
-        forceRemove flag impacts all other replicas hosted in the same
-        process.
+        replica from a Service Fabric cluster. The removal closes the replica,
+        transitions the replica to the role None, and then removes all of the
+        state information of the replica from the cluster. This API tests the
+        replica state removal path, and simulates the report fault permanent
+        path through client APIs. Warning - There are no safety checks
+        performed when this API is used. Incorrect use of this API can lead to
+        data loss for stateful services. In addition, the forceRemove flag
+        impacts all other replicas hosted in the same process.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -6745,31 +8475,30 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param force_remove: Remove a Service Fabric application or service
-         forcefully without going through the graceful shutdown sequence.
-         This parameter can be used to forcefully delete an application or
-         service for which delete is timing out due to issues in the service
-         code that prevents graceful close of replicas.
+         forcefully without going through the graceful shutdown sequence. This
+         parameter can be used to forcefully delete an application or service
+         for which delete is timing out due to issues in the service code that
+         prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'
+        url = self.remove_replica.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -6787,13 +8516,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6801,6 +8529,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'}
 
     def get_deployed_service_package_info_list(
             self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6814,28 +8543,32 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServicePackageInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'
+        url = self.get_deployed_service_package_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -6850,13 +8583,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6871,6 +8604,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'}
 
     def get_deployed_service_package_info_list_by_name(
             self, node_name, application_id, service_package_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6887,30 +8621,34 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServicePackageInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'
+        url = self.get_deployed_service_package_info_list_by_name.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -6926,15 +8664,15 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -6947,13 +8685,14 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_info_list_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'}
 
     def get_deployed_service_package_health(
             self, node_name, application_id, service_package_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the information about health of an service package for a specific
+        """Gets the information about health of a service package for a specific
         application deployed for a Service Fabric node and application.
 
-        Gets the information about health of service package for a specific
+        Gets the information about health of a service package for a specific
         application deployed on a Service Fabric node. Use
         EventsHealthStateFilter to optionally filter for the collection of
         HealthEvent objects reported on the deployed service package based on
@@ -6964,25 +8703,29 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -6993,26 +8736,25 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedServicePackageHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServicePackageHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
+        url = self.get_deployed_service_package_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -7030,13 +8772,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7051,6 +8793,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
 
     def get_deployed_service_package_health_using_policy(
             self, node_name, application_id, service_package_name, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7058,7 +8801,7 @@ class ServiceFabricClientAPIs(object):
         application deployed on a Service Fabric node using the specified
         policy.
 
-        Gets the information about health of an service package for a specific
+        Gets the information about health of a service package for a specific
         application deployed on a Service Fabric node. using the specified
         policy. Use EventsHealthStateFilter to optionally filter for the
         collection of HealthEvent objects reported on the deployed service
@@ -7067,32 +8810,35 @@ class ServiceFabricClientAPIs(object):
         This API only uses 'ConsiderWarningAsError' field of the
         ApplicationHealthPolicy. The rest of the fields are ignored while
         evaluating the health of the deployed service package.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
-         The possible values for this parameter include integer value of one
-         of the following health states.
-         Only events that match the filter are returned. All events are used
-         to evaluate the aggregated health state.
-         If not specified, all entries are returned. The state values are flag
-         based enumeration, so the value could be a combination of these
-         value obtained using bitwise 'OR' operator. For example, If the
+         The possible values for this parameter include integer value of one of
+         the following health states.
+         Only events that match the filter are returned. All events are used to
+         evaluate the aggregated health state.
+         If not specified, all entries are returned. The state values are
+         flag-based enumeration, so the value could be a combination of these
+         values, obtained using the bitwise 'OR' operator. For example, If the
          provided value is 6 then all of the events with HealthState value of
          OK (2) and Warning (4) are returned.
-         - Default - Default value. Matches any HealthState. The value is
-         zero.
-         - None - Filter that doesn’t match any HealthState value. Used in
-         order to return no results on a given collection of states. The
-         value is 1.
+         - Default - Default value. Matches any HealthState. The value is zero.
+         - None - Filter that doesn't match any HealthState value. Used in
+         order to return no results on a given collection of states. The value
+         is 1.
          - Ok - Filter that matches input with HealthState value Ok. The value
          is 2.
          - Warning - Filter that matches input with HealthState value Warning.
@@ -7106,29 +8852,28 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeployedServicePackageHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServicePackageHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
+        url = self.get_deployed_service_package_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -7146,6 +8891,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -7157,9 +8903,8 @@ class ServiceFabricClientAPIs(object):
             body_content = None
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7174,59 +8919,82 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
 
     def report_deployed_service_package_health(
-            self, node_name, application_id, service_package_name, health_information, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, service_package_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric deployed service package.
 
-        Reports health state of the service package of the application
-        deployed on a Service Fabric node. The report must contain the
-        information about the source of the health report and property on
-        which it is reported.
+        Reports health state of the service package of the application deployed
+        on a Service Fabric node. The report must contain the information about
+        the source of the health report and property on which it is reported.
         The report is sent to a Service Fabric gateway Service, which forwards
         to the health store.
         The report may be accepted by the gateway, but rejected by the health
         store after extra validation.
         For example, the health store may reject the report because of an
         invalid parameter, like a stale sequence number.
-        To see whether the report was applied in the health store, get
-        deployed service package health and check that the report appears in
-        the HealthEvents section.
-        .
+        To see whether the report was applied in the health store, get deployed
+        service package health and check that the report appears in the
+        HealthEvents section.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
+        :param immediate: A flag that indicates whether the report should be
+         sent immediately.
+         A health report is sent to a Service Fabric gateway Application, which
+         forwards to the health store.
+         If Immediate is set to true, the report is sent immediately from HTTP
+         Gateway to the health store, regardless of the fabric client settings
+         that the HTTP Gateway Application is using.
+         This is useful for critical reports that should be sent as soon as
+         possible.
+         Depending on timing and other conditions, sending the report may still
+         fail, for example if the HTTP Gateway is closed or the message doesn't
+         reach the Gateway.
+         If Immediate is set to false, the report is sent based on the health
+         client settings from the HTTP Gateway. Therefore, it will be batched
+         according to the HealthReportSendInterval configuration.
+         This is the recommended setting because it allows the health client to
+         optimize health reporting messages to health store as well as health
+         report processing.
+         By default, reports are not sent immediately.
+        :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'
+        url = self.report_deployed_service_package_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -7237,6 +9005,8 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if immediate is not None:
+            query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -7250,9 +9020,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(health_information, 'HealthInformation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7260,43 +9029,45 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'}
 
-    def deployed_service_package_to_node(
+    def deploy_service_package_to_node(
             self, node_name, deploy_service_package_to_node_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Downloads packages associated with specified service manifest to image
-        cache on specified node.
+        """Downloads all of the code packages associated with specified service
+        manifest on the specified node.
 
-        Downloads packages associated with specified service manifest to image
-        cache on specified node.
-        .
+        This API provides a way to download code packages including the
+        container images on a specific node outside of the normal application
+        deployment and upgrade path. This is useful for the large code packages
+        and container images to be present on the node before the actual
+        application deployment and upgrade, thus significantly reducing the
+        total time required for the deployment or upgrade.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param deploy_service_package_to_node_description: Describes
          information for deploying a service package to a Service Fabric node.
         :type deploy_service_package_to_node_description:
-         :class:`DeployServicePackageToNodeDescription
-         <azure.servicefabric.models.DeployServicePackageToNodeDescription>`
+         ~azure.servicefabric.models.DeployServicePackageToNodeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/DeployServicePackage'
+        url = self.deploy_service_package_to_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -7318,9 +9089,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(deploy_service_package_to_node_description, 'DeployServicePackageToNodeDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7328,6 +9098,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    deploy_service_package_to_node.metadata = {'url': '/Nodes/{nodeName}/$/DeployServicePackage'}
 
     def get_deployed_code_package_info_list(
             self, node_name, application_id, service_manifest_name=None, code_package_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7341,36 +9112,39 @@ class ServiceFabricClientAPIs(object):
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_manifest_name: The name of a service manifest
-         registered as part of an application type in a Service Fabric
-         cluster.
+         registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param code_package_name: The name of code package specified in
          service manifest registered as part of an application type in a
          Service Fabric cluster.
         :type code_package_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`DeployedCodePackageInfo
-         <azure.servicefabric.models.DeployedCodePackageInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedCodePackageInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'
+        url = self.get_deployed_code_package_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -7389,13 +9163,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7410,47 +9184,50 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_code_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'}
 
     def restart_deployed_code_package(
             self, node_name, application_id, restart_deployed_code_package_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Restarts a code package deployed on a Service Fabric node in a
-        cluster.
+        """Restarts a code package deployed on a Service Fabric node in a cluster.
 
-        Restarts a code package deployed on a Service Fabric node in a
-        cluster. This aborts the code package process, which will restart all
-        the user service replicas hosted in that process.
+        Restarts a code package deployed on a Service Fabric node in a cluster.
+        This aborts the code package process, which will restart all the user
+        service replicas hosted in that process.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
          scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param restart_deployed_code_package_description: Describes the
          deployed code package on Service Fabric node to restart.
         :type restart_deployed_code_package_description:
-         :class:`RestartDeployedCodePackageDescription
-         <azure.servicefabric.models.RestartDeployedCodePackageDescription>`
+         ~azure.servicefabric.models.RestartDeployedCodePackageDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'
+        url = self.restart_deployed_code_package.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -7473,9 +9250,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(restart_deployed_code_package_description, 'RestartDeployedCodePackageDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7483,38 +9259,232 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_deployed_code_package.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'}
 
-    def create_compose_application(
-            self, create_compose_application_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates a Service Fabric compose application.
+    def get_container_logs_deployed_on_node(
+            self, node_name, application_id, service_manifest_name, code_package_name, tail=None, previous=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the container logs for container deployed on a Service Fabric
+        node.
 
-        Creates a Service Fabric compose application.
+        Gets the container logs for container deployed on a Service Fabric node
+        for the given code package.
 
-        :param create_compose_application_description: Describes the compose
-         application that needs to be created.
-        :type create_compose_application_description:
-         :class:`CreateComposeApplicationDescription
-         <azure.servicefabric.models.CreateComposeApplicationDescription>`
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param service_manifest_name: The name of a service manifest
+         registered as part of an application type in a Service Fabric cluster.
+        :type service_manifest_name: str
+        :param code_package_name: The name of code package specified in
+         service manifest registered as part of an application type in a
+         Service Fabric cluster.
+        :type code_package_name: str
+        :param tail: Number of lines to show from the end of the logs. Default
+         is 100. 'all' to show the complete logs.
+        :type tail: str
+        :param previous: Specifies whether to get container logs from
+         exited/dead containers of the code package instance.
+        :type previous: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ContainerLogs or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ContainerLogs or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/ComposeDeployments/$/Create'
+        url = self.get_container_logs_deployed_on_node.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+        if tail is not None:
+            query_parameters['Tail'] = self._serialize.query("tail", tail, 'str')
+        if previous is not None:
+            query_parameters['Previous'] = self._serialize.query("previous", previous, 'bool')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerLogs', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_container_logs_deployed_on_node.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs'}
+
+    def invoke_container_api(
+            self, node_name, application_id, service_manifest_name, code_package_name, code_package_instance_id, container_api_request_body, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Invoke container API on a container deployed on a Service Fabric node.
+
+        Invoke container API on a container deployed on a Service Fabric node
+        for the given code package.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param service_manifest_name: The name of a service manifest
+         registered as part of an application type in a Service Fabric cluster.
+        :type service_manifest_name: str
+        :param code_package_name: The name of code package specified in
+         service manifest registered as part of an application type in a
+         Service Fabric cluster.
+        :type code_package_name: str
+        :param code_package_instance_id: ID that uniquely identifies a code
+         package instance deployed on a service fabric node.
+        :type code_package_instance_id: str
+        :param container_api_request_body: Parameters for making container API
+         call
+        :type container_api_request_body:
+         ~azure.servicefabric.models.ContainerApiRequestBody
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ContainerApiResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ContainerApiResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.invoke_container_api.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+        query_parameters['CodePackageInstanceId'] = self._serialize.query("code_package_instance_id", code_package_instance_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(container_api_request_body, 'ContainerApiRequestBody')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerApiResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    invoke_container_api.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerApi'}
+
+    def create_compose_deployment(
+            self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a Service Fabric compose deployment.
+
+        Compose is a file format that describes multi-container applications.
+        This API allows deploying container based applications defined in
+        compose format in a Service Fabric cluster. Once the deployment is
+        created, its status can be tracked via the `GetComposeDeploymentStatus`
+        API.
+
+        :param create_compose_deployment_description: Describes the compose
+         deployment that needs to be created.
+        :type create_compose_deployment_description:
+         ~azure.servicefabric.models.CreateComposeDeploymentDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0-preview"
+
+        # Construct URL
+        url = self.create_compose_deployment.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7529,12 +9499,11 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(create_compose_application_description, 'CreateComposeApplicationDescription')
+        body_content = self._serialize.body(create_compose_deployment_description, 'CreateComposeDeploymentDescription')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7542,43 +9511,41 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_compose_deployment.metadata = {'url': '/ComposeDeployments/$/Create'}
 
-    def get_compose_application_status(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a Service Fabric compose application.
+    def get_compose_deployment_status(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a Service Fabric compose deployment.
 
-        Returns the status of compose application that was created or in the
+        Returns the status of the compose deployment that was created or in the
         process of being created in the Service Fabric cluster and whose name
         matches the one specified as the parameter. The response includes the
-        name, status and other details about the application.
+        name, status, and other details about the deployment.
 
-        :param application_id: The identity of the application. This is
-         typically the full name of the application without the 'fabric:' URI
-         scheme.
-        :type application_id: str
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ComposeApplicationStatusInfo
-         <azure.servicefabric.models.ComposeApplicationStatusInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ComposeDeploymentStatusInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ComposeDeploymentStatusInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{applicationId}'
+        url = self.get_compose_deployment_status.metadata['url']
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -7590,13 +9557,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7604,65 +9571,65 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ComposeApplicationStatusInfo', response)
+            deserialized = self._deserialize('ComposeDeploymentStatusInfo', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_compose_deployment_status.metadata = {'url': '/ComposeDeployments/{deploymentName}'}
 
-    def get_compose_application_status_list(
+    def get_compose_deployment_status_list(
             self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of compose applications created in the Service Fabric
+        """Gets the list of compose deployments created in the Service Fabric
         cluster.
 
-        Gets the status about the compose applications that were created or in
+        Gets the status about the compose deployments that were created or in
         the process of being created in the Service Fabric cluster. The
-        response includes the name, status and other details about the
-        compose application. If the applications do not fit in a page, one
-        page of results is returned as well as a continuation token which can
-        be used to get the next page.
+        response includes the name, status, and other details about the compose
+        deployments. If the list of deployments do not fit in a page, one page
+        of results is returned as well as a continuation token, which can be
+        used to get the next page.
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param max_results: The maximum number of results to be returned as
          part of the paged queries. This parameter defines the upper bound on
-         the number of results returned. The results returned can be less
-         than the specified maximum results if they do not fit in the message
-         as per the max message size restrictions defined in the
-         configuration. If this parameter is zero or not specified, the paged
-         queries includes as much results as possible that fit in the return
-         message.
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PagedComposeApplicationStatusInfoList
-         <azure.servicefabric.models.PagedComposeApplicationStatusInfoList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PagedComposeDeploymentStatusInfoList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.servicefabric.models.PagedComposeDeploymentStatusInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments'
+        url = self.get_compose_deployment_status_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7676,13 +9643,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7690,47 +9657,172 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PagedComposeApplicationStatusInfoList', response)
+            deserialized = self._deserialize('PagedComposeDeploymentStatusInfoList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_compose_deployment_status_list.metadata = {'url': '/ComposeDeployments'}
 
-    def remove_compose_application(
-            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing Service Fabric compose application from cluster.
+    def get_compose_deployment_upgrade_progress(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest upgrade performed on this Service Fabric
+        compose deployment.
 
-        Deletes an existing Service Fabric compose application. An application
-        must be created before it can be deleted.
+        Returns the information about the state of the compose deployment
+        upgrade along with details to aid debugging application health issues.
 
-        :param application_id: The identity of the application. This is
-         typically the full name of the application without the 'fabric:' URI
-         scheme.
-        :type application_id: str
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ComposeDeploymentUpgradeProgressInfo or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "4.0-preview"
+        api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{applicationId}/$/Delete'
+        url = self.get_compose_deployment_upgrade_progress.metadata['url']
         path_format_arguments = {
-            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ComposeDeploymentUpgradeProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_compose_deployment_upgrade_progress.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress'}
+
+    def remove_compose_deployment(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing Service Fabric compose deployment from cluster.
+
+        Deletes an existing Service Fabric compose deployment.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0-preview"
+
+        # Construct URL
+        url = self.remove_compose_deployment.metadata['url']
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_compose_deployment.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Delete'}
+
+    def start_compose_deployment_upgrade(
+            self, deployment_name, compose_deployment_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Starts upgrading a compose deployment in the Service Fabric cluster.
+
+        Validates the supplied upgrade parameters and starts upgrading the
+        deployment if the parameters are valid.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param compose_deployment_upgrade_description: Parameters for
+         upgrading compose deployment.
+        :type compose_deployment_upgrade_description:
+         ~azure.servicefabric.models.ComposeDeploymentUpgradeDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0-preview"
+
+        # Construct URL
+        url = self.start_compose_deployment_upgrade.metadata['url']
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -7746,9 +9838,12 @@ class ServiceFabricClientAPIs(object):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(compose_deployment_upgrade_description, 'ComposeDeploymentUpgradeDescription')
+
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7756,6 +9851,123 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Upgrade'}
+
+    def start_rollback_compose_deployment_upgrade(
+            self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Starts rolling back a compose deployment upgrade in the Service Fabric
+        cluster.
+
+        Rollback a service fabric compose deployment upgrade.
+
+        :param deployment_name: The identity of the deployment.
+        :type deployment_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4-preview"
+
+        # Construct URL
+        url = self.start_rollback_compose_deployment_upgrade.metadata['url']
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    start_rollback_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/RollbackUpgrade'}
+
+    def get_chaos(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the status of Chaos.
+
+        Get the status of Chaos indicating whether or not Chaos is running, the
+        Chaos parameters used for running Chaos and the status of the Chaos
+        Schedule.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Chaos or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.Chaos or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.get_chaos.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Chaos', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_chaos.metadata = {'url': '/Tools/Chaos'}
 
     def start_chaos(
             self, chaos_parameters, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7763,37 +9975,34 @@ class ServiceFabricClientAPIs(object):
 
         If Chaos is not already running in the cluster, it starts Chaos with
         the passed in Chaos parameters.
-        If Chaos is already running when this call is made, the call fails
-        with the error code FABRIC_E_CHAOS_ALREADY_RUNNING.
-        Please refer to the article [Induce controlled Chaos in Service Fabric
-        clusters](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-controlled-chaos)
+        If Chaos is already running when this call is made, the call fails with
+        the error code FABRIC_E_CHAOS_ALREADY_RUNNING.
+        Refer to the article [Induce controlled Chaos in Service Fabric
+        clusters](https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos)
         for more details.
-        .
 
         :param chaos_parameters: Describes all the parameters to configure a
          Chaos run.
-        :type chaos_parameters: :class:`ChaosParameters
-         <azure.servicefabric.models.ChaosParameters>`
+        :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Start'
+        url = self.start_chaos.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7811,9 +10020,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(chaos_parameters, 'ChaosParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7821,35 +10029,39 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_chaos.metadata = {'url': '/Tools/Chaos/$/Start'}
 
     def stop_chaos(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Stops Chaos in the cluster if it is already running, otherwise it does
-        nothing.
+        """Stops Chaos if it is running in the cluster and put the Chaos Schedule
+        in a stopped state.
 
-        Stops Chaos from scheduling further faults; but, the in-flight faults
-        are not affected.
+        Stops Chaos from executing new faults. In-flight faults will continue
+        to execute until they are complete. The current Chaos Schedule is put
+        into a stopped state.
+        Once a schedule is stopped, it will stay in the stopped state and not
+        be used to Chaos Schedule new runs of Chaos. A new Chaos Schedule must
+        be set in order to resume scheduling.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Stop'
+        url = self.stop_chaos.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7859,13 +10071,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7873,58 +10084,71 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    stop_chaos.metadata = {'url': '/Tools/Chaos/$/Stop'}
 
-    def get_chaos_report(
-            self, continuation_token=None, start_time_utc=None, end_time_utc=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the next segment of the Chaos report based on the passed-in
-        continuation token or the passed-in time-range.
+    def get_chaos_events(
+            self, continuation_token=None, start_time_utc=None, end_time_utc=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the next segment of the Chaos events based on the continuation
+        token or the time range.
 
-        You can either specify the ContinuationTokenOptionalQueryParam to get
-        the next segment of the Chaos report or you can specify the time-range
-        through StartTimeUtcOptionalQueryParam and
-        EndTimeUtcOptionalQueryParam, but you cannot specify both the
-        ContinuationTokenOptionalQueryParam and the time-range at the same
-        time.
-        When the Chaos report contains more than 100 Chaos events, the Chaos
-        report is returned in segments where a segment contains no more than
-        100 Chaos events.
-        .
+        To get the next segment of the Chaos events, you can specify the
+        ContinuationToken. To get the start of a new segment of Chaos events,
+        you can specify the time range
+        through StartTimeUtc and EndTimeUtc. You cannot specify both the
+        ContinuationToken and the time range in the same call.
+        When there are more than 100 Chaos events, the Chaos events are
+        returned in multiple segments where a segment contains no more than 100
+        Chaos events and to get the next segment you make a call to this API
+        with the continuation token.
 
-        :param continuation_token: The continuation token parameter is used
-         to obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from
-         the system do not fit in a single response. When this value is
-         passed to the next API call, the API returns next set of results. If
-         there are no further results then the continuation token does not
-         contain a value. The value of this parameter should not be URL
-         encoded.
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
-        :param start_time_utc: Start of the time range for which a Chaos
-         report is to be generated.
+        :param start_time_utc: The Windows file time representing the start
+         time of the time range for which a Chaos report is to be generated.
+         Consult [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         for details.
         :type start_time_utc: str
-        :param end_time_utc: End of the time range for which a Chaos report
-         is to be generated.
+        :param end_time_utc: The Windows file time representing the end time
+         of the time range for which a Chaos report is to be generated. Consult
+         [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         for details.
         :type end_time_utc: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ChaosReport <azure.servicefabric.models.ChaosReport>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ChaosEventsSegment or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ChaosEventsSegment or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Report'
+        url = self.get_chaos_events.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7935,18 +10159,20 @@ class ServiceFabricClientAPIs(object):
             query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
         if end_time_utc is not None:
             query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7954,50 +10180,112 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChaosReport', response)
+            deserialized = self._deserialize('ChaosEventsSegment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_chaos_events.metadata = {'url': '/Tools/Chaos/Events'}
 
-    def upload_file(
-            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Uploads contents of the file to the image store.
+    def get_chaos_schedule(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the Chaos Schedule defining when and how to run Chaos.
 
-        Uploads contents of the file to the image store. Use this API if the
-        file is small enough to upload again if the connection fails. The
-        file's data needs to be added to the request body. The contents will
-        be uploaded to the specified path.
+        Gets the version of the Chaos Schedule in use and the Chaos Schedule
+        that defines when and how to run Chaos.
 
-        :param content_path: Relative path to file or folder in the image
-         store from its root.
-        :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ChaosScheduleDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ChaosScheduleDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
-        path_format_arguments = {
-            'contentPath': self._serialize.url("content_path", content_path, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.get_chaos_schedule.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ChaosScheduleDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
+
+    def post_chaos_schedule(
+            self, timeout=60, version=None, schedule=None, custom_headers=None, raw=False, **operation_config):
+        """Set the schedule used by Chaos.
+
+        Chaos will automatically schedule runs based on the Chaos Schedule.
+        The Chaos Schedule will be updated if the provided version matches the
+        version on the server.
+        When updating the Chaos Schedule, the version on the server is
+        incremented by 1.
+        The version on the server will wrap back to 0 after reaching a large
+        number.
+        If Chaos is running when this call is made, the call will fail.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param version: The version number of the Schedule.
+        :type version: int
+        :param schedule: Defines the schedule used by Chaos.
+        :type schedule: ~azure.servicefabric.models.ChaosSchedule
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        chaos_schedule = models.ChaosScheduleDescription(version=version, schedule=schedule)
+
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.post_chaos_schedule.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -8011,9 +10299,12 @@ class ServiceFabricClientAPIs(object):
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        body_content = self._serialize.body(chaos_schedule, 'ChaosScheduleDescription')
+
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8021,38 +10312,46 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    post_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
 
-    def get_image_store_content(
+    def upload_file(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the image store content information.
+        """Uploads contents of the file to the image store.
 
-        Returns the information about the image store content at the specified
-        contentPath relative to the root of the image store.
+        Uploads contents of the file to the image store. Use this API if the
+        file is small enough to upload again if the connection fails. The
+        file's data needs to be added to the request body. The contents will be
+        uploaded to the specified path. Image store service uses a mark file to
+        indicate the availability of the folder. The mark file is an empty file
+        named "_.dir". The mark file is generated by the image store service
+        when all files in a folder are uploaded. When using File-by-File
+        approach to upload application package in REST, the image store service
+        isn't aware of the file hierarchy of the application package; you need
+        to create a mark file per folder and upload it last, to let the image
+        store service know that the folder is complete.
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
+        url = self.upload_file.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -8066,13 +10365,72 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    upload_file.metadata = {'url': '/ImageStore/{contentPath}'}
+
+    def get_image_store_content(
+            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the image store content information.
+
+        Returns the information about the image store content at the specified
+        contentPath. The contentPath is relative to the root of the image
+        store.
+
+        :param content_path: Relative path to file or folder in the image
+         store from its root.
+        :type content_path: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ImageStoreContent or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ImageStoreContent or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.get_image_store_content.metadata['url']
+        path_format_arguments = {
+            'contentPath': self._serialize.url("content_path", content_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8087,38 +10445,38 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
     def delete_image_store_content(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes existing image store content.
 
-        Deletes existing image store content being found within the given
-        image store relative path. This can be used to delete uploaded
+        Deletes existing image store content being found within the given image
+        store relative path. This command can be used to delete uploaded
         application packages once they are provisioned.
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
+        url = self.delete_image_store_content.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -8132,13 +10490,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8146,6 +10503,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
     def get_image_store_root_content(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8155,26 +10513,25 @@ class ServiceFabricClientAPIs(object):
         the image store.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ImageStoreContent or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ImageStoreContent or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore'
+        url = self.get_image_store_root_content.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -8184,13 +10541,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8205,6 +10562,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_root_content.metadata = {'url': '/ImageStore'}
 
     def copy_image_store_content(
             self, image_store_copy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8215,28 +10573,27 @@ class ServiceFabricClientAPIs(object):
 
         :param image_store_copy_description: Describes the copy description
          for the image store.
-        :type image_store_copy_description: :class:`ImageStoreCopyDescription
-         <azure.servicefabric.models.ImageStoreCopyDescription>`
+        :type image_store_copy_description:
+         ~azure.servicefabric.models.ImageStoreCopyDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/$/Copy'
+        url = self.copy_image_store_content.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -8254,9 +10611,8 @@ class ServiceFabricClientAPIs(object):
         body_content = self._serialize.body(image_store_copy_description, 'ImageStoreCopyDescription')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8264,9 +10620,332 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    copy_image_store_content.metadata = {'url': '/ImageStore/$/Copy'}
+
+    def delete_image_store_upload_session(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Cancels an image store upload session.
+
+        The DELETE request will cause the existing upload session to expire and
+        remove any previously uploaded file chunks.
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.delete_image_store_upload_session.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_image_store_upload_session.metadata = {'url': '/ImageStore/$/DeleteUploadSession'}
+
+    def commit_image_store_upload_session(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Commit an image store upload session.
+
+        When all file chunks have been uploaded, the upload session needs to be
+        committed explicitly to complete the upload. Image store preserves the
+        upload session until the expiration time, which is 30 minutes after the
+        last chunk received. .
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.commit_image_store_upload_session.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    commit_image_store_upload_session.metadata = {'url': '/ImageStore/$/CommitUploadSession'}
+
+    def get_image_store_upload_session_by_id(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the image store upload session by ID.
+
+        Gets the image store upload session identified by the given ID. User
+        can query the upload session at any time during uploading. .
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UploadSession or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.UploadSession or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_image_store_upload_session_by_id.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UploadSession', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_image_store_upload_session_by_id.metadata = {'url': '/ImageStore/$/GetUploadSession'}
+
+    def get_image_store_upload_session_by_path(
+            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the image store upload session by relative path.
+
+        Gets the image store upload session associated with the given image
+        store relative path. User can query the upload session at any time
+        during uploading. .
+
+        :param content_path: Relative path to file or folder in the image
+         store from its root.
+        :type content_path: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UploadSession or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.UploadSession or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_image_store_upload_session_by_path.metadata['url']
+        path_format_arguments = {
+            'contentPath': self._serialize.url("content_path", content_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UploadSession', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_image_store_upload_session_by_path.metadata = {'url': '/ImageStore/{contentPath}/$/GetUploadSession'}
+
+    def upload_file_chunk(
+            self, content_path, session_id, content_range, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Uploads a file chunk to the image store relative path.
+
+        Uploads a file chunk to the image store with the specified upload
+        session ID and image store relative path. This API allows user to
+        resume the file upload operation. user doesn't have to restart the file
+        upload from scratch whenever there is a network interruption. Use this
+        option if the file size is large.
+        To perform a resumable file upload, user need to break the file into
+        multiple chunks and upload these chunks to the image store one-by-one.
+        Chunks don't have to be uploaded in order. If the file represented by
+        the image store relative path already exists, it will be overwritten
+        when the upload session commits.
+
+        :param content_path: Relative path to file or folder in the image
+         store from its root.
+        :type content_path: str
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param content_range: When uploading file chunks to the image store,
+         the Content-Range header field need to be configured and sent with a
+         request. The format should looks like "bytes
+         {First-Byte-Position}-{Last-Byte-Position}/{File-Length}". For
+         example, Content-Range:bytes 300-5000/20000 indicates that user is
+         sending bytes 300 through 5,000 and the total file length is 20,000
+         bytes.
+        :type content_range: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.upload_file_chunk.metadata['url']
+        path_format_arguments = {
+            'contentPath': self._serialize.url("content_path", content_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Content-Range'] = self._serialize.header("content_range", content_range, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    upload_file_chunk.metadata = {'url': '/ImageStore/{contentPath}/$/UploadChunk'}
 
     def invoke_infrastructure_command(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Invokes an administrative command on the given Infrastructure Service
         instance.
 
@@ -8280,41 +10959,34 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
         :type command: str
-        :param service_id: The identity of the infrastructure service. This
-         is  the full name of the infrastructure service without the
-         'fabric:' URI scheme. This parameter required only for the cluster
-         that have more than one instance of infrastructure service running.
+        :param service_id: The identity of the infrastructure service. This is
+         the full name of the infrastructure service without the 'fabric:' URI
+         scheme. This parameter required only for the cluster that has more
+         than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/InvokeInfrastructureCommand'
+        url = self.invoke_infrastructure_command.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -8327,13 +10999,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8341,18 +11013,18 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    invoke_infrastructure_command.metadata = {'url': '/$/InvokeInfrastructureCommand'}
 
     def invoke_infrastructure_query(
-            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Invokes a read-only query on the given infrastructure service
-        instance.
+            self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Invokes a read-only query on the given infrastructure service instance.
 
         For clusters that have one or more instances of the Infrastructure
         Service configured,
@@ -8364,41 +11036,34 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
         :type command: str
-        :param service_id: The identity of the infrastructure service. This
-         is  the full name of the infrastructure service without the
-         'fabric:' URI scheme. This parameter required only for the cluster
-         that have more than one instance of infrastructure service running.
+        :param service_id: The identity of the infrastructure service. This is
+         the full name of the infrastructure service without the 'fabric:' URI
+         scheme. This parameter required only for the cluster that has more
+         than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/$/InvokeInfrastructureQuery'
+        url = self.invoke_infrastructure_query.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -8411,13 +11076,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8425,13 +11090,14 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    invoke_infrastructure_query.metadata = {'url': '/$/InvokeInfrastructureQuery'}
 
     def start_data_loss(
             self, service_id, partition_id, operation_id, data_loss_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8440,11 +11106,11 @@ class ServiceFabricClientAPIs(object):
 
         This API will induce data loss for the specified partition. It will
         trigger a call to the OnDataLoss API of the partition.
-        Actual data loss will depend on the specified DataLossMode
-        PartialDataLoss - Only a quorum of replicas are removed and OnDataLoss
-        is triggered for the partition but actual data loss depends on the
-        presence of in-flight replication.
-        FullDataLoss - All replicas are removed hence all data is lost and
+        Actual data loss will depend on the specified DataLossMode.
+        - PartialDataLoss - Only a quorum of replicas are removed and
+        OnDataLoss is triggered for the partition but actual data loss depends
+        on the presence of in-flight replication.
+        - FullDataLoss - All replicas are removed hence all data is lost and
         OnDataLoss is triggered.
         This API should only be called with a stateful service as the target.
         Calling this API with a system service as the target is not advised.
@@ -8455,47 +11121,43 @@ class ServiceFabricClientAPIs(object):
         cause data loss.
         Call the GetDataLossProgress API with the same OperationId to return
         information on the operation started with this API.
-        .
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param data_loss_mode: This enum is passed to the StartDataLoss API
-         to indicate what type of data loss to induce.
-         - Invalid - Reserved.  Do not pass into API.
-         - PartialDataLoss - PartialDataLoss option will cause a quorum of
-         replicas to go down, triggering an OnDataLoss event in the system
-         for the given partition.
-         - FullDataLoss - FullDataLoss option will drop all the replicas which
-         means that all the data will be lost.
-         . Possible values include: 'Invalid', 'PartialDataLoss',
-         'FullDataLoss'
-        :type data_loss_mode: str
+        :param data_loss_mode: This enum is passed to the StartDataLoss API to
+         indicate what type of data loss to induce. Possible values include:
+         'Invalid', 'PartialDataLoss', 'FullDataLoss'
+        :type data_loss_mode: str or ~azure.servicefabric.models.DataLossMode
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'
+        url = self.start_data_loss.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8512,13 +11174,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8526,6 +11187,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_data_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'}
 
     def get_data_loss_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8534,10 +11196,14 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a data loss operation started with StartDataLoss,
         using the OperationId.
-        .
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8545,26 +11211,25 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionDataLossProgress
-         <azure.servicefabric.models.PartitionDataLossProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionDataLossProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionDataLossProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'
+        url = self.get_data_loss_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8580,13 +11245,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8601,22 +11266,27 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_data_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'}
 
     def start_quorum_loss(
             self, service_id, partition_id, operation_id, quorum_loss_mode, quorum_loss_duration, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Induces quorum loss for a given stateful service partition.
 
-        Induces quorum loss for a given stateful service partition.  This API
-        is useful for a temporary quorum loss situation on your service.
+        This API is useful for a temporary quorum loss situation on your
+        service.
         Call the GetQuorumLossProgress API with the same OperationId to return
         information on the operation started with this API.
-        This can only be called on stateful persisted
-        (HasPersistedState==true) services.  Do not use this API on stateless
-        services or stateful in-memory only services.
-        .
+        This can only be called on stateful persisted (HasPersistedState==true)
+        services.  Do not use this API on stateless services or stateful
+        in-memory only services.
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8624,38 +11294,33 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param quorum_loss_mode: This enum is passed to the StartQuorumLoss
-         API to indicate what type of quorum loss to induce.
-         - Invalid - Reserved.  Do not pass into API.
-         - QuorumReplicas - Partial Quorum loss mode : Minimum number of
-         replicas for a partition will be down that will cause a quorum loss.
-         - AllReplicas- Full Quorum loss mode : All replicas for a partition
-         will be down that will cause a quorum loss.
-         . Possible values include: 'Invalid', 'QuorumReplicas', 'AllReplicas'
-        :type quorum_loss_mode: str
+         API to indicate what type of quorum loss to induce. Possible values
+         include: 'Invalid', 'QuorumReplicas', 'AllReplicas'
+        :type quorum_loss_mode: str or
+         ~azure.servicefabric.models.QuorumLossMode
         :param quorum_loss_duration: The amount of time for which the
          partition will be kept in quorum loss.  This must be specified in
          seconds.
         :type quorum_loss_duration: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'
+        url = self.start_quorum_loss.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8673,13 +11338,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8687,6 +11351,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_quorum_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'}
 
     def get_quorum_loss_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8695,10 +11360,14 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a quorum loss operation started with
         StartQuorumLoss, using the provided OperationId.
-        .
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8706,26 +11375,25 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionQuorumLossProgress
-         <azure.servicefabric.models.PartitionQuorumLossProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionQuorumLossProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionQuorumLossProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'
+        url = self.get_quorum_loss_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8741,13 +11409,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8762,6 +11430,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_quorum_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'}
 
     def start_partition_restart(
             self, service_id, partition_id, operation_id, restart_partition_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8773,44 +11442,44 @@ class ServiceFabricClientAPIs(object):
         must be AllReplicasOrInstances.
         Call the GetPartitionRestartProgress API using the same OperationId to
         get the progress.
-        .
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param restart_partition_mode: - Invalid - Reserved.  Do not pass
-         into API.
-         - AllReplicasOrInstances - All replicas or instances in the partition
-         are restarted at once.
-         - OnlyActiveSecondaries - Only the secondary replicas are restarted.
-         . Possible values include: 'Invalid', 'AllReplicasOrInstances',
+        :param restart_partition_mode: Describe which partitions to restart.
+         Possible values include: 'Invalid', 'AllReplicasOrInstances',
          'OnlyActiveSecondaries'
-        :type restart_partition_mode: str
+        :type restart_partition_mode: str or
+         ~azure.servicefabric.models.RestartPartitionMode
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'
+        url = self.start_partition_restart.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8827,13 +11496,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8841,6 +11509,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_partition_restart.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'}
 
     def get_partition_restart_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8849,10 +11518,14 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a PartitionRestart started with
         StartPartitionRestart using the provided OperationId.
-        .
 
-        :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme.
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8860,26 +11533,25 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PartitionRestartProgress
-         <azure.servicefabric.models.PartitionRestartProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PartitionRestartProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionRestartProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'
+        url = self.get_partition_restart_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8895,13 +11567,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8916,6 +11588,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_restart_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'}
 
     def start_node_transition(
             self, node_name, operation_id, node_transition_type, node_instance_id, stop_duration_in_seconds, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8925,11 +11598,10 @@ class ServiceFabricClientAPIs(object):
         OS instance itself.  To start a node, pass in "Start" for the
         NodeTransitionType parameter.
         To stop a node, pass in "Stop" for the NodeTransitionType parameter.
-        This API starts the operation - when the API returns the node may
-        not have finished transitioning yet.
+        This API starts the operation - when the API returns the node may not
+        have finished transitioning yet.
         Call GetNodeTransitionProgress with the same OperationId to get the
         progress of the operation.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8938,39 +11610,36 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param node_transition_type: Indicates the type of transition to
          perform.  NodeTransitionType.Start will start a stopped node.
-         NodeTransitionType.Stop will stop a node that is up.
-         - Invalid - Reserved.  Do not pass into API.
-         - Start - Transition a stopped node to up.
-         - Stop - Transition an up node to stopped.
-         . Possible values include: 'Invalid', 'Start', 'Stop'
-        :type node_transition_type: str
+         NodeTransitionType.Stop will stop a node that is up. Possible values
+         include: 'Invalid', 'Start', 'Stop'
+        :type node_transition_type: str or
+         ~azure.servicefabric.models.NodeTransitionType
         :param node_instance_id: The node instance ID of the target node.
          This can be determined through GetNodeInfo API.
         :type node_instance_id: str
-        :param stop_duration_in_seconds: The duration, in seconds, to keep
-         the node stopped.  The minimum value is 600, the maximum is 14400.
-         After this time expires, the node will automatically come back up.
+        :param stop_duration_in_seconds: The duration, in seconds, to keep the
+         node stopped.  The minimum value is 600, the maximum is 14400.  After
+         this time expires, the node will automatically come back up.
         :type stop_duration_in_seconds: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Nodes/{nodeName}/$/StartTransition/'
+        url = self.start_node_transition.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -8988,13 +11657,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9002,6 +11670,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_node_transition.metadata = {'url': '/Faults/Nodes/{nodeName}/$/StartTransition/'}
 
     def get_node_transition_progress(
             self, node_name, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9009,7 +11678,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of an operation started with StartNodeTransition
         using the provided OperationId.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -9017,26 +11685,25 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeTransitionProgress
-         <azure.servicefabric.models.NodeTransitionProgress>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NodeTransitionProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeTransitionProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'
+        url = self.get_node_transition_progress.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -9051,13 +11718,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9072,54 +11739,54 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_transition_progress.metadata = {'url': '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'}
 
     def get_fault_operation_list(
             self, type_filter=65535, state_filter=65535, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets a list of user-induced fault operations filtered by provided
         input.
 
-        Gets the a list of user-induced fault operations filtered by provided
+        Gets the list of user-induced fault operations filtered by provided
         input.
 
         :param type_filter: Used to filter on OperationType for user-induced
          operations.
-         65535 - select all
-         1     - select PartitionDataLoss.
-         2     - select PartitionQuorumLoss.
-         4     - select PartitionRestart.
-         8     - select NodeTransition.
+         - 65535 - select all
+         - 1 - select PartitionDataLoss.
+         - 2 - select PartitionQuorumLoss.
+         - 4 - select PartitionRestart.
+         - 8 - select NodeTransition.
         :type type_filter: int
         :param state_filter: Used to filter on OperationState's for
          user-induced operations.
-         65535 - select All
-         1     - select Running
-         2     - select RollingBack
-         8     - select Completed
-         16    - select Faulted
-         32    - select Cancelled
-         64    - select ForceCancelled
+         - 65535 - select All
+         - 1 - select Running
+         - 2 - select RollingBack
+         - 8 - select Completed
+         - 16 - select Faulted
+         - 32 - select Cancelled
+         - 64 - select ForceCancelled
         :type state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`OperationStatus
-         <azure.servicefabric.models.OperationStatus>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.OperationStatus] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/'
+        url = self.get_fault_operation_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9131,13 +11798,13 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9152,28 +11819,26 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_fault_operation_list.metadata = {'url': '/Faults/'}
 
     def cancel_operation(
             self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Cancels a user-induced fault operation.
 
-        The following is a list of APIs that start fault operations that may
-        be cancelled using CancelOperation -
-        - StartDataLoss
-        - StartQuorumLoss
-        - StartPartitionRestart
-        - StartNodeTransition
+        The following APIs start fault operations that may be cancelled by
+        using CancelOperation: StartDataLoss, StartQuorumLoss,
+        StartPartitionRestart, StartNodeTransition.
         If force is false, then the specified user-induced operation will be
-        gracefully stopped and cleaned up.  If force is true, the command
-        will be aborted, and some internal state
-        may be left behind.  Specifying force as true should be used with
-        care.  Calling this API with force set to true is not allowed until
-        this API has already
+        gracefully stopped and cleaned up.  If force is true, the command will
+        be aborted, and some internal state
+        may be left behind.  Specifying force as true should be used with care.
+        Calling this API with force set to true is not allowed until this API
+        has already
         been called on the same test command with force set to false first, or
         unless the test command already has an OperationState of
         OperationState.RollingBack.
-        Clarification: OperationState.RollingBack means that the system
-        will/is be cleaning up internal system state caused by executing the
+        Clarification: OperationState.RollingBack means that the system will
+        be/is cleaning up internal system state caused by executing the
         command.  It will not restore data if the
         test command was to cause data loss.  For example, if you call
         StartDataLoss then call this API, the system will only clean up
@@ -9182,35 +11847,33 @@ class ServiceFabricClientAPIs(object):
         progressed far enough to cause data loss.
         Important note:  if this API is invoked with force==true, internal
         state may be left behind.
-        .
 
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param force: Indicates whether to gracefully rollback and clean up
+        :param force: Indicates whether to gracefully roll back and clean up
          internal system state modified by executing the user-induced
          operation.
         :type force: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value
-         for this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "3.0"
+        api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/$/Cancel'
+        url = self.cancel_operation.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9222,13 +11885,12 @@ class ServiceFabricClientAPIs(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9236,3 +11898,3929 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    cancel_operation.metadata = {'url': '/Faults/$/Cancel'}
+
+    def create_backup_policy(
+            self, backup_policy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a backup policy.
+
+        Creates a backup policy which can be associated later with a Service
+        Fabric application, service or a partition for periodic backup.
+
+        :param backup_policy_description: Describes the backup policy.
+        :type backup_policy_description:
+         ~azure.servicefabric.models.BackupPolicyDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.create_backup_policy.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    create_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/$/Create'}
+
+    def delete_backup_policy(
+            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes the backup policy.
+
+        Deletes an existing backup policy. A backup policy must be created
+        before it can be deleted. A currently active backup policy, associated
+        with any Service Fabric application, service or partition, cannot be
+        deleted without first deleting the mapping.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.delete_backup_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Delete'}
+
+    def get_backup_policy_list(
+            self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets all the backup policies configured.
+
+        Get a list of all the backup policies configured.
+
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupPolicyDescriptionList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupPolicyDescriptionList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_backup_policy_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupPolicyDescriptionList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backup_policy_list.metadata = {'url': '/BackupRestore/BackupPolicies'}
+
+    def get_backup_policy_by_name(
+            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets a particular backup policy by name.
+
+        Gets a particular backup policy identified by {backupPolicyName}.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupPolicyDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.BackupPolicyDescription or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_backup_policy_by_name.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupPolicyDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backup_policy_by_name.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}'}
+
+    def get_all_entities_backed_up_by_policy(
+            self, backup_policy_name, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backup entities that are associated with this policy.
+
+        Returns a list of Service Fabric application, service or partition
+        which are associated with this backup policy.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupEntityList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupEntityList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_all_entities_backed_up_by_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupEntityList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_all_entities_backed_up_by_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/GetBackupEnabledEntities'}
+
+    def update_backup_policy(
+            self, backup_policy_description, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Updates the backup policy.
+
+        Updates the backup policy identified by {backupPolicyName}.
+
+        :param backup_policy_description: Describes the backup policy.
+        :type backup_policy_description:
+         ~azure.servicefabric.models.BackupPolicyDescription
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.update_backup_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Update'}
+
+    def enable_application_backup(
+            self, application_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of stateful partitions under this Service
+        Fabric application.
+
+        Enables periodic backup of stateful partitions which are part of this
+        Service Fabric application. Each partition is backed up individually as
+        per the specified backup policy description.
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.enable_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/EnableBackup'}
+
+    def disable_application_backup(
+            self, application_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric application.
+
+        Disables periodic backup of Service Fabric application which was
+        previously enabled.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.disable_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/DisableBackup'}
+
+    def get_application_backup_configuration_info(
+            self, application_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the Service Fabric application backup configuration information.
+
+        Gets the Service Fabric backup configuration information for the
+        application and the services and partitions under this application.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupConfigurationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupConfigurationInfoList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_application_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_backup_configuration_info.metadata = {'url': '/Applications/{applicationId}/$/GetBackupConfigurationInfo'}
+
+    def get_application_backup_list(
+            self, application_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for every partition in this
+        application.
+
+        Returns a list of backups available for every partition in this Service
+        Fabric application. The server enumerates all the backups available at
+        the backup location configured in the backup policy. It also allows
+        filtering of the result based on start and end datetime or just
+        fetching the latest available backup for every partition.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_application_backup_list.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_backup_list.metadata = {'url': '/Applications/{applicationId}/$/GetBackups'}
+
+    def suspend_application_backup(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified Service Fabric application.
+
+        The application which is configured to take periodic backups, is
+        suspended for taking further backups till it is resumed again. This
+        operation applies to the entire application's hierarchy. It means all
+        the services and partitions under this application are now suspended
+        for backup.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.suspend_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_application_backup.metadata = {'url': '/Applications/{applicationId}/$/SuspendBackup'}
+
+    def resume_application_backup(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of a Service Fabric application which was
+        previously suspended.
+
+        The previously suspended Service Fabric application resumes taking
+        periodic backup as per the backup policy currently configured for the
+        same.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.resume_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_application_backup.metadata = {'url': '/Applications/{applicationId}/$/ResumeBackup'}
+
+    def enable_service_backup(
+            self, service_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of stateful partitions under this Service
+        Fabric service.
+
+        Enables periodic backup of stateful partitions which are part of this
+        Service Fabric service. Each partition is backed up individually as per
+        the specified backup policy description. In case the application, which
+        the service is part of, is already enabled for backup then this
+        operation would override the policy being used to take the periodic
+        backup for this service and its partitions (unless explicitly
+        overridden at the partition level).
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.enable_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_service_backup.metadata = {'url': '/Services/{serviceId}/$/EnableBackup'}
+
+    def disable_service_backup(
+            self, service_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric service which was previously
+        enabled.
+
+        Disables periodic backup of Service Fabric service which was previously
+        enabled. Backup must be explicitly enabled before it can be disabled.
+        In case the backup is enabled for the Service Fabric application, which
+        this service is part of, this service would continue to be periodically
+        backed up as per the policy mapped at the application level.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.disable_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_service_backup.metadata = {'url': '/Services/{serviceId}/$/DisableBackup'}
+
+    def get_service_backup_configuration_info(
+            self, service_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the Service Fabric service backup configuration information.
+
+        Gets the Service Fabric backup configuration information for the
+        service and the partitions under this service.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupConfigurationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupConfigurationInfoList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_service_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_backup_configuration_info.metadata = {'url': '/Services/{serviceId}/$/GetBackupConfigurationInfo'}
+
+    def get_service_backup_list(
+            self, service_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for every partition in this service.
+
+        Returns a list of backups available for every partition in this Service
+        Fabric service. The server enumerates all the backups available in the
+        backup store configured in the backup policy. It also allows filtering
+        of the result based on start and end datetime or just fetching the
+        latest available backup for every partition.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_service_backup_list.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_backup_list.metadata = {'url': '/Services/{serviceId}/$/GetBackups'}
+
+    def suspend_service_backup(
+            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified Service Fabric service.
+
+        The service which is configured to take periodic backups, is suspended
+        for taking further backups till it is resumed again. This operation
+        applies to the entire service's hierarchy. It means all the partitions
+        under this service are now suspended for backup.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.suspend_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_service_backup.metadata = {'url': '/Services/{serviceId}/$/SuspendBackup'}
+
+    def resume_service_backup(
+            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of a Service Fabric service which was
+        previously suspended.
+
+        The previously suspended Service Fabric service resumes taking periodic
+        backup as per the backup policy currently configured for the same.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.resume_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_service_backup.metadata = {'url': '/Services/{serviceId}/$/ResumeBackup'}
+
+    def enable_partition_backup(
+            self, partition_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of the stateful persisted partition.
+
+        Enables periodic backup of stateful persisted partition. Each partition
+        is backed up as per the specified backup policy description. In case
+        the application or service, which is partition is part of, is already
+        enabled for backup then this operation would override the policy being
+        used to take the periodic backup of this partition.
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.enable_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/EnableBackup'}
+
+    def disable_partition_backup(
+            self, partition_id, clean_backup, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric partition which was
+        previously enabled.
+
+        Disables periodic backup of partition which was previously enabled.
+        Backup must be explicitly enabled before it can be disabled.
+        In case the backup is enabled for the Service Fabric application or
+        service, which this partition is part of, this partition would continue
+        to be periodically backed up as per the policy mapped at the higher
+        level entity.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param clean_backup: Boolean flag to delete backups. It can be set to
+         true for deleting all the backups which were created for the backup
+         entity that is getting disabled for backup.
+        :type clean_backup: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        disable_backup_description = None
+        if clean_backup is not None:
+            disable_backup_description = models.DisableBackupDescription(clean_backup=clean_backup)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.disable_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if disable_backup_description is not None:
+            body_content = self._serialize.body(disable_backup_description, 'DisableBackupDescription')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/DisableBackup'}
+
+    def get_partition_backup_configuration_info(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the partition backup configuration information.
+
+        Gets the Service Fabric Backup configuration information for the
+        specified partition.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PartitionBackupConfigurationInfo or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PartitionBackupConfigurationInfo
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PartitionBackupConfigurationInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_configuration_info.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupConfigurationInfo'}
+
+    def get_partition_backup_list(
+            self, partition_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for the specified partition.
+
+        Returns a list of backups available for the specified partition. The
+        server enumerates all the backups available in the backup store
+        configured in the backup policy. It also allows filtering of the result
+        based on start and end datetime or just fetching the latest available
+        backup for the partition.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_backup_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_list.metadata = {'url': '/Partitions/{partitionId}/$/GetBackups'}
+
+    def suspend_partition_backup(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified partition.
+
+        The partition which is configured to take periodic backups, is
+        suspended for taking further backups till it is resumed again.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.suspend_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/SuspendBackup'}
+
+    def resume_partition_backup(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of partition which was previously suspended.
+
+        The previously suspended partition resumes taking periodic backup as
+        per the backup policy currently configured for the same.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.resume_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/ResumeBackup'}
+
+    def backup_partition(
+            self, partition_id, backup_timeout=10, timeout=60, backup_storage=None, custom_headers=None, raw=False, **operation_config):
+        """Triggers backup of the partition's state.
+
+        Creates a backup of the stateful persisted partition's state. In case
+        the partition is already being periodically backed up, then by default
+        the new backup is created at the same backup storage. One can also
+        override the same by specifying the backup storage details as part of
+        the request body. Once the backup is initiated, its progress can be
+        tracked using the GetBackupProgress operation.
+        In case, the operation times out, specify a greater backup timeout
+        value in the query parameter.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param backup_timeout: Specifies the maximum amount of time, in
+         minutes, to wait for the backup operation to complete. Post that, the
+         operation completes with timeout error. However, in certain corner
+         cases it could be that though the operation returns back timeout, the
+         backup actually goes through. In case of timeout error, its
+         recommended to invoke this operation again with a greater timeout
+         value. The default value for the same is 10 minutes.
+        :type backup_timeout: int
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param backup_storage: Specifies the details of the backup storage
+         where to save the backup.
+        :type backup_storage:
+         ~azure.servicefabric.models.BackupStorageDescription
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        backup_partition_description = None
+        if backup_storage is not None:
+            backup_partition_description = models.BackupPartitionDescription(backup_storage=backup_storage)
+
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.backup_partition.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if backup_timeout is not None:
+            query_parameters['BackupTimeout'] = self._serialize.query("backup_timeout", backup_timeout, 'int')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if backup_partition_description is not None:
+            body_content = self._serialize.body(backup_partition_description, 'BackupPartitionDescription')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    backup_partition.metadata = {'url': '/Partitions/{partitionId}/$/Backup'}
+
+    def get_partition_backup_progress(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest backup triggered for this partition.
+
+        Returns information about the state of the latest backup along with
+        details or failure reason in case of completion.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupProgressInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.BackupProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_backup_progress.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupProgress'}
+
+    def restore_partition(
+            self, partition_id, restore_partition_description, restore_timeout=10, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Triggers restore of the state of the partition using the specified
+        restore partition description.
+
+        Restores the state of a of the stateful persisted partition using the
+        specified backup point. In case the partition is already being
+        periodically backed up, then by default the backup point is looked for
+        in the storage specified in backup policy. One can also override the
+        same by specifying the backup storage details as part of the restore
+        partition description in body. Once the restore is initiated, its
+        progress can be tracked using the GetRestoreProgress operation.
+        In case, the operation times out, specify a greater restore timeout
+        value in the query parameter.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param restore_partition_description: Describes the parameters to
+         restore the partition.
+        :type restore_partition_description:
+         ~azure.servicefabric.models.RestorePartitionDescription
+        :param restore_timeout: Specifies the maximum amount of time to wait,
+         in minutes, for the restore operation to complete. Post that, the
+         operation returns back with timeout error. However, in certain corner
+         cases it could be that the restore operation goes through even though
+         it completes with timeout. In case of timeout error, its recommended
+         to invoke this operation again with a greater timeout value. the
+         default value for the same is 10 minutes.
+        :type restore_timeout: int
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.restore_partition.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if restore_timeout is not None:
+            query_parameters['RestoreTimeout'] = self._serialize.query("restore_timeout", restore_timeout, 'int')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(restore_partition_description, 'RestorePartitionDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    restore_partition.metadata = {'url': '/Partitions/{partitionId}/$/Restore'}
+
+    def get_partition_restore_progress(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest restore operation triggered for this
+        partition.
+
+        Returns information about the state of the latest restore operation
+        along with details or failure reason in case of completion.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RestoreProgressInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RestoreProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_restore_progress.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RestoreProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_restore_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetRestoreProgress'}
+
+    def get_backups_from_backup_location(
+            self, get_backup_by_storage_query_description, timeout=60, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for the specified backed up entity
+        at the specified backup location.
+
+        Gets the list of backups available for the specified backed up entity
+        (Application, Service or Partition) at the specified backup location
+        (FileShare or Azure Blob Storage).
+
+        :param get_backup_by_storage_query_description: Describes the filters
+         and backup storage details to be used for enumerating backups.
+        :type get_backup_by_storage_query_description:
+         ~azure.servicefabric.models.GetBackupByStorageQueryDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_backups_from_backup_location.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(get_backup_by_storage_query_description, 'GetBackupByStorageQueryDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backups_from_backup_location.metadata = {'url': '/BackupRestore/$/GetBackups'}
+
+    def create_name(
+            self, name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a Service Fabric name.
+
+        Creates the specified Service Fabric name.
+
+        :param name: The Service Fabric name, including the 'fabric:' URI
+         scheme.
+        :type name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        name_description = models.NameDescription(name=name)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.create_name.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(name_description, 'NameDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    create_name.metadata = {'url': '/Names/$/Create'}
+
+    def get_name_exists_info(
+            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Returns whether the Service Fabric name exists.
+
+        Returns whether the specified Service Fabric name exists.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_name_exists_info.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    get_name_exists_info.metadata = {'url': '/Names/{nameId}'}
+
+    def delete_name(
+            self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Service Fabric name.
+
+        Deletes the specified Service Fabric name. A name must be created
+        before it can be deleted. Deleting a name with child properties will
+        fail.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.delete_name.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_name.metadata = {'url': '/Names/{nameId}'}
+
+    def get_sub_name_info_list(
+            self, name_id, recursive=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enumerates all the Service Fabric names under a given name.
+
+        Enumerates all the Service Fabric names under a given name. If the
+        subnames do not fit in a page, one page of results is returned as well
+        as a continuation token, which can be used to get the next page.
+        Querying a name that doesn't exist will fail.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param recursive: Allows specifying that the search performed should
+         be recursive.
+        :type recursive: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedSubNameInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedSubNameInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_sub_name_info_list.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if recursive is not None:
+            query_parameters['Recursive'] = self._serialize.query("recursive", recursive, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedSubNameInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_sub_name_info_list.metadata = {'url': '/Names/{nameId}/$/GetSubNames'}
+
+    def get_property_info_list(
+            self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets information on all Service Fabric properties under a given name.
+
+        A Service Fabric name can have one or more named properties that store
+        custom information. This operation gets the information about these
+        properties in a paged list. The information includes name, value, and
+        metadata about each of the properties.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param include_values: Allows specifying whether to include the values
+         of the properties returned. True if values should be returned with the
+         metadata; False to return only property metadata.
+        :type include_values: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedPropertyInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedPropertyInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_property_info_list.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if include_values is not None:
+            query_parameters['IncludeValues'] = self._serialize.query("include_values", include_values, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedPropertyInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_property_info_list.metadata = {'url': '/Names/{nameId}/$/GetProperties'}
+
+    def put_property(
+            self, name_id, property_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Service Fabric property.
+
+        Creates or updates the specified Service Fabric property under a given
+        name.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_description: Describes the Service Fabric property to
+         be created.
+        :type property_description:
+         ~azure.servicefabric.models.PropertyDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.put_property.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(property_description, 'PropertyDescription')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    put_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
+
+    def get_property_info(
+            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified Service Fabric property.
+
+        Gets the specified Service Fabric property under a given name. This
+        will always return both value and metadata.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_name: Specifies the name of the property to get.
+        :type property_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PropertyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PropertyInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_property_info.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PropertyInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_property_info.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
+
+    def delete_property(
+            self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified Service Fabric property.
+
+        Deletes the specified Service Fabric property under a given name. A
+        property must be created before it can be deleted.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param property_name: Specifies the name of the property to get.
+        :type property_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.delete_property.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['PropertyName'] = self._serialize.query("property_name", property_name, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
+
+    def submit_property_batch(
+            self, name_id, timeout=60, operations=None, custom_headers=None, raw=False, **operation_config):
+        """Submits a property batch.
+
+        Submits a batch of property operations. Either all or none of the
+        operations will be committed.
+
+        :param name_id: The Service Fabric name, without the 'fabric:' URI
+         scheme.
+        :type name_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param operations: A list of the property batch operations to be
+         executed.
+        :type operations:
+         list[~azure.servicefabric.models.PropertyBatchOperation]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PropertyBatchInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PropertyBatchInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        property_batch_description_list = models.PropertyBatchDescriptionList(operations=operations)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.submit_property_batch.metadata['url']
+        path_format_arguments = {
+            'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(property_batch_description_list, 'PropertyBatchDescriptionList')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 409]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SuccessfulPropertyBatchInfo', response)
+        if response.status_code == 409:
+            deserialized = self._deserialize('FailedPropertyBatchInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    submit_property_batch.metadata = {'url': '/Names/{nameId}/$/GetProperties/$/SubmitBatch'}
+
+    def get_cluster_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Cluster-related events.
+
+        The response is list of ClusterEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ClusterEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_cluster_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ClusterEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_event_list.metadata = {'url': '/EventsStore/Cluster/Events'}
+
+    def get_containers_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Containers-related events.
+
+        The response is list of ContainerInstanceEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ContainerInstanceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_containers_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ContainerInstanceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_containers_event_list.metadata = {'url': '/EventsStore/Containers/Events'}
+
+    def get_node_event_list(
+            self, node_name, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Node-related events.
+
+        The response is list of NodeEvent objects.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.NodeEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_node_event_list.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[NodeEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_node_event_list.metadata = {'url': '/EventsStore/Nodes/{nodeName}/$/Events'}
+
+    def get_nodes_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Nodes-related Events.
+
+        The response is list of NodeEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.NodeEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_nodes_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[NodeEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_nodes_event_list.metadata = {'url': '/EventsStore/Nodes/Events'}
+
+    def get_application_event_list(
+            self, application_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets an Application-related events.
+
+        The response is list of ApplicationEvent objects.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ApplicationEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_application_event_list.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ApplicationEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_event_list.metadata = {'url': '/EventsStore/Applications/{applicationId}/$/Events'}
+
+    def get_applications_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Applications-related events.
+
+        The response is list of ApplicationEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ApplicationEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_applications_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ApplicationEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_applications_event_list.metadata = {'url': '/EventsStore/Applications/Events'}
+
+    def get_service_event_list(
+            self, service_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Service-related events.
+
+        The response is list of ServiceEvent objects.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_service_event_list.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ServiceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_event_list.metadata = {'url': '/EventsStore/Services/{serviceId}/$/Events'}
+
+    def get_services_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Services-related events.
+
+        The response is list of ServiceEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_services_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ServiceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_services_event_list.metadata = {'url': '/EventsStore/Services/Events'}
+
+    def get_partition_event_list(
+            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Partition-related events.
+
+        The response is list of PartitionEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.PartitionEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[PartitionEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Events'}
+
+    def get_partitions_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Partitions-related events.
+
+        The response is list of PartitionEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.PartitionEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partitions_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[PartitionEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partitions_event_list.metadata = {'url': '/EventsStore/Partitions/Events'}
+
+    def get_partition_replica_event_list(
+            self, partition_id, replica_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Partition Replica-related events.
+
+        The response is list of ReplicaEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param replica_id: The identifier of the replica.
+        :type replica_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ReplicaEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_replica_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
+            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ReplicaEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_replica_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/{replicaId}/$/Events'}
+
+    def get_partition_replicas_event_list(
+            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Replicas-related events for a Partition.
+
+        The response is list of ReplicaEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ReplicaEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_partition_replicas_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ReplicaEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_replicas_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/Events'}
+
+    def get_correlated_event_list(
+            self, event_instance_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets all correlated events for a given event.
+
+        The response is list of FabricEvents.
+
+        :param event_instance_id: The EventInstanceId.
+        :type event_instance_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.4"
+
+        # Construct URL
+        url = self.get_correlated_event_list.metadata['url']
+        path_format_arguments = {
+            'eventInstanceId': self._serialize.url("event_instance_id", event_instance_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[FabricEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_correlated_event_list.metadata = {'url': '/EventsStore/CorrelatedEvents/{eventInstanceId}/$/Events'}

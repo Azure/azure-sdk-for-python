@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ExpressRouteCircuitAuthorizationPaged(Paged):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitAuthorization object
+    A paging container for iterating over a list of :class:`ExpressRouteCircuitAuthorization <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitAuthorization>` object
     """
 
     _attribute_map = {

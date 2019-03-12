@@ -20,8 +20,8 @@ class DeploymentOperation(Model):
     :param operation_id: Deployment operation id.
     :type operation_id: str
     :param properties: Deployment properties.
-    :type properties: :class:`DeploymentOperationProperties
-     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperationProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperationProperties
     """
 
     _attribute_map = {
@@ -30,7 +30,8 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, id=None, operation_id=None, properties=None):
-        self.id = id
-        self.operation_id = operation_id
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentOperation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.properties = kwargs.get('properties', None)

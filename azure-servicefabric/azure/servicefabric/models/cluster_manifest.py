@@ -17,11 +17,12 @@ class ClusterManifest(Model):
 
     :param manifest: The contents of the cluster manifest file.
     :type manifest: str
-    """ 
+    """
 
     _attribute_map = {
         'manifest': {'key': 'Manifest', 'type': 'str'},
     }
 
-    def __init__(self, manifest=None):
-        self.manifest = manifest
+    def __init__(self, **kwargs):
+        super(ClusterManifest, self).__init__(**kwargs)
+        self.manifest = kwargs.get('manifest', None)

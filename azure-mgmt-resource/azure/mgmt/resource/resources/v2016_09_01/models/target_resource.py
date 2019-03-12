@@ -29,7 +29,8 @@ class TargetResource(Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, resource_name=None, resource_type=None):
-        self.id = id
-        self.resource_name = resource_name
-        self.resource_type = resource_type
+    def __init__(self, **kwargs):
+        super(TargetResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.resource_name = kwargs.get('resource_name', None)
+        self.resource_type = kwargs.get('resource_type', None)

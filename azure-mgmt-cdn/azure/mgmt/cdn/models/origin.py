@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Origin(Resource):
+class Origin(TrackedResource):
     """CDN origin is the source of the content being delivered via CDN. When the
     edge nodes represented by an endpoint do not have the requested content
     cached, they attempt to fetch it from one or more of the configured
@@ -21,18 +21,20 @@ class Origin(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param host_name: The address of the origin. Domain names, IPv4 addresses,
-     and IPv6 addresses are supported.
+    :type tags: dict[str, str]
+    :param host_name: Required. The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
@@ -41,8 +43,7 @@ class Origin(Resource):
     :type https_port: int
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
-    :vartype resource_state: str or :class:`OriginResourceState
-     <azure.mgmt.cdn.models.OriginResourceState>`
+    :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
     :ivar provisioning_state: Provisioning status of the origin.
     :vartype provisioning_state: str
     """
@@ -72,10 +73,10 @@ class Origin(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, host_name, tags=None, http_port=None, https_port=None):
-        super(Origin, self).__init__(location=location, tags=tags)
-        self.host_name = host_name
-        self.http_port = http_port
-        self.https_port = https_port
+    def __init__(self, **kwargs):
+        super(Origin, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)
+        self.http_port = kwargs.get('http_port', None)
+        self.https_port = kwargs.get('https_port', None)
         self.resource_state = None
         self.provisioning_state = None

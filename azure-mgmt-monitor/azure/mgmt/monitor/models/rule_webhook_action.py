@@ -16,14 +16,16 @@ class RuleWebhookAction(RuleAction):
     """Specifies the action to post to service when the rule condition is
     evaluated. The discriminator is always RuleWebhookAction in this case.
 
-    :param odatatype: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param service_uri: the service uri to Post the notitication when the
+    :param service_uri: the service uri to Post the notification when the
      alert activates or resolves.
     :type service_uri: str
     :param properties: the dictionary of custom properties to include with the
      post operation. These data are appended to the webhook payload.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _validation = {
@@ -36,8 +38,8 @@ class RuleWebhookAction(RuleAction):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, service_uri=None, properties=None):
-        super(RuleWebhookAction, self).__init__()
-        self.service_uri = service_uri
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(RuleWebhookAction, self).__init__(**kwargs)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.properties = kwargs.get('properties', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'

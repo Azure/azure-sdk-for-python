@@ -27,15 +27,14 @@ class ArtifactSource(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param display_name: The artifact source's display name.
     :type display_name: str
     :param uri: The artifact source's URI.
     :type uri: str
     :param source_type: The artifact source's type. Possible values include:
      'VsoGit', 'GitHub'
-    :type source_type: str or :class:`SourceControlType
-     <azure.mgmt.devtestlabs.models.SourceControlType>`
+    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
     :param folder_path: The folder containing artifacts.
     :type folder_path: str
     :param arm_template_folder_path: The folder containing Azure Resource
@@ -48,15 +47,14 @@ class ArtifactSource(Resource):
     :type security_token: str
     :param status: Indicates if the artifact source is enabled (values:
      Enabled, Disabled). Possible values include: 'Enabled', 'Disabled'
-    :type status: str or :class:`EnableStatus
-     <azure.mgmt.devtestlabs.models.EnableStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     :ivar created_date: The artifact source's creation date.
     :vartype created_date: datetime
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -64,6 +62,8 @@ class ArtifactSource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'created_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -85,16 +85,16 @@ class ArtifactSource(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, display_name=None, uri=None, source_type=None, folder_path=None, arm_template_folder_path=None, branch_ref=None, security_token=None, status=None, provisioning_state=None, unique_identifier=None):
-        super(ArtifactSource, self).__init__(location=location, tags=tags)
-        self.display_name = display_name
-        self.uri = uri
-        self.source_type = source_type
-        self.folder_path = folder_path
-        self.arm_template_folder_path = arm_template_folder_path
-        self.branch_ref = branch_ref
-        self.security_token = security_token
-        self.status = status
+    def __init__(self, **kwargs):
+        super(ArtifactSource, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.uri = kwargs.get('uri', None)
+        self.source_type = kwargs.get('source_type', None)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.arm_template_folder_path = kwargs.get('arm_template_folder_path', None)
+        self.branch_ref = kwargs.get('branch_ref', None)
+        self.security_token = kwargs.get('security_token', None)
+        self.status = kwargs.get('status', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = None
+        self.unique_identifier = None

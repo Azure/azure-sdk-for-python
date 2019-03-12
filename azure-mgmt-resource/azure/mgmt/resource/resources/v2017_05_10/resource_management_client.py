@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -42,21 +42,19 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(ResourceManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('resourcemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class ResourceManagementClient(object):
+class ResourceManagementClient(SDKClient):
     """Provides operations for working with resources and resource groups.
 
     :ivar config: Configuration for client.
@@ -87,7 +85,7 @@ class ResourceManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ResourceManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ResourceManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-05-10'

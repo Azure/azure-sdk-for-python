@@ -26,8 +26,8 @@ class Topology(Model):
     :ivar last_modified: The datetime when the topology was last modified.
     :vartype last_modified: datetime
     :param resources:
-    :type resources: list of :class:`TopologyResource
-     <azure.mgmt.network.v2017_03_01.models.TopologyResource>`
+    :type resources:
+     list[~azure.mgmt.network.v2017_03_01.models.TopologyResource]
     """
 
     _validation = {
@@ -43,8 +43,9 @@ class Topology(Model):
         'resources': {'key': 'resources', 'type': '[TopologyResource]'},
     }
 
-    def __init__(self, resources=None):
+    def __init__(self, **kwargs):
+        super(Topology, self).__init__(**kwargs)
         self.id = None
         self.created_date_time = None
         self.last_modified = None
-        self.resources = resources
+        self.resources = kwargs.get('resources', None)

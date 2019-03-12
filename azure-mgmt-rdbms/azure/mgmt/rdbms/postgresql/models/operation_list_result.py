@@ -16,13 +16,13 @@ class OperationListResult(Model):
     """A list of resource provider operations.
 
     :param value: The list of resource provider operations.
-    :type value: list of :class:`Operation
-     <azure.mgmt.rdbms.postgresql.models.Operation>`
+    :type value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

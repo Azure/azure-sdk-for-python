@@ -37,8 +37,9 @@ class DataLakeAnalyticsCatalogCredentialUpdateParameters(Model):
         'user_id': {'key': 'userId', 'type': 'str'},
     }
 
-    def __init__(self, password=None, new_password=None, uri=None, user_id=None):
-        self.password = password
-        self.new_password = new_password
-        self.uri = uri
-        self.user_id = user_id
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsCatalogCredentialUpdateParameters, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)
+        self.new_password = kwargs.get('new_password', None)
+        self.uri = kwargs.get('uri', None)
+        self.user_id = kwargs.get('user_id', None)

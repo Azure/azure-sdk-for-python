@@ -18,15 +18,15 @@ class ApplicationGatewayPathRule(SubResource):
     :param id: Resource ID.
     :type id: str
     :param paths: Path rules of URL path map.
-    :type paths: list of str
+    :type paths: list[str]
     :param backend_address_pool: Backend address pool resource of URL path
      map.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2016_12_01.models.SubResource
     :param backend_http_settings: Backend http settings resource of URL path
      map.
-    :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2016_12_01.models.SubResource
     :param provisioning_state: Path rule of URL path map resource. Possible
      values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -48,11 +48,11 @@ class ApplicationGatewayPathRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayPathRule, self).__init__(id=id)
-        self.paths = paths
-        self.backend_address_pool = backend_address_pool
-        self.backend_http_settings = backend_http_settings
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayPathRule, self).__init__(**kwargs)
+        self.paths = kwargs.get('paths', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings = kwargs.get('backend_http_settings', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

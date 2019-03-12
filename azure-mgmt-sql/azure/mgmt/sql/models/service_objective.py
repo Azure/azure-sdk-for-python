@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class ServiceObjective(SubResource):
+class ServiceObjective(ProxyResource):
     """Represents a database service objective.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar service_objective_name: The name for the service objective.
     :vartype service_objective_name: str
     :ivar is_default: Gets whether the service level objective is the default
@@ -37,8 +39,9 @@ class ServiceObjective(SubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'service_objective_name': {'readonly': True},
         'is_default': {'readonly': True},
         'is_system': {'readonly': True},
@@ -47,8 +50,9 @@ class ServiceObjective(SubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'service_objective_name': {'key': 'properties.serviceObjectiveName', 'type': 'str'},
         'is_default': {'key': 'properties.isDefault', 'type': 'bool'},
         'is_system': {'key': 'properties.isSystem', 'type': 'bool'},
@@ -56,8 +60,8 @@ class ServiceObjective(SubResource):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(ServiceObjective, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServiceObjective, self).__init__(**kwargs)
         self.service_objective_name = None
         self.is_default = None
         self.is_system = None

@@ -17,16 +17,16 @@ class Error(Model):
     """Cognitive Services error object.
 
     :param error: The error body.
-    :type error: :class:`ErrorBody
-     <azure.mgmt.cognitiveservices.models.ErrorBody>`
+    :type error: ~azure.mgmt.cognitiveservices.models.ErrorBody
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorBody'},
     }
 
-    def __init__(self, error=None):
-        self.error = error
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ErrorException(HttpOperationError):

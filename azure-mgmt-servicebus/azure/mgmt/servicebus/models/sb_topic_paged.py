@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SBTopicPaged(Paged):
     """
-    A paging container for iterating over a list of SBTopic object
+    A paging container for iterating over a list of :class:`SBTopic <azure.mgmt.servicebus.models.SBTopic>` object
     """
 
     _attribute_map = {

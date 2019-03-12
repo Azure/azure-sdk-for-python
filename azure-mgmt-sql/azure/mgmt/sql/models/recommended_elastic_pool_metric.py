@@ -30,7 +30,8 @@ class RecommendedElasticPoolMetric(Model):
         'size_gb': {'key': 'sizeGB', 'type': 'float'},
     }
 
-    def __init__(self, date_time_property=None, dtu=None, size_gb=None):
-        self.date_time_property = date_time_property
-        self.dtu = dtu
-        self.size_gb = size_gb
+    def __init__(self, **kwargs):
+        super(RecommendedElasticPoolMetric, self).__init__(**kwargs)
+        self.date_time_property = kwargs.get('date_time_property', None)
+        self.dtu = kwargs.get('dtu', None)
+        self.size_gb = kwargs.get('size_gb', None)

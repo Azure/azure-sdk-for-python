@@ -15,24 +15,25 @@ from msrest.serialization import Model
 class ExportRequest(Model):
     """Export database parameters.
 
-    :param storage_key_type: The type of the storage key to use. Possible
-     values include: 'StorageAccessKey', 'SharedAccessKey'
-    :type storage_key_type: str or :class:`StorageKeyType
-     <azure.mgmt.sql.models.StorageKeyType>`
-    :param storage_key: The storage key to use.  If storage key type is
-     SharedAccessKey, it must be preceded with a "?."
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_key_type: Required. The type of the storage key to use.
+     Possible values include: 'StorageAccessKey', 'SharedAccessKey'
+    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :param storage_key: Required. The storage key to use.  If storage key type
+     is SharedAccessKey, it must be preceded with a "?."
     :type storage_key: str
-    :param storage_uri: The storage uri to use.
+    :param storage_uri: Required. The storage uri to use.
     :type storage_uri: str
-    :param administrator_login: The name of the SQL administrator.
+    :param administrator_login: Required. The name of the SQL administrator.
     :type administrator_login: str
-    :param administrator_login_password: The password of the SQL
+    :param administrator_login_password: Required. The password of the SQL
      administrator.
     :type administrator_login_password: str
     :param authentication_type: The authentication type. Possible values
      include: 'SQL', 'ADPassword'. Default value: "SQL" .
-    :type authentication_type: str or :class:`AuthenticationType
-     <azure.mgmt.sql.models.AuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.sql.models.AuthenticationType
     """
 
     _validation = {
@@ -52,10 +53,11 @@ class ExportRequest(Model):
         'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
     }
 
-    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type="SQL"):
-        self.storage_key_type = storage_key_type
-        self.storage_key = storage_key
-        self.storage_uri = storage_uri
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.authentication_type = authentication_type
+    def __init__(self, **kwargs):
+        super(ExportRequest, self).__init__(**kwargs)
+        self.storage_key_type = kwargs.get('storage_key_type', None)
+        self.storage_key = kwargs.get('storage_key', None)
+        self.storage_uri = kwargs.get('storage_uri', None)
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.authentication_type = kwargs.get('authentication_type', "SQL")

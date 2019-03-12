@@ -18,8 +18,8 @@ class SecurityGroupNetworkInterface(Model):
     :param id: ID of the network interface.
     :type id: str
     :param security_rule_associations:
-    :type security_rule_associations: :class:`SecurityRuleAssociations
-     <azure.mgmt.network.v2016_12_01.models.SecurityRuleAssociations>`
+    :type security_rule_associations:
+     ~azure.mgmt.network.v2016_12_01.models.SecurityRuleAssociations
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class SecurityGroupNetworkInterface(Model):
         'security_rule_associations': {'key': 'securityRuleAssociations', 'type': 'SecurityRuleAssociations'},
     }
 
-    def __init__(self, id=None, security_rule_associations=None):
-        self.id = id
-        self.security_rule_associations = security_rule_associations
+    def __init__(self, **kwargs):
+        super(SecurityGroupNetworkInterface, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.security_rule_associations = kwargs.get('security_rule_associations', None)

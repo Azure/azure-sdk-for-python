@@ -15,35 +15,27 @@ from msrest.serialization import Model
 class ClientDiscoveryDisplay(Model):
     """Localized display information of an operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar provider: Name of the resource provider.
-    :vartype provider: str
-    :ivar resource: Type of the resource.
-    :vartype resource: str
-    :ivar operation: Name of the operation.
-    :vartype operation: str
-    :ivar description: Operation description.
-    :vartype description: str
+    :param provider: Name of the provider for display purposes
+    :type provider: str
+    :param resource: ResourceType for which this Operation can be performed.
+    :type resource: str
+    :param operation: Operations Name itself.
+    :type operation: str
+    :param description: Description of the operation having details of what
+     operation is about.
+    :type description: str
     """
 
-    _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
     _attribute_map = {
-        'provider': {'key': 'Provider', 'type': 'str'},
-        'resource': {'key': 'Resource', 'type': 'str'},
-        'operation': {'key': 'Operation', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)

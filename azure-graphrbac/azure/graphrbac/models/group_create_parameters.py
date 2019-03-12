@@ -18,17 +18,22 @@ class GroupCreateParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param display_name: Group display name
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param display_name: Required. Group display name
     :type display_name: str
-    :ivar mail_enabled: Whether the group is mail-enabled. Must be false. This
-     is because only pure security groups can be created using the Graph API.
-     Default value: False .
+    :ivar mail_enabled: Required. Whether the group is mail-enabled. Must be
+     false. This is because only pure security groups can be created using the
+     Graph API. Default value: False .
     :vartype mail_enabled: bool
-    :param mail_nickname: Mail nickname
+    :param mail_nickname: Required. Mail nickname
     :type mail_nickname: str
-    :ivar security_enabled: Whether the group is a security group. Must be
-     true. This is because only pure security groups can be created using the
-     Graph API. Default value: True .
+    :ivar security_enabled: Required. Whether the group is a security group.
+     Must be true. This is because only pure security groups can be created
+     using the Graph API. Default value: True .
     :vartype security_enabled: bool
     """
 
@@ -40,6 +45,7 @@ class GroupCreateParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'mail_enabled': {'key': 'mailEnabled', 'type': 'bool'},
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
@@ -50,6 +56,8 @@ class GroupCreateParameters(Model):
 
     security_enabled = True
 
-    def __init__(self, display_name, mail_nickname):
-        self.display_name = display_name
-        self.mail_nickname = mail_nickname
+    def __init__(self, **kwargs):
+        super(GroupCreateParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.mail_nickname = kwargs.get('mail_nickname', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class FeatureResultPaged(Paged):
     """
-    A paging container for iterating over a list of FeatureResult object
+    A paging container for iterating over a list of :class:`FeatureResult <azure.mgmt.resource.features.v2015_12_01.models.FeatureResult>` object
     """
 
     _attribute_map = {

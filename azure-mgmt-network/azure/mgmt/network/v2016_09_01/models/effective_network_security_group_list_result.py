@@ -16,8 +16,8 @@ class EffectiveNetworkSecurityGroupListResult(Model):
     """Response for list effective network security groups API service call.
 
     :param value: A list of effective network security groups.
-    :type value: list of :class:`EffectiveNetworkSecurityGroup
-     <azure.mgmt.network.v2016_09_01.models.EffectiveNetworkSecurityGroup>`
+    :type value:
+     list[~azure.mgmt.network.v2016_09_01.models.EffectiveNetworkSecurityGroup]
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """
@@ -27,6 +27,7 @@ class EffectiveNetworkSecurityGroupListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityGroupListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)

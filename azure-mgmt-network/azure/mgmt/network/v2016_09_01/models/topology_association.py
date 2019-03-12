@@ -23,8 +23,8 @@ class TopologyAssociation(Model):
     :type resource_id: str
     :param association_type: The association type of the child resource to the
      parent resource. Possible values include: 'Associated', 'Contains'
-    :type association_type: str or :class:`AssociationType
-     <azure.mgmt.network.v2016_09_01.models.AssociationType>`
+    :type association_type: str or
+     ~azure.mgmt.network.v2016_09_01.models.AssociationType
     """
 
     _attribute_map = {
@@ -33,7 +33,8 @@ class TopologyAssociation(Model):
         'association_type': {'key': 'associationType', 'type': 'str'},
     }
 
-    def __init__(self, name=None, resource_id=None, association_type=None):
-        self.name = name
-        self.resource_id = resource_id
-        self.association_type = association_type
+    def __init__(self, **kwargs):
+        super(TopologyAssociation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.association_type = kwargs.get('association_type', None)

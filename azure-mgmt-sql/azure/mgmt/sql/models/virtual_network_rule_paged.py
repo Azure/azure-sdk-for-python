@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VirtualNetworkRulePaged(Paged):
     """
-    A paging container for iterating over a list of VirtualNetworkRule object
+    A paging container for iterating over a list of :class:`VirtualNetworkRule <azure.mgmt.sql.models.VirtualNetworkRule>` object
     """
 
     _attribute_map = {

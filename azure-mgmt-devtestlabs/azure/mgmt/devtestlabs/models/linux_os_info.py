@@ -18,13 +18,13 @@ class LinuxOsInfo(Model):
     :param linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned,
      DeprovisionRequested, DeprovisionApplied). Possible values include:
      'NonDeprovisioned', 'DeprovisionRequested', 'DeprovisionApplied'
-    :type linux_os_state: str or :class:`LinuxOsState
-     <azure.mgmt.devtestlabs.models.LinuxOsState>`
+    :type linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
     """
 
     _attribute_map = {
         'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
     }
 
-    def __init__(self, linux_os_state=None):
-        self.linux_os_state = linux_os_state
+    def __init__(self, **kwargs):
+        super(LinuxOsInfo, self).__init__(**kwargs)
+        self.linux_os_state = kwargs.get('linux_os_state', None)

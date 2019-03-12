@@ -19,12 +19,12 @@ class ExpressRouteCircuitSku(Model):
     :type name: str
     :param tier: The tier of the SKU. Possible values are 'Standard' and
      'Premium'. Possible values include: 'Standard', 'Premium'
-    :type tier: str or :class:`ExpressRouteCircuitSkuTier
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitSkuTier>`
+    :type tier: str or
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitSkuTier
     :param family: The family of the SKU. Possible values are: 'UnlimitedData'
      and 'MeteredData'. Possible values include: 'UnlimitedData', 'MeteredData'
-    :type family: str or :class:`ExpressRouteCircuitSkuFamily
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitSkuFamily>`
+    :type family: str or
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitSkuFamily
     """
 
     _attribute_map = {
@@ -33,7 +33,8 @@ class ExpressRouteCircuitSku(Model):
         'family': {'key': 'family', 'type': 'str'},
     }
 
-    def __init__(self, name=None, tier=None, family=None):
-        self.name = name
-        self.tier = tier
-        self.family = family
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.family = kwargs.get('family', None)

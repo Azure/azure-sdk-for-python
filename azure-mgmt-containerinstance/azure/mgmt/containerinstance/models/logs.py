@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Logs(Model):
     """The logs.
 
-    :param content: content of the log.
+    :param content: The content of the log.
     :type content: str
     """
 
@@ -23,5 +23,6 @@ class Logs(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, content=None):
-        self.content = content
+    def __init__(self, **kwargs):
+        super(Logs, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)

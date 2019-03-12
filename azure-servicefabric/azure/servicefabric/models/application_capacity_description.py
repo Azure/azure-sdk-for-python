@@ -19,15 +19,14 @@ class ApplicationCapacityDescription(Model):
     - Limiting the total number of nodes that services of this application can
     run on
     - Limiting the custom capacity metrics to limit the total consumption of
-    this metric by the services of this application
-    .
+    this metric by the services of this application.
 
     :param minimum_nodes: The minimum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean
      that the services of this application will be placed on all of those
-     nodes. If this property is set to zero, no capacity will be reserved.
-     The value of this property cannot be more than the value of the
-     MaximumNodes property.
+     nodes. If this property is set to zero, no capacity will be reserved. The
+     value of this property cannot be more than the value of the MaximumNodes
+     property.
     :type minimum_nodes: long
     :param maximum_nodes: The maximum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean
@@ -35,10 +34,11 @@ class ApplicationCapacityDescription(Model):
      nodes. By default, the value of this property is zero and it means that
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
-    :param application_metrics:
-    :type application_metrics: list of :class:`ApplicationMetricDescription
-     <azure.servicefabric.models.ApplicationMetricDescription>`
-    """ 
+    :param application_metrics: List of application capacity metric
+     description.
+    :type application_metrics:
+     list[~azure.servicefabric.models.ApplicationMetricDescription]
+    """
 
     _validation = {
         'minimum_nodes': {'minimum': 0},
@@ -51,7 +51,8 @@ class ApplicationCapacityDescription(Model):
         'application_metrics': {'key': 'ApplicationMetrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, minimum_nodes=None, maximum_nodes=0, application_metrics=None):
-        self.minimum_nodes = minimum_nodes
-        self.maximum_nodes = maximum_nodes
-        self.application_metrics = application_metrics
+    def __init__(self, **kwargs):
+        super(ApplicationCapacityDescription, self).__init__(**kwargs)
+        self.minimum_nodes = kwargs.get('minimum_nodes', None)
+        self.maximum_nodes = kwargs.get('maximum_nodes', 0)
+        self.application_metrics = kwargs.get('application_metrics', None)

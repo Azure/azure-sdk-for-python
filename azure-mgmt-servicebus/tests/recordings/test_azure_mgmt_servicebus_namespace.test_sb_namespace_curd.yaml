@@ -1,0 +1,1565 @@
+interactions:
+- request:
+    body: '{"location": "westus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
+      {"name": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['97']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-04-21T00:27:30.67Z","updatedAt":"2018-04-21T00:27:30.67Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['717']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:27:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-04-21T00:27:30.67Z","updatedAt":"2018-04-21T00:27:54.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['716']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:00 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-04-21T00:27:30.67Z","updatedAt":"2018-04-21T00:27:54.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['716']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-04-21T00:27:30.67Z","updatedAt":"2018-04-21T00:27:54.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['728']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:02 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServiceBus/namespaces?api-version=2017-04-01
+  response:
+    body: {string: "{\"value\":[{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestEurope/providers/Microsoft.ServiceBus/namespaces/quicktest-sbe2\"\
+        ,\"name\":\"quicktest-sbe2\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:quicktest-sbe2\"\
+        ,\"createdAt\":\"2015-10-01T17:49:41.35Z\",\"updatedAt\":\"2017-08-09T20:15:07.987Z\"\
+        ,\"serviceBusEndpoint\":\"https://quicktest-sbe2.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RapscallionResources/providers/Microsoft.ServiceBus/namespaces/MassiveSB\"\
+        ,\"name\":\"MassiveSB\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:massivesb\",\"createdAt\"\
+        :\"2016-10-31T21:03:32.36Z\",\"updatedAt\":\"2017-08-17T21:35:02.51Z\",\"\
+        serviceBusEndpoint\":\"https://MassiveSB.servicebus.windows.net:443/\",\"\
+        status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-CentralUS/providers/Microsoft.ServiceBus/namespaces/rrama-dm2-011-createlatency\"\
+        ,\"name\":\"rrama-dm2-011-createlatency\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-dm2-011-createlatency\"\
+        ,\"createdAt\":\"2017-08-16T16:59:51.647Z\",\"updatedAt\":\"2017-08-17T21:58:31.533Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-dm2-011-createlatency.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SoutheastAsia/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-southeast-asia\"\
+        ,\"name\":\"sbgm-testns-prod-southeast-asia\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Southeast Asia\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-southeast-asia\"\
+        ,\"createdAt\":\"2015-06-16T21:25:43.823Z\",\"updatedAt\":\"2017-08-22T17:14:36.883Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-southeast-asia.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ardsouza-resourcemovetest-group2/providers/Microsoft.ServiceBus/namespaces/ardsouza-5-11-movetest-SBNamespace\"\
+        ,\"name\":\"ardsouza-5-11-movetest-SBNamespace\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-5-11-movetest-sbnamespace\"\
+        ,\"createdAt\":\"2017-05-11T23:04:08.75Z\",\"updatedAt\":\"2017-08-25T02:17:31.693Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-5-11-movetest-SBNamespace.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutestgrp/providers/Microsoft.ServiceBus/namespaces/testvinsustd928\"\
+        ,\"name\":\"testvinsustd928\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Brazil South\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsustd928\"\
+        ,\"createdAt\":\"2015-09-29T01:56:34.36Z\",\"updatedAt\":\"2017-08-15T23:15:17.073Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsustd928.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-12-9\"\
+        ,\"name\":\"ardsouza-12-9\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-12-9\"\
+        ,\"createdAt\":\"2017-12-09T22:36:39.203Z\",\"updatedAt\":\"2017-12-09T22:39:28.777Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-12-9.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":4},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newVinsu/providers/Microsoft.ServiceBus/namespaces/testvinsuWatsonIssue\"\
+        ,\"name\":\"testvinsuWatsonIssue\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsuwatsonissue\"\
+        ,\"createdAt\":\"2016-10-31T19:32:04.88Z\",\"updatedAt\":\"2016-10-31T19:32:52.853Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsuWatsonIssue.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-CentralUS/providers/Microsoft.ServiceBus/namespaces/rrama-ind-premrepro\"\
+        ,\"name\":\"rrama-ind-premrepro\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South India\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-ind-premrepro\"\
+        ,\"createdAt\":\"2017-06-21T17:18:26.42Z\",\"updatedAt\":\"2017-08-15T18:51:09.393Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-ind-premrepro.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/msatestns2\"\
+        ,\"name\":\"msatestns2\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"West Central US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:msatestns2\"\
+        ,\"createdAt\":\"2017-09-15T23:36:00.15Z\",\"updatedAt\":\"2017-09-15T23:37:19.307Z\"\
+        ,\"serviceBusEndpoint\":\"https://msatestns2.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/\xE4\
+        group/providers/Microsoft.ServiceBus/namespaces/slacktype\",\"name\":\"slacktype\"\
+        ,\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\":\"Central US\"\
+        ,\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\",\"metricId\"\
+        :\"00000000-0000-0000-0000-000000000000:slacktype\",\"createdAt\":\"2017-04-06T17:33:55.433Z\"\
+        ,\"updatedAt\":\"2017-08-17T21:49:43.89Z\",\"serviceBusEndpoint\":\"https://slacktype.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vijayjavaclient/providers/Microsoft.ServiceBus/namespaces/vijayjavaclient\"\
+        ,\"name\":\"vijayjavaclient\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vijayjavaclient\"\
+        ,\"createdAt\":\"2016-10-19T21:43:01.853Z\",\"updatedAt\":\"2017-08-17T21:28:49.553Z\"\
+        ,\"serviceBusEndpoint\":\"https://vijayjavaclient.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1921-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1921-ns\"\
+        ,\"name\":\"sb-dotnet-av-1921-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1921-ns\"\
+        ,\"createdAt\":\"2017-08-03T01:36:14.313Z\",\"updatedAt\":\"2017-08-03T01:36:41.58Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1921-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1971-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1971-ns\"\
+        ,\"name\":\"sb-dotnet-av-1971-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1971-ns\"\
+        ,\"createdAt\":\"2017-08-03T17:15:33.937Z\",\"updatedAt\":\"2017-08-03T17:15:56.47Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1971-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1431-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1431-ns\"\
+        ,\"name\":\"sb-dotnet-av-1431-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1431-ns\"\
+        ,\"createdAt\":\"2017-07-19T23:50:49.357Z\",\"updatedAt\":\"2017-07-19T23:51:15.73Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1431-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alitest/providers/Microsoft.ServiceBus/namespaces/sbusns-secondary-ali\"\
+        ,\"name\":\"sbusns-secondary-ali\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbusns-secondary-ali\"\
+        ,\"createdAt\":\"2018-02-28T19:56:20.963Z\",\"updatedAt\":\"2018-03-13T16:53:12.613Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbusns-secondary-ali.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-NorthCentralUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-north-central-us\"\
+        ,\"name\":\"sbgm-testns-prod-north-central-us\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-north-central-us\"\
+        ,\"createdAt\":\"2015-06-16T21:20:53.3Z\",\"updatedAt\":\"2017-01-12T23:23:59.237Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-north-central-us.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-5211-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-5211-ns\"\
+        ,\"name\":\"sb-dotnet-av-5211-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-5211-ns\"\
+        ,\"createdAt\":\"2018-04-20T00:38:10.65Z\",\"updatedAt\":\"2018-04-20T00:38:34.013Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-5211-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaSoutheast/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-australia-southeast\"\
+        ,\"name\":\"sbgm-testns-prod-australia-southeast\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia Southeast\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-australia-southeast\"\
+        ,\"createdAt\":\"2015-06-16T21:21:04.137Z\",\"updatedAt\":\"2017-08-15T22:01:28.533Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-australia-southeast.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-NorthEurope/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-north-europe\"\
+        ,\"name\":\"sbgm-testns-prod-north-europe\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-north-europe\"\
+        ,\"createdAt\":\"2015-06-16T21:23:19.077Z\",\"updatedAt\":\"2017-08-24T22:23:51.167Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-north-europe.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-5384\"\
+        ,\"name\":\"sdk-Namespace-5384\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-5384\"\
+        ,\"createdAt\":\"2017-08-09T03:38:18.78Z\",\"updatedAt\":\"2017-08-17T20:51:01.44Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-5384.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RapscallionResources/providers/Microsoft.ServiceBus/namespaces/BlockFrancoWriteFromThisNamespace\"\
+        ,\"name\":\"BlockFrancoWriteFromThisNamespace\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:blockfrancowritefromthisnamespace\"\
+        ,\"createdAt\":\"2017-10-26T21:24:20.907Z\",\"updatedAt\":\"2017-10-26T21:24:48.63Z\"\
+        ,\"serviceBusEndpoint\":\"https://BlockFrancoWriteFromThisNamespace.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestEurope/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-west-europe\"\
+        ,\"name\":\"sbgm-testns-prod-west-europe\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-west-europe\"\
+        ,\"createdAt\":\"2015-06-16T21:24:15.37Z\",\"updatedAt\":\"2017-08-09T19:47:10.35Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-west-europe.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-811-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-811-ns\"\
+        ,\"name\":\"sb-dotnet-av-811-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-811-ns\"\
+        ,\"createdAt\":\"2017-07-01T06:59:45.367Z\",\"updatedAt\":\"2017-07-01T07:00:13.087Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-811-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SouthCentralUS/providers/Microsoft.ServiceBus/namespaces/ardsouza-crudtest-2-11-2018\"\
+        ,\"name\":\"ardsouza-crudtest-2-11-2018\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-crudtest-2-11-2018\"\
+        ,\"createdAt\":\"2018-02-12T00:21:08.58Z\",\"updatedAt\":\"2018-02-12T00:21:32.967Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-crudtest-2-11-2018.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-east-us\"\
+        ,\"name\":\"sbgm-testns-prod-east-us\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-east-us\"\
+        ,\"createdAt\":\"2015-06-16T21:18:41.58Z\",\"updatedAt\":\"2017-01-12T23:23:42.847Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-east-us.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-JapanWest/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-japan-west\"\
+        ,\"name\":\"sbgm-testns-prod-japan-west\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Japan West\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-japan-west\"\
+        ,\"createdAt\":\"2015-06-16T21:28:52.083Z\",\"updatedAt\":\"2017-08-17T23:51:22.437Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-japan-west.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4702-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4702-ns\"\
+        ,\"name\":\"sb-dotnet-av-4702-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4702-ns\"\
+        ,\"createdAt\":\"2018-01-11T01:52:58.307Z\",\"updatedAt\":\"2018-01-11T01:53:25.38Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4702-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-5231-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-5231-ns\"\
+        ,\"name\":\"sb-dotnet-av-5231-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-5231-ns\"\
+        ,\"createdAt\":\"2018-04-20T01:50:05.41Z\",\"updatedAt\":\"2018-04-20T01:50:30.14Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-5231-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/rrama-ns-8-23\"\
+        ,\"name\":\"rrama-ns-8-23\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-ns-8-23\"\
+        ,\"createdAt\":\"2016-08-23T20:48:45.577Z\",\"updatedAt\":\"2017-08-25T01:17:00.177Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-ns-8-23.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/nemakam/providers/Microsoft.ServiceBus/namespaces/nemakamtest1\"\
+        ,\"name\":\"nemakamtest1\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US 2\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:nemakamtest1\"\
+        ,\"createdAt\":\"2017-01-03T23:45:59.5Z\",\"updatedAt\":\"2017-08-17T22:03:35.653Z\"\
+        ,\"serviceBusEndpoint\":\"https://nemakamtest1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-NorthEurope/providers/Microsoft.ServiceBus/namespaces/quicktest-sbe\"\
+        ,\"name\":\"quicktest-sbe\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"North Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:quicktest-sbe\"\
+        ,\"createdAt\":\"2015-10-01T17:47:51.28Z\",\"updatedAt\":\"2017-01-12T23:24:44.033Z\"\
+        ,\"serviceBusEndpoint\":\"https://quicktest-sbe.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-JapanEast/providers/Microsoft.ServiceBus/namespaces/testvinsukw918\"\
+        ,\"name\":\"testvinsukw918\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Japan East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsukw918\"\
+        ,\"createdAt\":\"2015-09-18T20:49:16.85Z\",\"updatedAt\":\"2017-08-16T03:43:27.323Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsukw918.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-2690\"\
+        ,\"name\":\"sdk-Namespace-2690\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-2690\"\
+        ,\"createdAt\":\"2017-08-09T23:33:00.2Z\",\"updatedAt\":\"2017-08-17T20:52:24.153Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-2690.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newVinsu/providers/Microsoft.ServiceBus/namespaces/vinsuamqpsqlperftest314\"\
+        ,\"name\":\"vinsuamqpsqlperftest314\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vinsuamqpsqlperftest314\"\
+        ,\"createdAt\":\"2017-03-14T17:40:15.657Z\",\"updatedAt\":\"2017-08-23T20:01:51.8Z\"\
+        ,\"serviceBusEndpoint\":\"https://vinsuamqpsqlperftest314.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4411-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4411-ns\"\
+        ,\"name\":\"sb-dotnet-av-4411-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4411-ns\"\
+        ,\"createdAt\":\"2017-12-15T00:12:31.82Z\",\"updatedAt\":\"2017-12-15T00:12:55.42Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4411-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-2352-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-2352-ns\"\
+        ,\"name\":\"sb-dotnet-av-2352-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-2352-ns\"\
+        ,\"createdAt\":\"2017-08-11T16:10:27.7Z\",\"updatedAt\":\"2017-08-11T16:10:53.8Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-2352-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/testpartition\"\
+        ,\"name\":\"testpartition\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testpartition\"\
+        ,\"createdAt\":\"2016-10-19T00:19:15.623Z\",\"updatedAt\":\"2017-08-25T01:33:48.217Z\"\
+        ,\"serviceBusEndpoint\":\"https://testpartition.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-781-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-781-ns\"\
+        ,\"name\":\"sb-dotnet-av-781-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-781-ns\"\
+        ,\"createdAt\":\"2017-06-30T21:53:15.56Z\",\"updatedAt\":\"2017-06-30T21:53:38.45Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-781-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-5131-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-5131-ns\"\
+        ,\"name\":\"sb-dotnet-av-5131-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-5131-ns\"\
+        ,\"createdAt\":\"2018-04-02T23:14:14.907Z\",\"updatedAt\":\"2018-04-02T23:14:38.003Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-5131-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RichardTestGroup/providers/Microsoft.ServiceBus/namespaces/aaa-001\"\
+        ,\"name\":\"aaa-001\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:aaa-001\",\"createdAt\"\
+        :\"2017-05-11T19:42:23.74Z\",\"updatedAt\":\"2017-08-25T02:17:30.693Z\",\"\
+        serviceBusEndpoint\":\"https://aaa-001.servicebus.windows.net:443/\",\"status\"\
+        :\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"},\"id\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-2221-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-2221-ns\"\
+        ,\"name\":\"sb-dotnet-av-2221-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-2221-ns\"\
+        ,\"createdAt\":\"2017-08-10T06:08:29.383Z\",\"updatedAt\":\"2017-08-10T06:08:56.89Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-2221-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AAA-Default-ServiceBus-NewRegions-Testing/providers/Microsoft.ServiceBus/namespaces/Ardsouza-Canada-EastTest\"\
+        ,\"name\":\"Ardsouza-Canada-EastTest\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Canada East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-canada-easttest\"\
+        ,\"createdAt\":\"2017-05-02T19:38:28.617Z\",\"updatedAt\":\"2017-08-22T16:57:53.587Z\"\
+        ,\"serviceBusEndpoint\":\"https://Ardsouza-Canada-EastTest.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-3291-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-3291-ns\"\
+        ,\"name\":\"sb-dotnet-av-3291-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-3291-ns\"\
+        ,\"createdAt\":\"2017-09-16T00:15:22.96Z\",\"updatedAt\":\"2017-09-16T00:15:47.757Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-3291-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TestingthePwr2017\"\
+        ,\"name\":\"TestingthePwr2017\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingthepwr2017\"\
+        ,\"createdAt\":\"2017-07-23T23:34:02.043Z\",\"updatedAt\":\"2017-07-23T23:34:27.567Z\"\
+        ,\"serviceBusEndpoint\":\"https://TestingthePwr2017.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-91-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-91-ns\"\
+        ,\"name\":\"sb-dotnet-av-91-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-91-ns\"\
+        ,\"createdAt\":\"2017-06-02T21:53:09.447Z\",\"updatedAt\":\"2017-06-02T21:53:31.99Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-91-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TestingRCPwr201711\"\
+        ,\"name\":\"TestingRCPwr201711\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingrcpwr201711\"\
+        ,\"createdAt\":\"2017-08-08T17:09:26.94Z\",\"updatedAt\":\"2017-08-08T17:11:13.497Z\"\
+        ,\"serviceBusEndpoint\":\"https://TestingRCPwr201711.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutest15/providers/Microsoft.ServiceBus/namespaces/vinsuafterSendFix\"\
+        ,\"name\":\"vinsuafterSendFix\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vinsuaftersendfix\"\
+        ,\"createdAt\":\"2017-01-21T02:37:11.79Z\",\"updatedAt\":\"2017-08-25T01:49:28.46Z\"\
+        ,\"serviceBusEndpoint\":\"https://vinsuafterSendFix.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4381-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4381-ns\"\
+        ,\"name\":\"sb-dotnet-av-4381-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4381-ns\"\
+        ,\"createdAt\":\"2017-12-14T20:48:32.503Z\",\"updatedAt\":\"2017-12-14T20:48:57.247Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4381-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-CentralIndia/providers/Microsoft.ServiceBus/namespaces/rrama-upgradetest\"\
+        ,\"name\":\"rrama-upgradetest\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-upgradetest\"\
+        ,\"createdAt\":\"2017-06-02T00:29:37.667Z\",\"updatedAt\":\"2017-06-02T00:29:59.72Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-upgradetest.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-2201-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-2201-ns\"\
+        ,\"name\":\"sb-dotnet-av-2201-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-2201-ns\"\
+        ,\"createdAt\":\"2017-08-10T04:30:13.05Z\",\"updatedAt\":\"2017-08-10T04:30:38.317Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-2201-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutest/providers/Microsoft.ServiceBus/namespaces/partOnBasic\"\
+        ,\"name\":\"partOnBasic\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:partonbasic\"\
+        ,\"createdAt\":\"2016-12-14T22:59:00.21Z\",\"updatedAt\":\"2017-08-25T16:57:09.9Z\"\
+        ,\"serviceBusEndpoint\":\"https://partOnBasic.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4342-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4342-ns\"\
+        ,\"name\":\"sb-dotnet-av-4342-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4342-ns\"\
+        ,\"createdAt\":\"2017-12-14T00:31:45.843Z\",\"updatedAt\":\"2017-12-14T00:32:13.4Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4342-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-292-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-292-ns\"\
+        ,\"name\":\"sb-dotnet-av-292-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-292-ns\"\
+        ,\"createdAt\":\"2017-06-15T23:33:08.713Z\",\"updatedAt\":\"2017-06-15T23:33:29.027Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-292-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-3201-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-3201-ns\"\
+        ,\"name\":\"sb-dotnet-av-3201-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-3201-ns\"\
+        ,\"createdAt\":\"2017-09-14T22:09:43.817Z\",\"updatedAt\":\"2017-09-14T22:10:06.693Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-3201-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-2455\"\
+        ,\"name\":\"sdk-Namespace-2455\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-2455\"\
+        ,\"createdAt\":\"2017-08-16T00:31:53.02Z\",\"updatedAt\":\"2017-08-17T20:55:39.073Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-2455.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AkkaTesting/providers/Microsoft.ServiceBus/namespaces/abhigarg-testns1\"\
+        ,\"name\":\"abhigarg-testns1\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:abhigarg-testns1\"\
+        ,\"createdAt\":\"2018-03-01T00:20:01.927Z\",\"updatedAt\":\"2018-03-01T00:20:30.91Z\"\
+        ,\"serviceBusEndpoint\":\"https://abhigarg-testns1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mysamplesvtest/providers/Microsoft.ServiceBus/namespaces/sampleeh\"\
+        ,\"name\":\"sampleeh\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:sampleeh\",\"createdAt\"\
+        :\"2016-08-08T17:00:25.86Z\",\"updatedAt\":\"2017-08-17T21:25:15.643Z\",\"\
+        serviceBusEndpoint\":\"https://sampleeh.servicebus.windows.net:443/\",\"status\"\
+        :\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"},\"id\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4781-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4781-ns\"\
+        ,\"name\":\"sb-dotnet-av-4781-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4781-ns\"\
+        ,\"createdAt\":\"2018-02-13T01:49:53.82Z\",\"updatedAt\":\"2018-02-13T01:50:20.427Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4781-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-CentralIndia/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-central-india\"\
+        ,\"name\":\"sbgm-testns-prod-central-india\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central India\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Created\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-central-india\"\
+        ,\"createdAt\":\"2015-09-25T18:52:18.553Z\",\"updatedAt\":\"2017-01-12T23:24:34.61Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-central-india.servicebus.windows.net:443/\"\
+        ,\"status\":\"Activating\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4631-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4631-ns\"\
+        ,\"name\":\"sb-dotnet-av-4631-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4631-ns\"\
+        ,\"createdAt\":\"2017-12-15T20:10:07.88Z\",\"updatedAt\":\"2017-12-15T20:10:32.637Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4631-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-2291-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-2291-ns\"\
+        ,\"name\":\"sb-dotnet-av-2291-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-2291-ns\"\
+        ,\"createdAt\":\"2017-08-11T02:37:27.16Z\",\"updatedAt\":\"2017-08-11T02:37:51.697Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-2291-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4571-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4571-ns\"\
+        ,\"name\":\"sb-dotnet-av-4571-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4571-ns\"\
+        ,\"createdAt\":\"2017-12-15T11:40:40.7Z\",\"updatedAt\":\"2017-12-15T11:41:08.183Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4571-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutestgrp/providers/Microsoft.ServiceBus/namespaces/testvinsubasic924\"\
+        ,\"name\":\"testvinsubasic924\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsubasic924\"\
+        ,\"createdAt\":\"2015-09-25T00:43:22.303Z\",\"updatedAt\":\"2015-09-25T00:43:28.823Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsubasic924.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinaytest/providers/Microsoft.ServiceBus/namespaces/testvinsuprem928\"\
+        ,\"name\":\"testvinsuprem928\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsuprem928\"\
+        ,\"createdAt\":\"2015-09-29T02:00:30.503Z\",\"updatedAt\":\"2018-02-02T19:11:10.453Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsuprem928.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinaytest/providers/Microsoft.ServiceBus/namespaces/testvinsubasic928\"\
+        ,\"name\":\"testvinsubasic928\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East Asia\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsubasic928\"\
+        ,\"createdAt\":\"2015-09-29T01:58:45.487Z\",\"updatedAt\":\"2017-08-03T01:18:41.713Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsubasic928.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-sn1\"\
+        ,\"name\":\"sbgm-testns-prod-sn1\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-sn1\"\
+        ,\"createdAt\":\"2015-06-16T21:18:20.947Z\",\"updatedAt\":\"2017-01-12T23:23:42.847Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-sn1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-testNS-4-28-5\"\
+        ,\"name\":\"ardsouza-testNS-4-28-5\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-testns-4-28-5\"\
+        ,\"createdAt\":\"2017-04-29T03:05:38.65Z\",\"updatedAt\":\"2017-08-25T02:11:28.32Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-testNS-4-28-5.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-testNS-4-28-4\"\
+        ,\"name\":\"ardsouza-testNS-4-28-4\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-testns-4-28-4\"\
+        ,\"createdAt\":\"2017-04-29T02:35:09.907Z\",\"updatedAt\":\"2017-08-25T02:16:57.767Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-testNS-4-28-4.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-testNS-4-28-3\"\
+        ,\"name\":\"ardsouza-testNS-4-28-3\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-testns-4-28-3\"\
+        ,\"createdAt\":\"2017-04-29T02:22:27.973Z\",\"updatedAt\":\"2017-08-25T02:11:02.937Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-testNS-4-28-3.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-testNS-4-28-2\"\
+        ,\"name\":\"ardsouza-testNS-4-28-2\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-testns-4-28-2\"\
+        ,\"createdAt\":\"2017-04-29T02:16:41.393Z\",\"updatedAt\":\"2017-08-25T02:11:28.07Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-testNS-4-28-2.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vijayjavaclienttests/providers/Microsoft.ServiceBus/namespaces/vijayaadtest\"\
+        ,\"name\":\"vijayaadtest\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"East US 2\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vijayaadtest\"\
+        ,\"createdAt\":\"2017-12-15T02:02:38.617Z\",\"updatedAt\":\"2017-12-15T02:03:05.287Z\"\
+        ,\"serviceBusEndpoint\":\"https://vijayaadtest.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4812-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4812-ns\"\
+        ,\"name\":\"sb-dotnet-av-4812-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4812-ns\"\
+        ,\"createdAt\":\"2018-02-13T04:40:11.337Z\",\"updatedAt\":\"2018-02-13T04:40:37.177Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4812-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alitest/providers/Microsoft.ServiceBus/namespaces/alitestsb-1\"\
+        ,\"name\":\"alitestsb-1\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:alitestsb-1\"\
+        ,\"createdAt\":\"2017-12-07T23:18:52.473Z\",\"updatedAt\":\"2017-12-07T23:20:10.82Z\"\
+        ,\"serviceBusEndpoint\":\"https://alitestsb-1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alitest/providers/Microsoft.ServiceBus/namespaces/alitestsb\"\
+        ,\"name\":\"alitestsb\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"East US 2\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:alitestsb\",\"createdAt\"\
+        :\"2017-11-20T18:24:43.903Z\",\"updatedAt\":\"2017-11-20T18:25:17.637Z\",\"\
+        serviceBusEndpoint\":\"https://alitestsb.servicebus.windows.net:443/\",\"\
+        status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/binzy-premium\"\
+        ,\"name\":\"binzy-premium\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:binzy-premium\"\
+        ,\"createdAt\":\"2016-10-03T23:06:39.077Z\",\"updatedAt\":\"2017-12-15T23:59:13.023Z\"\
+        ,\"serviceBusEndpoint\":\"https://binzy-premium.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vijaypremiumjavaclienttests/providers/Microsoft.ServiceBus/namespaces/vijaypremiumjavaclienttests\"\
+        ,\"name\":\"vijaypremiumjavaclienttests\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vijaypremiumjavaclienttests\"\
+        ,\"createdAt\":\"2017-07-11T22:26:21.55Z\",\"updatedAt\":\"2017-07-11T22:27:49.84Z\"\
+        ,\"serviceBusEndpoint\":\"https://vijaypremiumjavaclienttests.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-761-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-761-ns\"\
+        ,\"name\":\"sb-dotnet-av-761-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-761-ns\"\
+        ,\"createdAt\":\"2017-06-30T07:56:03.837Z\",\"updatedAt\":\"2017-06-30T07:56:26.197Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-761-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/EventHubGeoDRResourceGroup/providers/Microsoft.ServiceBus/namespaces/sb-geodr-scus-1ardsouza-3-13-2018\"\
+        ,\"name\":\"sb-geodr-scus-1ardsouza-3-13-2018\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-geodr-scus-1ardsouza-3-13-2018\"\
+        ,\"createdAt\":\"2018-03-13T17:04:46.317Z\",\"updatedAt\":\"2018-03-13T17:16:44.78Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-geodr-scus-1ardsouza-3-13-2018.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-BrazilSouth/providers/Microsoft.ServiceBus/namespaces/sampletestns\"\
+        ,\"name\":\"sampletestns\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sampletestns\"\
+        ,\"createdAt\":\"2017-05-12T17:00:21.603Z\",\"updatedAt\":\"2017-08-25T02:21:02.64Z\"\
+        ,\"serviceBusEndpoint\":\"https://sampletestns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-3131-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-3131-ns\"\
+        ,\"name\":\"sb-dotnet-av-3131-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-3131-ns\"\
+        ,\"createdAt\":\"2017-09-14T21:32:21.263Z\",\"updatedAt\":\"2017-09-14T21:32:46.933Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-3131-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-3191-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-3191-ns\"\
+        ,\"name\":\"sb-dotnet-av-3191-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-3191-ns\"\
+        ,\"createdAt\":\"2017-09-14T22:07:59.72Z\",\"updatedAt\":\"2017-09-14T22:08:22.42Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-3191-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TestResourceGroup/providers/Microsoft.ServiceBus/namespaces/ardsouza-12-10-test\"\
+        ,\"name\":\"ardsouza-12-10-test\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-12-10-test\"\
+        ,\"createdAt\":\"2017-12-10T17:35:47.113Z\",\"updatedAt\":\"2017-12-10T17:36:28.713Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-12-10-test.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SouthCentralUS/providers/Microsoft.ServiceBus/namespaces/clemensrbactestmessaging\"\
+        ,\"name\":\"clemensrbactestmessaging\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:clemensrbactestmessaging\"\
+        ,\"createdAt\":\"2017-11-30T18:11:30.993Z\",\"updatedAt\":\"2017-12-13T17:38:29.58Z\"\
+        ,\"serviceBusEndpoint\":\"https://clemensrbactestmessaging.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-5101-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-5101-ns\"\
+        ,\"name\":\"sb-dotnet-av-5101-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-5101-ns\"\
+        ,\"createdAt\":\"2018-03-30T00:12:33.793Z\",\"updatedAt\":\"2018-03-30T00:12:56.787Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-5101-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TEstingServicebusNamespace\"\
+        ,\"name\":\"TEstingServicebusNamespace\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingservicebusnamespace\"\
+        ,\"createdAt\":\"2017-07-20T00:33:46.673Z\",\"updatedAt\":\"2017-07-20T00:34:12.827Z\"\
+        ,\"serviceBusEndpoint\":\"https://TEstingServicebusNamespace.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TestingArmTeplateAuto\"\
+        ,\"name\":\"TestingArmTeplateAuto\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingarmteplateauto\"\
+        ,\"createdAt\":\"2018-01-12T23:08:32.84Z\",\"updatedAt\":\"2018-01-12T23:16:12.38Z\"\
+        ,\"serviceBusEndpoint\":\"https://TestingArmTeplateAuto.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-1055\"\
+        ,\"name\":\"sdk-Namespace-1055\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-1055\"\
+        ,\"createdAt\":\"2017-08-16T00:39:00.04Z\",\"updatedAt\":\"2017-08-17T20:49:59.757Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-1055.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-testNS-4-28\"\
+        ,\"name\":\"ardsouza-testNS-4-28\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-testns-4-28\"\
+        ,\"createdAt\":\"2017-04-29T02:07:09.213Z\",\"updatedAt\":\"2017-08-25T02:16:57.05Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-testNS-4-28.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newVinsu/providers/Microsoft.ServiceBus/namespaces/testdotnetcoreissue122\"\
+        ,\"name\":\"testdotnetcoreissue122\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testdotnetcoreissue122\"\
+        ,\"createdAt\":\"2017-12-02T22:44:49.697Z\",\"updatedAt\":\"2017-12-02T22:45:43.703Z\"\
+        ,\"serviceBusEndpoint\":\"https://testdotnetcoreissue122.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vijayjavaclienttests/providers/Microsoft.ServiceBus/namespaces/vijayjavaclienttests\"\
+        ,\"name\":\"vijayjavaclienttests\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:vijayjavaclienttests\"\
+        ,\"createdAt\":\"2017-05-26T19:42:19.41Z\",\"updatedAt\":\"2017-08-17T21:51:34.353Z\"\
+        ,\"serviceBusEndpoint\":\"https://vijayjavaclienttests.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutestgrp/providers/Microsoft.ServiceBus/namespaces/testvinsuStandard924\"\
+        ,\"name\":\"testvinsuStandard924\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Europe\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testvinsustandard924\"\
+        ,\"createdAt\":\"2015-09-25T00:34:59.83Z\",\"updatedAt\":\"2015-09-25T00:35:03.9Z\"\
+        ,\"serviceBusEndpoint\":\"https://testvinsuStandard924.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TestingArmTeplateAuto1\"\
+        ,\"name\":\"TestingArmTeplateAuto1\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingarmteplateauto1\"\
+        ,\"createdAt\":\"2018-01-13T00:03:43.23Z\",\"updatedAt\":\"2018-01-13T00:04:08.823Z\"\
+        ,\"serviceBusEndpoint\":\"https://TestingArmTeplateAuto1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/EventHubGeoDRResourceGroup/providers/Microsoft.ServiceBus/namespaces/sb-geodr-ncus-1ardsouza-3-13-2018\"\
+        ,\"name\":\"sb-geodr-ncus-1ardsouza-3-13-2018\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-geodr-ncus-1ardsouza-3-13-2018\"\
+        ,\"createdAt\":\"2018-03-13T17:06:25.38Z\",\"updatedAt\":\"2018-03-13T17:16:41.773Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-geodr-ncus-1ardsouza-3-13-2018.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastAsia/providers/Microsoft.ServiceBus/namespaces/testhkn94\"\
+        ,\"name\":\"testhkn94\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"East Asia\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:testhkn94\",\"createdAt\"\
+        :\"2015-09-04T12:21:47.223Z\",\"updatedAt\":\"2017-08-03T01:06:19.253Z\",\"\
+        serviceBusEndpoint\":\"https://testhkn94.servicebus.windows.net:443/\",\"\
+        status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-341-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-341-ns\"\
+        ,\"name\":\"sb-dotnet-av-341-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-341-ns\"\
+        ,\"createdAt\":\"2017-06-16T23:10:08.27Z\",\"updatedAt\":\"2017-06-16T23:10:33.223Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-341-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SouthCentralUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-south-central-us\"\
+        ,\"name\":\"sbgm-testns-prod-south-central-us\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-south-central-us\"\
+        ,\"createdAt\":\"2015-06-16T21:21:58.993Z\",\"updatedAt\":\"2017-08-25T19:57:36.087Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-south-central-us.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TemplateNamspaceAutofwd\"\
+        ,\"name\":\"TemplateNamspaceAutofwd\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:templatenamspaceautofwd\"\
+        ,\"createdAt\":\"2018-01-13T00:16:40.47Z\",\"updatedAt\":\"2018-01-13T00:17:06.947Z\"\
+        ,\"serviceBusEndpoint\":\"https://TemplateNamspaceAutofwd.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1901-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1901-ns\"\
+        ,\"name\":\"sb-dotnet-av-1901-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1901-ns\"\
+        ,\"createdAt\":\"2017-08-03T01:18:31.183Z\",\"updatedAt\":\"2017-08-03T01:18:58.497Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1901-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-711-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-711-ns\"\
+        ,\"name\":\"sb-dotnet-av-711-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-711-ns\"\
+        ,\"createdAt\":\"2017-06-30T02:19:49.3Z\",\"updatedAt\":\"2017-06-30T02:20:13.493Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-711-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-2232-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-2232-ns\"\
+        ,\"name\":\"sb-dotnet-av-2232-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-2232-ns\"\
+        ,\"createdAt\":\"2017-08-10T06:30:30.913Z\",\"updatedAt\":\"2017-08-10T06:30:54.147Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-2232-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1711-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1711-ns\"\
+        ,\"name\":\"sb-dotnet-av-1711-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1711-ns\"\
+        ,\"createdAt\":\"2017-07-27T22:14:08.153Z\",\"updatedAt\":\"2017-07-27T22:14:31.02Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1711-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace\"\
+        ,\"name\":\"testingpythontestcasenamespace\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{\"tag1\":\"value1\",\"tag2\":\"value2\"\
+        },\"properties\":{\"provisioningState\":\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace\"\
+        ,\"createdAt\":\"2018-04-21T00:27:30.67Z\",\"updatedAt\":\"2018-04-21T00:27:54.417Z\"\
+        ,\"serviceBusEndpoint\":\"https://testingpythontestcasenamespace.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestIndia/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-west-india\"\
+        ,\"name\":\"sbgm-testns-prod-west-india\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West India\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-west-india\"\
+        ,\"createdAt\":\"2017-01-20T23:53:32.69Z\",\"updatedAt\":\"2017-01-20T23:53:56.937Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-west-india.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dstucki-test-rg-usw/providers/Microsoft.ServiceBus/namespaces/dstucki-sb-usw\"\
+        ,\"name\":\"dstucki-sb-usw\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:dstucki-sb-usw\"\
+        ,\"createdAt\":\"2018-01-23T19:47:12.25Z\",\"updatedAt\":\"2018-01-30T21:12:01.27Z\"\
+        ,\"serviceBusEndpoint\":\"https://dstucki-sb-usw.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.ServiceBus/namespaces/ardsouza-test7-24\"\
+        ,\"name\":\"ardsouza-test7-24\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Canada Central\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:ardsouza-test7-24\"\
+        ,\"createdAt\":\"2017-07-24T23:34:29.137Z\",\"updatedAt\":\"2017-07-24T23:34:51.3Z\"\
+        ,\"serviceBusEndpoint\":\"https://ardsouza-test7-24.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/rrama-8-22\"\
+        ,\"name\":\"rrama-8-22\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-8-22\",\"createdAt\"\
+        :\"2016-08-22T23:06:13.51Z\",\"updatedAt\":\"2017-08-25T01:15:37.553Z\",\"\
+        serviceBusEndpoint\":\"https://rrama-8-22.servicebus.windows.net:443/\",\"\
+        status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/binzytest/providers/Microsoft.ServiceBus/namespaces/rrama-ns-8-9\"\
+        ,\"name\":\"rrama-ns-8-9\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-ns-8-9\"\
+        ,\"createdAt\":\"2016-08-09T23:05:49.883Z\",\"updatedAt\":\"2017-08-25T01:11:13.767Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-ns-8-9.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-731-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-731-ns\"\
+        ,\"name\":\"sb-dotnet-av-731-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-731-ns\"\
+        ,\"createdAt\":\"2017-06-30T05:16:14.243Z\",\"updatedAt\":\"2017-06-30T05:16:39.583Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-731-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TwitterGroup/providers/Microsoft.ServiceBus/namespaces/saz-test-22\"\
+        ,\"name\":\"saz-test-22\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:saz-test-22\"\
+        ,\"createdAt\":\"2016-07-06T00:00:07.063Z\",\"updatedAt\":\"2017-08-25T01:06:33.797Z\"\
+        ,\"serviceBusEndpoint\":\"https://saz-test-22.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1421-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1421-ns\"\
+        ,\"name\":\"sb-dotnet-av-1421-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1421-ns\"\
+        ,\"createdAt\":\"2017-07-19T19:41:41.643Z\",\"updatedAt\":\"2017-07-19T19:42:08.99Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1421-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4531-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4531-ns\"\
+        ,\"name\":\"sb-dotnet-av-4531-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4531-ns\"\
+        ,\"createdAt\":\"2017-12-15T11:21:34.167Z\",\"updatedAt\":\"2017-12-15T11:21:59.73Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4531-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-311-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-311-ns\"\
+        ,\"name\":\"sb-dotnet-av-311-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-311-ns\"\
+        ,\"createdAt\":\"2017-06-16T00:49:46.527Z\",\"updatedAt\":\"2017-06-16T00:50:07.52Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-311-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RapscallionResources/providers/Microsoft.ServiceBus/namespaces/RapscallionsDisabled\"\
+        ,\"name\":\"RapscallionsDisabled\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rapscallionsdisabled\"\
+        ,\"createdAt\":\"2016-10-06T21:36:02.35Z\",\"updatedAt\":\"2017-08-17T21:28:17.957Z\"\
+        ,\"serviceBusEndpoint\":\"https://RapscallionsDisabled.servicebus.windows.net:443/\"\
+        ,\"status\":\"Disabled\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-BizTalk-West-US/providers/Microsoft.ServiceBus/namespaces/oiwjoidjojs\"\
+        ,\"name\":\"oiwjoidjojs\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:oiwjoidjojs\"\
+        ,\"createdAt\":\"2017-04-26T22:26:11.71Z\",\"updatedAt\":\"2017-04-26T22:27:29.077Z\"\
+        ,\"serviceBusEndpoint\":\"https://oiwjoidjojs.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-4216\"\
+        ,\"name\":\"sdk-Namespace-4216\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-4216\"\
+        ,\"createdAt\":\"2017-08-09T23:36:40.42Z\",\"updatedAt\":\"2017-08-17T20:47:30.167Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-4216.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4322-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4322-ns\"\
+        ,\"name\":\"sb-dotnet-av-4322-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4322-ns\"\
+        ,\"createdAt\":\"2017-12-13T19:45:46.753Z\",\"updatedAt\":\"2017-12-13T19:46:10.733Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4322-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4491-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4491-ns\"\
+        ,\"name\":\"sb-dotnet-av-4491-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4491-ns\"\
+        ,\"createdAt\":\"2017-12-15T09:29:28.107Z\",\"updatedAt\":\"2017-12-15T09:30:05.927Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4491-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Basic\",\"tier\":\"Basic\"},\"\
+        id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RapscallionResources/providers/Microsoft.ServiceBus/namespaces/Rapscallion\"\
+        ,\"name\":\"Rapscallion\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rapscallion\"\
+        ,\"createdAt\":\"2016-08-22T23:24:10.64Z\",\"updatedAt\":\"2017-08-17T21:25:41.847Z\"\
+        ,\"serviceBusEndpoint\":\"https://Rapscallion.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RapscallionResources/providers/Microsoft.ServiceBus/namespaces/Rapscallions\"\
+        ,\"name\":\"Rapscallions\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rapscallions\"\
+        ,\"createdAt\":\"2016-08-23T17:41:32.93Z\",\"updatedAt\":\"2017-08-17T21:25:43.197Z\"\
+        ,\"serviceBusEndpoint\":\"https://Rapscallions.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4511-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4511-ns\"\
+        ,\"name\":\"sb-dotnet-av-4511-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4511-ns\"\
+        ,\"createdAt\":\"2017-12-15T10:30:12.217Z\",\"updatedAt\":\"2017-12-15T10:30:40.197Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4511-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-331-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-331-ns\"\
+        ,\"name\":\"sb-dotnet-av-331-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-331-ns\"\
+        ,\"createdAt\":\"2017-06-16T18:47:43.827Z\",\"updatedAt\":\"2017-06-16T18:48:09.61Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-331-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-1871-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-1871-ns\"\
+        ,\"name\":\"sb-dotnet-av-1871-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-1871-ns\"\
+        ,\"createdAt\":\"2017-08-02T22:34:52.633Z\",\"updatedAt\":\"2017-08-02T22:35:19.733Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-1871-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-282-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-282-ns\"\
+        ,\"name\":\"sb-dotnet-av-282-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-282-ns\"\
+        ,\"createdAt\":\"2017-06-15T21:55:36.727Z\",\"updatedAt\":\"2017-06-15T21:55:58.583Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-282-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-3681-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-3681-ns\"\
+        ,\"name\":\"sb-dotnet-av-3681-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-3681-ns\"\
+        ,\"createdAt\":\"2017-10-07T00:29:31.463Z\",\"updatedAt\":\"2017-10-07T00:29:54.887Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-3681-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":1},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alitest/providers/Microsoft.ServiceBus/namespaces/sbns-primary-ali\"\
+        ,\"name\":\"sbns-primary-ali\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US 2\",\"tags\":{\"displayName\":\"ServiceBus1\"},\"\
+        properties\":{\"provisioningState\":\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbns-primary-ali\"\
+        ,\"createdAt\":\"2018-02-28T01:50:32.4Z\",\"updatedAt\":\"2018-03-13T16:53:15.663Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbns-primary-ali.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TwitterGroup/providers/Microsoft.ServiceBus/namespaces/saz-test-222\"\
+        ,\"name\":\"saz-test-222\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:saz-test-222\"\
+        ,\"createdAt\":\"2016-07-06T00:14:40.12Z\",\"updatedAt\":\"2017-08-25T01:03:04.827Z\"\
+        ,\"serviceBusEndpoint\":\"https://saz-test-222.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SouthCentralUS/providers/Microsoft.ServiceBus/namespaces/deadletterforwardtotest\"\
+        ,\"name\":\"deadletterforwardtotest\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:deadletterforwardtotest\"\
+        ,\"createdAt\":\"2017-07-27T17:38:39.35Z\",\"updatedAt\":\"2017-07-27T17:39:12.15Z\"\
+        ,\"serviceBusEndpoint\":\"https://deadletterforwardtotest.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4441-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4441-ns\"\
+        ,\"name\":\"sb-dotnet-av-4441-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4441-ns\"\
+        ,\"createdAt\":\"2017-12-15T04:55:32.543Z\",\"updatedAt\":\"2017-12-15T04:55:57.27Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4441-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testeh-delete/providers/Microsoft.ServiceBus/namespaces/rrama-arm-easdtus-8-4-2\"\
+        ,\"name\":\"rrama-arm-easdtus-8-4-2\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-arm-easdtus-8-4-2\"\
+        ,\"createdAt\":\"2017-08-04T17:27:56.02Z\",\"updatedAt\":\"2017-08-04T17:28:22.91Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-arm-easdtus-8-4-2.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testeh-delete/providers/Microsoft.ServiceBus/namespaces/rrama-arm-easdtus-8-4-1\"\
+        ,\"name\":\"rrama-arm-easdtus-8-4-1\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:rrama-arm-easdtus-8-4-1\"\
+        ,\"createdAt\":\"2017-08-04T17:21:35.86Z\",\"updatedAt\":\"2017-08-04T17:22:01.66Z\"\
+        ,\"serviceBusEndpoint\":\"https://rrama-arm-easdtus-8-4-1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-CentralUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-central-us\"\
+        ,\"name\":\"sbgm-testns-prod-central-us\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-central-us\"\
+        ,\"createdAt\":\"2015-06-16T21:17:36.18Z\",\"updatedAt\":\"2017-01-12T23:24:03.893Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-central-us.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4792-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4792-ns\"\
+        ,\"name\":\"sb-dotnet-av-4792-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4792-ns\"\
+        ,\"createdAt\":\"2018-02-13T02:24:40.277Z\",\"updatedAt\":\"2018-02-13T02:25:07.41Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4792-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/alitest/providers/Microsoft.ServiceBus/namespaces/alitestsb-backup\"\
+        ,\"name\":\"alitestsb-backup\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"North Central US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:alitestsb-backup\"\
+        ,\"createdAt\":\"2017-12-07T22:21:52.317Z\",\"updatedAt\":\"2017-12-07T22:22:21.23Z\"\
+        ,\"serviceBusEndpoint\":\"https://alitestsb-backup.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/LuesbuebliResources/providers/Microsoft.ServiceBus/namespaces/sblues\"\
+        ,\"name\":\"sblues\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"Central US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:sblues\",\"createdAt\"\
+        :\"2016-09-01T01:03:51.877Z\",\"updatedAt\":\"2017-08-17T21:23:20.527Z\",\"\
+        serviceBusEndpoint\":\"https://sblues.servicebus.windows.net:443/\",\"status\"\
+        :\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"},\"id\"\
+        :\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastUS2/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-east-us-2\"\
+        ,\"name\":\"sbgm-testns-prod-east-us-2\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US 2\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-east-us-2\"\
+        ,\"createdAt\":\"2015-06-16T21:19:47.437Z\",\"updatedAt\":\"2017-01-12T23:24:05.097Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-east-us-2.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/testingTopicAuto11\"\
+        ,\"name\":\"testingTopicAuto11\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingtopicauto11\"\
+        ,\"createdAt\":\"2018-01-12T23:58:06.097Z\",\"updatedAt\":\"2018-01-12T23:58:35.127Z\"\
+        ,\"serviceBusEndpoint\":\"https://testingTopicAuto11.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4332-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4332-ns\"\
+        ,\"name\":\"sb-dotnet-av-4332-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4332-ns\"\
+        ,\"createdAt\":\"2017-12-13T22:56:21.083Z\",\"updatedAt\":\"2017-12-13T22:56:47.513Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4332-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-SouthIndia/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-south-india\"\
+        ,\"name\":\"sbgm-testns-prod-south-india\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"South India\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Created\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-south-india\"\
+        ,\"createdAt\":\"2015-09-25T18:53:03.69Z\",\"updatedAt\":\"2017-01-12T23:24:39.58Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-south-india.servicebus.windows.net:443/\"\
+        ,\"status\":\"Activating\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-JapanEast/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-japan-east\"\
+        ,\"name\":\"sbgm-testns-prod-japan-east\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Japan East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-japan-east\"\
+        ,\"createdAt\":\"2015-06-18T01:53:13.697Z\",\"updatedAt\":\"2017-08-16T03:42:22.983Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-japan-east.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4611-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4611-ns\"\
+        ,\"name\":\"sb-dotnet-av-4611-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4611-ns\"\
+        ,\"createdAt\":\"2017-12-15T19:23:03.03Z\",\"updatedAt\":\"2017-12-15T19:23:28.387Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4611-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vijayjavaclienttests/providers/Microsoft.ServiceBus/namespaces/VijayBYNS\"\
+        ,\"name\":\"VijayBYNS\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"location\"\
+        :\"West US\",\"tags\":{},\"properties\":{\"provisioningState\":\"Succeeded\"\
+        ,\"metricId\":\"00000000-0000-0000-0000-000000000000:vijaybyns\",\"createdAt\"\
+        :\"2018-01-04T23:24:03.083Z\",\"updatedAt\":\"2018-01-04T23:24:26.063Z\",\"\
+        serviceBusEndpoint\":\"https://VijayBYNS.servicebus.windows.net:443/\",\"\
+        status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sdk-Namespace-2850\"\
+        ,\"name\":\"sdk-Namespace-2850\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sdk-namespace-2850\"\
+        ,\"createdAt\":\"2017-08-16T00:33:12.503Z\",\"updatedAt\":\"2017-08-17T20:47:43.95Z\"\
+        ,\"serviceBusEndpoint\":\"https://sdk-Namespace-2850.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-BrazilSouth/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-brazil-south\"\
+        ,\"name\":\"sbgm-testns-prod-brazil-south\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Brazil South\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-brazil-south\"\
+        ,\"createdAt\":\"2015-06-16T21:26:22.883Z\",\"updatedAt\":\"2017-08-15T23:24:43.767Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-brazil-south.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Premium\",\"tier\":\"Premium\"\
+        ,\"capacity\":4},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vinsutest/providers/Microsoft.ServiceBus/namespaces/premiumrepro1032017\"\
+        ,\"name\":\"premiumrepro1032017\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:premiumrepro1032017\"\
+        ,\"createdAt\":\"2016-10-03T21:58:59.23Z\",\"updatedAt\":\"2016-10-03T21:59:53.897Z\"\
+        ,\"serviceBusEndpoint\":\"https://premiumrepro1032017.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/TestingRCPwr2017\"\
+        ,\"name\":\"TestingRCPwr2017\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:testingrcpwr2017\"\
+        ,\"createdAt\":\"2017-08-08T01:14:33.473Z\",\"updatedAt\":\"2017-08-08T01:15:02.303Z\"\
+        ,\"serviceBusEndpoint\":\"https://TestingRCPwr2017.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-AustraliaEast/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-australia-east\"\
+        ,\"name\":\"sbgm-testns-prod-australia-east\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"Australia East\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-australia-east\"\
+        ,\"createdAt\":\"2015-06-16T21:19:52.407Z\",\"updatedAt\":\"2017-08-17T18:58:27.143Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-australia-east.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4822-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4822-ns\"\
+        ,\"name\":\"sb-dotnet-av-4822-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4822-ns\"\
+        ,\"createdAt\":\"2018-02-13T05:17:25.433Z\",\"updatedAt\":\"2018-02-13T05:17:51.43Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4822-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-4362-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-4362-ns\"\
+        ,\"name\":\"sb-dotnet-av-4362-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-4362-ns\"\
+        ,\"createdAt\":\"2017-12-14T03:31:01.483Z\",\"updatedAt\":\"2017-12-14T03:31:26.583Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-4362-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sb-dotnet-av-5091-rg/providers/Microsoft.ServiceBus/namespaces/sb-dotnet-av-5091-ns\"\
+        ,\"name\":\"sb-dotnet-av-5091-ns\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"West US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sb-dotnet-av-5091-ns\"\
+        ,\"createdAt\":\"2018-03-29T23:50:43.503Z\",\"updatedAt\":\"2018-03-29T23:51:06.183Z\"\
+        ,\"serviceBusEndpoint\":\"https://sb-dotnet-av-5091-ns.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newVinsu/providers/Microsoft.ServiceBus/namespaces/newVinsu1028\"\
+        ,\"name\":\"newVinsu1028\",\"type\":\"Microsoft.ServiceBus/Namespaces\",\"\
+        location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\":\"\
+        Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:newvinsu1028\"\
+        ,\"createdAt\":\"2016-10-28T17:34:58.937Z\",\"updatedAt\":\"2017-08-25T16:39:31.713Z\"\
+        ,\"serviceBusEndpoint\":\"https://newVinsu1028.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastAsia/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-east-asia\"\
+        ,\"name\":\"sbgm-testns-prod-east-asia\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East Asia\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-east-asia\"\
+        ,\"createdAt\":\"2015-06-16T21:24:47.43Z\",\"updatedAt\":\"2017-08-03T01:00:57.87Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-east-asia.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}},{\"sku\":{\"name\":\"Standard\",\"tier\":\"Standard\"\
+        },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-EastUS/providers/Microsoft.ServiceBus/namespaces/sbgm-testns-prod-ch1\"\
+        ,\"name\":\"sbgm-testns-prod-ch1\",\"type\":\"Microsoft.ServiceBus/Namespaces\"\
+        ,\"location\":\"East US\",\"tags\":{},\"properties\":{\"provisioningState\"\
+        :\"Succeeded\",\"metricId\":\"00000000-0000-0000-0000-000000000000:sbgm-testns-prod-ch1\"\
+        ,\"createdAt\":\"2015-06-16T21:22:38.45Z\",\"updatedAt\":\"2017-01-12T23:23:42.847Z\"\
+        ,\"serviceBusEndpoint\":\"https://sbgm-testns-prod-ch1.servicebus.windows.net:443/\"\
+        ,\"status\":\"Active\"}}]}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['92081']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:02 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['378']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['46']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['353']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:35 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['353']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:36 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen", "Manage"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['56']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['362']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['753']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=kZTROPc/pT8xeE6Zte7GxldXVbkb5Vso/OBxJ950+lg=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=iN+3Fy9mWI5a8T0A3y2k94ASOMlDBF8TED/4NG1gMnY=","primaryKey":"kZTROPc/pT8xeE6Zte7GxldXVbkb5Vso/OBxJ950+lg=","secondaryKey":"iN+3Fy9mWI5a8T0A3y2k94ASOMlDBF8TED/4NG1gMnY=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:28:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "PrimaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=6E6NfG2hkSM+iG9aMVV7+hanwVU6irnocBWR2UVSQek=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=iN+3Fy9mWI5a8T0A3y2k94ASOMlDBF8TED/4NG1gMnY=","primaryKey":"6E6NfG2hkSM+iG9aMVV7+hanwVU6irnocBWR2UVSQek=","secondaryKey":"iN+3Fy9mWI5a8T0A3y2k94ASOMlDBF8TED/4NG1gMnY=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:29:12 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "SecondaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=6E6NfG2hkSM+iG9aMVV7+hanwVU6irnocBWR2UVSQek=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=jvtCmmuhQKR8w6iHfEAo9bt4OpUOpXqTAHBOy51aSio=","primaryKey":"6E6NfG2hkSM+iG9aMVV7+hanwVU6irnocBWR2UVSQek=","secondaryKey":"jvtCmmuhQKR8w6iHfEAo9bt4OpUOpXqTAHBOy51aSio=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:29:28 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sat, 21 Apr 2018 00:29:45 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['390']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 21 Apr 2018 00:29:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sat, 21 Apr 2018 00:29:47 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/operationresults/testingpythontestcasenamespace?api-version=2017-04-01']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.25 azure-mgmt-servicebus/0.5.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_servicebus_namespace_test_sb_namespace_curdde57183c/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasenamespace/operationresults/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sat, 21 Apr 2018 00:30:18 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

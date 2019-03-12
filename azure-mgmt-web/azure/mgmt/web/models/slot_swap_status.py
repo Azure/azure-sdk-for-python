@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SlotSwapStatus(Model):
-    """The status of the last successfull slot swap operation.
+    """The status of the last successful slot swap operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,7 +39,8 @@ class SlotSwapStatus(Model):
         'destination_slot_name': {'key': 'destinationSlotName', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(SlotSwapStatus, self).__init__(**kwargs)
         self.timestamp_utc = None
         self.source_slot_name = None
         self.destination_slot_name = None

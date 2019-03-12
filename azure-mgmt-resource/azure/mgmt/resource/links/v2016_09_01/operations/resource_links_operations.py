@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class ResourceLinksOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -50,13 +52,12 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{linkId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -68,7 +69,6 @@ class ResourceLinksOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -77,8 +77,8 @@ class ResourceLinksOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -88,6 +88,7 @@ class ResourceLinksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{linkId}'}
 
     def create_or_update(
             self, link_id, properties=None, custom_headers=None, raw=False, **operation_config):
@@ -100,23 +101,22 @@ class ResourceLinksOperations(object):
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink
         :type link_id: str
         :param properties: Properties for resource link.
-        :type properties: :class:`ResourceLinkProperties
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties>`
+        :type properties:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceLink or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ResourceLink(properties=properties)
 
         # Construct URL
-        url = '/{linkId}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -128,6 +128,7 @@ class ResourceLinksOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -140,20 +141,19 @@ class ResourceLinksOperations(object):
         body_content = self._serialize.body(parameters, 'ResourceLink')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('ResourceLink', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('ResourceLink', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('ResourceLink', response)
 
         if raw:
@@ -161,6 +161,7 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/{linkId}'}
 
     def get(
             self, link_id, custom_headers=None, raw=False, **operation_config):
@@ -175,14 +176,13 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceLink or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{linkId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'linkId': self._serialize.url("link_id", link_id, 'str', skip_quote=True)
         }
@@ -194,7 +194,7 @@ class ResourceLinksOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -203,8 +203,8 @@ class ResourceLinksOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -221,29 +221,31 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{linkId}'}
 
     def list_at_subscription(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the linked resources for the subscription.
 
         :param filter: The filter to apply on the list resource links
-         operation. The supported filter for list resource links is targetid.
-         For example, $filter=targetid eq {value}
+         operation. The supported filter for list resource links is targetId.
+         For example, $filter=targetId eq {value}
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
+        :return: An iterator like instance of ResourceLink
+        :rtype:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/links'
+                url = self.list_at_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -261,7 +263,7 @@ class ResourceLinksOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -270,9 +272,8 @@ class ResourceLinksOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -290,6 +291,7 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/links'}
 
     def list_at_source_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -309,15 +311,16 @@ class ResourceLinksOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
+        :return: An iterator like instance of ResourceLink
+        :rtype:
+         ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Resources/links'
+                url = self.list_at_source_scope.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -335,7 +338,7 @@ class ResourceLinksOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -344,9 +347,8 @@ class ResourceLinksOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -364,3 +366,4 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
         return deserialized
+    list_at_source_scope.metadata = {'url': '/{scope}/providers/Microsoft.Resources/links'}

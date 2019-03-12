@@ -26,6 +26,7 @@ class ExpressRouteCircuitArpTable(Model):
         'mac_address': {'key': 'macAddress', 'type': 'str'},
     }
 
-    def __init__(self, ip_address=None, mac_address=None):
-        self.ip_address = ip_address
-        self.mac_address = mac_address
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitArpTable, self).__init__(**kwargs)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.mac_address = kwargs.get('mac_address', None)

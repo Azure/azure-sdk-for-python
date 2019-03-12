@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class GenericResourcePaged(Paged):
     """
-    A paging container for iterating over a list of GenericResource object
+    A paging container for iterating over a list of :class:`GenericResource <azure.mgmt.resource.resources.v2016_02_01.models.GenericResource>` object
     """
 
     _attribute_map = {

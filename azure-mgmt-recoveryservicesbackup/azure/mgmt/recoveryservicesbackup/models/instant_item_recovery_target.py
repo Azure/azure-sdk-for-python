@@ -16,13 +16,14 @@ class InstantItemRecoveryTarget(Model):
     """Target details for file / folder restore.
 
     :param client_scripts: List of client scripts.
-    :type client_scripts: list of :class:`ClientScriptForConnect
-     <azure.mgmt.recoveryservicesbackup.models.ClientScriptForConnect>`
+    :type client_scripts:
+     list[~azure.mgmt.recoveryservicesbackup.models.ClientScriptForConnect]
     """
 
     _attribute_map = {
         'client_scripts': {'key': 'clientScripts', 'type': '[ClientScriptForConnect]'},
     }
 
-    def __init__(self, client_scripts=None):
-        self.client_scripts = client_scripts
+    def __init__(self, **kwargs):
+        super(InstantItemRecoveryTarget, self).__init__(**kwargs)
+        self.client_scripts = kwargs.get('client_scripts', None)

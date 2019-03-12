@@ -22,9 +22,11 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -36,34 +38,24 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Returns the list of available operations.
 
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ClientDiscoveryValueForSingleApi
-         <azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi>`
-        :rtype: :class:`ClientDiscoveryValueForSingleApiPaged
-         <azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApiPaged>`
+        :return: An iterator like instance of ClientDiscoveryValueForSingleApi
+        :rtype:
+         ~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApiPaged[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/operations'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -86,7 +78,7 @@ class Operations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -104,3 +96,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.RecoveryServices/operations'}

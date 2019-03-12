@@ -26,6 +26,7 @@ class CatalogItem(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None):
-        self.compute_account_name = compute_account_name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(CatalogItem, self).__init__(**kwargs)
+        self.compute_account_name = kwargs.get('compute_account_name', None)
+        self.version = kwargs.get('version', None)

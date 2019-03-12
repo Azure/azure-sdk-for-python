@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class Deployment(Model):
     """Deployment operation parameters.
 
-    :param properties: The deployment properties.
-    :type properties: :class:`DeploymentProperties
-     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentProperties>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentProperties
     """
 
     _validation = {
@@ -28,5 +30,6 @@ class Deployment(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, properties):
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

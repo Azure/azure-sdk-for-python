@@ -23,5 +23,6 @@ class DeploymentExtendedFilter(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, provisioning_state=None):
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(DeploymentExtendedFilter, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)

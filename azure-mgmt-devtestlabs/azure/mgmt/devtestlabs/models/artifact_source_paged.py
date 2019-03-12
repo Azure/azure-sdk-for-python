@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ArtifactSourcePaged(Paged):
     """
-    A paging container for iterating over a list of ArtifactSource object
+    A paging container for iterating over a list of :class:`ArtifactSource <azure.mgmt.devtestlabs.models.ArtifactSource>` object
     """
 
     _attribute_map = {

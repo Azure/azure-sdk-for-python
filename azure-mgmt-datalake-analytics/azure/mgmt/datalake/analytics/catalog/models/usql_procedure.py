@@ -39,9 +39,9 @@ class USqlProcedure(CatalogItem):
         'definition': {'key': 'definition', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, definition=None):
-        super(USqlProcedure, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.definition = definition
+    def __init__(self, **kwargs):
+        super(USqlProcedure, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.name = kwargs.get('name', None)
+        self.definition = kwargs.get('definition', None)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IdentityProperties(Model):
-    """IdentityProperties.
+    """Properties of a managed identity.
 
     :param type: Managed identity.
     :type type: str
@@ -32,8 +32,9 @@ class IdentityProperties(Model):
         'client_secret_url': {'key': 'clientSecretUrl', 'type': 'str'},
     }
 
-    def __init__(self, type=None, principal_id=None, tenant_id=None, client_secret_url=None):
-        self.type = type
-        self.principal_id = principal_id
-        self.tenant_id = tenant_id
-        self.client_secret_url = client_secret_url
+    def __init__(self, **kwargs):
+        super(IdentityProperties, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.client_secret_url = kwargs.get('client_secret_url', None)

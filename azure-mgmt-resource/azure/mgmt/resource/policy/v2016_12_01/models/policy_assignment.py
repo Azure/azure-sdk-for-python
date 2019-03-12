@@ -13,7 +13,10 @@ from msrest.serialization import Model
 
 
 class PolicyAssignment(Model):
-    """The policy definition.
+    """The policy assignment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param display_name: The display name of the policy assignment.
     :type display_name: str
@@ -26,13 +29,17 @@ class PolicyAssignment(Model):
     :param description: This message will be part of response in case of
      policy violation.
     :type description: str
-    :param id: The ID of the policy assignment.
-    :type id: str
+    :ivar id: The ID of the policy assignment.
+    :vartype id: str
     :param type: The type of the policy assignment.
     :type type: str
     :param name: The name of the policy assignment.
     :type name: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
@@ -45,12 +52,13 @@ class PolicyAssignment(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, policy_definition_id=None, scope=None, parameters=None, description=None, id=None, type=None, name=None):
-        self.display_name = display_name
-        self.policy_definition_id = policy_definition_id
-        self.scope = scope
-        self.parameters = parameters
-        self.description = description
-        self.id = id
-        self.type = type
-        self.name = name
+    def __init__(self, **kwargs):
+        super(PolicyAssignment, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.scope = kwargs.get('scope', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.description = kwargs.get('description', None)
+        self.id = None
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)

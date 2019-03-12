@@ -18,20 +18,23 @@ class AppServiceCertificateOrder(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param certificates: State of the Key Vault secret.
-    :type certificates: dict
+    :type certificates: dict[str,
+     ~azure.mgmt.web.models.AppServiceCertificate]
     :param distinguished_name: Certificate distinguished name.
     :type distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
@@ -41,34 +44,30 @@ class AppServiceCertificateOrder(Resource):
     :type validity_in_years: int
     :param key_size: Certificate key size. Default value: 2048 .
     :type key_size: int
-    :param product_type: Certificate product type. Possible values include:
-     'StandardDomainValidatedSsl', 'StandardDomainValidatedWildCardSsl'
-    :type product_type: str or :class:`CertificateProductType
-     <azure.mgmt.web.models.CertificateProductType>`
+    :param product_type: Required. Certificate product type. Possible values
+     include: 'StandardDomainValidatedSsl',
+     'StandardDomainValidatedWildCardSsl'
+    :type product_type: str or ~azure.mgmt.web.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
      Default value: True .
     :type auto_renew: bool
     :ivar provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :ivar status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
-    :vartype status: str or :class:`CertificateOrderStatus
-     <azure.mgmt.web.models.CertificateOrderStatus>`
+    :vartype status: str or ~azure.mgmt.web.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
-    :vartype signed_certificate: :class:`CertificateDetails
-     <azure.mgmt.web.models.CertificateDetails>`
+    :vartype signed_certificate: ~azure.mgmt.web.models.CertificateDetails
     :param csr: Last CSR that was created for this order.
     :type csr: str
     :ivar intermediate: Intermediate certificate.
-    :vartype intermediate: :class:`CertificateDetails
-     <azure.mgmt.web.models.CertificateDetails>`
+    :vartype intermediate: ~azure.mgmt.web.models.CertificateDetails
     :ivar root: Root certificate.
-    :vartype root: :class:`CertificateDetails
-     <azure.mgmt.web.models.CertificateDetails>`
+    :vartype root: ~azure.mgmt.web.models.CertificateDetails
     :ivar serial_number: Current serial number of the certificate.
     :vartype serial_number: str
     :ivar last_certificate_issuance_time: Certificate last issuance time.
@@ -80,7 +79,7 @@ class AppServiceCertificateOrder(Resource):
     :vartype is_private_key_external: bool
     :ivar app_service_certificate_not_renewable_reasons: Reasons why App
      Service Certificate is not renewable at the current moment.
-    :vartype app_service_certificate_not_renewable_reasons: list of str
+    :vartype app_service_certificate_not_renewable_reasons: list[str]
     :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would
      be auto renewed next
     :vartype next_auto_renewal_time_stamp: datetime
@@ -88,9 +87,12 @@ class AppServiceCertificateOrder(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
         'validity_in_years': {'maximum': 3, 'minimum': 1},
+        'product_type': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'signed_certificate': {'readonly': True},
@@ -132,19 +134,19 @@ class AppServiceCertificateOrder(Resource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
-        super(AppServiceCertificateOrder, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.certificates = certificates
-        self.distinguished_name = distinguished_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificateOrder, self).__init__(**kwargs)
+        self.certificates = kwargs.get('certificates', None)
+        self.distinguished_name = kwargs.get('distinguished_name', None)
         self.domain_verification_token = None
-        self.validity_in_years = validity_in_years
-        self.key_size = key_size
-        self.product_type = product_type
-        self.auto_renew = auto_renew
+        self.validity_in_years = kwargs.get('validity_in_years', 1)
+        self.key_size = kwargs.get('key_size', 2048)
+        self.product_type = kwargs.get('product_type', None)
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.provisioning_state = None
         self.status = None
         self.signed_certificate = None
-        self.csr = csr
+        self.csr = kwargs.get('csr', None)
         self.intermediate = None
         self.root = None
         self.serial_number = None

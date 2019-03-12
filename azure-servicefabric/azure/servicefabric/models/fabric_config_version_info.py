@@ -17,11 +17,12 @@ class FabricConfigVersionInfo(Model):
 
     :param config_version: The config version of Service Fabric.
     :type config_version: str
-    """ 
+    """
 
     _attribute_map = {
         'config_version': {'key': 'ConfigVersion', 'type': 'str'},
     }
 
-    def __init__(self, config_version=None):
-        self.config_version = config_version
+    def __init__(self, **kwargs):
+        super(FabricConfigVersionInfo, self).__init__(**kwargs)
+        self.config_version = kwargs.get('config_version', None)

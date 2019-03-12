@@ -20,12 +20,11 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :param redirect_type: Supported http redirection types - Permanent,
      Temporary, Found, SeeOther. Possible values include: 'Permanent', 'Found',
      'SeeOther', 'Temporary'
-    :type redirect_type: str or :class:`ApplicationGatewayRedirectType
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType>`
+    :type redirect_type: str or
+     ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewayRedirectType
     :param target_listener: Reference to a listener to redirect the request
      to.
-    :type target_listener: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type target_listener: ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param target_url: Url to redirect the request to.
     :type target_url: str
     :param include_path: Include path in the redirected url.
@@ -34,15 +33,14 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
     :type include_query_string: bool
     :param request_routing_rules: Request routing specifying redirect
      configuration.
-    :type request_routing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type request_routing_rules:
+     list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param url_path_maps: Url path maps specifying default redirect
      configuration.
-    :type url_path_maps: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type url_path_maps:
+     list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param path_rules: Path rules specifying redirect configuration.
-    :type path_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type path_rules: list[~azure.mgmt.network.v2017_06_01.models.SubResource]
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
     :type name: str
@@ -68,16 +66,16 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, redirect_type=None, target_listener=None, target_url=None, include_path=None, include_query_string=None, request_routing_rules=None, url_path_maps=None, path_rules=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayRedirectConfiguration, self).__init__(id=id)
-        self.redirect_type = redirect_type
-        self.target_listener = target_listener
-        self.target_url = target_url
-        self.include_path = include_path
-        self.include_query_string = include_query_string
-        self.request_routing_rules = request_routing_rules
-        self.url_path_maps = url_path_maps
-        self.path_rules = path_rules
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayRedirectConfiguration, self).__init__(**kwargs)
+        self.redirect_type = kwargs.get('redirect_type', None)
+        self.target_listener = kwargs.get('target_listener', None)
+        self.target_url = kwargs.get('target_url', None)
+        self.include_path = kwargs.get('include_path', None)
+        self.include_query_string = kwargs.get('include_query_string', None)
+        self.request_routing_rules = kwargs.get('request_routing_rules', None)
+        self.url_path_maps = kwargs.get('url_path_maps', None)
+        self.path_rules = kwargs.get('path_rules', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

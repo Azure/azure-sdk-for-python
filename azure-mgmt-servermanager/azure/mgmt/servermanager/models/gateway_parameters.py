@@ -23,8 +23,7 @@ class GatewayParameters(Model):
      gateway to auto upgrade itself. If properties value not specified, then we
      assume upgradeMode = Automatic. Possible values include: 'Manual',
      'Automatic'
-    :type upgrade_mode: str or :class:`UpgradeMode
-     <azure.mgmt.servermanager.models.UpgradeMode>`
+    :type upgrade_mode: str or ~azure.mgmt.servermanager.models.UpgradeMode
     """
 
     _attribute_map = {
@@ -33,7 +32,8 @@ class GatewayParameters(Model):
         'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'UpgradeMode'},
     }
 
-    def __init__(self, location=None, tags=None, upgrade_mode=None):
-        self.location = location
-        self.tags = tags
-        self.upgrade_mode = upgrade_mode
+    def __init__(self, **kwargs):
+        super(GatewayParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.upgrade_mode = kwargs.get('upgrade_mode', None)

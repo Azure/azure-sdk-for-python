@@ -17,8 +17,7 @@ class USqlAssemblyFileInfo(Model):
 
     :param type: the assembly file type. Possible values include: 'Assembly',
      'Resource', 'Nodeploy'
-    :type type: str or :class:`FileType
-     <azure.mgmt.datalake.analytics.catalog.models.FileType>`
+    :type type: str or ~azure.mgmt.datalake.analytics.catalog.models.FileType
     :param original_path: the the original path to the assembly file.
     :type original_path: str
     :param content_path: the the content path to the assembly file.
@@ -31,7 +30,8 @@ class USqlAssemblyFileInfo(Model):
         'content_path': {'key': 'contentPath', 'type': 'str'},
     }
 
-    def __init__(self, type=None, original_path=None, content_path=None):
-        self.type = type
-        self.original_path = original_path
-        self.content_path = content_path
+    def __init__(self, **kwargs):
+        super(USqlAssemblyFileInfo, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.original_path = kwargs.get('original_path', None)
+        self.content_path = kwargs.get('content_path', None)

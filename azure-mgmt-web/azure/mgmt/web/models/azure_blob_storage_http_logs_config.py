@@ -22,7 +22,8 @@ class AzureBlobStorageHttpLogsConfig(Model):
      Remove blobs older than X days.
      0 or lower means no retention.
     :type retention_in_days: int
-    :param enabled: Enabled.
+    :param enabled: True if configuration is enabled, false if it is disabled
+     and null if configuration is not set.
     :type enabled: bool
     """
 
@@ -32,7 +33,8 @@ class AzureBlobStorageHttpLogsConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, sas_url=None, retention_in_days=None, enabled=None):
-        self.sas_url = sas_url
-        self.retention_in_days = retention_in_days
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(AzureBlobStorageHttpLogsConfig, self).__init__(**kwargs)
+        self.sas_url = kwargs.get('sas_url', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.enabled = kwargs.get('enabled', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EdgeNodePaged(Paged):
     """
-    A paging container for iterating over a list of EdgeNode object
+    A paging container for iterating over a list of :class:`EdgeNode <azure.mgmt.cdn.models.EdgeNode>` object
     """
 
     _attribute_map = {

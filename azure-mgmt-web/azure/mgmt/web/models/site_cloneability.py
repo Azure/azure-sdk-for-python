@@ -17,21 +17,20 @@ class SiteCloneability(Model):
 
     :param result: Name of app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
-    :type result: str or :class:`CloneAbilityResult
-     <azure.mgmt.web.models.CloneAbilityResult>`
+    :type result: str or ~azure.mgmt.web.models.CloneAbilityResult
     :param blocking_features: List of features enabled on app that prevent
      cloning.
-    :type blocking_features: list of :class:`SiteCloneabilityCriterion
-     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
+    :type blocking_features:
+     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
     :param unsupported_features: List of features enabled on app that are
      non-blocking but cannot be cloned. The app can still be cloned
      but the features in this list will not be set up on cloned app.
-    :type unsupported_features: list of :class:`SiteCloneabilityCriterion
-     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
+    :type unsupported_features:
+     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
     :param blocking_characteristics: List of blocking application
      characteristics.
-    :type blocking_characteristics: list of :class:`SiteCloneabilityCriterion
-     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
+    :type blocking_characteristics:
+     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
     """
 
     _attribute_map = {
@@ -41,8 +40,9 @@ class SiteCloneability(Model):
         'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
     }
 
-    def __init__(self, result=None, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
-        self.result = result
-        self.blocking_features = blocking_features
-        self.unsupported_features = unsupported_features
-        self.blocking_characteristics = blocking_characteristics
+    def __init__(self, **kwargs):
+        super(SiteCloneability, self).__init__(**kwargs)
+        self.result = kwargs.get('result', None)
+        self.blocking_features = kwargs.get('blocking_features', None)
+        self.unsupported_features = kwargs.get('unsupported_features', None)
+        self.blocking_characteristics = kwargs.get('blocking_characteristics', None)

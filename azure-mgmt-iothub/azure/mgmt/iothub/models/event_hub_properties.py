@@ -23,13 +23,13 @@ class EventHubProperties(Model):
      messages in days. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages
     :type retention_time_in_days: long
-    :param partition_count: The number of paritions for receiving
+    :param partition_count: The number of partitions for receiving
      device-to-cloud messages in the Event Hub-compatible endpoint. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type partition_count: int
     :ivar partition_ids: The partition ids in the Event Hub-compatible
      endpoint.
-    :vartype partition_ids: list of str
+    :vartype partition_ids: list[str]
     :ivar path: The Event Hub-compatible name.
     :vartype path: str
     :ivar endpoint: The Event Hub-compatible endpoint.
@@ -50,9 +50,10 @@ class EventHubProperties(Model):
         'endpoint': {'key': 'endpoint', 'type': 'str'},
     }
 
-    def __init__(self, retention_time_in_days=None, partition_count=None):
-        self.retention_time_in_days = retention_time_in_days
-        self.partition_count = partition_count
+    def __init__(self, **kwargs):
+        super(EventHubProperties, self).__init__(**kwargs)
+        self.retention_time_in_days = kwargs.get('retention_time_in_days', None)
+        self.partition_count = kwargs.get('partition_count', None)
         self.partition_ids = None
         self.path = None
         self.endpoint = None

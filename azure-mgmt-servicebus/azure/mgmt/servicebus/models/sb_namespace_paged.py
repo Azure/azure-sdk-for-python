@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SBNamespacePaged(Paged):
     """
-    A paging container for iterating over a list of SBNamespace object
+    A paging container for iterating over a list of :class:`SBNamespace <azure.mgmt.servicebus.models.SBNamespace>` object
     """
 
     _attribute_map = {

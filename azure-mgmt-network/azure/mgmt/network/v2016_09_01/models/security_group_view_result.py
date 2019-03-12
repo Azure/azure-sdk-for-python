@@ -16,13 +16,14 @@ class SecurityGroupViewResult(Model):
     """The information about security rules applied to the specified VM.
 
     :param network_interfaces: List of network interfaces on the specified VM.
-    :type network_interfaces: list of :class:`SecurityGroupNetworkInterface
-     <azure.mgmt.network.v2016_09_01.models.SecurityGroupNetworkInterface>`
+    :type network_interfaces:
+     list[~azure.mgmt.network.v2016_09_01.models.SecurityGroupNetworkInterface]
     """
 
     _attribute_map = {
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[SecurityGroupNetworkInterface]'},
     }
 
-    def __init__(self, network_interfaces=None):
-        self.network_interfaces = network_interfaces
+    def __init__(self, **kwargs):
+        super(SecurityGroupViewResult, self).__init__(**kwargs)
+        self.network_interfaces = kwargs.get('network_interfaces', None)

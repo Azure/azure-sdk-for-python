@@ -15,23 +15,23 @@ from msrest.serialization import Model
 class ScaleAction(Model):
     """The parameters for the scaling action.
 
-    :param direction: the scale direction. Whether the scaling action
-     increases or decreases the number of instances. Possible values include:
-     'None', 'Increase', 'Decrease'
-    :type direction: str or :class:`ScaleDirection
-     <azure.mgmt.monitor.models.ScaleDirection>`
-    :param type: the type of action that should occur when the scale rule
-     fires. Possible values include: 'ChangeCount', 'PercentChangeCount',
+    All required parameters must be populated in order to send to Azure.
+
+    :param direction: Required. the scale direction. Whether the scaling
+     action increases or decreases the number of instances. Possible values
+     include: 'None', 'Increase', 'Decrease'
+    :type direction: str or ~azure.mgmt.monitor.models.ScaleDirection
+    :param type: Required. the type of action that should occur when the scale
+     rule fires. Possible values include: 'ChangeCount', 'PercentChangeCount',
      'ExactCount'
-    :type type: str or :class:`ScaleType
-     <azure.mgmt.monitor.models.ScaleType>`
+    :type type: str or ~azure.mgmt.monitor.models.ScaleType
     :param value: the number of instances that are involved in the scaling
      action. This value must be 1 or greater. The default value is 1. Default
      value: "1" .
     :type value: str
-    :param cooldown: the amount of time to wait since the last scaling action
-     before this action occurs. It must be between 1 week and 1 minute in ISO
-     8601 format.
+    :param cooldown: Required. the amount of time to wait since the last
+     scaling action before this action occurs. It must be between 1 week and 1
+     minute in ISO 8601 format.
     :type cooldown: timedelta
     """
 
@@ -48,8 +48,9 @@ class ScaleAction(Model):
         'cooldown': {'key': 'cooldown', 'type': 'duration'},
     }
 
-    def __init__(self, direction, type, cooldown, value="1"):
-        self.direction = direction
-        self.type = type
-        self.value = value
-        self.cooldown = cooldown
+    def __init__(self, **kwargs):
+        super(ScaleAction, self).__init__(**kwargs)
+        self.direction = kwargs.get('direction', None)
+        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', "1")
+        self.cooldown = kwargs.get('cooldown', None)

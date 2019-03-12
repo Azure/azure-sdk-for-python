@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DataMaskingRulePaged(Paged):
     """
-    A paging container for iterating over a list of DataMaskingRule object
+    A paging container for iterating over a list of :class:`DataMaskingRule <azure.mgmt.sql.models.DataMaskingRule>` object
     """
 
     _attribute_map = {

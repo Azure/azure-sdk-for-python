@@ -17,7 +17,9 @@ class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
     deprecated and will be removed in the next release. Please use
     DataLakeAnalyticsCatalogCredentialCreateOrUpdateParameters instead.
 
-    :param password: the password for the secret to pass in
+    All required parameters must be populated in order to send to Azure.
+
+    :param password: Required. the password for the secret to pass in
     :type password: str
     :param uri: the URI identifier for the secret in the format
      <hostname>:<port>
@@ -33,6 +35,7 @@ class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, password, uri=None):
-        self.password = password
-        self.uri = uri
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)
+        self.uri = kwargs.get('uri', None)

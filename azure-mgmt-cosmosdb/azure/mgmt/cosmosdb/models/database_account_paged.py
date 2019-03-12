@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DatabaseAccountPaged(Paged):
     """
-    A paging container for iterating over a list of DatabaseAccount object
+    A paging container for iterating over a list of :class:`DatabaseAccount <azure.mgmt.cosmosdb.models.DatabaseAccount>` object
     """
 
     _attribute_map = {

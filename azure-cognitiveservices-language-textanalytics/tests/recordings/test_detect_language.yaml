@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I had a wonderful experience! The rooms
+      were wonderful and the staff was helpful."}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['121']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
+          textanalyticsapi/v2.0]
+    method: POST
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/languages
+  response:
+    body: {string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[]}'}
+    headers:
+      apim-request-id: [9be4d744-07aa-40e2-b9e6-0d07aaca6ea7]
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 19 Oct 2017 22:02:20 GMT']
+      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
+      transfer-encoding: [chunked]
+      x-aml-ta-request-id: [038c732a-e9f8-4419-8299-1c718464d093]
+      x-content-type-options: [nosniff]
+      x-ms-transaction-count: ['1']
+    status: {code: 200, message: OK}
+version: 1

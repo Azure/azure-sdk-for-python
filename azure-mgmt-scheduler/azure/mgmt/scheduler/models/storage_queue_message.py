@@ -32,8 +32,9 @@ class StorageQueueMessage(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None):
-        self.storage_account = storage_account
-        self.queue_name = queue_name
-        self.sas_token = sas_token
-        self.message = message
+    def __init__(self, **kwargs):
+        super(StorageQueueMessage, self).__init__(**kwargs)
+        self.storage_account = kwargs.get('storage_account', None)
+        self.queue_name = kwargs.get('queue_name', None)
+        self.sas_token = kwargs.get('sas_token', None)
+        self.message = kwargs.get('message', None)

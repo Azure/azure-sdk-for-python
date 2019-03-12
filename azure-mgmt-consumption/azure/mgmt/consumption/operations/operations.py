@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-02-27-preview. Constant value: "2017-04-24-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-24-preview"
+        self.api_version = "2018-01-31"
 
         self.config = config
 
@@ -43,8 +45,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.consumption.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.consumption.models.OperationPaged[~azure.mgmt.consumption.models.Operation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -52,7 +55,7 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Consumption/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -75,7 +78,7 @@ class Operations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -91,3 +94,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Consumption/operations'}

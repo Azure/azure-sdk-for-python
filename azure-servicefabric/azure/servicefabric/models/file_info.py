@@ -17,16 +17,15 @@ class FileInfo(Model):
 
     :param file_size: The size of file in bytes.
     :type file_size: str
-    :param file_version:
-    :type file_version: :class:`FileVersion
-     <azure.servicefabric.models.FileVersion>`
-    :param modified_date: The date and time when the image store file was
-     last modified.
+    :param file_version: Information about the version of image store file.
+    :type file_version: ~azure.servicefabric.models.FileVersion
+    :param modified_date: The date and time when the image store file was last
+     modified.
     :type modified_date: datetime
-    :param store_relative_path: The file path relative to the image store
-     root path.
+    :param store_relative_path: The file path relative to the image store root
+     path.
     :type store_relative_path: str
-    """ 
+    """
 
     _attribute_map = {
         'file_size': {'key': 'FileSize', 'type': 'str'},
@@ -35,8 +34,9 @@ class FileInfo(Model):
         'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
     }
 
-    def __init__(self, file_size=None, file_version=None, modified_date=None, store_relative_path=None):
-        self.file_size = file_size
-        self.file_version = file_version
-        self.modified_date = modified_date
-        self.store_relative_path = store_relative_path
+    def __init__(self, **kwargs):
+        super(FileInfo, self).__init__(**kwargs)
+        self.file_size = kwargs.get('file_size', None)
+        self.file_version = kwargs.get('file_version', None)
+        self.modified_date = kwargs.get('modified_date', None)
+        self.store_relative_path = kwargs.get('store_relative_path', None)

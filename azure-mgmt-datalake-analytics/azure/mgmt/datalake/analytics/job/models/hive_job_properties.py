@@ -13,28 +13,31 @@ from .job_properties import JobProperties
 
 
 class HiveJobProperties(JobProperties):
-    """Hive job properties used when submitting and retrieving Hive jobs.
+    """Hive job properties used when retrieving Hive jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param runtime_version: the runtime version of the Data Lake Analytics
+    All required parameters must be populated in order to send to Azure.
+
+    :param runtime_version: The runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run
+    :param script: Required. The script to run. Please note that the maximum
+     script size is 3 MB.
     :type script: str
-    :param type: Polymorphic Discriminator
+    :param type: Required. Constant filled by server.
     :type type: str
-    :ivar logs_location: the Hive logs location
+    :ivar logs_location: The Hive logs location.
     :vartype logs_location: str
-    :ivar output_location: the location of Hive job output files (both
-     execution output and results)
+    :ivar output_location: The location of Hive job output files (both
+     execution output and results).
     :vartype output_location: str
-    :ivar statement_count: the number of statements that will be run based on
-     the script
+    :ivar statement_count: The number of statements that will be run based on
+     the script.
     :vartype statement_count: int
-    :ivar executed_statement_count: the number of statements that have been
-     run based on the script
+    :ivar executed_statement_count: The number of statements that have been
+     run based on the script.
     :vartype executed_statement_count: int
     """
 
@@ -57,8 +60,8 @@ class HiveJobProperties(JobProperties):
         'executed_statement_count': {'key': 'executedStatementCount', 'type': 'int'},
     }
 
-    def __init__(self, script, runtime_version=None):
-        super(HiveJobProperties, self).__init__(runtime_version=runtime_version, script=script)
+    def __init__(self, **kwargs):
+        super(HiveJobProperties, self).__init__(**kwargs)
         self.logs_location = None
         self.output_location = None
         self.statement_count = None

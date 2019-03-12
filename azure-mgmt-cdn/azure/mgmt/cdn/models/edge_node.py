@@ -9,14 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class EdgeNode(Resource):
-    """Edge node of CDN service.
+class EdgeNode(ProxyResource):
+    """Edgenode is a global Point of Presence (POP) location used to deliver CDN
+    content to end users.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -24,20 +27,14 @@ class EdgeNode(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param ip_address_groups: List of ip address groups.
-    :type ip_address_groups: list of :class:`IpAddressGroup
-     <azure.mgmt.cdn.models.IpAddressGroup>`
+    :param ip_address_groups: Required. List of ip address groups.
+    :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'ip_address_groups': {'required': True},
     }
 
@@ -45,11 +42,9 @@ class EdgeNode(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
     }
 
-    def __init__(self, location, ip_address_groups, tags=None):
-        super(EdgeNode, self).__init__(location=location, tags=tags)
-        self.ip_address_groups = ip_address_groups
+    def __init__(self, **kwargs):
+        super(EdgeNode, self).__init__(**kwargs)
+        self.ip_address_groups = kwargs.get('ip_address_groups', None)

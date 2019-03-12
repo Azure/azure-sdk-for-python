@@ -16,8 +16,8 @@ class ComputeVmPropertiesFragment(Model):
     """Properties of a virtual machine returned by the Microsoft.Compute API.
 
     :param statuses: Gets the statuses of the virtual machine.
-    :type statuses: list of :class:`ComputeVmInstanceViewStatusFragment
-     <azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatusFragment>`
+    :type statuses:
+     list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatusFragment]
     :param os_type: Gets the OS type of the virtual machine.
     :type os_type: str
     :param vm_size: Gets the size of the virtual machine.
@@ -28,10 +28,10 @@ class ComputeVmPropertiesFragment(Model):
     :param os_disk_id: Gets OS disk blob uri for the virtual machine.
     :type os_disk_id: str
     :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list of str
+    :type data_disk_ids: list[str]
     :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks: list of :class:`ComputeDataDiskFragment
-     <azure.mgmt.devtestlabs.models.ComputeDataDiskFragment>`
+    :type data_disks:
+     list[~azure.mgmt.devtestlabs.models.ComputeDataDiskFragment]
     """
 
     _attribute_map = {
@@ -44,11 +44,12 @@ class ComputeVmPropertiesFragment(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDiskFragment]'},
     }
 
-    def __init__(self, statuses=None, os_type=None, vm_size=None, network_interface_id=None, os_disk_id=None, data_disk_ids=None, data_disks=None):
-        self.statuses = statuses
-        self.os_type = os_type
-        self.vm_size = vm_size
-        self.network_interface_id = network_interface_id
-        self.os_disk_id = os_disk_id
-        self.data_disk_ids = data_disk_ids
-        self.data_disks = data_disks
+    def __init__(self, **kwargs):
+        super(ComputeVmPropertiesFragment, self).__init__(**kwargs)
+        self.statuses = kwargs.get('statuses', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.network_interface_id = kwargs.get('network_interface_id', None)
+        self.os_disk_id = kwargs.get('os_disk_id', None)
+        self.data_disk_ids = kwargs.get('data_disk_ids', None)
+        self.data_disks = kwargs.get('data_disks', None)

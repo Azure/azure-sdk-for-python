@@ -21,24 +21,22 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :type port: int
     :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
      Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol
     :param cookie_based_affinity: Cookie based affinity. Possible values are:
      'Enabled' and 'Disabled'. Possible values include: 'Enabled', 'Disabled'
     :type cookie_based_affinity: str or
-     :class:`ApplicationGatewayCookieBasedAffinity
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayCookieBasedAffinity>`
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayCookieBasedAffinity
     :param request_timeout: Request timeout in seconds. Application Gateway
      will fail the request if response is not received within RequestTimeout.
      Acceptable values are from 1 second to 86400 seconds.
     :type request_timeout: int
     :param probe: Probe resource of an application gateway.
-    :type probe: :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type probe: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :param authentication_certificates: Array of references to application
      gateway authentication certificates.
-    :type authentication_certificates: list of :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type authentication_certificates:
+     list[~azure.mgmt.network.v2016_09_01.models.SubResource]
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -63,14 +61,14 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, authentication_certificates=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
-        self.port = port
-        self.protocol = protocol
-        self.cookie_based_affinity = cookie_based_affinity
-        self.request_timeout = request_timeout
-        self.probe = probe
-        self.authentication_certificates = authentication_certificates
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHttpSettings, self).__init__(**kwargs)
+        self.port = kwargs.get('port', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.cookie_based_affinity = kwargs.get('cookie_based_affinity', None)
+        self.request_timeout = kwargs.get('request_timeout', None)
+        self.probe = kwargs.get('probe', None)
+        self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

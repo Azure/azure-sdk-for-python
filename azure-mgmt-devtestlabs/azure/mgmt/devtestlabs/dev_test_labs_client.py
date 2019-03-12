@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.provider_operations import ProviderOperations
 from .operations.labs_operations import LabsOperations
+from .operations.operations import Operations
 from .operations.global_schedules_operations import GlobalSchedulesOperations
 from .operations.artifact_sources_operations import ArtifactSourcesOperations
 from .operations.arm_templates_operations import ArmTemplatesOperations
@@ -31,6 +33,8 @@ from .operations.users_operations import UsersOperations
 from .operations.disks_operations import DisksOperations
 from .operations.environments_operations import EnvironmentsOperations
 from .operations.secrets_operations import SecretsOperations
+from .operations.service_fabrics_operations import ServiceFabricsOperations
+from .operations.service_fabric_schedules_operations import ServiceFabricSchedulesOperations
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
 from .operations.virtual_networks_operations import VirtualNetworksOperations
@@ -57,68 +61,74 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(DevTestLabsClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('devtestlabsclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-devtestlabs/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class DevTestLabsClient(object):
+class DevTestLabsClient(SDKClient):
     """The DevTest Labs Client.
 
     :ivar config: Configuration for client.
     :vartype config: DevTestLabsClientConfiguration
 
+    :ivar provider_operations: ProviderOperations operations
+    :vartype provider_operations: azure.mgmt.devtestlabs.operations.ProviderOperations
     :ivar labs: Labs operations
-    :vartype labs: .operations.LabsOperations
+    :vartype labs: azure.mgmt.devtestlabs.operations.LabsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.devtestlabs.operations.Operations
     :ivar global_schedules: GlobalSchedules operations
-    :vartype global_schedules: .operations.GlobalSchedulesOperations
+    :vartype global_schedules: azure.mgmt.devtestlabs.operations.GlobalSchedulesOperations
     :ivar artifact_sources: ArtifactSources operations
-    :vartype artifact_sources: .operations.ArtifactSourcesOperations
+    :vartype artifact_sources: azure.mgmt.devtestlabs.operations.ArtifactSourcesOperations
     :ivar arm_templates: ArmTemplates operations
-    :vartype arm_templates: .operations.ArmTemplatesOperations
+    :vartype arm_templates: azure.mgmt.devtestlabs.operations.ArmTemplatesOperations
     :ivar artifacts: Artifacts operations
-    :vartype artifacts: .operations.ArtifactsOperations
+    :vartype artifacts: azure.mgmt.devtestlabs.operations.ArtifactsOperations
     :ivar costs: Costs operations
-    :vartype costs: .operations.CostsOperations
+    :vartype costs: azure.mgmt.devtestlabs.operations.CostsOperations
     :ivar custom_images: CustomImages operations
-    :vartype custom_images: .operations.CustomImagesOperations
+    :vartype custom_images: azure.mgmt.devtestlabs.operations.CustomImagesOperations
     :ivar formulas: Formulas operations
-    :vartype formulas: .operations.FormulasOperations
+    :vartype formulas: azure.mgmt.devtestlabs.operations.FormulasOperations
     :ivar gallery_images: GalleryImages operations
-    :vartype gallery_images: .operations.GalleryImagesOperations
+    :vartype gallery_images: azure.mgmt.devtestlabs.operations.GalleryImagesOperations
     :ivar notification_channels: NotificationChannels operations
-    :vartype notification_channels: .operations.NotificationChannelsOperations
+    :vartype notification_channels: azure.mgmt.devtestlabs.operations.NotificationChannelsOperations
     :ivar policy_sets: PolicySets operations
-    :vartype policy_sets: .operations.PolicySetsOperations
+    :vartype policy_sets: azure.mgmt.devtestlabs.operations.PolicySetsOperations
     :ivar policies: Policies operations
-    :vartype policies: .operations.PoliciesOperations
+    :vartype policies: azure.mgmt.devtestlabs.operations.PoliciesOperations
     :ivar schedules: Schedules operations
-    :vartype schedules: .operations.SchedulesOperations
+    :vartype schedules: azure.mgmt.devtestlabs.operations.SchedulesOperations
     :ivar service_runners: ServiceRunners operations
-    :vartype service_runners: .operations.ServiceRunnersOperations
+    :vartype service_runners: azure.mgmt.devtestlabs.operations.ServiceRunnersOperations
     :ivar users: Users operations
-    :vartype users: .operations.UsersOperations
+    :vartype users: azure.mgmt.devtestlabs.operations.UsersOperations
     :ivar disks: Disks operations
-    :vartype disks: .operations.DisksOperations
+    :vartype disks: azure.mgmt.devtestlabs.operations.DisksOperations
     :ivar environments: Environments operations
-    :vartype environments: .operations.EnvironmentsOperations
+    :vartype environments: azure.mgmt.devtestlabs.operations.EnvironmentsOperations
     :ivar secrets: Secrets operations
-    :vartype secrets: .operations.SecretsOperations
+    :vartype secrets: azure.mgmt.devtestlabs.operations.SecretsOperations
+    :ivar service_fabrics: ServiceFabrics operations
+    :vartype service_fabrics: azure.mgmt.devtestlabs.operations.ServiceFabricsOperations
+    :ivar service_fabric_schedules: ServiceFabricSchedules operations
+    :vartype service_fabric_schedules: azure.mgmt.devtestlabs.operations.ServiceFabricSchedulesOperations
     :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: .operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.devtestlabs.operations.VirtualMachinesOperations
     :ivar virtual_machine_schedules: VirtualMachineSchedules operations
-    :vartype virtual_machine_schedules: .operations.VirtualMachineSchedulesOperations
+    :vartype virtual_machine_schedules: azure.mgmt.devtestlabs.operations.VirtualMachineSchedulesOperations
     :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: .operations.VirtualNetworksOperations
+    :vartype virtual_networks: azure.mgmt.devtestlabs.operations.VirtualNetworksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -132,14 +142,18 @@ class DevTestLabsClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DevTestLabsClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DevTestLabsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-05-15'
+        self.api_version = '2018-09-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.provider_operations = ProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.labs = LabsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.global_schedules = GlobalSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -174,6 +188,10 @@ class DevTestLabsClient(object):
         self.environments = EnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.secrets = SecretsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_fabrics = ServiceFabricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_fabric_schedules = ServiceFabricSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -16,13 +16,13 @@ class CertificateRequest(Model):
     """Details of the certificate to be uploaded to the vault.
 
     :param properties:
-    :type properties: :class:`RawCertificateData
-     <azure.mgmt.recoveryservices.models.RawCertificateData>`
+    :type properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
     """
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'RawCertificateData'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CertificateRequest, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

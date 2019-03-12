@@ -14,19 +14,24 @@ from .health_evaluation import HealthEvaluation
 
 class UpgradeDomainNodesHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for cluster nodes in an upgrade domain,
-    containing health evaluations for each unhealthy node that impacted
-    current aggregated health state. Can be returned when evaluating cluster
-    health during cluster upgrade and the aggregated health state is either
-    Error or Warning.
+    containing health evaluations for each unhealthy node that impacted current
+    aggregated health state. Can be returned when evaluating cluster health
+    during cluster upgrade and the aggregated health state is either Error or
+    Warning.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param upgrade_domain_name: Name of the upgrade domain where nodes health
      is currently evaluated.
     :type upgrade_domain_name: str
@@ -38,28 +43,28 @@ class UpgradeDomainNodesHealthEvaluation(HealthEvaluation):
     :param unhealthy_evaluations: List of unhealthy evaluations that led to
      the aggregated health state. Includes all the unhealthy
      NodeHealthEvaluation that impacted the aggregated health.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
         'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
         'total_count': {'key': 'TotalCount', 'type': 'long'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, upgrade_domain_name=None, max_percent_unhealthy_nodes=None, total_count=None, unhealthy_evaluations=None):
-        super(UpgradeDomainNodesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.upgrade_domain_name = upgrade_domain_name
-        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'UpgradeDomainNodes'
+    def __init__(self, **kwargs):
+        super(UpgradeDomainNodesHealthEvaluation, self).__init__(**kwargs)
+        self.upgrade_domain_name = kwargs.get('upgrade_domain_name', None)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'UpgradeDomainNodes'

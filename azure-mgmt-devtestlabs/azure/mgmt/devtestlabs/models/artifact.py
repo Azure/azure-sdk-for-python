@@ -27,7 +27,7 @@ class Artifact(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar title: The artifact's title.
     :vartype title: str
     :ivar description: The artifact's description.
@@ -76,8 +76,8 @@ class Artifact(Resource):
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(Artifact, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Artifact, self).__init__(**kwargs)
         self.title = None
         self.description = None
         self.publisher = None

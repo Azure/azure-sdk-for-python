@@ -18,17 +18,20 @@ class PartnerInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource identifier of the partner server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource identifier of the partner server.
     :type id: str
     :ivar location: Geo location of the partner server.
     :vartype location: str
     :ivar replication_role: Replication role of the partner server. Possible
      values include: 'Primary', 'Secondary'
-    :vartype replication_role: str or :class:`FailoverGroupReplicationRole
-     <azure.mgmt.sql.models.FailoverGroupReplicationRole>`
+    :vartype replication_role: str or
+     ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     """
 
     _validation = {
+        'id': {'required': True},
         'location': {'readonly': True},
         'replication_role': {'readonly': True},
     }
@@ -39,7 +42,8 @@ class PartnerInfo(Model):
         'replication_role': {'key': 'replicationRole', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(PartnerInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.location = None
         self.replication_role = None

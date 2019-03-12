@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class CheckNameAvailabilityOutput(Model):
     """Output of check name availability API.
 
-    :param name_available: Indicates whether the name is available.
-    :type name_available: bool
-    :param reason: The reason why the name is not available.
-    :type reason: str
-    :param message: The detailed error message describing why the name is not
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name_available: Indicates whether the name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the name is not available.
+    :vartype reason: str
+    :ivar message: The detailed error message describing why the name is not
      available.
-    :type message: str
+    :vartype message: str
     """
+
+    _validation = {
+        'name_available': {'readonly': True},
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
@@ -30,7 +39,8 @@ class CheckNameAvailabilityOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityOutput, self).__init__(**kwargs)
+        self.name_available = None
+        self.reason = None
+        self.message = None

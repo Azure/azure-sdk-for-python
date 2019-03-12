@@ -27,19 +27,19 @@ class USqlTable(CatalogItem):
     :param name: the name of the table.
     :type name: str
     :param column_list: the list of columns in this table
-    :type column_list: list of :class:`USqlTableColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn>`
+    :type column_list:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn]
     :param index_list: the list of indices in this table
-    :type index_list: list of :class:`USqlIndex
-     <azure.mgmt.datalake.analytics.catalog.models.USqlIndex>`
+    :type index_list:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlIndex]
     :param partition_key_list: the list of partition keys in the table
-    :type partition_key_list: list of str
+    :type partition_key_list: list[str]
     :param external_table: the external table associated with the table.
-    :type external_table: :class:`ExternalTable
-     <azure.mgmt.datalake.analytics.catalog.models.ExternalTable>`
+    :type external_table:
+     ~azure.mgmt.datalake.analytics.catalog.models.ExternalTable
     :param distribution_info: the distributions info of the table
-    :type distribution_info: :class:`USqlDistributionInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
+    :type distribution_info:
+     ~azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo
     """
 
     _attribute_map = {
@@ -55,13 +55,13 @@ class USqlTable(CatalogItem):
         'distribution_info': {'key': 'distributionInfo', 'type': 'USqlDistributionInfo'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, column_list=None, index_list=None, partition_key_list=None, external_table=None, distribution_info=None):
-        super(USqlTable, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.column_list = column_list
-        self.index_list = index_list
-        self.partition_key_list = partition_key_list
-        self.external_table = external_table
-        self.distribution_info = distribution_info
+    def __init__(self, **kwargs):
+        super(USqlTable, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.name = kwargs.get('name', None)
+        self.column_list = kwargs.get('column_list', None)
+        self.index_list = kwargs.get('index_list', None)
+        self.partition_key_list = kwargs.get('partition_key_list', None)
+        self.external_table = kwargs.get('external_table', None)
+        self.distribution_info = kwargs.get('distribution_info', None)

@@ -19,13 +19,13 @@ class JobStateAuditRecord(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar new_state: the new state the job is in.
+    :ivar new_state: The new state the job is in.
     :vartype new_state: str
-    :ivar time_stamp: the time stamp that the state change took place.
+    :ivar time_stamp: The time stamp that the state change took place.
     :vartype time_stamp: datetime
-    :ivar requested_by_user: the user who requests the change.
+    :ivar requested_by_user: The user who requests the change.
     :vartype requested_by_user: str
-    :ivar details:  the details of the audit log.
+    :ivar details: The details of the audit log.
     :vartype details: str
     """
 
@@ -43,7 +43,8 @@ class JobStateAuditRecord(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(JobStateAuditRecord, self).__init__(**kwargs)
         self.new_state = None
         self.time_stamp = None
         self.requested_by_user = None

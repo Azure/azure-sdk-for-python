@@ -1,0 +1,857 @@
+interactions:
+- request:
+    body: '{"location": "northeurope"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first","name":"first","type":"Microsoft.BatchAI/workspaces","location":"northeurope","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T19:59:42.173Z","creationTime":"2018-06-06T19:59:42.173Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['411']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 19:59:42 GMT']
+      etag: ['"0x8D5CBE80B17873B"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 19:59:42 GMT']
+      pragma: [no-cache]
+      request-id: [cc078c91-5b82-45f7-9cd6-90f8a5c27103]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "northeurope"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second","name":"second","type":"Microsoft.BatchAI/workspaces","location":"northeurope","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T19:59:45.592Z","creationTime":"2018-06-06T19:59:45.592Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['413']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 19:59:45 GMT']
+      etag: ['"0x8D5CBE80D2135E4"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 19:59:45 GMT']
+      pragma: [no-cache]
+      request-id: [62c37f38-a7e6-42d7-a2aa-0535ce8542a6]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1194']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"vmSize": "STANDARD_D1", "vmPriority": "lowpriority", "scaleSettings":
+      {"manual": {"targetNodeCount": 0, "nodeDeallocationOption": "requeue"}}, "userAccountSettings":
+      {"adminUserName": "demoUser", "adminUserPassword": "Dem0Pa$$w0rd"}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['251']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/clusters/cluster?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/feccedcc-8fab-4c37-ae3b-1e13df24d645?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 06 Jun 2018 19:59:45 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationstatuses/feccedcc-8fab-4c37-ae3b-1e13df24d645?api-version=2018-05-01']
+      pragma: [no-cache]
+      request-id: [58f02aa5-22af-46ed-adf4-2e6ed5cc4698]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1193']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/feccedcc-8fab-4c37-ae3b-1e13df24d645?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/feccedcc-8fab-4c37-ae3b-1e13df24d645","name":"feccedcc-8fab-4c37-ae3b-1e13df24d645","status":"Succeeded","startTime":"2018-06-06T19:59:46.622Z","endTime":"2018-06-06T19:59:47.405Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_workspaces_test_workspaces_isolation66241661$first$cluster"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['479']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [8602aba7-0276-4bdb-9557-8282cc5ae257]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/clusters/cluster?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/clusters/cluster","name":"cluster","type":"Microsoft.BatchAI/workspaces/clusters","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-06-06T19:59:46.607Z","allocationStateTransitionTime":"2018-06-06T19:59:47.953Z","provisioningStateTransitionTime":"2018-06-06T19:59:47.374Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":0,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['966']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:03 GMT']
+      etag: ['"0x8D5CBE80DBC069D"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 19:59:46 GMT']
+      pragma: [no-cache]
+      request-id: [e23f0560-5a1b-464f-9012-6d36006b563a]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/experiments/experiment?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/experiments/experiment","name":"experiment","type":"Microsoft.BatchAI/workspaces/experiments","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:05.596Z","creationTime":"2018-06-06T20:00:05.596Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['426']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:04 GMT']
+      etag: ['"0x8D5CBE8190D97D6"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:05 GMT']
+      pragma: [no-cache]
+      request-id: [48110e93-5ca4-40bb-bc47-c68853f2a57b]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 200, message: OK}
+- request:
+    body: 'b''{"properties": {"schedulingPriority": "normal", "cluster": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/clusters/cluster"},
+      "nodeCount": 1, "customToolkitSettings": {"commandLine": "true"}, "stdOutErrPathPrefix":
+      "$AZ_BATCHAI_MOUNT_ROOT"}}'''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['377']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/experiments/experiment/jobs/job?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/8f6ff902-f52d-4629-8a28-8827741fd516?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 06 Jun 2018 20:00:06 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationstatuses/8f6ff902-f52d-4629-8a28-8827741fd516?api-version=2018-05-01']
+      pragma: [no-cache]
+      request-id: [8d7a3961-8f4f-46fb-bc00-0b9a0adf71c3]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/8f6ff902-f52d-4629-8a28-8827741fd516?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/8f6ff902-f52d-4629-8a28-8827741fd516","name":"8f6ff902-f52d-4629-8a28-8827741fd516","status":"Succeeded","startTime":"2018-06-06T20:00:07.316Z","endTime":"2018-06-06T20:00:07.945Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_workspaces_test_workspaces_isolation66241661$first$experiment$job"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['486']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:23 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [ed4a5bf9-da90-49b8-aa6a-b791765033f6]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/experiments/experiment/jobs/job?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/experiments/experiment/jobs/job","name":"job","type":"Microsoft.BatchAI/workspaces/experiments/jobs","properties":{"experimentName":"experiment","schedulingPriority":"normal","cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first/clusters/cluster"},"jobOutputDirectoryPathSegment":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/workspaces/first/experiments/experiment/jobs/job/b4086612-1e49-443e-b1ac-ad6d0388af42","nodeCount":1,"toolType":"custom","customToolkitSettings":{"commandLine":"true"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT","constraints":{"maxWallClockTime":"P7D"},"creationTime":"2018-06-06T20:00:07.3Z","provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:07.929Z","executionState":"queued","executionStateTransitionTime":"2018-06-06T20:00:07.3Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1173']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:23 GMT']
+      etag: ['"0x8D5CBE81A11977D"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:07 GMT']
+      pragma: [no-cache]
+      request-id: [5ac51cce-c55d-4d2c-9bd4-bf5069cbd863]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"vmSize": "STANDARD_D1", "vmPriority": "lowpriority", "scaleSettings":
+      {"manual": {"targetNodeCount": 0, "nodeDeallocationOption": "requeue"}}, "userAccountSettings":
+      {"adminUserName": "demoUser", "adminUserPassword": "Dem0Pa$$w0rd"}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['251']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/4b901741-c87b-43d4-a2b5-2b168f39088e?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 06 Jun 2018 20:00:24 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationstatuses/4b901741-c87b-43d4-a2b5-2b168f39088e?api-version=2018-05-01']
+      pragma: [no-cache]
+      request-id: [b1181af1-068b-4402-94ca-6f37a70c3f06]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/4b901741-c87b-43d4-a2b5-2b168f39088e?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/4b901741-c87b-43d4-a2b5-2b168f39088e","name":"4b901741-c87b-43d4-a2b5-2b168f39088e","status":"Succeeded","startTime":"2018-06-06T20:00:24.664Z","endTime":"2018-06-06T20:00:25.367Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_workspaces_test_workspaces_isolation66241661$second$cluster"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['480']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [d7017dbc-3be1-427e-b65e-acbd1449c96e]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster","name":"cluster","type":"Microsoft.BatchAI/workspaces/clusters","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-06-06T20:00:24.649Z","allocationStateTransitionTime":"2018-06-06T20:00:25.777Z","provisioningStateTransitionTime":"2018-06-06T20:00:25.352Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":0,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['967']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:41 GMT']
+      etag: ['"0x8D5CBE82468CA78"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:24 GMT']
+      pragma: [no-cache]
+      request-id: [7e679cca-477d-4a55-9855-990a0e828e78]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment","name":"experiment","type":"Microsoft.BatchAI/workspaces/experiments","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:43.677Z","creationTime":"2018-06-06T20:00:43.677Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['427']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:00:43 GMT']
+      etag: ['"0x8D5CBE82FC05AA6"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:43 GMT']
+      pragma: [no-cache]
+      request-id: [2fc7ebf2-bbd0-483e-9d2d-c78286d25329]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: 'b''{"properties": {"schedulingPriority": "normal", "cluster": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster"},
+      "nodeCount": 1, "customToolkitSettings": {"commandLine": "true"}, "stdOutErrPathPrefix":
+      "$AZ_BATCHAI_MOUNT_ROOT"}}'''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['378']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment/jobs/job?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/e58868d2-1d99-4c58-a68f-2a8d838129ec?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 06 Jun 2018 20:00:45 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationstatuses/e58868d2-1d99-4c58-a68f-2a8d838129ec?api-version=2018-05-01']
+      pragma: [no-cache]
+      request-id: [ce3d0f83-9a03-416b-8487-062c38dcf150]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/e58868d2-1d99-4c58-a68f-2a8d838129ec?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/e58868d2-1d99-4c58-a68f-2a8d838129ec","name":"e58868d2-1d99-4c58-a68f-2a8d838129ec","status":"Succeeded","startTime":"2018-06-06T20:00:45.415Z","endTime":"2018-06-06T20:00:45.759Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_workspaces_test_workspaces_isolation66241661$second$experiment$job"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['487']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:01:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [96c0cbc5-b300-4944-a148-154c2a059728]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment/jobs/job?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment/jobs/job","name":"job","type":"Microsoft.BatchAI/workspaces/experiments/jobs","properties":{"experimentName":"experiment","schedulingPriority":"normal","cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster"},"jobOutputDirectoryPathSegment":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/workspaces/second/experiments/experiment/jobs/job/70811690-35c3-49f5-93f7-203c17f2d68a","nodeCount":1,"toolType":"custom","customToolkitSettings":{"commandLine":"true"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT","constraints":{"maxWallClockTime":"P7D"},"creationTime":"2018-06-06T20:00:45.399Z","provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:45.743Z","executionState":"queued","executionStateTransitionTime":"2018-06-06T20:00:45.399Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1180']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:01:01 GMT']
+      etag: ['"0x8D5CBE830C71C4A"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:45 GMT']
+      pragma: [no-cache]
+      request-id: [8d10e2eb-4cfa-4376-be12-3dbff9386162]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Wed, 06 Jun 2018 20:01:03 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationstatuses/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01']
+      pragma: [no-cache]
+      request-id: [dde3e1d9-b428-4310-ac61-88b64464dbf5]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-deletes: ['14998']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:01:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [38fc1725-1de2-49d5-8fce-eb9fde0a4f09]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:01:50 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [a2a5218d-543b-4a90-ba1c-a297b5900ca4]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:02:23 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [5e26d71b-2cee-47dc-bea2-3f72e14618a7]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:02:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [6f55aed8-9eb5-4a8d-aef8-a24f493acb14]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:03:25 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [d59a74dc-8f4c-4e07-9cc1-2e8fafd24b9d]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"InProgress","startTime":"2018-06-06T20:01:04.014Z"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['299']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:03:57 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [a9de8c1d-c9aa-4afd-8d75-87042b7e6a20]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/northeurope/operationresults/5a53fb79-e859-4e21-999b-60f875fa5142","name":"5a53fb79-e859-4e21-999b-60f875fa5142","status":"Succeeded","startTime":"2018-06-06T20:01:04.014Z","endTime":"2018-06-06T20:04:22.945Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_workspaces_test_workspaces_isolation66241661$first"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['471']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:28 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [a5a3f4b9-71c3-4818-bb43-f647dcf896b0]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/first?api-version=2018-05-01
+  response:
+    body: {string: '{"error":{"code":"WorkspaceNotFound","message":"The specified
+        workspace first is not found"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['93']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [595f9da6-37b5-4f77-89eb-97bf49463f3e]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 404, message: The specified workspace first is not found}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second","name":"second","type":"Microsoft.BatchAI/workspaces","location":"northeurope","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T19:59:45.592Z","creationTime":"2018-06-06T19:59:45.592Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['413']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:30 GMT']
+      etag: ['"0x8D5CBE80D2135E4"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 19:59:45 GMT']
+      pragma: [no-cache]
+      request-id: [6ec053fa-6f17-4a20-8b51-e5b4377ca217]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster","name":"cluster","type":"Microsoft.BatchAI/workspaces/clusters","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-06-06T20:00:24.649Z","allocationStateTransitionTime":"2018-06-06T20:00:25.777Z","provisioningStateTransitionTime":"2018-06-06T20:00:25.352Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":0,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['967']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:31 GMT']
+      etag: ['"0x8D5CBE82468CA78"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:24 GMT']
+      pragma: [no-cache]
+      request-id: [aa24be9b-a12d-46a1-acde-199ee0673fd5]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment","name":"experiment","type":"Microsoft.BatchAI/workspaces/experiments","properties":{"provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:43.677Z","creationTime":"2018-06-06T20:00:43.677Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['427']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:32 GMT']
+      etag: ['"0x8D5CBE82FC05AA6"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:43 GMT']
+      pragma: [no-cache]
+      request-id: [2b64191d-58e7-4bdb-972f-012be214ccb3]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Linux-4.16.12-300.fc28.x86_64-x86_64-with-fedora-28-Twenty_Eight)
+          requests/2.18.4 msrest/0.4.29 msrest_azure/0.4.31 azure-mgmt-batchai/1.0.1
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment/jobs/job?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/experiments/experiment/jobs/job","name":"job","type":"Microsoft.BatchAI/workspaces/experiments/jobs","properties":{"experimentName":"experiment","schedulingPriority":"normal","cluster":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/providers/Microsoft.BatchAI/workspaces/second/clusters/cluster"},"jobOutputDirectoryPathSegment":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_workspaces_test_workspaces_isolation66241661/workspaces/second/experiments/experiment/jobs/job/70811690-35c3-49f5-93f7-203c17f2d68a","nodeCount":1,"toolType":"custom","customToolkitSettings":{"commandLine":"true"},"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT","constraints":{"maxWallClockTime":"P7D"},"creationTime":"2018-06-06T20:00:45.399Z","provisioningState":"succeeded","provisioningStateTransitionTime":"2018-06-06T20:00:45.743Z","executionState":"queued","executionStateTransitionTime":"2018-06-06T20:00:45.399Z"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1180']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 06 Jun 2018 20:04:34 GMT']
+      etag: ['"0x8D5CBE830C71C4A"']
+      expires: ['-1']
+      last-modified: ['Wed, 06 Jun 2018 20:00:45 GMT']
+      pragma: [no-cache]
+      request-id: [bebce685-4a5d-45ae-b390-669de1b56059]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

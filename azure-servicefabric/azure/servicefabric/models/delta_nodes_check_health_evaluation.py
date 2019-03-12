@@ -13,21 +13,24 @@ from .health_evaluation import HealthEvaluation
 
 
 class DeltaNodesCheckHealthEvaluation(HealthEvaluation):
-    """Represents health evaluation for delta nodes, containing health
-    evaluations for each unhealthy node that impacted current aggregated
-    health state.
+    """Represents health evaluation for delta nodes, containing health evaluations
+    for each unhealthy node that impacted current aggregated health state.
     Can be returned during cluster upgrade when the aggregated health state of
     the cluster is Warning or Error.
-    .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param baseline_error_count: Number of nodes with aggregated heath state
      Error in the health store at the beginning of the cluster upgrade.
     :type baseline_error_count: long
@@ -43,18 +46,18 @@ class DeltaNodesCheckHealthEvaluation(HealthEvaluation):
      the aggregated health state.
      Includes all the unhealthy NodeHealthEvaluation that impacted the
      aggregated health.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'baseline_error_count': {'key': 'BaselineErrorCount', 'type': 'long'},
         'baseline_total_count': {'key': 'BaselineTotalCount', 'type': 'long'},
         'max_percent_delta_unhealthy_nodes': {'key': 'MaxPercentDeltaUnhealthyNodes', 'type': 'int'},
@@ -62,11 +65,11 @@ class DeltaNodesCheckHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, baseline_error_count=None, baseline_total_count=None, max_percent_delta_unhealthy_nodes=None, total_count=None, unhealthy_evaluations=None):
-        super(DeltaNodesCheckHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.baseline_error_count = baseline_error_count
-        self.baseline_total_count = baseline_total_count
-        self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'DeltaNodesCheck'
+    def __init__(self, **kwargs):
+        super(DeltaNodesCheckHealthEvaluation, self).__init__(**kwargs)
+        self.baseline_error_count = kwargs.get('baseline_error_count', None)
+        self.baseline_total_count = kwargs.get('baseline_total_count', None)
+        self.max_percent_delta_unhealthy_nodes = kwargs.get('max_percent_delta_unhealthy_nodes', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'DeltaNodesCheck'

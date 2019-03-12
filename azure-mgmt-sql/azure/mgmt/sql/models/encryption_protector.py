@@ -18,6 +18,8 @@ class EncryptionProtector(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -25,20 +27,18 @@ class EncryptionProtector(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param kind: Kind of encryption protector. This is metadata used for the
-     Azure portal experience. Possible values include: '', 'azurekeyvault',
-     'servicemanaged'
-    :type kind: str or :class:`enum <azure.mgmt.sql.models.enum>`
+     Azure portal experience.
+    :type kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
     :vartype subregion: str
     :param server_key_name: The name of the server key.
     :type server_key_name: str
-    :param server_key_type: The encryption protector type like
+    :param server_key_type: Required. The encryption protector type like
      'ServiceManaged', 'AzureKeyVault'. Possible values include:
      'ServiceManaged', 'AzureKeyVault'
-    :type server_key_type: str or :class:`ServerKeyType
-     <azure.mgmt.sql.models.ServerKeyType>`
+    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :ivar uri: The URI of the server key.
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.
@@ -51,6 +51,7 @@ class EncryptionProtector(ProxyResource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
+        'server_key_type': {'required': True},
         'uri': {'readonly': True},
         'thumbprint': {'readonly': True},
     }
@@ -68,12 +69,12 @@ class EncryptionProtector(ProxyResource):
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, server_key_name=None, server_key_type=None):
-        super(EncryptionProtector, self).__init__()
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(EncryptionProtector, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
         self.location = None
         self.subregion = None
-        self.server_key_name = server_key_name
-        self.server_key_type = server_key_type
+        self.server_key_name = kwargs.get('server_key_name', None)
+        self.server_key_type = kwargs.get('server_key_type', None)
         self.uri = None
         self.thumbprint = None

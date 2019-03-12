@@ -17,7 +17,7 @@ class WeekDetailsFragment(Model):
 
     :param weekdays: The days of the week for which the schedule is set (e.g.
      Sunday, Monday, Tuesday, etc.).
-    :type weekdays: list of str
+    :type weekdays: list[str]
     :param time: The time of the day the schedule will occur.
     :type time: str
     """
@@ -27,6 +27,7 @@ class WeekDetailsFragment(Model):
         'time': {'key': 'time', 'type': 'str'},
     }
 
-    def __init__(self, weekdays=None, time=None):
-        self.weekdays = weekdays
-        self.time = time
+    def __init__(self, **kwargs):
+        super(WeekDetailsFragment, self).__init__(**kwargs)
+        self.weekdays = kwargs.get('weekdays', None)
+        self.time = kwargs.get('time', None)

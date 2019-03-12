@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class KeyVaultSecretStatus(Enum):
+class KeyVaultSecretStatus(str, Enum):
 
     initialized = "Initialized"
     waiting_on_certificate_order = "WaitingOnCertificateOrder"
@@ -27,13 +27,13 @@ class KeyVaultSecretStatus(Enum):
     unknown = "Unknown"
 
 
-class CertificateProductType(Enum):
+class CertificateProductType(str, Enum):
 
     standard_domain_validated_ssl = "StandardDomainValidatedSsl"
     standard_domain_validated_wild_card_ssl = "StandardDomainValidatedWildCardSsl"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
     failed = "Failed"
@@ -42,7 +42,7 @@ class ProvisioningState(Enum):
     deleting = "Deleting"
 
 
-class CertificateOrderStatus(Enum):
+class CertificateOrderStatus(str, Enum):
 
     pendingissuance = "Pendingissuance"
     issued = "Issued"
@@ -56,7 +56,7 @@ class CertificateOrderStatus(Enum):
     not_submitted = "NotSubmitted"
 
 
-class CertificateOrderActionType(Enum):
+class CertificateOrderActionType(str, Enum):
 
     certificate_issued = "CertificateIssued"
     certificate_order_canceled = "CertificateOrderCanceled"
@@ -74,56 +74,33 @@ class CertificateOrderActionType(Enum):
     unknown = "Unknown"
 
 
-class HostingEnvironmentStatus(Enum):
+class RouteType(str, Enum):
 
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
+    default = "DEFAULT"
+    inherited = "INHERITED"
+    static = "STATIC"
 
 
-class ComputeModeOptions(Enum):
+class ManagedServiceIdentityType(str, Enum):
 
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
 
 
-class WorkerSizeOptions(Enum):
+class IpFilterTag(str, Enum):
 
     default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
+    xff_proxy = "XffProxy"
 
 
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
-class StatusOptions(Enum):
-
-    ready = "Ready"
-    pending = "Pending"
-
-
-class AutoHealActionType(Enum):
+class AutoHealActionType(str, Enum):
 
     recycle = "Recycle"
     log_event = "LogEvent"
     custom_action = "CustomAction"
 
 
-class ConnectionStringType(Enum):
+class ConnectionStringType(str, Enum):
 
     my_sql = "MySql"
     sql_server = "SQLServer"
@@ -138,42 +115,20 @@ class ConnectionStringType(Enum):
     postgre_sql = "PostgreSQL"
 
 
-class SslState(Enum):
+class AzureStorageType(str, Enum):
 
-    disabled = "Disabled"
-    sni_enabled = "SniEnabled"
-    ip_based_enabled = "IpBasedEnabled"
-
-
-class HostType(Enum):
-
-    standard = "Standard"
-    repository = "Repository"
+    azure_files = "AzureFiles"
+    azure_blob = "AzureBlob"
 
 
-class OperationStatus(Enum):
+class AzureStorageState(str, Enum):
 
-    in_progress = "InProgress"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    timed_out = "TimedOut"
-    created = "Created"
+    ok = "Ok"
+    invalid_credentials = "InvalidCredentials"
+    invalid_share = "InvalidShare"
 
 
-class UsageState(Enum):
-
-    normal = "Normal"
-    exceeded = "Exceeded"
-
-
-class SiteAvailabilityState(Enum):
-
-    normal = "Normal"
-    limited = "Limited"
-    disaster_recovery_mode = "DisasterRecoveryMode"
-
-
-class ScmType(Enum):
+class ScmType(str, Enum):
 
     none = "None"
     dropbox = "Dropbox"
@@ -190,13 +145,13 @@ class ScmType(Enum):
     vso = "VSO"
 
 
-class ManagedPipelineMode(Enum):
+class ManagedPipelineMode(str, Enum):
 
     integrated = "Integrated"
     classic = "Classic"
 
 
-class SiteLoadBalancing(Enum):
+class SiteLoadBalancing(str, Enum):
 
     weighted_round_robin = "WeightedRoundRobin"
     least_requests = "LeastRequests"
@@ -205,14 +160,63 @@ class SiteLoadBalancing(Enum):
     request_hash = "RequestHash"
 
 
-class RouteType(Enum):
+class SupportedTlsVersions(str, Enum):
 
-    default = "DEFAULT"
-    inherited = "INHERITED"
-    static = "STATIC"
+    one_full_stop_zero = "1.0"
+    one_full_stop_one = "1.1"
+    one_full_stop_two = "1.2"
 
 
-class DomainStatus(Enum):
+class FtpsState(str, Enum):
+
+    all_allowed = "AllAllowed"
+    ftps_only = "FtpsOnly"
+    disabled = "Disabled"
+
+
+class SslState(str, Enum):
+
+    disabled = "Disabled"
+    sni_enabled = "SniEnabled"
+    ip_based_enabled = "IpBasedEnabled"
+
+
+class HostType(str, Enum):
+
+    standard = "Standard"
+    repository = "Repository"
+
+
+class UsageState(str, Enum):
+
+    normal = "Normal"
+    exceeded = "Exceeded"
+
+
+class SiteAvailabilityState(str, Enum):
+
+    normal = "Normal"
+    limited = "Limited"
+    disaster_recovery_mode = "DisasterRecoveryMode"
+
+
+class RedundancyMode(str, Enum):
+
+    none = "None"
+    manual = "Manual"
+    failover = "Failover"
+    active_active = "ActiveActive"
+    geo_redundant = "GeoRedundant"
+
+
+class StatusOptions(str, Enum):
+
+    ready = "Ready"
+    pending = "Pending"
+    creating = "Creating"
+
+
+class DomainStatus(str, Enum):
 
     active = "Active"
     awaiting = "Awaiting"
@@ -237,44 +241,119 @@ class DomainStatus(Enum):
     json_converter_failed = "JsonConverterFailed"
 
 
-class AzureResourceType(Enum):
+class AzureResourceType(str, Enum):
 
     website = "Website"
     traffic_manager = "TrafficManager"
 
 
-class CustomHostNameDnsRecordType(Enum):
+class CustomHostNameDnsRecordType(str, Enum):
 
     cname = "CName"
     a = "A"
 
 
-class HostNameType(Enum):
+class HostNameType(str, Enum):
 
     verified = "Verified"
     managed = "Managed"
 
 
-class DnsType(Enum):
+class DnsType(str, Enum):
 
     azure_dns = "AzureDns"
     default_domain_registrar_dns = "DefaultDomainRegistrarDns"
 
 
-class DomainType(Enum):
+class DomainType(str, Enum):
 
     regular = "Regular"
     soft_deleted = "SoftDeleted"
 
 
-class ResourceScopeType(Enum):
+class HostingEnvironmentStatus(str, Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(str, Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(str, Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(str, Enum):
+
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+    d1 = "D1"
+    d2 = "D2"
+    d3 = "D3"
+    default = "Default"
+
+
+class AccessControlEntryAction(str, Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class OperationStatus(str, Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+
+
+class IssueType(str, Enum):
+
+    service_incident = "ServiceIncident"
+    app_deployment = "AppDeployment"
+    app_crash = "AppCrash"
+    runtime_issue_detected = "RuntimeIssueDetected"
+    ase_deployment = "AseDeployment"
+    user_issue = "UserIssue"
+    platform_issue = "PlatformIssue"
+    other = "Other"
+
+
+class SolutionType(str, Enum):
+
+    quick_solution = "QuickSolution"
+    deep_investigation = "DeepInvestigation"
+    best_practices = "BestPractices"
+
+
+class RenderingType(str, Enum):
+
+    no_graph = "NoGraph"
+    table = "Table"
+    time_series = "TimeSeries"
+    time_series_per_instance = "TimeSeriesPerInstance"
+
+
+class ResourceScopeType(str, Enum):
 
     server_farm = "ServerFarm"
     subscription = "Subscription"
     web_site = "WebSite"
 
 
-class NotificationLevel(Enum):
+class NotificationLevel(str, Enum):
 
     critical = "Critical"
     warning = "Warning"
@@ -282,7 +361,7 @@ class NotificationLevel(Enum):
     non_urgent_suggestion = "NonUrgentSuggestion"
 
 
-class Channels(Enum):
+class Channels(str, Enum):
 
     notification = "Notification"
     api = "Api"
@@ -291,7 +370,7 @@ class Channels(Enum):
     all = "All"
 
 
-class AppServicePlanRestrictions(Enum):
+class AppServicePlanRestrictions(str, Enum):
 
     none = "None"
     free = "Free"
@@ -301,26 +380,31 @@ class AppServicePlanRestrictions(Enum):
     premium = "Premium"
 
 
-class InAvailabilityReasonType(Enum):
+class InAvailabilityReasonType(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
 
 
-class CheckNameResourceTypes(Enum):
+class CheckNameResourceTypes(str, Enum):
 
     site = "Site"
     slot = "Slot"
     hosting_environment = "HostingEnvironment"
+    publishing_user = "PublishingUser"
+    microsoft_websites = "Microsoft.Web/sites"
+    microsoft_websitesslots = "Microsoft.Web/sites/slots"
+    microsoft_webhosting_environments = "Microsoft.Web/hostingEnvironments"
+    microsoft_webpublishing_users = "Microsoft.Web/publishingUsers"
 
 
-class ValidateResourceTypes(Enum):
+class ValidateResourceTypes(str, Enum):
 
     server_farm = "ServerFarm"
     site = "Site"
 
 
-class LogLevel(Enum):
+class LogLevel(str, Enum):
 
     off = "Off"
     verbose = "Verbose"
@@ -329,7 +413,7 @@ class LogLevel(Enum):
     error = "Error"
 
 
-class BackupItemStatus(Enum):
+class BackupItemStatus(str, Enum):
 
     in_progress = "InProgress"
     failed = "Failed"
@@ -343,7 +427,7 @@ class BackupItemStatus(Enum):
     deleted = "Deleted"
 
 
-class DatabaseType(Enum):
+class DatabaseType(str, Enum):
 
     sql_azure = "SqlAzure"
     my_sql = "MySql"
@@ -351,40 +435,86 @@ class DatabaseType(Enum):
     postgre_sql = "PostgreSql"
 
 
-class FrequencyUnit(Enum):
+class FrequencyUnit(str, Enum):
 
     day = "Day"
     hour = "Hour"
 
 
-class BackupRestoreOperationType(Enum):
+class ContinuousWebJobStatus(str, Enum):
 
-    default = "Default"
-    clone = "Clone"
-    relocation = "Relocation"
+    initializing = "Initializing"
+    starting = "Starting"
+    running = "Running"
+    pending_restart = "PendingRestart"
+    stopped = "Stopped"
 
 
-class PublishingProfileFormat(Enum):
+class WebJobType(str, Enum):
+
+    continuous = "Continuous"
+    triggered = "Triggered"
+
+
+class PublishingProfileFormat(str, Enum):
 
     file_zilla3 = "FileZilla3"
     web_deploy = "WebDeploy"
     ftp = "Ftp"
 
 
-class DnsVerificationTestResult(Enum):
+class DnsVerificationTestResult(str, Enum):
 
     passed = "Passed"
     failed = "Failed"
     skipped = "Skipped"
 
 
-class UnauthenticatedClientAction(Enum):
+class MSDeployLogEntryType(str, Enum):
+
+    message = "Message"
+    warning = "Warning"
+    error = "Error"
+
+
+class MSDeployProvisioningState(str, Enum):
+
+    accepted = "accepted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+    canceled = "canceled"
+
+
+class MySqlMigrationType(str, Enum):
+
+    local_to_remote = "LocalToRemote"
+    remote_to_local = "RemoteToLocal"
+
+
+class PublicCertificateLocation(str, Enum):
+
+    current_user_my = "CurrentUserMy"
+    local_machine_my = "LocalMachineMy"
+    unknown = "Unknown"
+
+
+class BackupRestoreOperationType(str, Enum):
+
+    default = "Default"
+    clone = "Clone"
+    relocation = "Relocation"
+    snapshot = "Snapshot"
+    cloud_fs = "CloudFS"
+
+
+class UnauthenticatedClientAction(str, Enum):
 
     redirect_to_login_page = "RedirectToLoginPage"
     allow_anonymous = "AllowAnonymous"
 
 
-class BuiltInAuthenticationProvider(Enum):
+class BuiltInAuthenticationProvider(str, Enum):
 
     azure_active_directory = "AzureActiveDirectory"
     facebook = "Facebook"
@@ -393,14 +523,27 @@ class BuiltInAuthenticationProvider(Enum):
     twitter = "Twitter"
 
 
-class CloneAbilityResult(Enum):
+class CloneAbilityResult(str, Enum):
 
     cloneable = "Cloneable"
     partially_cloneable = "PartiallyCloneable"
     not_cloneable = "NotCloneable"
 
 
-class SkuName(Enum):
+class SiteExtensionType(str, Enum):
+
+    gallery = "Gallery"
+    web_root = "WebRoot"
+
+
+class TriggeredWebJobStatus(str, Enum):
+
+    success = "Success"
+    failed = "Failed"
+    error = "Error"
+
+
+class SkuName(str, Enum):
 
     free = "Free"
     shared = "Shared"
@@ -409,3 +552,6 @@ class SkuName(Enum):
     premium = "Premium"
     dynamic = "Dynamic"
     isolated = "Isolated"
+    premium_v2 = "PremiumV2"
+    elastic_premium = "ElasticPremium"
+    elastic_isolated = "ElasticIsolated"

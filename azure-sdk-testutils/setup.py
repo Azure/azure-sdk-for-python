@@ -1,1 +1,0 @@
-# Blank setup.py so this directory will be added to PYTHONPATH by azure_nosetests.py

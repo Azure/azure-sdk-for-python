@@ -27,8 +27,8 @@ class SubscriptionPolicies(Model):
     :vartype quota_id: str
     :ivar spending_limit: The subscription spending limit. Possible values
      include: 'On', 'Off', 'CurrentPeriodOff'
-    :vartype spending_limit: str or :class:`SpendingLimit
-     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SpendingLimit>`
+    :vartype spending_limit: str or
+     ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SpendingLimit
     """
 
     _validation = {
@@ -43,7 +43,8 @@ class SubscriptionPolicies(Model):
         'spending_limit': {'key': 'spendingLimit', 'type': 'SpendingLimit'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(SubscriptionPolicies, self).__init__(**kwargs)
         self.location_placement_id = None
         self.quota_id = None
         self.spending_limit = None

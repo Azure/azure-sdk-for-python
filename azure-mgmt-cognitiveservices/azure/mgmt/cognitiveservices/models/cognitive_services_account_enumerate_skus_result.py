@@ -20,8 +20,8 @@ class CognitiveServicesAccountEnumerateSkusResult(Model):
 
     :ivar value: Gets the list of Cognitive Services accounts and their
      properties.
-    :vartype value: list of :class:`CognitiveServicesResourceAndSku
-     <azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku>`
+    :vartype value:
+     list[~azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku]
     """
 
     _validation = {
@@ -32,5 +32,6 @@ class CognitiveServicesAccountEnumerateSkusResult(Model):
         'value': {'key': 'value', 'type': '[CognitiveServicesResourceAndSku]'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccountEnumerateSkusResult, self).__init__(**kwargs)
         self.value = None

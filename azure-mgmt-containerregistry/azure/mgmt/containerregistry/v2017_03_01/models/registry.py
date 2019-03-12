@@ -18,37 +18,39 @@ class Registry(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource ID.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource. This cannot be changed
-     after the resource is created.
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
-    :param sku: The SKU of the container registry.
-    :type sku: :class:`Sku
-     <azure.mgmt.containerregistry.v2017_03_01.models.Sku>`
+    :type tags: dict[str, str]
+    :param sku: Required. The SKU of the container registry.
+    :type sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in
      ISO8601 format.
     :vartype creation_date: datetime
-    :ivar provisioning_state: The status of the container registry at the time
-     the operation was called. Possible values include: 'Creating', 'Succeeded'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.containerregistry.v2017_03_01.models.ProvisioningState>`
+    :ivar provisioning_state: The provisioning state of the container registry
+     at the time the operation was called. Possible values include: 'Creating',
+     'Succeeded'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2017_03_01.models.ProvisioningState
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default. Default value: False .
+     is enabled. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
      container registry.
-    :type storage_account: :class:`StorageAccountProperties
-     <azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountProperties>`
+    :type storage_account:
+     ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountProperties
     """
 
     _validation = {
@@ -76,11 +78,11 @@ class Registry(Resource):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, location, sku, tags=None, admin_user_enabled=False, storage_account=None):
-        super(Registry, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(Registry, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.login_server = None
         self.creation_date = None
         self.provisioning_state = None
-        self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
+        self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
+        self.storage_account = kwargs.get('storage_account', None)

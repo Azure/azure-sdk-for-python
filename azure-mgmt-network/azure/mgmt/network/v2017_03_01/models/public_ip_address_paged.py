@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PublicIPAddressPaged(Paged):
     """
-    A paging container for iterating over a list of PublicIPAddress object
+    A paging container for iterating over a list of :class:`PublicIPAddress <azure.mgmt.network.v2017_03_01.models.PublicIPAddress>` object
     """
 
     _attribute_map = {

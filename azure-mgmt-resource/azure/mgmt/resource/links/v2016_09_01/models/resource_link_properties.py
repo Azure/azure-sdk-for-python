@@ -18,11 +18,13 @@ class ResourceLinkProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar source_id: The fully qualified ID of the source resource in the
      link.
     :vartype source_id: str
-    :param target_id: The fully qualified ID of the target resource in the
-     link.
+    :param target_id: Required. The fully qualified ID of the target resource
+     in the link.
     :type target_id: str
     :param notes: Notes about the resource link.
     :type notes: str
@@ -39,7 +41,8 @@ class ResourceLinkProperties(Model):
         'notes': {'key': 'notes', 'type': 'str'},
     }
 
-    def __init__(self, target_id, notes=None):
+    def __init__(self, **kwargs):
+        super(ResourceLinkProperties, self).__init__(**kwargs)
         self.source_id = None
-        self.target_id = target_id
-        self.notes = notes
+        self.target_id = kwargs.get('target_id', None)
+        self.notes = kwargs.get('notes', None)

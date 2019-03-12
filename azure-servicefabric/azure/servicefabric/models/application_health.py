@@ -21,40 +21,44 @@ class ApplicationHealth(EntityHealth):
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
     :param unhealthy_evaluations: The unhealthy evaluations that show why the
      current aggregated health state was returned by Health Manager.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    :param name:
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
+    :param name: The name of the application, including the 'fabric:' URI
+     scheme.
     :type name: str
-    :param service_health_states: Service health states as found in the
-     health store.
-    :type service_health_states: list of :class:`ServiceHealthState
-     <azure.servicefabric.models.ServiceHealthState>`
+    :param service_health_states: Service health states as found in the health
+     store.
+    :type service_health_states:
+     list[~azure.servicefabric.models.ServiceHealthState]
     :param deployed_application_health_states: Deployed application health
      states as found in the health store.
-    :type deployed_application_health_states: list of
-     :class:`DeployedApplicationHealthState
-     <azure.servicefabric.models.DeployedApplicationHealthState>`
-    """ 
+    :type deployed_application_health_states:
+     list[~azure.servicefabric.models.DeployedApplicationHealthState]
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
         'name': {'key': 'Name', 'type': 'str'},
         'service_health_states': {'key': 'ServiceHealthStates', 'type': '[ServiceHealthState]'},
         'deployed_application_health_states': {'key': 'DeployedApplicationHealthStates', 'type': '[DeployedApplicationHealthState]'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, name=None, service_health_states=None, deployed_application_health_states=None):
-        super(ApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations)
-        self.name = name
-        self.service_health_states = service_health_states
-        self.deployed_application_health_states = deployed_application_health_states
+    def __init__(self, **kwargs):
+        super(ApplicationHealth, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.service_health_states = kwargs.get('service_health_states', None)
+        self.deployed_application_health_states = kwargs.get('deployed_application_health_states', None)

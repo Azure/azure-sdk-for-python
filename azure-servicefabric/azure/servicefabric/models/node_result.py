@@ -16,17 +16,18 @@ class NodeResult(Model):
     """Contains information about a node that was targeted by a user-induced
     operation.
 
-    :param node_name: The node name
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param node_instance_id: The node instance id.
     :type node_instance_id: str
-    """ 
+    """
 
     _attribute_map = {
         'node_name': {'key': 'NodeName', 'type': 'str'},
         'node_instance_id': {'key': 'NodeInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, node_name=None, node_instance_id=None):
-        self.node_name = node_name
-        self.node_instance_id = node_instance_id
+    def __init__(self, **kwargs):
+        super(NodeResult, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.node_instance_id = kwargs.get('node_instance_id', None)

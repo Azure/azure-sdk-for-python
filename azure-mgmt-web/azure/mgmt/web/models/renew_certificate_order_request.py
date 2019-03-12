@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class RenewCertificateOrderRequest(Resource):
+class RenewCertificateOrderRequest(ProxyOnlyResource):
     """Class representing certificate renew request.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,12 @@ class RenewCertificateOrderRequest(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param key_size: Certificate Key Size.
     :type key_size: int
     :param csr: Csr to be used for re-key operation.
@@ -41,23 +37,22 @@ class RenewCertificateOrderRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'key_size': {'key': 'properties.keySize', 'type': 'int'},
         'csr': {'key': 'properties.csr', 'type': 'str'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_size=None, csr=None, is_private_key_external=None):
-        super(RenewCertificateOrderRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.key_size = key_size
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+    def __init__(self, **kwargs):
+        super(RenewCertificateOrderRequest, self).__init__(**kwargs)
+        self.key_size = kwargs.get('key_size', None)
+        self.csr = kwargs.get('csr', None)
+        self.is_private_key_external = kwargs.get('is_private_key_external', None)

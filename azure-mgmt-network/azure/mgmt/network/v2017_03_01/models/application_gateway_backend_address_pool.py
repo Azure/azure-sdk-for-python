@@ -19,12 +19,11 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :type id: str
     :param backend_ip_configurations: Collection of references to IPs defined
      in network interfaces.
-    :type backend_ip_configurations: list of
-     :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2017_03_01.models.NetworkInterfaceIPConfiguration>`
+    :type backend_ip_configurations:
+     list[~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceIPConfiguration]
     :param backend_addresses: Backend addresses
-    :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendAddress>`
+    :type backend_addresses:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendAddress]
     :param provisioning_state: Provisioning state of the backend address pool
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -45,10 +44,10 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, backend_ip_configurations=None, backend_addresses=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayBackendAddressPool, self).__init__(id=id)
-        self.backend_ip_configurations = backend_ip_configurations
-        self.backend_addresses = backend_addresses
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendAddressPool, self).__init__(**kwargs)
+        self.backend_ip_configurations = kwargs.get('backend_ip_configurations', None)
+        self.backend_addresses = kwargs.get('backend_addresses', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

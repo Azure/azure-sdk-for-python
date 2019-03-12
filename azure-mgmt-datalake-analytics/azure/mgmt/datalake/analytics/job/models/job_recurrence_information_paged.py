@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class JobRecurrenceInformationPaged(Paged):
     """
-    A paging container for iterating over a list of JobRecurrenceInformation object
+    A paging container for iterating over a list of :class:`JobRecurrenceInformation <azure.mgmt.datalake.analytics.job.models.JobRecurrenceInformation>` object
     """
 
     _attribute_map = {

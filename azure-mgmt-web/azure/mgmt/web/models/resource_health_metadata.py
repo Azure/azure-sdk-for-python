@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class ResourceHealthMetadata(Resource):
+class ResourceHealthMetadata(ProxyOnlyResource):
     """Used for getting ResourceHealthCheck settings.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,18 +20,12 @@ class ResourceHealthMetadata(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param resource_health_metadata_id: ARM Resource Id
-    :type resource_health_metadata_id: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param category: The category that the resource matches in the RHC Policy
      File
     :type category: str
@@ -41,23 +35,20 @@ class ResourceHealthMetadata(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_health_metadata_id': {'key': 'properties.id', 'type': 'str'},
         'category': {'key': 'properties.category', 'type': 'str'},
         'signal_availability': {'key': 'properties.signalAvailability', 'type': 'bool'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, resource_health_metadata_id=None, category=None, signal_availability=None):
-        super(ResourceHealthMetadata, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.resource_health_metadata_id = resource_health_metadata_id
-        self.category = category
-        self.signal_availability = signal_availability
+    def __init__(self, **kwargs):
+        super(ResourceHealthMetadata, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.signal_availability = kwargs.get('signal_availability', None)

@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class Encryption(Model):
     """The encryption settings on the storage account.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param services: List of services which support encryption.
-    :type services: :class:`EncryptionServices
-     <azure.mgmt.storage.v2017_06_01.models.EncryptionServices>`
-    :param key_source: The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible
-     values include: 'Microsoft.Storage', 'Microsoft.Keyvault'. Default value:
-     "Microsoft.Storage" .
-    :type key_source: str or :class:`KeySource
-     <azure.mgmt.storage.v2017_06_01.models.KeySource>`
+    :type services: ~azure.mgmt.storage.v2017_06_01.models.EncryptionServices
+    :param key_source: Required. The encryption keySource (provider). Possible
+     values (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault.
+     Possible values include: 'Microsoft.Storage', 'Microsoft.Keyvault'.
+     Default value: "Microsoft.Storage" .
+    :type key_source: str or ~azure.mgmt.storage.v2017_06_01.models.KeySource
     :param key_vault_properties: Properties provided by key vault.
-    :type key_vault_properties: :class:`KeyVaultProperties
-     <azure.mgmt.storage.v2017_06_01.models.KeyVaultProperties>`
+    :type key_vault_properties:
+     ~azure.mgmt.storage.v2017_06_01.models.KeyVaultProperties
     """
 
     _validation = {
@@ -39,7 +39,8 @@ class Encryption(Model):
         'key_vault_properties': {'key': 'keyvaultproperties', 'type': 'KeyVaultProperties'},
     }
 
-    def __init__(self, services=None, key_source="Microsoft.Storage", key_vault_properties=None):
-        self.services = services
-        self.key_source = key_source
-        self.key_vault_properties = key_vault_properties
+    def __init__(self, **kwargs):
+        super(Encryption, self).__init__(**kwargs)
+        self.services = kwargs.get('services', None)
+        self.key_source = kwargs.get('key_source', "Microsoft.Storage")
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)

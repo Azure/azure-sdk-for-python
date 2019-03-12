@@ -16,13 +16,14 @@ class ActivityLogAlertActionList(Model):
     """A list of activity log alert actions.
 
     :param action_groups: The list of activity log alerts.
-    :type action_groups: list of :class:`ActivityLogAlertActionGroup
-     <azure.mgmt.monitor.models.ActivityLogAlertActionGroup>`
+    :type action_groups:
+     list[~azure.mgmt.monitor.models.ActivityLogAlertActionGroup]
     """
 
     _attribute_map = {
         'action_groups': {'key': 'actionGroups', 'type': '[ActivityLogAlertActionGroup]'},
     }
 
-    def __init__(self, action_groups=None):
-        self.action_groups = action_groups
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertActionList, self).__init__(**kwargs)
+        self.action_groups = kwargs.get('action_groups', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PremierAddOnOfferPaged(Paged):
     """
-    A paging container for iterating over a list of PremierAddOnOffer object
+    A paging container for iterating over a list of :class:`PremierAddOnOffer <azure.mgmt.web.models.PremierAddOnOffer>` object
     """
 
     _attribute_map = {

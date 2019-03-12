@@ -9,38 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .update_resource import UpdateResource
 
 
-class PolicyFragment(Resource):
+class PolicyFragment(UpdateResource):
     """A Policy.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param description: The description of the policy.
     :type description: str
     :param status: The status of the policy. Possible values include:
      'Enabled', 'Disabled'
-    :type status: str or :class:`PolicyStatus
-     <azure.mgmt.devtestlabs.models.PolicyStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
     :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize,
      MaxVmsAllowedPerLab, etc. Possible values include: 'UserOwnedLabVmCount',
      'UserOwnedLabPremiumVmCount', 'LabVmCount', 'LabPremiumVmCount',
      'LabVmSize', 'GalleryImage', 'UserOwnedLabVmCountInSubnet',
-     'LabTargetCost'
-    :type fact_name: str or :class:`PolicyFactName
-     <azure.mgmt.devtestlabs.models.PolicyFactName>`
+     'LabTargetCost', 'EnvironmentTemplate', 'ScheduleEditPermission'
+    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
     :param fact_data: The fact data of the policy.
     :type fact_data: str
     :param threshold: The threshold of the policy (i.e. a number for
@@ -49,26 +36,11 @@ class PolicyFragment(Resource):
     :param evaluator_type: The evaluator type of the policy (i.e.
      AllowedValuesPolicy, MaxValuePolicy). Possible values include:
      'AllowedValuesPolicy', 'MaxValuePolicy'
-    :type evaluator_type: str or :class:`PolicyEvaluatorType
-     <azure.mgmt.devtestlabs.models.PolicyEvaluatorType>`
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
-     (Guid).
-    :type unique_identifier: str
+    :type evaluator_type: str or
+     ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
@@ -76,17 +48,13 @@ class PolicyFragment(Resource):
         'fact_data': {'key': 'properties.factData', 'type': 'str'},
         'threshold': {'key': 'properties.threshold', 'type': 'str'},
         'evaluator_type': {'key': 'properties.evaluatorType', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, description=None, status=None, fact_name=None, fact_data=None, threshold=None, evaluator_type=None, provisioning_state=None, unique_identifier=None):
-        super(PolicyFragment, self).__init__(location=location, tags=tags)
-        self.description = description
-        self.status = status
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.threshold = threshold
-        self.evaluator_type = evaluator_type
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(PolicyFragment, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.status = kwargs.get('status', None)
+        self.fact_name = kwargs.get('fact_name', None)
+        self.fact_data = kwargs.get('fact_data', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.evaluator_type = kwargs.get('evaluator_type', None)

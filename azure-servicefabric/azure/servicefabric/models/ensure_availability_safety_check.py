@@ -13,21 +13,28 @@ from .partition_safety_check import PartitionSafetyCheck
 
 
 class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
-    """Safety check that waits for ensures the avaiability of the partition. It
-    waits until there are replicas avaiabile such that bring down this
-    replica will not cause avaiability loss for the partition.
+    """Safety check that waits to ensure the availability of the partition. It
+    waits until there are replicas available such that bringing down this
+    replica will not cause availability loss for the partition.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
     :type partition_id: str
-    """ 
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(EnsureAvailabilitySafetyCheck, self).__init__(partition_id=partition_id)
-        self.Kind = 'EnsureAvailability'
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EnsureAvailabilitySafetyCheck, self).__init__(**kwargs)
+        self.kind = 'EnsureAvailability'

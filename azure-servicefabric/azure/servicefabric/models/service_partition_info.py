@@ -15,36 +15,47 @@ from msrest.serialization import Model
 class ServicePartitionInfo(Model):
     """Information about a partition of a Service Fabric service.
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param partition_status: Possible values include: 'Invalid', 'Ready',
-     'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str
-    :param partition_information:
-    :type partition_information: :class:`PartitionInformation
-     <azure.servicefabric.models.PartitionInformation>`
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServicePartitionInfo,
+    StatelessServicePartitionInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param partition_status: The status of the service fabric service
+     partition. Possible values include: 'Invalid', 'Ready', 'NotReady',
+     'InQuorumLoss', 'Reconfiguring', 'Deleting'
+    :type partition_status: str or
+     ~azure.servicefabric.models.ServicePartitionStatus
+    :param partition_information: Information about the partition identity,
+     partitioning scheme and keys supported by it.
+    :type partition_information:
+     ~azure.servicefabric.models.PartitionInformation
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
+        'service_kind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
     }
 
-    def __init__(self, health_state=None, partition_status=None, partition_information=None):
-        self.health_state = health_state
-        self.partition_status = partition_status
-        self.partition_information = partition_information
-        self.ServiceKind = None
+    def __init__(self, **kwargs):
+        super(ServicePartitionInfo, self).__init__(**kwargs)
+        self.health_state = kwargs.get('health_state', None)
+        self.partition_status = kwargs.get('partition_status', None)
+        self.partition_information = kwargs.get('partition_information', None)
+        self.service_kind = None

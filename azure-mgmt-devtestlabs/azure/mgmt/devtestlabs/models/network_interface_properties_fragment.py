@@ -37,8 +37,7 @@ class NetworkInterfacePropertiesFragment(Model):
     :param shared_public_ip_address_configuration: The configuration for
      sharing a public IP address across multiple virtual machines.
     :type shared_public_ip_address_configuration:
-     :class:`SharedPublicIpAddressConfigurationFragment
-     <azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment>`
+     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
     """
 
     _attribute_map = {
@@ -53,13 +52,14 @@ class NetworkInterfacePropertiesFragment(Model):
         'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SharedPublicIpAddressConfigurationFragment'},
     }
 
-    def __init__(self, virtual_network_id=None, subnet_id=None, public_ip_address_id=None, public_ip_address=None, private_ip_address=None, dns_name=None, rdp_authority=None, ssh_authority=None, shared_public_ip_address_configuration=None):
-        self.virtual_network_id = virtual_network_id
-        self.subnet_id = subnet_id
-        self.public_ip_address_id = public_ip_address_id
-        self.public_ip_address = public_ip_address
-        self.private_ip_address = private_ip_address
-        self.dns_name = dns_name
-        self.rdp_authority = rdp_authority
-        self.ssh_authority = ssh_authority
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
+    def __init__(self, **kwargs):
+        super(NetworkInterfacePropertiesFragment, self).__init__(**kwargs)
+        self.virtual_network_id = kwargs.get('virtual_network_id', None)
+        self.subnet_id = kwargs.get('subnet_id', None)
+        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
+        self.dns_name = kwargs.get('dns_name', None)
+        self.rdp_authority = kwargs.get('rdp_authority', None)
+        self.ssh_authority = kwargs.get('ssh_authority', None)
+        self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)

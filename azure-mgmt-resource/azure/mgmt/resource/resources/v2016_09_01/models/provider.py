@@ -25,8 +25,8 @@ class Provider(Model):
     :ivar registration_state: The registration state of the provider.
     :vartype registration_state: str
     :ivar resource_types: The collection of provider resource types.
-    :vartype resource_types: list of :class:`ProviderResourceType
-     <azure.mgmt.resource.resources.v2016_09_01.models.ProviderResourceType>`
+    :vartype resource_types:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.ProviderResourceType]
     """
 
     _validation = {
@@ -42,8 +42,9 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, namespace=None):
+    def __init__(self, **kwargs):
+        super(Provider, self).__init__(**kwargs)
         self.id = None
-        self.namespace = namespace
+        self.namespace = kwargs.get('namespace', None)
         self.registration_state = None
         self.resource_types = None

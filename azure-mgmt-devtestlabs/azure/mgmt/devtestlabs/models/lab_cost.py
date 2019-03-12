@@ -27,19 +27,18 @@ class LabCost(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param target_cost: The target cost properties
-    :type target_cost: :class:`TargetCostProperties
-     <azure.mgmt.devtestlabs.models.TargetCostProperties>`
+    :type target_cost: ~azure.mgmt.devtestlabs.models.TargetCostProperties
     :ivar lab_cost_summary: The lab cost summary component of the cost data.
-    :vartype lab_cost_summary: :class:`LabCostSummaryProperties
-     <azure.mgmt.devtestlabs.models.LabCostSummaryProperties>`
+    :vartype lab_cost_summary:
+     ~azure.mgmt.devtestlabs.models.LabCostSummaryProperties
     :ivar lab_cost_details: The lab cost details component of the cost data.
-    :vartype lab_cost_details: list of :class:`LabCostDetailsProperties
-     <azure.mgmt.devtestlabs.models.LabCostDetailsProperties>`
+    :vartype lab_cost_details:
+     list[~azure.mgmt.devtestlabs.models.LabCostDetailsProperties]
     :ivar resource_costs: The resource cost component of the cost data.
-    :vartype resource_costs: list of :class:`LabResourceCostProperties
-     <azure.mgmt.devtestlabs.models.LabResourceCostProperties>`
+    :vartype resource_costs:
+     list[~azure.mgmt.devtestlabs.models.LabResourceCostProperties]
     :param currency_code: The currency code of the cost.
     :type currency_code: str
     :param start_date_time: The start time of the cost data.
@@ -48,11 +47,11 @@ class LabCost(Resource):
     :type end_date_time: datetime
     :param created_date: The creation date of the cost.
     :type created_date: datetime
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -62,6 +61,8 @@ class LabCost(Resource):
         'lab_cost_summary': {'readonly': True},
         'lab_cost_details': {'readonly': True},
         'resource_costs': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -82,15 +83,15 @@ class LabCost(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, target_cost=None, currency_code=None, start_date_time=None, end_date_time=None, created_date=None, provisioning_state=None, unique_identifier=None):
-        super(LabCost, self).__init__(location=location, tags=tags)
-        self.target_cost = target_cost
+    def __init__(self, **kwargs):
+        super(LabCost, self).__init__(**kwargs)
+        self.target_cost = kwargs.get('target_cost', None)
         self.lab_cost_summary = None
         self.lab_cost_details = None
         self.resource_costs = None
-        self.currency_code = currency_code
-        self.start_date_time = start_date_time
-        self.end_date_time = end_date_time
-        self.created_date = created_date
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.currency_code = kwargs.get('currency_code', None)
+        self.start_date_time = kwargs.get('start_date_time', None)
+        self.end_date_time = kwargs.get('end_date_time', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

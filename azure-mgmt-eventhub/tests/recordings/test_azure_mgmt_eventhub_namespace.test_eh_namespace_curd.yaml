@@ -1,0 +1,547 @@
+interactions:
+- request:
+    body: '{"location": "westus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
+      {"name": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['97']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2018-05-04T21:49:48.737Z","updatedAt":"2018-05-04T21:49:48.737Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['754']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:49:49 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2018-05-04T21:49:48.737Z","updatedAt":"2018-05-04T21:50:14.2Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['750']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:18 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2018-05-04T21:49:48.737Z","updatedAt":"2018-05-04T21:50:14.2Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['750']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2018-05-04T21:49:48.737Z","updatedAt":"2018-05-04T21:50:14.2Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['762']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9296/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-6727","name":"Eventhub-Namespace-6727","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-6727","createdAt":"2018-01-23T00:22:18.057Z","updatedAt":"2018-01-23T00:31:56.097Z","serviceBusEndpoint":"https://Eventhub-Namespace-6727.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1426/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8314","name":"Eventhub-Namespace-8314","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8314","createdAt":"2018-04-03T21:23:38.057Z","updatedAt":"2018-04-03T21:24:00.197Z","serviceBusEndpoint":"https://Eventhub-Namespace-8314.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9724/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-6475","name":"Eventhub-Namespace-6475","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-6475","createdAt":"2018-01-23T03:18:09.46Z","updatedAt":"2018-01-23T03:33:51.053Z","serviceBusEndpoint":"https://Eventhub-Namespace-6475.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TestingGeoDRPS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3004","name":"Eventhub-Namespace-3004","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3004","createdAt":"2018-01-24T04:58:54.21Z","updatedAt":"2018-01-24T04:59:18.573Z","serviceBusEndpoint":"https://Eventhub-Namespace-3004.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TestingGeoDRPS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3003","name":"Eventhub-Namespace-3003","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3003","createdAt":"2018-01-24T04:58:16.053Z","updatedAt":"2018-01-24T04:58:39.347Z","serviceBusEndpoint":"https://Eventhub-Namespace-3003.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps7707/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8164","name":"Eventhub-Namespace-8164","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8164","createdAt":"2018-01-23T02:38:25.37Z","updatedAt":"2018-01-23T02:54:31.35Z","serviceBusEndpoint":"https://Eventhub-Namespace-8164.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1600/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8301","name":"Eventhub-Namespace-8301","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8301","createdAt":"2018-04-03T22:10:43.833Z","updatedAt":"2018-04-03T22:11:05.037Z","serviceBusEndpoint":"https://Eventhub-Namespace-8301.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1600/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-2098","name":"Eventhub-Namespace-2098","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-2098","createdAt":"2018-04-03T22:11:15.757Z","updatedAt":"2018-04-03T22:11:39.417Z","serviceBusEndpoint":"https://Eventhub-Namespace-2098.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps7707/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-9328","name":"Eventhub-Namespace-9328","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-9328","createdAt":"2018-01-23T02:38:56.527Z","updatedAt":"2018-01-23T02:54:37.457Z","serviceBusEndpoint":"https://Eventhub-Namespace-9328.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9296/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4988","name":"Eventhub-Namespace-4988","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4988","createdAt":"2018-01-23T00:22:50.337Z","updatedAt":"2018-01-23T00:31:58.627Z","serviceBusEndpoint":"https://Eventhub-Namespace-4988.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9196/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3207","name":"Eventhub-Namespace-3207","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3207","createdAt":"2017-12-22T03:47:05.99Z","updatedAt":"2017-12-22T04:23:38.957Z","serviceBusEndpoint":"https://Eventhub-Namespace-3207.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1868/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-6081","name":"Eventhub-Namespace-6081","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-6081","createdAt":"2018-01-28T00:11:29.58Z","updatedAt":"2018-01-28T00:11:53.253Z","serviceBusEndpoint":"https://Eventhub-Namespace-6081.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9969/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3885","name":"Eventhub-Namespace-3885","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3885","createdAt":"2017-12-28T00:55:34.217Z","updatedAt":"2017-12-28T01:38:40.973Z","serviceBusEndpoint":"https://Eventhub-Namespace-3885.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-SouthCentralUS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-ps9080","name":"Eventhub-Namespace-ps9080","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-ps9080","createdAt":"2017-12-15T00:27:56.527Z","updatedAt":"2017-12-15T00:32:00.73Z","serviceBusEndpoint":"https://Eventhub-Namespace-ps9080.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps63/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-885","name":"Eventhub-Namespace-885","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-885","createdAt":"2018-01-23T01:19:24.41Z","updatedAt":"2018-01-23T01:27:07.61Z","serviceBusEndpoint":"https://Eventhub-Namespace-885.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps639/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4778","name":"Eventhub-Namespace-4778","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4778","createdAt":"2017-12-22T02:42:22.057Z","updatedAt":"2017-12-22T02:42:46.417Z","serviceBusEndpoint":"https://Eventhub-Namespace-4778.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8091/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8809","name":"Eventhub-Namespace-8809","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8809","createdAt":"2017-12-28T01:56:31.937Z","updatedAt":"2017-12-28T02:25:54.407Z","serviceBusEndpoint":"https://Eventhub-Namespace-8809.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2018-05-04T21:49:48.737Z","updatedAt":"2018-05-04T21:50:14.2Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-SouthCentralUS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-ps9391","name":"Eventhub-Namespace-ps9391","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-ps9391","createdAt":"2017-12-15T00:18:50.163Z","updatedAt":"2017-12-15T00:19:13.433Z","serviceBusEndpoint":"https://Eventhub-Namespace-ps9391.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8865/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4232","name":"Eventhub-Namespace-4232","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4232","createdAt":"2018-01-22T00:35:51.627Z","updatedAt":"2018-01-22T00:49:49.547Z","serviceBusEndpoint":"https://Eventhub-Namespace-4232.servicebus.windows.net:443/","status":"Disabled"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9079/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3606","name":"Eventhub-Namespace-3606","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3606","createdAt":"2018-04-03T21:58:20.73Z","updatedAt":"2018-04-03T22:02:36.927Z","serviceBusEndpoint":"https://Eventhub-Namespace-3606.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps53/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4765","name":"Eventhub-Namespace-4765","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4765","createdAt":"2018-04-03T22:04:29.523Z","updatedAt":"2018-04-03T22:04:51.563Z","serviceBusEndpoint":"https://Eventhub-Namespace-4765.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1426/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8446","name":"Eventhub-Namespace-8446","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8446","createdAt":"2018-04-03T21:24:12.137Z","updatedAt":"2018-04-03T21:24:36.187Z","serviceBusEndpoint":"https://Eventhub-Namespace-8446.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps6596/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4415","name":"Eventhub-Namespace-4415","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4415","createdAt":"2018-01-23T03:46:11Z","updatedAt":"2018-01-23T04:04:31.317Z","serviceBusEndpoint":"https://Eventhub-Namespace-4415.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps1868/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3539","name":"Eventhub-Namespace-3539","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3539","createdAt":"2018-01-28T00:12:00.49Z","updatedAt":"2018-01-28T00:12:23.367Z","serviceBusEndpoint":"https://Eventhub-Namespace-3539.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8592/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-7231","name":"Eventhub-Namespace-7231","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-7231","createdAt":"2018-01-28T00:17:55.377Z","updatedAt":"2018-01-28T00:21:21.72Z","serviceBusEndpoint":"https://Eventhub-Namespace-7231.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9084/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-9861","name":"Eventhub-Namespace-9861","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-9861","createdAt":"2018-04-03T22:50:35.233Z","updatedAt":"2018-04-03T22:59:50.39Z","serviceBusEndpoint":"https://Eventhub-Namespace-9861.servicebus.windows.net:443/","status":"Active","alternateName":"AlternateName2023"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps3560/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-2957","name":"Eventhub-Namespace-2957","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-2957","createdAt":"2018-04-03T22:23:34.933Z","updatedAt":"2018-04-03T22:36:20.983Z","serviceBusEndpoint":"https://Eventhub-Namespace-2957.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9196/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3328","name":"Eventhub-Namespace-3328","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3328","createdAt":"2017-12-22T03:47:43.21Z","updatedAt":"2017-12-22T04:23:39.067Z","serviceBusEndpoint":"https://Eventhub-Namespace-3328.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps840/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3849","name":"Eventhub-Namespace-3849","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3849","createdAt":"2018-01-19T01:02:30.29Z","updatedAt":"2018-01-19T01:06:27.943Z","serviceBusEndpoint":"https://Eventhub-Namespace-3849.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8239/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-6031","name":"Eventhub-Namespace-6031","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-6031","createdAt":"2018-01-23T21:09:05.16Z","updatedAt":"2018-01-23T21:13:09.053Z","serviceBusEndpoint":"https://Eventhub-Namespace-6031.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9084/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-702","name":"Eventhub-Namespace-702","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-702","createdAt":"2018-04-03T22:51:06.827Z","updatedAt":"2018-04-03T22:59:53.643Z","serviceBusEndpoint":"https://Eventhub-Namespace-702.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8091/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3878","name":"Eventhub-Namespace-3878","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3878","createdAt":"2017-12-28T01:56:04.95Z","updatedAt":"2017-12-28T02:24:08.267Z","serviceBusEndpoint":"https://Eventhub-Namespace-3878.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps63/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-3644","name":"Eventhub-Namespace-3644","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-3644","createdAt":"2018-01-23T01:19:55.533Z","updatedAt":"2018-01-23T01:27:10.687Z","serviceBusEndpoint":"https://Eventhub-Namespace-3644.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8239/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-9827","name":"Eventhub-Namespace-9827","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-9827","createdAt":"2018-01-23T21:09:36.757Z","updatedAt":"2018-01-23T21:13:07.37Z","serviceBusEndpoint":"https://Eventhub-Namespace-9827.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps53/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-1561","name":"Eventhub-Namespace-1561","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-1561","createdAt":"2018-04-03T22:05:01.37Z","updatedAt":"2018-04-03T22:05:23.863Z","serviceBusEndpoint":"https://Eventhub-Namespace-1561.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RSG1577/providers/Microsoft.EventHub/namespaces/Namespace-9111","name":"Namespace-9111","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace-9111","createdAt":"2018-05-03T21:46:52.04Z","updatedAt":"2018-05-03T21:47:14.833Z","serviceBusEndpoint":"https://Namespace-9111.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-NotificationHubs-AustraliaEast/providers/Microsoft.EventHub/namespaces/sdk-Namespace-4237","name":"sdk-Namespace-4237","type":"Microsoft.EventHub/Namespaces","location":"Australia
+        East","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":true,"maximumThroughputUnits":10,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:sdk-namespace-4237","createdAt":"2018-04-10T17:29:26.44Z","updatedAt":"2018-04-10T17:29:51.917Z","serviceBusEndpoint":"https://sdk-Namespace-4237.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-NotificationHubs-AustraliaEast/providers/Microsoft.EventHub/namespaces/sdk-Namespace-3219","name":"sdk-Namespace-3219","type":"Microsoft.EventHub/Namespaces","location":"Australia
+        East","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":true,"maximumThroughputUnits":10,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:sdk-namespace-3219","createdAt":"2018-04-10T17:55:52.167Z","updatedAt":"2018-04-10T17:56:20.043Z","serviceBusEndpoint":"https://sdk-Namespace-3219.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8132/providers/Microsoft.EventHub/namespaces/ps2614","name":"ps2614","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":true,"maximumThroughputUnits":10,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:ps2614","createdAt":"2017-12-29T03:33:11.7Z","updatedAt":"2017-12-29T03:33:35.497Z","serviceBusEndpoint":"https://ps2614.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-SouthCentralUS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-ps5593","name":"Eventhub-Namespace-ps5593","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-ps5593","createdAt":"2017-12-15T00:40:14.137Z","updatedAt":"2017-12-15T00:49:34.183Z","serviceBusEndpoint":"https://Eventhub-Namespace-ps5593.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps6596/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-1378","name":"Eventhub-Namespace-1378","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-1378","createdAt":"2018-01-23T03:46:42.86Z","updatedAt":"2018-01-23T04:03:14.313Z","serviceBusEndpoint":"https://Eventhub-Namespace-1378.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.EventHub/namespaces/TestingEventhubNamespace001","name":"TestingEventhubNamespace001","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingeventhubnamespace001","createdAt":"2018-05-01T19:24:09.287Z","updatedAt":"2018-05-01T19:24:32.44Z","serviceBusEndpoint":"https://TestingEventhubNamespace001.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9120/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-7029","name":"Eventhub-Namespace-7029","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-7029","createdAt":"2018-01-23T21:29:03.85Z","updatedAt":"2018-01-23T21:29:28.423Z","serviceBusEndpoint":"https://Eventhub-Namespace-7029.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-SouthCentralUS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-ps8652","name":"Eventhub-Namespace-ps8652","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-ps8652","createdAt":"2017-12-15T00:39:09.807Z","updatedAt":"2017-12-15T00:49:34.403Z","serviceBusEndpoint":"https://Eventhub-Namespace-ps8652.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9079/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-6254","name":"Eventhub-Namespace-6254","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-6254","createdAt":"2018-04-03T21:57:48.997Z","updatedAt":"2018-04-03T22:02:36.95Z","serviceBusEndpoint":"https://Eventhub-Namespace-6254.servicebus.windows.net:443/","status":"Active","alternateName":"TestingAlterName"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps3560/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-4298","name":"Eventhub-Namespace-4298","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-4298","createdAt":"2018-04-03T22:23:03.357Z","updatedAt":"2018-04-03T22:36:20.963Z","serviceBusEndpoint":"https://Eventhub-Namespace-4298.servicebus.windows.net:443/","status":"Active","alternateName":"AlternateName6109"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8400/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-225","name":"Eventhub-Namespace-225","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-225","createdAt":"2017-12-29T03:44:29.45Z","updatedAt":"2017-12-29T04:14:59.32Z","serviceBusEndpoint":"https://Eventhub-Namespace-225.servicebus.windows.net:443/","status":"Disabled"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9969/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-1064","name":"Eventhub-Namespace-1064","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-1064","createdAt":"2017-12-28T00:55:03.15Z","updatedAt":"2017-12-28T01:37:28.007Z","serviceBusEndpoint":"https://Eventhub-Namespace-1064.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps8592/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8335","name":"Eventhub-Namespace-8335","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8335","createdAt":"2018-01-28T00:17:24.28Z","updatedAt":"2018-01-28T00:21:24.807Z","serviceBusEndpoint":"https://Eventhub-Namespace-8335.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps840/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-8336","name":"Eventhub-Namespace-8336","type":"Microsoft.EventHub/Namespaces","location":"North
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-8336","createdAt":"2018-01-19T01:02:54.883Z","updatedAt":"2018-01-19T01:06:30.553Z","serviceBusEndpoint":"https://Eventhub-Namespace-8336.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ps9724/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-1232","name":"Eventhub-Namespace-1232","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-1232","createdAt":"2018-01-23T03:17:38.413Z","updatedAt":"2018-01-23T03:33:49.31Z","serviceBusEndpoint":"https://Eventhub-Namespace-1232.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-EventHub-SouthCentralUS/providers/Microsoft.EventHub/namespaces/Eventhub-Namespace-ps3907","name":"Eventhub-Namespace-ps3907","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:eventhub-namespace-ps3907","createdAt":"2017-12-15T00:27:29.323Z","updatedAt":"2017-12-15T00:32:03.53Z","serviceBusEndpoint":"https://Eventhub-Namespace-ps3907.servicebus.windows.net:443/","status":"Active"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['35898']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:21 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['367']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:38 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['46']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['342']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['342']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:50:57 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen", "Manage"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['56']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['351']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:51:13 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['731']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:51:26 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=piInIZWDzcRw+xGSfSRvOL0pxBtv8w+CIjw6N4kb5ks=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=cdUpv2efQKf/FbHJKJOvOz6IQTGKDXxZBItINI1/hVI=","primaryKey":"piInIZWDzcRw+xGSfSRvOL0pxBtv8w+CIjw6N4kb5ks=","secondaryKey":"cdUpv2efQKf/FbHJKJOvOz6IQTGKDXxZBItINI1/hVI=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['533']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:51:28 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "PrimaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=9d+4GSWvZ1Kv3ggoPXtYHKzWC7CEYbHm9K3QvcndqHE=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=cdUpv2efQKf/FbHJKJOvOz6IQTGKDXxZBItINI1/hVI=","primaryKey":"9d+4GSWvZ1Kv3ggoPXtYHKzWC7CEYbHm9K3QvcndqHE=","secondaryKey":"cdUpv2efQKf/FbHJKJOvOz6IQTGKDXxZBItINI1/hVI=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['533']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:51:48 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "SecondaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=9d+4GSWvZ1Kv3ggoPXtYHKzWC7CEYbHm9K3QvcndqHE=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=GmfxxzH8fcrJ/IR8lXOTzny8cP2QENLYgyKcehjy0gY=","primaryKey":"9d+4GSWvZ1Kv3ggoPXtYHKzWC7CEYbHm9K3QvcndqHE=","secondaryKey":"GmfxxzH8fcrJ/IR8lXOTzny8cP2QENLYgyKcehjy0gY=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['533']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:52:04 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 04 May 2018 21:52:21 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/AuthorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['379']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 04 May 2018 21:52:22 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 04 May 2018 21:52:24 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/operationresults/pythontestcasenamespace?api-version=2017-04-01']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.29
+          msrest_azure/0.4.29 azure-mgmt-eventhub/1.3.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/operationresults/pythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 04 May 2018 21:52:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/CH3, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/CH3]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

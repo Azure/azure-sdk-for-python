@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SubscriptionPaged(Paged):
     """
-    A paging container for iterating over a list of Subscription object
+    A paging container for iterating over a list of :class:`Subscription <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>` object
     """
 
     _attribute_map = {

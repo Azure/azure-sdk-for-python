@@ -32,11 +32,11 @@ class USqlAssembly(CatalogItem):
      defined or not.
     :type is_user_defined: bool
     :param files: the list of files associated with the assembly
-    :type files: list of :class:`USqlAssemblyFileInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyFileInfo>`
+    :type files:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyFileInfo]
     :param dependencies: the list of dependencies associated with the assembly
-    :type dependencies: list of :class:`USqlAssemblyDependencyInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo>`
+    :type dependencies:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo]
     """
 
     _attribute_map = {
@@ -51,12 +51,12 @@ class USqlAssembly(CatalogItem):
         'dependencies': {'key': 'dependencies', 'type': '[USqlAssemblyDependencyInfo]'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, name=None, clr_name=None, is_visible=None, is_user_defined=None, files=None, dependencies=None):
-        super(USqlAssembly, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.name = name
-        self.clr_name = clr_name
-        self.is_visible = is_visible
-        self.is_user_defined = is_user_defined
-        self.files = files
-        self.dependencies = dependencies
+    def __init__(self, **kwargs):
+        super(USqlAssembly, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.name = kwargs.get('name', None)
+        self.clr_name = kwargs.get('clr_name', None)
+        self.is_visible = kwargs.get('is_visible', None)
+        self.is_user_defined = kwargs.get('is_user_defined', None)
+        self.files = kwargs.get('files', None)
+        self.dependencies = kwargs.get('dependencies', None)

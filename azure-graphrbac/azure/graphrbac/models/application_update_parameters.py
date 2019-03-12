@@ -15,6 +15,13 @@ from msrest.serialization import Model
 class ApplicationUpdateParameters(Model):
     """Request parameters for updating an existing application.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param available_to_other_tenants: Whether the application is available to
      other tenants
     :type available_to_other_tenants: bool
@@ -23,18 +30,28 @@ class ApplicationUpdateParameters(Model):
     :param homepage: The home page of the application.
     :type homepage: str
     :param identifier_uris: A collection of URIs for the application.
-    :type identifier_uris: list of str
+    :type identifier_uris: list[str]
     :param reply_urls: A collection of reply URLs for the application.
-    :type reply_urls: list of str
+    :type reply_urls: list[str]
     :param key_credentials: The list of KeyCredential objects.
-    :type key_credentials: list of :class:`KeyCredential
-     <azure.graphrbac.models.KeyCredential>`
+    :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
     :param password_credentials: The list of PasswordCredential objects.
-    :type password_credentials: list of :class:`PasswordCredential
-     <azure.graphrbac.models.PasswordCredential>`
+    :type password_credentials:
+     list[~azure.graphrbac.models.PasswordCredential]
+    :param oauth2_allow_implicit_flow: Whether to allow implicit grant flow
+     for OAuth2
+    :type oauth2_allow_implicit_flow: bool
+    :param required_resource_access: Specifies resources that this application
+     requires access to and the set of OAuth permission scopes and application
+     roles that it needs under each of those resources. This pre-configuration
+     of required resource access drives the consent experience.
+    :type required_resource_access:
+     list[~azure.graphrbac.models.RequiredResourceAccess]
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
@@ -42,13 +59,20 @@ class ApplicationUpdateParameters(Model):
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
+        'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
+        'required_resource_access': {'key': 'requiredResourceAccess', 'type': '[RequiredResourceAccess]'},
     }
 
-    def __init__(self, available_to_other_tenants=None, display_name=None, homepage=None, identifier_uris=None, reply_urls=None, key_credentials=None, password_credentials=None):
-        self.available_to_other_tenants = available_to_other_tenants
-        self.display_name = display_name
-        self.homepage = homepage
-        self.identifier_uris = identifier_uris
-        self.reply_urls = reply_urls
-        self.key_credentials = key_credentials
-        self.password_credentials = password_credentials
+    def __init__(self, **kwargs):
+        super(ApplicationUpdateParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)

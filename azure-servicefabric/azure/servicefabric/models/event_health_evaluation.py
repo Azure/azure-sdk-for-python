@@ -17,39 +17,44 @@ class EventHealthEvaluation(HealthEvaluation):
     entity.
     The health evaluation is returned when evaluating health of an entity
     results in Error or Warning.
-    .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param consider_warning_as_error: Indicates whether warnings are treated
      with the same severity as errors. The field is specified in the health
      policy used to evaluate the entity.
     :type consider_warning_as_error: bool
-    :param unhealthy_event:
-    :type unhealthy_event: :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
-    """ 
+    :param unhealthy_event: Represents health information reported on a health
+     entity, such as cluster, application or node, with additional metadata
+     added by the Health Manager.
+    :type unhealthy_event: ~azure.servicefabric.models.HealthEvent
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
         'unhealthy_event': {'key': 'UnhealthyEvent', 'type': 'HealthEvent'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, consider_warning_as_error=None, unhealthy_event=None):
-        super(EventHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.consider_warning_as_error = consider_warning_as_error
-        self.unhealthy_event = unhealthy_event
-        self.Kind = 'Event'
+    def __init__(self, **kwargs):
+        super(EventHealthEvaluation, self).__init__(**kwargs)
+        self.consider_warning_as_error = kwargs.get('consider_warning_as_error', None)
+        self.unhealthy_event = kwargs.get('unhealthy_event', None)
+        self.kind = 'Event'

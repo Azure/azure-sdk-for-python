@@ -15,27 +15,30 @@ from .chaos_event import ChaosEvent
 class StartedChaosEvent(ChaosEvent):
     """Describes a Chaos event that gets generated when Chaos is started.
 
-    :param time_stamp_utc:
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    :param chaos_parameters:
-    :type chaos_parameters: :class:`ChaosParameters
-     <azure.servicefabric.models.ChaosParameters>`
-    """ 
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param chaos_parameters: Defines all the parameters to configure a Chaos
+     run.
+    :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
+    """
 
     _validation = {
         'time_stamp_utc': {'required': True},
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'chaos_parameters': {'key': 'ChaosParameters', 'type': 'ChaosParameters'},
     }
 
-    def __init__(self, time_stamp_utc, chaos_parameters=None):
-        super(StartedChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
-        self.chaos_parameters = chaos_parameters
-        self.Kind = 'Started'
+    def __init__(self, **kwargs):
+        super(StartedChaosEvent, self).__init__(**kwargs)
+        self.chaos_parameters = kwargs.get('chaos_parameters', None)
+        self.kind = 'Started'

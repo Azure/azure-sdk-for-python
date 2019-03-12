@@ -23,7 +23,7 @@ class EmailNotification(Model):
     :type send_to_subscription_co_administrators: bool
     :param custom_emails: the custom e-mails list. This value can be null or
      empty, in which case this attribute will be ignored.
-    :type custom_emails: list of str
+    :type custom_emails: list[str]
     """
 
     _attribute_map = {
@@ -32,7 +32,8 @@ class EmailNotification(Model):
         'custom_emails': {'key': 'customEmails', 'type': '[str]'},
     }
 
-    def __init__(self, send_to_subscription_administrator=None, send_to_subscription_co_administrators=None, custom_emails=None):
-        self.send_to_subscription_administrator = send_to_subscription_administrator
-        self.send_to_subscription_co_administrators = send_to_subscription_co_administrators
-        self.custom_emails = custom_emails
+    def __init__(self, **kwargs):
+        super(EmailNotification, self).__init__(**kwargs)
+        self.send_to_subscription_administrator = kwargs.get('send_to_subscription_administrator', None)
+        self.send_to_subscription_co_administrators = kwargs.get('send_to_subscription_co_administrators', None)
+        self.custom_emails = kwargs.get('custom_emails', None)

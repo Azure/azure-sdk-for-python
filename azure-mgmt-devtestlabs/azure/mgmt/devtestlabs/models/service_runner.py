@@ -27,10 +27,9 @@ class ServiceRunner(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The identity of the resource.
-    :type identity: :class:`IdentityProperties
-     <azure.mgmt.devtestlabs.models.IdentityProperties>`
+    :type identity: ~azure.mgmt.devtestlabs.models.IdentityProperties
     """
 
     _validation = {
@@ -48,6 +47,6 @@ class ServiceRunner(Resource):
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
     }
 
-    def __init__(self, location=None, tags=None, identity=None):
-        super(ServiceRunner, self).__init__(location=location, tags=tags)
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(ServiceRunner, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)

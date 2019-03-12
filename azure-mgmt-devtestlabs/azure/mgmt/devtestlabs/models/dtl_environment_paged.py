@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DtlEnvironmentPaged(Paged):
     """
-    A paging container for iterating over a list of DtlEnvironment object
+    A paging container for iterating over a list of :class:`DtlEnvironment <azure.mgmt.devtestlabs.models.DtlEnvironment>` object
     """
 
     _attribute_map = {

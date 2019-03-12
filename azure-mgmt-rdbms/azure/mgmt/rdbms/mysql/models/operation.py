@@ -23,14 +23,12 @@ class Operation(Model):
     :vartype name: str
     :ivar display: The localized display information for this particular
      operation or action.
-    :vartype display: :class:`OperationDisplay
-     <azure.mgmt.rdbms.mysql.models.OperationDisplay>`
+    :vartype display: ~azure.mgmt.rdbms.mysql.models.OperationDisplay
     :ivar origin: The intended executor of the operation. Possible values
      include: 'NotSpecified', 'user', 'system'
-    :vartype origin: str or :class:`OperationOrigin
-     <azure.mgmt.rdbms.mysql.models.OperationOrigin>`
+    :vartype origin: str or ~azure.mgmt.rdbms.mysql.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict
+    :vartype properties: dict[str, object]
     """
 
     _validation = {
@@ -47,7 +45,8 @@ class Operation(Model):
         'properties': {'key': 'properties', 'type': '{object}'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
         self.origin = None

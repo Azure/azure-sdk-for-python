@@ -25,5 +25,6 @@ class DataLakeAnalyticsCatalogCredentialDeleteParameters(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, password=None):
-        self.password = password
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsCatalogCredentialDeleteParameters, self).__init__(**kwargs)
+        self.password = kwargs.get('password', None)

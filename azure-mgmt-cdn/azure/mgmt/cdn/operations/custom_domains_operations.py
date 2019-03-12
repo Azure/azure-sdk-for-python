@@ -9,9 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_operation import AzureOperationPoller
 import uuid
+from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -22,16 +23,18 @@ class CustomDomainsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2016-10-02. Constant value: "2016-10-02".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-10-12".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-10-02"
+        self.api_version = "2017-10-12"
 
         self.config = config
 
@@ -53,8 +56,9 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomainPaged
-         <azure.mgmt.cdn.models.CustomDomainPaged>`
+        :return: An iterator like instance of CustomDomain
+        :rtype:
+         ~azure.mgmt.cdn.models.CustomDomainPaged[~azure.mgmt.cdn.models.CustomDomain]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
@@ -62,9 +66,9 @@ class CustomDomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains'
+                url = self.list_by_endpoint.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -81,7 +85,7 @@ class CustomDomainsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -90,9 +94,8 @@ class CustomDomainsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -108,10 +111,11 @@ class CustomDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_endpoint.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains'}
 
     def get(
             self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an exisitng custom domain within an endpoint.
+        """Gets an existing custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -130,16 +134,16 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -153,7 +157,7 @@ class CustomDomainsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -162,8 +166,8 @@ class CustomDomainsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -178,9 +182,66 @@ class CustomDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'}
+
+
+    def _create_initial(
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
+        custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
+
+        # Construct URL
+        url = self.create.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(custom_domain_properties, 'CustomDomainParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CustomDomain', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('CustomDomain', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('CustomDomain', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def create(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a new custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the
@@ -199,23 +260,55 @@ class CustomDomainsOperations(object):
          name.
         :type host_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns CustomDomain or
+         ClientRawResponse<CustomDomain> if raw==True
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`CustomDomain
-         <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.CustomDomain]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cdn.models.CustomDomain]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
-        custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            custom_domain_name=custom_domain_name,
+            host_name=host_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
+        def get_long_running_output(response):
+            deserialized = self._deserialize('CustomDomain', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -229,7 +322,7 @@ class CustomDomainsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -237,57 +330,26 @@ class CustomDomainsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(custom_domain_properties, 'CustomDomainParameters')
-
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('CustomDomain', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('CustomDomain', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('CustomDomain', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 202:
+            deserialized = self._deserialize('CustomDomain', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
     def delete(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing custom domain within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the
@@ -303,65 +365,31 @@ class CustomDomainsOperations(object):
          endpoint.
         :type custom_domain_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns CustomDomain or
+         ClientRawResponse<CustomDomain> if raw==True
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`CustomDomain
-         <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.CustomDomain]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cdn.models.CustomDomain]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
-            'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        def long_running_send():
-
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            profile_name=profile_name,
+            endpoint_name=endpoint_name,
+            custom_domain_name=custom_domain_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 202:
-                deserialized = self._deserialize('CustomDomain', response)
+            deserialized = self._deserialize('CustomDomain', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -369,16 +397,14 @@ class CustomDomainsOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'}
 
     def disable_custom_https(
             self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
@@ -401,16 +427,16 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'
+        url = self.disable_custom_https.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -424,7 +450,7 @@ class CustomDomainsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -433,10 +459,10 @@ class CustomDomainsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 200]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -449,9 +475,10 @@ class CustomDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    disable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}
 
     def enable_custom_https(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_domain_https_parameters=None, custom_headers=None, raw=False, **operation_config):
         """Enable https delivery of the custom domain.
 
         :param resource_group_name: Name of the Resource group within the
@@ -466,21 +493,27 @@ class CustomDomainsOperations(object):
         :param custom_domain_name: Name of the custom domain within an
          endpoint.
         :type custom_domain_name: str
+        :param custom_domain_https_parameters: The configuration specifying
+         how to enable HTTPS for the custom domain - using CDN managed
+         certificate or user's own certificate. If not specified, enabling ssl
+         uses CDN managed certificate by default.
+        :type custom_domain_https_parameters:
+         ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CustomDomain or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cdn.models.CustomDomain or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'
+        url = self.enable_custom_https.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -494,6 +527,7 @@ class CustomDomainsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -502,11 +536,17 @@ class CustomDomainsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        # Construct body
+        if custom_domain_https_parameters is not None:
+            body_content = self._serialize.body(custom_domain_https_parameters, 'CustomDomainHttpsParameters')
+        else:
+            body_content = None
 
-        if response.status_code not in [202, 200]:
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -519,3 +559,4 @@ class CustomDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    enable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/enableCustomHttps'}

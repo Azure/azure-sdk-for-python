@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class USqlExternalDataSourcePaged(Paged):
     """
-    A paging container for iterating over a list of USqlExternalDataSource object
+    A paging container for iterating over a list of :class:`USqlExternalDataSource <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>` object
     """
 
     _attribute_map = {

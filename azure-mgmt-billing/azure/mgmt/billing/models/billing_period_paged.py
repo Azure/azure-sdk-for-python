@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class BillingPeriodPaged(Paged):
     """
-    A paging container for iterating over a list of BillingPeriod object
+    A paging container for iterating over a list of :class:`BillingPeriod <azure.mgmt.billing.models.BillingPeriod>` object
     """
 
     _attribute_map = {

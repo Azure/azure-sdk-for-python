@@ -15,23 +15,25 @@ from msrest.serialization import Model
 class EdifactAcknowledgementSettings(Model):
     """The Edifact agreement acknowledgement settings.
 
-    :param need_technical_acknowledgement: The value indicating whether
-     technical acknowledgement is needed.
+    All required parameters must be populated in order to send to Azure.
+
+    :param need_technical_acknowledgement: Required. The value indicating
+     whether technical acknowledgement is needed.
     :type need_technical_acknowledgement: bool
-    :param batch_technical_acknowledgements: The value indicating whether to
-     batch the technical acknowledgements.
+    :param batch_technical_acknowledgements: Required. The value indicating
+     whether to batch the technical acknowledgements.
     :type batch_technical_acknowledgements: bool
-    :param need_functional_acknowledgement: The value indicating whether
-     functional acknowledgement is needed.
+    :param need_functional_acknowledgement: Required. The value indicating
+     whether functional acknowledgement is needed.
     :type need_functional_acknowledgement: bool
-    :param batch_functional_acknowledgements: The value indicating whether to
-     batch functional acknowledgements.
+    :param batch_functional_acknowledgements: Required. The value indicating
+     whether to batch functional acknowledgements.
     :type batch_functional_acknowledgements: bool
-    :param need_loop_for_valid_messages: The value indicating whether a loop
-     is needed for valid messages.
+    :param need_loop_for_valid_messages: Required. The value indicating
+     whether a loop is needed for valid messages.
     :type need_loop_for_valid_messages: bool
-    :param send_synchronous_acknowledgement: The value indicating whether to
-     send synchronous acknowledgement.
+    :param send_synchronous_acknowledgement: Required. The value indicating
+     whether to send synchronous acknowledgement.
     :type send_synchronous_acknowledgement: bool
     :param acknowledgement_control_number_prefix: The acknowledgement control
      number prefix.
@@ -39,14 +41,14 @@ class EdifactAcknowledgementSettings(Model):
     :param acknowledgement_control_number_suffix: The acknowledgement control
      number suffix.
     :type acknowledgement_control_number_suffix: str
-    :param acknowledgement_control_number_lower_bound: The acknowledgement
-     control number lower bound.
+    :param acknowledgement_control_number_lower_bound: Required. The
+     acknowledgement control number lower bound.
     :type acknowledgement_control_number_lower_bound: int
-    :param acknowledgement_control_number_upper_bound: The acknowledgement
-     control number upper bound.
+    :param acknowledgement_control_number_upper_bound: Required. The
+     acknowledgement control number upper bound.
     :type acknowledgement_control_number_upper_bound: int
-    :param rollover_acknowledgement_control_number: The value indicating
-     whether to rollover acknowledgement control number.
+    :param rollover_acknowledgement_control_number: Required. The value
+     indicating whether to rollover acknowledgement control number.
     :type rollover_acknowledgement_control_number: bool
     """
 
@@ -76,15 +78,16 @@ class EdifactAcknowledgementSettings(Model):
         'rollover_acknowledgement_control_number': {'key': 'rolloverAcknowledgementControlNumber', 'type': 'bool'},
     }
 
-    def __init__(self, need_technical_acknowledgement, batch_technical_acknowledgements, need_functional_acknowledgement, batch_functional_acknowledgements, need_loop_for_valid_messages, send_synchronous_acknowledgement, acknowledgement_control_number_lower_bound, acknowledgement_control_number_upper_bound, rollover_acknowledgement_control_number, acknowledgement_control_number_prefix=None, acknowledgement_control_number_suffix=None):
-        self.need_technical_acknowledgement = need_technical_acknowledgement
-        self.batch_technical_acknowledgements = batch_technical_acknowledgements
-        self.need_functional_acknowledgement = need_functional_acknowledgement
-        self.batch_functional_acknowledgements = batch_functional_acknowledgements
-        self.need_loop_for_valid_messages = need_loop_for_valid_messages
-        self.send_synchronous_acknowledgement = send_synchronous_acknowledgement
-        self.acknowledgement_control_number_prefix = acknowledgement_control_number_prefix
-        self.acknowledgement_control_number_suffix = acknowledgement_control_number_suffix
-        self.acknowledgement_control_number_lower_bound = acknowledgement_control_number_lower_bound
-        self.acknowledgement_control_number_upper_bound = acknowledgement_control_number_upper_bound
-        self.rollover_acknowledgement_control_number = rollover_acknowledgement_control_number
+    def __init__(self, **kwargs):
+        super(EdifactAcknowledgementSettings, self).__init__(**kwargs)
+        self.need_technical_acknowledgement = kwargs.get('need_technical_acknowledgement', None)
+        self.batch_technical_acknowledgements = kwargs.get('batch_technical_acknowledgements', None)
+        self.need_functional_acknowledgement = kwargs.get('need_functional_acknowledgement', None)
+        self.batch_functional_acknowledgements = kwargs.get('batch_functional_acknowledgements', None)
+        self.need_loop_for_valid_messages = kwargs.get('need_loop_for_valid_messages', None)
+        self.send_synchronous_acknowledgement = kwargs.get('send_synchronous_acknowledgement', None)
+        self.acknowledgement_control_number_prefix = kwargs.get('acknowledgement_control_number_prefix', None)
+        self.acknowledgement_control_number_suffix = kwargs.get('acknowledgement_control_number_suffix', None)
+        self.acknowledgement_control_number_lower_bound = kwargs.get('acknowledgement_control_number_lower_bound', None)
+        self.acknowledgement_control_number_upper_bound = kwargs.get('acknowledgement_control_number_upper_bound', None)
+        self.rollover_acknowledgement_control_number = kwargs.get('rollover_acknowledgement_control_number', None)

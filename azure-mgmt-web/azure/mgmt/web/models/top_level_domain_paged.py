@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class TopLevelDomainPaged(Paged):
     """
-    A paging container for iterating over a list of TopLevelDomain object
+    A paging container for iterating over a list of :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>` object
     """
 
     _attribute_map = {

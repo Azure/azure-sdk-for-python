@@ -19,8 +19,8 @@ class PolicySetResult(Model):
      has discovered violations.
     :type has_error: bool
     :param policy_violations: The list of policy violations.
-    :type policy_violations: list of :class:`PolicyViolation
-     <azure.mgmt.devtestlabs.models.PolicyViolation>`
+    :type policy_violations:
+     list[~azure.mgmt.devtestlabs.models.PolicyViolation]
     """
 
     _attribute_map = {
@@ -28,6 +28,7 @@ class PolicySetResult(Model):
         'policy_violations': {'key': 'policyViolations', 'type': '[PolicyViolation]'},
     }
 
-    def __init__(self, has_error=None, policy_violations=None):
-        self.has_error = has_error
-        self.policy_violations = policy_violations
+    def __init__(self, **kwargs):
+        super(PolicySetResult, self).__init__(**kwargs)
+        self.has_error = kwargs.get('has_error', None)
+        self.policy_violations = kwargs.get('policy_violations', None)

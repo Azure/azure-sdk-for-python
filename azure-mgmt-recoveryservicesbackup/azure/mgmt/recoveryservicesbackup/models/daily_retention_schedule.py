@@ -16,10 +16,10 @@ class DailyRetentionSchedule(Model):
     """Daily retention schedule.
 
     :param retention_times: Retention times of retention policy.
-    :type retention_times: list of datetime
+    :type retention_times: list[datetime]
     :param retention_duration: Retention duration of retention Policy.
-    :type retention_duration: :class:`RetentionDuration
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDuration>`
+    :type retention_duration:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDuration
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class DailyRetentionSchedule(Model):
         'retention_duration': {'key': 'retentionDuration', 'type': 'RetentionDuration'},
     }
 
-    def __init__(self, retention_times=None, retention_duration=None):
-        self.retention_times = retention_times
-        self.retention_duration = retention_duration
+    def __init__(self, **kwargs):
+        super(DailyRetentionSchedule, self).__init__(**kwargs)
+        self.retention_times = kwargs.get('retention_times', None)
+        self.retention_duration = kwargs.get('retention_duration', None)

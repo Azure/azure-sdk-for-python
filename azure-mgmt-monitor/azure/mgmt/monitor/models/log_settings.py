@@ -16,16 +16,17 @@ class LogSettings(Model):
     """Part of MultiTenantDiagnosticSettings. Specifies the settings for a
     particular log.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param category: Name of a Diagnostic Log category for a resource type
      this setting is applied to. To obtain the list of Diagnostic Log
      categories for a resource, first perform a GET diagnostic settings
      operation.
     :type category: str
-    :param enabled: a value indicating whether this log is enabled.
+    :param enabled: Required. a value indicating whether this log is enabled.
     :type enabled: bool
     :param retention_policy: the retention policy for this log.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.monitor.models.RetentionPolicy>`
+    :type retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
     """
 
     _validation = {
@@ -38,7 +39,8 @@ class LogSettings(Model):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, enabled, category=None, retention_policy=None):
-        self.category = category
-        self.enabled = enabled
-        self.retention_policy = retention_policy
+    def __init__(self, **kwargs):
+        super(LogSettings, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.retention_policy = kwargs.get('retention_policy', None)

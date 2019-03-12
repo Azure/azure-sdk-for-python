@@ -16,44 +16,55 @@ class StatefulServiceReplicaHealth(ReplicaHealth):
     """Represents the health of the stateful service replica.
     Contains the replica aggregated health state, the health events and the
     unhealthy evaluations.
-    .
+
+    All required parameters must be populated in order to send to Azure.
 
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
     :param unhealthy_evaluations: The unhealthy evaluations that show why the
      current aggregated health state was returned by Health Manager.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
     :param partition_id: Id of the partition to which this replica belongs.
     :type partition_id: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    :param replica_id: Id of the stateful service replica.
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    :param replica_id: Id of a stateful service replica. ReplicaId is used by
+     Service Fabric to uniquely identify a replica of a partition. It is unique
+     within a partition and does not change for the lifetime of the replica. If
+     a replica gets dropped and another replica gets created on the same node
+     for the same partition, it will get a different value for the id.
+     Sometimes the id of a stateless service instance is also referred as a
+     replica id.
     :type replica_id: str
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, partition_id=None, replica_id=None):
-        super(StatefulServiceReplicaHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, partition_id=partition_id)
-        self.replica_id = replica_id
-        self.ServiceKind = 'Stateful'
+    def __init__(self, **kwargs):
+        super(StatefulServiceReplicaHealth, self).__init__(**kwargs)
+        self.replica_id = kwargs.get('replica_id', None)
+        self.service_kind = 'Stateful'

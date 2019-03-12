@@ -22,16 +22,18 @@ class LocationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2018-12-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01"
+        self.api_version = "2018-12-01"
 
         self.config = config
 
@@ -48,17 +50,13 @@ class LocationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchLocationQuota
-         <azure.mgmt.batch.models.BatchLocationQuota>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchLocationQuota
-         <azure.mgmt.batch.models.BatchLocationQuota>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchLocationQuota or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchLocationQuota or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'
+        url = self.get_quotas.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -81,7 +79,7 @@ class LocationOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -98,6 +96,7 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    get_quotas.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'}
 
     def check_name_availability(
             self, location_name, name, custom_headers=None, raw=False, **operation_config):
@@ -113,19 +112,15 @@ class LocationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.batch.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.batch.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckNameAvailabilityParameters(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -152,7 +147,7 @@ class LocationOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -169,3 +164,4 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'}

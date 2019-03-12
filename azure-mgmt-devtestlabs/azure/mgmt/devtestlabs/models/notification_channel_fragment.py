@@ -9,62 +9,41 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .update_resource import UpdateResource
 
 
-class NotificationChannelFragment(Resource):
+class NotificationChannelFragment(UpdateResource):
     """A notification.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param web_hook_url: The webhook URL to send notifications to.
     :type web_hook_url: str
+    :param email_recipient: The email recipient to send notifications to (can
+     be a list of semi-colon separated email addresses).
+    :type email_recipient: str
+    :param notification_locale: The locale to use when sending a notification
+     (fallback for unsupported languages is EN).
+    :type notification_locale: str
     :param description: Description of notification.
     :type description: str
     :param events: The list of event for which this notification is enabled.
-    :type events: list of :class:`EventFragment
-     <azure.mgmt.devtestlabs.models.EventFragment>`
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
-     (Guid).
-    :type unique_identifier: str
+    :type events: list[~azure.mgmt.devtestlabs.models.EventFragment]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'web_hook_url': {'key': 'properties.webHookUrl', 'type': 'str'},
+        'email_recipient': {'key': 'properties.emailRecipient', 'type': 'str'},
+        'notification_locale': {'key': 'properties.notificationLocale', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'events': {'key': 'properties.events', 'type': '[EventFragment]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, web_hook_url=None, description=None, events=None, provisioning_state=None, unique_identifier=None):
-        super(NotificationChannelFragment, self).__init__(location=location, tags=tags)
-        self.web_hook_url = web_hook_url
-        self.description = description
-        self.events = events
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(NotificationChannelFragment, self).__init__(**kwargs)
+        self.web_hook_url = kwargs.get('web_hook_url', None)
+        self.email_recipient = kwargs.get('email_recipient', None)
+        self.notification_locale = kwargs.get('notification_locale', None)
+        self.description = kwargs.get('description', None)
+        self.events = kwargs.get('events', None)

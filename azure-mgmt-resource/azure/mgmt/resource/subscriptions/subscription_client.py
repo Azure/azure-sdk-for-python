@@ -9,9 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -42,7 +45,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class SubscriptionClient(object):
+class SubscriptionClient(MultiApiClientMixin, SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     :ivar config: Configuration for client.
@@ -51,22 +54,39 @@ class SubscriptionClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
-    def __init__(
-            self, credentials, api_version = '2016-06-01', base_url=None):
+    DEFAULT_API_VERSION='2016-06-01'
+    _PROFILE_TAG = "azure.mgmt.resource.subscriptions.SubscriptionClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
+    def __init__(self, credentials, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = SubscriptionClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SubscriptionClient, self).__init__(
+            credentials,
+            self.config,
+            api_version=api_version,
+            profile=profile
+        )
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
-        self.api_version = api_version
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+############ Generated from here ############
 
     @classmethod
-    def models(cls, api_version='2016-06-01'):
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
            * 2016-06-01: :mod:`v2016_06_01.models<azure.mgmt.resource.subscriptions.v2016_06_01.models>`
@@ -75,6 +95,19 @@ class SubscriptionClient(object):
             from .v2016_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
+    
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2016-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2016_06_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2016-06-01':
+            from .v2016_06_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def subscriptions(self):
@@ -82,11 +115,12 @@ class SubscriptionClient(object):
 
            * 2016-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2016_06_01.operations.SubscriptionsOperations>`
         """
-        if self.api_version == '2016-06-01':
+        api_version = self._get_api_version('subscriptions')
+        if api_version == '2016-06-01':
             from .v2016_06_01.operations import SubscriptionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def tenants(self):
@@ -94,8 +128,9 @@ class SubscriptionClient(object):
 
            * 2016-06-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2016_06_01.operations.TenantsOperations>`
         """
-        if self.api_version == '2016-06-01':
+        api_version = self._get_api_version('tenants')
+        if api_version == '2016-06-01':
             from .v2016_06_01.operations import TenantsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
