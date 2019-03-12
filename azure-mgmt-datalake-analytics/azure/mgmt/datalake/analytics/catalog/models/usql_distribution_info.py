@@ -18,8 +18,8 @@ class USqlDistributionInfo(Model):
     :param type: the type of this distribution.
     :type type: int
     :param keys: the list of directed columns in the distribution
-    :type keys: list of :class:`USqlDirectedColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
+    :type keys:
+     list[~azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn]
     :param count: the count of indices using this distribution.
     :type count: int
     :param dynamic_count: the dynamic count of indices using this
@@ -34,8 +34,9 @@ class USqlDistributionInfo(Model):
         'dynamic_count': {'key': 'dynamicCount', 'type': 'int'},
     }
 
-    def __init__(self, type=None, keys=None, count=None, dynamic_count=None):
-        self.type = type
-        self.keys = keys
-        self.count = count
-        self.dynamic_count = dynamic_count
+    def __init__(self, **kwargs):
+        super(USqlDistributionInfo, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.keys = kwargs.get('keys', None)
+        self.count = kwargs.get('count', None)
+        self.dynamic_count = kwargs.get('dynamic_count', None)

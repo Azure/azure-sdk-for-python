@@ -17,13 +17,12 @@ class ApplicationGatewayBackendHealthPool(Model):
 
     :param backend_address_pool: Reference of an
      ApplicationGatewayBackendAddressPool resource.
-    :type backend_address_pool: :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendAddressPool>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendAddressPool
     :param backend_http_settings_collection: List of
      ApplicationGatewayBackendHealthHttpSettings resources.
-    :type backend_http_settings_collection: list of
-     :class:`ApplicationGatewayBackendHealthHttpSettings
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHealthHttpSettings>`
+    :type backend_http_settings_collection:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHealthHttpSettings]
     """
 
     _attribute_map = {
@@ -31,6 +30,7 @@ class ApplicationGatewayBackendHealthPool(Model):
         'backend_http_settings_collection': {'key': 'backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHealthHttpSettings]'},
     }
 
-    def __init__(self, backend_address_pool=None, backend_http_settings_collection=None):
-        self.backend_address_pool = backend_address_pool
-        self.backend_http_settings_collection = backend_http_settings_collection
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHealthPool, self).__init__(**kwargs)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings_collection = kwargs.get('backend_http_settings_collection', None)

@@ -18,8 +18,8 @@ class ArtifactInstallPropertiesFragment(Model):
     :param artifact_id: The artifact's identifier.
     :type artifact_id: str
     :param parameters: The parameters of the artifact.
-    :type parameters: list of :class:`ArtifactParameterPropertiesFragment
-     <azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment>`
+    :type parameters:
+     list[~azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment]
     :param status: The status of the artifact.
     :type status: str
     :param deployment_status_message: The status message from the deployment.
@@ -42,6 +42,7 @@ class ArtifactInstallPropertiesFragment(Model):
     }
 
     def __init__(self, artifact_id=None, parameters=None, status=None, deployment_status_message=None, vm_extension_status_message=None, install_time=None):
+        super(ArtifactInstallPropertiesFragment, self).__init__()
         self.artifact_id = artifact_id
         self.parameters = parameters
         self.status = status

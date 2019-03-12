@@ -22,8 +22,8 @@ class Subnet(Model):
     :param allow_public_ip: The permission policy of the subnet for allowing
      public IP addresses (i.e. Allow, Deny)). Possible values include:
      'Default', 'Deny', 'Allow'
-    :type allow_public_ip: str or :class:`UsagePermissionType
-     <azure.mgmt.devtestlabs.models.UsagePermissionType>`
+    :type allow_public_ip: str or
+     ~azure.mgmt.devtestlabs.models.UsagePermissionType
     """
 
     _attribute_map = {
@@ -33,6 +33,7 @@ class Subnet(Model):
     }
 
     def __init__(self, resource_id=None, lab_subnet_name=None, allow_public_ip=None):
+        super(Subnet, self).__init__()
         self.resource_id = resource_id
         self.lab_subnet_name = lab_subnet_name
         self.allow_public_ip = allow_public_ip

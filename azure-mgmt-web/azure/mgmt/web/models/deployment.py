@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class Deployment(Resource):
+class Deployment(ProxyOnlyResource):
     """User crendentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,25 +20,19 @@ class Deployment(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param deployment_id: ID.
-    :type deployment_id: str
-    :param status: Status.
+    :ivar type: Resource type.
+    :vartype type: str
+    :param status: Deployment status.
     :type status: int
-    :param message: Message.
+    :param message: Details about deployment status.
     :type message: str
-    :param author: Author.
+    :param author: Who authored the deployment.
     :type author: str
-    :param deployer: Deployer.
+    :param deployer: Who performed the deployment.
     :type deployer: str
     :param author_email: Author email.
     :type author_email: str
@@ -46,45 +40,43 @@ class Deployment(Resource):
     :type start_time: datetime
     :param end_time: End time.
     :type end_time: datetime
-    :param active: Active.
+    :param active: True if deployment is currently active, false if completed
+     and null if not started.
     :type active: bool
-    :param details: Detail.
+    :param details: Details on deployment.
     :type details: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'deployment_id': {'key': 'properties.id', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'int'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'author': {'key': 'properties.author', 'type': 'str'},
         'deployer': {'key': 'properties.deployer', 'type': 'str'},
-        'author_email': {'key': 'properties.authorEmail', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'author_email': {'key': 'properties.author_email', 'type': 'str'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601'},
         'active': {'key': 'properties.active', 'type': 'bool'},
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.deployment_id = deployment_id
-        self.status = status
-        self.message = message
-        self.author = author
-        self.deployer = deployer
-        self.author_email = author_email
-        self.start_time = start_time
-        self.end_time = end_time
-        self.active = active
-        self.details = details
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
+        self.author = kwargs.get('author', None)
+        self.deployer = kwargs.get('deployer', None)
+        self.author_email = kwargs.get('author_email', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.active = kwargs.get('active', None)
+        self.details = kwargs.get('details', None)

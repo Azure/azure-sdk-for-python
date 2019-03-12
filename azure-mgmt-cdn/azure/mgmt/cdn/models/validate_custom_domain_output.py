@@ -15,15 +15,24 @@ from msrest.serialization import Model
 class ValidateCustomDomainOutput(Model):
     """Output of custom domain validation.
 
-    :param custom_domain_validated: Indicates whether the custom domain is
-     validated or not.
-    :type custom_domain_validated: bool
-    :param reason: The reason why the custom domain is not valid.
-    :type reason: str
-    :param message: Error message describing why the custom domain is not
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar custom_domain_validated: Indicates whether the custom domain is
+     valid or not.
+    :vartype custom_domain_validated: bool
+    :ivar reason: The reason why the custom domain is not valid.
+    :vartype reason: str
+    :ivar message: Error message describing why the custom domain is not
      valid.
-    :type message: str
+    :vartype message: str
     """
+
+    _validation = {
+        'custom_domain_validated': {'readonly': True},
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'custom_domain_validated': {'key': 'customDomainValidated', 'type': 'bool'},
@@ -31,7 +40,8 @@ class ValidateCustomDomainOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, custom_domain_validated=None, reason=None, message=None):
-        self.custom_domain_validated = custom_domain_validated
-        self.reason = reason
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ValidateCustomDomainOutput, self).__init__(**kwargs)
+        self.custom_domain_validated = None
+        self.reason = None
+        self.message = None

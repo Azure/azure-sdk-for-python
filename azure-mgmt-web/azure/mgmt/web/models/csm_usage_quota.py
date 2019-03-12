@@ -24,8 +24,7 @@ class CsmUsageQuota(Model):
     :param limit: The resource limit.
     :type limit: long
     :param name: Quota name.
-    :type name: :class:`LocalizableString
-     <azure.mgmt.web.models.LocalizableString>`
+    :type name: ~azure.mgmt.web.models.LocalizableString
     """
 
     _attribute_map = {
@@ -36,9 +35,10 @@ class CsmUsageQuota(Model):
         'name': {'key': 'name', 'type': 'LocalizableString'},
     }
 
-    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None):
-        self.unit = unit
-        self.next_reset_time = next_reset_time
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CsmUsageQuota, self).__init__(**kwargs)
+        self.unit = kwargs.get('unit', None)
+        self.next_reset_time = kwargs.get('next_reset_time', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)

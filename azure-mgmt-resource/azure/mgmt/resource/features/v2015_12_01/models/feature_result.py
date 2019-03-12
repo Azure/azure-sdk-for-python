@@ -18,8 +18,8 @@ class FeatureResult(Model):
     :param name: The name of the feature.
     :type name: str
     :param properties: Properties of the previewed feature.
-    :type properties: :class:`FeatureProperties
-     <azure.mgmt.resource.features.v2015_12_01.models.FeatureProperties>`
+    :type properties:
+     ~azure.mgmt.resource.features.v2015_12_01.models.FeatureProperties
     :param id: The resource ID of the feature.
     :type id: str
     :param type: The resource type of the feature.
@@ -33,8 +33,9 @@ class FeatureResult(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, properties=None, id=None, type=None):
-        self.name = name
-        self.properties = properties
-        self.id = id
-        self.type = type
+    def __init__(self, **kwargs):
+        super(FeatureResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)

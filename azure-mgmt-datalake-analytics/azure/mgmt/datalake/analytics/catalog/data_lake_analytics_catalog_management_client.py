@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -37,20 +37,18 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if adla_catalog_dns_suffix is None:
             raise ValueError("Parameter 'adla_catalog_dns_suffix' must not be None.")
-        if not isinstance(adla_catalog_dns_suffix, str):
-            raise TypeError("Parameter 'adla_catalog_dns_suffix' must be str.")
         base_url = 'https://{accountName}.{adlaCatalogDnsSuffix}'
 
         super(DataLakeAnalyticsCatalogManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('datalakeanalyticscatalogmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-datalake-analytics/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.adla_catalog_dns_suffix = adla_catalog_dns_suffix
 
 
-class DataLakeAnalyticsCatalogManagementClient(object):
+class DataLakeAnalyticsCatalogManagementClient(SDKClient):
     """Creates an Azure Data Lake Analytics catalog client.
 
     :ivar config: Configuration for client.
@@ -71,7 +69,7 @@ class DataLakeAnalyticsCatalogManagementClient(object):
             self, credentials, adla_catalog_dns_suffix):
 
         self.config = DataLakeAnalyticsCatalogManagementClientConfiguration(credentials, adla_catalog_dns_suffix)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataLakeAnalyticsCatalogManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-11-01'

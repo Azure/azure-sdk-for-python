@@ -25,4 +25,5 @@ class FormulaPropertiesFromVm(Model):
     }
 
     def __init__(self, lab_vm_id=None):
+        super(FormulaPropertiesFromVm, self).__init__()
         self.lab_vm_id = lab_vm_id

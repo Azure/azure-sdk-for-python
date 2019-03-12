@@ -25,8 +25,11 @@ class USqlTableColumn(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'column_name': {'key': 'columnName', 'type': 'str'},
+        'data_type': {'key': 'dataType', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
-        self.name = name
-        self.type = type
+    def __init__(self, name=None, type=None, column_name=None, data_type=None):
+        super(USqlTableColumn, self).__init__()
+        self.name = name if name != None else column_name
+        self.type = type if type != None else data_type

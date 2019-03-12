@@ -21,7 +21,7 @@ class ResourceProviderOperationDisplayProperties(Model):
     :type provider: str
     :param resource: Operation resource.
     :type resource: str
-    :param operation: Operation.
+    :param operation: The operation name.
     :type operation: str
     :param description: Operation description.
     :type description: str
@@ -35,9 +35,10 @@ class ResourceProviderOperationDisplayProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None):
-        self.publisher = publisher
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+    def __init__(self, **kwargs):
+        super(ResourceProviderOperationDisplayProperties, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)

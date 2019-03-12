@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class UserPaged(Paged):
     """
-    A paging container for iterating over a list of User object
+    A paging container for iterating over a list of :class:`User <azure.mgmt.devtestlabs.models.User>` object
     """
 
     _attribute_map = {

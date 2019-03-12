@@ -24,6 +24,41 @@ from .application import Application
 from .application_update_parameters import ApplicationUpdateParameters
 from .batch_location_quota import BatchLocationQuota
 from .resource import Resource
+from .proxy_resource import ProxyResource
+from .certificate_base_properties import CertificateBaseProperties
+from .delete_certificate_error import DeleteCertificateError
+from .certificate import Certificate
+from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
+from .cloud_service_configuration import CloudServiceConfiguration
+from .image_reference import ImageReference
+from .os_disk import OSDisk
+from .windows_configuration import WindowsConfiguration
+from .data_disk import DataDisk
+from .virtual_machine_configuration import VirtualMachineConfiguration
+from .deployment_configuration import DeploymentConfiguration
+from .fixed_scale_settings import FixedScaleSettings
+from .auto_scale_settings import AutoScaleSettings
+from .scale_settings import ScaleSettings
+from .auto_scale_run_error import AutoScaleRunError
+from .auto_scale_run import AutoScaleRun
+from .network_security_group_rule import NetworkSecurityGroupRule
+from .inbound_nat_pool import InboundNatPool
+from .pool_endpoint_configuration import PoolEndpointConfiguration
+from .network_configuration import NetworkConfiguration
+from .task_scheduling_policy import TaskSchedulingPolicy
+from .linux_user_configuration import LinuxUserConfiguration
+from .user_account import UserAccount
+from .metadata_item import MetadataItem
+from .resource_file import ResourceFile
+from .environment_setting import EnvironmentSetting
+from .auto_user_specification import AutoUserSpecification
+from .user_identity import UserIdentity
+from .start_task import StartTask
+from .certificate_reference import CertificateReference
+from .application_package_reference import ApplicationPackageReference
+from .resize_error import ResizeError
+from .resize_operation_status import ResizeOperationStatus
+from .pool import Pool
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .check_name_availability_parameters import CheckNameAvailabilityParameters
@@ -31,11 +66,28 @@ from .check_name_availability_result import CheckNameAvailabilityResult
 from .batch_account_paged import BatchAccountPaged
 from .application_paged import ApplicationPaged
 from .operation_paged import OperationPaged
+from .certificate_paged import CertificatePaged
+from .pool_paged import PoolPaged
 from .batch_management_client_enums import (
     PoolAllocationMode,
     ProvisioningState,
     AccountKeyType,
     PackageState,
+    CertificateFormat,
+    CertificateProvisioningState,
+    PoolProvisioningState,
+    AllocationState,
+    CachingType,
+    StorageAccountType,
+    ComputeNodeDeallocationOption,
+    InterNodeCommunicationState,
+    InboundEndpointProtocol,
+    NetworkSecurityGroupRuleAccess,
+    ComputeNodeFillType,
+    ElevationLevel,
+    AutoUserScope,
+    CertificateStoreLocation,
+    CertificateVisibility,
     NameAvailabilityReason,
 )
 
@@ -55,6 +107,41 @@ __all__ = [
     'ApplicationUpdateParameters',
     'BatchLocationQuota',
     'Resource',
+    'ProxyResource',
+    'CertificateBaseProperties',
+    'DeleteCertificateError',
+    'Certificate',
+    'CertificateCreateOrUpdateParameters',
+    'CloudServiceConfiguration',
+    'ImageReference',
+    'OSDisk',
+    'WindowsConfiguration',
+    'DataDisk',
+    'VirtualMachineConfiguration',
+    'DeploymentConfiguration',
+    'FixedScaleSettings',
+    'AutoScaleSettings',
+    'ScaleSettings',
+    'AutoScaleRunError',
+    'AutoScaleRun',
+    'NetworkSecurityGroupRule',
+    'InboundNatPool',
+    'PoolEndpointConfiguration',
+    'NetworkConfiguration',
+    'TaskSchedulingPolicy',
+    'LinuxUserConfiguration',
+    'UserAccount',
+    'MetadataItem',
+    'ResourceFile',
+    'EnvironmentSetting',
+    'AutoUserSpecification',
+    'UserIdentity',
+    'StartTask',
+    'CertificateReference',
+    'ApplicationPackageReference',
+    'ResizeError',
+    'ResizeOperationStatus',
+    'Pool',
     'OperationDisplay',
     'Operation',
     'CheckNameAvailabilityParameters',
@@ -62,9 +149,26 @@ __all__ = [
     'BatchAccountPaged',
     'ApplicationPaged',
     'OperationPaged',
+    'CertificatePaged',
+    'PoolPaged',
     'PoolAllocationMode',
     'ProvisioningState',
     'AccountKeyType',
     'PackageState',
+    'CertificateFormat',
+    'CertificateProvisioningState',
+    'PoolProvisioningState',
+    'AllocationState',
+    'CachingType',
+    'StorageAccountType',
+    'ComputeNodeDeallocationOption',
+    'InterNodeCommunicationState',
+    'InboundEndpointProtocol',
+    'NetworkSecurityGroupRuleAccess',
+    'ComputeNodeFillType',
+    'ElevationLevel',
+    'AutoUserScope',
+    'CertificateStoreLocation',
+    'CertificateVisibility',
     'NameAvailabilityReason',
 ]

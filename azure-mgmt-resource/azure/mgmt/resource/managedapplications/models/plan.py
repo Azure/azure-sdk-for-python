@@ -13,17 +13,19 @@ from msrest.serialization import Model
 
 
 class Plan(Model):
-    """Plan for the appliance.
+    """Plan for the managed application.
 
-    :param name: The plan name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The plan name.
     :type name: str
-    :param publisher: The publisher ID.
+    :param publisher: Required. The publisher ID.
     :type publisher: str
-    :param product: The product code.
+    :param product: Required. The product code.
     :type product: str
     :param promotion_code: The promotion code.
     :type promotion_code: str
-    :param version: The plan's version.
+    :param version: Required. The plan's version.
     :type version: str
     """
 
@@ -42,9 +44,10 @@ class Plan(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name, publisher, product, version, promotion_code=None):
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
-        self.version = version
+    def __init__(self, **kwargs):
+        super(Plan, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.product = kwargs.get('product', None)
+        self.promotion_code = kwargs.get('promotion_code', None)
+        self.version = kwargs.get('version', None)

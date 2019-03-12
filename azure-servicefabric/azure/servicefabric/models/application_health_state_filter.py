@@ -17,7 +17,6 @@ class ApplicationHealthStateFilter(Model):
     included in the cluster health chunk.
     One filter can match zero, one or multiple applications, depending on its
     properties.
-    .
 
     :param application_name_filter: The name of the application that matches
      the filter, as a fabric uri. The filter is applied only to the specified
@@ -29,8 +28,8 @@ class ApplicationHealthStateFilter(Model):
      If not specified, all applications are matched against the other filter
      members, like health state filter.
     :type application_name_filter: str
-    :param application_type_name_filter: The name of the application type
-     that matches the filter.
+    :param application_type_name_filter: The name of the application type that
+     matches the filter.
      If specified, the filter is applied only to applications of the selected
      application type, if any exists.
      If no applications of the specified application type exists, no
@@ -49,41 +48,39 @@ class ApplicationHealthStateFilter(Model):
      If not specified, default value is None, unless the application name or
      the application type name are specified. If the filter has default value
      and application name is specified, the matching application is returned.
-     The state values are flag based enumeration, so the value could be a
+     The state values are flag-based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
      For example, if the provided value is 6, it matches applications with
      HealthState value of OK (2) and Warning (4).
      - Default - Default value. Matches any HealthState. The value is zero.
-     - None - Filter that doesn’t match any HealthState value. Used in order
-     to return no results on a given collection of states. The value is 1.
+     - None - Filter that doesn't match any HealthState value. Used in order to
+     return no results on a given collection of states. The value is 1.
      - Ok - Filter that matches input with HealthState value Ok. The value is
      2.
      - Warning - Filter that matches input with HealthState value Warning. The
      value is 4.
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
-     - All - Filter that matches input with any HealthState value. The value
-     is 65535.
-     . Default value: 0 .
+     - All - Filter that matches input with any HealthState value. The value is
+     65535. Default value: 0 .
     :type health_state_filter: int
     :param service_filters: Defines a list of filters that specify which
      services to be included in the returned cluster health chunk as children
      of the application. The services are returned only if the parent
      application matches a filter.
      If the list is empty, no services are returned. All the services are used
-     to evaluate the parent application aggregated health state, regardless
-     of the input filters.
+     to evaluate the parent application aggregated health state, regardless of
+     the input filters.
      The application filter may specify multiple service filters.
      For example, it can specify a filter to return all services with health
      state Error and another filter to always include a service identified by
      its service name.
-    :type service_filters: list of :class:`ServiceHealthStateFilter
-     <azure.servicefabric.models.ServiceHealthStateFilter>`
+    :type service_filters:
+     list[~azure.servicefabric.models.ServiceHealthStateFilter]
     :param deployed_application_filters: Defines a list of filters that
-     specify which deployed applications to be included in the returned
-     cluster health chunk as children of the application. The deployed
-     applications are returned only if the parent application matches a
-     filter.
+     specify which deployed applications to be included in the returned cluster
+     health chunk as children of the application. The deployed applications are
+     returned only if the parent application matches a filter.
      If the list is empty, no deployed applications are returned. All the
      deployed applications are used to evaluate the parent application
      aggregated health state, regardless of the input filters.
@@ -91,10 +88,9 @@ class ApplicationHealthStateFilter(Model):
      For example, it can specify a filter to return all deployed applications
      with health state Error and another filter to always include a deployed
      application on a specified node.
-    :type deployed_application_filters: list of
-     :class:`DeployedApplicationHealthStateFilter
-     <azure.servicefabric.models.DeployedApplicationHealthStateFilter>`
-    """ 
+    :type deployed_application_filters:
+     list[~azure.servicefabric.models.DeployedApplicationHealthStateFilter]
+    """
 
     _attribute_map = {
         'application_name_filter': {'key': 'ApplicationNameFilter', 'type': 'str'},
@@ -104,9 +100,10 @@ class ApplicationHealthStateFilter(Model):
         'deployed_application_filters': {'key': 'DeployedApplicationFilters', 'type': '[DeployedApplicationHealthStateFilter]'},
     }
 
-    def __init__(self, application_name_filter=None, application_type_name_filter=None, health_state_filter=0, service_filters=None, deployed_application_filters=None):
-        self.application_name_filter = application_name_filter
-        self.application_type_name_filter = application_type_name_filter
-        self.health_state_filter = health_state_filter
-        self.service_filters = service_filters
-        self.deployed_application_filters = deployed_application_filters
+    def __init__(self, **kwargs):
+        super(ApplicationHealthStateFilter, self).__init__(**kwargs)
+        self.application_name_filter = kwargs.get('application_name_filter', None)
+        self.application_type_name_filter = kwargs.get('application_type_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.service_filters = kwargs.get('service_filters', None)
+        self.deployed_application_filters = kwargs.get('deployed_application_filters', None)

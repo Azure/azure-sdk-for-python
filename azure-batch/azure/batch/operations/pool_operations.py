@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class PoolOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-06-01.5.1".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-06-01.5.1"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -41,20 +43,23 @@ class PoolOperations(object):
 
         If you do not specify a $filter clause including a poolId, the response
         includes all pools that existed in the account in the time range of the
-        returned aggregation intervals.
+        returned aggregation intervals. If you do not specify a $filter clause
+        including a startTime or endTime these filters default to the start and
+        end times of the last aggregation interval currently available; that
+        is, only the last aggregation interval is returned.
 
         :param pool_list_usage_metrics_options: Additional parameters for the
          operation
         :type pool_list_usage_metrics_options:
-         :class:`PoolListUsageMetricsOptions
-         <azure.batch.models.PoolListUsageMetricsOptions>`
+         ~azure.batch.models.PoolListUsageMetricsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PoolUsageMetricsPaged
-         <azure.batch.models.PoolUsageMetricsPaged>`
+        :return: An iterator like instance of PoolUsageMetrics
+        :rtype:
+         ~azure.batch.models.PoolUsageMetricsPaged[~azure.batch.models.PoolUsageMetrics]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -87,7 +92,11 @@ class PoolOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/poolusagemetrics'
+                url = self.list_usage_metrics.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -109,7 +118,7 @@ class PoolOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -124,9 +133,8 @@ class PoolOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -142,6 +150,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    list_usage_metrics.metadata = {'url': '/poolusagemetrics'}
 
     def get_all_lifetime_statistics(
             self, pool_get_all_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
@@ -150,21 +159,22 @@ class PoolOperations(object):
 
         Statistics are aggregated across all pools that have ever existed in
         the account, from account creation to the last update time of the
-        statistics.
+        statistics. The statistics may not be immediately available. The Batch
+        service performs periodic roll-up of statistics. The typical delay is
+        about 30 minutes.
 
         :param pool_get_all_lifetime_statistics_options: Additional parameters
          for the operation
         :type pool_get_all_lifetime_statistics_options:
-         :class:`PoolGetAllLifetimeStatisticsOptions
-         <azure.batch.models.PoolGetAllLifetimeStatisticsOptions>`
+         ~azure.batch.models.PoolGetAllLifetimeStatisticsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PoolStatistics or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.PoolStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -182,7 +192,11 @@ class PoolOperations(object):
             ocp_date = pool_get_all_lifetime_statistics_options.ocp_date
 
         # Construct URL
-        url = '/lifetimepoolstats'
+        url = self.get_all_lifetime_statistics.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -192,7 +206,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -207,8 +221,8 @@ class PoolOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -231,6 +245,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_lifetime_statistics.metadata = {'url': '/lifetimepoolstats'}
 
     def add(
             self, pool, pool_add_options=None, custom_headers=None, raw=False, **operation_config):
@@ -241,19 +256,16 @@ class PoolOperations(object):
         logs accessible to Microsoft Support engineers.
 
         :param pool: The pool to be added.
-        :type pool: :class:`PoolAddParameter
-         <azure.batch.models.PoolAddParameter>`
+        :type pool: ~azure.batch.models.PoolAddParameter
         :param pool_add_options: Additional parameters for the operation
-        :type pool_add_options: :class:`PoolAddOptions
-         <azure.batch.models.PoolAddOptions>`
+        :type pool_add_options: ~azure.batch.models.PoolAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -271,7 +283,11 @@ class PoolOperations(object):
             ocp_date = pool_add_options.ocp_date
 
         # Construct URL
-        url = '/pools'
+        url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -299,9 +315,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool, 'PoolAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -316,20 +331,22 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/pools'}
 
     def list(
             self, pool_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the pools in the specified account.
 
         :param pool_list_options: Additional parameters for the operation
-        :type pool_list_options: :class:`PoolListOptions
-         <azure.batch.models.PoolListOptions>`
+        :type pool_list_options: ~azure.batch.models.PoolListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudPoolPaged <azure.batch.models.CloudPoolPaged>`
+        :return: An iterator like instance of CloudPool
+        :rtype:
+         ~azure.batch.models.CloudPoolPaged[~azure.batch.models.CloudPool]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -362,7 +379,11 @@ class PoolOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/pools'
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -384,7 +405,7 @@ class PoolOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -399,9 +420,8 @@ class PoolOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -417,6 +437,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/pools'}
 
     def delete(
             self, pool_id, pool_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -439,16 +460,14 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to delete.
         :type pool_id: str
         :param pool_delete_options: Additional parameters for the operation
-        :type pool_delete_options: :class:`PoolDeleteOptions
-         <azure.batch.models.PoolDeleteOptions>`
+        :type pool_delete_options: ~azure.batch.models.PoolDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -478,8 +497,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_delete_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -492,7 +512,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -515,8 +534,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -528,6 +547,7 @@ class PoolOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete.metadata = {'url': '/pools/{poolId}'}
 
     def exists(
             self, pool_id, pool_exists_options=None, custom_headers=None, raw=False, **operation_config):
@@ -536,16 +556,14 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_exists_options: Additional parameters for the operation
-        :type pool_exists_options: :class:`PoolExistsOptions
-         <azure.batch.models.PoolExistsOptions>`
+        :type pool_exists_options: ~azure.batch.models.PoolExistsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: bool
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -575,8 +593,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_exists_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.exists.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -589,7 +608,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -612,8 +630,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -629,6 +647,7 @@ class PoolOperations(object):
                 })
             return client_raw_response
         return deserialized
+    exists.metadata = {'url': '/pools/{poolId}'}
 
     def get(
             self, pool_id, pool_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -637,16 +656,15 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_get_options: Additional parameters for the operation
-        :type pool_get_options: :class:`PoolGetOptions
-         <azure.batch.models.PoolGetOptions>`
+        :type pool_get_options: ~azure.batch.models.PoolGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudPool <azure.batch.models.CloudPool>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CloudPool or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -682,8 +700,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_get_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -700,7 +719,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -723,8 +742,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -747,6 +766,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/pools/{poolId}'}
 
     def patch(
             self, pool_id, pool_patch_parameter, pool_patch_options=None, custom_headers=None, raw=False, **operation_config):
@@ -760,19 +780,16 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to update.
         :type pool_id: str
         :param pool_patch_parameter: The parameters for the request.
-        :type pool_patch_parameter: :class:`PoolPatchParameter
-         <azure.batch.models.PoolPatchParameter>`
+        :type pool_patch_parameter: ~azure.batch.models.PoolPatchParameter
         :param pool_patch_options: Additional parameters for the operation
-        :type pool_patch_options: :class:`PoolPatchOptions
-         <azure.batch.models.PoolPatchOptions>`
+        :type pool_patch_options: ~azure.batch.models.PoolPatchOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -802,8 +819,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_patch_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -842,9 +860,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_patch_parameter, 'PoolPatchParameter')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -859,6 +876,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    patch.metadata = {'url': '/pools/{poolId}'}
 
     def disable_auto_scale(
             self, pool_id, pool_disable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
@@ -870,16 +888,14 @@ class PoolOperations(object):
         :param pool_disable_auto_scale_options: Additional parameters for the
          operation
         :type pool_disable_auto_scale_options:
-         :class:`PoolDisableAutoScaleOptions
-         <azure.batch.models.PoolDisableAutoScaleOptions>`
+         ~azure.batch.models.PoolDisableAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -897,8 +913,9 @@ class PoolOperations(object):
             ocp_date = pool_disable_auto_scale_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/disableautoscale'
+        url = self.disable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -911,7 +928,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -926,8 +942,8 @@ class PoolOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -942,9 +958,10 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    disable_auto_scale.metadata = {'url': '/pools/{poolId}/disableautoscale'}
 
     def enable_auto_scale(
-            self, pool_id, pool_enable_auto_scale_options=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, auto_scale_formula=None, auto_scale_evaluation_interval=None, pool_enable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables automatic scaling for a pool.
 
         You cannot enable automatic scaling on a pool if a resize operation is
@@ -957,11 +974,6 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool on which to enable automatic
          scaling.
         :type pool_id: str
-        :param pool_enable_auto_scale_options: Additional parameters for the
-         operation
-        :type pool_enable_auto_scale_options:
-         :class:`PoolEnableAutoScaleOptions
-         <azure.batch.models.PoolEnableAutoScaleOptions>`
         :param auto_scale_formula: The formula for the desired number of
          compute nodes in the pool. The formula is checked for validity before
          it is applied to the pool. If the formula is not valid, the Batch
@@ -982,14 +994,17 @@ class PoolOperations(object):
          be started, with its starting time being the time when this request
          was issued.
         :type auto_scale_evaluation_interval: timedelta
+        :param pool_enable_auto_scale_options: Additional parameters for the
+         operation
+        :type pool_enable_auto_scale_options:
+         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1020,8 +1035,9 @@ class PoolOperations(object):
         pool_enable_auto_scale_parameter = models.PoolEnableAutoScaleParameter(auto_scale_formula=auto_scale_formula, auto_scale_evaluation_interval=auto_scale_evaluation_interval)
 
         # Construct URL
-        url = '/pools/{poolId}/enableautoscale'
+        url = self.enable_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1060,9 +1076,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_enable_auto_scale_parameter, 'PoolEnableAutoScaleParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1077,13 +1092,15 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    enable_auto_scale.metadata = {'url': '/pools/{poolId}/enableautoscale'}
 
     def evaluate_auto_scale(
             self, pool_id, auto_scale_formula, pool_evaluate_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the result of evaluating an automatic scaling formula on the pool.
 
         This API is primarily for validating an autoscale formula, as it simply
-        returns the result without applying the formula to the pool.
+        returns the result without applying the formula to the pool. The pool
+        must have auto scaling enabled in order to evaluate a formula.
 
         :param pool_id: The ID of the pool on which to evaluate the automatic
          scaling formula.
@@ -1099,16 +1116,15 @@ class PoolOperations(object):
         :param pool_evaluate_auto_scale_options: Additional parameters for the
          operation
         :type pool_evaluate_auto_scale_options:
-         :class:`PoolEvaluateAutoScaleOptions
-         <azure.batch.models.PoolEvaluateAutoScaleOptions>`
+         ~azure.batch.models.PoolEvaluateAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AutoScaleRun or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.AutoScaleRun or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1127,8 +1143,9 @@ class PoolOperations(object):
         pool_evaluate_auto_scale_parameter = models.PoolEvaluateAutoScaleParameter(auto_scale_formula=auto_scale_formula)
 
         # Construct URL
-        url = '/pools/{poolId}/evaluateautoscale'
+        url = self.evaluate_auto_scale.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1141,6 +1158,7 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
@@ -1159,9 +1177,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_evaluate_auto_scale_parameter, 'PoolEvaluateAutoScaleParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1185,6 +1202,7 @@ class PoolOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_auto_scale.metadata = {'url': '/pools/{poolId}/evaluateautoscale'}
 
     def resize(
             self, pool_id, pool_resize_parameter, pool_resize_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1202,19 +1220,16 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool to resize.
         :type pool_id: str
         :param pool_resize_parameter: The parameters for the request.
-        :type pool_resize_parameter: :class:`PoolResizeParameter
-         <azure.batch.models.PoolResizeParameter>`
+        :type pool_resize_parameter: ~azure.batch.models.PoolResizeParameter
         :param pool_resize_options: Additional parameters for the operation
-        :type pool_resize_options: :class:`PoolResizeOptions
-         <azure.batch.models.PoolResizeOptions>`
+        :type pool_resize_options: ~azure.batch.models.PoolResizeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1244,8 +1259,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_resize_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/resize'
+        url = self.resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1284,9 +1300,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_resize_parameter, 'PoolResizeParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1301,6 +1316,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    resize.metadata = {'url': '/pools/{poolId}/resize'}
 
     def stop_resize(
             self, pool_id, pool_stop_resize_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1308,24 +1324,26 @@ class PoolOperations(object):
 
         This does not restore the pool to its previous state before the resize
         operation: it only stops any further changes being made, and the pool
-        maintains its current state. A resize operation need not be an explicit
-        resize pool request; this API can also be used to halt the initial
-        sizing of the pool when it is created.
+        maintains its current state. After stopping, the pool stabilizes at the
+        number of nodes it was at when the stop operation was done. During the
+        stop operation, the pool allocation state changes first to stopping and
+        then to steady. A resize operation need not be an explicit resize pool
+        request; this API can also be used to halt the initial sizing of the
+        pool when it is created.
 
         :param pool_id: The ID of the pool whose resizing you want to stop.
         :type pool_id: str
         :param pool_stop_resize_options: Additional parameters for the
          operation
-        :type pool_stop_resize_options: :class:`PoolStopResizeOptions
-         <azure.batch.models.PoolStopResizeOptions>`
+        :type pool_stop_resize_options:
+         ~azure.batch.models.PoolStopResizeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1355,8 +1373,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_stop_resize_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/stopresize'
+        url = self.stop_resize.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1369,7 +1388,6 @@ class PoolOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1392,8 +1410,8 @@ class PoolOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1408,6 +1426,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    stop_resize.metadata = {'url': '/pools/{poolId}/stopresize'}
 
     def update_properties(
             self, pool_id, pool_update_properties_parameter, pool_update_properties_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1423,21 +1442,18 @@ class PoolOperations(object):
         :param pool_update_properties_parameter: The parameters for the
          request.
         :type pool_update_properties_parameter:
-         :class:`PoolUpdatePropertiesParameter
-         <azure.batch.models.PoolUpdatePropertiesParameter>`
+         ~azure.batch.models.PoolUpdatePropertiesParameter
         :param pool_update_properties_options: Additional parameters for the
          operation
         :type pool_update_properties_options:
-         :class:`PoolUpdatePropertiesOptions
-         <azure.batch.models.PoolUpdatePropertiesOptions>`
+         ~azure.batch.models.PoolUpdatePropertiesOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1455,8 +1471,9 @@ class PoolOperations(object):
             ocp_date = pool_update_properties_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/updateproperties'
+        url = self.update_properties.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1487,9 +1504,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(pool_update_properties_parameter, 'PoolUpdatePropertiesParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1504,128 +1520,7 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
-
-    def upgrade_os(
-            self, pool_id, target_os_version, pool_upgrade_os_options=None, custom_headers=None, raw=False, **operation_config):
-        """Upgrades the operating system of the specified pool.
-
-        During an upgrade, the Batch service upgrades each compute node in the
-        pool. When a compute node is chosen for upgrade, any tasks running on
-        that node are removed from the node and returned to the queue to be
-        rerun later (or on a different compute node). The node will be
-        unavailable until the upgrade is complete. This operation results in
-        temporarily reduced pool capacity as nodes are taken out of service to
-        be upgraded. Although the Batch service tries to avoid upgrading all
-        compute nodes at the same time, it does not guarantee to do this
-        (particularly on small pools); therefore, the pool may be temporarily
-        unavailable to run tasks. When this operation runs, the pool state
-        changes to upgrading. When all compute nodes have finished upgrading,
-        the pool state returns to active.
-
-        :param pool_id: The ID of the pool to upgrade.
-        :type pool_id: str
-        :param target_os_version: The Azure Guest OS version to be installed
-         on the virtual machines in the pool.
-        :type target_os_version: str
-        :param pool_upgrade_os_options: Additional parameters for the
-         operation
-        :type pool_upgrade_os_options: :class:`PoolUpgradeOsOptions
-         <azure.batch.models.PoolUpgradeOsOptions>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
-        """
-        timeout = None
-        if pool_upgrade_os_options is not None:
-            timeout = pool_upgrade_os_options.timeout
-        client_request_id = None
-        if pool_upgrade_os_options is not None:
-            client_request_id = pool_upgrade_os_options.client_request_id
-        return_client_request_id = None
-        if pool_upgrade_os_options is not None:
-            return_client_request_id = pool_upgrade_os_options.return_client_request_id
-        ocp_date = None
-        if pool_upgrade_os_options is not None:
-            ocp_date = pool_upgrade_os_options.ocp_date
-        if_match = None
-        if pool_upgrade_os_options is not None:
-            if_match = pool_upgrade_os_options.if_match
-        if_none_match = None
-        if pool_upgrade_os_options is not None:
-            if_none_match = pool_upgrade_os_options.if_none_match
-        if_modified_since = None
-        if pool_upgrade_os_options is not None:
-            if_modified_since = pool_upgrade_os_options.if_modified_since
-        if_unmodified_since = None
-        if pool_upgrade_os_options is not None:
-            if_unmodified_since = pool_upgrade_os_options.if_unmodified_since
-        pool_upgrade_os_parameter = models.PoolUpgradeOSParameter(target_os_version=target_os_version)
-
-        # Construct URL
-        url = '/pools/{poolId}/upgradeos'
-        path_format_arguments = {
-            'poolId': self._serialize.url("pool_id", pool_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-        if client_request_id is not None:
-            header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
-        if return_client_request_id is not None:
-            header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
-        if ocp_date is not None:
-            header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        if if_modified_since is not None:
-            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
-        if if_unmodified_since is not None:
-            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-
-        # Construct body
-        body_content = self._serialize.body(pool_upgrade_os_parameter, 'PoolUpgradeOSParameter')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.BatchErrorException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
-                'client-request-id': 'str',
-                'request-id': 'str',
-                'ETag': 'str',
-                'Last-Modified': 'rfc-1123',
-                'DataServiceId': 'str',
-            })
-            return client_raw_response
+    update_properties.metadata = {'url': '/pools/{poolId}/updateproperties'}
 
     def remove_nodes(
             self, pool_id, node_remove_parameter, pool_remove_nodes_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1639,20 +1534,18 @@ class PoolOperations(object):
          nodes.
         :type pool_id: str
         :param node_remove_parameter: The parameters for the request.
-        :type node_remove_parameter: :class:`NodeRemoveParameter
-         <azure.batch.models.NodeRemoveParameter>`
+        :type node_remove_parameter: ~azure.batch.models.NodeRemoveParameter
         :param pool_remove_nodes_options: Additional parameters for the
          operation
-        :type pool_remove_nodes_options: :class:`PoolRemoveNodesOptions
-         <azure.batch.models.PoolRemoveNodesOptions>`
+        :type pool_remove_nodes_options:
+         ~azure.batch.models.PoolRemoveNodesOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1682,8 +1575,9 @@ class PoolOperations(object):
             if_unmodified_since = pool_remove_nodes_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/removenodes'
+        url = self.remove_nodes.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1722,9 +1616,8 @@ class PoolOperations(object):
         body_content = self._serialize.body(node_remove_parameter, 'NodeRemoveParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1739,3 +1632,4 @@ class PoolOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    remove_nodes.metadata = {'url': '/pools/{poolId}/removenodes'}

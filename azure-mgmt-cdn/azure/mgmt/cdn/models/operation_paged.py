@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of Operation object
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.cdn.models.Operation>` object
     """
 
     _attribute_map = {

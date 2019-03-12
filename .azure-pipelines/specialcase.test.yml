@@ -1,0 +1,84 @@
+# Variables: 
+#  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+
+jobs:
+- job: Special_Python_Distro_Tests
+  dependsOn:
+  - 'Build_Target_Packages'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - powershell: |
+     cd ~/
+     wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
+     tar xf pypy3-v6.0.0-linux64.tar.bz2
+     cd $(Build.SourcesDirectory)
+     
+     $storedPath=$Env:PATH
+     $Env:PATH="/home/vsts/pypy3-v6.0.0-linux64/bin:" + $Env:PATH
+
+     $inputFilterSet="$(build_targeting_string)"
+      
+     if ($inputFilterSet -eq "")
+     {
+        $inputFilterSet = "azure-*"
+     }
+
+     pypy3 -m ensurepip
+
+     foreach($inputFilter in $inputFilterSet.split(","))
+     {
+        pypy3 scripts/dev_setup.py -g $inputFilter
+     }
+     
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+     
+        pypy3 -m pytest $folderCombination
+     }
+     
+     pypy3 ./setup.py check -r -s
+     $Env:PATH=$storedPath
+    displayName: 'Setup and Run Filtered Tests PyPy3'
+    continueOnError: true
+
+  - powershell: |
+     sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+     cd ~/
+     git clone https://github.com/python/cpython.git
+     cd cpython
+     mkdir debug
+     cd debug
+     ../configure --enable-optimizations --prefix=$HOME
+     make install
+     
+     cd $(Build.SourcesDirectory)
+     $storedPath=$Env:PATH     
+     $Env:PATH="/home/vsts/bin:" + $Env:PATH
+
+     $inputFilterSet="$(build_targeting_string)"
+      
+     if ($inputFilterSet -eq "")
+     {
+        $inputFilterSet = "azure-*"
+     }
+
+     python3 -m ensurepip
+     
+     foreach($inputFilter in $inputFilterSet.split(","))
+     {
+        python3 scripts/dev_setup.py -g $inputFilter
+     }
+
+     foreach($inputFilter in "$inputFilterSet".split(","))
+     {
+        $folderCombination = (gci -Directory -Name -Filter "$inputFilter"  | %{ "$(Build.SourcesDirectory)/$_/" }) -join " "
+     
+        python3 -m pytest $folderCombination
+     }
+     
+     python3 ./setup.py check -r -s
+     $Env:PATH=$storedPath
+    displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+    continueOnError: true

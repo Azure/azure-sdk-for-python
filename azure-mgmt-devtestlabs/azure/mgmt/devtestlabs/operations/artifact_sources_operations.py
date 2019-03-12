@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class ArtifactSourcesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -59,8 +61,9 @@ class ArtifactSourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArtifactSourcePaged
-         <azure.mgmt.devtestlabs.models.ArtifactSourcePaged>`
+        :return: An iterator like instance of ArtifactSource
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.ArtifactSourcePaged[~azure.mgmt.devtestlabs.models.ArtifactSource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -104,7 +107,7 @@ class ArtifactSourcesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -141,10 +144,9 @@ class ArtifactSourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArtifactSource
-         <azure.mgmt.devtestlabs.models.ArtifactSource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ArtifactSource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -175,7 +177,7 @@ class ArtifactSourcesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -204,17 +206,15 @@ class ArtifactSourcesOperations(object):
         :param name: The name of the artifact source.
         :type name: str
         :param artifact_source: Properties of an artifact source.
-        :type artifact_source: :class:`ArtifactSource
-         <azure.mgmt.devtestlabs.models.ArtifactSource>`
+        :type artifact_source: ~azure.mgmt.devtestlabs.models.ArtifactSource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArtifactSource
-         <azure.mgmt.devtestlabs.models.ArtifactSource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ArtifactSource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -247,7 +247,7 @@ class ArtifactSourcesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -282,9 +282,8 @@ class ArtifactSourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -313,7 +312,7 @@ class ArtifactSourcesOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -335,17 +334,16 @@ class ArtifactSourcesOperations(object):
         :param name: The name of the artifact source.
         :type name: str
         :param artifact_source: Properties of an artifact source.
-        :type artifact_source: :class:`ArtifactSourceFragment
-         <azure.mgmt.devtestlabs.models.ArtifactSourceFragment>`
+        :type artifact_source:
+         ~azure.mgmt.devtestlabs.models.ArtifactSourceFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArtifactSource
-         <azure.mgmt.devtestlabs.models.ArtifactSource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ArtifactSource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ArtifactSource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -378,7 +376,7 @@ class ArtifactSourcesOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class DeploymentProperties(Model):
     """Deployment properties.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param template: The template content. You use this element when you want
      to pass the template syntax directly in the request rather than link to an
      existing template. It can be a JObject or well-formed JSON string. Use
@@ -22,8 +24,8 @@ class DeploymentProperties(Model):
     :type template: object
     :param template_link: The URI of the template. Use either the templateLink
      property or the template property, but not both.
-    :type template_link: :class:`TemplateLink
-     <azure.mgmt.resource.resources.v2017_05_10.models.TemplateLink>`
+    :type template_link:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.TemplateLink
     :param parameters: Name and value pairs that define the deployment
      parameters for the template. You use this element when you want to provide
      the parameter values directly in the request rather than link to an
@@ -34,20 +36,21 @@ class DeploymentProperties(Model):
     :param parameters_link: The URI of parameters file. You use this element
      to link to an existing parameters file. Use either the parametersLink
      property or the parameters property, but not both.
-    :type parameters_link: :class:`ParametersLink
-     <azure.mgmt.resource.resources.v2017_05_10.models.ParametersLink>`
-    :param mode: The mode that is used to deploy resources. This value can be
-     either Incremental or Complete. In Incremental mode, resources are
-     deployed without deleting existing resources that are not included in the
-     template. In Complete mode, resources are deployed and existing resources
-     in the resource group that are not included in the template are deleted.
-     Be careful when using Complete mode as you may unintentionally delete
-     resources. Possible values include: 'Incremental', 'Complete'
-    :type mode: str or :class:`DeploymentMode
-     <azure.mgmt.resource.resources.v2017_05_10.models.DeploymentMode>`
+    :type parameters_link:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.ParametersLink
+    :param mode: Required. The mode that is used to deploy resources. This
+     value can be either Incremental or Complete. In Incremental mode,
+     resources are deployed without deleting existing resources that are not
+     included in the template. In Complete mode, resources are deployed and
+     existing resources in the resource group that are not included in the
+     template are deleted. Be careful when using Complete mode as you may
+     unintentionally delete resources. Possible values include: 'Incremental',
+     'Complete'
+    :type mode: str or
+     ~azure.mgmt.resource.resources.v2017_05_10.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
-    :type debug_setting: :class:`DebugSetting
-     <azure.mgmt.resource.resources.v2017_05_10.models.DebugSetting>`
+    :type debug_setting:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.DebugSetting
     """
 
     _validation = {
@@ -63,10 +66,11 @@ class DeploymentProperties(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None):
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
+    def __init__(self, **kwargs):
+        super(DeploymentProperties, self).__init__(**kwargs)
+        self.template = kwargs.get('template', None)
+        self.template_link = kwargs.get('template_link', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.parameters_link = kwargs.get('parameters_link', None)
+        self.mode = kwargs.get('mode', None)
+        self.debug_setting = kwargs.get('debug_setting', None)

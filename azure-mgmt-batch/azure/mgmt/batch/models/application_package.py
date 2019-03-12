@@ -24,9 +24,8 @@ class ApplicationPackage(Model):
     :ivar version: The version of the application package.
     :vartype version: str
     :ivar state: The current state of the application package. Possible values
-     include: 'pending', 'active', 'unmapped'
-    :vartype state: str or :class:`PackageState
-     <azure.mgmt.batch.models.PackageState>`
+     include: 'Pending', 'Active', 'Unmapped'
+    :vartype state: str or ~azure.mgmt.batch.models.PackageState
     :ivar format: The format of the application package, if the package is
      active.
     :vartype format: str
@@ -61,6 +60,7 @@ class ApplicationPackage(Model):
     }
 
     def __init__(self):
+        super(ApplicationPackage, self).__init__()
         self.id = None
         self.version = None
         self.state = None

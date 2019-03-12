@@ -7,70 +7,63 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['52']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [72d3219c-a2d1-11e6-a267-ecb1d756380e]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Media/CheckNameAvailability?api-version=2015-10-01
   response:
-    body: {string: '{"NameAvailable":true,"Reason":null,"Message":null}'}
+    body: {string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\
+        \n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 04 Nov 2016 20:58:34 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      content-length: ['51']
-      x-ms-client-request-id: [72d3219c-a2d1-11e6-a267-ecb1d756380e]
-      x-ms-correlation-request-id: [6d8806bd-441c-4908-9eb9-a06c0eedf22c]
+      cache-control: [no-cache]
+      content-length: ['57']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:06 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [c6edced2-454e-47c9-8c2d-5f5dd035ca9a]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205834Z:6d8806bd-441c-4908-9eb9-a06c0eedf22c']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
-    body: '{"properties": {"storageAccounts": [{"isPrimary": true, "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest"}]},
-      "location": "westus"}'
+    body: 'b''{"location": "westus", "properties": {"storageAccounts": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest8fdd0a81",
+      "isPrimary": true}]}}'''
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['249']
+      Content-Length: ['257']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [73602e36-a2d1-11e6-85a6-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
-    body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
-        US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n        \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
-        \     }\r\n    ],\"storageAccounts\":[\r\n      {\r\n        \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest\",\"isPrimary\":true\r\n
-        \     }\r\n    ]\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\"\
+        ,\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"\
+        West US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n      \
+        \  \"endpoint\":\"https://pymedia8fdd0a81.restv2.westus.media.azure.net/api/\"\
+        ,\"majorVersion\":\"2\"\r\n      }\r\n    ],\"storageAccounts\":[\r\n    \
+        \  {\r\n        \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest8fdd0a81\"\
+        ,\"isPrimary\":true\r\n      }\r\n    ]\r\n  }\r\n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['663']
-      Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Fri, 04 Nov 2016 20:58:41 GMT']
-      Expires: ['-1']
-      OData-Version: ['4.0']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      x-ms-client-request-id: [73602e36-a2d1-11e6-85a6-ecb1d756380e]
-      x-ms-correlation-request-id: [6c88aa33-8c9d-4a27-9a09-333101556c7f]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [e3a3bf19-84c8-4865-84f2-bcbeb8304fd2]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205841Z:6c88aa33-8c9d-4a27-9a09-333101556c7f']
+      cache-control: [no-cache]
+      content-length: ['682']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:23 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -79,36 +72,32 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7740a706-a2d1-11e6-975f-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
-    body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
-        US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n        \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
-        \     }\r\n    ],\"storageAccounts\":[\r\n      {\r\n        \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest\",\"isPrimary\":true\r\n
-        \     }\r\n    ]\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\"\
+        ,\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"\
+        West US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n      \
+        \  \"endpoint\":\"https://pymedia8fdd0a81.restv2.westus.media.azure.net/api/\"\
+        ,\"majorVersion\":\"2\"\r\n      }\r\n    ],\"storageAccounts\":[\r\n    \
+        \  {\r\n        \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest8fdd0a81\"\
+        ,\"isPrimary\":true\r\n      }\r\n    ]\r\n  }\r\n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Fri, 04 Nov 2016 20:58:41 GMT']
-      Expires: ['-1']
-      OData-Version: ['4.0']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      content-length: ['663']
-      x-ms-client-request-id: [7740a706-a2d1-11e6-975f-ecb1d756380e]
-      x-ms-correlation-request-id: [26b1b974-98b6-45ec-95c2-72c33c400eb0]
-      x-ms-ratelimit-remaining-subscription-reads: ['14984']
-      x-ms-request-id: [4a5a6e66-4169-4cc1-a675-641ed5820a0d]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205842Z:26b1b974-98b6-45ec-95c2-72c33c400eb0']
+      cache-control: [no-cache]
+      content-length: ['682']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:24 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -117,36 +106,34 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [77f1a06c-a2d1-11e6-9c33-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices?api-version=2015-10-01
   response:
-    body: {string: "{\r\n  \"value\":[\r\n    {\r\n      \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
-        US\",\"properties\":{\r\n        \"apiEndpoints\":[\r\n          {\r\n            \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
-        \         }\r\n        ],\"storageAccounts\":[\r\n          {\r\n            \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest\",\"isPrimary\":true\r\n
-        \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"value\":[\r\n    {\r\n      \"name\":\"pymedia8fdd0a81\"\
+        ,\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\"\
+        ,\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"\
+        West US\",\"properties\":{\r\n        \"apiEndpoints\":[\r\n          {\r\n\
+        \            \"endpoint\":\"https://pymedia8fdd0a81.restv2.westus.media.azure.net/api/\"\
+        ,\"majorVersion\":\"2\"\r\n          }\r\n        ],\"storageAccounts\":[\r\
+        \n          {\r\n            \"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest8fdd0a81\"\
+        ,\"isPrimary\":true\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\
+        \n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Fri, 04 Nov 2016 20:58:43 GMT']
-      Expires: ['-1']
-      OData-Version: ['4.0']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      content-length: ['739']
-      x-ms-client-request-id: [77f1a06c-a2d1-11e6-9c33-ecb1d756380e]
-      x-ms-correlation-request-id: [8af0f4f8-c412-4f86-9d6a-cece8865d89f]
-      x-ms-ratelimit-remaining-subscription-reads: ['14988']
-      x-ms-request-id: [b5afef77-ae7d-40fe-b1ea-b06e817a63c2]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205843Z:8af0f4f8-c412-4f86-9d6a-cece8865d89f']
+      cache-control: [no-cache]
+      content-length: ['758']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:25 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -156,33 +143,31 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7879fcf4-a2d1-11e6-9d32-ecb1d756380e]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/listKeys?api-version=2015-10-01
   response:
-    body: {string: "{\r\n  \"primaryAuthEndpoint\":\"https://wamsprodglobal001acs.accesscontrol.windows.net/\",\"secondaryAuthEndpoint\":\"https://wamsprodglobal002acs.accesscontrol.windows.net/\",\"primaryKey\":\"eUu/DVT52NA2Sukw/xwf6jzDKDY+UssjRborZBn1lH0=\",\"secondaryKey\":\"OgnBIhLooXnJZlZBYSZ1fBwTi5nbMKRkQAw6CKxYyD8=\",\"scope\":\"urn:windowsazuremediaservices\"\r\n}"}
+    body: {string: "{\r\n  \"primaryAuthEndpoint\":\"https://wamsprodglobal001acs.accesscontrol.windows.net/\"\
+        ,\"secondaryAuthEndpoint\":\"https://wamsprodglobal002acs.accesscontrol.windows.net/\"\
+        ,\"primaryKey\":\"t8A3FxGAKAeOP6nzTNlZtQSEp4BmyKZsoRZy0KFvpwg=\",\"secondaryKey\"\
+        :\"h6sWSR+vokZpcrht0buZ2GhxX+zdberG4thbSjAGh0Q=\",\"scope\":\"urn:windowsazuremediaservices\"\
+        \r\n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Fri, 04 Nov 2016 20:58:44 GMT']
-      Expires: ['-1']
-      OData-Version: ['4.0']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
+      cache-control: [no-cache]
       content-length: ['331']
-      x-ms-client-request-id: [7879fcf4-a2d1-11e6-9d32-ecb1d756380e]
-      x-ms-correlation-request-id: [b7b8b52c-8c0a-445b-8c44-7e4c3de92ebb]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [478e1911-38b9-4cbe-8955-7cf0278233fd]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205844Z:b7b8b52c-8c0a-445b-8c44-7e4c3de92ebb']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:27 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
     body: '{"keyType": "Primary"}'
@@ -192,65 +177,54 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [794e2070-a2d1-11e6-8908-ecb1d756380e]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/regenerateKey?api-version=2015-10-01
   response:
-    body: {string: "{\r\n  \"key\":\"Ldp8wyUnARv50+ITBpTKmMrLgd032l12tUKUxImE2CE=\"\r\n}"}
+    body: {string: "{\r\n  \"key\":\"VEqxecdkM6nlKLwDwppwpuXAN+QOmlKbSjaP1fCLq0E=\"\
+        \r\n}"}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Fri, 04 Nov 2016 20:58:45 GMT']
-      Expires: ['-1']
-      OData-Version: ['4.0']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
+      cache-control: [no-cache]
       content-length: ['60']
-      x-ms-client-request-id: [794e2070-a2d1-11e6-8908-ecb1d756380e]
-      x-ms-correlation-request-id: [444f62fc-01af-4a92-b946-8b603ef5763b]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [62251c29-4569-4b56-af2a-0c98a044adb7]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205845Z:444f62fc-01af-4a92-b946-8b603ef5763b']
+      content-type: [application/json; odata.metadata=minimal]
+      date: ['Fri, 15 Sep 2017 00:10:27 GMT']
+      expires: ['-1']
+      odata-version: ['4.0']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
-    body: '{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest"}'
+    body: 'b''{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest8fdd0a81"}'''
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['169']
+      Content-Length: ['177']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7a0655b0-a2d1-11e6-be2d-ecb1d756380e]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/syncStorageKeys?api-version=2015-10-01
   response:
     body: {string: ''}
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 04 Nov 2016 20:58:47 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      x-ms-client-request-id: [7a0655b0-a2d1-11e6-be2d-ecb1d756380e]
-      x-ms-correlation-request-id: [43403709-c2dd-45fc-9851-be165f1f8aaf]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [16a1c85a-e98e-474d-ba05-d036e7adf32c]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205847Z:43403709-c2dd-45fc-9851-be165f1f8aaf']
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 15 Sep 2017 00:10:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -260,28 +234,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 mediaservicesmanagementclient/0.1.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.14
+          msrest_azure/0.4.11 mediaservicesmanagementclient/0.1.2 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7ad955f4-a2d1-11e6-ac93-ecb1d756380e]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
     body: {string: ''}
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 04 Nov 2016 20:58:50 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      x-ms-client-request-id: [7ad955f4-a2d1-11e6-ac93-ecb1d756380e]
-      x-ms-correlation-request-id: [d71be27b-61f0-4bfe-8605-a62c2be63803]
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 15 Sep 2017 00:10:32 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [a5629cb3-014f-4bdb-ad09-90a8b51a79eb]
-      x-ms-routing-request-id: ['NORTHCENTRALUS:20161104T205850Z:d71be27b-61f0-4bfe-8605-a62c2be63803']
+      x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 version: 1

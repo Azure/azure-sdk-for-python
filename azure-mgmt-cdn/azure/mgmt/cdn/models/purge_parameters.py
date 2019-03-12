@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class PurgeParameters(Model):
     """Parameters required for content purge.
 
-    :param content_paths: The path to the content to be purged. Can describe a
-     file path or a wild card directory.
-    :type content_paths: list of str
+    All required parameters must be populated in order to send to Azure.
+
+    :param content_paths: Required. The path to the content to be purged. Can
+     describe a file path or a wild card directory.
+    :type content_paths: list[str]
     """
 
     _validation = {
@@ -28,5 +30,6 @@ class PurgeParameters(Model):
         'content_paths': {'key': 'contentPaths', 'type': '[str]'},
     }
 
-    def __init__(self, content_paths):
-        self.content_paths = content_paths
+    def __init__(self, **kwargs):
+        super(PurgeParameters, self).__init__(**kwargs)
+        self.content_paths = kwargs.get('content_paths', None)

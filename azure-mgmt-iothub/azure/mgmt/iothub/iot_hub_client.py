@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.iot_hub_resource_operations import IotHubResourceOperations
+from .operations.resource_provider_common_operations import ResourceProviderCommonOperations
+from .operations.certificates_operations import CertificatesOperations
 from . import models
 
 
@@ -37,28 +40,32 @@ class IotHubClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(IotHubClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('iothubclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-iothub/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class IotHubClient(object):
+class IotHubClient(SDKClient):
     """Use this API to manage the IoT hubs in your Azure subscription.
 
     :ivar config: Configuration for client.
     :vartype config: IotHubClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.iothub.operations.Operations
     :ivar iot_hub_resource: IotHubResource operations
     :vartype iot_hub_resource: azure.mgmt.iothub.operations.IotHubResourceOperations
+    :ivar resource_provider_common: ResourceProviderCommon operations
+    :vartype resource_provider_common: azure.mgmt.iothub.operations.ResourceProviderCommonOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.iothub.operations.CertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -72,12 +79,18 @@ class IotHubClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = IotHubClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(IotHubClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-01-19'
+        self.api_version = '2018-12-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.iot_hub_resource = IotHubResourceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_provider_common = ResourceProviderCommonOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -17,12 +17,12 @@ class VirtualNetworkGatewaySku(Model):
 
     :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
-    :type name: str or :class:`VirtualNetworkGatewaySkuName
-     <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewaySkuName>`
+    :type name: str or
+     ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewaySkuName
     :param tier: Gateway sku tier -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
-    :type tier: str or :class:`VirtualNetworkGatewaySkuTier
-     <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewaySkuTier>`
+    :type tier: str or
+     ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewaySkuTier
     :param capacity: The capacity
     :type capacity: int
     """
@@ -33,7 +33,8 @@ class VirtualNetworkGatewaySku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
-        self.name = name
-        self.tier = tier
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(VirtualNetworkGatewaySku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get('capacity', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ProfilePaged(Paged):
     """
-    A paging container for iterating over a list of Profile object
+    A paging container for iterating over a list of :class:`Profile <azure.mgmt.trafficmanager.models.Profile>` object
     """
 
     _attribute_map = {

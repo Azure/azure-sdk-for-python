@@ -23,5 +23,6 @@ class RuleManagementEventClaimsDataSource(Model):
         'email_address': {'key': 'emailAddress', 'type': 'str'},
     }
 
-    def __init__(self, email_address=None):
-        self.email_address = email_address
+    def __init__(self, **kwargs):
+        super(RuleManagementEventClaimsDataSource, self).__init__(**kwargs)
+        self.email_address = kwargs.get('email_address', None)

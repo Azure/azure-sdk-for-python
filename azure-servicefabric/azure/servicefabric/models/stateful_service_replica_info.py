@@ -14,33 +14,44 @@ from .replica_info import ReplicaInfo
 
 class StatefulServiceReplicaInfo(ReplicaInfo):
     """Represents a stateful service replica. This includes information about the
-    identity, role, status, health, node name, uptime, and other details
-    about the replica.
+    identity, role, status, health, node name, uptime, and other details about
+    the replica.
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param node_name: The name of the node.
+    All required parameters must be populated in order to send to Azure.
+
+    :param replica_status: The status of a replica of a service. Possible
+     values include: 'Invalid', 'InBuild', 'Standby', 'Ready', 'Down',
+     'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.ReplicaStatus
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    :param replica_role: Possible values include: 'Unknown', 'None',
-     'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type replica_role: str
-    :param replica_id:
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    :param replica_role: The role of a replica of a stateful service. Possible
+     values include: 'Unknown', 'None', 'Primary', 'IdleSecondary',
+     'ActiveSecondary'
+    :type replica_role: str or ~azure.servicefabric.models.ReplicaRole
+    :param replica_id: Id of a stateful service replica. ReplicaId is used by
+     Service Fabric to uniquely identify a replica of a partition. It is unique
+     within a partition and does not change for the lifetime of the replica. If
+     a replica gets dropped and another replica gets created on the same node
+     for the same partition, it will get a different value for the id.
+     Sometimes the id of a stateless service instance is also referred as a
+     replica id.
     :type replica_id: str
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -49,13 +60,13 @@ class StatefulServiceReplicaInfo(ReplicaInfo):
         'node_name': {'key': 'NodeName', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'replica_role': {'key': 'ReplicaRole', 'type': 'str'},
         'replica_id': {'key': 'ReplicaId', 'type': 'str'},
     }
 
-    def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None, replica_role=None, replica_id=None):
-        super(StatefulServiceReplicaInfo, self).__init__(replica_status=replica_status, health_state=health_state, node_name=node_name, address=address, last_in_build_duration_in_seconds=last_in_build_duration_in_seconds)
-        self.replica_role = replica_role
-        self.replica_id = replica_id
-        self.ServiceKind = 'Stateful'
+    def __init__(self, **kwargs):
+        super(StatefulServiceReplicaInfo, self).__init__(**kwargs)
+        self.replica_role = kwargs.get('replica_role', None)
+        self.replica_id = kwargs.get('replica_id', None)
+        self.service_kind = 'Stateful'

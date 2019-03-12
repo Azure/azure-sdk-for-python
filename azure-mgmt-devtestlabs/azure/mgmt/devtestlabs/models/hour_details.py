@@ -24,4 +24,5 @@ class HourDetails(Model):
     }
 
     def __init__(self, minute=None):
+        super(HourDetails, self).__init__()
         self.minute = minute

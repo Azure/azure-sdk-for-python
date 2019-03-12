@@ -17,8 +17,8 @@ class LabVirtualMachineCreationParameter(Model):
 
     :param bulk_creation_parameters: The number of virtual machine instances
      to create.
-    :type bulk_creation_parameters: :class:`BulkCreationParameters
-     <azure.mgmt.devtestlabs.models.BulkCreationParameters>`
+    :type bulk_creation_parameters:
+     ~azure.mgmt.devtestlabs.models.BulkCreationParameters
     :param notes: The notes of the virtual machine.
     :type notes: str
     :param owner_object_id: The object identifier of the owner of the virtual
@@ -62,27 +62,25 @@ class LabVirtualMachineCreationParameter(Model):
      is to be created without a public IP address.
     :type disallow_public_ip_address: bool
     :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list of :class:`ArtifactInstallProperties
-     <azure.mgmt.devtestlabs.models.ArtifactInstallProperties>`
+    :type artifacts:
+     list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
     :param artifact_deployment_status: The artifact deployment status for the
      virtual machine.
     :type artifact_deployment_status:
-     :class:`ArtifactDeploymentStatusProperties
-     <azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties>`
+     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
     :param gallery_image_reference: The Microsoft Azure Marketplace image
      reference of the virtual machine.
-    :type gallery_image_reference: :class:`GalleryImageReference
-     <azure.mgmt.devtestlabs.models.GalleryImageReference>`
+    :type gallery_image_reference:
+     ~azure.mgmt.devtestlabs.models.GalleryImageReference
     :param compute_vm: The compute virtual machine properties.
-    :type compute_vm: :class:`ComputeVmProperties
-     <azure.mgmt.devtestlabs.models.ComputeVmProperties>`
+    :type compute_vm: ~azure.mgmt.devtestlabs.models.ComputeVmProperties
     :param network_interface: The network interface properties.
-    :type network_interface: :class:`NetworkInterfaceProperties
-     <azure.mgmt.devtestlabs.models.NetworkInterfaceProperties>`
+    :type network_interface:
+     ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
     :param applicable_schedule: The applicable schedule for the virtual
      machine.
-    :type applicable_schedule: :class:`ApplicableSchedule
-     <azure.mgmt.devtestlabs.models.ApplicableSchedule>`
+    :type applicable_schedule:
+     ~azure.mgmt.devtestlabs.models.ApplicableSchedule
     :param expiration_date: The expiration date for VM.
     :type expiration_date: datetime
     :param allow_claim: Indicates whether another user can take ownership of
@@ -95,8 +93,7 @@ class LabVirtualMachineCreationParameter(Model):
      virtual machine. Output property only. Possible values include:
      'FromCustomImage', 'FromGalleryImage'
     :type virtual_machine_creation_source: str or
-     :class:`VirtualMachineCreationSource
-     <azure.mgmt.devtestlabs.models.VirtualMachineCreationSource>`
+     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
     :param environment_id: The resource ID of the environment that contains
      this virtual machine, if any.
     :type environment_id: str
@@ -110,7 +107,7 @@ class LabVirtualMachineCreationParameter(Model):
     :param location: The location of the new virtual machine or environment
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -151,6 +148,7 @@ class LabVirtualMachineCreationParameter(Model):
     }
 
     def __init__(self, bulk_creation_parameters=None, notes=None, owner_object_id=None, owner_user_principal_name=None, created_by_user_id=None, created_by_user=None, created_date=None, custom_image_id=None, os_type=None, size=None, user_name=None, password=None, ssh_key=None, is_authentication_with_ssh_key=None, fqdn=None, lab_subnet_name=None, lab_virtual_network_id=None, disallow_public_ip_address=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, compute_vm=None, network_interface=None, applicable_schedule=None, expiration_date=None, allow_claim=None, storage_type=None, virtual_machine_creation_source=None, environment_id=None, provisioning_state=None, unique_identifier=None, name=None, location=None, tags=None):
+        super(LabVirtualMachineCreationParameter, self).__init__()
         self.bulk_creation_parameters = bulk_creation_parameters
         self.notes = notes
         self.owner_object_id = owner_object_id

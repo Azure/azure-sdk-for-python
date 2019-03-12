@@ -27,10 +27,9 @@ class ServiceRunner(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The identity of the resource.
-    :type identity: :class:`IdentityProperties
-     <azure.mgmt.devtestlabs.models.IdentityProperties>`
+    :type identity: ~azure.mgmt.devtestlabs.models.IdentityProperties
     """
 
     _validation = {

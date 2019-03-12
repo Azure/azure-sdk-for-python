@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class NotificationChannelPaged(Paged):
     """
-    A paging container for iterating over a list of NotificationChannel object
+    A paging container for iterating over a list of :class:`NotificationChannel <azure.mgmt.devtestlabs.models.NotificationChannel>` object
     """
 
     _attribute_map = {

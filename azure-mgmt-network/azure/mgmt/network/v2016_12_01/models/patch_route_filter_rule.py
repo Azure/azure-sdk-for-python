@@ -18,18 +18,19 @@ class PatchRouteFilterRule(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
-    :param access: The access type of the rule. Valid values are: 'Allow',
-     'Deny'. Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`Access
-     <azure.mgmt.network.v2016_12_01.models.Access>`
-    :ivar route_filter_rule_type: The rule type of the rule. Valid value is:
-     'Community'. Default value: "Community" .
+    :param access: Required. The access type of the rule. Valid values are:
+     'Allow', 'Deny'. Possible values include: 'Allow', 'Deny'
+    :type access: str or ~azure.mgmt.network.v2016_12_01.models.Access
+    :ivar route_filter_rule_type: Required. The rule type of the rule. Valid
+     value is: 'Community'. Default value: "Community" .
     :vartype route_filter_rule_type: str
-    :param communities: The collection for bgp community values to filter on.
-     e.g. ['12076:5010','12076:5020']
-    :type communities: list of str
+    :param communities: Required. The collection for bgp community values to
+     filter on. e.g. ['12076:5010','12076:5020']
+    :type communities: list[str]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
@@ -40,7 +41,7 @@ class PatchRouteFilterRule(SubResource):
      is updated.
     :vartype etag: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -65,11 +66,11 @@ class PatchRouteFilterRule(SubResource):
 
     route_filter_rule_type = "Community"
 
-    def __init__(self, access, communities, id=None, tags=None):
-        super(PatchRouteFilterRule, self).__init__(id=id)
-        self.access = access
-        self.communities = communities
+    def __init__(self, **kwargs):
+        super(PatchRouteFilterRule, self).__init__(**kwargs)
+        self.access = kwargs.get('access', None)
+        self.communities = kwargs.get('communities', None)
         self.provisioning_state = None
         self.name = None
         self.etag = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)

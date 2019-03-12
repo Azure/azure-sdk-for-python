@@ -21,19 +21,16 @@ class ConnectivityIssue(Model):
 
     :ivar origin: The origin of the issue. Possible values include: 'Local',
      'Inbound', 'Outbound'
-    :vartype origin: str or :class:`Origin
-     <azure.mgmt.network.v2017_03_01.models.Origin>`
+    :vartype origin: str or ~azure.mgmt.network.v2017_03_01.models.Origin
     :ivar severity: The severity of the issue. Possible values include:
      'Error', 'Warning'
-    :vartype severity: str or :class:`Severity
-     <azure.mgmt.network.v2017_03_01.models.Severity>`
+    :vartype severity: str or ~azure.mgmt.network.v2017_03_01.models.Severity
     :ivar type: The type of issue. Possible values include: 'Unknown',
      'AgentStopped', 'GuestFirewall', 'DnsResolution', 'SocketBind',
      'NetworkSecurityRule', 'UserDefinedRoute', 'PortThrottled', 'Platform'
-    :vartype type: str or :class:`IssueType
-     <azure.mgmt.network.v2017_03_01.models.IssueType>`
+    :vartype type: str or ~azure.mgmt.network.v2017_03_01.models.IssueType
     :ivar context: Provides additional context on the issue.
-    :vartype context: list of dict
+    :vartype context: list[dict[str, str]]
     """
 
     _validation = {
@@ -50,7 +47,8 @@ class ConnectivityIssue(Model):
         'context': {'key': 'context', 'type': '[{str}]'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ConnectivityIssue, self).__init__(**kwargs)
         self.origin = None
         self.severity = None
         self.type = None

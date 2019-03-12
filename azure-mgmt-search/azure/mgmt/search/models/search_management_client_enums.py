@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class UnavailableNameReason(Enum):
+class UnavailableNameReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     free = "free"
     basic = "basic"
@@ -27,13 +27,13 @@ class SkuName(Enum):
     standard3 = "standard3"
 
 
-class HostingMode(Enum):
+class HostingMode(str, Enum):
 
     default = "default"
     high_density = "highDensity"
 
 
-class SearchServiceStatus(Enum):
+class SearchServiceStatus(str, Enum):
 
     running = "running"
     provisioning = "provisioning"
@@ -43,14 +43,14 @@ class SearchServiceStatus(Enum):
     error = "error"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     succeeded = "succeeded"
     provisioning = "provisioning"
     failed = "failed"
 
 
-class AdminKeyKind(Enum):
+class AdminKeyKind(str, Enum):
 
     primary = "primary"
     secondary = "secondary"

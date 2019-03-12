@@ -9,16 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
+from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
+from .operations.migration_configs_operations import MigrationConfigsOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.rules_operations import RulesOperations
+from .operations.regions_operations import RegionsOperations
+from .operations.premium_messaging_regions_operations import PremiumMessagingRegionsOperations
+from .operations.event_hubs_operations import EventHubsOperations
 from . import models
 
 
@@ -44,21 +49,19 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(ServiceBusManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('servicebusmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-servicebus/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class ServiceBusManagementClient(object):
+class ServiceBusManagementClient(SDKClient):
     """Azure Service Bus client
 
     :ivar config: Configuration for client.
@@ -68,6 +71,10 @@ class ServiceBusManagementClient(object):
     :vartype operations: azure.mgmt.servicebus.operations.Operations
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.servicebus.operations.NamespacesOperations
+    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
+    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
+    :ivar migration_configs: MigrationConfigs operations
+    :vartype migration_configs: azure.mgmt.servicebus.operations.MigrationConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
@@ -76,6 +83,12 @@ class ServiceBusManagementClient(object):
     :vartype subscriptions: azure.mgmt.servicebus.operations.SubscriptionsOperations
     :ivar rules: Rules operations
     :vartype rules: azure.mgmt.servicebus.operations.RulesOperations
+    :ivar regions: Regions operations
+    :vartype regions: azure.mgmt.servicebus.operations.RegionsOperations
+    :ivar premium_messaging_regions: PremiumMessagingRegions operations
+    :vartype premium_messaging_regions: azure.mgmt.servicebus.operations.PremiumMessagingRegionsOperations
+    :ivar event_hubs: EventHubs operations
+    :vartype event_hubs: azure.mgmt.servicebus.operations.EventHubsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -91,7 +104,7 @@ class ServiceBusManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ServiceBusManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ServiceBusManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-01'
@@ -102,6 +115,10 @@ class ServiceBusManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.migration_configs = MigrationConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topics = TopicsOperations(
@@ -109,4 +126,10 @@ class ServiceBusManagementClient(object):
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.rules = RulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regions = RegionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.premium_messaging_regions = PremiumMessagingRegionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)

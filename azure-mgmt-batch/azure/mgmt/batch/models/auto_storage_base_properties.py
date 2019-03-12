@@ -29,4 +29,5 @@ class AutoStorageBaseProperties(Model):
     }
 
     def __init__(self, storage_account_id):
+        super(AutoStorageBaseProperties, self).__init__()
         self.storage_account_id = storage_account_id

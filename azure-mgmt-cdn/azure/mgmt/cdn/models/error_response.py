@@ -17,20 +17,29 @@ class ErrorResponse(Model):
     """Error reponse indicates CDN service is not able to process the incoming
     request. The reason is provided in the error message.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
 
 
 class ErrorResponseException(HttpOperationError):

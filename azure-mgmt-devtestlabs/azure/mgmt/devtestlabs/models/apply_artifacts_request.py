@@ -16,8 +16,8 @@ class ApplyArtifactsRequest(Model):
     """Request body for applying artifacts to a virtual machine.
 
     :param artifacts: The list of artifacts to apply.
-    :type artifacts: list of :class:`ArtifactInstallProperties
-     <azure.mgmt.devtestlabs.models.ArtifactInstallProperties>`
+    :type artifacts:
+     list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
     """
 
     _attribute_map = {
@@ -25,4 +25,5 @@ class ApplyArtifactsRequest(Model):
     }
 
     def __init__(self, artifacts=None):
+        super(ApplyArtifactsRequest, self).__init__()
         self.artifacts = artifacts

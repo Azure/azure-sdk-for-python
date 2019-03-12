@@ -18,8 +18,7 @@ class ScheduleEntry(Model):
     :param day_of_week: Day of the week when a cache can be patched. Possible
      values include: 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
      'Saturday', 'Sunday', 'Everyday', 'Weekend'
-    :type day_of_week: str or :class:`DayOfWeek
-     <azure.mgmt.redis.models.DayOfWeek>`
+    :type day_of_week: str or ~azure.mgmt.redis.models.DayOfWeek
     :param start_hour_utc: Start hour after which cache patching can start.
     :type start_hour_utc: int
     :param maintenance_window: ISO8601 timespan specifying how much time cache
@@ -39,6 +38,7 @@ class ScheduleEntry(Model):
     }
 
     def __init__(self, day_of_week, start_hour_utc, maintenance_window=None):
+        super(ScheduleEntry, self).__init__()
         self.day_of_week = day_of_week
         self.start_hour_utc = start_hour_utc
         self.maintenance_window = maintenance_window

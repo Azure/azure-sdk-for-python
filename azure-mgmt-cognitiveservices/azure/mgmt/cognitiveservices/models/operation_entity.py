@@ -18,8 +18,7 @@ class OperationEntity(Model):
     :param name: Operation name: {provider}/{resource}/{operation}.
     :type name: str
     :param display: The operation supported by Cognitive Services.
-    :type display: :class:`OperationDisplayInfo
-     <azure.mgmt.cognitiveservices.models.OperationDisplayInfo>`
+    :type display: ~azure.mgmt.cognitiveservices.models.OperationDisplayInfo
     :param origin: The origin of the operation.
     :type origin: str
     :param properties: Additional properties.
@@ -33,8 +32,9 @@ class OperationEntity(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, properties=None):
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(OperationEntity, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

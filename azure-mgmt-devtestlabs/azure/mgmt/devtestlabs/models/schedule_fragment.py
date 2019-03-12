@@ -27,31 +27,29 @@ class ScheduleFragment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param status: The status of the schedule (i.e. Enabled, Disabled).
      Possible values include: 'Enabled', 'Disabled'
-    :type status: str or :class:`EnableStatus
-     <azure.mgmt.devtestlabs.models.EnableStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask,
      LabVmAutoStart).
     :type task_type: str
     :param weekly_recurrence: If the schedule will occur only some days of the
      week, specify the weekly recurrence.
-    :type weekly_recurrence: :class:`WeekDetailsFragment
-     <azure.mgmt.devtestlabs.models.WeekDetailsFragment>`
+    :type weekly_recurrence:
+     ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
     :param daily_recurrence: If the schedule will occur once each day of the
      week, specify the daily recurrence.
-    :type daily_recurrence: :class:`DayDetailsFragment
-     <azure.mgmt.devtestlabs.models.DayDetailsFragment>`
+    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
     :param hourly_recurrence: If the schedule will occur multiple times a day,
      specify the hourly recurrence.
-    :type hourly_recurrence: :class:`HourDetailsFragment
-     <azure.mgmt.devtestlabs.models.HourDetailsFragment>`
+    :type hourly_recurrence:
+     ~azure.mgmt.devtestlabs.models.HourDetailsFragment
     :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
     :type time_zone_id: str
     :param notification_settings: Notification settings.
-    :type notification_settings: :class:`NotificationSettingsFragment
-     <azure.mgmt.devtestlabs.models.NotificationSettingsFragment>`
+    :type notification_settings:
+     ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
     :param target_resource_id: The resource ID to which the schedule belongs
     :type target_resource_id: str
     :param provisioning_state: The provisioning status of the resource.

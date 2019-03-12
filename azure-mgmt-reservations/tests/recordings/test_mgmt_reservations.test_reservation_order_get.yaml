@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591?api-version=2018-06-01
+  response:
+    body: {string: '{"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591","type":"Microsoft.Capacity/reservationOrders","name":"9f530eb9-16eb-4e3a-8965-8a1aecee3591","etag":7,"properties":{"displayName":"PythonSDK_Test","requestDateTime":"2018-06-14T19:40:05.314129Z","createdDateTime":"2018-06-14T19:42:16.5270597Z","expiryDate":"2019-06-14","term":"P1Y","provisioningState":"Succeeded","reservations":[{"id":"/providers/microsoft.capacity/reservationOrders/9f530eb9-16eb-4e3a-8965-8a1aecee3591/reservations/408ddb33-6363-43b9-adbb-bb7ce22f2c10"}],"originalQuantity":2}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['590']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 20:54:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

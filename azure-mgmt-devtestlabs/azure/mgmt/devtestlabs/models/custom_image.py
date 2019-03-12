@@ -27,13 +27,11 @@ class CustomImage(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param vm: The virtual machine from which the image is to be created.
-    :type vm: :class:`CustomImagePropertiesFromVm
-     <azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVm>`
+    :type vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVm
     :param vhd: The VHD from which the image is to be created.
-    :type vhd: :class:`CustomImagePropertiesCustom
-     <azure.mgmt.devtestlabs.models.CustomImagePropertiesCustom>`
+    :type vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustom
     :param description: The description of the custom image.
     :type description: str
     :param author: The author of the custom image.

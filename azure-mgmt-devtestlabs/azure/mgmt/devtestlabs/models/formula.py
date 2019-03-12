@@ -27,7 +27,7 @@ class Formula(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param description: The description of the formula.
     :type description: str
     :param author: The author of the formula.
@@ -37,11 +37,10 @@ class Formula(Resource):
     :ivar creation_date: The creation date of the formula.
     :vartype creation_date: datetime
     :param formula_content: The content of the formula.
-    :type formula_content: :class:`LabVirtualMachineCreationParameter
-     <azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter>`
+    :type formula_content:
+     ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
     :param vm: Information about a VM from which a formula is to be created.
-    :type vm: :class:`FormulaPropertiesFromVm
-     <azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm>`
+    :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

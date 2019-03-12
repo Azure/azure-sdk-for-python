@@ -17,8 +17,7 @@ class WorkflowParameter(Model):
 
     :param type: The type. Possible values include: 'NotSpecified', 'String',
      'SecureString', 'Int', 'Float', 'Bool', 'Array', 'Object', 'SecureObject'
-    :type type: str or :class:`ParameterType
-     <azure.mgmt.logic.models.ParameterType>`
+    :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
     :type value: object
     :param metadata: The metadata.
@@ -28,14 +27,15 @@ class WorkflowParameter(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'ParameterType'},
+        'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'object'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, description=None):
-        self.type = type
-        self.value = value
-        self.metadata = metadata
-        self.description = description
+    def __init__(self, **kwargs):
+        super(WorkflowParameter, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.value = kwargs.get('value', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.description = kwargs.get('description', None)

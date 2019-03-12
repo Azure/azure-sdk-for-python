@@ -27,18 +27,15 @@ class VirtualNetwork(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param address_space: The AddressSpace that contains an array of IP
      address ranges that can be used by subnets.
-    :type address_space: :class:`AddressSpace
-     <azure.mgmt.network.v2015_06_15.models.AddressSpace>`
+    :type address_space: ~azure.mgmt.network.v2015_06_15.models.AddressSpace
     :param dhcp_options: The dhcpOptions that contains an array of DNS servers
      available to VMs deployed in the virtual network.
-    :type dhcp_options: :class:`DhcpOptions
-     <azure.mgmt.network.v2015_06_15.models.DhcpOptions>`
+    :type dhcp_options: ~azure.mgmt.network.v2015_06_15.models.DhcpOptions
     :param subnets: A list of subnets in a Virtual Network.
-    :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2015_06_15.models.Subnet>`
+    :type subnets: list[~azure.mgmt.network.v2015_06_15.models.Subnet]
     :param resource_guid: The resourceGuid property of the Virtual Network
      resource.
     :type resource_guid: str
@@ -69,11 +66,11 @@ class VirtualNetwork(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags)
-        self.address_space = address_space
-        self.dhcp_options = dhcp_options
-        self.subnets = subnets
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VirtualNetwork, self).__init__(**kwargs)
+        self.address_space = kwargs.get('address_space', None)
+        self.dhcp_options = kwargs.get('dhcp_options', None)
+        self.subnets = kwargs.get('subnets', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

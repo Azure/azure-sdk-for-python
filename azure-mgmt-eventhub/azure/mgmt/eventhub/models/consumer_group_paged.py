@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ConsumerGroupPaged(Paged):
     """
-    A paging container for iterating over a list of ConsumerGroup object
+    A paging container for iterating over a list of :class:`ConsumerGroup <azure.mgmt.eventhub.models.ConsumerGroup>` object
     """
 
     _attribute_map = {

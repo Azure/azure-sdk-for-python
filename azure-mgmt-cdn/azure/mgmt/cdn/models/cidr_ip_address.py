@@ -26,6 +26,7 @@ class CidrIpAddress(Model):
         'prefix_length': {'key': 'prefixLength', 'type': 'int'},
     }
 
-    def __init__(self, base_ip_address=None, prefix_length=None):
-        self.base_ip_address = base_ip_address
-        self.prefix_length = prefix_length
+    def __init__(self, **kwargs):
+        super(CidrIpAddress, self).__init__(**kwargs)
+        self.base_ip_address = kwargs.get('base_ip_address', None)
+        self.prefix_length = kwargs.get('prefix_length', None)

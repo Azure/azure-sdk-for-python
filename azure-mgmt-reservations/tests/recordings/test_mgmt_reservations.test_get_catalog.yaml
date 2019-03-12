@@ -1,0 +1,378 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/catalogs?api-version=2018-06-01&reservedResourceType=VirtualMachines&location=westus
+  response:
+    body: {string: '[{"resourceType":"virtualMachines","name":"Standard_H16mr","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"H
+        Series Hi Mem Low Latency"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H16MR"},{"name":"MeterId","value":"05e50686-36c1-41ea-8537-75d4da79067c"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_H16r","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"H
+        Series Low Latency"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H16R"},{"name":"MeterId","value":"7ef144e8-61b2-4575-bed9-aa1f153f9bdf"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_H16m","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"H
+        Series Hi Mem"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H16M"},{"name":"MeterId","value":"a3d2bf71-0a63-4b93-90a3-8e2acd001363"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_H8m","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"H
+        Series Hi Mem"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H8M"},{"name":"MeterId","value":"50cd4076-72de-4f42-a240-63d75f45df02"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_H16","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"H
+        Series"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H16"},{"name":"MeterId","value":"28bd4017-f91c-4023-a580-2279ec2b7f5a"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_H8","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"H
+        Series"},{"name":"ProductShortName","value":"H Series"},{"name":"ProductTitle","value":"H
+        Series"},{"name":"SkuName","value":"H8"},{"name":"MeterId","value":"2bbe2140-2764-45af-ba6a-7c34824b6182"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_L32s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"32"},{"name":"ReservationsAutofitGroup","value":"L
+        Series"},{"name":"ProductShortName","value":"L Series"},{"name":"ProductTitle","value":"L
+        Series"},{"name":"SkuName","value":"L32"},{"name":"MeterId","value":"4f743466-7a76-422d-976b-20f2560408c8"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_L16s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"L
+        Series"},{"name":"ProductShortName","value":"L Series"},{"name":"ProductTitle","value":"L
+        Series"},{"name":"SkuName","value":"L16"},{"name":"MeterId","value":"17a7522f-1e03-4a46-8400-53066aad0cfc"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_L8s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"L
+        Series"},{"name":"ProductShortName","value":"L Series"},{"name":"ProductTitle","value":"L
+        Series"},{"name":"SkuName","value":"L8"},{"name":"MeterId","value":"54c40026-ffc2-4da4-888d-481a0ef44704"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_L4s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"L
+        Series"},{"name":"ProductShortName","value":"L Series"},{"name":"ProductTitle","value":"L
+        Series"},{"name":"SkuName","value":"L4"},{"name":"MeterId","value":"2478ad4d-37cf-400e-a3d2-857871312862"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E64s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E64s"},{"name":"MeterId","value":"1095124b-d751-4c82-9938-2f64013a9b9e"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E64is_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series Isolated"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E64s v3"},{"name":"MeterId","value":"5ccec6c7-43ce-4c73-8000-6cf901125fe1"}],"restrictions":[{"type":"Term","values":["P3Y"],"reasonCode":"NotAvailableForSubscription"}]},{"resourceType":"virtualMachines","name":"Standard_E32s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"32"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E32s"},{"name":"MeterId","value":"a58852c7-34c8-41f7-a2fc-c87be1447f7c"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E16s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E16s"},{"name":"MeterId","value":"73f4f834-6b9b-463e-8a1c-1ff38555063d"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E8s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E8s"},{"name":"MeterId","value":"cc078ca0-87b0-462e-be7e-bbe3c1df0ed2"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E4s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E4s"},{"name":"MeterId","value":"ad8bf6ff-c2f5-4861-84f9-c5d3101058aa"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E2s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"ESv3
+        Series"},{"name":"ProductShortName","value":"ESv3 Series"},{"name":"ProductTitle","value":"ESv3
+        Series"},{"name":"SkuName","value":"E2s"},{"name":"MeterId","value":"65822779-1430-4a44-a6c1-ebc7c2aef10a"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E64_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E64"},{"name":"MeterId","value":"1095124b-d751-4c82-9938-2f64013a9b9e"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E64i_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series Isolated"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E64i v3"},{"name":"MeterId","value":"5ccec6c7-43ce-4c73-8000-6cf901125fe1"}],"restrictions":[{"type":"Term","values":["P3Y"],"reasonCode":"NotAvailableForSubscription"}]},{"resourceType":"virtualMachines","name":"Standard_E32_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"32"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E32"},{"name":"MeterId","value":"a58852c7-34c8-41f7-a2fc-c87be1447f7c"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E16_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E16"},{"name":"MeterId","value":"73f4f834-6b9b-463e-8a1c-1ff38555063d"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E8_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E8"},{"name":"MeterId","value":"cc078ca0-87b0-462e-be7e-bbe3c1df0ed2"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E4_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E4"},{"name":"MeterId","value":"ad8bf6ff-c2f5-4861-84f9-c5d3101058aa"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_E2_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"Ev3
+        Series"},{"name":"ProductShortName","value":"Ev3 Series"},{"name":"ProductTitle","value":"Ev3
+        Series"},{"name":"SkuName","value":"E2"},{"name":"MeterId","value":"65822779-1430-4a44-a6c1-ebc7c2aef10a"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D64s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D64s"},{"name":"MeterId","value":"775c4b10-16d1-4b6e-9632-c412bf54c42e"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D64_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"64"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D64"},{"name":"MeterId","value":"775c4b10-16d1-4b6e-9632-c412bf54c42e"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS14","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series Hi Mem"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS14"},{"name":"MeterId","value":"c08f7d89-a982-4b80-bfe9-40ccb9e6ee6c"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS13","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series Hi Mem"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS13"},{"name":"MeterId","value":"f3e734c0-bd1a-46cc-bcb2-8b25fb6464ed"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS12","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series Hi Mem"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS12"},{"name":"MeterId","value":"4801f383-ed00-4597-a879-da967f7739f3"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS11","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series Hi Mem"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS11"},{"name":"MeterId","value":"88dfea34-b63f-460b-82cc-22750f689c86"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS4","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS4"},{"name":"MeterId","value":"8d998c26-3749-4d5c-bc7e-cbd9e15b91d7"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS3"},{"name":"MeterId","value":"cd4dde62-93d3-4c88-a041-7b392216c326"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS2"},{"name":"MeterId","value":"709fb951-cbf8-425e-9baa-cf504880d6b5"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS1","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"DS
+        Series"},{"name":"ProductShortName","value":"DS Series"},{"name":"ProductTitle","value":"DS
+        Series"},{"name":"SkuName","value":"DS1"},{"name":"MeterId","value":"9a721778-24e6-40c4-a4e5-02014fd8f6ee"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D14","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"D
+        Series Hi Mem"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D14"},{"name":"MeterId","value":"c08f7d89-a982-4b80-bfe9-40ccb9e6ee6c"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D13","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"D
+        Series Hi Mem"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D13"},{"name":"MeterId","value":"f3e734c0-bd1a-46cc-bcb2-8b25fb6464ed"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D12","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"D
+        Series Hi Mem"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D12"},{"name":"MeterId","value":"4801f383-ed00-4597-a879-da967f7739f3"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D11","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"D
+        Series Hi Mem"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D11"},{"name":"MeterId","value":"88dfea34-b63f-460b-82cc-22750f689c86"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D4","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"D
+        Series"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D4"},{"name":"MeterId","value":"8d998c26-3749-4d5c-bc7e-cbd9e15b91d7"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"D
+        Series"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D3"},{"name":"MeterId","value":"cd4dde62-93d3-4c88-a041-7b392216c326"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"D
+        Series"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D2"},{"name":"MeterId","value":"709fb951-cbf8-425e-9baa-cf504880d6b5"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D1","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"D
+        Series"},{"name":"ProductShortName","value":"D Series"},{"name":"ProductTitle","value":"D
+        Series"},{"name":"SkuName","value":"D1"},{"name":"MeterId","value":"9a721778-24e6-40c4-a4e5-02014fd8f6ee"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D32_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"32"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D32"},{"name":"MeterId","value":"329a1fce-a987-4d0e-96bb-c9d6ede6a2d1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D16_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D16"},{"name":"MeterId","value":"878ae2c5-f13d-4c83-9af2-7b333b1c9fa1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D8_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D8"},{"name":"MeterId","value":"f128c5c9-ea87-473a-9672-6cf1fb3b8b98"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D4_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D4"},{"name":"MeterId","value":"8462aa11-a392-4ae4-87cf-2dbabe31d487"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D2_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"Dv3
+        Series"},{"name":"ProductShortName","value":"Dv3 Series"},{"name":"ProductTitle","value":"Dv3
+        Series"},{"name":"SkuName","value":"D2"},{"name":"MeterId","value":"23d721f3-3f2c-440f-98d8-08a3f30a80ba"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F16","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"F
+        Series"},{"name":"ProductShortName","value":"F Series"},{"name":"ProductTitle","value":"F
+        Series"},{"name":"SkuName","value":"F16"},{"name":"MeterId","value":"f5c756b2-15b2-46cd-97b9-df8953afedd1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F8","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"F
+        Series"},{"name":"ProductShortName","value":"F Series"},{"name":"ProductTitle","value":"F
+        Series"},{"name":"SkuName","value":"F8"},{"name":"MeterId","value":"d963fcb5-ca86-46dd-ac1a-95a52ab154b6"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F4","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"F
+        Series"},{"name":"ProductShortName","value":"F Series"},{"name":"ProductTitle","value":"F
+        Series"},{"name":"SkuName","value":"F4"},{"name":"MeterId","value":"1d0eaa49-0140-4f00-8b6d-2aacfd087e78"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"F
+        Series"},{"name":"ProductShortName","value":"F Series"},{"name":"ProductTitle","value":"F
+        Series"},{"name":"SkuName","value":"F2"},{"name":"MeterId","value":"efdb48e1-6e65-4d8a-ba65-f7b6a04d05ee"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F1","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"F
+        Series"},{"name":"ProductShortName","value":"F Series"},{"name":"ProductTitle","value":"F
+        Series"},{"name":"SkuName","value":"F1"},{"name":"MeterId","value":"818def1d-898e-488e-9271-800928934f34"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D15_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"20"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D15"},{"name":"MeterId","value":"ff79cd83-8a39-47cb-b459-0977e3e89e77"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D14_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D14"},{"name":"MeterId","value":"825bdd8a-9501-4f95-ada0-0e4948420152"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D13_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D13"},{"name":"MeterId","value":"63918874-b2ec-4926-8f8c-4c404d384703"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D12_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D12"},{"name":"MeterId","value":"42b49a56-132d-4182-8061-aec164a8a5a8"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D11_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D11"},{"name":"MeterId","value":"25cd7f37-50c4-4c7a-8db7-f5ddcadfe240"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D5_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D5"},{"name":"MeterId","value":"bb2ceb60-7694-47ca-8297-ddfbf9f98e05"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D4_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D4"},{"name":"MeterId","value":"ab3049b4-0a43-46e3-9b2c-a37ac14785d8"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D3_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D3"},{"name":"MeterId","value":"b4e55536-5a69-4246-897a-2e7982be5197"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D2_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D2"},{"name":"MeterId","value":"d5a81ebd-6435-4b0f-9ab1-6c0d0dd6eed0"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D1_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"Dv2
+        Series"},{"name":"ProductShortName","value":"Dv2 Series"},{"name":"ProductTitle","value":"Dv2
+        Series"},{"name":"SkuName","value":"D1"},{"name":"MeterId","value":"2e3c2132-1398-43d2-ad45-1d77f6574933"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D32s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"32"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D32s"},{"name":"MeterId","value":"329a1fce-a987-4d0e-96bb-c9d6ede6a2d1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D16s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D16s"},{"name":"MeterId","value":"878ae2c5-f13d-4c83-9af2-7b333b1c9fa1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D8s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D8s"},{"name":"MeterId","value":"f128c5c9-ea87-473a-9672-6cf1fb3b8b98"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D4s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D4s"},{"name":"MeterId","value":"8462aa11-a392-4ae4-87cf-2dbabe31d487"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_D2s_v3","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"DSv3
+        Series"},{"name":"ProductShortName","value":"DSv3 Series"},{"name":"ProductTitle","value":"DSv3
+        Series"},{"name":"SkuName","value":"D2s"},{"name":"MeterId","value":"23d721f3-3f2c-440f-98d8-08a3f30a80ba"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F16s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"FS
+        Series"},{"name":"ProductShortName","value":"FS Series"},{"name":"ProductTitle","value":"FS
+        Series"},{"name":"SkuName","value":"F16s"},{"name":"MeterId","value":"f5c756b2-15b2-46cd-97b9-df8953afedd1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F8s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"FS
+        Series"},{"name":"ProductShortName","value":"FS Series"},{"name":"ProductTitle","value":"FS
+        Series"},{"name":"SkuName","value":"F8s"},{"name":"MeterId","value":"d963fcb5-ca86-46dd-ac1a-95a52ab154b6"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F4s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"FS
+        Series"},{"name":"ProductShortName","value":"FS Series"},{"name":"ProductTitle","value":"FS
+        Series"},{"name":"SkuName","value":"F4s"},{"name":"MeterId","value":"1d0eaa49-0140-4f00-8b6d-2aacfd087e78"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F2s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"FS
+        Series"},{"name":"ProductShortName","value":"FS Series"},{"name":"ProductTitle","value":"FS
+        Series"},{"name":"SkuName","value":"F2s"},{"name":"MeterId","value":"efdb48e1-6e65-4d8a-ba65-f7b6a04d05ee"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_F1s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"FS
+        Series"},{"name":"ProductShortName","value":"FS Series"},{"name":"ProductTitle","value":"FS
+        Series"},{"name":"SkuName","value":"F1s"},{"name":"MeterId","value":"818def1d-898e-488e-9271-800928934f34"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS15_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"20"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS15"},{"name":"MeterId","value":"ff79cd83-8a39-47cb-b459-0977e3e89e77"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS14_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS14"},{"name":"MeterId","value":"825bdd8a-9501-4f95-ada0-0e4948420152"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS13_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS13"},{"name":"MeterId","value":"63918874-b2ec-4926-8f8c-4c404d384703"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS12_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS12"},{"name":"MeterId","value":"42b49a56-132d-4182-8061-aec164a8a5a8"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS11_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series Hi Mem"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS11"},{"name":"MeterId","value":"25cd7f37-50c4-4c7a-8db7-f5ddcadfe240"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS5_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"16"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS5"},{"name":"MeterId","value":"bb2ceb60-7694-47ca-8297-ddfbf9f98e05"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS4_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS4"},{"name":"MeterId","value":"ab3049b4-0a43-46e3-9b2c-a37ac14785d8"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS3_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS3"},{"name":"MeterId","value":"b4e55536-5a69-4246-897a-2e7982be5197"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS2_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS2"},{"name":"MeterId","value":"d5a81ebd-6435-4b0f-9ab1-6c0d0dd6eed0"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_DS1_v2","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"DSv2
+        Series"},{"name":"ProductShortName","value":"DSv2 Series"},{"name":"ProductTitle","value":"DSv2
+        Series"},{"name":"SkuName","value":"DS1"},{"name":"MeterId","value":"2e3c2132-1398-43d2-ad45-1d77f6574933"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B8ms","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"8"},{"name":"ReservationsAutofitGroup","value":"B
+        Series Hi Mem"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B8ms"},{"name":"MeterId","value":"48c00aac-c54f-451c-b907-782b0e632e71"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B4ms","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"4"},{"name":"ReservationsAutofitGroup","value":"B
+        Series Hi Mem"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B4ms"},{"name":"MeterId","value":"9fb5594c-c780-4c72-b470-a245d94260dd"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B2s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"B
+        Series"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B2s"},{"name":"MeterId","value":"0cf74939-2520-41ce-94a2-4db03e5952f0"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B2ms","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"2"},{"name":"ReservationsAutofitGroup","value":"B
+        Series Hi Mem"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B2ms"},{"name":"MeterId","value":"949adaff-7692-4519-bbe0-28d9588f35a1"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B1s","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"B
+        Series"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B1s"},{"name":"MeterId","value":"d1632310-2c4c-406b-85ec-14a68f6fa75e"}],"restrictions":[]},{"resourceType":"virtualMachines","name":"Standard_B1ms","terms":["P1Y","P3Y"],"locations":["westus"],"skuProperties":[{"name":"Cores","value":"1"},{"name":"ReservationsAutofitGroup","value":"B
+        Series Hi Mem"},{"name":"ProductShortName","value":"B Series"},{"name":"ProductTitle","value":"B
+        Series"},{"name":"SkuName","value":"B1ms"},{"name":"MeterId","value":"3492700f-2a14-4f8a-8718-fb3db465ac4a"}],"restrictions":[]}]'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['37107']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:32:12 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          9:32:11 PM"}']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/catalogs?api-version=2018-06-01&reservedResourceType=SqlDatabases&location=southeastasia
+  response:
+    body: {string: '[{"resourceType":"SQLDatabases","name":"SQLDB_GP_Compute_Gen5","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        Single/Elastic Pool General Purpose - Compute Gen5"},{"name":"DeploymentType","value":"SQL
+        Database Single/Elastic Pool"},{"name":"ProductTitle","value":"SQL Database
+        Single/Elastic Pool General Purpose - Compute Gen5"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"e2fd3ddc-6500-40ee-8ecb-5713ab3c8682"}],"restrictions":[]},{"resourceType":"SQLDatabases","name":"SQLDB_BC_Compute_Gen4","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        Single/Elastic Pool Business Critical - Compute Gen4"},{"name":"DeploymentType","value":"SQL
+        Database Single/Elastic Pool"},{"name":"ProductTitle","value":"SQL Database
+        Single/Elastic Pool Business Critical - Compute Gen4"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"811eaaf4-5e57-423b-ba14-61cf1cd1b1a7"}],"restrictions":[]},{"resourceType":"SQLDatabases","name":"SQLDB_GP_Compute_Gen4","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        Single/Elastic Pool General Purpose - Compute Gen4"},{"name":"DeploymentType","value":"SQL
+        Database Single/Elastic Pool"},{"name":"ProductTitle","value":"SQL Database
+        Single/Elastic Pool General Purpose - Compute Gen4"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"94e45a8d-23a0-4ac1-9720-f19c5411bda8"}],"restrictions":[]},{"resourceType":"SQLManagedInstances","name":"SQLMI_BC_Compute_Gen5","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        MI Business Critical - Compute Gen5"},{"name":"DeploymentType","value":"SQL
+        Database Managed Instance"},{"name":"ProductTitle","value":"SQL Database Managed
+        Instance Business Critical - Compute Gen5"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"59c9b9be-b21f-4650-9329-902307863fc7"}],"restrictions":[{"type":"Location","values":["southeastasia"],"reasonCode":"NotAvailableForSubscription"}]},{"resourceType":"SQLManagedInstances","name":"SQLMI_GP_Compute_Gen5","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        MI General Purpose - Compute Gen5"},{"name":"DeploymentType","value":"SQL
+        Database Managed Instance"},{"name":"ProductTitle","value":"SQL Database Managed
+        Instance General Purpose - Compute Gen5"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"91c28f76-193c-4c90-87a1-580552578bb6"}],"restrictions":[{"type":"Location","values":["southeastasia"],"reasonCode":"NotAvailableForSubscription"}]},{"resourceType":"SQLManagedInstances","name":"SQLMI_BC_Compute_Gen4","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        MI Business Critical - Compute Gen4"},{"name":"DeploymentType","value":"SQL
+        Database Managed Instance"},{"name":"ProductTitle","value":"SQL Database Managed
+        Instance Business Critical - Compute Gen4"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"aecaed42-2a4c-422d-8b72-bf03e11b414a"}],"restrictions":[{"type":"Location","values":["southeastasia"],"reasonCode":"NotAvailableForSubscription"}]},{"resourceType":"SQLManagedInstances","name":"SQLMI_GP_Compute_Gen4","terms":["P1Y","P3Y"],"locations":["southeastasia"],"skuProperties":[{"name":"ProductShortName","value":"SQL
+        MI General Purpose - Compute Gen4"},{"name":"DeploymentType","value":"SQL
+        Database Managed Instance"},{"name":"ProductTitle","value":"SQL Database Managed
+        Instance General Purpose - Compute Gen4"},{"name":"SkuName","value":"vCore"},{"name":"MeterId","value":"e1cae245-720b-436f-8f31-c92871bfe606"}],"restrictions":[{"type":"Location","values":["southeastasia"],"reasonCode":"NotAvailableForSubscription"}]}]'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['3889']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:32:14 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          9:32:13 PM"}']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/catalogs?api-version=2018-06-01&reservedResourceType=SuseLinux
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['87']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:32:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          9:32:16 PM"}']
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/catalogs?api-version=2018-06-01&reservedResourceType=SuseLinux
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['87']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:32:17 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          9:32:17 PM"}']
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/catalogs?api-version=2018-06-01&reservedResourceType=SuseLinux
+  response:
+    body: {string: '[{"resourceType":"SuseLinux","name":"sles_hpc_standard_3-4_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Standard"},{"name":"SkuName","value":"3-4 vCPU VM"},{"name":"MeterId","value":"4ed70d2d-e2bb-4dcd-b6fa-42da71861a1c"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_hpc_priority_5plus_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Priority"},{"name":"SkuName","value":"5+ vCPU VM"},{"name":"MeterId","value":"4edcd5a5-8510-49a8-a9fc-c9721f501913"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_hpc_standard_5plus_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Standard"},{"name":"SkuName","value":"5+ vCPU VM"},{"name":"MeterId","value":"907a85de-024f-4dd6-969c-347d47a1bdff"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_priority_1_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Priority"},{"name":"SkuName","value":"1
+        vCPU VM"},{"name":"MeterId","value":"dd75c4ed-be82-4c52-9e65-f63f0b544941"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_sap_priority_5plus_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for SAP Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for SAP Priority"},{"name":"SkuName","value":"5+ vCPU VM"},{"name":"MeterId","value":"18ae79cd-dfce-48c9-897b-ebd3053c6058"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_standard_5plus_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Standard"},{"name":"SkuName","value":"5+
+        vCPU VM"},{"name":"MeterId","value":"7b349b65-d906-42e5-833f-b2af38513468"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_standard_1-2_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Standard"},{"name":"SkuName","value":"1-2
+        vCPU VM"},{"name":"MeterId","value":"4b2fecfc-b110-4312-8f9d-807db1cb79ae"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_priority_8plus_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Priority"},{"name":"SkuName","value":"8+
+        vCPU VM"},{"name":"MeterId","value":"93329a72-24d7-4faa-93d9-203f367ed334"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_priority_2-4_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Priority"},{"name":"SkuName","value":"2-4
+        vCPU VM"},{"name":"MeterId","value":"924bee71-5eb8-424f-83ed-a58823c33908"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_hpc_priority_1-2_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Priority"},{"name":"SkuName","value":"1-2 vCPU VM"},{"name":"MeterId","value":"e275a668-ce79-44e2-a659-f43443265e98"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_hpc_priority_3-4_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Priority"},{"name":"SkuName","value":"3-4 vCPU VM"},{"name":"MeterId","value":"e531e1c0-09c9-4d83-b7d0-a2c6741faa22"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_priority_6_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Priority"},{"name":"SkuName","value":"6
+        vCPU VM"},{"name":"MeterId","value":"e8862232-6131-4dbe-bde4-e2ae383afc6f"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_sap_priority_3-4_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for SAP Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for SAP Priority"},{"name":"SkuName","value":"3-4 vCPU VM"},{"name":"MeterId","value":"847887de-68ce-4adc-8a33-7a3f4133312f"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_sap_priority_1-2_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for SAP Priority"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for SAP Priority"},{"name":"SkuName","value":"1-2 vCPU VM"},{"name":"MeterId","value":"497fe0b6-fa3c-4e3d-a66b-836097244142"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_hpc_standard_1-2_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        for HPC Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server
+        for HPC Standard"},{"name":"SkuName","value":"1-2 vCPU VM"},{"name":"MeterId","value":"8c94ad45-b93b-4772-aab1-ff92fcec6610"}],"restrictions":[]},{"resourceType":"SuseLinux","name":"sles_standard_3-4_vcpu_vm","terms":["P1Y","P3Y"],"skuProperties":[{"name":"ProductShortName","value":"SLES
+        Standard"},{"name":"ProductTitle","value":"SUSE Linux Enterprise Server Standard"},{"name":"SkuName","value":"3-4
+        vCPU VM"},{"name":"MeterId","value":"0c3ebb4c-db7d-4125-b45a-0534764d4bda"}],"restrictions":[]}]'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['5826']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 21:32:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-ms-test: ['{"contact":"kgautam","scenarios":"SqlSusePurchase","retention":"6/24/2018
+          9:32:19 PM"}']
+    status: {code: 200, message: OK}
+version: 1

@@ -21,14 +21,13 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
     :type name: str
     :param cipher_suites: Ssl cipher suites to be enabled in the specified
      order for application gateway.
-    :type cipher_suites: list of str or
-     :class:`ApplicationGatewaySslCipherSuite
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite>`
+    :type cipher_suites: list[str or
+     ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslCipherSuite]
     :param min_protocol_version: Minimum version of Ssl protocol to be
      supported on application gateway. Possible values include: 'TLSv1_0',
      'TLSv1_1', 'TLSv1_2'
-    :type min_protocol_version: str or :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol>`
+    :type min_protocol_version: str or
+     ~azure.mgmt.network.v2017_06_01.models.ApplicationGatewaySslProtocol
     """
 
     _attribute_map = {
@@ -38,8 +37,8 @@ class ApplicationGatewaySslPredefinedPolicy(SubResource):
         'min_protocol_version': {'key': 'properties.minProtocolVersion', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, cipher_suites=None, min_protocol_version=None):
-        super(ApplicationGatewaySslPredefinedPolicy, self).__init__(id=id)
-        self.name = name
-        self.cipher_suites = cipher_suites
-        self.min_protocol_version = min_protocol_version
+    def __init__(self, **kwargs):
+        super(ApplicationGatewaySslPredefinedPolicy, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.cipher_suites = kwargs.get('cipher_suites', None)
+        self.min_protocol_version = kwargs.get('min_protocol_version', None)

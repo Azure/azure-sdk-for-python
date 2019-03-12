@@ -17,8 +17,8 @@ class SharedPublicIpAddressConfiguration(Model):
     load balancer.
 
     :param inbound_nat_rules: The incoming NAT rules
-    :type inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.devtestlabs.models.InboundNatRule>`
+    :type inbound_nat_rules:
+     list[~azure.mgmt.devtestlabs.models.InboundNatRule]
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class SharedPublicIpAddressConfiguration(Model):
     }
 
     def __init__(self, inbound_nat_rules=None):
+        super(SharedPublicIpAddressConfiguration, self).__init__()
         self.inbound_nat_rules = inbound_nat_rules

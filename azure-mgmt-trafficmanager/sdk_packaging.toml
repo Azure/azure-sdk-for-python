@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-trafficmanager"
+package_pprint_name = "Traffic Manager"
+package_doc_id = "traffic-manager"
+is_stable = false

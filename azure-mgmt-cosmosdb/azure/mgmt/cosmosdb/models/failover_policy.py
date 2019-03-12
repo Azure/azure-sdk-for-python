@@ -42,7 +42,8 @@ class FailoverPolicy(Model):
         'failover_priority': {'key': 'failoverPriority', 'type': 'int'},
     }
 
-    def __init__(self, location_name=None, failover_priority=None):
+    def __init__(self, **kwargs):
+        super(FailoverPolicy, self).__init__(**kwargs)
         self.id = None
-        self.location_name = location_name
-        self.failover_priority = failover_priority
+        self.location_name = kwargs.get('location_name', None)
+        self.failover_priority = kwargs.get('failover_priority', None)

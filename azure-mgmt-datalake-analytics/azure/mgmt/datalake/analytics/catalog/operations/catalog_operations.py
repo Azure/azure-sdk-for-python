@@ -22,9 +22,11 @@ class CatalogOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -59,17 +61,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.create_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -98,7 +97,7 @@ class CatalogOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -108,6 +107,75 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
+
+    def get_secret(
+            self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified secret in the specified database. This is deprecated
+        and will be removed in the next release. Please use GetCredential
+        instead.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the secret.
+        :type database_name: str
+        :param secret_name: The name of the secret to get
+        :type secret_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlSecret or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlSecret or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_secret.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'secretName': self._serialize.url("secret_name", secret_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlSecret', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def update_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
@@ -132,17 +200,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.update_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -171,7 +236,7 @@ class CatalogOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -181,6 +246,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def delete_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -200,15 +266,12 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.delete_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -233,7 +296,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -243,77 +306,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-    def get_secret(
-            self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified secret in the specified database. This is deprecated
-        and will be removed in the next release. Please use GetCredential
-        instead.
-
-        :param account_name: The Azure Data Lake Analytics account upon which
-         to execute catalog operations.
-        :type account_name: str
-        :param database_name: The name of the database containing the secret.
-        :type database_name: str
-        :param secret_name: The name of the secret to get
-        :type secret_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'secretName': self._serialize.url("secret_name", secret_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlSecret', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+    delete_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def delete_all_secrets(
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -331,15 +324,12 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets'
+        url = self.delete_all_secrets.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -363,7 +353,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -373,6 +363,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_all_secrets.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets'}
 
     def create_credential(
             self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -392,22 +383,18 @@ class CatalogOperations(object):
         :param parameters: The parameters required to create the credential
          (name and password)
         :type parameters:
-         :class:`DataLakeAnalyticsCatalogCredentialCreateParameters
-         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters>`
+         ~azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.create_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -436,7 +423,7 @@ class CatalogOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -446,6 +433,74 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
+
+    def get_credential(
+            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the specified credential from the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the schema.
+        :type database_name: str
+        :param credential_name: The name of the credential.
+        :type credential_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlCredential or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlCredential
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_credential.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlCredential', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def update_credential(
             self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -463,22 +518,18 @@ class CatalogOperations(object):
         :param parameters: The parameters required to modify the credential
          (name and password)
         :type parameters:
-         :class:`DataLakeAnalyticsCatalogCredentialUpdateParameters
-         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialUpdateParameters>`
+         ~azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.update_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -507,7 +558,7 @@ class CatalogOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -517,6 +568,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def delete_credential(
             self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
@@ -544,11 +596,8 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -556,7 +605,7 @@ class CatalogOperations(object):
             parameters = models.DataLakeAnalyticsCatalogCredentialDeleteParameters(password=password)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.delete_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -590,7 +639,7 @@ class CatalogOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -600,76 +649,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-    def get_credential(
-            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the specified credential from the Data Lake Analytics
-        catalog.
-
-        :param account_name: The Azure Data Lake Analytics account upon which
-         to execute catalog operations.
-        :type account_name: str
-        :param database_name: The name of the database containing the schema.
-        :type database_name: str
-        :param credential_name: The name of the credential.
-        :type credential_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlCredential', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+    delete_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def list_credentials(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -705,17 +685,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
-        :rtype: :class:`USqlCredentialPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
+        :return: An iterator like instance of USqlCredential
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlCredential]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/credentials'
+                url = self.list_credentials.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -756,7 +735,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -774,6 +753,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_credentials.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials'}
 
     def get_external_data_source(
             self, account_name, database_name, external_data_source_name, custom_headers=None, raw=False, **operation_config):
@@ -794,17 +774,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlExternalDataSource
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlExternalDataSource
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlExternalDataSource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'
+        url = self.get_external_data_source.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -829,7 +806,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -846,6 +823,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_external_data_source.metadata = {'url': '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'}
 
     def list_external_data_sources(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -883,17 +861,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlExternalDataSource
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
-        :rtype: :class:`USqlExternalDataSourcePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
+        :return: An iterator like instance of USqlExternalDataSource
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/externaldatasources'
+                url = self.list_external_data_sources.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -934,7 +911,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -952,6 +929,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_external_data_sources.metadata = {'url': '/catalog/usql/databases/{databaseName}/externaldatasources'}
 
     def get_procedure(
             self, account_name, database_name, schema_name, procedure_name, custom_headers=None, raw=False, **operation_config):
@@ -972,17 +950,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlProcedure
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlProcedure
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlProcedure or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlProcedure or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'
+        url = self.get_procedure.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1008,7 +982,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1025,6 +999,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_procedure.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'}
 
     def list_procedures(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1063,17 +1038,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlProcedure
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
-        :rtype: :class:`USqlProcedurePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
+        :return: An iterator like instance of USqlProcedure
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlProcedure]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures'
+                url = self.list_procedures.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1115,7 +1089,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1133,6 +1107,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_procedures.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures'}
 
     def get_table(
             self, account_name, database_name, schema_name, table_name, custom_headers=None, raw=False, **operation_config):
@@ -1152,17 +1127,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlTable or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTable or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'
+        url = self.get_table.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1188,7 +1159,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1205,6 +1176,121 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'}
+
+    def list_table_fragments(
+            self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of table fragments from the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the table
+         fragments.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the table
+         fragments.
+        :type schema_name: str
+        :param table_name: The name of the table containing the table
+         fragments.
+        :type table_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of USqlTableFragment
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableFragmentPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableFragment]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_table_fragments.metadata['url']
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+                    'tableName': self._serialize.url("table_name", table_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlTableFragmentPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlTableFragmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_table_fragments.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/tablefragments'}
 
     def list_tables(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, basic=False, custom_headers=None, raw=False, **operation_config):
@@ -1248,17 +1334,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
-        :rtype: :class:`USqlTablePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+        :return: An iterator like instance of USqlTable
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTable]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables'
+                url = self.list_tables.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1302,7 +1387,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1320,6 +1405,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_tables.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables'}
 
     def list_table_statistics_by_database_and_schema(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1359,17 +1445,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
-        :rtype: :class:`USqlTableStatisticsPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :return: An iterator like instance of USqlTableStatistics
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/statistics'
+                url = self.list_table_statistics_by_database_and_schema.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1411,7 +1496,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1429,6 +1514,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics_by_database_and_schema.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/statistics'}
 
     def get_table_type(
             self, account_name, database_name, schema_name, table_type_name, custom_headers=None, raw=False, **operation_config):
@@ -1450,17 +1536,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlTableType
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlTableType
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlTableType or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTableType or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'
+        url = self.get_table_type.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1486,7 +1568,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1503,6 +1585,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_type.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'}
 
     def list_table_types(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1541,17 +1624,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableType
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>`
-        :rtype: :class:`USqlTableTypePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableTypePaged>`
+        :return: An iterator like instance of USqlTableType
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableTypePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableType]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes'
+                url = self.list_table_types.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1593,7 +1675,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1611,6 +1693,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_types.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes'}
 
     def get_package(
             self, account_name, database_name, schema_name, package_name, custom_headers=None, raw=False, **operation_config):
@@ -1630,17 +1713,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlPackage
-         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlPackage
-         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlPackage or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlPackage or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages/{packageName}'
+        url = self.get_package.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1666,7 +1745,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1683,6 +1762,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_package.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages/{packageName}'}
 
     def list_packages(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1721,17 +1801,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlPackage
-         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>`
-        :rtype: :class:`USqlPackagePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlPackagePaged>`
+        :return: An iterator like instance of USqlPackage
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlPackagePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlPackage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages'
+                url = self.list_packages.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1773,7 +1852,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1791,6 +1870,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_packages.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages'}
 
     def get_view(
             self, account_name, database_name, schema_name, view_name, custom_headers=None, raw=False, **operation_config):
@@ -1810,17 +1890,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlView or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlView or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'
+        url = self.get_view.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1846,7 +1922,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1863,6 +1939,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_view.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'}
 
     def list_views(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1900,17 +1977,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
-        :rtype: :class:`USqlViewPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+        :return: An iterator like instance of USqlView
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlView]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views'
+                url = self.list_views.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1952,7 +2028,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1970,6 +2046,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_views.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views'}
 
     def get_table_statistic(
             self, account_name, database_name, schema_name, table_name, statistics_name, custom_headers=None, raw=False, **operation_config):
@@ -1993,17 +2070,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlTableStatistics or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'
+        url = self.get_table_statistic.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2030,7 +2104,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2047,6 +2121,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_statistic.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'}
 
     def list_table_statistics(
             self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2088,17 +2163,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
-        :rtype: :class:`USqlTableStatisticsPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :return: An iterator like instance of USqlTableStatistics
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics'
+                url = self.list_table_statistics.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2141,7 +2215,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2159,6 +2233,90 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics'}
+
+    def preview_table_partition(
+            self, account_name, database_name, schema_name, table_name, partition_name, max_rows=None, max_columns=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves a preview set of rows in given partition.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         partition.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the partition.
+        :type schema_name: str
+        :param table_name: The name of the table containing the partition.
+        :type table_name: str
+        :param partition_name: The name of the table partition.
+        :type partition_name: str
+        :param max_rows: The maximum number of preview rows to be
+         retrieved.Rows returned may be less than or equal to this number
+         depending on row sizes and number of rows in the partition.
+        :type max_rows: long
+        :param max_columns: The maximum number of columns to be retrieved.
+        :type max_columns: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlTablePreview or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePreview
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.preview_table_partition.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+            'partitionName': self._serialize.url("partition_name", partition_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if max_rows is not None:
+            query_parameters['maxRows'] = self._serialize.query("max_rows", max_rows, 'long')
+        if max_columns is not None:
+            query_parameters['maxColumns'] = self._serialize.query("max_columns", max_columns, 'long')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlTablePreview', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    preview_table_partition.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}/previewrows'}
 
     def get_table_partition(
             self, account_name, database_name, schema_name, table_name, partition_name, custom_headers=None, raw=False, **operation_config):
@@ -2182,17 +2340,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlTablePartition
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlTablePartition
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlTablePartition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'
+        url = self.get_table_partition.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2219,7 +2374,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2236,6 +2391,86 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_partition.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'}
+
+    def preview_table(
+            self, account_name, database_name, schema_name, table_name, max_rows=None, max_columns=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves a preview set of rows in given table.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the table.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the table.
+        :type schema_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :param max_rows: The maximum number of preview rows to be retrieved.
+         Rows returned may be less than or equal to this number depending on
+         row sizes and number of rows in the table.
+        :type max_rows: long
+        :param max_columns: The maximum number of columns to be retrieved.
+        :type max_columns: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlTablePreview or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePreview
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.preview_table.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if max_rows is not None:
+            query_parameters['maxRows'] = self._serialize.query("max_rows", max_rows, 'long')
+        if max_columns is not None:
+            query_parameters['maxColumns'] = self._serialize.query("max_columns", max_columns, 'long')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlTablePreview', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    preview_table.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/previewrows'}
 
     def list_table_partitions(
             self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2277,17 +2512,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTablePartition
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>`
-        :rtype: :class:`USqlTablePartitionPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartitionPaged>`
+        :return: An iterator like instance of USqlTablePartition
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePartitionPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions'
+                url = self.list_table_partitions.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2330,7 +2564,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2348,6 +2582,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_partitions.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions'}
 
     def list_types(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2386,17 +2621,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlType
-         <azure.mgmt.datalake.analytics.catalog.models.USqlType>`
-        :rtype: :class:`USqlTypePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
+        :return: An iterator like instance of USqlType
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlType]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/types'
+                url = self.list_types.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2438,7 +2672,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2456,6 +2690,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_types.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/types'}
 
     def get_table_valued_function(
             self, account_name, database_name, schema_name, table_valued_function_name, custom_headers=None, raw=False, **operation_config):
@@ -2479,17 +2714,14 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlTableValuedFunction
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlTableValuedFunction
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlTableValuedFunction or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'
+        url = self.get_table_valued_function.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2515,7 +2747,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2532,6 +2764,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_valued_function.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'}
 
     def list_table_valued_functions(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2572,17 +2805,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableValuedFunction
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
-        :rtype: :class:`USqlTableValuedFunctionPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+        :return: An iterator like instance of USqlTableValuedFunction
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions'
+                url = self.list_table_valued_functions.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2624,7 +2856,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2642,6 +2874,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_valued_functions.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions'}
 
     def get_assembly(
             self, account_name, database_name, assembly_name, custom_headers=None, raw=False, **operation_config):
@@ -2660,17 +2893,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlAssembly
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlAssembly
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlAssembly or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlAssembly or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'
+        url = self.get_assembly.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2695,7 +2924,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2712,6 +2941,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_assembly.metadata = {'url': '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'}
 
     def list_assemblies(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2748,17 +2978,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlAssemblyClr
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClr>`
-        :rtype: :class:`USqlAssemblyClrPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
+        :return: An iterator like instance of USqlAssemblyClr
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClr]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/assemblies'
+                url = self.list_assemblies.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2799,7 +3028,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2817,6 +3046,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_assemblies.metadata = {'url': '/catalog/usql/databases/{databaseName}/assemblies'}
 
     def get_schema(
             self, account_name, database_name, schema_name, custom_headers=None, raw=False, **operation_config):
@@ -2834,17 +3064,13 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlSchema
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlSchema
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: USqlSchema or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlSchema or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'
+        url = self.get_schema.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2869,7 +3095,7 @@ class CatalogOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -2886,6 +3112,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_schema.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'}
 
     def list_schemas(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2921,17 +3148,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlSchema
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
-        :rtype: :class:`USqlSchemaPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
+        :return: An iterator like instance of USqlSchema
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlSchema]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas'
+                url = self.list_schemas.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2972,7 +3198,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -2990,6 +3216,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_schemas.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas'}
 
     def list_table_statistics_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3027,17 +3254,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
-        :rtype: :class:`USqlTableStatisticsPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :return: An iterator like instance of USqlTableStatistics
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/statistics'
+                url = self.list_table_statistics_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3078,7 +3304,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3096,6 +3322,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/statistics'}
 
     def list_tables_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, basic=False, custom_headers=None, raw=False, **operation_config):
@@ -3137,17 +3364,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
-        :rtype: :class:`USqlTablePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+        :return: An iterator like instance of USqlTable
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTable]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/tables'
+                url = self.list_tables_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3190,7 +3416,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3208,6 +3434,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_tables_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/tables'}
 
     def list_table_valued_functions_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3245,17 +3472,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlTableValuedFunction
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
-        :rtype: :class:`USqlTableValuedFunctionPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+        :return: An iterator like instance of USqlTableValuedFunction
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/tablevaluedfunctions'
+                url = self.list_table_valued_functions_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3296,7 +3522,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3314,6 +3540,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_valued_functions_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/tablevaluedfunctions'}
 
     def list_views_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3350,17 +3577,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
-        :rtype: :class:`USqlViewPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+        :return: An iterator like instance of USqlView
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged[~azure.mgmt.datalake.analytics.catalog.models.USqlView]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/views'
+                url = self.list_views_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3401,7 +3627,7 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3419,76 +3645,117 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_views_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/views'}
 
-    def get_database(
-            self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the specified database from the Data Lake Analytics catalog.
+    def list_acls_by_database(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of access control list (ACL) entries for the
+        database from the Data Lake Analytics catalog.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`USqlDatabase
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`USqlDatabase
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An iterator like instance of Acl
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclPaged[~azure.mgmt.datalake.analytics.catalog.models.Acl]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_acls_by_database.metadata['url']
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlDatabase', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AclPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.AclPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    list_acls_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}
 
-    def list_databases(
+    def list_acls(
             self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the list of databases from the Data Lake Analytics catalog.
+        """Retrieves the list of access control list (ACL) entries for the Data
+        Lake Analytics catalog.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
@@ -3518,17 +3785,16 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`USqlDatabase
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
-        :rtype: :class:`USqlDatabasePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
+        :return: An iterator like instance of Acl
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclPaged[~azure.mgmt.datalake.analytics.catalog.models.Acl]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases'
+                url = self.list_acls.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
@@ -3568,7 +3834,171 @@ class CatalogOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AclPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.AclPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_acls.metadata = {'url': '/catalog/usql/acl'}
+
+    def get_database(
+            self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the specified database from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: USqlDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.USqlDatabase or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_database.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_database.metadata = {'url': '/catalog/usql/databases/{databaseName}'}
+
+    def list_databases(
+            self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of databases from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of USqlDatabase
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged[~azure.mgmt.datalake.analytics.catalog.models.USqlDatabase]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_databases.metadata['url']
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -3586,3 +4016,278 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_databases.metadata = {'url': '/catalog/usql/databases'}
+
+    def grant_acl(
+            self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Grants an access control list (ACL) entry to the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param parameters: Parameters supplied to create or update an access
+         control list (ACL) entry for a Data Lake Analytics catalog.
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclCreateOrUpdateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        op = "GRANTACE"
+
+        # Construct URL
+        url = self.grant_acl.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AclCreateOrUpdateParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    grant_acl.metadata = {'url': '/catalog/usql/acl'}
+
+    def grant_acl_to_database(
+            self, account_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Grants an access control list (ACL) entry to the database from the Data
+        Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param parameters: Parameters supplied to create or update an access
+         control list (ACL) entry for a database.
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclCreateOrUpdateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        op = "GRANTACE"
+
+        # Construct URL
+        url = self.grant_acl_to_database.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AclCreateOrUpdateParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    grant_acl_to_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}
+
+    def revoke_acl(
+            self, account_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
+        """Revokes an access control list (ACL) entry from the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param ace_type: the access control list (ACL) entry type. UserObj and
+         GroupObj denote the owning user and group, respectively. Possible
+         values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
+        :type ace_type: str or
+         ~azure.mgmt.datalake.analytics.catalog.models.AclType
+        :param principal_id: the Azure AD object ID of the user or group being
+         specified in the access control list (ACL) entry.
+        :type principal_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.AclDeleteParameters(ace_type=ace_type, principal_id=principal_id)
+
+        op = "REVOKEACE"
+
+        # Construct URL
+        url = self.revoke_acl.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AclDeleteParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    revoke_acl.metadata = {'url': '/catalog/usql/acl'}
+
+    def revoke_acl_from_database(
+            self, account_name, database_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
+        """Revokes an access control list (ACL) entry for the database from the
+        Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param ace_type: the access control list (ACL) entry type. UserObj and
+         GroupObj denote the owning user and group, respectively. Possible
+         values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
+        :type ace_type: str or
+         ~azure.mgmt.datalake.analytics.catalog.models.AclType
+        :param principal_id: the Azure AD object ID of the user or group being
+         specified in the access control list (ACL) entry.
+        :type principal_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.AclDeleteParameters(ace_type=ace_type, principal_id=principal_id)
+
+        op = "REVOKEACE"
+
+        # Construct URL
+        url = self.revoke_acl_from_database.metadata['url']
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AclDeleteParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    revoke_acl_from_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}

@@ -18,32 +18,32 @@ class AlertRuleResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
-    :param alert_rule_resource_name: the name of the alert rule.
+    :type tags: dict[str, str]
+    :param alert_rule_resource_name: Required. the name of the alert rule.
     :type alert_rule_resource_name: str
     :param description: the description of the alert rule that will be
      included in the alert email.
     :type description: str
-    :param is_enabled: the flag that indicates whether the alert rule is
-     enabled.
+    :param is_enabled: Required. the flag that indicates whether the alert
+     rule is enabled.
     :type is_enabled: bool
-    :param condition: the condition that results in the alert rule being
-     activated.
-    :type condition: :class:`RuleCondition
-     <azure.mgmt.monitor.models.RuleCondition>`
+    :param condition: Required. the condition that results in the alert rule
+     being activated.
+    :type condition: ~azure.mgmt.monitor.models.RuleCondition
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
-    :type actions: list of :class:`RuleAction
-     <azure.mgmt.monitor.models.RuleAction>`
+    :type actions: list[~azure.mgmt.monitor.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: datetime
     """
@@ -73,11 +73,11 @@ class AlertRuleResource(Resource):
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, alert_rule_resource_name, is_enabled, condition, tags=None, description=None, actions=None):
-        super(AlertRuleResource, self).__init__(location=location, tags=tags)
-        self.alert_rule_resource_name = alert_rule_resource_name
-        self.description = description
-        self.is_enabled = is_enabled
-        self.condition = condition
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(AlertRuleResource, self).__init__(**kwargs)
+        self.alert_rule_resource_name = kwargs.get('alert_rule_resource_name', None)
+        self.description = kwargs.get('description', None)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.condition = kwargs.get('condition', None)
+        self.actions = kwargs.get('actions', None)
         self.last_updated_time = None

@@ -12,7 +12,27 @@
 from enum import Enum
 
 
-class FileType(Enum):
+class AclType(str, Enum):
+
+    user_obj = "UserObj"
+    group_obj = "GroupObj"
+    other = "Other"
+    user = "User"
+    group = "Group"
+
+
+class PermissionType(str, Enum):
+
+    none = "None"
+    use = "Use"
+    create = "Create"
+    drop = "Drop"
+    alter = "Alter"
+    write = "Write"
+    all = "All"
+
+
+class FileType(str, Enum):
 
     assembly = "Assembly"
     resource = "Resource"

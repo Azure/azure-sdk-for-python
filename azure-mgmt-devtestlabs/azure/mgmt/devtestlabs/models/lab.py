@@ -27,7 +27,7 @@ class Lab(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar default_storage_account: The lab's default storage account.
     :vartype default_storage_account: str
     :ivar default_premium_storage_account: The lab's default premium storage
@@ -43,8 +43,7 @@ class Lab(Resource):
     :param lab_storage_type: Type of storage used by the lab. It can be either
      Premium or Standard. Default is Premium. Possible values include:
      'Standard', 'Premium'
-    :type lab_storage_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
+    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     :ivar created_date: The creation date of the lab.
     :vartype created_date: datetime
     :param premium_data_disks: The setting to enable usage of premium data
@@ -53,8 +52,8 @@ class Lab(Resource):
      allowed.
      When its value is 'Disabled', only creation of standard data disks is
      allowed. Possible values include: 'Disabled', 'Enabled'
-    :type premium_data_disks: str or :class:`PremiumDataDisk
-     <azure.mgmt.devtestlabs.models.PremiumDataDisk>`
+    :type premium_data_disks: str or
+     ~azure.mgmt.devtestlabs.models.PremiumDataDisk
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource

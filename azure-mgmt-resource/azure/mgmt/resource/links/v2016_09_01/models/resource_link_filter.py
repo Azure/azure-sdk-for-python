@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ResourceLinkFilter(Model):
     """Resource link filter.
 
-    :param target_id: The ID of the target resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_id: Required. The ID of the target resource.
     :type target_id: str
     """
 
@@ -27,5 +29,6 @@ class ResourceLinkFilter(Model):
         'target_id': {'key': 'targetId', 'type': 'str'},
     }
 
-    def __init__(self, target_id):
-        self.target_id = target_id
+    def __init__(self, **kwargs):
+        super(ResourceLinkFilter, self).__init__(**kwargs)
+        self.target_id = kwargs.get('target_id', None)

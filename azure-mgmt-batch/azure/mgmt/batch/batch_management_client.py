@@ -18,6 +18,8 @@ from .operations.application_package_operations import ApplicationPackageOperati
 from .operations.application_operations import ApplicationOperations
 from .operations.location_operations import LocationOperations
 from .operations.operations import Operations
+from .operations.certificate_operations import CertificateOperations
+from .operations.pool_operations import PoolOperations
 from . import models
 
 
@@ -42,14 +44,12 @@ class BatchManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(BatchManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('batchmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-batch/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -72,6 +72,10 @@ class BatchManagementClient(object):
     :vartype location: azure.mgmt.batch.operations.LocationOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.batch.operations.Operations
+    :ivar certificate: Certificate operations
+    :vartype certificate: azure.mgmt.batch.operations.CertificateOperations
+    :ivar pool: Pool operations
+    :vartype pool: azure.mgmt.batch.operations.PoolOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -89,7 +93,7 @@ class BatchManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-05-01'
+        self.api_version = '2017-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -102,4 +106,8 @@ class BatchManagementClient(object):
         self.location = LocationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.certificate = CertificateOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.pool = PoolOperations(
             self._client, self.config, self._serialize, self._deserialize)

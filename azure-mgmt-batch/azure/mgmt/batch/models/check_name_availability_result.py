@@ -25,8 +25,7 @@ class CheckNameAvailabilityResult(Model):
     :ivar reason: Gets the reason that a Batch account name could not be used.
      The Reason element is only returned if NameAvailable is false. Possible
      values include: 'Invalid', 'AlreadyExists'
-    :vartype reason: str or :class:`NameAvailabilityReason
-     <azure.mgmt.batch.models.NameAvailabilityReason>`
+    :vartype reason: str or ~azure.mgmt.batch.models.NameAvailabilityReason
     :ivar message: Gets an error message explaining the Reason value in more
      detail.
     :vartype message: str
@@ -45,6 +44,7 @@ class CheckNameAvailabilityResult(Model):
     }
 
     def __init__(self):
+        super(CheckNameAvailabilityResult, self).__init__()
         self.name_available = None
         self.reason = None
         self.message = None

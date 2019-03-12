@@ -17,8 +17,8 @@ class RegistryPassword(Model):
 
     :param name: The password name. Possible values include: 'password',
      'password2'
-    :type name: str or :class:`PasswordName
-     <azure.mgmt.containerregistry.v2017_03_01.models.PasswordName>`
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2017_03_01.models.PasswordName
     :param value: The password value.
     :type value: str
     """
@@ -28,6 +28,7 @@ class RegistryPassword(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None):
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(RegistryPassword, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

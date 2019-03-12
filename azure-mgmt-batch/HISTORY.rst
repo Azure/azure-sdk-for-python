@@ -3,6 +3,20 @@
 Release History
 ===============
 
+5.0.1 (2018-05-25)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- msrestazure dependency version range
+
+5.0.0 (2017-11-13)
+++++++++++++++++++
+
+- Batch Pools are now ARM resources that can be created, updated and managed using the new client.PoolOperations.
+- Batch Certificates are now ARM resources that can be created, updated and managed using the new client.CertificateOperations.
+
 4.1.0 (2017-07-24)
 ++++++++++++++++++
 

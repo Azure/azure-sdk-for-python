@@ -25,8 +25,7 @@ class CheckNameAvailabilityResult(Model):
     :ivar reason: Gets the reason that a storage account name could not be
      used. The Reason element is only returned if NameAvailable is false.
      Possible values include: 'AccountNameInvalid', 'AlreadyExists'
-    :vartype reason: str or :class:`Reason
-     <azure.mgmt.storage.v2016_12_01.models.Reason>`
+    :vartype reason: str or ~azure.mgmt.storage.v2016_12_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more
      detail.
     :vartype message: str
@@ -44,7 +43,8 @@ class CheckNameAvailabilityResult(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None

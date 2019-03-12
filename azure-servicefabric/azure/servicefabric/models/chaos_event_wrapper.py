@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class ChaosEventWrapper(Model):
     """Wrapper object for Chaos event.
 
-    :param chaos_event:
-    :type chaos_event: :class:`ChaosEvent
-     <azure.servicefabric.models.ChaosEvent>`
-    """ 
+    :param chaos_event: Represents an event generated during a Chaos run.
+    :type chaos_event: ~azure.servicefabric.models.ChaosEvent
+    """
 
     _attribute_map = {
         'chaos_event': {'key': 'ChaosEvent', 'type': 'ChaosEvent'},
     }
 
-    def __init__(self, chaos_event=None):
-        self.chaos_event = chaos_event
+    def __init__(self, **kwargs):
+        super(ChaosEventWrapper, self).__init__(**kwargs)
+        self.chaos_event = kwargs.get('chaos_event', None)

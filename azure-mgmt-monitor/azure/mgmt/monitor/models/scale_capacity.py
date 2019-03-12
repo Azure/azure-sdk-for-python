@@ -15,15 +15,18 @@ from msrest.serialization import Model
 class ScaleCapacity(Model):
     """The number of instances that can be used during this profile.
 
-    :param minimum: the minimum number of instances for the resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param minimum: Required. the minimum number of instances for the
+     resource.
     :type minimum: str
-    :param maximum: the maximum number of instances for the resource. The
-     actual maximum number of instances is limited by the cores that are
-     available in the subscription.
+    :param maximum: Required. the maximum number of instances for the
+     resource. The actual maximum number of instances is limited by the cores
+     that are available in the subscription.
     :type maximum: str
-    :param default: the number of instances that will be set if metrics are
-     not available for evaluation. The default is only used if the current
-     instance count is lower than the default.
+    :param default: Required. the number of instances that will be set if
+     metrics are not available for evaluation. The default is only used if the
+     current instance count is lower than the default.
     :type default: str
     """
 
@@ -39,7 +42,8 @@ class ScaleCapacity(Model):
         'default': {'key': 'default', 'type': 'str'},
     }
 
-    def __init__(self, minimum, maximum, default):
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
+    def __init__(self, **kwargs):
+        super(ScaleCapacity, self).__init__(**kwargs)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.default = kwargs.get('default', None)

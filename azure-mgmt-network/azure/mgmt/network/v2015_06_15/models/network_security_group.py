@@ -27,22 +27,21 @@ class NetworkSecurityGroup(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param security_rules: A collection of security rules of the network
      security group.
-    :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2015_06_15.models.SecurityRule>`
+    :type security_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
     :param default_security_rules: The default security rules of network
      security group.
-    :type default_security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2015_06_15.models.SecurityRule>`
+    :type default_security_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.SecurityRule]
     :param network_interfaces: A collection of references to network
      interfaces.
-    :type network_interfaces: list of :class:`NetworkInterface
-     <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
+    :type network_interfaces:
+     list[~azure.mgmt.network.v2015_06_15.models.NetworkInterface]
     :param subnets: A collection of references to subnets.
-    :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2015_06_15.models.Subnet>`
+    :type subnets: list[~azure.mgmt.network.v2015_06_15.models.Subnet]
     :param resource_guid: The resource GUID property of the network security
      group resource.
     :type resource_guid: str
@@ -74,12 +73,12 @@ class NetworkSecurityGroup(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, security_rules=None, default_security_rules=None, network_interfaces=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(NetworkSecurityGroup, self).__init__(id=id, location=location, tags=tags)
-        self.security_rules = security_rules
-        self.default_security_rules = default_security_rules
-        self.network_interfaces = network_interfaces
-        self.subnets = subnets
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(NetworkSecurityGroup, self).__init__(**kwargs)
+        self.security_rules = kwargs.get('security_rules', None)
+        self.default_security_rules = kwargs.get('default_security_rules', None)
+        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.subnets = kwargs.get('subnets', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

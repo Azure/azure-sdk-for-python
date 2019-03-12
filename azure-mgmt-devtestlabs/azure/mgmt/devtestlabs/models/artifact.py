@@ -27,7 +27,7 @@ class Artifact(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar title: The artifact's title.
     :vartype title: str
     :ivar description: The artifact's description.

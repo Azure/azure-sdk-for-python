@@ -24,12 +24,12 @@ class ExpressRouteCircuitPeering(SubResource):
      'AzurePublicPeering', 'AzurePrivatePeering', and 'MicrosoftPeering'.
      Possible values include: 'AzurePublicPeering', 'AzurePrivatePeering',
      'MicrosoftPeering'
-    :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringType>`
+    :type peering_type: str or
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringType
     :param state: The state of peering. Possible values are: 'Disabled' and
      'Enabled'. Possible values include: 'Disabled', 'Enabled'
-    :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringState>`
+    :type state: str or
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringState
     :param azure_asn: The Azure ASN.
     :type azure_asn: int
     :param peer_asn: The peer ASN.
@@ -47,11 +47,11 @@ class ExpressRouteCircuitPeering(SubResource):
     :param vlan_id: The VLAN ID.
     :type vlan_id: int
     :param microsoft_peering_config: The Microsoft peering configuration.
-    :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringConfig>`
+    :type microsoft_peering_config:
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeeringConfig
     :param stats: Gets peering stats.
-    :type stats: :class:`ExpressRouteCircuitStats
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitStats>`
+    :type stats:
+     ~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitStats
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -61,8 +61,7 @@ class ExpressRouteCircuitPeering(SubResource):
      modified the peering.
     :type last_modified_by: str
     :param route_filter: The reference of the RouteFilter resource.
-    :type route_filter: :class:`RouteFilter
-     <azure.mgmt.network.v2016_12_01.models.RouteFilter>`
+    :type route_filter: ~azure.mgmt.network.v2016_12_01.models.RouteFilter
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -97,23 +96,23 @@ class ExpressRouteCircuitPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, gateway_manager_etag=None, last_modified_by=None, route_filter=None, name=None):
-        super(ExpressRouteCircuitPeering, self).__init__(id=id)
-        self.peering_type = peering_type
-        self.state = state
-        self.azure_asn = azure_asn
-        self.peer_asn = peer_asn
-        self.primary_peer_address_prefix = primary_peer_address_prefix
-        self.secondary_peer_address_prefix = secondary_peer_address_prefix
-        self.primary_azure_port = primary_azure_port
-        self.secondary_azure_port = secondary_azure_port
-        self.shared_key = shared_key
-        self.vlan_id = vlan_id
-        self.microsoft_peering_config = microsoft_peering_config
-        self.stats = stats
-        self.provisioning_state = provisioning_state
-        self.gateway_manager_etag = gateway_manager_etag
-        self.last_modified_by = last_modified_by
-        self.route_filter = route_filter
-        self.name = name
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitPeering, self).__init__(**kwargs)
+        self.peering_type = kwargs.get('peering_type', None)
+        self.state = kwargs.get('state', None)
+        self.azure_asn = kwargs.get('azure_asn', None)
+        self.peer_asn = kwargs.get('peer_asn', None)
+        self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
+        self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
+        self.primary_azure_port = kwargs.get('primary_azure_port', None)
+        self.secondary_azure_port = kwargs.get('secondary_azure_port', None)
+        self.shared_key = kwargs.get('shared_key', None)
+        self.vlan_id = kwargs.get('vlan_id', None)
+        self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
+        self.stats = kwargs.get('stats', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.route_filter = kwargs.get('route_filter', None)
+        self.name = kwargs.get('name', None)
         self.etag = None

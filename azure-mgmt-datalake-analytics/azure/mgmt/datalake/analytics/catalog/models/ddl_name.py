@@ -36,8 +36,9 @@ class DdlName(Model):
         'server': {'key': 'server', 'type': 'str'},
     }
 
-    def __init__(self, first_part=None, second_part=None, third_part=None, server=None):
-        self.first_part = first_part
-        self.second_part = second_part
-        self.third_part = third_part
-        self.server = server
+    def __init__(self, **kwargs):
+        super(DdlName, self).__init__(**kwargs)
+        self.first_part = kwargs.get('first_part', None)
+        self.second_part = kwargs.get('second_part', None)
+        self.third_part = kwargs.get('third_part', None)
+        self.server = kwargs.get('server', None)

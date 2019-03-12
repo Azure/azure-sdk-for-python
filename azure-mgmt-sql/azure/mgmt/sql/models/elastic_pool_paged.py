@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ElasticPoolPaged(Paged):
     """
-    A paging container for iterating over a list of ElasticPool object
+    A paging container for iterating over a list of :class:`ElasticPool <azure.mgmt.sql.models.ElasticPool>` object
     """
 
     _attribute_map = {

@@ -18,8 +18,10 @@ class EncryptionIdentity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: The type of encryption being used. Currently the only
-     supported type is 'SystemAssigned'. Default value: "SystemAssigned" .
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. The type of encryption being used. Currently the
+     only supported type is 'SystemAssigned'. Default value: "SystemAssigned" .
     :vartype type: str
     :ivar principal_id: The principal identifier associated with the
      encryption.
@@ -42,6 +44,7 @@ class EncryptionIdentity(Model):
 
     type = "SystemAssigned"
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(EncryptionIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None

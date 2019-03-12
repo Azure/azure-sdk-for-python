@@ -15,27 +15,44 @@ from msrest.serialization import Model
 class ApplicationTypeInfo(Model):
     """Information about an application type.
 
-    :param name: The name of the application type.
+    :param name: The application type name as defined in the application
+     manifest.
     :type name: str
-    :param version: The version of the application type.
+    :param version: The version of the application type as defined in the
+     application manifest.
     :type version: str
-    :param status: Possible values include: 'Invalid', 'Provisioning',
-     'Available', 'Unprovisioning', 'Failed'
-    :type status: str
-    :param default_parameter_list:
-    :type default_parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
-    """ 
+    :param default_parameter_list: List of application type parameters that
+     can be overridden when creating or updating the application.
+    :type default_parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
+    :param status: The status of the application type. Possible values
+     include: 'Invalid', 'Provisioning', 'Available', 'Unprovisioning',
+     'Failed'
+    :type status: str or ~azure.servicefabric.models.ApplicationTypeStatus
+    :param status_details: Additional detailed information about the status of
+     the application type.
+    :type status_details: str
+    :param application_type_definition_kind: The mechanism used to define a
+     Service Fabric application type. Possible values include: 'Invalid',
+     'ServiceFabricApplicationPackage', 'Compose'
+    :type application_type_definition_kind: str or
+     ~azure.servicefabric.models.ApplicationTypeDefinitionKind
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'version': {'key': 'Version', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
         'default_parameter_list': {'key': 'DefaultParameterList', 'type': '[ApplicationParameter]'},
+        'status': {'key': 'Status', 'type': 'str'},
+        'status_details': {'key': 'StatusDetails', 'type': 'str'},
+        'application_type_definition_kind': {'key': 'ApplicationTypeDefinitionKind', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None, status=None, default_parameter_list=None):
-        self.name = name
-        self.version = version
-        self.status = status
-        self.default_parameter_list = default_parameter_list
+    def __init__(self, **kwargs):
+        super(ApplicationTypeInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
+        self.default_parameter_list = kwargs.get('default_parameter_list', None)
+        self.status = kwargs.get('status', None)
+        self.status_details = kwargs.get('status_details', None)
+        self.application_type_definition_kind = kwargs.get('application_type_definition_kind', None)

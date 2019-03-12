@@ -36,9 +36,105 @@ class AccountKeyType(Enum):
 
 class PackageState(Enum):
 
-    pending = "pending"
-    active = "active"
-    unmapped = "unmapped"
+    pending = "Pending"
+    active = "Active"
+    unmapped = "Unmapped"
+
+
+class CertificateFormat(Enum):
+
+    pfx = "Pfx"
+    cer = "Cer"
+
+
+class CertificateProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class PoolProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+
+
+class AllocationState(Enum):
+
+    steady = "Steady"
+    resizing = "Resizing"
+    stopping = "Stopping"
+
+
+class CachingType(Enum):
+
+    none = "None"
+    read_only = "ReadOnly"
+    read_write = "ReadWrite"
+
+
+class StorageAccountType(Enum):
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+
+class ComputeNodeDeallocationOption(Enum):
+
+    requeue = "Requeue"
+    terminate = "Terminate"
+    task_completion = "TaskCompletion"
+    retained_data = "RetainedData"
+
+
+class InterNodeCommunicationState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class InboundEndpointProtocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class NetworkSecurityGroupRuleAccess(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class ComputeNodeFillType(Enum):
+
+    spread = "Spread"
+    pack = "Pack"
+
+
+class ElevationLevel(Enum):
+
+    non_admin = "NonAdmin"
+    admin = "Admin"
+
+
+class AutoUserScope(Enum):
+
+    task = "Task"
+    pool = "Pool"
+
+
+class CertificateStoreLocation(Enum):
+
+    current_user = "CurrentUser"
+    local_machine = "LocalMachine"
+
+
+class CertificateVisibility(Enum):
+
+    start_task = "StartTask"
+    task = "Task"
+    remote_user = "RemoteUser"
 
 
 class NameAvailabilityReason(Enum):

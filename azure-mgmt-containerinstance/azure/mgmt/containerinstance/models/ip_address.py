@@ -13,34 +13,45 @@ from msrest.serialization import Model
 
 
 class IpAddress(Model):
-    """IP address for the group.
+    """IP address for the container group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param ports: The ports.
-    :type ports: list of :class:`Port
-     <azure.mgmt.containerinstance.models.Port>`
-    :ivar type: Determines whether the IP is exposed to the public internet.
-     Default value: "Public" .
-    :vartype type: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param ports: Required. The list of ports exposed on the container group.
+    :type ports: list[~azure.mgmt.containerinstance.models.Port]
+    :param type: Required. Specifies if the IP is exposed to the public
+     internet or private VNET. Possible values include: 'Public', 'Private'
+    :type type: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupIpAddressType
     :param ip: The IP exposed to the public internet.
     :type ip: str
+    :param dns_name_label: The Dns name label for the IP.
+    :type dns_name_label: str
+    :ivar fqdn: The FQDN for the IP.
+    :vartype fqdn: str
     """
 
     _validation = {
         'ports': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
+        'fqdn': {'readonly': True},
     }
 
     _attribute_map = {
         'ports': {'key': 'ports', 'type': '[Port]'},
         'type': {'key': 'type', 'type': 'str'},
         'ip': {'key': 'ip', 'type': 'str'},
+        'dns_name_label': {'key': 'dnsNameLabel', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    type = "Public"
-
-    def __init__(self, ports, ip=None):
-        self.ports = ports
-        self.ip = ip
+    def __init__(self, **kwargs):
+        super(IpAddress, self).__init__(**kwargs)
+        self.ports = kwargs.get('ports', None)
+        self.type = kwargs.get('type', None)
+        self.ip = kwargs.get('ip', None)
+        self.dns_name_label = kwargs.get('dns_name_label', None)
+        self.fqdn = None

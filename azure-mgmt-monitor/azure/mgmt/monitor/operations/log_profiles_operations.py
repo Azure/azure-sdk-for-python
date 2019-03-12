@@ -22,9 +22,11 @@ class LogProfilesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-03-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -46,15 +48,12 @@ class LogProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -77,7 +76,7 @@ class LogProfilesOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -87,6 +86,7 @@ class LogProfilesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}
 
     def get(
             self, log_profile_name, custom_headers=None, raw=False, **operation_config):
@@ -99,18 +99,14 @@ class LogProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LogProfileResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogProfileResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -133,7 +129,7 @@ class LogProfilesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -148,6 +144,7 @@ class LogProfilesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}
 
     def create_or_update(
             self, log_profile_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -156,24 +153,19 @@ class LogProfilesOperations(object):
         :param log_profile_name: The name of the log profile.
         :type log_profile_name: str
         :param parameters: Parameters supplied to the operation.
-        :type parameters: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>`
+        :type parameters: ~azure.mgmt.monitor.models.LogProfileResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LogProfileResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogProfileResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -200,7 +192,7 @@ class LogProfilesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -217,6 +209,7 @@ class LogProfilesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}
 
     def update(
             self, log_profile_name, log_profiles_resource, custom_headers=None, raw=False, **operation_config):
@@ -226,25 +219,21 @@ class LogProfilesOperations(object):
         :param log_profile_name: The name of the log profile.
         :type log_profile_name: str
         :param log_profiles_resource: Parameters supplied to the operation.
-        :type log_profiles_resource: :class:`LogProfileResourcePatch
-         <azure.mgmt.monitor.models.LogProfileResourcePatch>`
+        :type log_profiles_resource:
+         ~azure.mgmt.monitor.models.LogProfileResourcePatch
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: LogProfileResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogProfileResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'logProfileName': self._serialize.url("log_profile_name", log_profile_name, 'str')
@@ -271,7 +260,7 @@ class LogProfilesOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -286,6 +275,7 @@ class LogProfilesOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles/{logProfileName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -296,17 +286,16 @@ class LogProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`LogProfileResource
-         <azure.mgmt.monitor.models.LogProfileResource>`
-        :rtype: :class:`LogProfileResourcePaged
-         <azure.mgmt.monitor.models.LogProfileResourcePaged>`
+        :return: An iterator like instance of LogProfileResource
+        :rtype:
+         ~azure.mgmt.monitor.models.LogProfileResourcePaged[~azure.mgmt.monitor.models.LogProfileResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -333,7 +322,7 @@ class LogProfilesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -351,3 +340,4 @@ class LogProfilesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/logprofiles'}

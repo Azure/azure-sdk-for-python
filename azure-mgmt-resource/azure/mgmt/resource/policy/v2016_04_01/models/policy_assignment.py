@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PolicyAssignment(Model):
-    """The policy definition.
+    """The policy assignment.
 
     :param display_name: The display name of the policy assignment.
     :type display_name: str
@@ -38,10 +38,11 @@ class PolicyAssignment(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, policy_definition_id=None, scope=None, id=None, type=None, name=None):
-        self.display_name = display_name
-        self.policy_definition_id = policy_definition_id
-        self.scope = scope
-        self.id = id
-        self.type = type
-        self.name = name
+    def __init__(self, **kwargs):
+        super(PolicyAssignment, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.scope = kwargs.get('scope', None)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)

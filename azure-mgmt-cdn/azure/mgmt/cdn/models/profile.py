@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Profile(Resource):
-    """CDN profile represents the top level resource and the entry point into the
-    CDN API. This allows users to set up a logical grouping of endpoints in
-    addition to creating shared configuration settings and selecting pricing
-    tiers and providers.
+class Profile(TrackedResource):
+    """CDN profile is a logical grouping of endpoints that share the same
+    settings, such as CDN provider and pricing tier.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -27,17 +27,17 @@ class Profile(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param sku: The pricing tier (defines a CDN provider, feature list and
-     rate) of the CDN profile.
-    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
+    :type tags: dict[str, str]
+    :param sku: Required. The pricing tier (defines a CDN provider, feature
+     list and rate) of the CDN profile.
+    :type sku: ~azure.mgmt.cdn.models.Sku
     :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :vartype resource_state: str or :class:`ProfileResourceState
-     <azure.mgmt.cdn.models.ProfileResourceState>`
+    :vartype resource_state: str or
+     ~azure.mgmt.cdn.models.ProfileResourceState
     :ivar provisioning_state: Provisioning status of the profile.
     :vartype provisioning_state: str
     """
@@ -63,8 +63,8 @@ class Profile(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, sku, tags=None):
-        super(Profile, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(Profile, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.resource_state = None
         self.provisioning_state = None

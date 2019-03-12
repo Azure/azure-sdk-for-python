@@ -27,13 +27,11 @@ class User(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The identity of the user.
-    :type identity: :class:`UserIdentity
-     <azure.mgmt.devtestlabs.models.UserIdentity>`
+    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentity
     :param secret_store: The secret store of the user.
-    :type secret_store: :class:`UserSecretStore
-     <azure.mgmt.devtestlabs.models.UserSecretStore>`
+    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStore
     :ivar created_date: The creation date of the user profile.
     :vartype created_date: datetime
     :param provisioning_state: The provisioning status of the resource.

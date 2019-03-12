@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class StampCapacityPaged(Paged):
     """
-    A paging container for iterating over a list of StampCapacity object
+    A paging container for iterating over a list of :class:`StampCapacity <azure.mgmt.web.models.StampCapacity>` object
     """
 
     _attribute_map = {

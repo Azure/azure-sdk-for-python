@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-cognitiveservices-language-spellcheck"
+package_nspkg = "azure-cognitiveservices-language-nspkg"
+package_pprint_name = "Cognitive Services Spellcheck"
+package_doc_id = "cognitive-services"
+is_stable = true
+is_arm = false

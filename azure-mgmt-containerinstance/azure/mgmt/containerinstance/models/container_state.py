@@ -13,17 +13,21 @@ from msrest.serialization import Model
 
 
 class ContainerState(Model):
-    """The container state.
+    """The container instance state.
 
-    :param state: The state of this container
+    :param state: The state of the container instance.
     :type state: str
-    :param start_time: Date/time when the container state started.
+    :param start_time: The date-time when the container instance state
+     started.
     :type start_time: datetime
-    :param exit_code: The container exit code.
+    :param exit_code: The container instance exit codes correspond to those
+     from the `docker run` command.
     :type exit_code: int
-    :param finish_time: Date/time when the container state finished.
+    :param finish_time: The date-time when the container instance state
+     finished.
     :type finish_time: datetime
-    :param detail_status: Human-readable status of this state.
+    :param detail_status: The human-readable status of the container instance
+     state.
     :type detail_status: str
     """
 
@@ -35,9 +39,10 @@ class ContainerState(Model):
         'detail_status': {'key': 'detailStatus', 'type': 'str'},
     }
 
-    def __init__(self, state=None, start_time=None, exit_code=None, finish_time=None, detail_status=None):
-        self.state = state
-        self.start_time = start_time
-        self.exit_code = exit_code
-        self.finish_time = finish_time
-        self.detail_status = detail_status
+    def __init__(self, **kwargs):
+        super(ContainerState, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.finish_time = kwargs.get('finish_time', None)
+        self.detail_status = kwargs.get('detail_status', None)

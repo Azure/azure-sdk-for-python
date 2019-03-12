@@ -13,36 +13,29 @@ from msrest.serialization import Model
 
 
 class MaxSizeCapability(Model):
-    """The maximum size limits for a database.
+    """The maximum size capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar limit: The maximum size of the database (see 'unit' for the units).
-    :vartype limit: long
+    :ivar limit: The maximum size limit (see 'unit' for the units).
+    :vartype limit: int
     :ivar unit: The units that the limit is expressed in. Possible values
      include: 'Megabytes', 'Gigabytes', 'Terabytes', 'Petabytes'
-    :vartype unit: str or :class:`MaxSizeUnits
-     <azure.mgmt.sql.models.MaxSizeUnits>`
-    :ivar status: The status of the maximum size capability. Possible values
-     include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype unit: str or ~azure.mgmt.sql.models.MaxSizeUnit
     """
 
     _validation = {
         'limit': {'readonly': True},
         'unit': {'readonly': True},
-        'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'MaxSizeUnits'},
-        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'limit': {'key': 'limit', 'type': 'int'},
+        'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(MaxSizeCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
-        self.status = None

@@ -15,31 +15,33 @@ from .sub_resource import SubResource
 class LoadBalancingRule(SubResource):
     """A loag balancing rule for a load balancer.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Identifier.
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
-    :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type frontend_ip_configuration:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param backend_address_pool: A reference to a pool of DIPs. Inbound
      traffic is randomly load balanced across IPs in the backend IPs.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param probe: The reference of the load balancer probe used by the load
      balancing rule.
-    :type probe: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
-    :param protocol: The transport protocol for the external endpoint.
-     Possible values are 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
-    :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.v2015_06_15.models.TransportProtocol>`
+    :type probe: ~azure.mgmt.network.v2015_06_15.models.SubResource
+    :param protocol: Required. The transport protocol for the external
+     endpoint. Possible values are 'Udp' or 'Tcp'. Possible values include:
+     'Udp', 'Tcp'
+    :type protocol: str or
+     ~azure.mgmt.network.v2015_06_15.models.TransportProtocol
     :param load_distribution: The load distribution policy for this rule.
      Possible values are 'Default', 'SourceIP', and 'SourceIPProtocol'.
      Possible values include: 'Default', 'SourceIP', 'SourceIPProtocol'
-    :type load_distribution: str or :class:`LoadDistribution
-     <azure.mgmt.network.v2015_06_15.models.LoadDistribution>`
-    :param frontend_port: The port for the external endpoint. Port numbers for
-     each Rule must be unique within the Load Balancer. Acceptable values are
-     between 1 and 65534.
+    :type load_distribution: str or
+     ~azure.mgmt.network.v2015_06_15.models.LoadDistribution
+    :param frontend_port: Required. The port for the external endpoint. Port
+     numbers for each rule must be unique within the Load Balancer. Acceptable
+     values are between 1 and 65534.
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
      endpoint. Acceptable values are between 1 and 65535.
@@ -86,17 +88,17 @@ class LoadBalancingRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, frontend_port, id=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
-        super(LoadBalancingRule, self).__init__(id=id)
-        self.frontend_ip_configuration = frontend_ip_configuration
-        self.backend_address_pool = backend_address_pool
-        self.probe = probe
-        self.protocol = protocol
-        self.load_distribution = load_distribution
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.enable_floating_ip = enable_floating_ip
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(LoadBalancingRule, self).__init__(**kwargs)
+        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.probe = kwargs.get('probe', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.load_distribution = kwargs.get('load_distribution', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

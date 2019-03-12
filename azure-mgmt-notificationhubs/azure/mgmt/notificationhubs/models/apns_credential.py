@@ -47,12 +47,13 @@ class ApnsCredential(Model):
         'token': {'key': 'properties.token', 'type': 'str'},
     }
 
-    def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None, key_id=None, app_name=None, app_id=None, token=None):
-        self.apns_certificate = apns_certificate
-        self.certificate_key = certificate_key
-        self.endpoint = endpoint
-        self.thumbprint = thumbprint
-        self.key_id = key_id
-        self.app_name = app_name
-        self.app_id = app_id
-        self.token = token
+    def __init__(self, **kwargs):
+        super(ApnsCredential, self).__init__(**kwargs)
+        self.apns_certificate = kwargs.get('apns_certificate', None)
+        self.certificate_key = kwargs.get('certificate_key', None)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.key_id = kwargs.get('key_id', None)
+        self.app_name = kwargs.get('app_name', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.token = kwargs.get('token', None)

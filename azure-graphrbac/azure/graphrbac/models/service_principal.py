@@ -9,35 +9,60 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .directory_object import DirectoryObject
 
 
-class ServicePrincipal(Model):
+class ServicePrincipal(DirectoryObject):
     """Active Directory service principal information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar deletion_timestamp: The time at which the directory object was
+     deleted.
+    :vartype deletion_timestamp: datetime
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param display_name: The display name of the service principal.
     :type display_name: str
     :param app_id: The application ID.
     :type app_id: str
+    :param app_roles: The collection of application roles that an application
+     may declare. These roles can be assigned to users, groups or service
+     principals.
+    :type app_roles: list[~azure.graphrbac.models.AppRole]
     :param service_principal_names: A collection of service principal names.
-    :type service_principal_names: list of str
+    :type service_principal_names: list[str]
     """
 
+    _validation = {
+        'object_id': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
+    }
+
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
+        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None):
-        self.object_id = object_id
-        self.object_type = object_type
-        self.display_name = display_name
-        self.app_id = app_id
-        self.service_principal_names = service_principal_names
+    def __init__(self, **kwargs):
+        super(ServicePrincipal, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.service_principal_names = kwargs.get('service_principal_names', None)
+        self.object_type = 'ServicePrincipal'

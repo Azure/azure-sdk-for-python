@@ -18,8 +18,8 @@ class RegistryListCredentialsResult(Model):
     :param username: The username for a container registry.
     :type username: str
     :param passwords: The list of passwords for a container registry.
-    :type passwords: list of :class:`RegistryPassword
-     <azure.mgmt.containerregistry.v2017_03_01.models.RegistryPassword>`
+    :type passwords:
+     list[~azure.mgmt.containerregistry.v2017_03_01.models.RegistryPassword]
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class RegistryListCredentialsResult(Model):
         'passwords': {'key': 'passwords', 'type': '[RegistryPassword]'},
     }
 
-    def __init__(self, username=None, passwords=None):
-        self.username = username
-        self.passwords = passwords
+    def __init__(self, **kwargs):
+        super(RegistryListCredentialsResult, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.passwords = kwargs.get('passwords', None)

@@ -16,57 +16,69 @@ class ServiceDescription(Model):
     """A ServiceDescription contains all of the information necessary to create a
     service.
 
-    :param application_name: The application name.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceDescription, StatelessServiceDescription
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param service_name: The service name.
+    :param service_name: Required. The full name of the service with 'fabric:'
+     URI scheme.
     :type service_name: str
-    :param service_type_name: The service type name.
+    :param service_type_name: Required. Name of the service type as specified
+     in the service manifest.
     :type service_type_name: str
     :param initialization_data: The initialization data as an array of bytes.
      Initialization data is passed to service instances or replicas when they
      are created.
-    :type initialization_data: list of int
-    :param partition_description: The partition description as an object.
-    :type partition_description: :class:`PartitionSchemeDescription
-     <azure.servicefabric.models.PartitionSchemeDescription>`
+    :type initialization_data: list[int]
+    :param partition_description: Required. The partition description as an
+     object.
+    :type partition_description:
+     ~azure.servicefabric.models.PartitionSchemeDescription
     :param placement_constraints: The placement constraints as a string.
-     Placement constraints are boolean expressions on node properties and
-     allow for restricting a service to particular nodes based on the service
+     Placement constraints are boolean expressions on node properties and allow
+     for restricting a service to particular nodes based on the service
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
     :param correlation_scheme: The correlation scheme.
-    :type correlation_scheme: list of :class:`ServiceCorrelationDescription
-     <azure.servicefabric.models.ServiceCorrelationDescription>`
+    :type correlation_scheme:
+     list[~azure.servicefabric.models.ServiceCorrelationDescription]
     :param service_load_metrics: The service load metrics.
-    :type service_load_metrics: list of :class:`ServiceLoadMetricDescription
-     <azure.servicefabric.models.ServiceLoadMetricDescription>`
+    :type service_load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies: The service placement policies.
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: The move cost for the service. Possible values
      include: 'Zero', 'Low', 'Medium', 'High'
-    :type default_move_cost: str
+    :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
     :type is_default_move_cost_specified: bool
     :param service_package_activation_mode: The activation mode of service
      package to be used for a service. Possible values include:
      'SharedProcess', 'ExclusiveProcess'
-    :type service_package_activation_mode: str
+    :type service_package_activation_mode: str or
+     ~azure.servicefabric.models.ServicePackageActivationMode
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param scaling_policies: Scaling policies for this service.
+    :type scaling_policies:
+     list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    """
 
     _validation = {
         'service_name': {'required': True},
         'service_type_name': {'required': True},
         'partition_description': {'required': True},
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -83,25 +95,28 @@ class ServiceDescription(Model):
         'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServiceKind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
+        'service_kind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
     }
 
-    def __init__(self, service_name, service_type_name, partition_description, application_name=None, initialization_data=None, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified=None, service_package_activation_mode=None, service_dns_name=None):
-        self.application_name = application_name
-        self.service_name = service_name
-        self.service_type_name = service_type_name
-        self.initialization_data = initialization_data
-        self.partition_description = partition_description
-        self.placement_constraints = placement_constraints
-        self.correlation_scheme = correlation_scheme
-        self.service_load_metrics = service_load_metrics
-        self.service_placement_policies = service_placement_policies
-        self.default_move_cost = default_move_cost
-        self.is_default_move_cost_specified = is_default_move_cost_specified
-        self.service_package_activation_mode = service_package_activation_mode
-        self.service_dns_name = service_dns_name
-        self.ServiceKind = None
+    def __init__(self, **kwargs):
+        super(ServiceDescription, self).__init__(**kwargs)
+        self.application_name = kwargs.get('application_name', None)
+        self.service_name = kwargs.get('service_name', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.initialization_data = kwargs.get('initialization_data', None)
+        self.partition_description = kwargs.get('partition_description', None)
+        self.placement_constraints = kwargs.get('placement_constraints', None)
+        self.correlation_scheme = kwargs.get('correlation_scheme', None)
+        self.service_load_metrics = kwargs.get('service_load_metrics', None)
+        self.service_placement_policies = kwargs.get('service_placement_policies', None)
+        self.default_move_cost = kwargs.get('default_move_cost', None)
+        self.is_default_move_cost_specified = kwargs.get('is_default_move_cost_specified', None)
+        self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)
+        self.scaling_policies = kwargs.get('scaling_policies', None)
+        self.service_kind = None

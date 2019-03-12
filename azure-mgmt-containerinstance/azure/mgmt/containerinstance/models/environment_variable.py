@@ -13,24 +13,30 @@ from msrest.serialization import Model
 
 
 class EnvironmentVariable(Model):
-    """Environment variable to set within the container.
+    """The environment variable to set within the container instance.
 
-    :param name: The name of the environment variable.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the environment variable.
     :type name: str
     :param value: The value of the environment variable.
     :type value: str
+    :param secure_value: The value of the secure environment variable.
+    :type secure_value: str
     """
 
     _validation = {
         'name': {'required': True},
-        'value': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'secure_value': {'key': 'secureValue', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EnvironmentVariable, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.secure_value = kwargs.get('secure_value', None)

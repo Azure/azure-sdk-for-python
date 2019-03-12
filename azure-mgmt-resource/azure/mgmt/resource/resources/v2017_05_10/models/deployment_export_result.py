@@ -23,5 +23,6 @@ class DeploymentExportResult(Model):
         'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, **kwargs):
+        super(DeploymentExportResult, self).__init__(**kwargs)
+        self.template = kwargs.get('template', None)

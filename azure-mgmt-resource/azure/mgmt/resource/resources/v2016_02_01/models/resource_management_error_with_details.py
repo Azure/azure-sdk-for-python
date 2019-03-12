@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class ResourceManagementErrorWithDetails(Model):
     """ResourceManagementErrorWithDetails.
 
-    :param code: The error code returned from the server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code returned from the server.
     :type code: str
-    :param message: The error message returned from the server.
+    :param message: Required. The error message returned from the server.
     :type message: str
     :param target: The target of the error.
     :type target: str
     :param details: Validation error.
-    :type details: list of :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails>`
+    :type details:
+     list[~azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails]
     """
 
     _validation = {
@@ -38,8 +40,9 @@ class ResourceManagementErrorWithDetails(Model):
         'details': {'key': 'details', 'type': '[ResourceManagementErrorWithDetails]'},
     }
 
-    def __init__(self, code, message, target=None, details=None):
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+    def __init__(self, **kwargs):
+        super(ResourceManagementErrorWithDetails, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)

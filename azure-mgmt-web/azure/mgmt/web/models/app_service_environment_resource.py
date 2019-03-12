@@ -18,33 +18,34 @@ class AppServiceEnvironmentResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param app_service_environment_resource_name: Name of the App Service
-     Environment.
+    :type tags: dict[str, str]
+    :param app_service_environment_resource_name: Required. Name of the App
+     Service Environment.
     :type app_service_environment_resource_name: str
-    :param app_service_environment_resource_location: Location of the App
-     Service Environment, e.g. "West US".
+    :param app_service_environment_resource_location: Required. Location of
+     the App Service Environment, e.g. "West US".
     :type app_service_environment_resource_location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
-    :vartype status: str or :class:`HostingEnvironmentStatus
-     <azure.mgmt.web.models.HostingEnvironmentStatus>`
+    :vartype status: str or ~azure.mgmt.web.models.HostingEnvironmentStatus
     :param vnet_name: Name of the Virtual Network for the App Service
      Environment.
     :type vnet_name: str
@@ -52,23 +53,20 @@ class AppServiceEnvironmentResource(Resource):
     :type vnet_resource_group_name: str
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
-    :param virtual_network: Description of the Virtual Network.
-    :type virtual_network: :class:`VirtualNetworkProfile
-     <azure.mgmt.web.models.VirtualNetworkProfile>`
+    :param virtual_network: Required. Description of the Virtual Network.
+    :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
-     :class:`InternalLoadBalancingMode
-     <azure.mgmt.web.models.InternalLoadBalancingMode>`
+     ~azure.mgmt.web.models.InternalLoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
-    :param worker_pools: Description of worker pools with worker size IDs, VM
-     sizes, and number of workers in each pool.
-    :type worker_pools: list of :class:`WorkerPool
-     <azure.mgmt.web.models.WorkerPool>`
+    :param worker_pools: Required. Description of worker pools with worker
+     size IDs, VM sizes, and number of workers in each pool.
+    :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
@@ -101,17 +99,15 @@ class AppServiceEnvironmentResource(Resource):
     :vartype maximum_number_of_machines: int
     :ivar vip_mappings: Description of IP SSL mapping for the App Service
      Environment.
-    :vartype vip_mappings: list of :class:`VirtualIPMapping
-     <azure.mgmt.web.models.VirtualIPMapping>`
+    :vartype vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
     :ivar environment_capacities: Current total, used, and available worker
      capacities.
-    :vartype environment_capacities: list of :class:`StampCapacity
-     <azure.mgmt.web.models.StampCapacity>`
+    :vartype environment_capacities:
+     list[~azure.mgmt.web.models.StampCapacity]
     :param network_access_control_list: Access control list for controlling
      traffic to the App Service Environment.
-    :type network_access_control_list: list of
-     :class:`NetworkAccessControlEntry
-     <azure.mgmt.web.models.NetworkAccessControlEntry>`
+    :type network_access_control_list:
+     list[~azure.mgmt.web.models.NetworkAccessControlEntry]
     :ivar environment_is_healthy: True/false indicating whether the App
      Service Environment is healthy.
     :vartype environment_is_healthy: bool
@@ -139,13 +135,26 @@ class AppServiceEnvironmentResource(Resource):
     :type dynamic_cache_enabled: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
-    :type cluster_settings: list of :class:`NameValuePair
-     <azure.mgmt.web.models.NameValuePair>`
+    :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
+     ASE db
+    :type user_whitelisted_ip_ranges: list[str]
+    :param has_linux_workers: Flag that displays whether an ASE has linux
+     workers or not
+    :type has_linux_workers: bool
+    :param ssl_cert_key_vault_id: Key Vault ID for ILB App Service Environment
+     default SSL certificate
+    :type ssl_cert_key_vault_id: str
+    :param ssl_cert_key_vault_secret_name: Key Vault Secret Name for ILB App
+     Service Environment default SSL certificate
+    :type ssl_cert_key_vault_secret_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
         'app_service_environment_resource_name': {'required': True},
         'app_service_environment_resource_location': {'required': True},
         'provisioning_state': {'readonly': True},
@@ -211,28 +220,32 @@ class AppServiceEnvironmentResource(Resource):
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
         'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
+        'user_whitelisted_ip_ranges': {'key': 'properties.userWhitelistedIpRanges', 'type': '[str]'},
+        'has_linux_workers': {'key': 'properties.hasLinuxWorkers', 'type': 'bool'},
+        'ssl_cert_key_vault_id': {'key': 'properties.sslCertKeyVaultId', 'type': 'str'},
+        'ssl_cert_key_vault_secret_name': {'key': 'properties.sslCertKeyVaultSecretName', 'type': 'str'},
     }
 
-    def __init__(self, location, app_service_environment_resource_name, app_service_environment_resource_location, virtual_network, worker_pools, name=None, kind=None, type=None, tags=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
-        super(AppServiceEnvironmentResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.app_service_environment_resource_name = app_service_environment_resource_name
-        self.app_service_environment_resource_location = app_service_environment_resource_location
+    def __init__(self, **kwargs):
+        super(AppServiceEnvironmentResource, self).__init__(**kwargs)
+        self.app_service_environment_resource_name = kwargs.get('app_service_environment_resource_name', None)
+        self.app_service_environment_resource_location = kwargs.get('app_service_environment_resource_location', None)
         self.provisioning_state = None
         self.status = None
-        self.vnet_name = vnet_name
-        self.vnet_resource_group_name = vnet_resource_group_name
-        self.vnet_subnet_name = vnet_subnet_name
-        self.virtual_network = virtual_network
-        self.internal_load_balancing_mode = internal_load_balancing_mode
-        self.multi_size = multi_size
-        self.multi_role_count = multi_role_count
-        self.worker_pools = worker_pools
-        self.ipssl_address_count = ipssl_address_count
+        self.vnet_name = kwargs.get('vnet_name', None)
+        self.vnet_resource_group_name = kwargs.get('vnet_resource_group_name', None)
+        self.vnet_subnet_name = kwargs.get('vnet_subnet_name', None)
+        self.virtual_network = kwargs.get('virtual_network', None)
+        self.internal_load_balancing_mode = kwargs.get('internal_load_balancing_mode', None)
+        self.multi_size = kwargs.get('multi_size', None)
+        self.multi_role_count = kwargs.get('multi_role_count', None)
+        self.worker_pools = kwargs.get('worker_pools', None)
+        self.ipssl_address_count = kwargs.get('ipssl_address_count', None)
         self.database_edition = None
         self.database_service_objective = None
         self.upgrade_domains = None
         self.subscription_id = None
-        self.dns_suffix = dns_suffix
+        self.dns_suffix = kwargs.get('dns_suffix', None)
         self.last_action = None
         self.last_action_result = None
         self.allowed_multi_sizes = None
@@ -240,13 +253,17 @@ class AppServiceEnvironmentResource(Resource):
         self.maximum_number_of_machines = None
         self.vip_mappings = None
         self.environment_capacities = None
-        self.network_access_control_list = network_access_control_list
+        self.network_access_control_list = kwargs.get('network_access_control_list', None)
         self.environment_is_healthy = None
         self.environment_status = None
         self.resource_group = None
-        self.front_end_scale_factor = front_end_scale_factor
+        self.front_end_scale_factor = kwargs.get('front_end_scale_factor', None)
         self.default_front_end_scale_factor = None
-        self.api_management_account_id = api_management_account_id
-        self.suspended = suspended
-        self.dynamic_cache_enabled = dynamic_cache_enabled
-        self.cluster_settings = cluster_settings
+        self.api_management_account_id = kwargs.get('api_management_account_id', None)
+        self.suspended = kwargs.get('suspended', None)
+        self.dynamic_cache_enabled = kwargs.get('dynamic_cache_enabled', None)
+        self.cluster_settings = kwargs.get('cluster_settings', None)
+        self.user_whitelisted_ip_ranges = kwargs.get('user_whitelisted_ip_ranges', None)
+        self.has_linux_workers = kwargs.get('has_linux_workers', None)
+        self.ssl_cert_key_vault_id = kwargs.get('ssl_cert_key_vault_id', None)
+        self.ssl_cert_key_vault_secret_name = kwargs.get('ssl_cert_key_vault_secret_name', None)

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteAuthSettings(Resource):
+class SiteAuthSettings(ProxyOnlyResource):
     """Configuration settings for the Azure App Service Authentication /
     Authorization feature.
 
@@ -21,16 +21,12 @@ class SiteAuthSettings(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param enabled: <code>true</code> if the Authentication / Authorization
      feature is enabled for the current app; otherwise, <code>false</code>.
     :type enabled: bool
@@ -43,8 +39,7 @@ class SiteAuthSettings(Resource):
      unauthenticated client attempts to access the app. Possible values
      include: 'RedirectToLoginPage', 'AllowAnonymous'
     :type unauthenticated_client_action: str or
-     :class:`UnauthenticatedClientAction
-     <azure.mgmt.web.models.UnauthenticatedClientAction>`
+     ~azure.mgmt.web.models.UnauthenticatedClientAction
     :param token_store_enabled: <code>true</code> to durably store
      platform-specific security tokens that are obtained during login flows;
      otherwise, <code>false</code>.
@@ -56,7 +51,7 @@ class SiteAuthSettings(Resource):
      This is an advanced setting typically only needed by Windows Store
      application backends.
      Note that URLs within the current domain are always implicitly allowed.
-    :type allowed_external_redirect_urls: list of str
+    :type allowed_external_redirect_urls: list[str]
     :param default_provider: The default authentication provider to use when
      multiple providers are configured.
      This setting is only needed if multiple providers are configured and the
@@ -64,8 +59,8 @@ class SiteAuthSettings(Resource):
      action is set to "RedirectToLoginPage". Possible values include:
      'AzureActiveDirectory', 'Facebook', 'Google', 'MicrosoftAccount',
      'Twitter'
-    :type default_provider: str or :class:`BuiltInAuthenticationProvider
-     <azure.mgmt.web.models.BuiltInAuthenticationProvider>`
+    :type default_provider: str or
+     ~azure.mgmt.web.models.BuiltInAuthenticationProvider
     :param token_refresh_extension_hours: The number of hours after session
      token expiration that a session token can be used to
      call the token refresh API. The default is 72 hours.
@@ -95,16 +90,19 @@ class SiteAuthSettings(Resource):
      More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html
     :type issuer: str
+    :param validate_issuer: Gets a value indicating whether the issuer should
+     be a valid HTTPS url and be validated as such.
+    :type validate_issuer: bool
     :param allowed_audiences: Allowed audience values to consider when
      validating JWTs issued by
      Azure Active Directory. Note that the <code>ClientID</code> value is
      always considered an
      allowed audience, regardless of this setting.
-    :type allowed_audiences: list of str
+    :type allowed_audiences: list[str]
     :param additional_login_params: Login parameters to send to the OpenID
      Connect authorization endpoint when
      a user logs in. Each parameter must be in the form "key=value".
-    :type additional_login_params: list of str
+    :type additional_login_params: list[str]
     :param google_client_id: The OpenID Connect Client ID for the Google web
      application.
      This setting is required for enabling Google Sign-In.
@@ -123,7 +121,7 @@ class SiteAuthSettings(Resource):
      "email" are used as default scopes.
      Google Sign-In documentation:
      https://developers.google.com/identity/sign-in/web/
-    :type google_oauth_scopes: list of str
+    :type google_oauth_scopes: list[str]
     :param facebook_app_id: The App ID of the Facebook app used for login.
      This setting is required for enabling Facebook Login.
      Facebook Login documentation:
@@ -140,7 +138,7 @@ class SiteAuthSettings(Resource):
      This setting is optional.
      Facebook Login documentation:
      https://developers.facebook.com/docs/facebook-login
-    :type facebook_oauth_scopes: list of str
+    :type facebook_oauth_scopes: list[str]
     :param twitter_consumer_key: The OAuth 1.0a consumer key of the Twitter
      application used for sign-in.
      This setting is required for enabling Twitter Sign-In.
@@ -169,21 +167,20 @@ class SiteAuthSettings(Resource):
      default scope.
      Microsoft Account Scopes and permissions documentation:
      https://msdn.microsoft.com/en-us/library/dn631845.aspx
-    :type microsoft_account_oauth_scopes: list of str
+    :type microsoft_account_oauth_scopes: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
         'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'UnauthenticatedClientAction'},
@@ -194,6 +191,7 @@ class SiteAuthSettings(Resource):
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'validate_issuer': {'key': 'properties.validateIssuer', 'type': 'bool'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
         'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
         'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
@@ -209,28 +207,29 @@ class SiteAuthSettings(Resource):
         'microsoft_account_oauth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
-        super(SiteAuthSettings, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.enabled = enabled
-        self.runtime_version = runtime_version
-        self.unauthenticated_client_action = unauthenticated_client_action
-        self.token_store_enabled = token_store_enabled
-        self.allowed_external_redirect_urls = allowed_external_redirect_urls
-        self.default_provider = default_provider
-        self.token_refresh_extension_hours = token_refresh_extension_hours
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.issuer = issuer
-        self.allowed_audiences = allowed_audiences
-        self.additional_login_params = additional_login_params
-        self.google_client_id = google_client_id
-        self.google_client_secret = google_client_secret
-        self.google_oauth_scopes = google_oauth_scopes
-        self.facebook_app_id = facebook_app_id
-        self.facebook_app_secret = facebook_app_secret
-        self.facebook_oauth_scopes = facebook_oauth_scopes
-        self.twitter_consumer_key = twitter_consumer_key
-        self.twitter_consumer_secret = twitter_consumer_secret
-        self.microsoft_account_client_id = microsoft_account_client_id
-        self.microsoft_account_client_secret = microsoft_account_client_secret
-        self.microsoft_account_oauth_scopes = microsoft_account_oauth_scopes
+    def __init__(self, **kwargs):
+        super(SiteAuthSettings, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.unauthenticated_client_action = kwargs.get('unauthenticated_client_action', None)
+        self.token_store_enabled = kwargs.get('token_store_enabled', None)
+        self.allowed_external_redirect_urls = kwargs.get('allowed_external_redirect_urls', None)
+        self.default_provider = kwargs.get('default_provider', None)
+        self.token_refresh_extension_hours = kwargs.get('token_refresh_extension_hours', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.issuer = kwargs.get('issuer', None)
+        self.validate_issuer = kwargs.get('validate_issuer', None)
+        self.allowed_audiences = kwargs.get('allowed_audiences', None)
+        self.additional_login_params = kwargs.get('additional_login_params', None)
+        self.google_client_id = kwargs.get('google_client_id', None)
+        self.google_client_secret = kwargs.get('google_client_secret', None)
+        self.google_oauth_scopes = kwargs.get('google_oauth_scopes', None)
+        self.facebook_app_id = kwargs.get('facebook_app_id', None)
+        self.facebook_app_secret = kwargs.get('facebook_app_secret', None)
+        self.facebook_oauth_scopes = kwargs.get('facebook_oauth_scopes', None)
+        self.twitter_consumer_key = kwargs.get('twitter_consumer_key', None)
+        self.twitter_consumer_secret = kwargs.get('twitter_consumer_secret', None)
+        self.microsoft_account_client_id = kwargs.get('microsoft_account_client_id', None)
+        self.microsoft_account_client_secret = kwargs.get('microsoft_account_client_secret', None)
+        self.microsoft_account_oauth_scopes = kwargs.get('microsoft_account_oauth_scopes', None)

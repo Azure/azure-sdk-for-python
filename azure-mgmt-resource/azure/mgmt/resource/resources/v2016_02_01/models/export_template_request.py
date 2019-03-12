@@ -18,7 +18,7 @@ class ExportTemplateRequest(Model):
     :param resources: The ids of the resources. The only supported string
      currently is '*' (all resources). Future api updates will support
      exporting specific resources.
-    :type resources: list of str
+    :type resources: list[str]
     :param options: The export template options. Supported values include
      'IncludeParameterDefaultValue', 'IncludeComments' or
      'IncludeParameterDefaultValue, IncludeComments
@@ -30,6 +30,7 @@ class ExportTemplateRequest(Model):
         'options': {'key': 'options', 'type': 'str'},
     }
 
-    def __init__(self, resources=None, options=None):
-        self.resources = resources
-        self.options = options
+    def __init__(self, **kwargs):
+        super(ExportTemplateRequest, self).__init__(**kwargs)
+        self.resources = kwargs.get('resources', None)
+        self.options = kwargs.get('options', None)

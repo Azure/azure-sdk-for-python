@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.0
+          msrest_azure/0.4.32 azure-mgmt-reservations/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Capacity/operations?api-version=2018-06-01
+  response:
+    body: {string: '{"value":[{"name":"Microsoft.Capacity/reservationorders/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/reservationorders/write","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Create Reservations","description":"Create
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Update Reservations","description":"Update
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/delete","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Delete Reservations","description":"Delete
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/reservationorders/reservations/write","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Create Reservations","description":"Create
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Update Reservations","description":"Update
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/delete","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Delete Reservations","description":"Delete
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/revisions/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/register/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Registers the Capacity Resource
+        Provider.","description":"Registers the Capacity resource provider and enables
+        the creation of Capacity resources."}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['2125']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 14 Jun 2018 20:54:33 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

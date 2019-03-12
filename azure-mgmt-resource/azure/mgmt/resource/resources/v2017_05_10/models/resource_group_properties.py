@@ -30,5 +30,6 @@ class ResourceGroupProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ResourceGroupProperties, self).__init__(**kwargs)
         self.provisioning_state = None

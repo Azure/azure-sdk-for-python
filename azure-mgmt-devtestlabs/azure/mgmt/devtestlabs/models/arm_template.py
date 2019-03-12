@@ -27,7 +27,7 @@ class ArmTemplate(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar display_name: The display name of the ARM template.
     :vartype display_name: str
     :ivar description: The description of the ARM template.
@@ -42,9 +42,8 @@ class ArmTemplate(Resource):
     :vartype created_date: datetime
     :ivar parameters_value_files_info: File name and parameter values
      information from all azuredeploy.*.parameters.json for the ARM template.
-    :vartype parameters_value_files_info: list of
-     :class:`ParametersValueFileInfo
-     <azure.mgmt.devtestlabs.models.ParametersValueFileInfo>`
+    :vartype parameters_value_files_info:
+     list[~azure.mgmt.devtestlabs.models.ParametersValueFileInfo]
     """
 
     _validation = {

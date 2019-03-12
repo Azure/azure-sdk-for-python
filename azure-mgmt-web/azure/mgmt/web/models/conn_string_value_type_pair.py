@@ -15,13 +15,14 @@ from msrest.serialization import Model
 class ConnStringValueTypePair(Model):
     """Database connection string value to type pair.
 
-    :param value: Value of pair.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. Value of pair.
     :type value: str
-    :param type: Type of database. Possible values include: 'MySql',
+    :param type: Required. Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or :class:`ConnectionStringType
-     <azure.mgmt.web.models.ConnectionStringType>`
+    :type type: str or ~azure.mgmt.web.models.ConnectionStringType
     """
 
     _validation = {
@@ -34,6 +35,7 @@ class ConnStringValueTypePair(Model):
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, value, type):
-        self.value = value
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ConnStringValueTypePair, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.type = kwargs.get('type', None)

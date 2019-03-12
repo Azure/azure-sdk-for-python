@@ -9,18 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_definition import PolicyDefinition
-from .policy_assignment import PolicyAssignment
-from .policy_assignment_paged import PolicyAssignmentPaged
+try:
+    from .policy_definition_py3 import PolicyDefinition
+    from .policy_assignment_py3 import PolicyAssignment
+except (SyntaxError, ImportError):
+    from .policy_definition import PolicyDefinition
+    from .policy_assignment import PolicyAssignment
 from .policy_definition_paged import PolicyDefinitionPaged
+from .policy_assignment_paged import PolicyAssignmentPaged
 from .policy_client_enums import (
     PolicyType,
+    PolicyMode,
 )
 
 __all__ = [
     'PolicyDefinition',
     'PolicyAssignment',
-    'PolicyAssignmentPaged',
     'PolicyDefinitionPaged',
+    'PolicyAssignmentPaged',
     'PolicyType',
+    'PolicyMode',
 ]

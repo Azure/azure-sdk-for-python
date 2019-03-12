@@ -18,11 +18,12 @@ class NodeId(Model):
 
     :param id: Value of the node Id. This is a 128 bit integer.
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(NodeId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

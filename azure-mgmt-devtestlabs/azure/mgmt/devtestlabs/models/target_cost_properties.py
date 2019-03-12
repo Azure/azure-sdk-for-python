@@ -17,21 +17,19 @@ class TargetCostProperties(Model):
 
     :param status: Target cost status. Possible values include: 'Enabled',
      'Disabled'
-    :type status: str or :class:`TargetCostStatus
-     <azure.mgmt.devtestlabs.models.TargetCostStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.TargetCostStatus
     :param target: Lab target cost
     :type target: int
     :param cost_thresholds: Cost thresholds.
-    :type cost_thresholds: list of :class:`CostThresholdProperties
-     <azure.mgmt.devtestlabs.models.CostThresholdProperties>`
+    :type cost_thresholds:
+     list[~azure.mgmt.devtestlabs.models.CostThresholdProperties]
     :param cycle_start_date_time: Reporting cycle start date.
     :type cycle_start_date_time: datetime
     :param cycle_end_date_time: Reporting cycle end date.
     :type cycle_end_date_time: datetime
     :param cycle_type: Reporting cycle type. Possible values include:
      'CalendarMonth', 'Custom'
-    :type cycle_type: str or :class:`ReportingCycleType
-     <azure.mgmt.devtestlabs.models.ReportingCycleType>`
+    :type cycle_type: str or ~azure.mgmt.devtestlabs.models.ReportingCycleType
     """
 
     _attribute_map = {
@@ -44,6 +42,7 @@ class TargetCostProperties(Model):
     }
 
     def __init__(self, status=None, target=None, cost_thresholds=None, cycle_start_date_time=None, cycle_end_date_time=None, cycle_type=None):
+        super(TargetCostProperties, self).__init__()
         self.status = status
         self.target = target
         self.cost_thresholds = cost_thresholds

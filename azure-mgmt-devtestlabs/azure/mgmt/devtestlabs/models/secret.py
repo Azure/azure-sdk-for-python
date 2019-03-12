@@ -27,7 +27,7 @@ class Secret(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param value: The value of the secret for secret creation.
     :type value: str
     :param provisioning_state: The provisioning status of the resource.

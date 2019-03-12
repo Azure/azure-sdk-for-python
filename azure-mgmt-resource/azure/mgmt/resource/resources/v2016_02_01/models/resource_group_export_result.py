@@ -18,8 +18,8 @@ class ResourceGroupExportResult(Model):
     :param template: The template content.
     :type template: object
     :param error: The error.
-    :type error: :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails>`
+    :type error:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails
     """
 
     _attribute_map = {
@@ -27,6 +27,7 @@ class ResourceGroupExportResult(Model):
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
     }
 
-    def __init__(self, template=None, error=None):
-        self.template = template
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ResourceGroupExportResult, self).__init__(**kwargs)
+        self.template = kwargs.get('template', None)
+        self.error = kwargs.get('error', None)

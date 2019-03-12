@@ -29,7 +29,8 @@ class BasicDependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, id=None, resource_type=None, resource_name=None):
-        self.id = id
-        self.resource_type = resource_type
-        self.resource_name = resource_name
+    def __init__(self, **kwargs):
+        super(BasicDependency, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_name = kwargs.get('resource_name', None)

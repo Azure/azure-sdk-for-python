@@ -12,18 +12,59 @@
 from enum import Enum
 
 
-class ContainerRestartPolicy(Enum):
-
-    always = "always"
-
-
-class ContainerGroupNetworkProtocol(Enum):
+class ContainerNetworkProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
 
 
-class OperatingSystemTypes(Enum):
+class GpuSku(str, Enum):
+
+    k80 = "K80"
+    p100 = "P100"
+    v100 = "V100"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
+
+
+class ContainerGroupRestartPolicy(str, Enum):
+
+    always = "Always"
+    on_failure = "OnFailure"
+    never = "Never"
+
+
+class ContainerGroupNetworkProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class ContainerGroupIpAddressType(str, Enum):
+
+    public = "Public"
+    private = "Private"
+
+
+class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+
+class LogAnalyticsLogType(str, Enum):
+
+    container_insights = "ContainerInsights"
+    container_instance_logs = "ContainerInstanceLogs"
+
+
+class ContainerInstanceOperationsOrigin(str, Enum):
+
+    user = "User"
+    system = "System"

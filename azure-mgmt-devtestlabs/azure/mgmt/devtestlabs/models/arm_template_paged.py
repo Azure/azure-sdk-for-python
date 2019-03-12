@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ArmTemplatePaged(Paged):
     """
-    A paging container for iterating over a list of ArmTemplate object
+    A paging container for iterating over a list of :class:`ArmTemplate <azure.mgmt.devtestlabs.models.ArmTemplate>` object
     """
 
     _attribute_map = {

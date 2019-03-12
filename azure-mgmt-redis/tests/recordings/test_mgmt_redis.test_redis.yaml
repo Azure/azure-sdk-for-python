@@ -1,0 +1,89 @@
+interactions:
+- request:
+    body: '{"properties": {"sku": {"name": "Basic", "family": "C", "capacity": 1}},
+      "location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['94']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 azure-mgmt-redis/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2017-10-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename","location":"West
+        US","name":"mycachename","type":"Microsoft.Cache/Redis","tags":{},"properties":{"provisioningState":"Creating","redisVersion":"3.2.7","sku":{"name":"Basic","family":"C","capacity":1},"enableNonSslPort":false,"redisConfiguration":{"maxclients":"1000","maxmemory-reserved":"50","maxfragmentationmemory-reserved":"50","maxmemory-delta":"50"},"accessKeys":{"primaryKey":"hp424Tqg3z71yVrrjGfP49cCeu+417QrvGVzXutin9U=","secondaryKey":"a9IOl0zTf6iNErNDNRMG1ciWhEUW+wGrCCUIMRJ8TVU="},"hostName":"mycachename.redis.cache.windows.net","port":6379,"sslPort":6380,"linkedServers":[]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['743']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 08 Feb 2018 19:00:32 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/redis/mycachename?api-version=2017-10-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-rp-server-mvid: [dd6c791d-5fa3-4f01-8490-cebc87c949a0]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 azure-mgmt-redis/5.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/redis/mycachename?api-version=2017-10-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename","location":"West
+        US","name":"mycachename","type":"Microsoft.Cache/Redis","tags":{},"properties":{"provisioningState":"Creating","redisVersion":"3.2.7","sku":{"name":"Basic","family":"C","capacity":1},"enableNonSslPort":false,"redisConfiguration":{"maxclients":"1000","maxmemory-reserved":"50","maxfragmentationmemory-reserved":"50","maxmemory-delta":"50"},"accessKeys":null,"hostName":"mycachename.redis.cache.windows.net","port":6379,"sslPort":6380,"linkedServers":[]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['624']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 08 Feb 2018 19:01:03 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-rp-server-mvid: [dd6c791d-5fa3-4f01-8490-cebc87c949a0]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 azure-mgmt-redis/5.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2017-10-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename","location":"West
+        US","name":"mycachename","type":"Microsoft.Cache/Redis","tags":{},"properties":{"provisioningState":"Creating","redisVersion":"3.2.7","sku":{"name":"Basic","family":"C","capacity":1},"enableNonSslPort":false,"redisConfiguration":{"maxclients":"1000","maxmemory-reserved":"50","maxfragmentationmemory-reserved":"50","maxmemory-delta":"50"},"accessKeys":null,"hostName":"mycachename.redis.cache.windows.net","port":6379,"sslPort":6380,"linkedServers":[]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['624']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 08 Feb 2018 19:01:03 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-rp-server-mvid: [dd6c791d-5fa3-4f01-8490-cebc87c949a0]
+    status: {code: 200, message: OK}
+version: 1

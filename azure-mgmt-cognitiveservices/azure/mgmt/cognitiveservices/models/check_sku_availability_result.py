@@ -16,16 +16,17 @@ class CheckSkuAvailabilityResult(Model):
     """Check SKU availability result.
 
     :param kind: The Kind of the resource. Possible values include:
-     'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
-     'Bing.SpellCheck', 'ComputerVision', 'ContentModerator', 'CustomSpeech',
-     'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
-     'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
-    :type kind: str or :class:`Kind
-     <azure.mgmt.cognitiveservices.models.Kind>`
+     'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
+     'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision', 'ContentModerator',
+     'CustomSpeech', 'CustomVision.Prediction', 'CustomVision.Training',
+     'Emotion', 'Face', 'LUIS', 'QnAMaker', 'SpeakerRecognition',
+     'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
+    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
     :param type: The Type of the resource.
     :type type: str
-    :param sku_name: The SKU of Cognitive Services account.
-    :type sku_name: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :param sku_name: The SKU of Cognitive Services account. Possible values
+     include: 'F0', 'P0', 'P1', 'P2', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
+    :type sku_name: str or ~azure.mgmt.cognitiveservices.models.SkuName
     :param sku_available: Indicates the given SKU is available or not.
     :type sku_available: bool
     :param reason: Reason why the SKU is not available.
@@ -37,16 +38,17 @@ class CheckSkuAvailabilityResult(Model):
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'sku_name': {'key': 'skuName', 'type': 'Sku'},
+        'sku_name': {'key': 'skuName', 'type': 'str'},
         'sku_available': {'key': 'skuAvailable', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, type=None, sku_name=None, sku_available=None, reason=None, message=None):
-        self.kind = kind
-        self.type = type
-        self.sku_name = sku_name
-        self.sku_available = sku_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, **kwargs):
+        super(CheckSkuAvailabilityResult, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.type = kwargs.get('type', None)
+        self.sku_name = kwargs.get('sku_name', None)
+        self.sku_available = kwargs.get('sku_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)

@@ -18,13 +18,12 @@ class ApplicationGatewayBackendHealthServer(Model):
     :param address: IP address or FQDN of backend server.
     :type address: str
     :param ip_configuration: Reference of IP configuration of backend server.
-    :type ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :type ip_configuration: ~azure.mgmt.network.v2016_12_01.models.SubResource
     :param health: Health of backend server. Possible values are: 'Unknown',
      'Up', 'Down', and 'Partial'. Possible values include: 'Unknown', 'Up',
      'Down', 'Partial'
-    :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
-     <azure.mgmt.network.v2016_12_01.models.ApplicationGatewayBackendHealthServerHealth>`
+    :type health: str or
+     ~azure.mgmt.network.v2016_12_01.models.ApplicationGatewayBackendHealthServerHealth
     """
 
     _attribute_map = {
@@ -33,7 +32,8 @@ class ApplicationGatewayBackendHealthServer(Model):
         'health': {'key': 'health', 'type': 'str'},
     }
 
-    def __init__(self, address=None, ip_configuration=None, health=None):
-        self.address = address
-        self.ip_configuration = ip_configuration
-        self.health = health
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHealthServer, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+        self.ip_configuration = kwargs.get('ip_configuration', None)
+        self.health = kwargs.get('health', None)

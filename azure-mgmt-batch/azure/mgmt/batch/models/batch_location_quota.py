@@ -32,4 +32,5 @@ class BatchLocationQuota(Model):
     }
 
     def __init__(self):
+        super(BatchLocationQuota, self).__init__()
         self.account_quota = None

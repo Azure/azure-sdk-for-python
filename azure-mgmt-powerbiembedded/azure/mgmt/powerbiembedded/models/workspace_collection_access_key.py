@@ -16,13 +16,13 @@ class WorkspaceCollectionAccessKey(Model):
     """WorkspaceCollectionAccessKey.
 
     :param key_name: Key name. Possible values include: 'key1', 'key2'
-    :type key_name: str or :class:`AccessKeyName
-     <azure.mgmt.powerbiembedded.models.AccessKeyName>`
+    :type key_name: str or ~azure.mgmt.powerbiembedded.models.AccessKeyName
     """
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'AccessKeyName'},
     }
 
-    def __init__(self, key_name=None):
-        self.key_name = key_name
+    def __init__(self, **kwargs):
+        super(WorkspaceCollectionAccessKey, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)

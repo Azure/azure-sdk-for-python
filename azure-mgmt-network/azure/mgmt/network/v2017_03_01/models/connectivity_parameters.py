@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class ConnectivityParameters(Model):
     """Parameters that determine how the connectivity check will be performed.
 
-    :param source:
-    :type source: :class:`ConnectivitySource
-     <azure.mgmt.network.v2017_03_01.models.ConnectivitySource>`
-    :param destination:
-    :type destination: :class:`ConnectivityDestination
-     <azure.mgmt.network.v2017_03_01.models.ConnectivityDestination>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required.
+    :type source: ~azure.mgmt.network.v2017_03_01.models.ConnectivitySource
+    :param destination: Required.
+    :type destination:
+     ~azure.mgmt.network.v2017_03_01.models.ConnectivityDestination
     """
 
     _validation = {
@@ -33,6 +34,7 @@ class ConnectivityParameters(Model):
         'destination': {'key': 'destination', 'type': 'ConnectivityDestination'},
     }
 
-    def __init__(self, source, destination):
-        self.source = source
-        self.destination = destination
+    def __init__(self, **kwargs):
+        super(ConnectivityParameters, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.destination = kwargs.get('destination', None)

@@ -24,4 +24,5 @@ class DayDetails(Model):
     }
 
     def __init__(self, time=None):
+        super(DayDetails, self).__init__()
         self.time = time

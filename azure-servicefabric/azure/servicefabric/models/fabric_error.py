@@ -17,12 +17,13 @@ class FabricError(Model):
     """The REST API operations for Service Fabric return standard HTTP status
     codes. This type defines the additional information returned from the
     Service Fabric API operations that are not successful.
-    .
 
-    :param error:
-    :type error: :class:`FabricErrorError
-     <azure.servicefabric.models.FabricErrorError>`
-    """ 
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. Error object containing error code and error
+     message.
+    :type error: ~azure.servicefabric.models.FabricErrorError
+    """
 
     _validation = {
         'error': {'required': True},
@@ -32,8 +33,9 @@ class FabricError(Model):
         'error': {'key': 'Error', 'type': 'FabricErrorError'},
     }
 
-    def __init__(self, error):
-        self.error = error
+    def __init__(self, **kwargs):
+        super(FabricError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class FabricErrorException(HttpOperationError):

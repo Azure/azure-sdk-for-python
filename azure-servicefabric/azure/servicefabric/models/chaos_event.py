@@ -15,26 +15,35 @@ from msrest.serialization import Model
 class ChaosEvent(Model):
     """Represents an event generated during a Chaos run.
 
-    :param time_stamp_utc:
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExecutingFaultsChaosEvent, StartedChaosEvent,
+    StoppedChaosEvent, TestErrorChaosEvent, ValidationFailedChaosEvent,
+    WaitingChaosEvent
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
 
     _validation = {
         'time_stamp_utc': {'required': True},
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'ExecutingFaults': 'ExecutingFaultsChaosEvent', 'Started': 'StartedChaosEvent', 'Stopped': 'StoppedChaosEvent', 'TestError': 'TestErrorChaosEvent', 'ValidationFailed': 'ValidationFailedChaosEvent', 'Waiting': 'WaitingChaosEvent'}
+        'kind': {'ExecutingFaults': 'ExecutingFaultsChaosEvent', 'Started': 'StartedChaosEvent', 'Stopped': 'StoppedChaosEvent', 'TestError': 'TestErrorChaosEvent', 'ValidationFailed': 'ValidationFailedChaosEvent', 'Waiting': 'WaitingChaosEvent'}
     }
 
-    def __init__(self, time_stamp_utc):
-        self.time_stamp_utc = time_stamp_utc
-        self.Kind = None
+    def __init__(self, **kwargs):
+        super(ChaosEvent, self).__init__(**kwargs)
+        self.time_stamp_utc = kwargs.get('time_stamp_utc', None)
+        self.kind = None

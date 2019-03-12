@@ -18,22 +18,23 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
+    :param location: Required. The location of the resource group to which the
+     resource belongs.
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :param kind: Indicates the type of database account. This can only be set
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
-    :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.cosmosdb.models.DatabaseAccountKind>`
+    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
     :param provisioning_state:
     :type provisioning_state: str
     :ivar document_endpoint: The connection endpoint for the Cosmos DB
@@ -43,13 +44,15 @@ class DatabaseAccount(Resource):
      database account. Default value: Standard. Possible values include:
      'Standard'
     :vartype database_account_offer_type: str or
-     :class:`DatabaseAccountOfferType
-     <azure.mgmt.cosmosdb.models.DatabaseAccountOfferType>`
+     ~azure.mgmt.cosmosdb.models.DatabaseAccountOfferType
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
      addresses/ranges must be comma separated and must not contain any spaces.
     :type ip_range_filter: str
+    :param is_virtual_network_filter_enabled: Flag to indicate whether to
+     enable/disable Virtual Network ACL rules.
+    :type is_virtual_network_filter_enabled: bool
     :param enable_automatic_failover: Enables automatic failover of the write
      region in the rare event that the region is unavailable due to an outage.
      Automatic failover will result in a new write region for the account and
@@ -57,20 +60,26 @@ class DatabaseAccount(Resource):
     :type enable_automatic_failover: bool
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
-    :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.cosmosdb.models.ConsistencyPolicy>`
+    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
-    :vartype write_locations: list of :class:`Location
-     <azure.mgmt.cosmosdb.models.Location>`
+    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
     :ivar read_locations: An array that contains of the read locations enabled
      for the Cosmos DB account.
-    :vartype read_locations: list of :class:`Location
-     <azure.mgmt.cosmosdb.models.Location>`
+    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
-    :vartype failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.cosmosdb.models.FailoverPolicy>`
+    :vartype failover_policies:
+     list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    :param virtual_network_rules: List of Virtual Network ACL rules configured
+     for the Cosmos DB account.
+    :type virtual_network_rules:
+     list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
     """
 
     _validation = {
@@ -96,22 +105,30 @@ class DatabaseAccount(Resource):
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'DatabaseAccountOfferType'},
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
         'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, enable_automatic_failover=None, consistency_policy=None):
-        super(DatabaseAccount, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(DatabaseAccount, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.document_endpoint = None
         self.database_account_offer_type = None
-        self.ip_range_filter = ip_range_filter
-        self.enable_automatic_failover = enable_automatic_failover
-        self.consistency_policy = consistency_policy
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.is_virtual_network_filter_enabled = kwargs.get('is_virtual_network_filter_enabled', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.capabilities = kwargs.get('capabilities', None)
         self.write_locations = None
         self.read_locations = None
         self.failover_policies = None
+        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)

@@ -17,13 +17,14 @@ class DatabaseAccountListConnectionStringsResult(Model):
 
     :param connection_strings: An array that contains the connection strings
      for the Cosmos DB account.
-    :type connection_strings: list of :class:`DatabaseAccountConnectionString
-     <azure.mgmt.cosmosdb.models.DatabaseAccountConnectionString>`
+    :type connection_strings:
+     list[~azure.mgmt.cosmosdb.models.DatabaseAccountConnectionString]
     """
 
     _attribute_map = {
         'connection_strings': {'key': 'connectionStrings', 'type': '[DatabaseAccountConnectionString]'},
     }
 
-    def __init__(self, connection_strings=None):
-        self.connection_strings = connection_strings
+    def __init__(self, **kwargs):
+        super(DatabaseAccountListConnectionStringsResult, self).__init__(**kwargs)
+        self.connection_strings = kwargs.get('connection_strings', None)

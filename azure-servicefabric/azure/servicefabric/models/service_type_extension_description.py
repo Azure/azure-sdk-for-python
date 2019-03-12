@@ -19,13 +19,14 @@ class ServiceTypeExtensionDescription(Model):
     :type key: str
     :param value: The extension value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'key': {'key': 'Key', 'type': 'str'},
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ServiceTypeExtensionDescription, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

@@ -10,9 +10,15 @@
 # --------------------------------------------------------------------------
 
 from .container_groups_operations import ContainerGroupsOperations
-from .container_logs_operations import ContainerLogsOperations
+from .operations import Operations
+from .container_group_usage_operations import ContainerGroupUsageOperations
+from .container_operations import ContainerOperations
+from .service_association_link_operations import ServiceAssociationLinkOperations
 
 __all__ = [
     'ContainerGroupsOperations',
-    'ContainerLogsOperations',
+    'Operations',
+    'ContainerGroupUsageOperations',
+    'ContainerOperations',
+    'ServiceAssociationLinkOperations',
 ]

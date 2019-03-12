@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RecoverableDatabasePaged(Paged):
     """
-    A paging container for iterating over a list of RecoverableDatabase object
+    A paging container for iterating over a list of :class:`RecoverableDatabase <azure.mgmt.sql.models.RecoverableDatabase>` object
     """
 
     _attribute_map = {

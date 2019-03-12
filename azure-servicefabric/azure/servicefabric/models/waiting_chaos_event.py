@@ -14,29 +14,33 @@ from .chaos_event import ChaosEvent
 
 class WaitingChaosEvent(ChaosEvent):
     """Describes a Chaos event that gets generated when Chaos is waiting for the
-    cluster to become ready for faulting, for example, Chaos may be waiting
-    for the on-going upgrade to finish.
+    cluster to become ready for faulting, for example, Chaos may be waiting for
+    the on-going upgrade to finish.
 
-    :param time_stamp_utc:
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp_utc: Required. The UTC timestamp when this Chaos event
+     was generated.
     :type time_stamp_utc: datetime
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    :param reason:
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param reason: Describes why the WaitingChaosEvent was generated, for
+     example, due to a cluster upgrade.
     :type reason: str
-    """ 
+    """
 
     _validation = {
         'time_stamp_utc': {'required': True},
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'reason': {'key': 'Reason', 'type': 'str'},
     }
 
-    def __init__(self, time_stamp_utc, reason=None):
-        super(WaitingChaosEvent, self).__init__(time_stamp_utc=time_stamp_utc)
-        self.reason = reason
-        self.Kind = 'Waiting'
+    def __init__(self, **kwargs):
+        super(WaitingChaosEvent, self).__init__(**kwargs)
+        self.reason = kwargs.get('reason', None)
+        self.kind = 'Waiting'

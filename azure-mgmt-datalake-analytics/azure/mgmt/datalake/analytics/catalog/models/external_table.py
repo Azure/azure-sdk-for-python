@@ -19,8 +19,7 @@ class ExternalTable(Model):
      schema.
     :type table_name: str
     :param data_source: the data source associated with this external table.
-    :type data_source: :class:`EntityId
-     <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
+    :type data_source: ~azure.mgmt.datalake.analytics.catalog.models.EntityId
     """
 
     _attribute_map = {
@@ -28,6 +27,7 @@ class ExternalTable(Model):
         'data_source': {'key': 'dataSource', 'type': 'EntityId'},
     }
 
-    def __init__(self, table_name=None, data_source=None):
-        self.table_name = table_name
-        self.data_source = data_source
+    def __init__(self, **kwargs):
+        super(ExternalTable, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
+        self.data_source = kwargs.get('data_source', None)

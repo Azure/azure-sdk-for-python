@@ -21,8 +21,7 @@ class AttachNewDataDiskOptions(Model):
     :type disk_name: str
     :param disk_type: The storage type for the disk (i.e. Standard, Premium).
      Possible values include: 'Standard', 'Premium'
-    :type disk_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
+    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     """
 
     _attribute_map = {
@@ -32,6 +31,7 @@ class AttachNewDataDiskOptions(Model):
     }
 
     def __init__(self, disk_size_gi_b=None, disk_name=None, disk_type=None):
+        super(AttachNewDataDiskOptions, self).__init__()
         self.disk_size_gi_b = disk_size_gi_b
         self.disk_name = disk_name
         self.disk_type = disk_type

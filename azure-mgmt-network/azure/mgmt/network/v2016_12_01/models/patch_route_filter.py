@@ -22,12 +22,11 @@ class PatchRouteFilter(SubResource):
     :type id: str
     :param rules: Collection of RouteFilterRules contained within a route
      filter.
-    :type rules: list of :class:`RouteFilterRule
-     <azure.mgmt.network.v2016_12_01.models.RouteFilterRule>`
+    :type rules: list[~azure.mgmt.network.v2016_12_01.models.RouteFilterRule]
     :ivar peerings: A collection of references to express route circuit
      peerings.
-    :vartype peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeering>`
+    :vartype peerings:
+     list[~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values are: 'Updating', 'Deleting', 'Succeeded' and 'Failed'.
     :vartype provisioning_state: str
@@ -40,7 +39,7 @@ class PatchRouteFilter(SubResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -62,12 +61,12 @@ class PatchRouteFilter(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, rules=None, tags=None):
-        super(PatchRouteFilter, self).__init__(id=id)
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(PatchRouteFilter, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
         self.peerings = None
         self.provisioning_state = None
         self.name = None
         self.etag = None
         self.type = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)

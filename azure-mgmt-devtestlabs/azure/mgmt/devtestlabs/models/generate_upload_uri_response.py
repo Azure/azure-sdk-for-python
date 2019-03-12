@@ -24,4 +24,5 @@ class GenerateUploadUriResponse(Model):
     }
 
     def __init__(self, upload_uri=None):
+        super(GenerateUploadUriResponse, self).__init__()
         self.upload_uri = upload_uri

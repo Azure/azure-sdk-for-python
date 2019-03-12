@@ -24,4 +24,5 @@ class PercentageCostThresholdProperties(Model):
     }
 
     def __init__(self, threshold_value=None):
+        super(PercentageCostThresholdProperties, self).__init__()
         self.threshold_value = threshold_value

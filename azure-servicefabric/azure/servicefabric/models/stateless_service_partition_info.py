@@ -15,34 +15,40 @@ from .service_partition_info import ServicePartitionInfo
 class StatelessServicePartitionInfo(ServicePartitionInfo):
     """Information about a partition of a stateless Service Fabric service.
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param partition_status: Possible values include: 'Invalid', 'Ready',
-     'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str
-    :param partition_information:
-    :type partition_information: :class:`PartitionInformation
-     <azure.servicefabric.models.PartitionInformation>`
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param partition_status: The status of the service fabric service
+     partition. Possible values include: 'Invalid', 'Ready', 'NotReady',
+     'InQuorumLoss', 'Reconfiguring', 'Deleting'
+    :type partition_status: str or
+     ~azure.servicefabric.models.ServicePartitionStatus
+    :param partition_information: Information about the partition identity,
+     partitioning scheme and keys supported by it.
+    :type partition_information:
+     ~azure.servicefabric.models.PartitionInformation
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
     :param instance_count: Number of instances of this partition.
     :type instance_count: long
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'partition_status': {'key': 'PartitionStatus', 'type': 'str'},
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'long'},
     }
 
-    def __init__(self, health_state=None, partition_status=None, partition_information=None, instance_count=None):
-        super(StatelessServicePartitionInfo, self).__init__(health_state=health_state, partition_status=partition_status, partition_information=partition_information)
-        self.instance_count = instance_count
-        self.ServiceKind = 'Stateless'
+    def __init__(self, **kwargs):
+        super(StatelessServicePartitionInfo, self).__init__(**kwargs)
+        self.instance_count = kwargs.get('instance_count', None)
+        self.service_kind = 'Stateless'

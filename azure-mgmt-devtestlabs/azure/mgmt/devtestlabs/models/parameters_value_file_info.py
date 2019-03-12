@@ -27,5 +27,6 @@ class ParametersValueFileInfo(Model):
     }
 
     def __init__(self, file_name=None, parameters_value_info=None):
+        super(ParametersValueFileInfo, self).__init__()
         self.file_name = file_name
         self.parameters_value_info = parameters_value_info

@@ -18,10 +18,12 @@ class CheckNameAvailabilityInput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The resource name to validate.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The resource name to validate.
     :type name: str
-    :ivar type: The type of the resource whose name is to be validated.
-     Default value: "Microsoft.Cdn/Profiles/Endpoints" .
+    :ivar type: Required. The type of the resource whose name is to be
+     validated. Default value: "Microsoft.Cdn/Profiles/Endpoints" .
     :vartype type: str
     """
 
@@ -37,5 +39,6 @@ class CheckNameAvailabilityInput(Model):
 
     type = "Microsoft.Cdn/Profiles/Endpoints"
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityInput, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

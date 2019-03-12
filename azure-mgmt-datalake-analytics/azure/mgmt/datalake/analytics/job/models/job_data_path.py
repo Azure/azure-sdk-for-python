@@ -18,12 +18,12 @@ class JobDataPath(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar job_id: the id of the job this data is for.
+    :ivar job_id: The ID of the job this data is for.
     :vartype job_id: str
-    :ivar command: the command that this job data relates to.
+    :ivar command: The command that this job data relates to.
     :vartype command: str
-    :ivar paths: the list of paths to all of the job data.
-    :vartype paths: list of str
+    :ivar paths: The list of paths to all of the job data.
+    :vartype paths: list[str]
     """
 
     _validation = {
@@ -38,7 +38,8 @@ class JobDataPath(Model):
         'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(JobDataPath, self).__init__(**kwargs)
         self.job_id = None
         self.command = None
         self.paths = None

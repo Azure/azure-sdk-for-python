@@ -18,10 +18,9 @@ class BatchAccountCreateParameters(Model):
     :param location: The region in which to create the account.
     :type location: str
     :param tags: The user-specified tags associated with the account.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param auto_storage: The properties related to the auto-storage account.
-    :type auto_storage: :class:`AutoStorageBaseProperties
-     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
+    :type auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
     :param pool_allocation_mode: The allocation mode to use for creating pools
      in the Batch account. The pool allocation mode also affects how clients
      may authenticate to the Batch Service API. If the mode is BatchService,
@@ -29,12 +28,11 @@ class BatchAccountCreateParameters(Model):
      the mode is UserSubscription, clients must use Azure Active Directory. The
      default is BatchService. Possible values include: 'BatchService',
      'UserSubscription'
-    :type pool_allocation_mode: str or :class:`PoolAllocationMode
-     <azure.mgmt.batch.models.PoolAllocationMode>`
+    :type pool_allocation_mode: str or
+     ~azure.mgmt.batch.models.PoolAllocationMode
     :param key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
-    :type key_vault_reference: :class:`KeyVaultReference
-     <azure.mgmt.batch.models.KeyVaultReference>`
+    :type key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
     """
 
     _validation = {
@@ -50,6 +48,7 @@ class BatchAccountCreateParameters(Model):
     }
 
     def __init__(self, location, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None):
+        super(BatchAccountCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.auto_storage = auto_storage

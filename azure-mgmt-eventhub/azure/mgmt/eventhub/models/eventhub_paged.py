@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EventhubPaged(Paged):
     """
-    A paging container for iterating over a list of Eventhub object
+    A paging container for iterating over a list of :class:`Eventhub <azure.mgmt.eventhub.models.Eventhub>` object
     """
 
     _attribute_map = {

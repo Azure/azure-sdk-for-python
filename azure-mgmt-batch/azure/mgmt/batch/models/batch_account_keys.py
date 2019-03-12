@@ -39,6 +39,7 @@ class BatchAccountKeys(Model):
     }
 
     def __init__(self):
+        super(BatchAccountKeys, self).__init__()
         self.account_name = None
         self.primary = None
         self.secondary = None

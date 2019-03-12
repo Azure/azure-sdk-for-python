@@ -17,27 +17,35 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     the identity, status, health, node name, uptime, and other details about
     the instance.
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param node_name: The name of the node.
+    All required parameters must be populated in order to send to Azure.
+
+    :param replica_status: The status of a replica of a service. Possible
+     values include: 'Invalid', 'InBuild', 'Standby', 'Ready', 'Down',
+     'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.ReplicaStatus
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    :param instance_id: Id of the stateless service instance.
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    :param instance_id: Id of a stateless service instance. InstanceId is used
+     by Service Fabric to uniquely identify an instance of a partition of a
+     stateless service. It is unique within a partition and does not change for
+     the lifetime of the instance. If the instance has failed over on the same
+     or different node, it will get a different value for the InstanceId.
     :type instance_id: str
-    """ 
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
     _attribute_map = {
@@ -46,11 +54,11 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
         'node_name': {'key': 'NodeName', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
         'last_in_build_duration_in_seconds': {'key': 'LastInBuildDurationInSeconds', 'type': 'str'},
-        'ServiceKind': {'key': 'ServiceKind', 'type': 'str'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_id': {'key': 'InstanceId', 'type': 'str'},
     }
 
-    def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None, instance_id=None):
-        super(StatelessServiceInstanceInfo, self).__init__(replica_status=replica_status, health_state=health_state, node_name=node_name, address=address, last_in_build_duration_in_seconds=last_in_build_duration_in_seconds)
-        self.instance_id = instance_id
-        self.ServiceKind = 'Stateless'
+    def __init__(self, **kwargs):
+        super(StatelessServiceInstanceInfo, self).__init__(**kwargs)
+        self.instance_id = kwargs.get('instance_id', None)
+        self.service_kind = 'Stateless'

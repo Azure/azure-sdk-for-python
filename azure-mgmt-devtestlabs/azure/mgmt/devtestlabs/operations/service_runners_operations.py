@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class ServiceRunnersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -56,8 +58,9 @@ class ServiceRunnersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceRunnerPaged
-         <azure.mgmt.devtestlabs.models.ServiceRunnerPaged>`
+        :return: An iterator like instance of ServiceRunner
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.ServiceRunnerPaged[~azure.mgmt.devtestlabs.models.ServiceRunner]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -99,7 +102,7 @@ class ServiceRunnersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -133,10 +136,9 @@ class ServiceRunnersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceRunner
-         <azure.mgmt.devtestlabs.models.ServiceRunner>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceRunner or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ServiceRunner or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -165,7 +167,7 @@ class ServiceRunnersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -195,17 +197,15 @@ class ServiceRunnersOperations(object):
         :type name: str
         :param service_runner: A container for a managed identity to execute
          DevTest lab services.
-        :type service_runner: :class:`ServiceRunner
-         <azure.mgmt.devtestlabs.models.ServiceRunner>`
+        :type service_runner: ~azure.mgmt.devtestlabs.models.ServiceRunner
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServiceRunner
-         <azure.mgmt.devtestlabs.models.ServiceRunner>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ServiceRunner or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ServiceRunner or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -238,7 +238,7 @@ class ServiceRunnersOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -273,9 +273,8 @@ class ServiceRunnersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -304,7 +303,7 @@ class ServiceRunnersOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)

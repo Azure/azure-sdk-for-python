@@ -22,9 +22,11 @@ class ExpressRouteServiceProvidersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-12-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -44,18 +46,16 @@ class ExpressRouteServiceProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`ExpressRouteServiceProvider
-         <azure.mgmt.network.v2016_12_01.models.ExpressRouteServiceProvider>`
-        :rtype: :class:`ExpressRouteServiceProviderPaged
-         <azure.mgmt.network.v2016_12_01.models.ExpressRouteServiceProviderPaged>`
+        :return: An iterator like instance of ExpressRouteServiceProvider
+        :rtype:
+         ~azure.mgmt.network.v2016_12_01.models.ExpressRouteServiceProviderPaged[~azure.mgmt.network.v2016_12_01.models.ExpressRouteServiceProvider]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -71,7 +71,7 @@ class ExpressRouteServiceProvidersOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -80,9 +80,8 @@ class ExpressRouteServiceProvidersOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -100,3 +99,4 @@ class ExpressRouteServiceProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders'}

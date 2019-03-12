@@ -26,14 +26,12 @@ class SkuDescription(Model):
     :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
     :param sku_capacity: Min, max, and default scale values of the SKU.
-    :type sku_capacity: :class:`SkuCapacity
-     <azure.mgmt.web.models.SkuCapacity>`
+    :type sku_capacity: ~azure.mgmt.web.models.SkuCapacity
     :param locations: Locations of the SKU.
-    :type locations: list of str
+    :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list of :class:`Capability
-     <azure.mgmt.web.models.Capability>`
+    :type capabilities: list[~azure.mgmt.web.models.Capability]
     """
 
     _attribute_map = {
@@ -47,12 +45,13 @@ class SkuDescription(Model):
         'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
-        self.name = name
-        self.tier = tier
-        self.size = size
-        self.family = family
-        self.capacity = capacity
-        self.sku_capacity = sku_capacity
-        self.locations = locations
-        self.capabilities = capabilities
+    def __init__(self, **kwargs):
+        super(SkuDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.sku_capacity = kwargs.get('sku_capacity', None)
+        self.locations = kwargs.get('locations', None)
+        self.capabilities = kwargs.get('capabilities', None)

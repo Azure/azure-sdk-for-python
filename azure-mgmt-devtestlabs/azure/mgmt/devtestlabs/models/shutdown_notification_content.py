@@ -56,6 +56,7 @@ class ShutdownNotificationContent(Model):
     }
 
     def __init__(self, skip_url=None, delay_url60=None, delay_url120=None, vm_name=None, guid=None, owner=None, event_type=None, text=None, subscription_id=None, resource_group_name=None, lab_name=None):
+        super(ShutdownNotificationContent, self).__init__()
         self.skip_url = skip_url
         self.delay_url60 = delay_url60
         self.delay_url120 = delay_url120

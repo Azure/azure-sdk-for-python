@@ -24,8 +24,7 @@ class DomainAvailablilityCheckResult(Model):
      full price of domain registration, SoftDeleted: Purchasing this domain
      will simply restore it and this operation will not cost anything. Possible
      values include: 'Regular', 'SoftDeleted'
-    :type domain_type: str or :class:`DomainType
-     <azure.mgmt.web.models.DomainType>`
+    :type domain_type: str or ~azure.mgmt.web.models.DomainType
     """
 
     _attribute_map = {
@@ -34,7 +33,8 @@ class DomainAvailablilityCheckResult(Model):
         'domain_type': {'key': 'domainType', 'type': 'DomainType'},
     }
 
-    def __init__(self, name=None, available=None, domain_type=None):
-        self.name = name
-        self.available = available
-        self.domain_type = domain_type
+    def __init__(self, **kwargs):
+        super(DomainAvailablilityCheckResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.available = kwargs.get('available', None)
+        self.domain_type = kwargs.get('domain_type', None)

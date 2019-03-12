@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class FailoverGroupPaged(Paged):
     """
-    A paging container for iterating over a list of FailoverGroup object
+    A paging container for iterating over a list of :class:`FailoverGroup <azure.mgmt.sql.models.FailoverGroup>` object
     """
 
     _attribute_map = {

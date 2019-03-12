@@ -15,31 +15,36 @@ from msrest.serialization import Model
 class EntityHealth(Model):
     """Health information common to all entities in the cluster. It contains the
     aggregated health state, health events and unhealthy evaluation.
-    .
 
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
     :param unhealthy_evaluations: The unhealthy evaluations that show why the
      current aggregated health state was returned by Health Manager.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'health_events': {'key': 'HealthEvents', 'type': '[HealthEvent]'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+        'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None):
-        self.aggregated_health_state = aggregated_health_state
-        self.health_events = health_events
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(EntityHealth, self).__init__(**kwargs)
+        self.aggregated_health_state = kwargs.get('aggregated_health_state', None)
+        self.health_events = kwargs.get('health_events', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.health_statistics = kwargs.get('health_statistics', None)

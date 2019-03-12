@@ -21,8 +21,7 @@ class Application(Model):
     :param display_name: The display name for the application.
     :type display_name: str
     :param packages: The list of packages under this application.
-    :type packages: list of :class:`ApplicationPackage
-     <azure.mgmt.batch.models.ApplicationPackage>`
+    :type packages: list[~azure.mgmt.batch.models.ApplicationPackage]
     :param allow_updates: A value indicating whether packages within the
      application may be overwritten using the same version string.
     :type allow_updates: bool
@@ -40,6 +39,7 @@ class Application(Model):
     }
 
     def __init__(self, id=None, display_name=None, packages=None, allow_updates=None, default_version=None):
+        super(Application, self).__init__()
         self.id = id
         self.display_name = display_name
         self.packages = packages

@@ -18,16 +18,16 @@ class MonetaryCommitment(OfferTermInfo):
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Polymorphic Discriminator
+    :param name: Constant filled by server.
     :type name: str
     :param tiered_discount: The list of key/value pairs for the tiered meter
      rates, in the format 'key':'value' where key = price, and value = the
      corresponding discount percentage. This field is used only by offer terms
      of type 'Monetary Commitment'.
-    :type tiered_discount: dict
+    :type tiered_discount: dict[str, decimal.Decimal]
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
-    :type excluded_meter_ids: list of str
+    :type excluded_meter_ids: list[str]
     """
 
     _validation = {

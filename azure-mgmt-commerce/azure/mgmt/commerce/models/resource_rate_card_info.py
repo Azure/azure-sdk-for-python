@@ -23,11 +23,9 @@ class ResourceRateCardInfo(Model):
      returned as 'false'.
     :type is_tax_included: bool
     :param offer_terms: A list of offer terms.
-    :type offer_terms: list of :class:`OfferTermInfo
-     <azure.mgmt.commerce.models.OfferTermInfo>`
+    :type offer_terms: list[~azure.mgmt.commerce.models.OfferTermInfo]
     :param meters: A list of meters.
-    :type meters: list of :class:`MeterInfo
-     <azure.mgmt.commerce.models.MeterInfo>`
+    :type meters: list[~azure.mgmt.commerce.models.MeterInfo]
     """
 
     _attribute_map = {
@@ -39,6 +37,7 @@ class ResourceRateCardInfo(Model):
     }
 
     def __init__(self, currency=None, locale=None, is_tax_included=None, offer_terms=None, meters=None):
+        super(ResourceRateCardInfo, self).__init__()
         self.currency = currency
         self.locale = locale
         self.is_tax_included = is_tax_included

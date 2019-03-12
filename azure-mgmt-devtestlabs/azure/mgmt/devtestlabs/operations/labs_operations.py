@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -23,9 +24,11 @@ class LabsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -56,7 +59,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabPaged <azure.mgmt.devtestlabs.models.LabPaged>`
+        :return: An iterator like instance of Lab
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabPaged[~azure.mgmt.devtestlabs.models.Lab]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -98,7 +103,7 @@ class LabsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -139,7 +144,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabPaged <azure.mgmt.devtestlabs.models.LabPaged>`
+        :return: An iterator like instance of Lab
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabPaged[~azure.mgmt.devtestlabs.models.Lab]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -182,7 +189,7 @@ class LabsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -217,9 +224,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Lab or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Lab or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -249,7 +256,7 @@ class LabsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -267,27 +274,9 @@ class LabsOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, resource_group_name, name, lab, custom_headers=None, raw=False, **operation_config):
-        """Create or replace an existing lab. This operation can take a while to
-        complete.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the lab.
-        :type name: str
-        :param lab: A lab.
-        :type lab: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, name, lab, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{name}'
         path_format_arguments = {
@@ -315,19 +304,73 @@ class LabsOperations(object):
         body_content = self._serialize.body(lab, 'Lab')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Lab', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('Lab', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, name, lab, custom_headers=None, raw=False, **operation_config):
+        """Create or replace an existing lab. This operation can take a while to
+        complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the lab.
+        :type name: str
+        :param lab: A lab.
+        :type lab: ~azure.mgmt.devtestlabs.models.Lab
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Lab or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.devtestlabs.models.Lab]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            lab=lab,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -336,22 +379,13 @@ class LabsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Lab', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('Lab', response)
+            deserialized = self._deserialize('Lab', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -360,24 +394,9 @@ class LabsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def delete(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Delete lab. This operation can take a while to complete.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the lab.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{name}'
         path_format_arguments = {
@@ -402,18 +421,58 @@ class LabsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Delete lab. This operation can take a while to complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the lab.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -425,10 +484,6 @@ class LabsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -446,16 +501,15 @@ class LabsOperations(object):
         :param name: The name of the lab.
         :type name: str
         :param lab: A lab.
-        :type lab: :class:`LabFragment
-         <azure.mgmt.devtestlabs.models.LabFragment>`
+        :type lab: ~azure.mgmt.devtestlabs.models.LabFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Lab or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Lab or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -487,7 +541,7 @@ class LabsOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -505,25 +559,9 @@ class LabsOperations(object):
 
         return deserialized
 
-    def claim_any_vm(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Claim a random claimable virtual machine in the lab. This operation can
-        take a while to complete.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the lab.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _claim_any_vm_initial(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{name}/claimAnyVm'
         path_format_arguments = {
@@ -548,18 +586,59 @@ class LabsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def claim_any_vm(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Claim a random claimable virtual machine in the lab. This operation can
+        take a while to complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the lab.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._claim_any_vm_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -572,10 +651,6 @@ class LabsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -583,30 +658,9 @@ class LabsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def create_environment(
-            self, resource_group_name, name, lab_virtual_machine_creation_parameter, custom_headers=None, raw=False, **operation_config):
-        """Create virtual machines in a lab. This operation can take a while to
-        complete.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the lab.
-        :type name: str
-        :param lab_virtual_machine_creation_parameter: Properties for creating
-         a virtual machine.
-        :type lab_virtual_machine_creation_parameter:
-         :class:`LabVirtualMachineCreationParameter
-         <azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_environment_initial(
+            self, resource_group_name, name, lab_virtual_machine_creation_parameter, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{name}/createEnvironment'
         path_format_arguments = {
@@ -634,19 +688,65 @@ class LabsOperations(object):
         body_content = self._serialize.body(lab_virtual_machine_creation_parameter, 'LabVirtualMachineCreationParameter')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def create_environment(
+            self, resource_group_name, name, lab_virtual_machine_creation_parameter, custom_headers=None, raw=False, **operation_config):
+        """Create virtual machines in a lab. This operation can take a while to
+        complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the lab.
+        :type name: str
+        :param lab_virtual_machine_creation_parameter: Properties for creating
+         a virtual machine.
+        :type lab_virtual_machine_creation_parameter:
+         ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_environment_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            lab_virtual_machine_creation_parameter=lab_virtual_machine_creation_parameter,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -659,10 +759,6 @@ class LabsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -670,32 +766,9 @@ class LabsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def export_resource_usage(
-            self, resource_group_name, name, blob_storage_absolute_sas_uri=None, usage_start_date=None, custom_headers=None, raw=False, **operation_config):
-        """Exports the lab resource usage into a storage account This operation
-        can take a while to complete.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the lab.
-        :type name: str
-        :param blob_storage_absolute_sas_uri: The blob storage absolute sas
-         uri with write permission to the container which the usage data needs
-         to be uploaded to.
-        :type blob_storage_absolute_sas_uri: str
-        :param usage_start_date: The start time of the usage. If not provided,
-         usage will be reported since the beginning of data collection.
-        :type usage_start_date: datetime
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _export_resource_usage_initial(
+            self, resource_group_name, name, blob_storage_absolute_sas_uri=None, usage_start_date=None, custom_headers=None, raw=False, **operation_config):
         export_resource_usage_parameters = models.ExportResourceUsageParameters(blob_storage_absolute_sas_uri=blob_storage_absolute_sas_uri, usage_start_date=usage_start_date)
 
         # Construct URL
@@ -725,19 +798,69 @@ class LabsOperations(object):
         body_content = self._serialize.body(export_resource_usage_parameters, 'ExportResourceUsageParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def export_resource_usage(
+            self, resource_group_name, name, blob_storage_absolute_sas_uri=None, usage_start_date=None, custom_headers=None, raw=False, **operation_config):
+        """Exports the lab resource usage into a storage account This operation
+        can take a while to complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the lab.
+        :type name: str
+        :param blob_storage_absolute_sas_uri: The blob storage absolute sas
+         uri with write permission to the container which the usage data needs
+         to be uploaded to.
+        :type blob_storage_absolute_sas_uri: str
+        :param usage_start_date: The start time of the usage. If not provided,
+         usage will be reported since the beginning of data collection.
+        :type usage_start_date: datetime
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._export_resource_usage_initial(
+            resource_group_name=resource_group_name,
+            name=name,
+            blob_storage_absolute_sas_uri=blob_storage_absolute_sas_uri,
+            usage_start_date=usage_start_date,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -749,10 +872,6 @@ class LabsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -776,10 +895,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`GenerateUploadUriResponse
-         <azure.mgmt.devtestlabs.models.GenerateUploadUriResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: GenerateUploadUriResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.GenerateUploadUriResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         generate_upload_uri_parameter = models.GenerateUploadUriParameter(blob_name=blob_name)
@@ -813,7 +931,7 @@ class LabsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -844,8 +962,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabVhdPaged
-         <azure.mgmt.devtestlabs.models.LabVhdPaged>`
+        :return: An iterator like instance of LabVhd
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabVhdPaged[~azure.mgmt.devtestlabs.models.LabVhd]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -881,7 +1000,7 @@ class LabsOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

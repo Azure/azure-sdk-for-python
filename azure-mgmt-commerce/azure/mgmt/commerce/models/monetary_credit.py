@@ -18,14 +18,14 @@ class MonetaryCredit(OfferTermInfo):
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Polymorphic Discriminator
+    :param name: Constant filled by server.
     :type name: str
     :param credit: The amount of credit provided under the terms of the given
      offer level.
     :type credit: decimal.Decimal
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
-    :type excluded_meter_ids: list of str
+    :type excluded_meter_ids: list[str]
     """
 
     _validation = {

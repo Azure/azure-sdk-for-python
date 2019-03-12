@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class CodePackageEntryPointStatistics(Model):
-    """Statistics about setup or main entry point  of a code package deployed on
-    a Service Fabric node.
+    """Statistics about setup or main entry point  of a code package deployed on a
+    Service Fabric node.
 
     :param last_exit_code: The last exit code of the entry point.
     :type last_exit_code: str
@@ -32,8 +32,8 @@ class CodePackageEntryPointStatistics(Model):
     :type last_successful_exit_time: datetime
     :param activation_count: Number of times the entry point has run.
     :type activation_count: str
-    :param activation_failure_count: Number of times the entry point failed
-     to run.
+    :param activation_failure_count: Number of times the entry point failed to
+     run.
     :type activation_failure_count: str
     :param continuous_activation_failure_count: Number of times the entry
      point continuously failed to run.
@@ -46,7 +46,7 @@ class CodePackageEntryPointStatistics(Model):
     :param continuous_exit_failure_count: Number of times the entry point
      continuously failed to exit gracefully.
     :type continuous_exit_failure_count: str
-    """ 
+    """
 
     _attribute_map = {
         'last_exit_code': {'key': 'LastExitCode', 'type': 'str'},
@@ -62,15 +62,16 @@ class CodePackageEntryPointStatistics(Model):
         'continuous_exit_failure_count': {'key': 'ContinuousExitFailureCount', 'type': 'str'},
     }
 
-    def __init__(self, last_exit_code=None, last_activation_time=None, last_exit_time=None, last_successful_activation_time=None, last_successful_exit_time=None, activation_count=None, activation_failure_count=None, continuous_activation_failure_count=None, exit_count=None, exit_failure_count=None, continuous_exit_failure_count=None):
-        self.last_exit_code = last_exit_code
-        self.last_activation_time = last_activation_time
-        self.last_exit_time = last_exit_time
-        self.last_successful_activation_time = last_successful_activation_time
-        self.last_successful_exit_time = last_successful_exit_time
-        self.activation_count = activation_count
-        self.activation_failure_count = activation_failure_count
-        self.continuous_activation_failure_count = continuous_activation_failure_count
-        self.exit_count = exit_count
-        self.exit_failure_count = exit_failure_count
-        self.continuous_exit_failure_count = continuous_exit_failure_count
+    def __init__(self, **kwargs):
+        super(CodePackageEntryPointStatistics, self).__init__(**kwargs)
+        self.last_exit_code = kwargs.get('last_exit_code', None)
+        self.last_activation_time = kwargs.get('last_activation_time', None)
+        self.last_exit_time = kwargs.get('last_exit_time', None)
+        self.last_successful_activation_time = kwargs.get('last_successful_activation_time', None)
+        self.last_successful_exit_time = kwargs.get('last_successful_exit_time', None)
+        self.activation_count = kwargs.get('activation_count', None)
+        self.activation_failure_count = kwargs.get('activation_failure_count', None)
+        self.continuous_activation_failure_count = kwargs.get('continuous_activation_failure_count', None)
+        self.exit_count = kwargs.get('exit_count', None)
+        self.exit_failure_count = kwargs.get('exit_failure_count', None)
+        self.continuous_exit_failure_count = kwargs.get('continuous_exit_failure_count', None)

@@ -9,7 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_lock_object import ManagementLockObject
+try:
+    from .management_lock_object_py3 import ManagementLockObject
+except (SyntaxError, ImportError):
+    from .management_lock_object import ManagementLockObject
 from .management_lock_object_paged import ManagementLockObjectPaged
 from .management_lock_client_enums import (
     LockLevel,

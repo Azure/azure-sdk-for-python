@@ -15,20 +15,22 @@ from msrest.serialization import Model
 class ResolvedServiceEndpoint(Model):
     """Endpoint of a resolved service partition.
 
-    :param kind: Possible values include: 'Invalid', 'Stateless',
-     'StatefulPrimary', 'StatefulSecondary'
-    :type kind: str
+    :param kind: The role of the replica where the endpoint is reported.
+     Possible values include: 'Invalid', 'Stateless', 'StatefulPrimary',
+     'StatefulSecondary'
+    :type kind: str or ~azure.servicefabric.models.ServiceEndpointRole
     :param address: The address of the endpoint. If the endpoint has multiple
-     listeners the address is a JSON object with one property per listener
-     with the value as the address of that listener.
+     listeners the address is a JSON object with one property per listener with
+     the value as the address of that listener.
     :type address: str
-    """ 
+    """
 
     _attribute_map = {
         'kind': {'key': 'Kind', 'type': 'str'},
         'address': {'key': 'Address', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, address=None):
-        self.kind = kind
-        self.address = address
+    def __init__(self, **kwargs):
+        super(ResolvedServiceEndpoint, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.address = kwargs.get('address', None)

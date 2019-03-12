@@ -15,15 +15,25 @@ from msrest.serialization import Model
 class ResourceUsage(Model):
     """Output of check resource usage API.
 
-    :param resource_type: Resource type of the usages.
-    :type resource_type: str
-    :param unit: Unit of the usage. e.g. Count.
-    :type unit: str
-    :param current_value: Actual value of the resource type.
-    :type current_value: int
-    :param limit: Quota of the resource type.
-    :type limit: int
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar resource_type: Resource type for which the usage is provided.
+    :vartype resource_type: str
+    :ivar unit: Unit of the usage. e.g. Count.
+    :vartype unit: str
+    :ivar current_value: Actual value of usage on the specified resource type.
+    :vartype current_value: int
+    :ivar limit: Quota of the specified resource type.
+    :vartype limit: int
     """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'unit': {'readonly': True},
+        'current_value': {'readonly': True},
+        'limit': {'readonly': True},
+    }
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -32,8 +42,9 @@ class ResourceUsage(Model):
         'limit': {'key': 'limit', 'type': 'int'},
     }
 
-    def __init__(self, resource_type=None, unit=None, current_value=None, limit=None):
-        self.resource_type = resource_type
-        self.unit = unit
-        self.current_value = current_value
-        self.limit = limit
+    def __init__(self, **kwargs):
+        super(ResourceUsage, self).__init__(**kwargs)
+        self.resource_type = None
+        self.unit = None
+        self.current_value = None
+        self.limit = None

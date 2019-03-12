@@ -16,8 +16,8 @@ class ComputeVmProperties(Model):
     """Properties of a virtual machine returned by the Microsoft.Compute API.
 
     :param statuses: Gets the statuses of the virtual machine.
-    :type statuses: list of :class:`ComputeVmInstanceViewStatus
-     <azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus]
     :param os_type: Gets the OS type of the virtual machine.
     :type os_type: str
     :param vm_size: Gets the size of the virtual machine.
@@ -28,10 +28,9 @@ class ComputeVmProperties(Model):
     :param os_disk_id: Gets OS disk blob uri for the virtual machine.
     :type os_disk_id: str
     :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list of str
+    :type data_disk_ids: list[str]
     :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks: list of :class:`ComputeDataDisk
-     <azure.mgmt.devtestlabs.models.ComputeDataDisk>`
+    :type data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDisk]
     """
 
     _attribute_map = {
@@ -45,6 +44,7 @@ class ComputeVmProperties(Model):
     }
 
     def __init__(self, statuses=None, os_type=None, vm_size=None, network_interface_id=None, os_disk_id=None, data_disk_ids=None, data_disks=None):
+        super(ComputeVmProperties, self).__init__()
         self.statuses = statuses
         self.os_type = os_type
         self.vm_size = vm_size

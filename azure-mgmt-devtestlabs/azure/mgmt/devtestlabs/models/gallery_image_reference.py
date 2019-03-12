@@ -36,6 +36,7 @@ class GalleryImageReference(Model):
     }
 
     def __init__(self, offer=None, publisher=None, sku=None, os_type=None, version=None):
+        super(GalleryImageReference, self).__init__()
         self.offer = offer
         self.publisher = publisher
         self.sku = sku

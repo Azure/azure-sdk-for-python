@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class BackupItemPaged(Paged):
     """
-    A paging container for iterating over a list of BackupItem object
+    A paging container for iterating over a list of :class:`BackupItem <azure.mgmt.web.models.BackupItem>` object
     """
 
     _attribute_map = {

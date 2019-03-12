@@ -18,6 +18,8 @@ class FailoverGroup(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -27,27 +29,26 @@ class FailoverGroup(ProxyResource):
     :ivar location: Resource location.
     :vartype location: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param read_write_endpoint: Read-write endpoint of the failover group
-     instance.
-    :type read_write_endpoint: :class:`FailoverGroupReadWriteEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint>`
+    :type tags: dict[str, str]
+    :param read_write_endpoint: Required. Read-write endpoint of the failover
+     group instance.
+    :type read_write_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
     :param read_only_endpoint: Read-only endpoint of the failover group
      instance.
-    :type read_only_endpoint: :class:`FailoverGroupReadOnlyEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint>`
+    :type read_only_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
     :ivar replication_role: Local replication role of the failover group
      instance. Possible values include: 'Primary', 'Secondary'
-    :vartype replication_role: str or :class:`FailoverGroupReplicationRole
-     <azure.mgmt.sql.models.FailoverGroupReplicationRole>`
+    :vartype replication_role: str or
+     ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     :ivar replication_state: Replication state of the failover group instance.
     :vartype replication_state: str
-    :param partner_servers: List of partner server information for the
-     failover group.
-    :type partner_servers: list of :class:`PartnerInfo
-     <azure.mgmt.sql.models.PartnerInfo>`
+    :param partner_servers: Required. List of partner server information for
+     the failover group.
+    :type partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     :param databases: List of databases in the failover group.
-    :type databases: list of str
+    :type databases: list[str]
     """
 
     _validation = {
@@ -55,8 +56,10 @@ class FailoverGroup(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
+        'read_write_endpoint': {'required': True},
         'replication_role': {'readonly': True},
         'replication_state': {'readonly': True},
+        'partner_servers': {'required': True},
     }
 
     _attribute_map = {
@@ -73,13 +76,13 @@ class FailoverGroup(ProxyResource):
         'databases': {'key': 'properties.databases', 'type': '[str]'},
     }
 
-    def __init__(self, tags=None, read_write_endpoint=None, read_only_endpoint=None, partner_servers=None, databases=None):
-        super(FailoverGroup, self).__init__()
+    def __init__(self, **kwargs):
+        super(FailoverGroup, self).__init__(**kwargs)
         self.location = None
-        self.tags = tags
-        self.read_write_endpoint = read_write_endpoint
-        self.read_only_endpoint = read_only_endpoint
+        self.tags = kwargs.get('tags', None)
+        self.read_write_endpoint = kwargs.get('read_write_endpoint', None)
+        self.read_only_endpoint = kwargs.get('read_only_endpoint', None)
         self.replication_role = None
         self.replication_state = None
-        self.partner_servers = partner_servers
-        self.databases = databases
+        self.partner_servers = kwargs.get('partner_servers', None)
+        self.databases = kwargs.get('databases', None)

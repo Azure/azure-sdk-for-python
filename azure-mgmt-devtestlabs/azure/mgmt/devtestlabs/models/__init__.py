@@ -97,29 +97,34 @@ from .lab_virtual_machine_fragment import LabVirtualMachineFragment
 from .notification_channel import NotificationChannel
 from .notification_channel_fragment import NotificationChannelFragment
 from .notify_parameters import NotifyParameters
+from .operation_error import OperationError
+from .operation_metadata_display import OperationMetadataDisplay
+from .operation_metadata import OperationMetadata
+from .operation_result import OperationResult
 from .policy import Policy
 from .policy_fragment import PolicyFragment
 from .port import Port
 from .port_fragment import PortFragment
 from .resource import Resource
+from .retarget_schedule_properties import RetargetScheduleProperties
 from .secret import Secret
 from .service_runner import ServiceRunner
+from .shutdown_notification_content import ShutdownNotificationContent
+from .subnet import Subnet
+from .subnet_fragment import SubnetFragment
+from .subnet_shared_public_ip_address_configuration import SubnetSharedPublicIpAddressConfiguration
+from .subnet_override import SubnetOverride
+from .subnet_shared_public_ip_address_configuration_fragment import SubnetSharedPublicIpAddressConfigurationFragment
+from .subnet_override_fragment import SubnetOverrideFragment
 from .user_identity import UserIdentity
 from .user_secret_store import UserSecretStore
 from .user import User
-from .subnet import Subnet
-from .subnet_shared_public_ip_address_configuration import SubnetSharedPublicIpAddressConfiguration
-from .subnet_override import SubnetOverride
-from .virtual_network import VirtualNetwork
-from .retarget_schedule_properties import RetargetScheduleProperties
-from .shutdown_notification_content import ShutdownNotificationContent
-from .subnet_fragment import SubnetFragment
-from .subnet_shared_public_ip_address_configuration_fragment import SubnetSharedPublicIpAddressConfigurationFragment
-from .subnet_override_fragment import SubnetOverrideFragment
 from .user_identity_fragment import UserIdentityFragment
 from .user_secret_store_fragment import UserSecretStoreFragment
 from .user_fragment import UserFragment
+from .virtual_network import VirtualNetwork
 from .virtual_network_fragment import VirtualNetworkFragment
+from .operation_metadata_paged import OperationMetadataPaged
 from .lab_paged import LabPaged
 from .lab_vhd_paged import LabVhdPaged
 from .schedule_paged import SchedulePaged
@@ -156,6 +161,7 @@ from .dev_test_labs_client_enums import (
     TargetCostStatus,
     ReportingCycleType,
     CostType,
+    HttpStatusCode,
     PolicyStatus,
     PolicyFactName,
     PolicyEvaluatorType,
@@ -251,29 +257,34 @@ __all__ = [
     'NotificationChannel',
     'NotificationChannelFragment',
     'NotifyParameters',
+    'OperationError',
+    'OperationMetadataDisplay',
+    'OperationMetadata',
+    'OperationResult',
     'Policy',
     'PolicyFragment',
     'Port',
     'PortFragment',
     'Resource',
+    'RetargetScheduleProperties',
     'Secret',
     'ServiceRunner',
+    'ShutdownNotificationContent',
+    'Subnet',
+    'SubnetFragment',
+    'SubnetSharedPublicIpAddressConfiguration',
+    'SubnetOverride',
+    'SubnetSharedPublicIpAddressConfigurationFragment',
+    'SubnetOverrideFragment',
     'UserIdentity',
     'UserSecretStore',
     'User',
-    'Subnet',
-    'SubnetSharedPublicIpAddressConfiguration',
-    'SubnetOverride',
-    'VirtualNetwork',
-    'RetargetScheduleProperties',
-    'ShutdownNotificationContent',
-    'SubnetFragment',
-    'SubnetSharedPublicIpAddressConfigurationFragment',
-    'SubnetOverrideFragment',
     'UserIdentityFragment',
     'UserSecretStoreFragment',
     'UserFragment',
+    'VirtualNetwork',
     'VirtualNetworkFragment',
+    'OperationMetadataPaged',
     'LabPaged',
     'LabVhdPaged',
     'SchedulePaged',
@@ -309,6 +320,7 @@ __all__ = [
     'TargetCostStatus',
     'ReportingCycleType',
     'CostType',
+    'HttpStatusCode',
     'PolicyStatus',
     'PolicyFactName',
     'PolicyEvaluatorType',

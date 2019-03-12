@@ -37,8 +37,7 @@ class NetworkInterfacePropertiesFragment(Model):
     :param shared_public_ip_address_configuration: The configuration for
      sharing a public IP address across multiple virtual machines.
     :type shared_public_ip_address_configuration:
-     :class:`SharedPublicIpAddressConfigurationFragment
-     <azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment>`
+     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
     """
 
     _attribute_map = {
@@ -54,6 +53,7 @@ class NetworkInterfacePropertiesFragment(Model):
     }
 
     def __init__(self, virtual_network_id=None, subnet_id=None, public_ip_address_id=None, public_ip_address=None, private_ip_address=None, dns_name=None, rdp_authority=None, ssh_authority=None, shared_public_ip_address_configuration=None):
+        super(NetworkInterfacePropertiesFragment, self).__init__()
         self.virtual_network_id = virtual_network_id
         self.subnet_id = subnet_id
         self.public_ip_address_id = public_ip_address_id

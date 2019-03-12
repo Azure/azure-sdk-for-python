@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SharedAccessSignatureAuthorizationRulePaged(Paged):
     """
-    A paging container for iterating over a list of SharedAccessSignatureAuthorizationRule object
+    A paging container for iterating over a list of :class:`SharedAccessSignatureAuthorizationRule <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>` object
     """
 
     _attribute_map = {

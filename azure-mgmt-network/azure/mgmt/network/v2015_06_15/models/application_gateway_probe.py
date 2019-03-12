@@ -19,8 +19,8 @@ class ApplicationGatewayProbe(SubResource):
     :type id: str
     :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
      Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
     :type host: str
     :param path: Relative path of probe. Valid path starts from '/'. Probe is
@@ -62,14 +62,14 @@ class ApplicationGatewayProbe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayProbe, self).__init__(id=id)
-        self.protocol = protocol
-        self.host = host
-        self.path = path
-        self.interval = interval
-        self.timeout = timeout
-        self.unhealthy_threshold = unhealthy_threshold
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayProbe, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.host = kwargs.get('host', None)
+        self.path = kwargs.get('path', None)
+        self.interval = kwargs.get('interval', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.unhealthy_threshold = kwargs.get('unhealthy_threshold', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

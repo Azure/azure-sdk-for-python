@@ -17,8 +17,7 @@ class NotificationSettings(Model):
 
     :param status: If notifications are enabled for this schedule (i.e.
      Enabled, Disabled). Possible values include: 'Disabled', 'Enabled'
-    :type status: str or :class:`NotificationStatus
-     <azure.mgmt.devtestlabs.models.NotificationStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.NotificationStatus
     :param time_in_minutes: Time in minutes before event at which notification
      will be sent.
     :type time_in_minutes: int
@@ -34,6 +33,7 @@ class NotificationSettings(Model):
     }
 
     def __init__(self, status=None, time_in_minutes=None, webhook_url=None):
+        super(NotificationSettings, self).__init__()
         self.status = status
         self.time_in_minutes = time_in_minutes
         self.webhook_url = webhook_url

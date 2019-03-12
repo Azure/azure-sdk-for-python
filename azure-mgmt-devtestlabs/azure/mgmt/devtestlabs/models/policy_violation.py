@@ -27,5 +27,6 @@ class PolicyViolation(Model):
     }
 
     def __init__(self, code=None, message=None):
+        super(PolicyViolation, self).__init__()
         self.code = code
         self.message = message

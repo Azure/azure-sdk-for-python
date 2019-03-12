@@ -23,15 +23,17 @@ class LocationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01"
+        self.api_version = "2017-09-01"
 
         self.config = config
 
@@ -48,13 +50,9 @@ class LocationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BatchLocationQuota
-         <azure.mgmt.batch.models.BatchLocationQuota>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BatchLocationQuota
-         <azure.mgmt.batch.models.BatchLocationQuota>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BatchLocationQuota or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.BatchLocationQuota or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -113,13 +111,9 @@ class LocationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.batch.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckNameAvailabilityResult
-         <azure.mgmt.batch.models.CheckNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batch.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckNameAvailabilityParameters(name=name)

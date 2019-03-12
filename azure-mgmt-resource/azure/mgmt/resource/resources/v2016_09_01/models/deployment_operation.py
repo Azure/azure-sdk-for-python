@@ -23,8 +23,8 @@ class DeploymentOperation(Model):
     :ivar operation_id: Deployment operation ID.
     :vartype operation_id: str
     :param properties: Deployment properties.
-    :type properties: :class:`DeploymentOperationProperties
-     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentOperationProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentOperationProperties
     """
 
     _validation = {
@@ -38,7 +38,8 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, **kwargs):
+        super(DeploymentOperation, self).__init__(**kwargs)
         self.id = None
         self.operation_id = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

@@ -30,6 +30,7 @@ class ComputeVmInstanceViewStatusFragment(Model):
     }
 
     def __init__(self, code=None, display_status=None, message=None):
+        super(ComputeVmInstanceViewStatusFragment, self).__init__()
         self.code = code
         self.display_status = display_status
         self.message = message

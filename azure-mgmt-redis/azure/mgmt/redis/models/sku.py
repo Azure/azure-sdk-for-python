@@ -18,11 +18,10 @@ class Sku(Model):
     :param name: The type of Redis cache to deploy. Valid values: (Basic,
      Standard, Premium). Possible values include: 'Basic', 'Standard',
      'Premium'
-    :type name: str or :class:`SkuName <azure.mgmt.redis.models.SkuName>`
+    :type name: str or ~azure.mgmt.redis.models.SkuName
     :param family: The SKU family to use. Valid values: (C, P). (C =
      Basic/Standard, P = Premium). Possible values include: 'C', 'P'
-    :type family: str or :class:`SkuFamily
-     <azure.mgmt.redis.models.SkuFamily>`
+    :type family: str or ~azure.mgmt.redis.models.SkuFamily
     :param capacity: The size of the Redis cache to deploy. Valid values: for
      C (Basic/Standard) family (0, 1, 2, 3, 4, 5, 6), for P (Premium) family
      (1, 2, 3, 4).
@@ -42,6 +41,7 @@ class Sku(Model):
     }
 
     def __init__(self, name, family, capacity):
+        super(Sku, self).__init__()
         self.name = name
         self.family = family
         self.capacity = capacity

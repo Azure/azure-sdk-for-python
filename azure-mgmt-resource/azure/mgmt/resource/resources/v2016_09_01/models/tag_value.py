@@ -15,14 +15,20 @@ from msrest.serialization import Model
 class TagValue(Model):
     """Tag information.
 
-    :param id: The tag ID.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The tag ID.
+    :vartype id: str
     :param tag_value: The tag value.
     :type tag_value: str
     :param count: The tag value count.
-    :type count: :class:`TagCount
-     <azure.mgmt.resource.resources.v2016_09_01.models.TagCount>`
+    :type count: ~azure.mgmt.resource.resources.v2016_09_01.models.TagCount
     """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -30,7 +36,8 @@ class TagValue(Model):
         'count': {'key': 'count', 'type': 'TagCount'},
     }
 
-    def __init__(self, id=None, tag_value=None, count=None):
-        self.id = id
-        self.tag_value = tag_value
-        self.count = count
+    def __init__(self, **kwargs):
+        super(TagValue, self).__init__(**kwargs)
+        self.id = None
+        self.tag_value = kwargs.get('tag_value', None)
+        self.count = kwargs.get('count', None)

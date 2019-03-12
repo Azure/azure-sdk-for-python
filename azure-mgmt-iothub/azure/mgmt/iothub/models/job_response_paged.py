@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class JobResponsePaged(Paged):
     """
-    A paging container for iterating over a list of JobResponse object
+    A paging container for iterating over a list of :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>` object
     """
 
     _attribute_map = {

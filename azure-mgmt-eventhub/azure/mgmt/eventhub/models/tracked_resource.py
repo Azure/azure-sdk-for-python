@@ -27,7 +27,7 @@ class TrackedResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -44,7 +44,7 @@ class TrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(TrackedResource, self).__init__()
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

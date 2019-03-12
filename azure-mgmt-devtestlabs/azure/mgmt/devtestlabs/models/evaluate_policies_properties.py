@@ -30,6 +30,7 @@ class EvaluatePoliciesProperties(Model):
     }
 
     def __init__(self, fact_name=None, fact_data=None, value_offset=None):
+        super(EvaluatePoliciesProperties, self).__init__()
         self.fact_name = fact_name
         self.fact_data = fact_data
         self.value_offset = value_offset

@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class ScaleRule(Model):
     """A rule that provide the triggers and parameters for the scaling action.
 
-    :param metric_trigger: the trigger that results in a scaling action.
-    :type metric_trigger: :class:`MetricTrigger
-     <azure.mgmt.monitor.models.MetricTrigger>`
-    :param scale_action: the parameters for the scaling action.
-    :type scale_action: :class:`ScaleAction
-     <azure.mgmt.monitor.models.ScaleAction>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param metric_trigger: Required. the trigger that results in a scaling
+     action.
+    :type metric_trigger: ~azure.mgmt.monitor.models.MetricTrigger
+    :param scale_action: Required. the parameters for the scaling action.
+    :type scale_action: ~azure.mgmt.monitor.models.ScaleAction
     """
 
     _validation = {
@@ -33,6 +34,7 @@ class ScaleRule(Model):
         'scale_action': {'key': 'scaleAction', 'type': 'ScaleAction'},
     }
 
-    def __init__(self, metric_trigger, scale_action):
-        self.metric_trigger = metric_trigger
-        self.scale_action = scale_action
+    def __init__(self, **kwargs):
+        super(ScaleRule, self).__init__(**kwargs)
+        self.metric_trigger = kwargs.get('metric_trigger', None)
+        self.scale_action = kwargs.get('scale_action', None)

@@ -20,10 +20,9 @@ class ErrorEntity(Model):
     :param message_template: Message template.
     :type message_template: str
     :param parameters: Parameters for the template.
-    :type parameters: list of str
+    :type parameters: list[str]
     :param inner_errors: Inner errors.
-    :type inner_errors: list of :class:`ErrorEntity
-     <azure.mgmt.web.models.ErrorEntity>`
+    :type inner_errors: list[~azure.mgmt.web.models.ErrorEntity]
     :param code: Basic error code.
     :type code: str
     :param message: Any details of the error.
@@ -39,10 +38,11 @@ class ErrorEntity(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, extended_code=None, message_template=None, parameters=None, inner_errors=None, code=None, message=None):
-        self.extended_code = extended_code
-        self.message_template = message_template
-        self.parameters = parameters
-        self.inner_errors = inner_errors
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorEntity, self).__init__(**kwargs)
+        self.extended_code = kwargs.get('extended_code', None)
+        self.message_template = kwargs.get('message_template', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.inner_errors = kwargs.get('inner_errors', None)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

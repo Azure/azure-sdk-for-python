@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ValidateCustomDomainInput(Model):
     """Input of the custom domain to be validated for DNS mapping.
 
-    :param host_name: The host name of the custom domain. Must be a domain
-     name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param host_name: Required. The host name of the custom domain. Must be a
+     domain name.
     :type host_name: str
     """
 
@@ -28,5 +30,6 @@ class ValidateCustomDomainInput(Model):
         'host_name': {'key': 'hostName', 'type': 'str'},
     }
 
-    def __init__(self, host_name):
-        self.host_name = host_name
+    def __init__(self, **kwargs):
+        super(ValidateCustomDomainInput, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)

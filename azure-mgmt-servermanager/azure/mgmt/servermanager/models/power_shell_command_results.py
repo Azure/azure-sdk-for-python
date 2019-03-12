@@ -16,8 +16,8 @@ class PowerShellCommandResults(Model):
     """A collection of results from a PowerShell command.
 
     :param results:
-    :type results: list of :class:`PowerShellCommandResult
-     <azure.mgmt.servermanager.models.PowerShellCommandResult>`
+    :type results:
+     list[~azure.mgmt.servermanager.models.PowerShellCommandResult]
     :param pssession:
     :type pssession: str
     :param command:
@@ -33,8 +33,9 @@ class PowerShellCommandResults(Model):
         'completed': {'key': 'completed', 'type': 'bool'},
     }
 
-    def __init__(self, results=None, pssession=None, command=None, completed=None):
-        self.results = results
-        self.pssession = pssession
-        self.command = command
-        self.completed = completed
+    def __init__(self, **kwargs):
+        super(PowerShellCommandResults, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)
+        self.pssession = kwargs.get('pssession', None)
+        self.command = kwargs.get('command', None)
+        self.completed = kwargs.get('completed', None)

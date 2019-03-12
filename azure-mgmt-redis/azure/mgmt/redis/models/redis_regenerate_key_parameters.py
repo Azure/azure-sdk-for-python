@@ -17,8 +17,7 @@ class RedisRegenerateKeyParameters(Model):
 
     :param key_type: The Redis access key to regenerate. Possible values
      include: 'Primary', 'Secondary'
-    :type key_type: str or :class:`RedisKeyType
-     <azure.mgmt.redis.models.RedisKeyType>`
+    :type key_type: str or ~azure.mgmt.redis.models.RedisKeyType
     """
 
     _validation = {
@@ -30,4 +29,5 @@ class RedisRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_type):
+        super(RedisRegenerateKeyParameters, self).__init__()
         self.key_type = key_type

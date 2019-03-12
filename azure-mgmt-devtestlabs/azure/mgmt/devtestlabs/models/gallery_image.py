@@ -27,7 +27,7 @@ class GalleryImage(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param author: The author of the gallery image.
     :type author: str
     :ivar created_date: The creation date of the gallery image.
@@ -35,8 +35,8 @@ class GalleryImage(Resource):
     :param description: The description of the gallery image.
     :type description: str
     :param image_reference: The image reference of the gallery image.
-    :type image_reference: :class:`GalleryImageReference
-     <azure.mgmt.devtestlabs.models.GalleryImageReference>`
+    :type image_reference:
+     ~azure.mgmt.devtestlabs.models.GalleryImageReference
     :param icon: The icon of the gallery image.
     :type icon: str
     :param enabled: Indicates whether this gallery image is enabled.

@@ -22,8 +22,7 @@ class ConnStringInfo(Model):
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or :class:`ConnectionStringType
-     <azure.mgmt.web.models.ConnectionStringType>`
+    :type type: str or ~azure.mgmt.web.models.ConnectionStringType
     """
 
     _attribute_map = {
@@ -32,7 +31,8 @@ class ConnStringInfo(Model):
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, name=None, connection_string=None, type=None):
-        self.name = name
-        self.connection_string = connection_string
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ConnStringInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.type = kwargs.get('type', None)

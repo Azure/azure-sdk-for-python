@@ -17,8 +17,7 @@ class SubnetSharedPublicIpAddressConfiguration(Model):
 
     :param allowed_ports: Backend ports that virtual machines on this subnet
      are allowed to expose
-    :type allowed_ports: list of :class:`Port
-     <azure.mgmt.devtestlabs.models.Port>`
+    :type allowed_ports: list[~azure.mgmt.devtestlabs.models.Port]
     """
 
     _attribute_map = {
@@ -26,4 +25,5 @@ class SubnetSharedPublicIpAddressConfiguration(Model):
     }
 
     def __init__(self, allowed_ports=None):
+        super(SubnetSharedPublicIpAddressConfiguration, self).__init__()
         self.allowed_ports = allowed_ports

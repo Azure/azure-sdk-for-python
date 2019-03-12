@@ -9,23 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .proxy_resource import ProxyResource
 
 
-class ReplicationLink(SubResource):
+class ReplicationLink(ProxyResource):
     """Represents a database replication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
-    :ivar type: Type of resource this is.
-    :vartype type: str
     :ivar is_termination_allowed: Legacy value indicating whether termination
      is allowed.  Currently always returns true.
     :vartype is_termination_allowed: bool
@@ -40,13 +40,11 @@ class ReplicationLink(SubResource):
     :ivar role: The role of the database in the replication link. Possible
      values include: 'Primary', 'Secondary', 'NonReadableSecondary', 'Source',
      'Copy'
-    :vartype role: str or :class:`ReplicationRole
-     <azure.mgmt.sql.models.ReplicationRole>`
+    :vartype role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar partner_role: The role of the partner database in the replication
      link. Possible values include: 'Primary', 'Secondary',
      'NonReadableSecondary', 'Source', 'Copy'
-    :vartype partner_role: str or :class:`ReplicationRole
-     <azure.mgmt.sql.models.ReplicationRole>`
+    :vartype partner_role: str or ~azure.mgmt.sql.models.ReplicationRole
     :ivar start_time: The start time for the replication link.
     :vartype start_time: datetime
     :ivar percent_complete: The percentage of seeding complete for the
@@ -54,15 +52,14 @@ class ReplicationLink(SubResource):
     :vartype percent_complete: int
     :ivar replication_state: The replication state for the replication link.
      Possible values include: 'PENDING', 'SEEDING', 'CATCH_UP', 'SUSPENDED'
-    :vartype replication_state: str or :class:`ReplicationState
-     <azure.mgmt.sql.models.ReplicationState>`
+    :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
-        'location': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
         'is_termination_allowed': {'readonly': True},
         'replication_mode': {'readonly': True},
         'partner_server': {'readonly': True},
@@ -76,10 +73,10 @@ class ReplicationLink(SubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'is_termination_allowed': {'key': 'properties.isTerminationAllowed', 'type': 'bool'},
         'replication_mode': {'key': 'properties.replicationMode', 'type': 'str'},
         'partner_server': {'key': 'properties.partnerServer', 'type': 'str'},
@@ -92,10 +89,9 @@ class ReplicationLink(SubResource):
         'replication_state': {'key': 'properties.replicationState', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ReplicationLink, self).__init__()
+    def __init__(self, **kwargs):
+        super(ReplicationLink, self).__init__(**kwargs)
         self.location = None
-        self.type = None
         self.is_termination_allowed = None
         self.replication_mode = None
         self.partner_server = None

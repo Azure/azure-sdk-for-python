@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CustomImagePaged(Paged):
     """
-    A paging container for iterating over a list of CustomImage object
+    A paging container for iterating over a list of :class:`CustomImage <azure.mgmt.devtestlabs.models.CustomImage>` object
     """
 
     _attribute_map = {

@@ -14,6 +14,8 @@ from .application_package_operations import ApplicationPackageOperations
 from .application_operations import ApplicationOperations
 from .location_operations import LocationOperations
 from .operations import Operations
+from .certificate_operations import CertificateOperations
+from .pool_operations import PoolOperations
 
 __all__ = [
     'BatchAccountOperations',
@@ -21,4 +23,6 @@ __all__ = [
     'ApplicationOperations',
     'LocationOperations',
     'Operations',
+    'CertificateOperations',
+    'PoolOperations',
 ]

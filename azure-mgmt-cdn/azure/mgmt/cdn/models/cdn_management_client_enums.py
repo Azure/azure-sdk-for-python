@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     standard_verizon = "Standard_Verizon"
     premium_verizon = "Premium_Verizon"
@@ -21,7 +21,7 @@ class SkuName(Enum):
     standard_china_cdn = "Standard_ChinaCdn"
 
 
-class ProfileResourceState(Enum):
+class ProfileResourceState(str, Enum):
 
     creating = "Creating"
     active = "Active"
@@ -29,7 +29,16 @@ class ProfileResourceState(Enum):
     disabled = "Disabled"
 
 
-class EndpointResourceState(Enum):
+class OptimizationType(str, Enum):
+
+    general_web_delivery = "GeneralWebDelivery"
+    general_media_streaming = "GeneralMediaStreaming"
+    video_on_demand_media_streaming = "VideoOnDemandMediaStreaming"
+    large_file_download = "LargeFileDownload"
+    dynamic_site_acceleration = "DynamicSiteAcceleration"
+
+
+class EndpointResourceState(str, Enum):
 
     creating = "Creating"
     deleting = "Deleting"
@@ -39,7 +48,7 @@ class EndpointResourceState(Enum):
     stopping = "Stopping"
 
 
-class QueryStringCachingBehavior(Enum):
+class QueryStringCachingBehavior(str, Enum):
 
     ignore_query_string = "IgnoreQueryString"
     bypass_caching = "BypassCaching"
@@ -47,27 +56,27 @@ class QueryStringCachingBehavior(Enum):
     not_set = "NotSet"
 
 
-class GeoFilterActions(Enum):
+class GeoFilterActions(str, Enum):
 
     block = "Block"
     allow = "Allow"
 
 
-class OriginResourceState(Enum):
+class OriginResourceState(str, Enum):
 
     creating = "Creating"
     active = "Active"
     deleting = "Deleting"
 
 
-class CustomDomainResourceState(Enum):
+class CustomDomainResourceState(str, Enum):
 
     creating = "Creating"
     active = "Active"
     deleting = "Deleting"
 
 
-class CustomHttpsProvisioningState(Enum):
+class CustomHttpsProvisioningState(str, Enum):
 
     enabling = "Enabling"
     enabled = "Enabled"
@@ -76,6 +85,20 @@ class CustomHttpsProvisioningState(Enum):
     failed = "Failed"
 
 
-class ResourceType(Enum):
+class CustomHttpsProvisioningSubstate(str, Enum):
+
+    submitting_domain_control_validation_request = "SubmittingDomainControlValidationRequest"
+    pending_domain_control_validation_request_approval = "PendingDomainControlValidationREquestApproval"
+    domain_control_validation_request_approved = "DomainControlValidationRequestApproved"
+    domain_control_validation_request_rejected = "DomainControlValidationRequestRejected"
+    domain_control_validation_request_timed_out = "DomainControlValidationRequestTimedOut"
+    issuing_certificate = "IssuingCertificate"
+    deploying_certificate = "DeployingCertificate"
+    certificate_deployed = "CertificateDeployed"
+    deleting_certificate = "DeletingCertificate"
+    certificate_deleted = "CertificateDeleted"
+
+
+class ResourceType(str, Enum):
 
     microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"

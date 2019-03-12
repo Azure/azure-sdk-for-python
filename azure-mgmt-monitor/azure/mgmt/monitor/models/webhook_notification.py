@@ -18,7 +18,7 @@ class WebhookNotification(Model):
     :param service_uri: the service address to receive the notification.
     :type service_uri: str
     :param properties: a property bag of settings. This value can be empty.
-    :type properties: dict
+    :type properties: dict[str, str]
     """
 
     _attribute_map = {
@@ -26,6 +26,7 @@ class WebhookNotification(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, service_uri=None, properties=None):
-        self.service_uri = service_uri
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(WebhookNotification, self).__init__(**kwargs)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.properties = kwargs.get('properties', None)

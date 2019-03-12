@@ -18,39 +18,40 @@ class Domain(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
-    :param type: Resource type.
-    :type type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
-    :param contact_admin: Administrative contact.
-    :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_billing: Billing contact.
-    :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_registrant: Registrant contact.
-    :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_tech: Technical contact.
-    :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type tags: dict[str, str]
+    :param contact_admin: Required. Administrative contact.
+    :type contact_admin: ~azure.mgmt.web.models.Contact
+    :param contact_billing: Required. Billing contact.
+    :type contact_billing: ~azure.mgmt.web.models.Contact
+    :param contact_registrant: Required. Registrant contact.
+    :type contact_registrant: ~azure.mgmt.web.models.Contact
+    :param contact_tech: Required. Technical contact.
+    :type contact_tech: ~azure.mgmt.web.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
-    :vartype registration_status: str or :class:`DomainStatus
-     <azure.mgmt.web.models.DomainStatus>`
+    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.ProvisioningState
     :ivar name_servers: Name servers.
-    :vartype name_servers: list of str
+    :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
      domain; otherwise, <code>false</code>.
     :type privacy: bool
@@ -71,29 +72,32 @@ class Domain(Resource):
     :vartype ready_for_dns_record_management: bool
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
-    :vartype managed_host_names: list of :class:`HostName
-     <azure.mgmt.web.models.HostName>`
-    :param consent: Legal agreement consent.
-    :type consent: :class:`DomainPurchaseConsent
-     <azure.mgmt.web.models.DomainPurchaseConsent>`
+    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
+    :param consent: Required. Legal agreement consent.
+    :type consent: ~azure.mgmt.web.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
-    :vartype domain_not_renewable_reasons: list of str
+    :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or :class:`DnsType <azure.mgmt.web.models.DnsType>`
+    :type dns_type: str or ~azure.mgmt.web.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or :class:`DnsType
-     <azure.mgmt.web.models.DnsType>`
-    :ivar auth_code:
-    :vartype auth_code: str
+    :type target_dns_type: str or ~azure.mgmt.web.models.DnsType
+    :param auth_code:
+    :type auth_code: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
+        'type': {'readonly': True},
+        'contact_admin': {'required': True},
+        'contact_billing': {'required': True},
+        'contact_registrant': {'required': True},
+        'contact_tech': {'required': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'name_servers': {'readonly': True},
@@ -102,8 +106,8 @@ class Domain(Resource):
         'last_renewed_time': {'readonly': True},
         'ready_for_dns_record_management': {'readonly': True},
         'managed_host_names': {'readonly': True},
+        'consent': {'required': True},
         'domain_not_renewable_reasons': {'readonly': True},
-        'auth_code': {'readonly': True},
     }
 
     _attribute_map = {
@@ -135,25 +139,25 @@ class Domain(Resource):
         'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
-        super(Domain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.contact_admin = contact_admin
-        self.contact_billing = contact_billing
-        self.contact_registrant = contact_registrant
-        self.contact_tech = contact_tech
+    def __init__(self, **kwargs):
+        super(Domain, self).__init__(**kwargs)
+        self.contact_admin = kwargs.get('contact_admin', None)
+        self.contact_billing = kwargs.get('contact_billing', None)
+        self.contact_registrant = kwargs.get('contact_registrant', None)
+        self.contact_tech = kwargs.get('contact_tech', None)
         self.registration_status = None
         self.provisioning_state = None
         self.name_servers = None
-        self.privacy = privacy
+        self.privacy = kwargs.get('privacy', None)
         self.created_time = None
         self.expiration_time = None
         self.last_renewed_time = None
-        self.auto_renew = auto_renew
+        self.auto_renew = kwargs.get('auto_renew', True)
         self.ready_for_dns_record_management = None
         self.managed_host_names = None
-        self.consent = consent
+        self.consent = kwargs.get('consent', None)
         self.domain_not_renewable_reasons = None
-        self.dns_type = dns_type
-        self.dns_zone_id = dns_zone_id
-        self.target_dns_type = target_dns_type
-        self.auth_code = None
+        self.dns_type = kwargs.get('dns_type', None)
+        self.dns_zone_id = kwargs.get('dns_zone_id', None)
+        self.target_dns_type = kwargs.get('target_dns_type', None)
+        self.auth_code = kwargs.get('auth_code', None)

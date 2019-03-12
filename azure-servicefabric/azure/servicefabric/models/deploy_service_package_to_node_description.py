@@ -15,21 +15,24 @@ from msrest.serialization import Model
 class DeployServicePackageToNodeDescription(Model):
     """Defines description for downloading packages associated with a service
     manifest to image cache on a Service Fabric node.
-    .
 
-    :param service_manifest_name: The name of service manifest whose packages
-     need to be downloaded.
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_manifest_name: Required. The name of service manifest whose
+     packages need to be downloaded.
     :type service_manifest_name: str
-    :param application_type_name:
+    :param application_type_name: Required. The application type name as
+     defined in the application manifest.
     :type application_type_name: str
-    :param application_type_version:
+    :param application_type_version: Required. The version of the application
+     type as defined in the application manifest.
     :type application_type_version: str
-    :param node_name:
+    :param node_name: Required. The name of a Service Fabric node.
     :type node_name: str
-    :param package_sharing_policy:
-    :type package_sharing_policy: list of :class:`PackageSharingPolicyInfo
-     <azure.servicefabric.models.PackageSharingPolicyInfo>`
-    """ 
+    :param package_sharing_policy: List of package sharing policy information.
+    :type package_sharing_policy:
+     list[~azure.servicefabric.models.PackageSharingPolicyInfo]
+    """
 
     _validation = {
         'service_manifest_name': {'required': True},
@@ -46,9 +49,10 @@ class DeployServicePackageToNodeDescription(Model):
         'package_sharing_policy': {'key': 'PackageSharingPolicy', 'type': '[PackageSharingPolicyInfo]'},
     }
 
-    def __init__(self, service_manifest_name, application_type_name, application_type_version, node_name, package_sharing_policy=None):
-        self.service_manifest_name = service_manifest_name
-        self.application_type_name = application_type_name
-        self.application_type_version = application_type_version
-        self.node_name = node_name
-        self.package_sharing_policy = package_sharing_policy
+    def __init__(self, **kwargs):
+        super(DeployServicePackageToNodeDescription, self).__init__(**kwargs)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.application_type_name = kwargs.get('application_type_name', None)
+        self.application_type_version = kwargs.get('application_type_version', None)
+        self.node_name = kwargs.get('node_name', None)
+        self.package_sharing_policy = kwargs.get('package_sharing_policy', None)

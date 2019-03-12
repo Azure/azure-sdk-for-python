@@ -60,11 +60,11 @@ class Configuration(ProxyResource):
         'source': {'key': 'properties.source', 'type': 'str'},
     }
 
-    def __init__(self, value=None, source=None):
-        super(Configuration, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Configuration, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.description = None
         self.default_value = None
         self.data_type = None
         self.allowed_values = None
-        self.source = source
+        self.source = kwargs.get('source', None)

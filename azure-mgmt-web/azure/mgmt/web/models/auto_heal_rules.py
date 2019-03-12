@@ -17,11 +17,9 @@ class AutoHealRules(Model):
 
     :param triggers: Conditions that describe when to execute the auto-heal
      actions.
-    :type triggers: :class:`AutoHealTriggers
-     <azure.mgmt.web.models.AutoHealTriggers>`
+    :type triggers: ~azure.mgmt.web.models.AutoHealTriggers
     :param actions: Actions to be executed when a rule is triggered.
-    :type actions: :class:`AutoHealActions
-     <azure.mgmt.web.models.AutoHealActions>`
+    :type actions: ~azure.mgmt.web.models.AutoHealActions
     """
 
     _attribute_map = {
@@ -29,6 +27,7 @@ class AutoHealRules(Model):
         'actions': {'key': 'actions', 'type': 'AutoHealActions'},
     }
 
-    def __init__(self, triggers=None, actions=None):
-        self.triggers = triggers
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(AutoHealRules, self).__init__(**kwargs)
+        self.triggers = kwargs.get('triggers', None)
+        self.actions = kwargs.get('actions', None)

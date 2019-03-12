@@ -32,8 +32,9 @@ class Plan(Model):
         'promotion_code': {'key': 'promotionCode', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
+    def __init__(self, **kwargs):
+        super(Plan, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.product = kwargs.get('product', None)
+        self.promotion_code = kwargs.get('promotion_code', None)

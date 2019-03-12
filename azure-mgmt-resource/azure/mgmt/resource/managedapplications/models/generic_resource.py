@@ -27,15 +27,13 @@ class GenericResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku
-     <azure.mgmt.resource.managedapplications.models.Sku>`
+    :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
-    :type identity: :class:`Identity
-     <azure.mgmt.resource.managedapplications.models.Identity>`
+    :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
     """
 
     _validation = {
@@ -55,8 +53,8 @@ class GenericResource(Resource):
         'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None):
-        super(GenericResource, self).__init__(location=location, tags=tags)
-        self.managed_by = managed_by
-        self.sku = sku
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(GenericResource, self).__init__(**kwargs)
+        self.managed_by = kwargs.get('managed_by', None)
+        self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)

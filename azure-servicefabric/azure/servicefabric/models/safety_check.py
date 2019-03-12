@@ -14,24 +14,30 @@ from msrest.serialization import Model
 
 class SafetyCheck(Model):
     """Represents a safety check performed by service fabric before continuing
-    with the operations. These checks ensure the avaiability of the service
+    with the operations. These checks ensure the availability of the service
     and the reliability of the state.
 
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: PartitionSafetyCheck, SeedNodeSafetyCheck
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'PartitionSafetyCheck': 'PartitionSafetyCheck', 'EnsureSeedNodeQuorum': 'SeedNodeSafetyCheck'}
+        'kind': {'PartitionSafetyCheck': 'PartitionSafetyCheck', 'EnsureSeedNodeQuorum': 'SeedNodeSafetyCheck'}
     }
 
-    def __init__(self):
-        self.Kind = None
+    def __init__(self, **kwargs):
+        super(SafetyCheck, self).__init__(**kwargs)
+        self.kind = None

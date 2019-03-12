@@ -58,8 +58,8 @@ class USqlTableType(USqlType):
      complex type.
     :type is_complex_type: bool
     :ivar columns: the type field information associated with this table type.
-    :vartype columns: list of :class:`TypeFieldInfo
-     <azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo>`
+    :vartype columns:
+     list[~azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo]
     """
 
     _validation = {
@@ -87,6 +87,6 @@ class USqlTableType(USqlType):
         'columns': {'key': 'columns', 'type': '[TypeFieldInfo]'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None):
-        super(USqlTableType, self).__init__(compute_account_name=compute_account_name, version=version, database_name=database_name, schema_name=schema_name, name=name, type_family=type_family, c_sharp_name=c_sharp_name, full_csharp_name=full_csharp_name, system_type_id=system_type_id, user_type_id=user_type_id, schema_id=schema_id, principal_id=principal_id, is_nullable=is_nullable, is_user_defined=is_user_defined, is_assembly_type=is_assembly_type, is_table_type=is_table_type, is_complex_type=is_complex_type)
+    def __init__(self, **kwargs):
+        super(USqlTableType, self).__init__(**kwargs)
         self.columns = None

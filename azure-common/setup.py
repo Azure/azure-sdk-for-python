@@ -6,16 +6,18 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import re
+import os.path
 from io import open
 from setuptools import setup
-import sys
-try:
-    from azure_bdist_wheel import cmdclass
-except ImportError:
-    from distutils import log as logger
-    logger.warn("Wheel is not available, disabling bdist_wheel hook")
-    cmdclass = {}
 
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-common"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -32,19 +34,27 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
 with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
 setup(
-    name='azure-common',
-    version='1.1.8',
+    name=PACKAGE_NAME,
+    version=version,
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -52,21 +62,21 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=[
-        'azure',
         'azure.common',
+        'azure.profiles',
     ],
     extras_require={
+        ":python_version<'3.0'": ['azure-nspkg'],
         'autorest':[
-            'msrestazure>=0.4.0,<0.5.0',
+            'msrestazure>=0.4.0,<2.0.0',
         ]
-    },
-    cmdclass=cmdclass
+    }
 )

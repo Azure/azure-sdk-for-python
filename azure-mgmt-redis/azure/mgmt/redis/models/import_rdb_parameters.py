@@ -18,7 +18,7 @@ class ImportRDBParameters(Model):
     :param format: File format.
     :type format: str
     :param files: files to import.
-    :type files: list of str
+    :type files: list[str]
     """
 
     _validation = {
@@ -31,5 +31,6 @@ class ImportRDBParameters(Model):
     }
 
     def __init__(self, files, format=None):
+        super(ImportRDBParameters, self).__init__()
         self.format = format
         self.files = files

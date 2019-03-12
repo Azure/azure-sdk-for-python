@@ -20,7 +20,6 @@ class ReplicatorQueueStatus(Model):
     timestamp, etc.
     Depending on the role of the replicator, the properties in this type imply
     different meanings.
-    .
 
     :param queue_utilization_percentage: Represents the utilization of the
      queue. A value of 0 indicates that the queue is empty and a value of 100
@@ -50,7 +49,7 @@ class ReplicatorQueueStatus(Model):
     :param last_sequence_number: Represents the latest sequence number of the
      operation that is available in the queue.
     :type last_sequence_number: str
-    """ 
+    """
 
     _attribute_map = {
         'queue_utilization_percentage': {'key': 'QueueUtilizationPercentage', 'type': 'int'},
@@ -61,10 +60,11 @@ class ReplicatorQueueStatus(Model):
         'last_sequence_number': {'key': 'LastSequenceNumber', 'type': 'str'},
     }
 
-    def __init__(self, queue_utilization_percentage=None, queue_memory_size=None, first_sequence_number=None, completed_sequence_number=None, committed_sequence_number=None, last_sequence_number=None):
-        self.queue_utilization_percentage = queue_utilization_percentage
-        self.queue_memory_size = queue_memory_size
-        self.first_sequence_number = first_sequence_number
-        self.completed_sequence_number = completed_sequence_number
-        self.committed_sequence_number = committed_sequence_number
-        self.last_sequence_number = last_sequence_number
+    def __init__(self, **kwargs):
+        super(ReplicatorQueueStatus, self).__init__(**kwargs)
+        self.queue_utilization_percentage = kwargs.get('queue_utilization_percentage', None)
+        self.queue_memory_size = kwargs.get('queue_memory_size', None)
+        self.first_sequence_number = kwargs.get('first_sequence_number', None)
+        self.completed_sequence_number = kwargs.get('completed_sequence_number', None)
+        self.committed_sequence_number = kwargs.get('committed_sequence_number', None)
+        self.last_sequence_number = kwargs.get('last_sequence_number', None)

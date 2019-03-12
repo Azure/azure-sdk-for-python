@@ -18,8 +18,7 @@ class RedisRebootParameters(Model):
     :param reboot_type: Which Redis node(s) to reboot. Depending on this value
      data loss is possible. Possible values include: 'PrimaryNode',
      'SecondaryNode', 'AllNodes'
-    :type reboot_type: str or :class:`RebootType
-     <azure.mgmt.redis.models.RebootType>`
+    :type reboot_type: str or ~azure.mgmt.redis.models.RebootType
     :param shard_id: If clustering is enabled, the ID of the shard to be
      rebooted.
     :type shard_id: int
@@ -35,5 +34,6 @@ class RedisRebootParameters(Model):
     }
 
     def __init__(self, reboot_type, shard_id=None):
+        super(RedisRebootParameters, self).__init__()
         self.reboot_type = reboot_type
         self.shard_id = shard_id

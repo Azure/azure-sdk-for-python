@@ -41,11 +41,12 @@ class AzureIaaSVMJobTaskDetails(Model):
         'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
     }
 
-    def __init__(self, task_id=None, start_time=None, end_time=None, instance_id=None, duration=None, status=None, progress_percentage=None):
-        self.task_id = task_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.instance_id = instance_id
-        self.duration = duration
-        self.status = status
-        self.progress_percentage = progress_percentage
+    def __init__(self, **kwargs):
+        super(AzureIaaSVMJobTaskDetails, self).__init__(**kwargs)
+        self.task_id = kwargs.get('task_id', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.instance_id = kwargs.get('instance_id', None)
+        self.duration = kwargs.get('duration', None)
+        self.status = kwargs.get('status', None)
+        self.progress_percentage = kwargs.get('progress_percentage', None)

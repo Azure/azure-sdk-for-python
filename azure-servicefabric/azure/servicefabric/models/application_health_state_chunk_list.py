@@ -13,26 +13,23 @@ from .entity_health_state_chunk_list import EntityHealthStateChunkList
 
 
 class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
-    """The list of application health state chunks in the cluster that respect
-    the input filters in the chunk query. Returned by get cluster health
-    state chunks query.
-    .
+    """The list of application health state chunks in the cluster that respect the
+    input filters in the chunk query. Returned by get cluster health state
+    chunks query.
 
-    :param total_count: Total number of entity health state objects that
-     match the specified filters from the cluster health chunk query
-     description.
+    :param total_count: Total number of entity health state objects that match
+     the specified filters from the cluster health chunk query description.
     :type total_count: long
-    :param items: The list of application health state chunks that respect
-     the input filters in the chunk query.
-    :type items: list of :class:`ApplicationHealthStateChunk
-     <azure.servicefabric.models.ApplicationHealthStateChunk>`
-    """ 
+    :param items: The list of application health state chunks that respect the
+     input filters in the chunk query.
+    :type items: list[~azure.servicefabric.models.ApplicationHealthStateChunk]
+    """
 
     _attribute_map = {
         'total_count': {'key': 'TotalCount', 'type': 'long'},
         'items': {'key': 'Items', 'type': '[ApplicationHealthStateChunk]'},
     }
 
-    def __init__(self, total_count=None, items=None):
-        super(ApplicationHealthStateChunkList, self).__init__(total_count=total_count)
-        self.items = items
+    def __init__(self, **kwargs):
+        super(ApplicationHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

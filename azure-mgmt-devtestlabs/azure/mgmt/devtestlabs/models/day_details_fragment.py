@@ -24,4 +24,5 @@ class DayDetailsFragment(Model):
     }
 
     def __init__(self, time=None):
+        super(DayDetailsFragment, self).__init__()
         self.time = time

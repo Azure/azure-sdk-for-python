@@ -15,18 +15,19 @@ from msrest.serialization import Model
 class UpgradeDomainInfo(Model):
     """Information about an upgrade domain.
 
-    :param name:
+    :param name: The name of the upgrade domain
     :type name: str
-    :param state: Possible values include: 'Invalid', 'Pending',
-     'InProgress', 'Completed'
-    :type state: str
-    """ 
+    :param state: The state of the upgrade domain. Possible values include:
+     'Invalid', 'Pending', 'InProgress', 'Completed'
+    :type state: str or ~azure.servicefabric.models.UpgradeDomainState
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
         'state': {'key': 'State', 'type': 'str'},
     }
 
-    def __init__(self, name=None, state=None):
-        self.name = name
-        self.state = state
+    def __init__(self, **kwargs):
+        super(UpgradeDomainInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.state = kwargs.get('state', None)

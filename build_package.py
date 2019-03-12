@@ -13,7 +13,13 @@ import re
 from pathlib import Path
 from subprocess import check_call
 
+try:
+    from packaging.version import parse as Version, InvalidVersion
+except ImportError: # Should not happen, but at worst in most case this is the same
+    from pip._vendor.packaging.version import parse as Version, InvalidVersion
+
 DEFAULT_DEST_FOLDER = "./dist"
+OMITTED_RELEASE_PACKAGES = ['azure-keyvault']
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
     absdirpath = os.path.abspath(name)
@@ -26,23 +32,35 @@ def travis_build_package():
     This method prints on stdout for Travis.
     Return is obj to pass to sys.exit() directly
     """
+
     travis_tag = os.environ.get('TRAVIS_TAG')
     if not travis_tag:
         print("TRAVIS_TAG environment variable is not present")
+        return "TRAVIS_TAG environment variable is not present"
+
+    try:
+        name, version = travis_tag.split("_")
+    except ValueError:
+        print("TRAVIS_TAG is not '<package_name>_<version>' (tag is: {})".format(travis_tag))
+        return "TRAVIS_TAG is not '<package_name>_<version>' (tag is: {})".format(travis_tag)
+
+    try:
+        version = Version(version)
+    except InvalidVersion:
+        print("Version must be a valid PEP440 version (version is: {})".format(version))
+        return "Version must be a valid PEP440 version (version is: {})".format(version)
+
+    if name.lower() in OMITTED_RELEASE_PACKAGES:
+        print("The input package {} has been disabled for release from Travis.CI.".format(name))
         return
 
-    matching = re.match(r"^(?P<name>azure[a-z\-]*)_(?P<version>[.0-9]+[rc0-9]*)$", travis_tag)
-    if not matching:
-        print("TRAVIS_TAG is not '<package_name> <version>' (tag is: {})".format(travis_tag))
-        return
+    abs_dist_path = Path(os.environ['TRAVIS_BUILD_DIR'], 'dist')
+    create_package(name, str(abs_dist_path))
 
-    name, version = matching.groups()
-    create_package(name, '../dist')
-
-    print("Produced:\n{}".format(list(Path('./dist').glob('*'))))
+    print("Produced:\n{}".format(list(abs_dist_path.glob('*'))))
 
     pattern = "*{}*".format(version)
-    packages = list(Path('./dist').glob(pattern))
+    packages = list(abs_dist_path.glob(pattern))
     if not packages:
         return "Package version does not match tag {}, abort".format(version)
     pypi_server = os.environ.get("PYPI_SERVER", "default PyPI server")

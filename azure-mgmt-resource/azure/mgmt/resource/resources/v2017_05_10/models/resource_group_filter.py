@@ -26,6 +26,7 @@ class ResourceGroupFilter(Model):
         'tag_value': {'key': 'tagValue', 'type': 'str'},
     }
 
-    def __init__(self, tag_name=None, tag_value=None):
-        self.tag_name = tag_name
-        self.tag_value = tag_value
+    def __init__(self, **kwargs):
+        super(ResourceGroupFilter, self).__init__(**kwargs)
+        self.tag_name = kwargs.get('tag_name', None)
+        self.tag_value = kwargs.get('tag_value', None)

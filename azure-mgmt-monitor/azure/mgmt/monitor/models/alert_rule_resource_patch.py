@@ -18,24 +18,24 @@ class AlertRuleResourcePatch(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: Resource tags
-    :type tags: dict
-    :param name: the name of the alert rule.
+    :type tags: dict[str, str]
+    :param name: Required. the name of the alert rule.
     :type name: str
     :param description: the description of the alert rule that will be
      included in the alert email.
     :type description: str
-    :param is_enabled: the flag that indicates whether the alert rule is
-     enabled.
+    :param is_enabled: Required. the flag that indicates whether the alert
+     rule is enabled.
     :type is_enabled: bool
-    :param condition: the condition that results in the alert rule being
-     activated.
-    :type condition: :class:`RuleCondition
-     <azure.mgmt.monitor.models.RuleCondition>`
+    :param condition: Required. the condition that results in the alert rule
+     being activated.
+    :type condition: ~azure.mgmt.monitor.models.RuleCondition
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
-    :type actions: list of :class:`RuleAction
-     <azure.mgmt.monitor.models.RuleAction>`
+    :type actions: list[~azure.mgmt.monitor.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: datetime
     """
@@ -57,11 +57,12 @@ class AlertRuleResourcePatch(Model):
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name, is_enabled, condition, tags=None, description=None, actions=None):
-        self.tags = tags
-        self.name = name
-        self.description = description
-        self.is_enabled = is_enabled
-        self.condition = condition
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(AlertRuleResourcePatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.condition = kwargs.get('condition', None)
+        self.actions = kwargs.get('actions', None)
         self.last_updated_time = None

@@ -16,30 +16,36 @@ class Int64RangePartitionInformation(PartitionInformation):
     """Describes the partition information for the integer range that is based on
     partition schemes.
 
-    :param id:
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     partition. This is a randomly generated GUID when the service was created.
+     The partition ID is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the IDs of its
+     partitions would be different.
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
+    :param service_partition_kind: Required. Constant filled by server.
+    :type service_partition_kind: str
     :param low_key: Specifies the minimum key value handled by this partition.
     :type low_key: str
     :param high_key: Specifies the maximum key value handled by this
      partition.
     :type high_key: str
-    """ 
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
-        'ServicePartitionKind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
         'low_key': {'key': 'LowKey', 'type': 'str'},
         'high_key': {'key': 'HighKey', 'type': 'str'},
     }
 
-    def __init__(self, id=None, low_key=None, high_key=None):
-        super(Int64RangePartitionInformation, self).__init__(id=id)
-        self.low_key = low_key
-        self.high_key = high_key
-        self.ServicePartitionKind = 'Int64Range'
+    def __init__(self, **kwargs):
+        super(Int64RangePartitionInformation, self).__init__(**kwargs)
+        self.low_key = kwargs.get('low_key', None)
+        self.high_key = kwargs.get('high_key', None)
+        self.service_partition_kind = 'Int64Range'

@@ -110,7 +110,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         body = _SchedulerManagementXmlSerializer.create_cloud_service_to_xml(
             label, description, geo_region)
 
-        return self._perform_put(path, body, async=True)
+        return self._perform_put(path, body, as_async=True)
 
     def get_cloud_service(self, cloud_service_id):
         '''
@@ -134,7 +134,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('cloud_service_id', cloud_service_id)
         path = self._get_cloud_services_path(cloud_service_id)
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     def check_job_collection_name(self, cloud_service_id, job_collection_id):
         '''
@@ -178,7 +178,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         body = _SchedulerManagementXmlSerializer.create_job_collection_to_xml(
             plan)
 
-        return self._perform_put(path, body, async=True)
+        return self._perform_put(path, body, as_async=True)
 
     def delete_job_collection(self, cloud_service_id, job_collection_id):
         '''
@@ -199,7 +199,7 @@ class SchedulerManagementService(_ServiceManagementClient):
 
         path += '/' + _str(job_collection_id)
 
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     def get_job_collection(self, cloud_service_id, job_collection_id):
         '''
@@ -239,7 +239,7 @@ class SchedulerManagementService(_ServiceManagementClient):
             cloud_service_id, job_collection_id, job_id)
 
         self.content_type = "application/json"
-        return self._perform_put(path, JSONEncoder().encode(job), async=True)
+        return self._perform_put(path, JSONEncoder().encode(job), as_async=True)
 
     def delete_job(self, cloud_service_id, job_collection_id, job_id):
         '''
@@ -257,7 +257,7 @@ class SchedulerManagementService(_ServiceManagementClient):
 
         path = self._get_job_collection_path(
             cloud_service_id, job_collection_id, job_id)
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     def get_job(self, cloud_service_id, job_collection_id, job_id):
         '''

@@ -24,4 +24,5 @@ class HourDetailsFragment(Model):
     }
 
     def __init__(self, minute=None):
+        super(HourDetailsFragment, self).__init__()
         self.minute = minute

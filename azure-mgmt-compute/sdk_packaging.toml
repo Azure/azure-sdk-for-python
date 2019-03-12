@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-compute"
+package_pprint_name = "Compute Management"
+package_doc_id = "virtualmachines"
+is_stable = true

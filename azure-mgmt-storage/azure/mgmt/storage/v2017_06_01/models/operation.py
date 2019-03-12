@@ -18,14 +18,13 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.storage.v2017_06_01.models.OperationDisplay>`
+    :type display: ~azure.mgmt.storage.v2017_06_01.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     :param service_specification: One property of operation, include metric
      specifications.
-    :type service_specification: :class:`ServiceSpecification
-     <azure.mgmt.storage.v2017_06_01.models.ServiceSpecification>`
+    :type service_specification:
+     ~azure.mgmt.storage.v2017_06_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -35,8 +34,9 @@ class Operation(Model):
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, service_specification=None):
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.service_specification = service_specification
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.service_specification = kwargs.get('service_specification', None)

@@ -15,19 +15,25 @@ from msrest.serialization import Model
 class TagDetails(Model):
     """Tag details.
 
-    :param id: The tag ID.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The tag ID.
+    :vartype id: str
     :param tag_name: The tag name.
     :type tag_name: str
     :param count: The total number of resources that use the resource tag.
      When a tag is initially created and has no associated resources, the value
      is 0.
-    :type count: :class:`TagCount
-     <azure.mgmt.resource.resources.v2016_09_01.models.TagCount>`
+    :type count: ~azure.mgmt.resource.resources.v2016_09_01.models.TagCount
     :param values: The list of tag values.
-    :type values: list of :class:`TagValue
-     <azure.mgmt.resource.resources.v2016_09_01.models.TagValue>`
+    :type values:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.TagValue]
     """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -36,8 +42,9 @@ class TagDetails(Model):
         'values': {'key': 'values', 'type': '[TagValue]'},
     }
 
-    def __init__(self, id=None, tag_name=None, count=None, values=None):
-        self.id = id
-        self.tag_name = tag_name
-        self.count = count
-        self.values = values
+    def __init__(self, **kwargs):
+        super(TagDetails, self).__init__(**kwargs)
+        self.id = None
+        self.tag_name = kwargs.get('tag_name', None)
+        self.count = kwargs.get('count', None)
+        self.values = kwargs.get('values', None)

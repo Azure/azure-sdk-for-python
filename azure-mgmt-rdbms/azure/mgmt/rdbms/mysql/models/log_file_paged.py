@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LogFilePaged(Paged):
     """
-    A paging container for iterating over a list of LogFile object
+    A paging container for iterating over a list of :class:`LogFile <azure.mgmt.rdbms.mysql.models.LogFile>` object
     """
 
     _attribute_map = {

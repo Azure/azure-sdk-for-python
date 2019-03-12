@@ -3,6 +3,222 @@
 Release History
 ===============
 
+4.4.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetExtension has a new parameter provision_after_extensions
+- Operation VirtualMachineScaleSetVMsOperations.reimage has a new parameter temp_disk
+- Operation VirtualMachineScaleSetsOperations.reimage has a new parameter temp_disk
+- Added operation VirtualMachinesOperations.reimage
+
+4.3.1 (2018-10-15)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 4.3.0. No code change.
+
+4.3.0 (2018-10-02)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2018-10-01
+
+**Features/BreakingChanges**
+
+- This version updates the access to properties realted to automatic OS upgrade introduced in 4.0.0
+
+4.2.0 (2018-09-25)
+++++++++++++++++++
+
+**Features**
+
+- Model OSDisk has a new parameter diff_disk_settings
+- Model BootDiagnosticsInstanceView has a new parameter status
+- Model VirtualMachineScaleSetOSDisk has a new parameter diff_disk_settings
+- Added operation VirtualMachinesOperations.list_by_location
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+4.1.0 (2018-09-12)
+++++++++++++++++++
+
+2018-06-01 for 'disks' and 'snapshots' (new default)
+
+**Features**
+
+- Model DiskUpdate has a new parameter disk_iops_read_write
+- Model DiskUpdate has a new parameter disk_mbps_read_write
+- Model VirtualMachineUpdate has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachineScaleSetVM has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter public_ip_prefix
+- Model Disk has a new parameter disk_iops_read_write
+- Model Disk has a new parameter disk_mbps_read_write
+- Model VirtualMachineScaleSetVMProfile has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachine has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Added operation VirtualMachineScaleSetRollingUpgradesOperations.start_extension_upgrade
+- New enum value UltraSSD_LRS for StorageAccountTypes
+
+4.0.1 (2018-07-23)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix incorrect import from azure.mgmt.compute.models
+
+4.0.0 (2018-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetIdentity has a new parameter user_assigned_identities
+- Model VirtualMachineScaleSetIPConfiguration has a new parameter application_security_groups
+- Model VirtualMachineScaleSetUpdateIPConfiguration has a new parameter application_security_groups
+- Model VirtualMachineIdentity has a new parameter user_assigned_identities
+- Model LinuxConfiguration has a new parameter provision_vm_agent
+- Model OSProfile has a new parameter allow_extension_operations
+- Added operation group GalleryImagesOperations
+- Added operation group GalleryImageVersionsOperations
+- Added operation group GalleriesOperations
+- Model UpgradeOperationHistoricalStatusInfoProperties has a new parameter rollback_info
+- Model UpgradePolicy has a new parameter auto_os_upgrade_policy
+- Added operation AvailabilitySetsOperations.list_by_subscription
+
+**Breaking changes**
+
+- Model VirtualMachineScaleSetIdentity no longer has parameter identity_ids
+- Model VirtualMachineScaleSetOSDisk no longer has parameter disk_size_gb
+- Model VirtualMachineScaleSetVM no longer has parameter zones
+- Model VirtualMachineScaleSetUpdateOSDisk no longer has parameter disk_size_gb
+- Model VirtualMachineIdentity no longer has parameter identity_ids
+
+New default API Version is now 2018-06-01
+
+4.0.0rc2 (2018-04-17)
++++++++++++++++++++++
+
+**Features**
+
+- All clients now support Azure profiles.
+- Add update operation to VirtualMachineExtension operations (all ApiVersions)
+- Add get_extensions operation to VirtualMachine operations (all ApiVersions)
+- Support eviction policy for virtual machines inside a low priority scale set (2017-12-01)
+- Add get_os_upgrade_history to VMSS operations (2017-12-01)
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- Fix some invalid models in Python 3 (introduced in 4.0.0rc1)
+
+4.0.0rc1 (2018-03-21)
++++++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**Compute features**
+
+- Support zone resilient for image/snapshots (new ApiVersion 2018-04-01)
+- Add "operations" operation group
+- Add availability_set.update
+- Add images.update
+- Add virtual_machine.update
+
+3.1.0rc3 (2018-11-01)
++++++++++++++++++++++
+
+**Features**
+
+- Add VirtualMachineScaleSetNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetUpdateNetworkConfiguration -> enable_ip_forwarding
+- Add VirtualMachineScaleSetVMProfile -> priority
+- Add ApiVersion 2017-12-01 of virtual_machine_run_commands (new default)
+
+3.1.0rc2 (2017-12-14)
++++++++++++++++++++++
+
+**Features**
+
+- Add User Assigned Identity parameters to VM/VMSS creation
+
+**Bugfixes**
+
+- Add RestrictionInfo to SKUs list (2017-09-01)
+- Restore virtual_machines.run_commands (broken in rc1)
+
+3.1.0rc1 (2017-11-27)
++++++++++++++++++++++
+
+**Disclaimer**
+
+This version supports Azure Profile. Meaning, you can specify specific API versions to support for each operation groups.
+
+The default API versions of this package are now:
+- 2017-03-30 for 'disks', 'virtual_machine_run_commands' and 'snapshots'
+- 2017-09-01 for 'resource_skus'
+- 2017-12-01 for everything else
+
+**Python features**
+
+- ComputeManagementClient has now a "profile" parameter, which is a dict from operation groups name to API version
+- Operation groups now have access to their own models. For instance, assuming you have variable called "client",
+  you can access the models for this opeations groups (according to your loaded profiles) using
+  `client.virtual_machines.models`
+- azure.mgmt.compute.models is deprecated. See https://aka.ms/pysdkmodels for details.
+
+**Azure features**
+
+- 'resource_skus' has improved 'location_info' field
+
+3.0.1 (2017-09-26)
+++++++++++++++++++
+
+**Bugfix**
+
+- Add missing virtual_machine_scale_set_rolling_upgrades operation group alias
+
+3.0.0 (2017-09-26)
+++++++++++++++++++
+
+**Features**
+
+- Availability Zones
+- VMSS Rolling upgrade / patch / health status
+- VM instance view APIs
+
+**Breaking changes**
+
+- "azure.mgmt.compute.compute" namespace is now simply "azure.mgmt.compute". If you were
+  already using "azure.mgmt.compute" before, you code should still work exactly the same.
+- ContainerService has now be removed and exported in azure-mgmt-containerservice
+
 2.1.0 (2017-07-19)
 ++++++++++++++++++
 
@@ -96,7 +312,7 @@ to use the new Managed Disk feature instead of Storage.
 
 New APIVersion for "container" 2016-09-30.
 
-* several parameters (e.g. "username") now dynamically check before REST calls validity 
+* several parameters (e.g. "username") now dynamically check before REST calls validity
   against a regexp. Exception will be TypeError and not CloudError anymore.
 
 0.31.0 (2016-11-01)

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class ArtifactsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -61,8 +63,9 @@ class ArtifactsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArtifactPaged
-         <azure.mgmt.devtestlabs.models.ArtifactPaged>`
+        :return: An iterator like instance of Artifact
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.ArtifactPaged[~azure.mgmt.devtestlabs.models.Artifact]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -107,7 +110,7 @@ class ArtifactsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -146,9 +149,9 @@ class ArtifactsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Artifact <azure.mgmt.devtestlabs.models.Artifact>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Artifact or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Artifact or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -180,7 +183,7 @@ class ArtifactsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -214,17 +217,15 @@ class ArtifactsOperations(object):
         :param generate_arm_template_request: Parameters for generating an ARM
          template for deploying artifacts.
         :type generate_arm_template_request:
-         :class:`GenerateArmTemplateRequest
-         <azure.mgmt.devtestlabs.models.GenerateArmTemplateRequest>`
+         ~azure.mgmt.devtestlabs.models.GenerateArmTemplateRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ArmTemplateInfo
-         <azure.mgmt.devtestlabs.models.ArmTemplateInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ArmTemplateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.ArmTemplateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -258,7 +259,7 @@ class ArtifactsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

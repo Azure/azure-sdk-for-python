@@ -27,20 +27,18 @@ class Policy(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param description: The description of the policy.
     :type description: str
     :param status: The status of the policy. Possible values include:
      'Enabled', 'Disabled'
-    :type status: str or :class:`PolicyStatus
-     <azure.mgmt.devtestlabs.models.PolicyStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
     :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize,
      MaxVmsAllowedPerLab, etc. Possible values include: 'UserOwnedLabVmCount',
      'UserOwnedLabPremiumVmCount', 'LabVmCount', 'LabPremiumVmCount',
      'LabVmSize', 'GalleryImage', 'UserOwnedLabVmCountInSubnet',
      'LabTargetCost'
-    :type fact_name: str or :class:`PolicyFactName
-     <azure.mgmt.devtestlabs.models.PolicyFactName>`
+    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
     :param fact_data: The fact data of the policy.
     :type fact_data: str
     :param threshold: The threshold of the policy (i.e. a number for
@@ -49,8 +47,8 @@ class Policy(Resource):
     :param evaluator_type: The evaluator type of the policy (i.e.
      AllowedValuesPolicy, MaxValuePolicy). Possible values include:
      'AllowedValuesPolicy', 'MaxValuePolicy'
-    :type evaluator_type: str or :class:`PolicyEvaluatorType
-     <azure.mgmt.devtestlabs.models.PolicyEvaluatorType>`
+    :type evaluator_type: str or
+     ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     :ivar created_date: The creation date of the policy.
     :vartype created_date: datetime
     :param provisioning_state: The provisioning status of the resource.

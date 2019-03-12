@@ -27,15 +27,14 @@ class ArtifactSource(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param display_name: The artifact source's display name.
     :type display_name: str
     :param uri: The artifact source's URI.
     :type uri: str
     :param source_type: The artifact source's type. Possible values include:
      'VsoGit', 'GitHub'
-    :type source_type: str or :class:`SourceControlType
-     <azure.mgmt.devtestlabs.models.SourceControlType>`
+    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
     :param folder_path: The folder containing artifacts.
     :type folder_path: str
     :param arm_template_folder_path: The folder containing Azure Resource
@@ -48,8 +47,7 @@ class ArtifactSource(Resource):
     :type security_token: str
     :param status: Indicates if the artifact source is enabled (values:
      Enabled, Disabled). Possible values include: 'Enabled', 'Disabled'
-    :type status: str or :class:`EnableStatus
-     <azure.mgmt.devtestlabs.models.EnableStatus>`
+    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     :ivar created_date: The artifact source's creation date.
     :vartype created_date: datetime
     :param provisioning_state: The provisioning status of the resource.

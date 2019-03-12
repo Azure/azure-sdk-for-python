@@ -49,3 +49,9 @@ class DayOfWeek(Enum):
     sunday = "Sunday"
     everyday = "Everyday"
     weekend = "Weekend"
+
+
+class ReplicationRole(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"

@@ -22,17 +22,16 @@ class BackendAddressPool(SubResource):
     :type id: str
     :param backend_ip_configurations: Gets collection of references to IP
      addresses defined in network interfaces.
-    :type backend_ip_configurations: list of
-     :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2015_06_15.models.NetworkInterfaceIPConfiguration>`
+    :type backend_ip_configurations:
+     list[~azure.mgmt.network.v2015_06_15.models.NetworkInterfaceIPConfiguration]
     :ivar load_balancing_rules: Gets load balancing rules that use this
      backend address pool.
-    :vartype load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :vartype load_balancing_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.SubResource]
     :param outbound_nat_rule: Gets outbound rules that use this backend
      address pool.
-    :type outbound_nat_rule: :class:`SubResource
-     <azure.mgmt.network.v2015_06_15.models.SubResource>`
+    :type outbound_nat_rule:
+     ~azure.mgmt.network.v2015_06_15.models.SubResource
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -58,11 +57,11 @@ class BackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, backend_ip_configurations=None, outbound_nat_rule=None, provisioning_state=None, name=None, etag=None):
-        super(BackendAddressPool, self).__init__(id=id)
-        self.backend_ip_configurations = backend_ip_configurations
+    def __init__(self, **kwargs):
+        super(BackendAddressPool, self).__init__(**kwargs)
+        self.backend_ip_configurations = kwargs.get('backend_ip_configurations', None)
         self.load_balancing_rules = None
-        self.outbound_nat_rule = outbound_nat_rule
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.outbound_nat_rule = kwargs.get('outbound_nat_rule', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

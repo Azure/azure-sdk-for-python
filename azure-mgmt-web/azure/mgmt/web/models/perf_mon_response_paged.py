@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PerfMonResponsePaged(Paged):
     """
-    A paging container for iterating over a list of PerfMonResponse object
+    A paging container for iterating over a list of :class:`PerfMonResponse <azure.mgmt.web.models.PerfMonResponse>` object
     """
 
     _attribute_map = {

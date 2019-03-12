@@ -15,9 +15,10 @@ from msrest.serialization import Model
 class AuthorizationRuleProperties(Model):
     """AuthorizationRule properties.
 
-    :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.servicebus.models.AccessRights>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param rights: Required. The rights associated with the rule.
+    :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
     """
 
     _validation = {
@@ -28,5 +29,6 @@ class AuthorizationRuleProperties(Model):
         'rights': {'key': 'rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, rights):
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(AuthorizationRuleProperties, self).__init__(**kwargs)
+        self.rights = kwargs.get('rights', None)

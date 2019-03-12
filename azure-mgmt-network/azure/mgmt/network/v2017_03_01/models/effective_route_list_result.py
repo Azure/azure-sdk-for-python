@@ -16,8 +16,7 @@ class EffectiveRouteListResult(Model):
     """Response for list effective route API service call.
 
     :param value: A list of effective routes.
-    :type value: list of :class:`EffectiveRoute
-     <azure.mgmt.network.v2017_03_01.models.EffectiveRoute>`
+    :type value: list[~azure.mgmt.network.v2017_03_01.models.EffectiveRoute]
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """
@@ -27,6 +26,7 @@ class EffectiveRouteListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(EffectiveRouteListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)

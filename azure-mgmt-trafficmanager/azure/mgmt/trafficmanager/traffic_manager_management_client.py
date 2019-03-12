@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.endpoints_operations import EndpointsOperations
 from .operations.profiles_operations import ProfilesOperations
 from .operations.geographic_hierarchies_operations import GeographicHierarchiesOperations
+from .operations.heat_map_operations import HeatMapOperations
 from . import models
 
 
@@ -41,21 +42,19 @@ class TrafficManagerManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(TrafficManagerManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('trafficmanagermanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-trafficmanager/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class TrafficManagerManagementClient(object):
+class TrafficManagerManagementClient(SDKClient):
     """TrafficManagerManagementClient
 
     :ivar config: Configuration for client.
@@ -67,6 +66,8 @@ class TrafficManagerManagementClient(object):
     :vartype profiles: azure.mgmt.trafficmanager.operations.ProfilesOperations
     :ivar geographic_hierarchies: GeographicHierarchies operations
     :vartype geographic_hierarchies: azure.mgmt.trafficmanager.operations.GeographicHierarchiesOperations
+    :ivar heat_map: HeatMap operations
+    :vartype heat_map: azure.mgmt.trafficmanager.operations.HeatMapOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,10 +83,10 @@ class TrafficManagerManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = TrafficManagerManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(TrafficManagerManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-05-01'
+        self.api_version = '2018-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -94,4 +95,6 @@ class TrafficManagerManagementClient(object):
         self.profiles = ProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.geographic_hierarchies = GeographicHierarchiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.heat_map = HeatMapOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -18,15 +18,15 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Gets or sets the sku name. Required for account creation,
-     optional for update. Possible values include: 'F0', 'P0', 'P1', 'P2',
-     'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.cognitiveservices.models.SkuName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Gets or sets the sku name. Required for account
+     creation, optional for update. Possible values include: 'F0', 'P0', 'P1',
+     'P2', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
+    :type name: str or ~azure.mgmt.cognitiveservices.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Free', 'Standard', 'Premium'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.cognitiveservices.models.SkuTier>`
+    :vartype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
     """
 
     _validation = {
@@ -39,6 +39,7 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'SkuTier'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None

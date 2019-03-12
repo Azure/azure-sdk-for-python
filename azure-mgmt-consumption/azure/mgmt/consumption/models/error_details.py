@@ -22,23 +22,19 @@ class ErrorDetails(Model):
     :vartype code: str
     :ivar message: Error message indicating why the operation failed.
     :vartype message: str
-    :ivar target: The target of the particular error.
-    :vartype target: str
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
-        'target': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
     }
 
     def __init__(self):
+        super(ErrorDetails, self).__init__()
         self.code = None
         self.message = None
-        self.target = None

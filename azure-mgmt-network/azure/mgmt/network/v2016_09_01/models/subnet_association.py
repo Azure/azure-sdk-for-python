@@ -21,8 +21,8 @@ class SubnetAssociation(Model):
     :ivar id: Subnet ID.
     :vartype id: str
     :param security_rules: Collection of custom security rules.
-    :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2016_09_01.models.SecurityRule>`
+    :type security_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.SecurityRule]
     """
 
     _validation = {
@@ -34,6 +34,7 @@ class SubnetAssociation(Model):
         'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
     }
 
-    def __init__(self, security_rules=None):
+    def __init__(self, **kwargs):
+        super(SubnetAssociation, self).__init__(**kwargs)
         self.id = None
-        self.security_rules = security_rules
+        self.security_rules = kwargs.get('security_rules', None)

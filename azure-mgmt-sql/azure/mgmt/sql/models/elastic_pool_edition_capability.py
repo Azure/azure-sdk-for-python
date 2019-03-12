@@ -13,37 +13,46 @@ from msrest.serialization import Model
 
 
 class ElasticPoolEditionCapability(Model):
-    """The elastic pool edition capabilities.
+    """The elastic pool edition capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: The elastic pool edition name.
     :vartype name: str
-    :ivar status: The status of the elastic pool edition. Possible values
-     include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
-    :ivar supported_elastic_pool_dtus: The list of supported elastic pool DTU
-     levels for the edition.
-    :vartype supported_elastic_pool_dtus: list of
-     :class:`ElasticPoolDtuCapability
-     <azure.mgmt.sql.models.ElasticPoolDtuCapability>`
+    :ivar supported_elastic_pool_performance_levels: The list of supported
+     elastic pool DTU levels for the edition.
+    :vartype supported_elastic_pool_performance_levels:
+     list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
+    :ivar zone_redundant: Whether or not zone redundancy is supported for the
+     edition.
+    :vartype zone_redundant: bool
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
         'name': {'readonly': True},
+        'supported_elastic_pool_performance_levels': {'readonly': True},
+        'zone_redundant': {'readonly': True},
         'status': {'readonly': True},
-        'supported_elastic_pool_dtus': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'supported_elastic_pool_performance_levels': {'key': 'supportedElasticPoolPerformanceLevels', 'type': '[ElasticPoolPerformanceLevelCapability]'},
+        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
-        'supported_elastic_pool_dtus': {'key': 'supportedElasticPoolDtus', 'type': '[ElasticPoolDtuCapability]'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
         self.name = None
+        self.supported_elastic_pool_performance_levels = None
+        self.zone_redundant = None
         self.status = None
-        self.supported_elastic_pool_dtus = None
+        self.reason = kwargs.get('reason', None)

@@ -18,7 +18,7 @@ class ListServiceSasResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar service_sas_token: List service SAS credentials of speicific
+    :ivar service_sas_token: List service SAS credentials of specific
      resource.
     :vartype service_sas_token: str
     """
@@ -31,5 +31,6 @@ class ListServiceSasResponse(Model):
         'service_sas_token': {'key': 'serviceSasToken', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ListServiceSasResponse, self).__init__(**kwargs)
         self.service_sas_token = None

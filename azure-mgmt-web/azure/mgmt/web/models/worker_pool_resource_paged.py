@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WorkerPoolResourcePaged(Paged):
     """
-    A paging container for iterating over a list of WorkerPoolResource object
+    A paging container for iterating over a list of :class:`WorkerPoolResource <azure.mgmt.web.models.WorkerPoolResource>` object
     """
 
     _attribute_map = {

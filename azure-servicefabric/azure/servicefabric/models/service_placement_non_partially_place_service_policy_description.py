@@ -16,16 +16,21 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
     """Describes the policy to be used for placement of a Service Fabric service
     where all replicas must be able to be placed in order for any replicas to
     be created.
-    .
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
-    """ 
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
-    def __init__(self):
-        super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__()
-        self.Type = 'NonPartiallyPlaceService'
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__(**kwargs)
+        self.type = 'NonPartiallyPlaceService'

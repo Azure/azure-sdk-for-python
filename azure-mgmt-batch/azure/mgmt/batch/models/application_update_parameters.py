@@ -32,6 +32,7 @@ class ApplicationUpdateParameters(Model):
     }
 
     def __init__(self, allow_updates=None, default_version=None, display_name=None):
+        super(ApplicationUpdateParameters, self).__init__()
         self.allow_updates = allow_updates
         self.default_version = default_version
         self.display_name = display_name

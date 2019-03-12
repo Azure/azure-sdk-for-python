@@ -16,11 +16,10 @@ class EffectiveNetworkSecurityGroupAssociation(Model):
     """The effective network security group association.
 
     :param subnet: The ID of the subnet if assigned.
-    :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type subnet: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param network_interface: The ID of the network interface if assigned.
-    :type network_interface: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type network_interface:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     """
 
     _attribute_map = {
@@ -28,6 +27,7 @@ class EffectiveNetworkSecurityGroupAssociation(Model):
         'network_interface': {'key': 'networkInterface', 'type': 'SubResource'},
     }
 
-    def __init__(self, subnet=None, network_interface=None):
-        self.subnet = subnet
-        self.network_interface = network_interface
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityGroupAssociation, self).__init__(**kwargs)
+        self.subnet = kwargs.get('subnet', None)
+        self.network_interface = kwargs.get('network_interface', None)

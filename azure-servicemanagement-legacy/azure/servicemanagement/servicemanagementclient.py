@@ -369,30 +369,30 @@ class _ServiceManagementClient(object):
 
         return response
 
-    def _perform_put(self, path, body, async=False, x_ms_version=None):
+    def _perform_put(self, path, body, as_async=False, x_ms_version=None):
         response = self.perform_put(path, body, x_ms_version)
 
-        if async:
+        if as_async:
             return parse_response_for_async_op(response)
 
         return None
 
-    def _perform_post(self, path, body, response_type=None, async=False,
+    def _perform_post(self, path, body, response_type=None, as_async=False,
                       x_ms_version=None):
         response = self.perform_post(path, body, x_ms_version)
 
         if response_type is not None:
             return _MinidomXmlToObject.parse_response(response, response_type)
 
-        if async:
+        if as_async:
             return parse_response_for_async_op(response)
 
         return None
 
-    def _perform_delete(self, path, async=False, x_ms_version=None):
+    def _perform_delete(self, path, as_async=False, x_ms_version=None):
         response = self.perform_delete(path, x_ms_version)
 
-        if async:
+        if as_async:
             return parse_response_for_async_op(response)
 
         return None

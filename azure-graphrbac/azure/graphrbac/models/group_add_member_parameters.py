@@ -15,7 +15,12 @@ from msrest.serialization import Model
 class GroupAddMemberParameters(Model):
     """Request parameters for adding a member to a group.
 
-    :param url: A member object URL, such as
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param url: Required. A member object URL, such as
      "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
      where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
      "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the member
@@ -28,8 +33,11 @@ class GroupAddMemberParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, **kwargs):
+        super(GroupAddMemberParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.url = kwargs.get('url', None)

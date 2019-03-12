@@ -27,28 +27,26 @@ class BatchAccount(Resource):
     :ivar location: The location of the resource.
     :vartype location: str
     :ivar tags: The tags of the resource.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     :ivar account_endpoint: The account endpoint used to interact with the
      Batch service.
     :vartype account_endpoint: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Cancelled'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.batch.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.batch.models.ProvisioningState
     :ivar pool_allocation_mode: The allocation mode to use for creating pools
      in the Batch account. Possible values include: 'BatchService',
      'UserSubscription'
-    :vartype pool_allocation_mode: str or :class:`PoolAllocationMode
-     <azure.mgmt.batch.models.PoolAllocationMode>`
+    :vartype pool_allocation_mode: str or
+     ~azure.mgmt.batch.models.PoolAllocationMode
     :ivar key_vault_reference: A reference to the Azure key vault associated
      with the Batch account.
-    :vartype key_vault_reference: :class:`KeyVaultReference
-     <azure.mgmt.batch.models.KeyVaultReference>`
+    :vartype key_vault_reference: ~azure.mgmt.batch.models.KeyVaultReference
     :ivar auto_storage: The properties and status of any auto-storage account
      associated with the Batch account.
-    :vartype auto_storage: :class:`AutoStorageProperties
-     <azure.mgmt.batch.models.AutoStorageProperties>`
+    :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageProperties
     :ivar dedicated_core_quota: The dedicated core quota for this Batch
      account.
     :vartype dedicated_core_quota: int

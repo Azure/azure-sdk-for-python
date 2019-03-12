@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class DomainOwnershipIdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of DomainOwnershipIdentifier object
+    A paging container for iterating over a list of :class:`DomainOwnershipIdentifier <azure.mgmt.web.models.DomainOwnershipIdentifier>` object
     """
 
     _attribute_map = {

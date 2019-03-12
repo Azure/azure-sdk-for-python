@@ -192,7 +192,7 @@ class WebsiteManagementService(_ServiceManagementClient):
         xml = _XmlSerializer.update_website_to_xml(state)
         return self._perform_put(
             self._get_sites_details_path(webspace_name, website_name),
-            xml, async=True)
+            xml, as_async=True)
 
     def restart_site(self, webspace_name, website_name):
         '''
@@ -205,7 +205,7 @@ class WebsiteManagementService(_ServiceManagementClient):
         '''
         return self._perform_post(
             self._get_restart_path(webspace_name, website_name),
-            None, async=True)
+            None, as_async=True)
 
     def get_historical_usage_metrics(self, webspace_name, website_name,
                                      metrics = None, start_time=None, end_time=None, time_grain=None):

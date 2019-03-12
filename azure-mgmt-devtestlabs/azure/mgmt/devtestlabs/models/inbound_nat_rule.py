@@ -18,8 +18,8 @@ class InboundNatRule(Model):
 
     :param transport_protocol: The transport protocol for the endpoint.
      Possible values include: 'Tcp', 'Udp'
-    :type transport_protocol: str or :class:`TransportProtocol
-     <azure.mgmt.devtestlabs.models.TransportProtocol>`
+    :type transport_protocol: str or
+     ~azure.mgmt.devtestlabs.models.TransportProtocol
     :param frontend_port: The external endpoint port of the inbound
      connection. Possible values range between 1 and 65535, inclusive. If
      unspecified, a value will be allocated automatically.
@@ -36,6 +36,7 @@ class InboundNatRule(Model):
     }
 
     def __init__(self, transport_protocol=None, frontend_port=None, backend_port=None):
+        super(InboundNatRule, self).__init__()
         self.transport_protocol = transport_protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port

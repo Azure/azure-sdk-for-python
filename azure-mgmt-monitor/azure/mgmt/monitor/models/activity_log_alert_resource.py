@@ -18,30 +18,33 @@ class ActivityLogAlertResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
-    :param scopes: A list of resourceIds that will be used as prefixes. The
-     alert will only apply to activityLogs with resourceIds that fall under one
-     of these prefixes. This list must include at least one item.
-    :type scopes: list of str
+    :type tags: dict[str, str]
+    :param scopes: Required. A list of resourceIds that will be used as
+     prefixes. The alert will only apply to activityLogs with resourceIds that
+     fall under one of these prefixes. This list must include at least one
+     item.
+    :type scopes: list[str]
     :param enabled: Indicates whether this activity log alert is enabled. If
      an activity log alert is not enabled, then none of its actions will be
      activated. Default value: True .
     :type enabled: bool
-    :param condition: The conditon that will cause this alert to activate.
-    :type condition: :class:`ActivityLogAlertAllOfCondition
-     <azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition>`
-    :param actions: The actions that will activate when the condition is met.
-    :type actions: :class:`ActivityLogAlertActionList
-     <azure.mgmt.monitor.models.ActivityLogAlertActionList>`
+    :param condition: Required. The condition that will cause this alert to
+     activate.
+    :type condition: ~azure.mgmt.monitor.models.ActivityLogAlertAllOfCondition
+    :param actions: Required. The actions that will activate when the
+     condition is met.
+    :type actions: ~azure.mgmt.monitor.models.ActivityLogAlertActionList
     :param description: A description of this activity log alert.
     :type description: str
     """
@@ -69,10 +72,10 @@ class ActivityLogAlertResource(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, location, scopes, condition, actions, tags=None, enabled=True, description=None):
-        super(ActivityLogAlertResource, self).__init__(location=location, tags=tags)
-        self.scopes = scopes
-        self.enabled = enabled
-        self.condition = condition
-        self.actions = actions
-        self.description = description
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertResource, self).__init__(**kwargs)
+        self.scopes = kwargs.get('scopes', None)
+        self.enabled = kwargs.get('enabled', True)
+        self.condition = kwargs.get('condition', None)
+        self.actions = kwargs.get('actions', None)
+        self.description = kwargs.get('description', None)

@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Cdn
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile,
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provider: Service provider: Microsoft.Cdn
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile,
      endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -30,7 +39,8 @@ class OperationDisplay(Model):
         'operation': {'key': 'operation', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None):
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
+    def __init__(self, **kwargs):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = None
+        self.resource = None
+        self.operation = None

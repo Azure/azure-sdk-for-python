@@ -19,22 +19,20 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :type id: str
     :param rule_type: Rule type. Possible values are: 'Basic' and
      'PathBasedRouting'. Possible values include: 'Basic', 'PathBasedRouting'
-    :type rule_type: str or :class:`ApplicationGatewayRequestRoutingRuleType
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRuleType>`
+    :type rule_type: str or
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRuleType
     :param backend_address_pool: Backend address pool resource of the
      application gateway.
-    :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2016_09_01.models.SubResource
     :param backend_http_settings: Frontend port resource of the application
      gateway.
-    :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2016_09_01.models.SubResource
     :param http_listener: Http listener resource of the application gateway.
-    :type http_listener: :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type http_listener: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :param url_path_map: URL path map resource of the application gateway.
-    :type url_path_map: :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :type url_path_map: ~azure.mgmt.network.v2016_09_01.models.SubResource
     :param provisioning_state: Provisioning state of the request routing rule
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -58,13 +56,13 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, rule_type=None, backend_address_pool=None, backend_http_settings=None, http_listener=None, url_path_map=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayRequestRoutingRule, self).__init__(id=id)
-        self.rule_type = rule_type
-        self.backend_address_pool = backend_address_pool
-        self.backend_http_settings = backend_http_settings
-        self.http_listener = http_listener
-        self.url_path_map = url_path_map
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayRequestRoutingRule, self).__init__(**kwargs)
+        self.rule_type = kwargs.get('rule_type', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings = kwargs.get('backend_http_settings', None)
+        self.http_listener = kwargs.get('http_listener', None)
+        self.url_path_map = kwargs.get('url_path_map', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

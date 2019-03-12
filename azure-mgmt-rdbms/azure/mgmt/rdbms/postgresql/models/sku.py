@@ -15,13 +15,12 @@ from msrest.serialization import Model
 class Sku(Model):
     """Billing information related properties of a server.
 
-    :param name: The name of the sku, typically, a letter + Number code, e.g.
-     P3.
+    :param name: The name of the sku, typically, tier + family + cores, e.g.
+     B_Gen4_1, GP_Gen5_8.
     :type name: str
     :param tier: The tier of the particular SKU, e.g. Basic. Possible values
-     include: 'Basic', 'Standard'
-    :type tier: str or :class:`SkuTier
-     <azure.mgmt.rdbms.postgresql.models.SkuTier>`
+     include: 'Basic', 'GeneralPurpose', 'MemoryOptimized'
+    :type tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
     :param capacity: The scale up/out capacity, representing server's compute
      units.
     :type capacity: int
@@ -43,9 +42,10 @@ class Sku(Model):
         'family': {'key': 'family', 'type': 'str'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None, size=None, family=None):
-        self.name = name
-        self.tier = tier
-        self.capacity = capacity
-        self.size = size
-        self.family = family
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)

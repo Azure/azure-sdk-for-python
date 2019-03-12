@@ -30,5 +30,6 @@ class ExportResourceUsageParameters(Model):
     }
 
     def __init__(self, blob_storage_absolute_sas_uri=None, usage_start_date=None):
+        super(ExportResourceUsageParameters, self).__init__()
         self.blob_storage_absolute_sas_uri = blob_storage_absolute_sas_uri
         self.usage_start_date = usage_start_date

@@ -9,12 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .accounts_operations import AccountsOperations
 from .firewall_rules_operations import FirewallRulesOperations
+from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .trusted_id_providers_operations import TrustedIdProvidersOperations
-from .account_operations import AccountOperations
+from .operations import Operations
+from .locations_operations import LocationsOperations
 
 __all__ = [
+    'AccountsOperations',
     'FirewallRulesOperations',
+    'VirtualNetworkRulesOperations',
     'TrustedIdProvidersOperations',
-    'AccountOperations',
+    'Operations',
+    'LocationsOperations',
 ]

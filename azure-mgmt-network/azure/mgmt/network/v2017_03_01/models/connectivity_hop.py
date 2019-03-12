@@ -27,10 +27,10 @@ class ConnectivityHop(Model):
     :ivar resource_id: The ID of the resource corresponding to this hop.
     :vartype resource_id: str
     :ivar next_hop_ids: List of next hop identifiers.
-    :vartype next_hop_ids: list of str
+    :vartype next_hop_ids: list[str]
     :ivar issues: List of issues.
-    :vartype issues: list of :class:`ConnectivityIssue
-     <azure.mgmt.network.v2017_03_01.models.ConnectivityIssue>`
+    :vartype issues:
+     list[~azure.mgmt.network.v2017_03_01.models.ConnectivityIssue]
     """
 
     _validation = {
@@ -51,7 +51,8 @@ class ConnectivityHop(Model):
         'issues': {'key': 'issues', 'type': '[ConnectivityIssue]'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ConnectivityHop, self).__init__(**kwargs)
         self.type = None
         self.id = None
         self.address = None

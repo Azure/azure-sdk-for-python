@@ -3,6 +3,16 @@
 Release History
 ===============
 
+2.2.0 (2018-02-15)
+++++++++++++++++++
+
+* Add "providers" operation group
+
+2.1.0 (2017-10-25)
+++++++++++++++++++
+
+* Add "operations" operation group
+
 2.0.0 (2017-04-27)
 ++++++++++++++++++
 

@@ -35,9 +35,10 @@ class DpmJobTaskDetails(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, task_id=None, start_time=None, end_time=None, duration=None, status=None):
-        self.task_id = task_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.duration = duration
-        self.status = status
+    def __init__(self, **kwargs):
+        super(DpmJobTaskDetails, self).__init__(**kwargs)
+        self.task_id = kwargs.get('task_id', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.duration = kwargs.get('duration', None)
+        self.status = kwargs.get('status', None)
