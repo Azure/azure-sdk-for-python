@@ -9,26 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class RedisFirewallRule(Model):
+class RedisFirewallRule(ProxyResource):
     """A firewall rule on a redis cache has a name, and describes a contiguous
     range of IP addresses permitted to connect.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: resource ID (of the firewall rule)
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: name of the firewall rule
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: type (of the firewall rule resource =
-     'Microsoft.Cache/redis/firewallRule')
+    :ivar type: Resource type.
     :vartype type: str
-    :param start_ip: lowest IP address included in the range
+    :param start_ip: Required. lowest IP address included in the range
     :type start_ip: str
-    :param end_ip: highest IP address included in the range
+    :param end_ip: Required. highest IP address included in the range
     :type end_ip: str
     """
 
@@ -48,9 +49,7 @@ class RedisFirewallRule(Model):
         'end_ip': {'key': 'properties.endIP', 'type': 'str'},
     }
 
-    def __init__(self, start_ip, end_ip):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.start_ip = start_ip
-        self.end_ip = end_ip
+    def __init__(self, **kwargs):
+        super(RedisFirewallRule, self).__init__(**kwargs)
+        self.start_ip = kwargs.get('start_ip', None)
+        self.end_ip = kwargs.get('end_ip', None)

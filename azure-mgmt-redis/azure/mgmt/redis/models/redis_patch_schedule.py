@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class RedisPatchSchedule(Model):
+class RedisPatchSchedule(ProxyResource):
     """Response to put/get patch schedules for Redis cache.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -24,18 +26,15 @@ class RedisPatchSchedule(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :param schedule_entries: List of patch schedules for a Redis cache.
-    :type schedule_entries: list of :class:`ScheduleEntry
-     <azure.mgmt.redis.models.ScheduleEntry>`
+    :param schedule_entries: Required. List of patch schedules for a Redis
+     cache.
+    :type schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'schedule_entries': {'required': True},
     }
 
@@ -43,13 +42,9 @@ class RedisPatchSchedule(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
     }
 
-    def __init__(self, schedule_entries):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
-        self.schedule_entries = schedule_entries
+    def __init__(self, **kwargs):
+        super(RedisPatchSchedule, self).__init__(**kwargs)
+        self.schedule_entries = kwargs.get('schedule_entries', None)

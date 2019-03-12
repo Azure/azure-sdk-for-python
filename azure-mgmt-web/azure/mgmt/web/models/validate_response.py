@@ -18,8 +18,7 @@ class ValidateResponse(Model):
     :param status: Result of validation.
     :type status: str
     :param error: Error details for the case when validation fails.
-    :type error: :class:`ValidateResponseError
-     <azure.mgmt.web.models.ValidateResponseError>`
+    :type error: ~azure.mgmt.web.models.ValidateResponseError
     """
 
     _attribute_map = {
@@ -27,6 +26,7 @@ class ValidateResponse(Model):
         'error': {'key': 'error', 'type': 'ValidateResponseError'},
     }
 
-    def __init__(self, status=None, error=None):
-        self.status = status
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ValidateResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)

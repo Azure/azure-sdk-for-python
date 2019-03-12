@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class UpdateFirewallRuleParameters(Model):
-    """Data Lake Analytics firewall rule update parameters.
+    """The parameters used to update a firewall rule.
 
-    :param start_ip_address: the start IP address for the firewall rule. This
+    :param start_ip_address: The start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.
     :type start_ip_address: str
-    :param end_ip_address: the end IP address for the firewall rule. This can
+    :param end_ip_address: The end IP address for the firewall rule. This can
      be either ipv4 or ipv6. Start and End should be in the same protocol.
     :type end_ip_address: str
     """
@@ -28,6 +28,7 @@ class UpdateFirewallRuleParameters(Model):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address=None, end_ip_address=None):
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, **kwargs):
+        super(UpdateFirewallRuleParameters, self).__init__(**kwargs)
+        self.start_ip_address = kwargs.get('start_ip_address', None)
+        self.end_ip_address = kwargs.get('end_ip_address', None)

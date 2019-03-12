@@ -16,16 +16,21 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a deployed service package, which
     contains the service manifest name and the service package aggregated
     health state.
-    .
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
     :param service_manifest_name: The name of the service manifest.
     :type service_manifest_name: str
-    :param service_package_activation_id:
+    :param service_package_activation_id: The ActivationId of a deployed
+     service package. If ServicePackageActivationMode specified at the time of
+     creating the service
+     is 'SharedProcess' (or if it is not specified, in which case it defaults
+     to 'SharedProcess'), then value of ServicePackageActivationId
+     is always an empty string.
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'health_state': {'key': 'HealthState', 'type': 'str'},
@@ -33,7 +38,7 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, service_manifest_name=None, service_package_activation_id=None):
-        super(DeployedServicePackageHealthStateChunk, self).__init__(health_state=health_state)
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageHealthStateChunk, self).__init__(**kwargs)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

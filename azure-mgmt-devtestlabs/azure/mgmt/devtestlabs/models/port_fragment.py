@@ -17,8 +17,8 @@ class PortFragment(Model):
 
     :param transport_protocol: Protocol type of the port. Possible values
      include: 'Tcp', 'Udp'
-    :type transport_protocol: str or :class:`TransportProtocol
-     <azure.mgmt.devtestlabs.models.TransportProtocol>`
+    :type transport_protocol: str or
+     ~azure.mgmt.devtestlabs.models.TransportProtocol
     :param backend_port: Backend port of the target virtual machine.
     :type backend_port: int
     """
@@ -28,6 +28,7 @@ class PortFragment(Model):
         'backend_port': {'key': 'backendPort', 'type': 'int'},
     }
 
-    def __init__(self, transport_protocol=None, backend_port=None):
-        self.transport_protocol = transport_protocol
-        self.backend_port = backend_port
+    def __init__(self, **kwargs):
+        super(PortFragment, self).__init__(**kwargs)
+        self.transport_protocol = kwargs.get('transport_protocol', None)
+        self.backend_port = kwargs.get('backend_port', None)

@@ -28,11 +28,11 @@ class Subscription(Model):
     :ivar state: The subscription state. Possible values are Enabled, Warned,
      PastDue, Disabled, and Deleted. Possible values include: 'Enabled',
      'Warned', 'PastDue', 'Disabled', 'Deleted'
-    :vartype state: str or :class:`SubscriptionState
-     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionState>`
+    :vartype state: str or
+     ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionState
     :param subscription_policies: The subscription policies.
-    :type subscription_policies: :class:`SubscriptionPolicies
-     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPolicies>`
+    :type subscription_policies:
+     ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPolicies
     :param authorization_source: The authorization source of the request.
      Valid values are one or more combinations of Legacy, RoleBased, Bypassed,
      Direct and Management. For example, 'Legacy, RoleBased'.
@@ -55,10 +55,11 @@ class Subscription(Model):
         'authorization_source': {'key': 'authorizationSource', 'type': 'str'},
     }
 
-    def __init__(self, subscription_policies=None, authorization_source=None):
+    def __init__(self, **kwargs):
+        super(Subscription, self).__init__(**kwargs)
         self.id = None
         self.subscription_id = None
         self.display_name = None
         self.state = None
-        self.subscription_policies = subscription_policies
-        self.authorization_source = authorization_source
+        self.subscription_policies = kwargs.get('subscription_policies', None)
+        self.authorization_source = kwargs.get('authorization_source', None)

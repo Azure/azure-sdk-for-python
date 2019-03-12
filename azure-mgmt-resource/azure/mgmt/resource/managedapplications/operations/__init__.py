@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .appliances_operations import AppliancesOperations
-from .appliance_definitions_operations import ApplianceDefinitionsOperations
+from .applications_operations import ApplicationsOperations
+from .application_definitions_operations import ApplicationDefinitionsOperations
 
 __all__ = [
-    'AppliancesOperations',
-    'ApplianceDefinitionsOperations',
+    'ApplicationsOperations',
+    'ApplicationDefinitionsOperations',
 ]

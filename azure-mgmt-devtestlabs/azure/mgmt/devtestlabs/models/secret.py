@@ -27,20 +27,22 @@ class Secret(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param value: The value of the secret for secret creation.
     :type value: str
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -54,8 +56,8 @@ class Secret(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, value=None, provisioning_state=None, unique_identifier=None):
-        super(Secret, self).__init__(location=location, tags=tags)
-        self.value = value
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(Secret, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

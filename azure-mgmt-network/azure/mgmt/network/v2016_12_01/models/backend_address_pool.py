@@ -22,17 +22,16 @@ class BackendAddressPool(SubResource):
     :type id: str
     :ivar backend_ip_configurations: Gets collection of references to IP
      addresses defined in network interfaces.
-    :vartype backend_ip_configurations: list of
-     :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2016_12_01.models.NetworkInterfaceIPConfiguration>`
+    :vartype backend_ip_configurations:
+     list[~azure.mgmt.network.v2016_12_01.models.NetworkInterfaceIPConfiguration]
     :ivar load_balancing_rules: Gets load balancing rules that use this
      backend address pool.
-    :vartype load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :vartype load_balancing_rules:
+     list[~azure.mgmt.network.v2016_12_01.models.SubResource]
     :ivar outbound_nat_rule: Gets outbound rules that use this backend address
      pool.
-    :vartype outbound_nat_rule: :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :vartype outbound_nat_rule:
+     ~azure.mgmt.network.v2016_12_01.models.SubResource
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -60,11 +59,11 @@ class BackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, provisioning_state=None, name=None, etag=None):
-        super(BackendAddressPool, self).__init__(id=id)
+    def __init__(self, **kwargs):
+        super(BackendAddressPool, self).__init__(**kwargs)
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_nat_rule = None
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

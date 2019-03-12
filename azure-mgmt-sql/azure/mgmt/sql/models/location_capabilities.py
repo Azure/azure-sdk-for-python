@@ -13,36 +13,46 @@ from msrest.serialization import Model
 
 
 class LocationCapabilities(Model):
-    """The capabilities for a location.
+    """The location capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: The location name.
     :vartype name: str
-    :ivar status: Azure SQL Database's status for the location. Possible
-     values include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
     :ivar supported_server_versions: The list of supported server versions.
-    :vartype supported_server_versions: list of
-     :class:`ServerVersionCapability
-     <azure.mgmt.sql.models.ServerVersionCapability>`
+    :vartype supported_server_versions:
+     list[~azure.mgmt.sql.models.ServerVersionCapability]
+    :ivar supported_managed_instance_versions: The list of supported managed
+     instance versions.
+    :vartype supported_managed_instance_versions:
+     list[~azure.mgmt.sql.models.ManagedInstanceVersionCapability]
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
         'name': {'readonly': True},
-        'status': {'readonly': True},
         'supported_server_versions': {'readonly': True},
+        'supported_managed_instance_versions': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
+        'supported_managed_instance_versions': {'key': 'supportedManagedInstanceVersions', 'type': '[ManagedInstanceVersionCapability]'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(LocationCapabilities, self).__init__(**kwargs)
         self.name = None
-        self.status = None
         self.supported_server_versions = None
+        self.supported_managed_instance_versions = None
+        self.status = None
+        self.reason = kwargs.get('reason', None)

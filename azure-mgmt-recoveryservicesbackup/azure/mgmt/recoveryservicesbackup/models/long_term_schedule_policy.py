@@ -15,7 +15,9 @@ from .schedule_policy import SchedulePolicy
 class LongTermSchedulePolicy(SchedulePolicy):
     """Long term policy schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param schedule_policy_type: Required. Constant filled by server.
     :type schedule_policy_type: str
     """
 
@@ -23,6 +25,10 @@ class LongTermSchedulePolicy(SchedulePolicy):
         'schedule_policy_type': {'required': True},
     }
 
-    def __init__(self):
-        super(LongTermSchedulePolicy, self).__init__()
+    _attribute_map = {
+        'schedule_policy_type': {'key': 'schedulePolicyType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LongTermSchedulePolicy, self).__init__(**kwargs)
         self.schedule_policy_type = 'LongTermSchedulePolicy'

@@ -16,18 +16,20 @@ class FailedUpgradeDomainProgressObject(Model):
     """The detailed upgrade progress for nodes in the current upgrade domain at
     the point of failure.
 
-    :param domain_name:
+    :param domain_name: The name of the upgrade domain
     :type domain_name: str
-    :param node_upgrade_progress_list:
-    :type node_upgrade_progress_list: list of :class:`NodeUpgradeProgressInfo
-     <azure.servicefabric.models.NodeUpgradeProgressInfo>`
-    """ 
+    :param node_upgrade_progress_list: List of upgrading nodes and their
+     statuses
+    :type node_upgrade_progress_list:
+     list[~azure.servicefabric.models.NodeUpgradeProgressInfo]
+    """
 
     _attribute_map = {
         'domain_name': {'key': 'DomainName', 'type': 'str'},
         'node_upgrade_progress_list': {'key': 'NodeUpgradeProgressList', 'type': '[NodeUpgradeProgressInfo]'},
     }
 
-    def __init__(self, domain_name=None, node_upgrade_progress_list=None):
-        self.domain_name = domain_name
-        self.node_upgrade_progress_list = node_upgrade_progress_list
+    def __init__(self, **kwargs):
+        super(FailedUpgradeDomainProgressObject, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.node_upgrade_progress_list = kwargs.get('node_upgrade_progress_list', None)

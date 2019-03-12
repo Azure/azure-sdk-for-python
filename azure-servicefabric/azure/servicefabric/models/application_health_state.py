@@ -15,20 +15,23 @@ from .entity_health_state import EntityHealthState
 class ApplicationHealthState(EntityHealthState):
     """Represents the health state of an application, which contains the
     application identifier and the aggregated health state.
-    .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param name: Full name of the application.
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param name: The name of the application, including the 'fabric:' URI
+     scheme.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, name=None):
-        super(ApplicationHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.name = name
+    def __init__(self, **kwargs):
+        super(ApplicationHealthState, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

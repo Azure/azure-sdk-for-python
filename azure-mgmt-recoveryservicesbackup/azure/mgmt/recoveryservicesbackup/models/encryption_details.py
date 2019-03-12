@@ -36,9 +36,10 @@ class EncryptionDetails(Model):
         'secret_key_vault_id': {'key': 'secretKeyVaultId', 'type': 'str'},
     }
 
-    def __init__(self, encryption_enabled=None, kek_url=None, secret_key_url=None, kek_vault_id=None, secret_key_vault_id=None):
-        self.encryption_enabled = encryption_enabled
-        self.kek_url = kek_url
-        self.secret_key_url = secret_key_url
-        self.kek_vault_id = kek_vault_id
-        self.secret_key_vault_id = secret_key_vault_id
+    def __init__(self, **kwargs):
+        super(EncryptionDetails, self).__init__(**kwargs)
+        self.encryption_enabled = kwargs.get('encryption_enabled', None)
+        self.kek_url = kwargs.get('kek_url', None)
+        self.secret_key_url = kwargs.get('secret_key_url', None)
+        self.kek_vault_id = kwargs.get('kek_vault_id', None)
+        self.secret_key_vault_id = kwargs.get('secret_key_vault_id', None)

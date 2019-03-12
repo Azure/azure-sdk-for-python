@@ -16,10 +16,12 @@ class ExportDevicesRequest(Model):
     """Use to provide parameters when requesting an export of all devices in the
     IoT hub.
 
-    :param export_blob_container_uri: The export blob container URI.
+    All required parameters must be populated in order to send to Azure.
+
+    :param export_blob_container_uri: Required. The export blob container URI.
     :type export_blob_container_uri: str
-    :param exclude_keys: The value indicating whether keys should be excluded
-     during export.
+    :param exclude_keys: Required. The value indicating whether keys should be
+     excluded during export.
     :type exclude_keys: bool
     """
 
@@ -29,10 +31,11 @@ class ExportDevicesRequest(Model):
     }
 
     _attribute_map = {
-        'export_blob_container_uri': {'key': 'ExportBlobContainerUri', 'type': 'str'},
-        'exclude_keys': {'key': 'ExcludeKeys', 'type': 'bool'},
+        'export_blob_container_uri': {'key': 'exportBlobContainerUri', 'type': 'str'},
+        'exclude_keys': {'key': 'excludeKeys', 'type': 'bool'},
     }
 
-    def __init__(self, export_blob_container_uri, exclude_keys):
-        self.export_blob_container_uri = export_blob_container_uri
-        self.exclude_keys = exclude_keys
+    def __init__(self, **kwargs):
+        super(ExportDevicesRequest, self).__init__(**kwargs)
+        self.export_blob_container_uri = kwargs.get('export_blob_container_uri', None)
+        self.exclude_keys = kwargs.get('exclude_keys', None)

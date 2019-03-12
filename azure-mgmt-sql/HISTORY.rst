@@ -3,6 +3,250 @@
 Release History
 ===============
 
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
+0.10.0 (2018-10-18)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseVulnerabilityAssessment has a new parameter storage_account_access_key
+- Model ManagedInstanceUpdate has a new parameter dns_zone_partner
+- Model ManagedInstanceUpdate has a new parameter collation
+- Model ManagedInstanceUpdate has a new parameter dns_zone
+- Model ManagedInstance has a new parameter dns_zone_partner
+- Model ManagedInstance has a new parameter collation
+- Model ManagedInstance has a new parameter dns_zone
+- Added operation BackupShortTermRetentionPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseVulnerabilityAssessmentsOperations
+- Added operation group ExtendedDatabaseBlobAuditingPoliciesOperations
+- Added operation group TdeCertificatesOperations
+- Added operation group ManagedInstanceKeysOperations
+- Added operation group ServerBlobAuditingPoliciesOperations
+- Added operation group ManagedInstanceEncryptionProtectorsOperations
+- Added operation group ExtendedServerBlobAuditingPoliciesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentScansOperations
+- Added operation group ManagedInstanceTdeCertificatesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+
+**Breaking changes**
+
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+0.9.1 (2018-05-24)
+++++++++++++++++++
+
+**Features**
+
+- Managed instances, databases, and failover groups
+- Vulnerability assessments
+- Backup short term retention policies
+- Elastic Jobs
+
+0.9.0 (2018-04-25)
+++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**SQL Breaking changes**
+
+- Database and ElasticPool now use Sku property for scale and tier-related properties. We have made this change in order to allow future support of autoscale, and to allow for new vCore-based editions.
+   * Database.sku has replaced Database.requested_service_objective_name and Database.edition. Database scale can be set by setting Sku.name to the requested service objective name (e.g. S0, P1, or GP_Gen4_1), or by setting Sku.name to the sku name (e.g. Standard, Premium, or GP_Gen4) and set Sku.capacity to the scale measured in DTU or vCores.
+   * Database.current_sku has replaced Database.service_level_objetive.
+   * Database.current_service_objective_id and Database.requested_service_objective_id have been removed.
+   * ElasticPool.sku has replaced ElasticPool.dtu. Elastic pool scale can be set by setting Sku.name to the requested sku name (e.g. StandardPool, PremiumPool, or GP_Gen4) and setting Sku.capacity to the scale measured in DTU or vCores.
+   * ElasticPool.per_database_settings has replaced ElasticPool.database_dtu_min and ElasticPool.database_dtu_max.
+- Database.max_size_bytes is now an integer instead of string.
+- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions.
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added Long Term Retention V2 commands, including getting backups, deleting backups, setting the V2 policies, and getting the V2 policies
+
+  * Removed support for managing Vaults used for Long Term Retention V1
+  * Changed BackupLongTermRetentionPolicy class, removing the Long Term Retention V1 properties and adding the Long Term Retention V2 properties
+  * Removed BackupLongTermRetentionPolicyState
+
+0.8.6 (2018-03-22)
+++++++++++++++++++
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added support for Auto-tuning REST API
+
+0.8.5 (2018-01-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for renaming databases
+- Added missing database editions and service objectives
+- Added ability to list long term retention vaults & policies
+
+0.8.4 (2017-11-14)
+++++++++++++++++++
+
+**Features**
+
+- Added support for subscription usages
+
+0.8.3 (2017-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Added support for database zone redundant property
+- Added support for server dns aliases
+
+0.8.2 (2017-10-18)
+++++++++++++++++++
+
+**Features**
+
+- Added support for state and migration flag properties for SQL Vnet rules
+
+0.8.1 (2017-10-04)
+++++++++++++++++++
+
+**Features**
+
+- Add database.cancel operation
+- Add database.list_by_database
+
+0.8.0 (2017-09-07)
+++++++++++++++++++
+
+**Disclaimer**
+
+We were using a slightly unorthodox convention for some operation ids.
+Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..)
+instead of the flattened ARM standard client.database_blob_auditing_policies.get(...).
+
+This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs.
+For example if we wanted to implement listing db audit policies by server, continuing the current convention would be
+client.databases.list_blob_auditing_policies_by_server(..) which makes much less sense than the ARM standard which would beclient.database_blob_auditing_policies.list_by_server(...)`.
+
+In order to resolve this and provide a good path moving forward,
+we have renamed the inconsistent operations to follow the ARM standard.
+This is an unfortunate breaking change, but it's best to do now while the SDK is still in preview and since most of these operations were only recently added.
+
+**Breaking changes**
+
+- client.database.get_backup_long_term_retention_policy -> client.backup_long_term_retention_policies.get
+- client.database.create_or_update_backup_long_term_retention_policy -> client.backup_long_term_retention_policies.create_or_update
+
+- client.servers.create_backup_long_term_retention_vault -> client.backup_long_term_retention_vaults.create_or_update
+- client.servers.get_backup_long_term_retention_vault -> client.backup_long_term_retention_vaults.get
+
+- client.database.list_restore_points -> client.restore_points.list_by_database
+
+- client.servers.create_or_update_connection_policy -> client.server_connection_policies.create_or_update
+- client.servers.get_connection_policy -> client.server_connection_policies.get
+
+- client.databases.create_or_update_data_masking_policy -> client.data_masking_policies.create_or_update
+- client.databases.get_data_masking_policy -> client.data_masking_policies.get
+
+- client.databases.create_or_update_data_masking_rule -> client.data_masking_rules.create_or_update
+- client.databases.get_data_masking_rule -> client.data_masking_rules.get
+- client.databases.list_data_masking_rules -> client.data_masking_rules.list_by_database
+
+- client.databases.get_threat_detection_policy -> client.database_threat_detection_policies.get
+- client.databases.create_or_update_threat_detection_policy -> client.database_threat_detection_policies.create_or_update
+
+- client.databases.create_or_update_geo_backup_policy -> client.geo_backup_policies.create_or_update
+- client.databases.get_geo_backup_policy -> client.geo_backup_policies.get
+- client.databases.list_geo_backup_policies -> client.geo_backup_policies.list_by_database
+
+- client.databases.delete_replication_link -> client.replication_links.delete
+- client.databases.get_replication_link -> client.replication_links.get
+- client.databases.failover_replication_link -> client.replication_links.failover
+- client.databases.failover_replication_link_allow_data_loss -> client.replication_links.failover_allow_data_loss
+- client.databases.list_replication_links -> client.replication_links.list_by_database
+
+- client.server_azure_ad_administrators.list -> client.server_azure_ad_administrators.list_by_server
+- client.servers.get_service_objective -> client.service_objectives.get
+- client.servers.list_service_objectives -> client.service_objectives.list_by_server
+
+- client.elastic_pools.list_activity -> client.elastic_pool_activities.list_by_elastic_pool
+- client.elastic_pools.list_database_activity -> client.elastic_pool_database_activities.list_by_elastic_pool
+- client.elastic_pools.get_database -> client.databases.get_by_elastic_pool
+- client.elastic_pools.list_databases -> client.databases.list_by_elastic_pool
+
+- client.recommended_elastic_pools.get_databases -> client.databases.get_by_recommended_elastic_pool
+- client.recommended_elastic_pools.list_databases -> client.databases.list_by_recommended_elastic_pool
+
+- client.databases.get_service_tier_advisor -> client.service_tier_advisors.get
+- client.databases.list_service_tier_advisors -> client.service_tier_advisors.list_by_database
+
+- client.databases.create_or_update_transparent_data_encryption_configuration -> client.transparent_data_encryptions.create_or_update
+- client.databases.get_transparent_data_encryption_configuration -> client.transparent_data_encryptions.get
+- client.databases.list_transparent_data_encryption_activity -> client.transparent_data_encryption_activities.list_by_configuration
+
+- client.servers.list_usages -> client.server_usages.list_by_server
+- client.databases.list_usages -> client.database_usages.list_by_database
+
+- client.databases.get_blob_auditing_policy -> client.database_blob_auditing_policies.get
+- client.databases.create_or_update_blob_auditing_policy -> client.database_blob_auditing_policies.create_or_update
+
+- client.servers.list_encryption_protectors, -> client.encryption_protectors.list_by_server
+- client.servers.get_encryption_protector -> client.encryption_protectors.get
+- client.servers.create_or_update_encryption_protector -> client.encryption_protectors.create_or_update
+
+- Database blob auditing policy state is required
+- Failover group resource now has required properties defined
+
+**Features**
+
+- Add SQL DB, server, and pool PATCH operations
+- client.operations.list now returnes a full list of operations and not a limited subset (2014-04-01 to 2015-05-01-preview)
+
+**Fixed bugs**
+
+- Fixed KeyError in server_azure_ad_administrators_operations.get
+
 0.7.1 (2017-06-30)
 ++++++++++++++++++
 
@@ -12,7 +256,7 @@ Release History
 0.7.0 (2017-06-28)
 ++++++++++++++++++
 
-**features**
+**Features**
 
 - Backup/Restore related: RecoverableDatabase, RestorableDroppedDatabase, BackupLongTermRetentionVault, BackupLongTermRetentionPolicy, and GeoBackupPolicy
 - Data Masking rules and policies

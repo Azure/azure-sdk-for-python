@@ -26,8 +26,7 @@ class BgpPeerStatus(Model):
     :vartype asn: int
     :ivar state: The BGP peer state. Possible values include: 'Unknown',
      'Stopped', 'Idle', 'Connecting', 'Connected'
-    :vartype state: str or :class:`BgpPeerState
-     <azure.mgmt.network.v2017_03_01.models.BgpPeerState>`
+    :vartype state: str or ~azure.mgmt.network.v2017_03_01.models.BgpPeerState
     :ivar connected_duration: For how long the peering has been up
     :vartype connected_duration: str
     :ivar routes_received: The number of routes learned from this peer
@@ -60,7 +59,8 @@ class BgpPeerStatus(Model):
         'messages_received': {'key': 'messagesReceived', 'type': 'long'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(BgpPeerStatus, self).__init__(**kwargs)
         self.local_address = None
         self.neighbor = None
         self.asn = None

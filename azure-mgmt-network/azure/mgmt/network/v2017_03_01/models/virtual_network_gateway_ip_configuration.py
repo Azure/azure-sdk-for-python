@@ -23,14 +23,13 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :param private_ip_allocation_method: The private IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
-    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2017_03_01.models.IPAllocationMethod>`
+    :type private_ip_allocation_method: str or
+     ~azure.mgmt.network.v2017_03_01.models.IPAllocationMethod
     :param subnet: The reference of the subnet resource.
-    :type subnet: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type subnet: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param public_ip_address: The reference of the public IP resource.
-    :type public_ip_address: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type public_ip_address:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     :ivar provisioning_state: The provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
@@ -56,11 +55,11 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, name=None, etag=None):
-        super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id)
-        self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = subnet
-        self.public_ip_address = public_ip_address
+    def __init__(self, **kwargs):
+        super(VirtualNetworkGatewayIPConfiguration, self).__init__(**kwargs)
+        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
         self.provisioning_state = None
-        self.name = name
-        self.etag = etag
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

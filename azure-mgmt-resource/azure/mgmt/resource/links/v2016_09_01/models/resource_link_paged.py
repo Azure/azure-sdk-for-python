@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ResourceLinkPaged(Paged):
     """
-    A paging container for iterating over a list of ResourceLink object
+    A paging container for iterating over a list of :class:`ResourceLink <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>` object
     """
 
     _attribute_map = {

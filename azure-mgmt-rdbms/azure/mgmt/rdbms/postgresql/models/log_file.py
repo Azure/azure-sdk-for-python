@@ -24,14 +24,12 @@ class LogFile(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param log_file_name: Log file name.
-    :type log_file_name: str
     :param size_in_kb: Size of the log file.
     :type size_in_kb: long
-    :param created_time: Creation timestamp of the log file.
-    :type created_time: datetime
-    :param last_modified_time: Last modified timestamp of the log file.
-    :type last_modified_time: datetime
+    :ivar created_time: Creation timestamp of the log file.
+    :vartype created_time: datetime
+    :ivar last_modified_time: Last modified timestamp of the log file.
+    :vartype last_modified_time: datetime
     :param log_file_type: Type of the log file.
     :type log_file_type: str
     :param url: The url to download the log file from.
@@ -42,13 +40,14 @@ class LogFile(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'created_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'log_file_name': {'key': 'properties.name', 'type': 'str'},
         'size_in_kb': {'key': 'properties.sizeInKB', 'type': 'long'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
@@ -56,11 +55,10 @@ class LogFile(ProxyResource):
         'url': {'key': 'properties.url', 'type': 'str'},
     }
 
-    def __init__(self, log_file_name=None, size_in_kb=None, created_time=None, last_modified_time=None, log_file_type=None, url=None):
-        super(LogFile, self).__init__()
-        self.log_file_name = log_file_name
-        self.size_in_kb = size_in_kb
-        self.created_time = created_time
-        self.last_modified_time = last_modified_time
-        self.log_file_type = log_file_type
-        self.url = url
+    def __init__(self, **kwargs):
+        super(LogFile, self).__init__(**kwargs)
+        self.size_in_kb = kwargs.get('size_in_kb', None)
+        self.created_time = None
+        self.last_modified_time = None
+        self.log_file_type = kwargs.get('log_file_type', None)
+        self.url = kwargs.get('url', None)

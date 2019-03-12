@@ -12,56 +12,43 @@
 from enum import Enum
 
 
-class EncryptionConfigType(Enum):
+class EncryptionConfigType(str, Enum):
 
     user_managed = "UserManaged"
     service_managed = "ServiceManaged"
 
 
-class DataLakeStoreAccountStatus(Enum):
-
-    failed = "Failed"
-    creating = "Creating"
-    running = "Running"
-    succeeded = "Succeeded"
-    patching = "Patching"
-    suspending = "Suspending"
-    resuming = "Resuming"
-    deleting = "Deleting"
-    deleted = "Deleted"
-
-
-class DataLakeStoreAccountState(Enum):
-
-    active = "Active"
-    suspended = "Suspended"
-
-
-class EncryptionState(Enum):
+class EncryptionState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class EncryptionProvisioningState(Enum):
+class EncryptionProvisioningState(str, Enum):
 
     creating = "Creating"
     succeeded = "Succeeded"
 
 
-class FirewallState(Enum):
+class FirewallState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class TrustedIdProviderState(Enum):
+class FirewallAllowAzureIpsState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class TierType(Enum):
+class TrustedIdProviderState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class TierType(str, Enum):
 
     consumption = "Consumption"
     commitment_1_tb = "Commitment_1TB"
@@ -72,7 +59,38 @@ class TierType(Enum):
     commitment_5_pb = "Commitment_5PB"
 
 
-class FirewallAllowAzureIpsState(Enum):
+class DataLakeStoreAccountStatus(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    failed = "Failed"
+    creating = "Creating"
+    running = "Running"
+    succeeded = "Succeeded"
+    patching = "Patching"
+    suspending = "Suspending"
+    resuming = "Resuming"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
+
+
+class DataLakeStoreAccountState(str, Enum):
+
+    active = "Active"
+    suspended = "Suspended"
+
+
+class OperationOrigin(str, Enum):
+
+    user = "user"
+    system = "system"
+    usersystem = "user,system"
+
+
+class SubscriptionState(str, Enum):
+
+    registered = "Registered"
+    suspended = "Suspended"
+    deleted = "Deleted"
+    unregistered = "Unregistered"
+    warned = "Warned"

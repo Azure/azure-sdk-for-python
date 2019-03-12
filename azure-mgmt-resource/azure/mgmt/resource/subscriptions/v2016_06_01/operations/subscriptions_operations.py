@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class SubscriptionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -50,15 +52,16 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LocationPaged
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged>`
+        :return: An iterator like instance of Location
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.Location]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/locations'
+                url = self.list_locations.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
@@ -74,7 +77,7 @@ class SubscriptionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -83,9 +86,8 @@ class SubscriptionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -103,6 +105,7 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}
 
     def get(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
@@ -115,14 +118,14 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Subscription
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Subscription or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
@@ -134,7 +137,7 @@ class SubscriptionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -143,8 +146,8 @@ class SubscriptionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -161,6 +164,7 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -171,15 +175,16 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SubscriptionPaged
-         <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged>`
+        :return: An iterator like instance of Subscription
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged[~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -191,7 +196,7 @@ class SubscriptionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -200,9 +205,8 @@ class SubscriptionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -220,3 +224,4 @@ class SubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions'}

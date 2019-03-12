@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,16 +22,18 @@ class PolicySetsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2016-05-15".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "2018-09-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-05-15"
+        self.api_version = "2018-09-15"
 
         self.config = config
 
@@ -46,23 +48,22 @@ class PolicySetsOperations(object):
         :param name: The name of the policy set.
         :type name: str
         :param policies: Policies to evaluate.
-        :type policies: list of :class:`EvaluatePoliciesProperties
-         <azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties>`
+        :type policies:
+         list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EvaluatePoliciesResponse
-         <azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: EvaluatePoliciesResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/policysets/{name}/evaluatePolicies'
+        url = self.evaluate_policies.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -77,6 +78,7 @@ class PolicySetsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -89,9 +91,8 @@ class PolicySetsOperations(object):
         body_content = self._serialize.body(evaluate_policies_request, 'EvaluatePoliciesRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -108,3 +109,4 @@ class PolicySetsOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_policies.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/policysets/{name}/evaluatePolicies'}

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
-import uuid
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -23,16 +24,18 @@ class VirtualMachineSchedulesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2016-05-15".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "2018-09-15".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-05-15"
+        self.api_version = "2018-09-15"
 
         self.config = config
 
@@ -49,28 +52,30 @@ class VirtualMachineSchedulesOperations(object):
         :param expand: Specify the $expand query. Example:
          'properties($select=status)'
         :type expand: str
-        :param filter: The filter to apply to the operation.
+        :param filter: The filter to apply to the operation. Example:
+         '$filter=contains(name,'myName')
         :type filter: str
         :param top: The maximum number of resources to return from the
-         operation.
+         operation. Example: '$top=10'
         :type top: int
         :param orderby: The ordering expression for the results, using OData
-         notation.
+         notation. Example: '$orderby=name desc'
         :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SchedulePaged
-         <azure.mgmt.devtestlabs.models.SchedulePaged>`
+        :return: An iterator like instance of Schedule
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.SchedulePaged[~azure.mgmt.devtestlabs.models.Schedule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -97,7 +102,7 @@ class VirtualMachineSchedulesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -106,9 +111,8 @@ class VirtualMachineSchedulesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -126,6 +130,7 @@ class VirtualMachineSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules'}
 
     def get(
             self, resource_group_name, lab_name, virtual_machine_name, name, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -147,13 +152,13 @@ class VirtualMachineSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -171,7 +176,7 @@ class VirtualMachineSchedulesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -180,8 +185,8 @@ class VirtualMachineSchedulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -198,6 +203,7 @@ class VirtualMachineSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'}
 
     def create_or_update(
             self, resource_group_name, lab_name, virtual_machine_name, name, schedule, custom_headers=None, raw=False, **operation_config):
@@ -212,20 +218,19 @@ class VirtualMachineSchedulesOperations(object):
         :param name: The name of the schedule.
         :type name: str
         :param schedule: A schedule.
-        :type schedule: :class:`Schedule
-         <azure.mgmt.devtestlabs.models.Schedule>`
+        :type schedule: ~azure.mgmt.devtestlabs.models.Schedule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -241,6 +246,7 @@ class VirtualMachineSchedulesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -253,9 +259,8 @@ class VirtualMachineSchedulesOperations(object):
         body_content = self._serialize.body(schedule, 'Schedule')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -274,6 +279,7 @@ class VirtualMachineSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'}
 
     def delete(
             self, resource_group_name, lab_name, virtual_machine_name, name, custom_headers=None, raw=False, **operation_config):
@@ -292,13 +298,12 @@ class VirtualMachineSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -314,7 +319,6 @@ class VirtualMachineSchedulesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -323,8 +327,8 @@ class VirtualMachineSchedulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -334,6 +338,7 @@ class VirtualMachineSchedulesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'}
 
     def update(
             self, resource_group_name, lab_name, virtual_machine_name, name, schedule, custom_headers=None, raw=False, **operation_config):
@@ -348,20 +353,19 @@ class VirtualMachineSchedulesOperations(object):
         :param name: The name of the schedule.
         :type name: str
         :param schedule: A schedule.
-        :type schedule: :class:`ScheduleFragment
-         <azure.mgmt.devtestlabs.models.ScheduleFragment>`
+        :type schedule: ~azure.mgmt.devtestlabs.models.ScheduleFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Schedule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Schedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -377,6 +381,7 @@ class VirtualMachineSchedulesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -389,9 +394,8 @@ class VirtualMachineSchedulesOperations(object):
         body_content = self._serialize.body(schedule, 'ScheduleFragment')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -408,31 +412,13 @@ class VirtualMachineSchedulesOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}'}
 
-    def execute(
+
+    def _execute_initial(
             self, resource_group_name, lab_name, virtual_machine_name, name, custom_headers=None, raw=False, **operation_config):
-        """Execute a schedule. This operation can take a while to complete.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab.
-        :type lab_name: str
-        :param virtual_machine_name: The name of the virtual machine.
-        :type virtual_machine_name: str
-        :param name: The name of the schedule.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}/execute'
+        url = self.execute.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -448,7 +434,6 @@ class VirtualMachineSchedulesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -457,37 +442,61 @@ class VirtualMachineSchedulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+    def execute(
+            self, resource_group_name, lab_name, virtual_machine_name, name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Execute a schedule. This operation can take a while to complete.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param lab_name: The name of the lab.
+        :type lab_name: str
+        :param virtual_machine_name: The name of the virtual machine.
+        :type virtual_machine_name: str
+        :param name: The name of the schedule.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._execute_initial(
+            resource_group_name=resource_group_name,
+            lab_name=lab_name,
+            virtual_machine_name=virtual_machine_name,
+            name=name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/virtualmachines/{virtualMachineName}/schedules/{name}/execute'}

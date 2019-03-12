@@ -1,14 +1,6 @@
 azure.mgmt.containerregistry package
 ====================================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.containerregistry.models
-   azure.mgmt.containerregistry.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.containerregistry.v2017_10_01
+   azure.mgmt.containerregistry.v2017_03_01

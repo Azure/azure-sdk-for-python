@@ -9,30 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class User(Resource):
-    """User crendentials used for publishing activity.
+class User(ProxyOnlyResource):
+    """User credentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param user_name: Username
-    :type user_name: str
-    :param publishing_user_name: Username used for publishing.
+    :ivar type: Resource type.
+    :vartype type: str
+    :param publishing_user_name: Required. Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
     :type publishing_password: str
@@ -41,31 +37,33 @@ class User(Resource):
     :param publishing_password_hash_salt: Password hash salt used for
      publishing.
     :type publishing_password_hash_salt: str
+    :param scm_uri: Url of SCM site.
+    :type scm_uri: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'publishing_user_name': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
+        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
-        super(User, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.user_name = user_name
-        self.publishing_user_name = publishing_user_name
-        self.publishing_password = publishing_password
-        self.publishing_password_hash = publishing_password_hash
-        self.publishing_password_hash_salt = publishing_password_hash_salt
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.publishing_user_name = kwargs.get('publishing_user_name', None)
+        self.publishing_password = kwargs.get('publishing_password', None)
+        self.publishing_password_hash = kwargs.get('publishing_password_hash', None)
+        self.publishing_password_hash_salt = kwargs.get('publishing_password_hash_salt', None)
+        self.scm_uri = kwargs.get('scm_uri', None)

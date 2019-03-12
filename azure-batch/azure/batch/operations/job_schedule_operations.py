@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class JobScheduleOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-05-01.5.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01.5.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -43,16 +45,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_exists_options: Additional parameters for the
          operation
-        :type job_schedule_exists_options: :class:`JobScheduleExistsOptions
-         <azure.batch.models.JobScheduleExistsOptions>`
+        :type job_schedule_exists_options:
+         ~azure.batch.models.JobScheduleExistsOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: bool
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -82,8 +83,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_exists_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.exists.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -96,7 +98,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -119,8 +120,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -136,6 +137,7 @@ class JobScheduleOperations(object):
                 })
             return client_raw_response
         return deserialized
+    exists.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def delete(
             self, job_schedule_id, job_schedule_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -152,16 +154,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_delete_options: Additional parameters for the
          operation
-        :type job_schedule_delete_options: :class:`JobScheduleDeleteOptions
-         <azure.batch.models.JobScheduleDeleteOptions>`
+        :type job_schedule_delete_options:
+         ~azure.batch.models.JobScheduleDeleteOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -191,8 +192,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_delete_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -205,7 +207,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -228,8 +229,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -241,6 +242,7 @@ class JobScheduleOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def get(
             self, job_schedule_id, job_schedule_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -250,17 +252,16 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_get_options: Additional parameters for the
          operation
-        :type job_schedule_get_options: :class:`JobScheduleGetOptions
-         <azure.batch.models.JobScheduleGetOptions>`
+        :type job_schedule_get_options:
+         ~azure.batch.models.JobScheduleGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudJobSchedule
-         <azure.batch.models.CloudJobSchedule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CloudJobSchedule or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.CloudJobSchedule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -296,8 +297,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_get_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -314,7 +316,7 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -337,8 +339,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -361,6 +363,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def patch(
             self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers=None, raw=False, **operation_config):
@@ -376,20 +379,19 @@ class JobScheduleOperations(object):
         :param job_schedule_id: The ID of the job schedule to update.
         :type job_schedule_id: str
         :param job_schedule_patch_parameter: The parameters for the request.
-        :type job_schedule_patch_parameter: :class:`JobSchedulePatchParameter
-         <azure.batch.models.JobSchedulePatchParameter>`
+        :type job_schedule_patch_parameter:
+         ~azure.batch.models.JobSchedulePatchParameter
         :param job_schedule_patch_options: Additional parameters for the
          operation
-        :type job_schedule_patch_options: :class:`JobSchedulePatchOptions
-         <azure.batch.models.JobSchedulePatchOptions>`
+        :type job_schedule_patch_options:
+         ~azure.batch.models.JobSchedulePatchOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -419,8 +421,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_patch_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -459,9 +462,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(job_schedule_patch_parameter, 'JobSchedulePatchParameter')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -476,6 +478,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    patch.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def update(
             self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
@@ -492,20 +495,18 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_update_parameter: The parameters for the request.
         :type job_schedule_update_parameter:
-         :class:`JobScheduleUpdateParameter
-         <azure.batch.models.JobScheduleUpdateParameter>`
+         ~azure.batch.models.JobScheduleUpdateParameter
         :param job_schedule_update_options: Additional parameters for the
          operation
-        :type job_schedule_update_options: :class:`JobScheduleUpdateOptions
-         <azure.batch.models.JobScheduleUpdateOptions>`
+        :type job_schedule_update_options:
+         ~azure.batch.models.JobScheduleUpdateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -535,8 +536,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_update_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -575,9 +577,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(job_schedule_update_parameter, 'JobScheduleUpdateParameter')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -592,6 +593,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    update.metadata = {'url': '/jobschedules/{jobScheduleId}'}
 
     def disable(
             self, job_schedule_id, job_schedule_disable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -603,16 +605,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_disable_options: Additional parameters for the
          operation
-        :type job_schedule_disable_options: :class:`JobScheduleDisableOptions
-         <azure.batch.models.JobScheduleDisableOptions>`
+        :type job_schedule_disable_options:
+         ~azure.batch.models.JobScheduleDisableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -642,8 +643,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_disable_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/disable'
+        url = self.disable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -656,7 +658,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -679,8 +680,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -695,6 +696,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    disable.metadata = {'url': '/jobschedules/{jobScheduleId}/disable'}
 
     def enable(
             self, job_schedule_id, job_schedule_enable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -704,16 +706,15 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_enable_options: Additional parameters for the
          operation
-        :type job_schedule_enable_options: :class:`JobScheduleEnableOptions
-         <azure.batch.models.JobScheduleEnableOptions>`
+        :type job_schedule_enable_options:
+         ~azure.batch.models.JobScheduleEnableOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -743,8 +744,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_enable_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/enable'
+        url = self.enable.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -757,7 +759,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -780,8 +781,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -796,6 +797,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    enable.metadata = {'url': '/jobschedules/{jobScheduleId}/enable'}
 
     def terminate(
             self, job_schedule_id, job_schedule_terminate_options=None, custom_headers=None, raw=False, **operation_config):
@@ -806,16 +808,14 @@ class JobScheduleOperations(object):
         :param job_schedule_terminate_options: Additional parameters for the
          operation
         :type job_schedule_terminate_options:
-         :class:`JobScheduleTerminateOptions
-         <azure.batch.models.JobScheduleTerminateOptions>`
+         ~azure.batch.models.JobScheduleTerminateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -845,8 +845,9 @@ class JobScheduleOperations(object):
             if_unmodified_since = job_schedule_terminate_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobschedules/{jobScheduleId}/terminate'
+        url = self.terminate.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -859,7 +860,6 @@ class JobScheduleOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -882,8 +882,8 @@ class JobScheduleOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -898,26 +898,25 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    terminate.metadata = {'url': '/jobschedules/{jobScheduleId}/terminate'}
 
     def add(
             self, cloud_job_schedule, job_schedule_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a job schedule to the specified account.
 
         :param cloud_job_schedule: The job schedule to be added.
-        :type cloud_job_schedule: :class:`JobScheduleAddParameter
-         <azure.batch.models.JobScheduleAddParameter>`
+        :type cloud_job_schedule: ~azure.batch.models.JobScheduleAddParameter
         :param job_schedule_add_options: Additional parameters for the
          operation
-        :type job_schedule_add_options: :class:`JobScheduleAddOptions
-         <azure.batch.models.JobScheduleAddOptions>`
+        :type job_schedule_add_options:
+         ~azure.batch.models.JobScheduleAddOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -935,7 +934,11 @@ class JobScheduleOperations(object):
             ocp_date = job_schedule_add_options.ocp_date
 
         # Construct URL
-        url = '/jobschedules'
+        url = self.add.metadata['url']
+        path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -963,9 +966,8 @@ class JobScheduleOperations(object):
         body_content = self._serialize.body(cloud_job_schedule, 'JobScheduleAddParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -980,6 +982,7 @@ class JobScheduleOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/jobschedules'}
 
     def list(
             self, job_schedule_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -987,15 +990,16 @@ class JobScheduleOperations(object):
 
         :param job_schedule_list_options: Additional parameters for the
          operation
-        :type job_schedule_list_options: :class:`JobScheduleListOptions
-         <azure.batch.models.JobScheduleListOptions>`
+        :type job_schedule_list_options:
+         ~azure.batch.models.JobScheduleListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudJobSchedulePaged
-         <azure.batch.models.CloudJobSchedulePaged>`
+        :return: An iterator like instance of CloudJobSchedule
+        :rtype:
+         ~azure.batch.models.CloudJobSchedulePaged[~azure.batch.models.CloudJobSchedule]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -1028,7 +1032,11 @@ class JobScheduleOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobschedules'
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -1050,7 +1058,7 @@ class JobScheduleOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1065,9 +1073,8 @@ class JobScheduleOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -1083,3 +1090,4 @@ class JobScheduleOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/jobschedules'}

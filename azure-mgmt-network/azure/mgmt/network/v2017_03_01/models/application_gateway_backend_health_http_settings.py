@@ -17,11 +17,11 @@ class ApplicationGatewayBackendHealthHttpSettings(Model):
 
     :param backend_http_settings: Reference of an
      ApplicationGatewayBackendHttpSettings resource.
-    :type backend_http_settings: :class:`ApplicationGatewayBackendHttpSettings
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHttpSettings>`
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHttpSettings
     :param servers: List of ApplicationGatewayBackendHealthServer resources.
-    :type servers: list of :class:`ApplicationGatewayBackendHealthServer
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHealthServer>`
+    :type servers:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayBackendHealthServer]
     """
 
     _attribute_map = {
@@ -29,6 +29,7 @@ class ApplicationGatewayBackendHealthHttpSettings(Model):
         'servers': {'key': 'servers', 'type': '[ApplicationGatewayBackendHealthServer]'},
     }
 
-    def __init__(self, backend_http_settings=None, servers=None):
-        self.backend_http_settings = backend_http_settings
-        self.servers = servers
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHealthHttpSettings, self).__init__(**kwargs)
+        self.backend_http_settings = kwargs.get('backend_http_settings', None)
+        self.servers = kwargs.get('servers', None)

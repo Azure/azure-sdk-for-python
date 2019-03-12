@@ -17,11 +17,9 @@ class AutoHealActions(Model):
 
     :param action_type: Predefined action to be taken. Possible values
      include: 'Recycle', 'LogEvent', 'CustomAction'
-    :type action_type: str or :class:`AutoHealActionType
-     <azure.mgmt.web.models.AutoHealActionType>`
+    :type action_type: str or ~azure.mgmt.web.models.AutoHealActionType
     :param custom_action: Custom action to be taken.
-    :type custom_action: :class:`AutoHealCustomAction
-     <azure.mgmt.web.models.AutoHealCustomAction>`
+    :type custom_action: ~azure.mgmt.web.models.AutoHealCustomAction
     :param min_process_execution_time: Minimum time the process must execute
      before taking the action
     :type min_process_execution_time: str
@@ -33,7 +31,8 @@ class AutoHealActions(Model):
         'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
     }
 
-    def __init__(self, action_type=None, custom_action=None, min_process_execution_time=None):
-        self.action_type = action_type
-        self.custom_action = custom_action
-        self.min_process_execution_time = min_process_execution_time
+    def __init__(self, **kwargs):
+        super(AutoHealActions, self).__init__(**kwargs)
+        self.action_type = kwargs.get('action_type', None)
+        self.custom_action = kwargs.get('custom_action', None)
+        self.min_process_execution_time = kwargs.get('min_process_execution_time', None)

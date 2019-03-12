@@ -14,17 +14,22 @@ from .health_evaluation import HealthEvaluation
 
 class ApplicationsHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for applications, containing health
-    evaluations for each unhealthy application that impacted current
-    aggregated health state.
+    evaluations for each unhealthy application that impacted current aggregated
+    health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     :param max_percent_unhealthy_applications: Maximum allowed percentage of
      unhealthy applications from the ClusterHealthPolicy.
     :type max_percent_unhealthy_applications: int
@@ -33,26 +38,26 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     :param unhealthy_evaluations: List of unhealthy evaluations that led to
      the aggregated health state. Includes all the unhealthy
      ApplicationHealthEvaluation that impacted the aggregated health.
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    """ 
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
         'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
         'total_count': {'key': 'TotalCount', 'type': 'long'},
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, max_percent_unhealthy_applications=None, total_count=None, unhealthy_evaluations=None):
-        super(ApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.Kind = 'Applications'
+    def __init__(self, **kwargs):
+        super(ApplicationsHealthEvaluation, self).__init__(**kwargs)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'Applications'

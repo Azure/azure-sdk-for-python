@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class TransparentDataEncryptionActivityPaged(Paged):
     """
-    A paging container for iterating over a list of TransparentDataEncryptionActivity object
+    A paging container for iterating over a list of :class:`TransparentDataEncryptionActivity <azure.mgmt.sql.models.TransparentDataEncryptionActivity>` object
     """
 
     _attribute_map = {

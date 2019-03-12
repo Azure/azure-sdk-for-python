@@ -32,7 +32,7 @@ class USqlSchema(CatalogItem):
         'name': {'key': 'schemaName', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, name=None):
-        super(USqlSchema, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.name = name
+    def __init__(self, **kwargs):
+        super(USqlSchema, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.name = kwargs.get('name', None)

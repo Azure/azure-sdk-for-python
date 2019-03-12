@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
+from .operations.skus_operations import SkusOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.usage_operations import UsageOperations
 from . import models
@@ -41,21 +42,19 @@ class StorageManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(StorageManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('storagemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-storage/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class StorageManagementClient(object):
+class StorageManagementClient(SDKClient):
     """The Azure Storage Management API.
 
     :ivar config: Configuration for client.
@@ -63,6 +62,8 @@ class StorageManagementClient(object):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storage.v2017_06_01.operations.Operations
+    :ivar skus: Skus operations
+    :vartype skus: azure.mgmt.storage.v2017_06_01.operations.SkusOperations
     :ivar storage_accounts: StorageAccounts operations
     :vartype storage_accounts: azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations
     :ivar usage: Usage operations
@@ -82,7 +83,7 @@ class StorageManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(StorageManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-06-01'
@@ -90,6 +91,8 @@ class StorageManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)

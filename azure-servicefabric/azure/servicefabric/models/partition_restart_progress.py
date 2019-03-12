@@ -15,19 +15,22 @@ from msrest.serialization import Model
 class PartitionRestartProgress(Model):
     """Information about a partition restart user-induced operation.
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
-    :param restart_partition_result:
-    :type restart_partition_result: :class:`RestartPartitionResult
-     <azure.servicefabric.models.RestartPartitionResult>`
-    """ 
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param restart_partition_result: Represents information about an operation
+     in a terminal state (Completed or Faulted).
+    :type restart_partition_result:
+     ~azure.servicefabric.models.RestartPartitionResult
+    """
 
     _attribute_map = {
         'state': {'key': 'State', 'type': 'str'},
         'restart_partition_result': {'key': 'RestartPartitionResult', 'type': 'RestartPartitionResult'},
     }
 
-    def __init__(self, state=None, restart_partition_result=None):
-        self.state = state
-        self.restart_partition_result = restart_partition_result
+    def __init__(self, **kwargs):
+        super(PartitionRestartProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.restart_partition_result = kwargs.get('restart_partition_result', None)

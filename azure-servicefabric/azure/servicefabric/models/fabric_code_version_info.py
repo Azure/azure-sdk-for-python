@@ -17,11 +17,12 @@ class FabricCodeVersionInfo(Model):
 
     :param code_version: The product version of Service Fabric.
     :type code_version: str
-    """ 
+    """
 
     _attribute_map = {
         'code_version': {'key': 'CodeVersion', 'type': 'str'},
     }
 
-    def __init__(self, code_version=None):
-        self.code_version = code_version
+    def __init__(self, **kwargs):
+        super(FabricCodeVersionInfo, self).__init__(**kwargs)
+        self.code_version = kwargs.get('code_version', None)

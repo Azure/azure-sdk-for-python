@@ -16,9 +16,11 @@ class ActivityLogAlertAllOfCondition(Model):
     """An Activity Log alert condition that is met when all its member conditions
     are met.
 
-    :param all_of: The list of activity log alert conditions.
-    :type all_of: list of :class:`ActivityLogAlertLeafCondition
-     <azure.mgmt.monitor.models.ActivityLogAlertLeafCondition>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param all_of: Required. The list of activity log alert conditions.
+    :type all_of:
+     list[~azure.mgmt.monitor.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
@@ -29,5 +31,6 @@ class ActivityLogAlertAllOfCondition(Model):
         'all_of': {'key': 'allOf', 'type': '[ActivityLogAlertLeafCondition]'},
     }
 
-    def __init__(self, all_of):
-        self.all_of = all_of
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertAllOfCondition, self).__init__(**kwargs)
+        self.all_of = kwargs.get('all_of', None)

@@ -18,19 +18,22 @@ class ResourceGroup(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The ID of the resource group.
     :vartype id: str
     :param name: The Name of the resource group.
     :type name: str
     :param properties:
-    :type properties: :class:`ResourceGroupProperties
-     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupProperties>`
-    :param location: The location of the resource group. It cannot be changed
-     after the resource group has been created. Has to be one of the supported
-     Azure Locations, such as West US, East US, West Europe, East Asia, etc.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupProperties
+    :param location: Required. The location of the resource group. It cannot
+     be changed after the resource group has been created. Has to be one of the
+     supported Azure Locations, such as West US, East US, West Europe, East
+     Asia, etc.
     :type location: str
     :param tags: The tags attached to the resource group.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -46,9 +49,10 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, properties=None, tags=None):
+    def __init__(self, **kwargs):
+        super(ResourceGroup, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.properties = properties
-        self.location = location
-        self.tags = tags
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

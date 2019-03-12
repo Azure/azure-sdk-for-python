@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SiteLogsConfig(Resource):
+class SiteLogsConfig(ProxyOnlyResource):
     """Configuration of App Service site logs.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,51 +20,42 @@ class SiteLogsConfig(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :param application_logs: Application logs configuration.
-    :type application_logs: :class:`ApplicationLogsConfig
-     <azure.mgmt.web.models.ApplicationLogsConfig>`
+    :type application_logs: ~azure.mgmt.web.models.ApplicationLogsConfig
     :param http_logs: HTTP logs configuration.
-    :type http_logs: :class:`HttpLogsConfig
-     <azure.mgmt.web.models.HttpLogsConfig>`
+    :type http_logs: ~azure.mgmt.web.models.HttpLogsConfig
     :param failed_requests_tracing: Failed requests tracing configuration.
-    :type failed_requests_tracing: :class:`EnabledConfig
-     <azure.mgmt.web.models.EnabledConfig>`
+    :type failed_requests_tracing: ~azure.mgmt.web.models.EnabledConfig
     :param detailed_error_messages: Detailed error messages configuration.
-    :type detailed_error_messages: :class:`EnabledConfig
-     <azure.mgmt.web.models.EnabledConfig>`
+    :type detailed_error_messages: ~azure.mgmt.web.models.EnabledConfig
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig'},
         'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig'},
         'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig'},
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
-        super(SiteLogsConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.application_logs = application_logs
-        self.http_logs = http_logs
-        self.failed_requests_tracing = failed_requests_tracing
-        self.detailed_error_messages = detailed_error_messages
+    def __init__(self, **kwargs):
+        super(SiteLogsConfig, self).__init__(**kwargs)
+        self.application_logs = kwargs.get('application_logs', None)
+        self.http_logs = kwargs.get('http_logs', None)
+        self.failed_requests_tracing = kwargs.get('failed_requests_tracing', None)
+        self.detailed_error_messages = kwargs.get('detailed_error_messages', None)

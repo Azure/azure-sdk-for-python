@@ -25,7 +25,7 @@ class UsageDetail(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar tags: Resource tags.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the
      usage belongs to.
     :vartype billing_period_id: str
@@ -62,13 +62,25 @@ class UsageDetail(Resource):
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
-    :vartype meter_details: :class:`MeterDetails
-     <azure.mgmt.consumption.models.MeterDetails>`
-    :ivar additional_properties: The list of key/value pairs for the
-     additional properties, in the format 'key':'value' where key = the field
-     name, and value = the field value. By default this is not populated,
-     unless it's specified in $expand.
-    :vartype additional_properties: dict
+    :vartype meter_details: ~azure.mgmt.consumption.models.MeterDetails
+    :ivar subscription_guid: Subscription guid.
+    :vartype subscription_guid: str
+    :ivar subscription_name: Subscription name.
+    :vartype subscription_name: str
+    :ivar account_name: Account name.
+    :vartype account_name: str
+    :ivar department_name: Department name.
+    :vartype department_name: str
+    :ivar product: Product name.
+    :vartype product: str
+    :ivar consumed_service: Consumed service name.
+    :vartype consumed_service: str
+    :ivar cost_center: The cost center of this department if it is a
+     department and a costcenter exists
+    :vartype cost_center: str
+    :ivar additional_properties: Additional details of this usage item. By
+     default this is not populated, unless it's specified in $expand.
+    :vartype additional_properties: str
     """
 
     _validation = {
@@ -90,6 +102,13 @@ class UsageDetail(Resource):
         'is_estimated': {'readonly': True},
         'meter_id': {'readonly': True},
         'meter_details': {'readonly': True},
+        'subscription_guid': {'readonly': True},
+        'subscription_name': {'readonly': True},
+        'account_name': {'readonly': True},
+        'department_name': {'readonly': True},
+        'product': {'readonly': True},
+        'consumed_service': {'readonly': True},
+        'cost_center': {'readonly': True},
         'additional_properties': {'readonly': True},
     }
 
@@ -112,7 +131,14 @@ class UsageDetail(Resource):
         'is_estimated': {'key': 'properties.isEstimated', 'type': 'bool'},
         'meter_id': {'key': 'properties.meterId', 'type': 'str'},
         'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetails'},
-        'additional_properties': {'key': 'properties.additionalProperties', 'type': '{str}'},
+        'subscription_guid': {'key': 'properties.subscriptionGuid', 'type': 'str'},
+        'subscription_name': {'key': 'properties.subscriptionName', 'type': 'str'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
+        'product': {'key': 'properties.product', 'type': 'str'},
+        'consumed_service': {'key': 'properties.consumedService', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
     }
 
     def __init__(self):
@@ -131,4 +157,11 @@ class UsageDetail(Resource):
         self.is_estimated = None
         self.meter_id = None
         self.meter_details = None
+        self.subscription_guid = None
+        self.subscription_name = None
+        self.account_name = None
+        self.department_name = None
+        self.product = None
+        self.consumed_service = None
+        self.cost_center = None
         self.additional_properties = None

@@ -24,36 +24,36 @@ class DeploymentPropertiesExtended(Model):
     :vartype correlation_id: str
     :ivar timestamp: The timestamp of the template deployment.
     :vartype timestamp: datetime
-    :param outputs: Key/value pairs that represent deploymentoutput.
+    :param outputs: Key/value pairs that represent deployment output.
     :type outputs: object
     :param providers: The list of resource providers needed for the
      deployment.
-    :type providers: list of :class:`Provider
-     <azure.mgmt.resource.resources.v2016_09_01.models.Provider>`
+    :type providers:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.Provider]
     :param dependencies: The list of deployment dependencies.
-    :type dependencies: list of :class:`Dependency
-     <azure.mgmt.resource.resources.v2016_09_01.models.Dependency>`
+    :type dependencies:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.Dependency]
     :param template: The template content. Use only one of Template or
      TemplateLink.
     :type template: object
     :param template_link: The URI referencing the template. Use only one of
      Template or TemplateLink.
-    :type template_link: :class:`TemplateLink
-     <azure.mgmt.resource.resources.v2016_09_01.models.TemplateLink>`
+    :type template_link:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.TemplateLink
     :param parameters: Deployment parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters: object
     :param parameters_link: The URI referencing the parameters. Use only one
      of Parameters or ParametersLink.
-    :type parameters_link: :class:`ParametersLink
-     <azure.mgmt.resource.resources.v2016_09_01.models.ParametersLink>`
+    :type parameters_link:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.ParametersLink
     :param mode: The deployment mode. Possible values are Incremental and
      Complete. Possible values include: 'Incremental', 'Complete'
-    :type mode: str or :class:`DeploymentMode
-     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode>`
+    :type mode: str or
+     ~azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
-    :type debug_setting: :class:`DebugSetting
-     <azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting>`
+    :type debug_setting:
+     ~azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting
     """
 
     _validation = {
@@ -77,16 +77,17 @@ class DeploymentPropertiesExtended(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
+    def __init__(self, **kwargs):
+        super(DeploymentPropertiesExtended, self).__init__(**kwargs)
         self.provisioning_state = None
         self.correlation_id = None
         self.timestamp = None
-        self.outputs = outputs
-        self.providers = providers
-        self.dependencies = dependencies
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
+        self.outputs = kwargs.get('outputs', None)
+        self.providers = kwargs.get('providers', None)
+        self.dependencies = kwargs.get('dependencies', None)
+        self.template = kwargs.get('template', None)
+        self.template_link = kwargs.get('template_link', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.parameters_link = kwargs.get('parameters_link', None)
+        self.mode = kwargs.get('mode', None)
+        self.debug_setting = kwargs.get('debug_setting', None)

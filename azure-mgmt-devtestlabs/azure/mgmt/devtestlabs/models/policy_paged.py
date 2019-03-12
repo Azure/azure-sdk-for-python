@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class PolicyPaged(Paged):
     """
-    A paging container for iterating over a list of Policy object
+    A paging container for iterating over a list of :class:`Policy <azure.mgmt.devtestlabs.models.Policy>` object
     """
 
     _attribute_map = {

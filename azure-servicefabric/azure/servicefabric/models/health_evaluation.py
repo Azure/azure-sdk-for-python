@@ -16,31 +16,51 @@ class HealthEvaluation(Model):
     """Represents a health evaluation which describes the data and the algorithm
     used by health manager to evaluate the health of an entity.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
-    :param description: Description of the health evaluation, which
-     represents a summary of the evaluation process.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ApplicationHealthEvaluation, ApplicationsHealthEvaluation,
+    ApplicationTypeApplicationsHealthEvaluation,
+    DeltaNodesCheckHealthEvaluation, DeployedApplicationHealthEvaluation,
+    DeployedApplicationsHealthEvaluation,
+    DeployedServicePackageHealthEvaluation,
+    DeployedServicePackagesHealthEvaluation, EventHealthEvaluation,
+    NodeHealthEvaluation, NodesHealthEvaluation, PartitionHealthEvaluation,
+    PartitionsHealthEvaluation, ReplicaHealthEvaluation,
+    ReplicasHealthEvaluation, ServiceHealthEvaluation,
+    ServicesHealthEvaluation, SystemApplicationHealthEvaluation,
+    UpgradeDomainDeltaNodesCheckHealthEvaluation,
+    UpgradeDomainNodesHealthEvaluation
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
     :type description: str
-    :param Kind: Polymorphic Discriminator
-    :type Kind: str
-    """ 
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
 
     _validation = {
-        'Kind': {'required': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
         'description': {'key': 'Description', 'type': 'str'},
-        'Kind': {'key': 'Kind', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation'}
+        'kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation'}
     }
 
-    def __init__(self, aggregated_health_state=None, description=None):
-        self.aggregated_health_state = aggregated_health_state
-        self.description = description
-        self.Kind = None
+    def __init__(self, **kwargs):
+        super(HealthEvaluation, self).__init__(**kwargs)
+        self.aggregated_health_state = kwargs.get('aggregated_health_state', None)
+        self.description = kwargs.get('description', None)
+        self.kind = None

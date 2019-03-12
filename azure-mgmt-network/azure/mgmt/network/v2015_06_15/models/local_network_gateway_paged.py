@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LocalNetworkGatewayPaged(Paged):
     """
-    A paging container for iterating over a list of LocalNetworkGateway object
+    A paging container for iterating over a list of :class:`LocalNetworkGateway <azure.mgmt.network.v2015_06_15.models.LocalNetworkGateway>` object
     """
 
     _attribute_map = {

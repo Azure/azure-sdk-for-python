@@ -20,15 +20,14 @@ class Ipv6ExpressRouteCircuitPeeringConfig(Model):
     :param secondary_peer_address_prefix: The secondary address prefix.
     :type secondary_peer_address_prefix: str
     :param microsoft_peering_config: The Microsoft peering configuration.
-    :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringConfig>`
+    :type microsoft_peering_config:
+     ~azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringConfig
     :param route_filter: The reference of the RouteFilter resource.
-    :type route_filter: :class:`RouteFilter
-     <azure.mgmt.network.v2017_03_01.models.RouteFilter>`
+    :type route_filter: ~azure.mgmt.network.v2017_03_01.models.RouteFilter
     :param state: The state of peering. Possible values are: 'Disabled' and
      'Enabled'. Possible values include: 'Disabled', 'Enabled'
-    :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringState>`
+    :type state: str or
+     ~azure.mgmt.network.v2017_03_01.models.ExpressRouteCircuitPeeringState
     """
 
     _attribute_map = {
@@ -39,9 +38,10 @@ class Ipv6ExpressRouteCircuitPeeringConfig(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, microsoft_peering_config=None, route_filter=None, state=None):
-        self.primary_peer_address_prefix = primary_peer_address_prefix
-        self.secondary_peer_address_prefix = secondary_peer_address_prefix
-        self.microsoft_peering_config = microsoft_peering_config
-        self.route_filter = route_filter
-        self.state = state
+    def __init__(self, **kwargs):
+        super(Ipv6ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
+        self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
+        self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
+        self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
+        self.route_filter = kwargs.get('route_filter', None)
+        self.state = kwargs.get('state', None)

@@ -16,13 +16,14 @@ class Deployment(Model):
     """Deployment operation parameters.
 
     :param properties: The deployment properties.
-    :type properties: :class:`DeploymentProperties
-     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentProperties
     """
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

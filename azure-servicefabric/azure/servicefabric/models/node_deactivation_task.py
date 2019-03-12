@@ -15,19 +15,23 @@ from msrest.serialization import Model
 class NodeDeactivationTask(Model):
     """The task representing the deactivation operation on the node.
 
-    :param node_deactivation_task_id:
-    :type node_deactivation_task_id: :class:`NodeDeactivationTaskId
-     <azure.servicefabric.models.NodeDeactivationTaskId>`
-    :param node_deactivation_intent: Possible values include: 'Invalid',
-     'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str
-    """ 
+    :param node_deactivation_task_id: Identity of the task related to
+     deactivation operation on the node.
+    :type node_deactivation_task_id:
+     ~azure.servicefabric.models.NodeDeactivationTaskId
+    :param node_deactivation_intent: The intent or the reason for deactivating
+     the node. Following are the possible values for it. Possible values
+     include: 'Invalid', 'Pause', 'Restart', 'RemoveData', 'RemoveNode'
+    :type node_deactivation_intent: str or
+     ~azure.servicefabric.models.NodeDeactivationIntent
+    """
 
     _attribute_map = {
         'node_deactivation_task_id': {'key': 'NodeDeactivationTaskId', 'type': 'NodeDeactivationTaskId'},
         'node_deactivation_intent': {'key': 'NodeDeactivationIntent', 'type': 'str'},
     }
 
-    def __init__(self, node_deactivation_task_id=None, node_deactivation_intent=None):
-        self.node_deactivation_task_id = node_deactivation_task_id
-        self.node_deactivation_intent = node_deactivation_intent
+    def __init__(self, **kwargs):
+        super(NodeDeactivationTask, self).__init__(**kwargs)
+        self.node_deactivation_task_id = kwargs.get('node_deactivation_task_id', None)
+        self.node_deactivation_intent = kwargs.get('node_deactivation_intent', None)

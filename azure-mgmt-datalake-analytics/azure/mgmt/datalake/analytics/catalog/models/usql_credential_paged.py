@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class USqlCredentialPaged(Paged):
     """
-    A paging container for iterating over a list of USqlCredential object
+    A paging container for iterating over a list of :class:`USqlCredential <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>` object
     """
 
     _attribute_map = {

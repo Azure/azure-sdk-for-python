@@ -24,8 +24,7 @@ class TunnelConnectionHealth(Model):
      Possible values include: 'Unknown', 'Connecting', 'Connected',
      'NotConnected'
     :vartype connection_status: str or
-     :class:`VirtualNetworkGatewayConnectionStatus
-     <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionStatus>`
+     ~azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this
      connection
     :vartype ingress_bytes_transferred: long
@@ -53,7 +52,8 @@ class TunnelConnectionHealth(Model):
         'last_connection_established_utc_time': {'key': 'lastConnectionEstablishedUtcTime', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(TunnelConnectionHealth, self).__init__(**kwargs)
         self.tunnel = None
         self.connection_status = None
         self.ingress_bytes_transferred = None

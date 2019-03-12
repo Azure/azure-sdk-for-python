@@ -24,24 +24,21 @@ class Subnet(SubResource):
     :type address_prefix: str
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
-    :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.v2017_06_01.models.NetworkSecurityGroup>`
+    :type network_security_group:
+     ~azure.mgmt.network.v2017_06_01.models.NetworkSecurityGroup
     :param route_table: The reference of the RouteTable resource.
-    :type route_table: :class:`RouteTable
-     <azure.mgmt.network.v2017_06_01.models.RouteTable>`
-    :param private_access_services: An array of private access services
-     values.
-    :type private_access_services: list of
-     :class:`PrivateAccessServicePropertiesFormat
-     <azure.mgmt.network.v2017_06_01.models.PrivateAccessServicePropertiesFormat>`
+    :type route_table: ~azure.mgmt.network.v2017_06_01.models.RouteTable
+    :param service_endpoints: An array of service endpoints.
+    :type service_endpoints:
+     list[~azure.mgmt.network.v2017_06_01.models.ServiceEndpointPropertiesFormat]
     :ivar ip_configurations: Gets an array of references to the network
      interface IP configurations using subnet.
-    :vartype ip_configurations: list of :class:`IPConfiguration
-     <azure.mgmt.network.v2017_06_01.models.IPConfiguration>`
+    :vartype ip_configurations:
+     list[~azure.mgmt.network.v2017_06_01.models.IPConfiguration]
     :param resource_navigation_links: Gets an array of references to the
      external resources using subnet.
-    :type resource_navigation_links: list of :class:`ResourceNavigationLink
-     <azure.mgmt.network.v2017_06_01.models.ResourceNavigationLink>`
+    :type resource_navigation_links:
+     list[~azure.mgmt.network.v2017_06_01.models.ResourceNavigationLink]
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -61,7 +58,7 @@ class Subnet(SubResource):
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
-        'private_access_services': {'key': 'properties.privateAccessServices', 'type': '[PrivateAccessServicePropertiesFormat]'},
+        'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
         'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -69,14 +66,14 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, private_access_services=None, resource_navigation_links=None, provisioning_state=None, name=None, etag=None):
-        super(Subnet, self).__init__(id=id)
-        self.address_prefix = address_prefix
-        self.network_security_group = network_security_group
-        self.route_table = route_table
-        self.private_access_services = private_access_services
+    def __init__(self, **kwargs):
+        super(Subnet, self).__init__(**kwargs)
+        self.address_prefix = kwargs.get('address_prefix', None)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.route_table = kwargs.get('route_table', None)
+        self.service_endpoints = kwargs.get('service_endpoints', None)
         self.ip_configurations = None
-        self.resource_navigation_links = resource_navigation_links
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.resource_navigation_links = kwargs.get('resource_navigation_links', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class IotHubQuotaMetricInfoPaged(Paged):
     """
-    A paging container for iterating over a list of IotHubQuotaMetricInfo object
+    A paging container for iterating over a list of :class:`IotHubQuotaMetricInfo <azure.mgmt.iothub.models.IotHubQuotaMetricInfo>` object
     """
 
     _attribute_map = {

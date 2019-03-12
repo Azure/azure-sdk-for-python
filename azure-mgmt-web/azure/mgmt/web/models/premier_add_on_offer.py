@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class PremierAddOnOffer(Resource):
+class PremierAddOnOffer(ProxyOnlyResource):
     """Premier add-on offer.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,35 +20,28 @@ class PremierAddOnOffer(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param sku: SKU.
+    :ivar type: Resource type.
+    :vartype type: str
+    :param sku: Premier add on SKU.
     :type sku: str
-    :param product: Product.
+    :param product: Premier add on offer Product.
     :type product: str
-    :param vendor: Vendor.
+    :param vendor: Premier add on offer Vendor.
     :type vendor: str
-    :param premier_add_on_offer_name: Name.
-    :type premier_add_on_offer_name: str
     :param promo_code_required: <code>true</code> if promotion code is
      required; otherwise, <code>false</code>.
     :type promo_code_required: bool
-    :param quota: Quota.
+    :param quota: Premier add on offer Quota.
     :type quota: int
     :param web_hosting_plan_restrictions: App Service plans this offer is
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',
      'Standard', 'Premium'
     :type web_hosting_plan_restrictions: str or
-     :class:`AppServicePlanRestrictions
-     <azure.mgmt.web.models.AppServicePlanRestrictions>`
+     ~azure.mgmt.web.models.AppServicePlanRestrictions
     :param privacy_policy_url: Privacy policy URL.
     :type privacy_policy_url: str
     :param legal_terms_url: Legal terms URL.
@@ -61,20 +54,18 @@ class PremierAddOnOffer(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'str'},
         'product': {'key': 'properties.product', 'type': 'str'},
         'vendor': {'key': 'properties.vendor', 'type': 'str'},
-        'premier_add_on_offer_name': {'key': 'properties.name', 'type': 'str'},
         'promo_code_required': {'key': 'properties.promoCodeRequired', 'type': 'bool'},
         'quota': {'key': 'properties.quota', 'type': 'int'},
         'web_hosting_plan_restrictions': {'key': 'properties.webHostingPlanRestrictions', 'type': 'AppServicePlanRestrictions'},
@@ -84,16 +75,15 @@ class PremierAddOnOffer(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
-        super(PremierAddOnOffer, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.sku = sku
-        self.product = product
-        self.vendor = vendor
-        self.premier_add_on_offer_name = premier_add_on_offer_name
-        self.promo_code_required = promo_code_required
-        self.quota = quota
-        self.web_hosting_plan_restrictions = web_hosting_plan_restrictions
-        self.privacy_policy_url = privacy_policy_url
-        self.legal_terms_url = legal_terms_url
-        self.marketplace_publisher = marketplace_publisher
-        self.marketplace_offer = marketplace_offer
+    def __init__(self, **kwargs):
+        super(PremierAddOnOffer, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.product = kwargs.get('product', None)
+        self.vendor = kwargs.get('vendor', None)
+        self.promo_code_required = kwargs.get('promo_code_required', None)
+        self.quota = kwargs.get('quota', None)
+        self.web_hosting_plan_restrictions = kwargs.get('web_hosting_plan_restrictions', None)
+        self.privacy_policy_url = kwargs.get('privacy_policy_url', None)
+        self.legal_terms_url = kwargs.get('legal_terms_url', None)
+        self.marketplace_publisher = kwargs.get('marketplace_publisher', None)
+        self.marketplace_offer = kwargs.get('marketplace_offer', None)

@@ -18,23 +18,23 @@ class Server(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: :class:`ResourceIdentity
-     <azure.mgmt.sql.models.ResourceIdentity>`
+    :type identity: ~azure.mgmt.sql.models.ResourceIdentity
     :ivar kind: Kind of sql server. This is metadata used for the Azure portal
-     experience. Possible values include: '', 'v2.0', 'v12.0', 'user',
-     'system', 'datawarehouse'
-    :vartype kind: str or :class:`enum <azure.mgmt.sql.models.enum>`
+     experience.
+    :vartype kind: str
     :param administrator_login: Administrator username for the server. Once
      created it cannot be changed.
     :type administrator_login: str
@@ -64,8 +64,8 @@ class Server(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -75,12 +75,12 @@ class Server(TrackedResource):
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, identity=None, administrator_login=None, administrator_login_password=None, version=None):
-        super(Server, self).__init__(tags=tags, location=location)
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(Server, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.kind = None
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.version = version
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.version = kwargs.get('version', None)
         self.state = None
         self.fully_qualified_domain_name = None

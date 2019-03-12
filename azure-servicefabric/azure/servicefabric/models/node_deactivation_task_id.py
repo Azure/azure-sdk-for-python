@@ -17,16 +17,19 @@ class NodeDeactivationTaskId(Model):
 
     :param id: Value of the task id.
     :type id: str
-    :param node_deactivation_task_type: Possible values include: 'Invalid',
-     'Infrastructure', 'Repair', 'Client'
-    :type node_deactivation_task_type: str
-    """ 
+    :param node_deactivation_task_type: The type of the task that performed
+     the node deactivation. Following are the possible values. Possible values
+     include: 'Invalid', 'Infrastructure', 'Repair', 'Client'
+    :type node_deactivation_task_type: str or
+     ~azure.servicefabric.models.NodeDeactivationTaskType
+    """
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
         'node_deactivation_task_type': {'key': 'NodeDeactivationTaskType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, node_deactivation_task_type=None):
-        self.id = id
-        self.node_deactivation_task_type = node_deactivation_task_type
+    def __init__(self, **kwargs):
+        super(NodeDeactivationTaskId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.node_deactivation_task_type = kwargs.get('node_deactivation_task_type', None)

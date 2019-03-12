@@ -16,8 +16,8 @@ class Dependency(Model):
     """Deployment dependency information.
 
     :param depends_on: The list of dependencies.
-    :type depends_on: list of :class:`BasicDependency
-     <azure.mgmt.resource.resources.v2017_05_10.models.BasicDependency>`
+    :type depends_on:
+     list[~azure.mgmt.resource.resources.v2017_05_10.models.BasicDependency]
     :param id: The ID of the dependency.
     :type id: str
     :param resource_type: The dependency resource type.
@@ -33,8 +33,9 @@ class Dependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None):
-        self.depends_on = depends_on
-        self.id = id
-        self.resource_type = resource_type
-        self.resource_name = resource_name
+    def __init__(self, **kwargs):
+        super(Dependency, self).__init__(**kwargs)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.id = kwargs.get('id', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_name = kwargs.get('resource_name', None)

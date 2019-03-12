@@ -15,26 +15,28 @@ from msrest.serialization import Model
 class GetObjectsParameters(Model):
     """Request parameters for the GetObjectsByObjectIds API.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param object_ids: The requested object IDs.
-    :type object_ids: list of str
+    :type object_ids: list[str]
     :param types: The requested object types.
-    :type types: list of str
+    :type types: list[str]
     :param include_directory_object_references: If true, also searches for
      object IDs in the partner tenant.
     :type include_directory_object_references: bool
     """
 
-    _validation = {
-        'include_directory_object_references': {'required': True},
-    }
-
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_ids': {'key': 'objectIds', 'type': '[str]'},
         'types': {'key': 'types', 'type': '[str]'},
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, object_ids=None, types=None):
-        self.object_ids = object_ids
-        self.types = types
-        self.include_directory_object_references = include_directory_object_references
+    def __init__(self, **kwargs):
+        super(GetObjectsParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.object_ids = kwargs.get('object_ids', None)
+        self.types = kwargs.get('types', None)
+        self.include_directory_object_references = kwargs.get('include_directory_object_references', None)

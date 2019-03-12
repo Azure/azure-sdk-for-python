@@ -18,25 +18,26 @@ class FirewallRule(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource identifier.
     :vartype id: str
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
     :vartype type: str
-    :param start_ip_address: the start IP address for the firewall rule. This
+    :ivar start_ip_address: The start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.
-    :type start_ip_address: str
-    :param end_ip_address: the end IP address for the firewall rule. This can
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address for the firewall rule. This can
      be either ipv4 or ipv6. Start and End should be in the same protocol.
-    :type end_ip_address: str
+    :vartype end_ip_address: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        'start_ip_address': {'readonly': True},
+        'end_ip_address': {'readonly': True},
     }
 
     _attribute_map = {
@@ -47,7 +48,7 @@ class FirewallRule(SubResource):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address, end_ip_address, name=None):
-        super(FirewallRule, self).__init__(name=name)
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, **kwargs):
+        super(FirewallRule, self).__init__(**kwargs)
+        self.start_ip_address = None
+        self.end_ip_address = None

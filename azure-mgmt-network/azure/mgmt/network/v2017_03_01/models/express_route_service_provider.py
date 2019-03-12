@@ -27,13 +27,12 @@ class ExpressRouteServiceProvider(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param peering_locations: Get a list of peering locations.
-    :type peering_locations: list of str
+    :type peering_locations: list[str]
     :param bandwidths_offered: Gets bandwidths offered.
-    :type bandwidths_offered: list of
-     :class:`ExpressRouteServiceProviderBandwidthsOffered
-     <azure.mgmt.network.v2017_03_01.models.ExpressRouteServiceProviderBandwidthsOffered>`
+    :type bandwidths_offered:
+     list[~azure.mgmt.network.v2017_03_01.models.ExpressRouteServiceProviderBandwidthsOffered]
     :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
     """
@@ -54,8 +53,8 @@ class ExpressRouteServiceProvider(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
-        super(ExpressRouteServiceProvider, self).__init__(id=id, location=location, tags=tags)
-        self.peering_locations = peering_locations
-        self.bandwidths_offered = bandwidths_offered
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(ExpressRouteServiceProvider, self).__init__(**kwargs)
+        self.peering_locations = kwargs.get('peering_locations', None)
+        self.bandwidths_offered = kwargs.get('bandwidths_offered', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)

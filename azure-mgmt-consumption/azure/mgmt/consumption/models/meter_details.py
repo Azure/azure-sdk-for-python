@@ -60,6 +60,7 @@ class MeterDetails(Model):
     }
 
     def __init__(self):
+        super(MeterDetails, self).__init__()
         self.meter_name = None
         self.meter_category = None
         self.meter_sub_category = None

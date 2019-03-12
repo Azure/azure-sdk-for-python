@@ -9,44 +9,58 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .plan import Plan
-from .appliance import Appliance
-from .plan_patchable import PlanPatchable
-from .appliance_patchable import AppliancePatchable
-from .appliance_provider_authorization import ApplianceProviderAuthorization
-from .appliance_artifact import ApplianceArtifact
-from .appliance_definition import ApplianceDefinition
-from .sku import Sku
-from .identity import Identity
-from .generic_resource import GenericResource
-from .resource import Resource
-from .error_response import ErrorResponse, ErrorResponseException
-from .appliance_paged import AppliancePaged
-from .appliance_definition_paged import ApplianceDefinitionPaged
-from .managed_application_client_enums import (
+try:
+    from .plan_py3 import Plan
+    from .application_py3 import Application
+    from .plan_patchable_py3 import PlanPatchable
+    from .application_patchable_py3 import ApplicationPatchable
+    from .application_provider_authorization_py3 import ApplicationProviderAuthorization
+    from .application_artifact_py3 import ApplicationArtifact
+    from .application_definition_py3 import ApplicationDefinition
+    from .sku_py3 import Sku
+    from .identity_py3 import Identity
+    from .generic_resource_py3 import GenericResource
+    from .resource_py3 import Resource
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+except (SyntaxError, ImportError):
+    from .plan import Plan
+    from .application import Application
+    from .plan_patchable import PlanPatchable
+    from .application_patchable import ApplicationPatchable
+    from .application_provider_authorization import ApplicationProviderAuthorization
+    from .application_artifact import ApplicationArtifact
+    from .application_definition import ApplicationDefinition
+    from .sku import Sku
+    from .identity import Identity
+    from .generic_resource import GenericResource
+    from .resource import Resource
+    from .error_response import ErrorResponse, ErrorResponseException
+from .application_paged import ApplicationPaged
+from .application_definition_paged import ApplicationDefinitionPaged
+from .application_client_enums import (
     ProvisioningState,
-    ApplianceLockLevel,
-    ApplianceArtifactType,
+    ApplicationLockLevel,
+    ApplicationArtifactType,
     ResourceIdentityType,
 )
 
 __all__ = [
     'Plan',
-    'Appliance',
+    'Application',
     'PlanPatchable',
-    'AppliancePatchable',
-    'ApplianceProviderAuthorization',
-    'ApplianceArtifact',
-    'ApplianceDefinition',
+    'ApplicationPatchable',
+    'ApplicationProviderAuthorization',
+    'ApplicationArtifact',
+    'ApplicationDefinition',
     'Sku',
     'Identity',
     'GenericResource',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
-    'AppliancePaged',
-    'ApplianceDefinitionPaged',
+    'ApplicationPaged',
+    'ApplicationDefinitionPaged',
     'ProvisioningState',
-    'ApplianceLockLevel',
-    'ApplianceArtifactType',
+    'ApplicationLockLevel',
+    'ApplicationArtifactType',
     'ResourceIdentityType',
 ]

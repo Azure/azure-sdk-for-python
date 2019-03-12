@@ -12,26 +12,26 @@
 from enum import Enum
 
 
-class DataLakeAnalyticsAccountStatus(Enum):
+class AADObjectType(str, Enum):
 
-    failed = "Failed"
-    creating = "Creating"
-    running = "Running"
-    succeeded = "Succeeded"
-    patching = "Patching"
-    suspending = "Suspending"
-    resuming = "Resuming"
-    deleting = "Deleting"
-    deleted = "Deleted"
+    user = "User"
+    group = "Group"
+    service_principal = "ServicePrincipal"
 
 
-class DataLakeAnalyticsAccountState(Enum):
+class FirewallState(str, Enum):
 
-    active = "Active"
-    suspended = "Suspended"
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
-class TierType(Enum):
+class FirewallAllowAzureIpsState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class TierType(str, Enum):
 
     consumption = "Consumption"
     commitment_100_au_hours = "Commitment_100AUHours"
@@ -44,20 +44,38 @@ class TierType(Enum):
     commitment_500000_au_hours = "Commitment_500000AUHours"
 
 
-class FirewallState(Enum):
+class DataLakeAnalyticsAccountStatus(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    failed = "Failed"
+    creating = "Creating"
+    running = "Running"
+    succeeded = "Succeeded"
+    patching = "Patching"
+    suspending = "Suspending"
+    resuming = "Resuming"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
 
 
-class FirewallAllowAzureIpsState(Enum):
+class DataLakeAnalyticsAccountState(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    active = "Active"
+    suspended = "Suspended"
 
 
-class AADObjectType(Enum):
+class OperationOrigin(str, Enum):
 
-    user = "User"
-    group = "Group"
-    service_principal = "ServicePrincipal"
+    user = "user"
+    system = "system"
+    usersystem = "user,system"
+
+
+class SubscriptionState(str, Enum):
+
+    registered = "Registered"
+    suspended = "Suspended"
+    deleted = "Deleted"
+    unregistered = "Unregistered"
+    warned = "Warned"

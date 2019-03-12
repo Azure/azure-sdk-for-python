@@ -18,6 +18,8 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -28,14 +30,14 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :type location: str
     :ivar kind: Resource kind.
     :vartype kind: str
-    :param state: Specifies the state of the policy. If state is Enabled,
-     storageEndpoint and storageAccountAccessKey are required. Possible values
-     include: 'New', 'Enabled', 'Disabled'
-    :type state: str or :class:`SecurityAlertPolicyState
-     <azure.mgmt.sql.models.SecurityAlertPolicyState>`
+    :param state: Required. Specifies the state of the policy. If state is
+     Enabled, storageEndpoint and storageAccountAccessKey are required.
+     Possible values include: 'New', 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies the semicolon-separated list of alerts
      that are disabled, or empty string to disable no alerts. Possible values:
-     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly; Usage_Anomaly.
+     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly;
+     Data_Exfiltration; Unsafe_Action.
     :type disabled_alerts: str
     :param email_addresses: Specifies the semicolon-separated list of e-mail
      addresses to which the alert is sent.
@@ -43,8 +45,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :param email_account_admins: Specifies that the alert is sent to the
      account administrators. Possible values include: 'Enabled', 'Disabled'
     :type email_account_admins: str or
-     :class:`SecurityAlertPolicyEmailAccountAdmins
-     <azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins>`
+     ~azure.mgmt.sql.models.SecurityAlertPolicyEmailAccountAdmins
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all
      Threat Detection audit logs. If state is Enabled, storageEndpoint is
@@ -60,8 +61,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     :param use_server_default: Specifies whether to use the default server
      policy. Possible values include: 'Enabled', 'Disabled'
     :type use_server_default: str or
-     :class:`SecurityAlertPolicyUseServerDefault
-     <azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault>`
+     ~azure.mgmt.sql.models.SecurityAlertPolicyUseServerDefault
     """
 
     _validation = {
@@ -88,15 +88,15 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
         'use_server_default': {'key': 'properties.useServerDefault', 'type': 'SecurityAlertPolicyUseServerDefault'},
     }
 
-    def __init__(self, state, location=None, disabled_alerts=None, email_addresses=None, email_account_admins=None, storage_endpoint=None, storage_account_access_key=None, retention_days=None, use_server_default=None):
-        super(DatabaseSecurityAlertPolicy, self).__init__()
-        self.location = location
+    def __init__(self, **kwargs):
+        super(DatabaseSecurityAlertPolicy, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.kind = None
-        self.state = state
-        self.disabled_alerts = disabled_alerts
-        self.email_addresses = email_addresses
-        self.email_account_admins = email_account_admins
-        self.storage_endpoint = storage_endpoint
-        self.storage_account_access_key = storage_account_access_key
-        self.retention_days = retention_days
-        self.use_server_default = use_server_default
+        self.state = kwargs.get('state', None)
+        self.disabled_alerts = kwargs.get('disabled_alerts', None)
+        self.email_addresses = kwargs.get('email_addresses', None)
+        self.email_account_admins = kwargs.get('email_account_admins', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.retention_days = kwargs.get('retention_days', None)
+        self.use_server_default = kwargs.get('use_server_default', None)

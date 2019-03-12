@@ -30,9 +30,8 @@ class ResourceMetricValue(Model):
     :vartype total: float
     :ivar count: Value count.
     :vartype count: float
-    :ivar properties: Properties.
-    :vartype properties: list of :class:`ResourceMetricProperty
-     <azure.mgmt.web.models.ResourceMetricProperty>`
+    :ivar properties: Resource metric properties collection.
+    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
     """
 
     _validation = {
@@ -55,7 +54,8 @@ class ResourceMetricValue(Model):
         'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ResourceMetricValue, self).__init__(**kwargs)
         self.timestamp = None
         self.average = None
         self.minimum = None

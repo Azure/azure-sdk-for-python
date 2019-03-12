@@ -49,7 +49,7 @@ class USqlTableStatistics(CatalogItem):
     :type filter_definition: str
     :param col_names: the list of column names associated with these
      statistics.
-    :type col_names: list of str
+    :type col_names: list[str]
     """
 
     _attribute_map = {
@@ -70,18 +70,18 @@ class USqlTableStatistics(CatalogItem):
         'col_names': {'key': 'colNames', 'type': '[str]'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, table_name=None, name=None, user_stat_name=None, stat_data_path=None, create_time=None, update_time=None, is_user_created=None, is_auto_created=None, has_filter=None, filter_definition=None, col_names=None):
-        super(USqlTableStatistics, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.table_name = table_name
-        self.name = name
-        self.user_stat_name = user_stat_name
-        self.stat_data_path = stat_data_path
-        self.create_time = create_time
-        self.update_time = update_time
-        self.is_user_created = is_user_created
-        self.is_auto_created = is_auto_created
-        self.has_filter = has_filter
-        self.filter_definition = filter_definition
-        self.col_names = col_names
+    def __init__(self, **kwargs):
+        super(USqlTableStatistics, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.name = kwargs.get('name', None)
+        self.user_stat_name = kwargs.get('user_stat_name', None)
+        self.stat_data_path = kwargs.get('stat_data_path', None)
+        self.create_time = kwargs.get('create_time', None)
+        self.update_time = kwargs.get('update_time', None)
+        self.is_user_created = kwargs.get('is_user_created', None)
+        self.is_auto_created = kwargs.get('is_auto_created', None)
+        self.has_filter = kwargs.get('has_filter', None)
+        self.filter_definition = kwargs.get('filter_definition', None)
+        self.col_names = kwargs.get('col_names', None)

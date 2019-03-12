@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class IncidentPaged(Paged):
     """
-    A paging container for iterating over a list of Incident object
+    A paging container for iterating over a list of :class:`Incident <azure.mgmt.monitor.models.Incident>` object
     """
 
     _attribute_map = {

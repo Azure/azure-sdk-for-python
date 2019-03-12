@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: 'b''b\''b\\\''b\\\\\\\''{"subscriptions": ["00000000-0000-0000-0000-000000000000"],
+      "query": "project id, tags, properties | limit 2"}\\\\\\\''\\\''\'''''
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['110']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          msrest_azure/0.4.34 azure-mgmt-resourcegraph/0.6.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2018-09-01-preview
+  response:
+    body: {string: '{"totalRecords":2,"count":2,"data":{"columns":[{"name":"id","type":"string"},{"name":"tags","type":"object"},{"name":"properties","type":"object"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zarttest1faaede5-14b9-43b9-8836-3b8df81aa6f2/providers/Microsoft.StreamAnalytics/streamingjobs/zarttest28000000",{},{"provisioningState":"Succeeded","sku":{"name":"Standard"},"eventsLateArrivalMaxDelayInSeconds":5,"createdDate":"2018-07-26T01:17:29.3470000Z","compatibilityLevel":"1.0","outputErrorPolicy":"Stop","dataLocale":"en-US","jobState":"Created","package":null,"jobType":"Cloud","jobId":"00000000-0000-0000-0000-000000000000"}],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/newzarttestefd4b1a7-6480-40bb-bac5-f23376ebb04d/providers/Microsoft.Storage/storageAccounts/zarttest9b000000",{},{"provisioningState":"Succeeded","creationTime":"2018-08-04T19:23:48.4690000Z","supportsHttpsTrafficOnly":true,"trustedDirectories":["72f988bf-86f1-41af-91ab-2d7cd011db47"],"primaryEndpoints":{"blob":"https://zarttest9b000000.blob.core.windows.net/","file":"https://zarttest9b000000.file.core.windows.net/","table":"https://zarttest9b000000.table.core.windows.net/","queue":"https://zarttest9b000000.queue.core.windows.net/"},"statusOfPrimary":"available","primaryLocation":"eastus","networkAcls":{"virtualNetworkRules":[],"defaultAction":"Allow","ipRules":[],"bypass":"AzureServices"},"encryption":{"services":{"blob":{"lastEnabledTime":"2018-08-04T19:23:48.5940000Z","enabled":true},"file":{"lastEnabledTime":"2018-08-04T19:23:48.5940000Z","enabled":true}},"keySource":"Microsoft.Storage"}}]]},"facets":[],"resultTruncated":"false"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1679']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 29 Aug 2018 02:06:58 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1198']
+    status: {code: 200, message: OK}
+version: 1

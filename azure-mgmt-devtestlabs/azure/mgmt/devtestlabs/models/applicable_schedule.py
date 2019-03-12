@@ -28,15 +28,13 @@ class ApplicableSchedule(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set
      at the lab or lab resource level.
-    :type lab_vms_shutdown: :class:`Schedule
-     <azure.mgmt.devtestlabs.models.Schedule>`
+    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.Schedule
     :param lab_vms_startup: The auto-startup schedule, if one has been set at
      the lab or lab resource level.
-    :type lab_vms_startup: :class:`Schedule
-     <azure.mgmt.devtestlabs.models.Schedule>`
+    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.Schedule
     """
 
     _validation = {
@@ -55,7 +53,7 @@ class ApplicableSchedule(Resource):
         'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'Schedule'},
     }
 
-    def __init__(self, location=None, tags=None, lab_vms_shutdown=None, lab_vms_startup=None):
-        super(ApplicableSchedule, self).__init__(location=location, tags=tags)
-        self.lab_vms_shutdown = lab_vms_shutdown
-        self.lab_vms_startup = lab_vms_startup
+    def __init__(self, **kwargs):
+        super(ApplicableSchedule, self).__init__(**kwargs)
+        self.lab_vms_shutdown = kwargs.get('lab_vms_shutdown', None)
+        self.lab_vms_startup = kwargs.get('lab_vms_startup', None)

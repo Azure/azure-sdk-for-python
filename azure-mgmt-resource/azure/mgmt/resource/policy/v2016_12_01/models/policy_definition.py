@@ -15,42 +15,60 @@ from msrest.serialization import Model
 class PolicyDefinition(Model):
     """The policy definition.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param policy_type: The type of policy definition. Possible values are
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
-    :type policy_type: str or :class:`PolicyType
-     <azure.mgmt.resource.policy.v2016_12_01.models.PolicyType>`
+    :type policy_type: str or
+     ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
+    :param mode: The policy definition mode. Possible values are NotSpecified,
+     Indexed, and All. Possible values include: 'NotSpecified', 'Indexed',
+     'All'
+    :type mode: str or
+     ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
     :param display_name: The display name of the policy definition.
     :type display_name: str
     :param description: The policy definition description.
     :type description: str
     :param policy_rule: The policy rule.
     :type policy_rule: object
+    :param metadata: The policy definition metadata.
+    :type metadata: object
     :param parameters: Required if a parameter is used in policy rule.
     :type parameters: object
-    :param id: The ID of the policy definition.
-    :type id: str
-    :param name: The name of the policy definition. If you do not specify a
-     value for name, the value is inferred from the name value in the request
-     URI.
-    :type name: str
+    :ivar id: The ID of the policy definition.
+    :vartype id: str
+    :ivar name: The name of the policy definition.
+    :vartype name: str
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+    }
 
     _attribute_map = {
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
+        'mode': {'key': 'properties.mode', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, policy_type=None, display_name=None, description=None, policy_rule=None, parameters=None, id=None, name=None):
-        self.policy_type = policy_type
-        self.display_name = display_name
-        self.description = description
-        self.policy_rule = policy_rule
-        self.parameters = parameters
-        self.id = id
-        self.name = name
+    def __init__(self, **kwargs):
+        super(PolicyDefinition, self).__init__(**kwargs)
+        self.policy_type = kwargs.get('policy_type', None)
+        self.mode = kwargs.get('mode', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.policy_rule = kwargs.get('policy_rule', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.id = None
+        self.name = None

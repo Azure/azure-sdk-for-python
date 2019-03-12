@@ -18,8 +18,7 @@ class PacketCaptureFilter(Model):
 
     :param protocol: Protocol to be filtered on. Possible values include:
      'TCP', 'UDP', 'Any'. Default value: "Any" .
-    :type protocol: str or :class:`PcProtocol
-     <azure.mgmt.network.v2017_03_01.models.PcProtocol>`
+    :type protocol: str or ~azure.mgmt.network.v2017_03_01.models.PcProtocol
     :param local_ip_address: Local IP Address to be filtered on. Notation:
      "127.0.0.1" for single address entry. "127.0.0.1-127.0.0.255" for range.
      "127.0.0.1;127.0.0.5"? for multiple entries. Multiple ranges not currently
@@ -52,9 +51,10 @@ class PacketCaptureFilter(Model):
         'remote_port': {'key': 'remotePort', 'type': 'str'},
     }
 
-    def __init__(self, protocol="Any", local_ip_address=None, remote_ip_address=None, local_port=None, remote_port=None):
-        self.protocol = protocol
-        self.local_ip_address = local_ip_address
-        self.remote_ip_address = remote_ip_address
-        self.local_port = local_port
-        self.remote_port = remote_port
+    def __init__(self, **kwargs):
+        super(PacketCaptureFilter, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', "Any")
+        self.local_ip_address = kwargs.get('local_ip_address', None)
+        self.remote_ip_address = kwargs.get('remote_ip_address', None)
+        self.local_port = kwargs.get('local_port', None)
+        self.remote_port = kwargs.get('remote_port', None)

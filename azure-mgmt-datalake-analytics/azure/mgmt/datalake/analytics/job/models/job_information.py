@@ -9,71 +9,75 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .job_information_basic import JobInformationBasic
 
 
-class JobInformation(Model):
-    """The common Data Lake Analytics job information properties.
+class JobInformation(JobInformationBasic):
+    """The extended Data Lake Analytics job information properties returned when
+    retrieving a specific job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar job_id: the job's unique identifier (a GUID).
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar job_id: The job's unique identifier (a GUID).
     :vartype job_id: str
-    :param name: the friendly name of the job.
+    :param name: Required. The friendly name of the job.
     :type name: str
-    :param type: the job type of the current job (Hive or USql). Possible
-     values include: 'USql', 'Hive'
-    :type type: str or :class:`JobType
-     <azure.mgmt.datalake.analytics.job.models.JobType>`
-    :ivar submitter: the user or account that submitted the job.
+    :param type: Required. The job type of the current job (Hive, USql, or
+     Scope (for internal use only)). Possible values include: 'USql', 'Hive',
+     'Scope'
+    :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
+    :ivar submitter: The user or account that submitted the job.
     :vartype submitter: str
-    :ivar error_message: the error message details for the job, if the job
-     failed.
-    :vartype error_message: list of :class:`JobErrorDetails
-     <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
-    :param degree_of_parallelism: the degree of parallelism used for this job.
+    :param degree_of_parallelism: The degree of parallelism used for this job.
      This must be greater than 0, if set to less than 0 it will default to 1.
      Default value: 1 .
     :type degree_of_parallelism: int
-    :param priority: the priority value for the current job. Lower numbers
+    :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
     :type priority: int
-    :ivar submit_time: the time the job was submitted to the service.
+    :ivar submit_time: The time the job was submitted to the service.
     :vartype submit_time: datetime
-    :ivar start_time: the start time of the job.
+    :ivar start_time: The start time of the job.
     :vartype start_time: datetime
-    :ivar end_time: the completion time of the job.
+    :ivar end_time: The completion time of the job.
     :vartype end_time: datetime
-    :ivar state: the job state. When the job is in the Ended state, refer to
+    :ivar state: The job state. When the job is in the Ended state, refer to
      Result and ErrorMessage for details. Possible values include: 'Accepted',
      'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
      'Starting', 'Paused', 'WaitingForCapacity'
-    :vartype state: str or :class:`JobState
-     <azure.mgmt.datalake.analytics.job.models.JobState>`
-    :ivar result: the result of job execution or the current result of the
+    :vartype state: str or ~azure.mgmt.datalake.analytics.job.models.JobState
+    :ivar result: The result of job execution or the current result of the
      running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
      'Failed'
-    :vartype result: str or :class:`JobResult
-     <azure.mgmt.datalake.analytics.job.models.JobResult>`
-    :ivar log_folder: the log folder path to use in the following format:
+    :vartype result: str or
+     ~azure.mgmt.datalake.analytics.job.models.JobResult
+    :ivar log_folder: The log folder path to use in the following format:
      adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
     :vartype log_folder: str
-    :param log_file_patterns: the list of log file name patterns to find in
+    :param log_file_patterns: The list of log file name patterns to find in
      the logFolder. '*' is the only matching character allowed. Example format:
      jobExecution*.log or *mylog*.txt
-    :type log_file_patterns: list of str
-    :ivar state_audit_records: the job state audit records, indicating when
+    :type log_file_patterns: list[str]
+    :param related: The recurring job relationship information properties.
+    :type related:
+     ~azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties
+    :param tags: The key-value pairs used to add additional metadata to the
+     job information. (Only for use internally with Scope job type.)
+    :type tags: dict[str, str]
+    :ivar error_message: The error message details for the job, if the job
+     failed.
+    :vartype error_message:
+     list[~azure.mgmt.datalake.analytics.job.models.JobErrorDetails]
+    :ivar state_audit_records: The job state audit records, indicating when
      various operations have been performed on this job.
-    :vartype state_audit_records: list of :class:`JobStateAuditRecord
-     <azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord>`
-    :param properties: the job specific properties.
-    :type properties: :class:`JobProperties
-     <azure.mgmt.datalake.analytics.job.models.JobProperties>`
-    :param related: the recurring job relationship information properties.
-    :type related: :class:`JobRelationshipProperties
-     <azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties>`
+    :vartype state_audit_records:
+     list[~azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord]
+    :param properties: Required. The job specific properties.
+    :type properties: ~azure.mgmt.datalake.analytics.job.models.JobProperties
     """
 
     _validation = {
@@ -81,13 +85,13 @@ class JobInformation(Model):
         'name': {'required': True},
         'type': {'required': True},
         'submitter': {'readonly': True},
-        'error_message': {'readonly': True},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'state': {'readonly': True},
         'result': {'readonly': True},
         'log_folder': {'readonly': True},
+        'error_message': {'readonly': True},
         'state_audit_records': {'readonly': True},
         'properties': {'required': True},
     }
@@ -97,7 +101,6 @@ class JobInformation(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'JobType'},
         'submitter': {'key': 'submitter', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': '[JobErrorDetails]'},
         'degree_of_parallelism': {'key': 'degreeOfParallelism', 'type': 'int'},
         'priority': {'key': 'priority', 'type': 'int'},
         'submit_time': {'key': 'submitTime', 'type': 'iso-8601'},
@@ -107,26 +110,15 @@ class JobInformation(Model):
         'result': {'key': 'result', 'type': 'JobResult'},
         'log_folder': {'key': 'logFolder', 'type': 'str'},
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
+        'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'error_message': {'key': 'errorMessage', 'type': '[JobErrorDetails]'},
         'state_audit_records': {'key': 'stateAuditRecords', 'type': '[JobStateAuditRecord]'},
         'properties': {'key': 'properties', 'type': 'JobProperties'},
-        'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
     }
 
-    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None):
-        self.job_id = None
-        self.name = name
-        self.type = type
-        self.submitter = None
+    def __init__(self, **kwargs):
+        super(JobInformation, self).__init__(**kwargs)
         self.error_message = None
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.submit_time = None
-        self.start_time = None
-        self.end_time = None
-        self.state = None
-        self.result = None
-        self.log_folder = None
-        self.log_file_patterns = log_file_patterns
         self.state_audit_records = None
-        self.properties = properties
-        self.related = related
+        self.properties = kwargs.get('properties', None)

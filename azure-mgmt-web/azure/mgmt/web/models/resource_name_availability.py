@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceNameAvailability(Model):
-    """Information regarding availbility of a resource name.
+    """Information regarding availability of a resource name.
 
     :param name_available: <code>true</code> indicates name is valid and
      available. <code>false</code> indicates the name is invalid, unavailable,
@@ -23,8 +23,7 @@ class ResourceNameAvailability(Model):
      match Azure App Service naming requirements. <code>AlreadyExists</code>
      indicates that the name is already in use and is therefore unavailable.
      Possible values include: 'Invalid', 'AlreadyExists'
-    :type reason: str or :class:`InAvailabilityReasonType
-     <azure.mgmt.web.models.InAvailabilityReasonType>`
+    :type reason: str or ~azure.mgmt.web.models.InAvailabilityReasonType
     :param message: If reason == invalid, provide the user with the reason why
      the given name is invalid, and provide the resource naming requirements so
      that the user can select a valid name. If reason == AlreadyExists, explain
@@ -39,7 +38,8 @@ class ResourceNameAvailability(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ResourceNameAvailability, self).__init__(**kwargs)
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)

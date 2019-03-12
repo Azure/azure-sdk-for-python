@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class ResourceMetricDefinition(Resource):
+class ResourceMetricDefinition(ProxyOnlyResource):
     """Metadata for the metrics.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,44 +20,34 @@ class ResourceMetricDefinition(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :ivar resource_metric_definition_name: Name of the metric.
-    :vartype resource_metric_definition_name: :class:`ResourceMetricName
-     <azure.mgmt.web.models.ResourceMetricName>`
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar unit: Unit of the metric.
     :vartype unit: str
     :ivar primary_aggregation_type: Primary aggregation type.
     :vartype primary_aggregation_type: str
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
-    :vartype metric_availabilities: list of :class:`ResourceMetricAvailability
-     <azure.mgmt.web.models.ResourceMetricAvailability>`
+    :vartype metric_availabilities:
+     list[~azure.mgmt.web.models.ResourceMetricAvailability]
     :ivar resource_uri: Resource URI.
     :vartype resource_uri: str
-    :ivar resource_metric_definition_id: Resource ID.
-    :vartype resource_metric_definition_id: str
-    :ivar properties: Properties.
-    :vartype properties: dict
+    :ivar properties: Resource metric definition properties.
+    :vartype properties: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
-        'resource_metric_definition_name': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'unit': {'readonly': True},
         'primary_aggregation_type': {'readonly': True},
         'metric_availabilities': {'readonly': True},
         'resource_uri': {'readonly': True},
-        'resource_metric_definition_id': {'readonly': True},
         'properties': {'readonly': True},
     }
 
@@ -65,24 +55,18 @@ class ResourceMetricDefinition(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_metric_definition_name': {'key': 'properties.name', 'type': 'ResourceMetricName'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'primary_aggregation_type': {'key': 'properties.primaryAggregationType', 'type': 'str'},
         'metric_availabilities': {'key': 'properties.metricAvailabilities', 'type': '[ResourceMetricAvailability]'},
         'resource_uri': {'key': 'properties.resourceUri', 'type': 'str'},
-        'resource_metric_definition_id': {'key': 'properties.id', 'type': 'str'},
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(ResourceMetricDefinition, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.resource_metric_definition_name = None
+    def __init__(self, **kwargs):
+        super(ResourceMetricDefinition, self).__init__(**kwargs)
         self.unit = None
         self.primary_aggregation_type = None
         self.metric_availabilities = None
         self.resource_uri = None
-        self.resource_metric_definition_id = None
         self.properties = None

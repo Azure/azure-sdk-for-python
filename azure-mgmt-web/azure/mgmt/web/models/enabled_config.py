@@ -15,7 +15,8 @@ from msrest.serialization import Model
 class EnabledConfig(Model):
     """Enabled configuration.
 
-    :param enabled: Enabled.
+    :param enabled: True if configuration is enabled, false if it is disabled
+     and null if configuration is not set.
     :type enabled: bool
     """
 
@@ -23,5 +24,6 @@ class EnabledConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, enabled=None):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(EnabledConfig, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)

@@ -27,20 +27,18 @@ class User(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param identity: The identity of the user.
-    :type identity: :class:`UserIdentity
-     <azure.mgmt.devtestlabs.models.UserIdentity>`
+    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentity
     :param secret_store: The secret store of the user.
-    :type secret_store: :class:`UserSecretStore
-     <azure.mgmt.devtestlabs.models.UserSecretStore>`
+    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStore
     :ivar created_date: The creation date of the user profile.
     :vartype created_date: datetime
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -48,6 +46,8 @@ class User(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'created_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -63,10 +63,10 @@ class User(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, identity=None, secret_store=None, provisioning_state=None, unique_identifier=None):
-        super(User, self).__init__(location=location, tags=tags)
-        self.identity = identity
-        self.secret_store = secret_store
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
+        self.secret_store = kwargs.get('secret_store', None)
         self.created_date = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = None
+        self.unique_identifier = None

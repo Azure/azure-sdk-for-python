@@ -18,13 +18,16 @@ class CheckNameAvailabilityInput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The Search service name to validate. Search service names
-     must only contain lowercase letters, digits or dashes, cannot use dash as
-     the first two or last one characters, cannot contain consecutive dashes,
-     and must be between 2 and 60 characters in length.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The Search service name to validate. Search service
+     names must only contain lowercase letters, digits or dashes, cannot use
+     dash as the first two or last one characters, cannot contain consecutive
+     dashes, and must be between 2 and 60 characters in length.
     :type name: str
-    :ivar type: The type of the resource whose name is to be validated. This
-     value must always be 'searchServices'. Default value: "searchServices" .
+    :ivar type: Required. The type of the resource whose name is to be
+     validated. This value must always be 'searchServices'. Default value:
+     "searchServices" .
     :vartype type: str
     """
 
@@ -40,5 +43,6 @@ class CheckNameAvailabilityInput(Model):
 
     type = "searchServices"
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityInput, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

@@ -9,9 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_operation import AzureOperationPoller
 import uuid
+from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -22,16 +24,18 @@ class IotHubResourceOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-01-19".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2018-12-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-01-19"
+        self.api_version = "2018-12-01-preview"
 
         self.config = config
 
@@ -51,15 +55,14 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IotHubDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.IotHubDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -73,7 +76,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -82,8 +85,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -98,9 +101,62 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'}
+
+
+    def _create_or_update_initial(
+            self, resource_group_name, resource_name, iot_hub_description, if_match=None, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(iot_hub_description, 'IotHubDescription')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ErrorDetailsException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('IotHubDescription', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('IotHubDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, iot_hub_description, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, iot_hub_description, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update the metadata of an IoT hub.
 
         Create or update the metadata of an Iot hub. The usual pattern to
@@ -111,26 +167,63 @@ class IotHubResourceOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to create or update.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security
          metadata.
-        :type iot_hub_description: :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
+        :type iot_hub_description: ~azure.mgmt.iothub.models.IotHubDescription
+        :param if_match: ETag of the IoT Hub. Do not specify for creating a
+         brand new IoT Hub. Required to update an existing IoT Hub.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns IotHubDescription or
+         ClientRawResponse<IotHubDescription> if raw==True
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.iothub.models.IotHubDescription]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.iothub.models.IotHubDescription]]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            iot_hub_description=iot_hub_description,
+            if_match=if_match,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('IotHubDescription', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'}
+
+
+    def _update_initial(
+            self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        iot_hub_tags = models.TagsResource(tags=tags)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -144,6 +237,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -153,34 +247,65 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(iot_hub_description, 'IotHubDescription')
+        body_content = self._serialize.body(iot_hub_tags, 'TagsResource')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+        if response.status_code == 200:
+            deserialized = self._deserialize('IotHubDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update an existing IoT Hubs tags.
+
+        Update an existing IoT Hub tags. to update other fields use the
+        CreateOrUpdate method.
+
+        :param resource_group_name: Resource group identifier.
+        :type resource_group_name: str
+        :param resource_name: Name of iot hub to update.
+        :type resource_name: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns IotHubDescription or
+         ClientRawResponse<IotHubDescription> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.iothub.models.IotHubDescription]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.iothub.models.IotHubDescription]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            tags=tags,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [201, 200]:
-                raise models.ErrorDetailsException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('IotHubDescription', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('IotHubDescription', response)
+            deserialized = self._deserialize('IotHubDescription', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -188,41 +313,20 @@ class IotHubResourceOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an IoT hub.
-
-        Delete an IoT hub.
-
-        :param resource_group_name: The name of the resource group that
-         contains the IoT hub.
-        :type resource_group_name: str
-        :param resource_name: The name of the IoT hub to delete.
-        :type resource_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises:
-         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -236,7 +340,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -245,32 +349,60 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204, 404]:
+            raise models.ErrorDetailsException(self._deserialize, response)
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+        if response.status_code == 200:
+            deserialized = self._deserialize('IotHubDescription', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('IotHubDescription', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('ErrorDetails', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete(
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete an IoT hub.
+
+        Delete an IoT hub.
+
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
+        :type resource_group_name: str
+        :param resource_name: The name of the IoT hub.
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns object or
+         ClientRawResponse<object> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202, 200, 204, 404]:
-                raise models.ErrorDetailsException(self._deserialize, response)
-
-            deserialized = None
-
-            if response.status_code == 202:
-                deserialized = self._deserialize('IotHubDescription', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('IotHubDescription', response)
-            if response.status_code == 404:
-                deserialized = self._deserialize('ErrorDetails', response)
+            deserialized = self._deserialize('object', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -278,16 +410,14 @@ class IotHubResourceOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'}
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
@@ -300,8 +430,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubDescriptionPaged
-         <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
+        :return: An iterator like instance of IotHubDescription
+        :rtype:
+         ~azure.mgmt.iothub.models.IotHubDescriptionPaged[~azure.mgmt.iothub.models.IotHubDescription]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -309,7 +440,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/IotHubs'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -325,7 +456,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -334,9 +465,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -352,6 +482,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/IotHubs'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -360,15 +491,16 @@ class IotHubResourceOperations(object):
         Get all the IoT hubs in a resource group.
 
         :param resource_group_name: The name of the resource group that
-         contains the IoT hubs.
+         contains the IoT hub.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubDescriptionPaged
-         <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
+        :return: An iterator like instance of IotHubDescription
+        :rtype:
+         ~azure.mgmt.iothub.models.IotHubDescriptionPaged[~azure.mgmt.iothub.models.IotHubDescription]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -376,7 +508,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -393,7 +525,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -402,9 +534,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -420,6 +551,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs'}
 
     def get_stats(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -437,15 +569,14 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RegistryStatistics
-         <azure.mgmt.iothub.models.RegistryStatistics>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: RegistryStatistics or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.RegistryStatistics or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubStats'
+        url = self.get_stats.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -459,7 +590,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -468,8 +599,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -484,6 +615,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_stats.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubStats'}
 
     def get_valid_skus(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -501,8 +633,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubSkuDescriptionPaged
-         <azure.mgmt.iothub.models.IotHubSkuDescriptionPaged>`
+        :return: An iterator like instance of IotHubSkuDescription
+        :rtype:
+         ~azure.mgmt.iothub.models.IotHubSkuDescriptionPaged[~azure.mgmt.iothub.models.IotHubSkuDescription]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -510,7 +643,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/skus'
+                url = self.get_valid_skus.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -528,7 +661,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -537,9 +670,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -555,6 +687,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_valid_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/skus'}
 
     def list_event_hub_consumer_groups(
             self, resource_group_name, resource_name, event_hub_endpoint_name, custom_headers=None, raw=False, **operation_config):
@@ -577,7 +710,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StrPaged <azure.mgmt.iothub.models.StrPaged>`
+        :return: An iterator like instance of EventHubConsumerGroupInfo
+        :rtype:
+         ~azure.mgmt.iothub.models.EventHubConsumerGroupInfoPaged[~azure.mgmt.iothub.models.EventHubConsumerGroupInfo]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -585,7 +720,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups'
+                url = self.list_event_hub_consumer_groups.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -604,7 +739,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -613,9 +748,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -623,14 +757,15 @@ class IotHubResourceOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.StrPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EventHubConsumerGroupInfoPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.StrPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EventHubConsumerGroupInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    list_event_hub_consumer_groups.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups'}
 
     def get_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
@@ -655,15 +790,14 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EventHubConsumerGroupInfo
-         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: EventHubConsumerGroupInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
+        url = self.get_event_hub_consumer_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -679,7 +813,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -688,8 +822,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -704,6 +838,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_event_hub_consumer_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'}
 
     def create_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
@@ -726,15 +861,14 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EventHubConsumerGroupInfo
-         <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: EventHubConsumerGroupInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
+        url = self.create_event_hub_consumer_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -750,7 +884,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -759,8 +893,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -775,6 +909,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    create_event_hub_consumer_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'}
 
     def delete_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
@@ -799,14 +934,13 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
+        url = self.delete_event_hub_consumer_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -822,7 +956,6 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -831,8 +964,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -840,6 +973,7 @@ class IotHubResourceOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_event_hub_consumer_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'}
 
     def list_jobs(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -859,8 +993,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponsePaged
-         <azure.mgmt.iothub.models.JobResponsePaged>`
+        :return: An iterator like instance of JobResponse
+        :rtype:
+         ~azure.mgmt.iothub.models.JobResponsePaged[~azure.mgmt.iothub.models.JobResponse]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -868,7 +1003,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs'
+                url = self.list_jobs.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -886,7 +1021,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -895,9 +1030,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -913,6 +1047,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_jobs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs'}
 
     def get_job(
             self, resource_group_name, resource_name, job_id, custom_headers=None, raw=False, **operation_config):
@@ -934,14 +1069,14 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.JobResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs/{jobId}'
+        url = self.get_job.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -956,7 +1091,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -965,8 +1100,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -981,6 +1116,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_job.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs/{jobId}'}
 
     def get_quota_metrics(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -998,8 +1134,9 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubQuotaMetricInfoPaged
-         <azure.mgmt.iothub.models.IotHubQuotaMetricInfoPaged>`
+        :return: An iterator like instance of IotHubQuotaMetricInfo
+        :rtype:
+         ~azure.mgmt.iothub.models.IotHubQuotaMetricInfoPaged[~azure.mgmt.iothub.models.IotHubQuotaMetricInfo]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -1007,7 +1144,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/quotaMetrics'
+                url = self.get_quota_metrics.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1025,7 +1162,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1034,9 +1171,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -1052,6 +1188,78 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_quota_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/quotaMetrics'}
+
+    def get_endpoint_health(
+            self, resource_group_name, iot_hub_name, custom_headers=None, raw=False, **operation_config):
+        """Get the health for routing endpoints.
+
+        Get the health for routing endpoints.
+
+        :param resource_group_name:
+        :type resource_group_name: str
+        :param iot_hub_name:
+        :type iot_hub_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of EndpointHealthData
+        :rtype:
+         ~azure.mgmt.iothub.models.EndpointHealthDataPaged[~azure.mgmt.iothub.models.EndpointHealthData]
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.get_endpoint_health.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'iotHubName': self._serialize.url("iot_hub_name", iot_hub_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorDetailsException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.EndpointHealthDataPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.EndpointHealthDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    get_endpoint_health.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routingEndpointsHealth'}
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
@@ -1066,17 +1274,16 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IotHubNameAvailabilityInfo
-         <azure.mgmt.iothub.models.IotHubNameAvailabilityInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IotHubNameAvailabilityInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.IotHubNameAvailabilityInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         operation_inputs = models.OperationInputs(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -1088,6 +1295,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -1100,9 +1308,8 @@ class IotHubResourceOperations(object):
         body_content = self._serialize.body(operation_inputs, 'OperationInputs')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -1117,6 +1324,145 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkNameAvailability'}
+
+    def test_all_routes(
+            self, input, iot_hub_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Test all routes.
+
+        Test all routes configured in this Iot Hub.
+
+        :param input: Input for testing all routes
+        :type input: ~azure.mgmt.iothub.models.TestAllRoutesInput
+        :param iot_hub_name: IotHub to be tested
+        :type iot_hub_name: str
+        :param resource_group_name: resource group which Iot Hub belongs to
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: TestAllRoutesResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.TestAllRoutesResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
+        """
+        # Construct URL
+        url = self.test_all_routes.metadata['url']
+        path_format_arguments = {
+            'iotHubName': self._serialize.url("iot_hub_name", iot_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(input, 'TestAllRoutesInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorDetailsException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TestAllRoutesResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    test_all_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testall'}
+
+    def test_route(
+            self, input, iot_hub_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Test the new route.
+
+        Test the new route for this Iot Hub.
+
+        :param input: Route that needs to be tested
+        :type input: ~azure.mgmt.iothub.models.TestRouteInput
+        :param iot_hub_name: IotHub to be tested
+        :type iot_hub_name: str
+        :param resource_group_name: resource group which Iot Hub belongs to
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: TestRouteResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.TestRouteResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
+        """
+        # Construct URL
+        url = self.test_route.metadata['url']
+        path_format_arguments = {
+            'iotHubName': self._serialize.url("iot_hub_name", iot_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(input, 'TestRouteInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorDetailsException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TestRouteResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    test_route.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testnew'}
 
     def list_keys(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -1136,8 +1482,10 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessSignatureAuthorizationRulePaged
-         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRulePaged>`
+        :return: An iterator like instance of
+         SharedAccessSignatureAuthorizationRule
+        :rtype:
+         ~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRulePaged[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -1145,7 +1493,7 @@ class IotHubResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/listkeys'
+                url = self.list_keys.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1163,7 +1511,7 @@ class IotHubResourceOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1172,9 +1520,8 @@ class IotHubResourceOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.post(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
@@ -1190,6 +1537,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/listkeys'}
 
     def get_keys_for_key_name(
             self, resource_group_name, resource_name, key_name, custom_headers=None, raw=False, **operation_config):
@@ -1213,15 +1561,16 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessSignatureAuthorizationRule
-         <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: SharedAccessSignatureAuthorizationRule or ClientRawResponse
          if raw=true
+        :rtype:
+         ~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubKeys/{keyName}/listkeys'
+        url = self.get_keys_for_key_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1236,7 +1585,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1245,8 +1594,8 @@ class IotHubResourceOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -1261,6 +1610,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_keys_for_key_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubKeys/{keyName}/listkeys'}
 
     def export_devices(
             self, resource_group_name, resource_name, export_blob_container_uri, exclude_keys, custom_headers=None, raw=False, **operation_config):
@@ -1287,16 +1637,16 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.JobResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         export_devices_parameters = models.ExportDevicesRequest(export_blob_container_uri=export_blob_container_uri, exclude_keys=exclude_keys)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/exportDevices'
+        url = self.export_devices.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1310,6 +1660,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -1322,9 +1673,8 @@ class IotHubResourceOperations(object):
         body_content = self._serialize.body(export_devices_parameters, 'ExportDevicesRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -1339,6 +1689,7 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    export_devices.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/exportDevices'}
 
     def import_devices(
             self, resource_group_name, resource_name, input_blob_container_uri, output_blob_container_uri, custom_headers=None, raw=False, **operation_config):
@@ -1364,16 +1715,16 @@ class IotHubResourceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: JobResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.JobResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         import_devices_parameters = models.ImportDevicesRequest(input_blob_container_uri=input_blob_container_uri, output_blob_container_uri=output_blob_container_uri)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/importDevices'
+        url = self.import_devices.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -1387,6 +1738,7 @@ class IotHubResourceOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -1399,9 +1751,8 @@ class IotHubResourceOperations(object):
         body_content = self._serialize.body(import_devices_parameters, 'ImportDevicesRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -1416,3 +1767,4 @@ class IotHubResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    import_devices.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/importDevices'}

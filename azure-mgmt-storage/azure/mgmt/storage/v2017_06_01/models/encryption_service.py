@@ -37,6 +37,7 @@ class EncryptionService(Model):
         'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, enabled=None):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(EncryptionService, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
         self.last_enabled_time = None

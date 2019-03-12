@@ -18,7 +18,7 @@ class AliasPathType(Model):
     :param path: The path of an alias.
     :type path: str
     :param api_versions: The API versions.
-    :type api_versions: list of str
+    :type api_versions: list[str]
     """
 
     _attribute_map = {
@@ -26,6 +26,7 @@ class AliasPathType(Model):
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
     }
 
-    def __init__(self, path=None, api_versions=None):
-        self.path = path
-        self.api_versions = api_versions
+    def __init__(self, **kwargs):
+        super(AliasPathType, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.api_versions = kwargs.get('api_versions', None)

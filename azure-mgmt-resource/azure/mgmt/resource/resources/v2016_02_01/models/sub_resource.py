@@ -23,5 +23,6 @@ class SubResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SubResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

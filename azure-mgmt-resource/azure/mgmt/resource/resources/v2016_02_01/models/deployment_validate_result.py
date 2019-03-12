@@ -16,11 +16,11 @@ class DeploymentValidateResult(Model):
     """Information from validate template deployment response.
 
     :param error: Validation error.
-    :type error: :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails>`
+    :type error:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails
     :param properties: The template deployment properties.
-    :type properties: :class:`DeploymentPropertiesExtended
-     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentPropertiesExtended>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2016_02_01.models.DeploymentPropertiesExtended
     """
 
     _attribute_map = {
@@ -28,6 +28,7 @@ class DeploymentValidateResult(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, error=None, properties=None):
-        self.error = error
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentValidateResult, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+        self.properties = kwargs.get('properties', None)

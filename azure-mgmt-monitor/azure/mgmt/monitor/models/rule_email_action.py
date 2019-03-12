@@ -16,15 +16,17 @@ class RuleEmailAction(RuleAction):
     """Specifies the action to send email when the rule condition is evaluated.
     The discriminator is always RuleEmailAction in this case.
 
-    :param odatatype: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param send_to_service_owners: Whether the administrators (service and
-     co-adiminstrators) of the service should be notified when the alert is
+     co-administrators) of the service should be notified when the alert is
      activated.
     :type send_to_service_owners: bool
     :param custom_emails: the list of administrator's custom email addresses
-     notifiy of the activation of the alert.
-    :type custom_emails: list of str
+     to notify of the activation of the alert.
+    :type custom_emails: list[str]
     """
 
     _validation = {
@@ -37,8 +39,8 @@ class RuleEmailAction(RuleAction):
         'custom_emails': {'key': 'customEmails', 'type': '[str]'},
     }
 
-    def __init__(self, send_to_service_owners=None, custom_emails=None):
-        super(RuleEmailAction, self).__init__()
-        self.send_to_service_owners = send_to_service_owners
-        self.custom_emails = custom_emails
+    def __init__(self, **kwargs):
+        super(RuleEmailAction, self).__init__(**kwargs)
+        self.send_to_service_owners = kwargs.get('send_to_service_owners', None)
+        self.custom_emails = kwargs.get('custom_emails', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'

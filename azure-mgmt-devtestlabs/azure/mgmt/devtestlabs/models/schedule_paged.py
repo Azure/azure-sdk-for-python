@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SchedulePaged(Paged):
     """
-    A paging container for iterating over a list of Schedule object
+    A paging container for iterating over a list of :class:`Schedule <azure.mgmt.devtestlabs.models.Schedule>` object
     """
 
     _attribute_map = {

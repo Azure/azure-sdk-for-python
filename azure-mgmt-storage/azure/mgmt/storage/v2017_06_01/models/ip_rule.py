@@ -15,13 +15,14 @@ from msrest.serialization import Model
 class IPRule(Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    :param ip_address_or_range: Specifies the IP or IP range in CIDR format.
-     Only IPV4 address is allowed.
+    All required parameters must be populated in order to send to Azure.
+
+    :param ip_address_or_range: Required. Specifies the IP or IP range in CIDR
+     format. Only IPV4 address is allowed.
     :type ip_address_or_range: str
     :param action: The action of IP ACL rule. Possible values include:
      'Allow'. Default value: "Allow" .
-    :type action: str or :class:`Action
-     <azure.mgmt.storage.v2017_06_01.models.Action>`
+    :type action: str or ~azure.mgmt.storage.v2017_06_01.models.Action
     """
 
     _validation = {
@@ -33,6 +34,7 @@ class IPRule(Model):
         'action': {'key': 'action', 'type': 'Action'},
     }
 
-    def __init__(self, ip_address_or_range, action="Allow"):
-        self.ip_address_or_range = ip_address_or_range
-        self.action = action
+    def __init__(self, **kwargs):
+        super(IPRule, self).__init__(**kwargs)
+        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.action = kwargs.get('action', "Allow")

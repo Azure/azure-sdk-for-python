@@ -18,9 +18,9 @@ class SkuInfo(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param sku: Name and tier of the SKU.
-    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
+    :type sku: ~azure.mgmt.web.models.SkuDescription
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: :class:`SkuCapacity <azure.mgmt.web.models.SkuCapacity>`
+    :type capacity: ~azure.mgmt.web.models.SkuCapacity
     """
 
     _attribute_map = {
@@ -29,7 +29,8 @@ class SkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None):
-        self.resource_type = resource_type
-        self.sku = sku
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(SkuInfo, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)

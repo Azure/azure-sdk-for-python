@@ -19,20 +19,18 @@ class ApplicationGatewayHttpListener(SubResource):
     :type id: str
     :param frontend_ip_configuration: Frontend IP configuration resource of an
      application gateway.
-    :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type frontend_ip_configuration:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param frontend_port: Frontend port resource of an application gateway.
-    :type frontend_port: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type frontend_port: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param protocol: Protocol. Possible values include: 'Http', 'Https'
-    :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayProtocol
     :param host_name: Host name of HTTP listener.
     :type host_name: str
     :param ssl_certificate: SSL certificate resource of an application
      gateway.
-    :type ssl_certificate: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type ssl_certificate: ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param require_server_name_indication: Applicable only if protocol is
      https. Enables SNI for multi-hosting.
     :type require_server_name_indication: bool
@@ -60,14 +58,14 @@ class ApplicationGatewayHttpListener(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, frontend_port=None, protocol=None, host_name=None, ssl_certificate=None, require_server_name_indication=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayHttpListener, self).__init__(id=id)
-        self.frontend_ip_configuration = frontend_ip_configuration
-        self.frontend_port = frontend_port
-        self.protocol = protocol
-        self.host_name = host_name
-        self.ssl_certificate = ssl_certificate
-        self.require_server_name_indication = require_server_name_indication
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayHttpListener, self).__init__(**kwargs)
+        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.ssl_certificate = kwargs.get('ssl_certificate', None)
+        self.require_server_name_indication = kwargs.get('require_server_name_indication', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

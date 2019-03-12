@@ -15,17 +15,16 @@ from msrest.serialization import Model
 class ServiceHealthStateChunkList(Model):
     """The list of service health state chunks that respect the input filters in
     the chunk query. Returned by get cluster health state chunks query.
-    .
 
     :param items: The list of service health state chunks that respect the
      input filters in the chunk query.
-    :type items: list of :class:`ServiceHealthStateChunk
-     <azure.servicefabric.models.ServiceHealthStateChunk>`
-    """ 
+    :type items: list[~azure.servicefabric.models.ServiceHealthStateChunk]
+    """
 
     _attribute_map = {
         'items': {'key': 'Items', 'type': '[ServiceHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        self.items = items
+    def __init__(self, **kwargs):
+        super(ServiceHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

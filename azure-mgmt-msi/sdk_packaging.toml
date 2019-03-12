@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-msi"
+package_pprint_name = "MSI Management"
+package_doc_id = "activedirectory"
+is_stable = false

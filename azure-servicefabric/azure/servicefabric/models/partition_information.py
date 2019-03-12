@@ -16,25 +16,36 @@ class PartitionInformation(Model):
     """Information about the partition identity, partitioning scheme and keys
     supported by it.
 
-    :param id:
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Int64RangePartitionInformation, NamedPartitionInformation,
+    SingletonPartitionInformation
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     partition. This is a randomly generated GUID when the service was created.
+     The partition ID is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the IDs of its
+     partitions would be different.
     :type id: str
-    :param ServicePartitionKind: Polymorphic Discriminator
-    :type ServicePartitionKind: str
-    """ 
+    :param service_partition_kind: Required. Constant filled by server.
+    :type service_partition_kind: str
+    """
 
     _validation = {
-        'ServicePartitionKind': {'required': True},
+        'service_partition_kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'Id', 'type': 'str'},
-        'ServicePartitionKind': {'key': 'ServicePartitionKind', 'type': 'str'},
+        'service_partition_kind': {'key': 'ServicePartitionKind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'ServicePartitionKind': {'Int64Range': 'Int64RangePartitionInformation', 'Named': 'NamedPartitionInformation', 'Singleton': 'SingletonPartitionInformation'}
+        'service_partition_kind': {'Int64Range': 'Int64RangePartitionInformation', 'Named': 'NamedPartitionInformation', 'Singleton': 'SingletonPartitionInformation'}
     }
 
-    def __init__(self, id=None):
-        self.id = id
-        self.ServicePartitionKind = None
+    def __init__(self, **kwargs):
+        super(PartitionInformation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.service_partition_kind = None

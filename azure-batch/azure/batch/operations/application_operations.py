@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class ApplicationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-05-01.5.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01.5.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -46,15 +48,16 @@ class ApplicationOperations(object):
 
         :param application_list_options: Additional parameters for the
          operation
-        :type application_list_options: :class:`ApplicationListOptions
-         <azure.batch.models.ApplicationListOptions>`
+        :type application_list_options:
+         ~azure.batch.models.ApplicationListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationSummaryPaged
-         <azure.batch.models.ApplicationSummaryPaged>`
+        :return: An iterator like instance of ApplicationSummary
+        :rtype:
+         ~azure.batch.models.ApplicationSummaryPaged[~azure.batch.models.ApplicationSummary]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -78,7 +81,11 @@ class ApplicationOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/applications'
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,7 +101,7 @@ class ApplicationOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -109,9 +116,8 @@ class ApplicationOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -127,26 +133,32 @@ class ApplicationOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/applications'}
 
     def get(
             self, application_id, application_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified application.
 
+        This operation returns only applications and versions that are
+        available for use on compute nodes; that is, that can be used in an
+        application package reference. For administrator information about
+        applications and versions that are not yet available to compute nodes,
+        use the Azure portal or the Azure Resource Manager API.
+
         :param application_id: The ID of the application.
         :type application_id: str
         :param application_get_options: Additional parameters for the
          operation
-        :type application_get_options: :class:`ApplicationGetOptions
-         <azure.batch.models.ApplicationGetOptions>`
+        :type application_get_options:
+         ~azure.batch.models.ApplicationGetOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationSummary
-         <azure.batch.models.ApplicationSummary>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ApplicationSummary or ClientRawResponse if raw=true
+        :rtype: ~azure.batch.models.ApplicationSummary or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -164,8 +176,9 @@ class ApplicationOperations(object):
             ocp_date = application_get_options.ocp_date
 
         # Construct URL
-        url = '/applications/{applicationId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'applicationId': self._serialize.url("application_id", application_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,7 +191,7 @@ class ApplicationOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -193,8 +206,8 @@ class ApplicationOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -217,3 +230,4 @@ class ApplicationOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/applications/{applicationId}'}

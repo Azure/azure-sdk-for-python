@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class FileOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-05-01.5.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01.5.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -43,7 +45,8 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The ID of the task whose file you want to delete.
         :type task_id: str
-        :param file_path: The path to the task file that you want to delete.
+        :param file_path: The path to the task file or directory that you want
+         to delete.
         :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
          filePath parameter represents a directory instead of a file, you can
@@ -53,16 +56,15 @@ class FileOperations(object):
         :type recursive: bool
         :param file_delete_from_task_options: Additional parameters for the
          operation
-        :type file_delete_from_task_options: :class:`FileDeleteFromTaskOptions
-         <azure.batch.models.FileDeleteFromTaskOptions>`
+        :type file_delete_from_task_options:
+         ~azure.batch.models.FileDeleteFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -80,8 +82,9 @@ class FileOperations(object):
             ocp_date = file_delete_from_task_options.ocp_date
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
+        url = self.delete_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -98,7 +101,6 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -113,8 +115,8 @@ class FileOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -126,6 +128,7 @@ class FileOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
     def get_from_task(
             self, job_id, task_id, file_path, file_get_from_task_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -140,8 +143,8 @@ class FileOperations(object):
         :type file_path: str
         :param file_get_from_task_options: Additional parameters for the
          operation
-        :type file_get_from_task_options: :class:`FileGetFromTaskOptions
-         <azure.batch.models.FileGetFromTaskOptions>`
+        :type file_get_from_task_options:
+         ~azure.batch.models.FileGetFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -152,9 +155,8 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -181,8 +183,9 @@ class FileOperations(object):
             if_unmodified_since = file_get_from_task_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
+        url = self.get_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -197,7 +200,7 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -218,8 +221,8 @@ class FileOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -248,6 +251,7 @@ class FileOperations(object):
             return client_raw_response
 
         return deserialized
+    get_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
     def get_properties_from_task(
             self, job_id, task_id, file_path, file_get_properties_from_task_options=None, custom_headers=None, raw=False, **operation_config):
@@ -264,16 +268,14 @@ class FileOperations(object):
         :param file_get_properties_from_task_options: Additional parameters
          for the operation
         :type file_get_properties_from_task_options:
-         :class:`FileGetPropertiesFromTaskOptions
-         <azure.batch.models.FileGetPropertiesFromTaskOptions>`
+         ~azure.batch.models.FileGetPropertiesFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -297,8 +299,9 @@ class FileOperations(object):
             if_unmodified_since = file_get_properties_from_task_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
+        url = self.get_properties_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -313,7 +316,6 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -332,8 +334,8 @@ class FileOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -353,6 +355,7 @@ class FileOperations(object):
                 'Content-Length': 'long',
             })
             return client_raw_response
+    get_properties_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'}
 
     def delete_from_compute_node(
             self, pool_id, node_id, file_path, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
@@ -363,7 +366,8 @@ class FileOperations(object):
         :param node_id: The ID of the compute node from which you want to
          delete the file.
         :type node_id: str
-        :param file_path: The path to the file that you want to delete.
+        :param file_path: The path to the file or directory that you want to
+         delete.
         :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
          filePath parameter represents a directory instead of a file, you can
@@ -374,16 +378,14 @@ class FileOperations(object):
         :param file_delete_from_compute_node_options: Additional parameters
          for the operation
         :type file_delete_from_compute_node_options:
-         :class:`FileDeleteFromComputeNodeOptions
-         <azure.batch.models.FileDeleteFromComputeNodeOptions>`
+         ~azure.batch.models.FileDeleteFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -401,8 +403,9 @@ class FileOperations(object):
             ocp_date = file_delete_from_compute_node_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
+        url = self.delete_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -419,7 +422,6 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -434,8 +436,8 @@ class FileOperations(object):
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -447,6 +449,7 @@ class FileOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'}
 
     def get_from_compute_node(
             self, pool_id, node_id, file_path, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -462,8 +465,7 @@ class FileOperations(object):
         :param file_get_from_compute_node_options: Additional parameters for
          the operation
         :type file_get_from_compute_node_options:
-         :class:`FileGetFromComputeNodeOptions
-         <azure.batch.models.FileGetFromComputeNodeOptions>`
+         ~azure.batch.models.FileGetFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -474,9 +476,8 @@ class FileOperations(object):
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: Generator
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -503,8 +504,9 @@ class FileOperations(object):
             if_unmodified_since = file_get_from_compute_node_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
+        url = self.get_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -519,7 +521,7 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -540,8 +542,8 @@ class FileOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -570,6 +572,7 @@ class FileOperations(object):
             return client_raw_response
 
         return deserialized
+    get_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'}
 
     def get_properties_from_compute_node(
             self, pool_id, node_id, file_path, file_get_properties_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
@@ -585,16 +588,14 @@ class FileOperations(object):
         :param file_get_properties_from_compute_node_options: Additional
          parameters for the operation
         :type file_get_properties_from_compute_node_options:
-         :class:`FileGetPropertiesFromComputeNodeOptions
-         <azure.batch.models.FileGetPropertiesFromComputeNodeOptions>`
+         ~azure.batch.models.FileGetPropertiesFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -618,8 +619,9 @@ class FileOperations(object):
             if_unmodified_since = file_get_properties_from_compute_node_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
+        url = self.get_properties_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -634,7 +636,6 @@ class FileOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -653,8 +654,8 @@ class FileOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -674,6 +675,7 @@ class FileOperations(object):
                 'Content-Length': 'long',
             })
             return client_raw_response
+    get_properties_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'}
 
     def list_from_task(
             self, job_id, task_id, recursive=None, file_list_from_task_options=None, custom_headers=None, raw=False, **operation_config):
@@ -683,20 +685,22 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The ID of the task whose files you want to list.
         :type task_id: str
-        :param recursive: Whether to list children of a directory. This
+        :param recursive: Whether to list children of the task directory. This
          parameter can be used in combination with the filter parameter to list
          specific type of files.
         :type recursive: bool
         :param file_list_from_task_options: Additional parameters for the
          operation
-        :type file_list_from_task_options: :class:`FileListFromTaskOptions
-         <azure.batch.models.FileListFromTaskOptions>`
+        :type file_list_from_task_options:
+         ~azure.batch.models.FileListFromTaskOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :return: An iterator like instance of NodeFile
+        :rtype:
+         ~azure.batch.models.NodeFilePaged[~azure.batch.models.NodeFile]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -723,8 +727,9 @@ class FileOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobs/{jobId}/tasks/{taskId}/files'
+                url = self.list_from_task.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'jobId': self._serialize.url("job_id", job_id, 'str'),
                     'taskId': self._serialize.url("task_id", task_id, 'str')
                 }
@@ -748,7 +753,7 @@ class FileOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -763,9 +768,8 @@ class FileOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -781,6 +785,7 @@ class FileOperations(object):
             return client_raw_response
 
         return deserialized
+    list_from_task.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}/files'}
 
     def list_from_compute_node(
             self, pool_id, node_id, recursive=None, file_list_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
@@ -797,14 +802,15 @@ class FileOperations(object):
         :param file_list_from_compute_node_options: Additional parameters for
          the operation
         :type file_list_from_compute_node_options:
-         :class:`FileListFromComputeNodeOptions
-         <azure.batch.models.FileListFromComputeNodeOptions>`
+         ~azure.batch.models.FileListFromComputeNodeOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :return: An iterator like instance of NodeFile
+        :rtype:
+         ~azure.batch.models.NodeFilePaged[~azure.batch.models.NodeFile]
         :raises:
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
@@ -831,8 +837,9 @@ class FileOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/pools/{poolId}/nodes/{nodeId}/files'
+                url = self.list_from_compute_node.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'poolId': self._serialize.url("pool_id", pool_id, 'str'),
                     'nodeId': self._serialize.url("node_id", node_id, 'str')
                 }
@@ -856,7 +863,7 @@ class FileOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -871,9 +878,8 @@ class FileOperations(object):
                 header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -889,3 +895,4 @@ class FileOperations(object):
             return client_raw_response
 
         return deserialized
+    list_from_compute_node.metadata = {'url': '/pools/{poolId}/nodes/{nodeId}/files'}

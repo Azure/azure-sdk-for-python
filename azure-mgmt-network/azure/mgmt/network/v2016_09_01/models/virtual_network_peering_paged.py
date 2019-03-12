@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VirtualNetworkPeeringPaged(Paged):
     """
-    A paging container for iterating over a list of VirtualNetworkPeering object
+    A paging container for iterating over a list of :class:`VirtualNetworkPeering <azure.mgmt.network.v2016_09_01.models.VirtualNetworkPeering>` object
     """
 
     _attribute_map = {

@@ -14,16 +14,18 @@ from msrest.serialization import Model
 
 class ApplicationTypeHealthPolicyMapItem(Model):
     """Defines an item in ApplicationTypeHealthPolicyMap.
-    .
 
-    :param key: The key of the application type health policy map item. This
-     is the name of the application type.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The key of the application type health policy map
+     item. This is the name of the application type.
     :type key: str
-    :param value: The value of the application type health policy map item.
+    :param value: Required. The value of the application type health policy
+     map item.
      The max percent unhealthy applications allowed for the application type.
      Must be between zero and 100.
     :type value: int
-    """ 
+    """
 
     _validation = {
         'key': {'required': True},
@@ -35,6 +37,7 @@ class ApplicationTypeHealthPolicyMapItem(Model):
         'value': {'key': 'Value', 'type': 'int'},
     }
 
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ApplicationTypeHealthPolicyMapItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

@@ -16,13 +16,14 @@ class ServiceSpecification(Model):
     """One property of operation, include metric specifications.
 
     :param metric_specifications: Metric specifications of operation.
-    :type metric_specifications: list of :class:`MetricSpecification
-     <azure.mgmt.storage.v2017_06_01.models.MetricSpecification>`
+    :type metric_specifications:
+     list[~azure.mgmt.storage.v2017_06_01.models.MetricSpecification]
     """
 
     _attribute_map = {
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
     }
 
-    def __init__(self, metric_specifications=None):
-        self.metric_specifications = metric_specifications
+    def __init__(self, **kwargs):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = kwargs.get('metric_specifications', None)

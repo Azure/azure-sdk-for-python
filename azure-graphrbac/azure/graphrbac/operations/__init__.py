@@ -9,16 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .objects_operations import ObjectsOperations
+from .signed_in_user_operations import SignedInUserOperations
 from .applications_operations import ApplicationsOperations
+from .deleted_applications_operations import DeletedApplicationsOperations
 from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
 from .users_operations import UsersOperations
+from .objects_operations import ObjectsOperations
+from .domains_operations import DomainsOperations
+from .oauth2_operations import OAuth2Operations
 
 __all__ = [
-    'ObjectsOperations',
+    'SignedInUserOperations',
     'ApplicationsOperations',
+    'DeletedApplicationsOperations',
     'GroupsOperations',
     'ServicePrincipalsOperations',
     'UsersOperations',
+    'ObjectsOperations',
+    'DomainsOperations',
+    'OAuth2Operations',
 ]

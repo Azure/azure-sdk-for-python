@@ -46,7 +46,8 @@ class DatabaseAccountListKeysResult(Model):
         'secondary_readonly_master_key': {'key': 'properties.secondaryReadonlyMasterKey', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(DatabaseAccountListKeysResult, self).__init__(**kwargs)
         self.primary_master_key = None
         self.secondary_master_key = None
         self.primary_readonly_master_key = None

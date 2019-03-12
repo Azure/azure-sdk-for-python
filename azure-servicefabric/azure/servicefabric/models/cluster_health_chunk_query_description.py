@@ -17,17 +17,17 @@ class ClusterHealthChunkQueryDescription(Model):
     policies to evaluate cluster health and very expressive filters to select
     which cluster entities to include in response.
 
-    :param node_filters: Defines a list of filters that specify which nodes
-     to be included in the returned cluster health chunk.
-     If no filters are specified, no nodes are returned. All the nodes are
-     used to evaluate the cluster's aggregated health state, regardless of
-     the input filters.
+    :param node_filters: Defines a list of filters that specify which nodes to
+     be included in the returned cluster health chunk.
+     If no filters are specified, no nodes are returned. All the nodes are used
+     to evaluate the cluster's aggregated health state, regardless of the input
+     filters.
      The cluster health chunk query may specify multiple node filters.
-     For example, it can specify a filter to return all nodes with health
-     state Error and another filter to always include a node identified by
-     its NodeName.
-    :type node_filters: list of :class:`NodeHealthStateFilter
-     <azure.servicefabric.models.NodeHealthStateFilter>`
+     For example, it can specify a filter to return all nodes with health state
+     Error and another filter to always include a node identified by its
+     NodeName.
+    :type node_filters:
+     list[~azure.servicefabric.models.NodeHealthStateFilter]
     :param application_filters: Defines a list of filters that specify which
      applications to be included in the returned cluster health chunk.
      If no filters are specified, no applications are returned. All the
@@ -35,17 +35,20 @@ class ClusterHealthChunkQueryDescription(Model):
      regardless of the input filters.
      The cluster health chunk query may specify multiple application filters.
      For example, it can specify a filter to return all applications with
-     health state Error and another filter to always include applications of
-     a specified application type.
-    :type application_filters: list of :class:`ApplicationHealthStateFilter
-     <azure.servicefabric.models.ApplicationHealthStateFilter>`
-    :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
-    :param application_health_policies:
-    :type application_health_policies: :class:`ApplicationHealthPolicies
-     <azure.servicefabric.models.ApplicationHealthPolicies>`
-    """ 
+     health state Error and another filter to always include applications of a
+     specified application type.
+    :type application_filters:
+     list[~azure.servicefabric.models.ApplicationHealthStateFilter]
+    :param cluster_health_policy: Defines a health policy used to evaluate the
+     health of the cluster or of a cluster node.
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
+    :param application_health_policies: Defines the application health policy
+     map used to evaluate the health of an application or one of its children
+     entities.
+    :type application_health_policies:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
+    """
 
     _attribute_map = {
         'node_filters': {'key': 'NodeFilters', 'type': '[NodeHealthStateFilter]'},
@@ -54,8 +57,9 @@ class ClusterHealthChunkQueryDescription(Model):
         'application_health_policies': {'key': 'ApplicationHealthPolicies', 'type': 'ApplicationHealthPolicies'},
     }
 
-    def __init__(self, node_filters=None, application_filters=None, cluster_health_policy=None, application_health_policies=None):
-        self.node_filters = node_filters
-        self.application_filters = application_filters
-        self.cluster_health_policy = cluster_health_policy
-        self.application_health_policies = application_health_policies
+    def __init__(self, **kwargs):
+        super(ClusterHealthChunkQueryDescription, self).__init__(**kwargs)
+        self.node_filters = kwargs.get('node_filters', None)
+        self.application_filters = kwargs.get('application_filters', None)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.application_health_policies = kwargs.get('application_health_policies', None)

@@ -23,5 +23,6 @@ class ManagementLockOwner(Model):
         'application_id': {'key': 'applicationId', 'type': 'str'},
     }
 
-    def __init__(self, application_id=None):
-        self.application_id = application_id
+    def __init__(self, **kwargs):
+        super(ManagementLockOwner, self).__init__(**kwargs)
+        self.application_id = kwargs.get('application_id', None)

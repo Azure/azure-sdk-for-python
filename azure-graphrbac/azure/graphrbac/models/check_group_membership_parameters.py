@@ -15,10 +15,15 @@ from msrest.serialization import Model
 class CheckGroupMembershipParameters(Model):
     """Request parameters for IsMemberOf API call.
 
-    :param group_id: The object ID of the group to check.
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param group_id: Required. The object ID of the group to check.
     :type group_id: str
-    :param member_id: The object ID of the contact, group, user, or service
-     principal to check for membership in the specified group.
+    :param member_id: Required. The object ID of the contact, group, user, or
+     service principal to check for membership in the specified group.
     :type member_id: str
     """
 
@@ -28,10 +33,13 @@ class CheckGroupMembershipParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'group_id': {'key': 'groupId', 'type': 'str'},
         'member_id': {'key': 'memberId', 'type': 'str'},
     }
 
-    def __init__(self, group_id, member_id):
-        self.group_id = group_id
-        self.member_id = member_id
+    def __init__(self, **kwargs):
+        super(CheckGroupMembershipParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.member_id = kwargs.get('member_id', None)

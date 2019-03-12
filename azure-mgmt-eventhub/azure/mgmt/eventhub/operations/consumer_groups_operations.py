@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,9 +21,11 @@ class ConsumerGroupsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -48,7 +50,7 @@ class ConsumerGroupsOperations(object):
         :type event_hub_name: str
         :param consumer_group_name: The consumer group name
         :type consumer_group_name: str
-        :param user_metadata: Usermetadata is a placeholder to store
+        :param user_metadata: User Metadata is a placeholder to store
          user-defined string data with maximum length 1024. e.g. it can be used
          to store descriptive data, such as list of teams and their contact
          information also user-defined configuration settings can be stored.
@@ -58,21 +60,20 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         parameters = models.ConsumerGroup(user_metadata=user_metadata)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -84,6 +85,7 @@ class ConsumerGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -96,9 +98,8 @@ class ConsumerGroupsOperations(object):
         body_content = self._serialize.body(parameters, 'ConsumerGroup')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -113,6 +114,7 @@ class ConsumerGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'}
 
     def delete(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, custom_headers=None, raw=False, **operation_config):
@@ -133,18 +135,17 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -156,7 +157,6 @@ class ConsumerGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -165,15 +165,16 @@ class ConsumerGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'}
 
     def get(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, custom_headers=None, raw=False, **operation_config):
@@ -193,19 +194,18 @@ class ConsumerGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroup
-         <azure.mgmt.eventhub.models.ConsumerGroup>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ConsumerGroup or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.ConsumerGroup or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -217,7 +217,7 @@ class ConsumerGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -226,8 +226,8 @@ class ConsumerGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -242,9 +242,10 @@ class ConsumerGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'}
 
     def list_by_event_hub(
-            self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, event_hub_name, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the consumer groups in a Namespace. An empty feed is returned
         if no consumer group exists in the Namespace.
 
@@ -255,13 +256,22 @@ class ConsumerGroupsOperations(object):
         :type namespace_name: str
         :param event_hub_name: The Event Hub name
         :type event_hub_name: str
+        :param skip: Skip is only used if a previous operation returned a
+         partial result. If a previous response contains a nextLink element,
+         the value of the nextLink element will include a skip parameter that
+         specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ConsumerGroupPaged
-         <azure.mgmt.eventhub.models.ConsumerGroupPaged>`
+        :return: An iterator like instance of ConsumerGroup
+        :rtype:
+         ~azure.mgmt.eventhub.models.ConsumerGroupPaged[~azure.mgmt.eventhub.models.ConsumerGroup]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -269,11 +279,11 @@ class ConsumerGroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups'
+                url = self.list_by_event_hub.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -281,6 +291,10 @@ class ConsumerGroupsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link
@@ -288,7 +302,7 @@ class ConsumerGroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -297,9 +311,8 @@ class ConsumerGroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -315,3 +328,4 @@ class ConsumerGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_event_hub.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups'}

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class CustomHostnameAnalysisResult(Resource):
+class CustomHostnameAnalysisResult(ProxyOnlyResource):
     """Custom domain analysis.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,54 +20,50 @@ class CustomHostnameAnalysisResult(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar is_hostname_already_verified: <code>true</code> if hostname is
      already verified; otherwise, <code>false</code>.
     :vartype is_hostname_already_verified: bool
     :ivar custom_domain_verification_test: DNS verification test result.
      Possible values include: 'Passed', 'Failed', 'Skipped'
     :vartype custom_domain_verification_test: str or
-     :class:`DnsVerificationTestResult
-     <azure.mgmt.web.models.DnsVerificationTestResult>`
+     ~azure.mgmt.web.models.DnsVerificationTestResult
     :ivar custom_domain_verification_failure_info: Raw failure information if
      DNS verification fails.
-    :vartype custom_domain_verification_failure_info: :class:`ErrorEntity
-     <azure.mgmt.web.models.ErrorEntity>`
+    :vartype custom_domain_verification_failure_info:
+     ~azure.mgmt.web.models.ErrorEntity
     :ivar has_conflict_on_scale_unit: <code>true</code> if there is a conflict
      on a scale unit; otherwise, <code>false</code>.
     :vartype has_conflict_on_scale_unit: bool
-    :ivar has_conflict_across_subscription: <code>true</code> if htere is a
+    :ivar has_conflict_across_subscription: <code>true</code> if there is a
      conflict across subscriptions; otherwise, <code>false</code>.
     :vartype has_conflict_across_subscription: bool
     :ivar conflicting_app_resource_id: Name of the conflicting app on scale
      unit if it's within the same subscription.
     :vartype conflicting_app_resource_id: str
     :param c_name_records: CName records controller can see for this hostname.
-    :type c_name_records: list of str
+    :type c_name_records: list[str]
     :param txt_records: TXT records controller can see for this hostname.
-    :type txt_records: list of str
+    :type txt_records: list[str]
     :param a_records: A records controller can see for this hostname.
-    :type a_records: list of str
+    :type a_records: list[str]
     :param alternate_cname_records: Alternate CName records controller can see
      for this hostname.
-    :type alternate_cname_records: list of str
+    :type alternate_cname_records: list[str]
     :param alternate_txt_records: Alternate TXT records controller can see for
      this hostname.
-    :type alternate_txt_records: list of str
+    :type alternate_txt_records: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'is_hostname_already_verified': {'readonly': True},
         'custom_domain_verification_test': {'readonly': True},
         'custom_domain_verification_failure_info': {'readonly': True},
@@ -80,9 +76,7 @@ class CustomHostnameAnalysisResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'is_hostname_already_verified': {'key': 'properties.isHostnameAlreadyVerified', 'type': 'bool'},
         'custom_domain_verification_test': {'key': 'properties.customDomainVerificationTest', 'type': 'DnsVerificationTestResult'},
         'custom_domain_verification_failure_info': {'key': 'properties.customDomainVerificationFailureInfo', 'type': 'ErrorEntity'},
@@ -96,16 +90,16 @@ class CustomHostnameAnalysisResult(Resource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
-        super(CustomHostnameAnalysisResult, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, **kwargs):
+        super(CustomHostnameAnalysisResult, self).__init__(**kwargs)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None
         self.custom_domain_verification_failure_info = None
         self.has_conflict_on_scale_unit = None
         self.has_conflict_across_subscription = None
         self.conflicting_app_resource_id = None
-        self.c_name_records = c_name_records
-        self.txt_records = txt_records
-        self.a_records = a_records
-        self.alternate_cname_records = alternate_cname_records
-        self.alternate_txt_records = alternate_txt_records
+        self.c_name_records = kwargs.get('c_name_records', None)
+        self.txt_records = kwargs.get('txt_records', None)
+        self.a_records = kwargs.get('a_records', None)
+        self.alternate_cname_records = kwargs.get('alternate_cname_records', None)
+        self.alternate_txt_records = kwargs.get('alternate_txt_records', None)

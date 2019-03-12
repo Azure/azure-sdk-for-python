@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class OriginPaged(Paged):
     """
-    A paging container for iterating over a list of Origin object
+    A paging container for iterating over a list of :class:`Origin <azure.mgmt.cdn.models.Origin>` object
     """
 
     _attribute_map = {

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ActivityLogAlertResourcePaged(Paged):
     """
-    A paging container for iterating over a list of ActivityLogAlertResource object
+    A paging container for iterating over a list of :class:`ActivityLogAlertResource <azure.mgmt.monitor.models.ActivityLogAlertResource>` object
     """
 
     _attribute_map = {

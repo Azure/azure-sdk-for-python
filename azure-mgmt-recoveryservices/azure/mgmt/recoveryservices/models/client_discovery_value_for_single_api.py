@@ -15,39 +15,29 @@ from msrest.serialization import Model
 class ClientDiscoveryValueForSingleApi(Model):
     """Available operation details.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Name of the operation.
-    :vartype name: str
-    :ivar display: Contains the localized display information for this
-     particular operation.
-    :vartype display: :class:`ClientDiscoveryDisplay
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay>`
-    :ivar origin: The intended executor of the operation.
-    :vartype origin: str
-    :ivar service_specification: Operation properties.
-    :vartype service_specification:
-     :class:`ClientDiscoveryForServiceSpecification
-     <azure.mgmt.recoveryservices.models.ClientDiscoveryForServiceSpecification>`
+    :param name: Name of the Operation.
+    :type name: str
+    :param display: Contains the localized display information for this
+     particular operation
+    :type display: ~azure.mgmt.recoveryservices.models.ClientDiscoveryDisplay
+    :param origin: The intended executor of the operation;governs the display
+     of the operation in the RBAC UX and the audit logs UX
+    :type origin: str
+    :param properties: ShoeBox properties for the given operation.
+    :type properties:
+     ~azure.mgmt.recoveryservices.models.ClientDiscoveryForProperties
     """
 
-    _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
-        'origin': {'readonly': True},
-        'service_specification': {'readonly': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'display': {'key': 'Display', 'type': 'ClientDiscoveryDisplay'},
-        'origin': {'key': 'Origin', 'type': 'str'},
-        'service_specification': {'key': 'Properties.serviceSpecification', 'type': 'ClientDiscoveryForServiceSpecification'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'ClientDiscoveryDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ClientDiscoveryForProperties'},
     }
 
-    def __init__(self):
-        self.name = None
-        self.display = None
-        self.origin = None
-        self.service_specification = None
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryValueForSingleApi, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

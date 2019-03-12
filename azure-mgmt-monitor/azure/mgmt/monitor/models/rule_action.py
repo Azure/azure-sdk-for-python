@@ -16,7 +16,12 @@ class RuleAction(Model):
     """The action that is performed when the alert rule becomes active, and when
     an alert condition is resolved.
 
-    :param odatatype: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RuleEmailAction, RuleWebhookAction
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
 
@@ -32,5 +37,6 @@ class RuleAction(Model):
         'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleEmailAction': 'RuleEmailAction', 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction': 'RuleWebhookAction'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(RuleAction, self).__init__(**kwargs)
         self.odatatype = None

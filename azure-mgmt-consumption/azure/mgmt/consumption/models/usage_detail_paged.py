@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class UsageDetailPaged(Paged):
     """
-    A paging container for iterating over a list of UsageDetail object
+    A paging container for iterating over a list of :class:`UsageDetail <azure.mgmt.consumption.models.UsageDetail>` object
     """
 
     _attribute_map = {

@@ -27,11 +27,11 @@ class DtlEnvironment(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param deployment_properties: The deployment properties of the
      environment.
-    :type deployment_properties: :class:`EnvironmentDeploymentProperties
-     <azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties>`
+    :type deployment_properties:
+     ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties
     :param arm_template_display_name: The display name of the Azure Resource
      Manager template that produced the environment.
     :type arm_template_display_name: str
@@ -40,11 +40,11 @@ class DtlEnvironment(Resource):
     :vartype resource_group_id: str
     :ivar created_by_user: The creator of the environment.
     :vartype created_by_user: str
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -53,6 +53,8 @@ class DtlEnvironment(Resource):
         'type': {'readonly': True},
         'resource_group_id': {'readonly': True},
         'created_by_user': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,11 +71,11 @@ class DtlEnvironment(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, deployment_properties=None, arm_template_display_name=None, provisioning_state=None, unique_identifier=None):
-        super(DtlEnvironment, self).__init__(location=location, tags=tags)
-        self.deployment_properties = deployment_properties
-        self.arm_template_display_name = arm_template_display_name
+    def __init__(self, **kwargs):
+        super(DtlEnvironment, self).__init__(**kwargs)
+        self.deployment_properties = kwargs.get('deployment_properties', None)
+        self.arm_template_display_name = kwargs.get('arm_template_display_name', None)
         self.resource_group_id = None
         self.created_by_user = None
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.provisioning_state = None
+        self.unique_identifier = None

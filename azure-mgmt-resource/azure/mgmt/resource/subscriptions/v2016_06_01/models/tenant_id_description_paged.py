@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class TenantIdDescriptionPaged(Paged):
     """
-    A paging container for iterating over a list of TenantIdDescription object
+    A paging container for iterating over a list of :class:`TenantIdDescription <azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantIdDescription>` object
     """
 
     _attribute_map = {

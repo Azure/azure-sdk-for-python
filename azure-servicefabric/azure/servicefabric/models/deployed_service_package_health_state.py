@@ -16,20 +16,29 @@ class DeployedServicePackageHealthState(EntityHealthState):
     """Represents the health state of a deployed service package, containing the
     entity identifier and the aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param node_name: Name of the node on which the service package is
      deployed.
     :type node_name: str
-    :param application_name: Full name of the application.
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
     :param service_manifest_name: Name of the manifest describing the service
      package.
     :type service_manifest_name: str
-    :param service_package_activation_id:
+    :param service_package_activation_id: The ActivationId of a deployed
+     service package. If ServicePackageActivationMode specified at the time of
+     creating the service
+     is 'SharedProcess' (or if it is not specified, in which case it defaults
+     to 'SharedProcess'), then value of ServicePackageActivationId
+     is always an empty string.
     :type service_package_activation_id: str
-    """ 
+    """
 
     _attribute_map = {
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
@@ -39,9 +48,9 @@ class DeployedServicePackageHealthState(EntityHealthState):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, node_name=None, application_name=None, service_manifest_name=None, service_package_activation_id=None):
-        super(DeployedServicePackageHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.node_name = node_name
-        self.application_name = application_name
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageHealthState, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.application_name = kwargs.get('application_name', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

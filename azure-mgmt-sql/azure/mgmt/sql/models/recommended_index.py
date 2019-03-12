@@ -27,13 +27,11 @@ class RecommendedIndex(ProxyResource):
     :ivar action: The proposed index action. You can create a missing index,
      drop an unused index, or rebuild an existing index to improve its
      performance. Possible values include: 'Create', 'Drop', 'Rebuild'
-    :vartype action: str or :class:`RecommendedIndexAction
-     <azure.mgmt.sql.models.RecommendedIndexAction>`
+    :vartype action: str or ~azure.mgmt.sql.models.RecommendedIndexAction
     :ivar state: The current recommendation state. Possible values include:
      'Active', 'Pending', 'Executing', 'Verifying', 'Pending Revert',
      'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'
-    :vartype state: str or :class:`RecommendedIndexState
-     <azure.mgmt.sql.models.RecommendedIndexState>`
+    :vartype state: str or ~azure.mgmt.sql.models.RecommendedIndexState
     :ivar created: The UTC datetime showing when this resource was created
      (ISO8601 format).
     :vartype created: datetime
@@ -43,26 +41,23 @@ class RecommendedIndex(ProxyResource):
     :ivar index_type: The type of index (CLUSTERED, NONCLUSTERED, COLUMNSTORE,
      CLUSTERED COLUMNSTORE). Possible values include: 'CLUSTERED',
      'NONCLUSTERED', 'COLUMNSTORE', 'CLUSTERED COLUMNSTORE'
-    :vartype index_type: str or :class:`RecommendedIndexType
-     <azure.mgmt.sql.models.RecommendedIndexType>`
+    :vartype index_type: str or ~azure.mgmt.sql.models.RecommendedIndexType
     :ivar schema: The schema where table to build index over resides
     :vartype schema: str
     :ivar table: The table on which to build index.
     :vartype table: str
     :ivar columns: Columns over which to build index
-    :vartype columns: list of str
+    :vartype columns: list[str]
     :ivar included_columns: The list of column names to be included in the
      index
-    :vartype included_columns: list of str
+    :vartype included_columns: list[str]
     :ivar index_script: The full build index script
     :vartype index_script: str
     :ivar estimated_impact: The estimated impact of doing recommended index
      action.
-    :vartype estimated_impact: list of :class:`OperationImpact
-     <azure.mgmt.sql.models.OperationImpact>`
+    :vartype estimated_impact: list[~azure.mgmt.sql.models.OperationImpact]
     :ivar reported_impact: The values reported after index action is complete.
-    :vartype reported_impact: list of :class:`OperationImpact
-     <azure.mgmt.sql.models.OperationImpact>`
+    :vartype reported_impact: list[~azure.mgmt.sql.models.OperationImpact]
     """
 
     _validation = {
@@ -101,8 +96,8 @@ class RecommendedIndex(ProxyResource):
         'reported_impact': {'key': 'properties.reportedImpact', 'type': '[OperationImpact]'},
     }
 
-    def __init__(self):
-        super(RecommendedIndex, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecommendedIndex, self).__init__(**kwargs)
         self.action = None
         self.state = None
         self.created = None

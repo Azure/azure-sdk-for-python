@@ -15,18 +15,19 @@ from msrest.serialization import Model
 class VirtualNetworkRule(Model):
     """Virtual Network rule.
 
-    :param virtual_network_resource_id: A URL of vnet, subnet, classicVnet or
-     classicSubnet.
+    All required parameters must be populated in order to send to Azure.
+
+    :param virtual_network_resource_id: Required. Resource ID of a subnet, for
+     example:
+     /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
-    :param action: The action of virtual network ACL rule. Possible values
+    :param action: The action of virtual network rule. Possible values
      include: 'Allow'. Default value: "Allow" .
-    :type action: str or :class:`Action
-     <azure.mgmt.storage.v2017_06_01.models.Action>`
-    :param state: Gets the state of virtual network ACL rule. Possible values
+    :type action: str or ~azure.mgmt.storage.v2017_06_01.models.Action
+    :param state: Gets the state of virtual network rule. Possible values
      include: 'provisioning', 'deprovisioning', 'succeeded', 'failed',
      'networkSourceDeleted'
-    :type state: str or :class:`State
-     <azure.mgmt.storage.v2017_06_01.models.State>`
+    :type state: str or ~azure.mgmt.storage.v2017_06_01.models.State
     """
 
     _validation = {
@@ -39,7 +40,8 @@ class VirtualNetworkRule(Model):
         'state': {'key': 'state', 'type': 'State'},
     }
 
-    def __init__(self, virtual_network_resource_id, action="Allow", state=None):
-        self.virtual_network_resource_id = virtual_network_resource_id
-        self.action = action
-        self.state = state
+    def __init__(self, **kwargs):
+        super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.virtual_network_resource_id = kwargs.get('virtual_network_resource_id', None)
+        self.action = kwargs.get('action', "Allow")
+        self.state = kwargs.get('state', None)

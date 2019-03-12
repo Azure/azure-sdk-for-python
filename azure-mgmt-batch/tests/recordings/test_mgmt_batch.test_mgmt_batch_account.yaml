@@ -1,0 +1,250 @@
+interactions:
+- request:
+    body: '{"location": "westcentralus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['29']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5?api-version=2018-12-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sun, 13 Jan 2019 21:47:20 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/c0429b12-c302-4743-95b3-646dd9f0ac57?api-version=2018-12-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/operationResults/c0429b12-c302-4743-95b3-646dd9f0ac57?api-version=2018-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":100,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['515']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:36 GMT']
+      etag: ['"0x8D679A0BB8C670A"']
+      expires: ['-1']
+      last-modified: ['Sun, 13 Jan 2019 21:47:36 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5?api-version=2018-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":100,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['515']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:37 GMT']
+      etag: ['"0x8D679A0B2388037"']
+      expires: ['-1']
+      last-modified: ['Sun, 13 Jan 2019 21:47:21 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts?api-version=2018-12-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":100,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['527']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:36 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/listKeys?api-version=2018-12-01
+  response:
+    body: {string: '{"accountName":"batch3e1b0fe5","primary":"Os04xxaGg6rFeapIhiqpwTw4foEj25zDWPRcF07XAyi+FKOlNsDv9m07nhpq1liM7YHctXmGiHN4Ocx3P30BNQ==","secondary":"WxrdI9m/FWWsBzpJrGC2CAeCDnUEpMGkfE/PmUBdrjBgEk95Z3HOUEBAeHdRrfjQJUGc37ITK9+9VUgwSGZoOg=="}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['235']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:36 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyName": "Secondary"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['24']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5/regenerateKeys?api-version=2018-12-01
+  response:
+    body: {string: '{"accountName":"batch3e1b0fe5","primary":"Os04xxaGg6rFeapIhiqpwTw4foEj25zDWPRcF07XAyi+FKOlNsDv9m07nhpq1liM7YHctXmGiHN4Ocx3P30BNQ==","secondary":"jdCVF0LQJJLsHs3zXjrTnTq5xBlailDt8+Eduu4ZyiLD7t3qpy02txmy9v8rVVSZpbMbjqN7vI848AqSlaaoGw=="}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['235']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:38 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"tags": {"Name": "tagName", "Value": "tagValue"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['50']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5?api-version=2018-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5","name":"batch3e1b0fe5","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batch3e1b0fe5.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":100,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService"},"tags":{"Name":"tagName","Value":"tagValue"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['560']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 21:47:38 GMT']
+      etag: ['"0x8D679A0BCE4557A"']
+      expires: ['-1']
+      last-modified: ['Sun, 13 Jan 2019 21:47:39 GMT']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batch_test_mgmt_batch_account3e1b0fe5/providers/Microsoft.Batch/batchAccounts/batch3e1b0fe5?api-version=2018-12-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sun, 13 Jan 2019 21:47:39 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-3631b20f-f4ea-41ef-b466-d20f80b538c6?api-version=2018-12-01']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-deletes: ['14999']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Windows-10-10.0.17763-SP0) msrest/0.6.3 msrest_azure/0.4.34
+          azure-mgmt-batch/2018-12-01 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/accountOperationResults/batch3e1b0fe5-3631b20f-f4ea-41ef-b466-d20f80b538c6?api-version=2018-12-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Sun, 13 Jan 2019 21:47:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

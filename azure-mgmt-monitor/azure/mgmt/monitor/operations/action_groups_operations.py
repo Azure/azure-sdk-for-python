@@ -9,9 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,16 +21,18 @@ class ActionGroupsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-04-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2018-09-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-01"
+        self.api_version = "2018-09-01"
 
         self.config = config
 
@@ -44,21 +45,20 @@ class ActionGroupsOperations(object):
         :param action_group_name: The name of the action group.
         :type action_group_name: str
         :param action_group: The action group to create or use for the update.
-        :type action_group: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
+        :type action_group: ~azure.mgmt.monitor.models.ActionGroupResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: ActionGroupResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
@@ -72,6 +72,7 @@ class ActionGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -84,14 +85,11 @@ class ActionGroupsOperations(object):
         body_content = self._serialize.body(action_group, 'ActionGroupResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -105,6 +103,7 @@ class ActionGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
 
     def get(
             self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
@@ -119,14 +118,14 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ActionGroupResource
-         <azure.mgmt.monitor.models.ActionGroupResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: ActionGroupResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
@@ -140,7 +139,7 @@ class ActionGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -149,13 +148,11 @@ class ActionGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -167,6 +164,7 @@ class ActionGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
 
     def delete(
             self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
@@ -181,13 +179,13 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
@@ -201,7 +199,6 @@ class ActionGroupsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -210,17 +207,90 @@ class ActionGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
+
+    def update(
+            self, resource_group_name, action_group_name, tags=None, enabled=True, custom_headers=None, raw=False, **operation_config):
+        """Updates an existing action group's tags. To update other fields use the
+        CreateOrUpdate method.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param action_group_name: The name of the action group.
+        :type action_group_name: str
+        :param tags: Resource tags
+        :type tags: dict[str, str]
+        :param enabled: Indicates whether this action group is enabled. If an
+         action group is not enabled, then none of its actions will be
+         activated.
+        :type enabled: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ActionGroupResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        """
+        action_group_patch = models.ActionGroupPatchBody(tags=tags, enabled=enabled)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(action_group_patch, 'ActionGroupPatchBody')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ActionGroupResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
 
     def list_by_subscription_id(
             self, custom_headers=None, raw=False, **operation_config):
@@ -231,15 +301,17 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ActionGroupResourcePaged
-         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of ActionGroupResource
+        :rtype:
+         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/actionGroups'
+                url = self.list_by_subscription_id.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -255,7 +327,7 @@ class ActionGroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -264,14 +336,11 @@ class ActionGroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -284,6 +353,7 @@ class ActionGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/actionGroups'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -296,15 +366,17 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ActionGroupResourcePaged
-         <azure.mgmt.monitor.models.ActionGroupResourcePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of ActionGroupResource
+        :rtype:
+         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -321,7 +393,7 @@ class ActionGroupsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -330,14 +402,11 @@ class ActionGroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -350,11 +419,13 @@ class ActionGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups'}
 
     def enable_receiver(
             self, resource_group_name, action_group_name, receiver_name, custom_headers=None, raw=False, **operation_config):
         """Enable a receiver in an action group. This changes the receiver's
-        status from Disabled to Enabled.
+        status from Disabled to Enabled. This operation is only supported for
+        Email or SMS receivers.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -367,15 +438,15 @@ class ActionGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         enable_request = models.EnableRequest(receiver_name=receiver_name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}/subscribe'
+        url = self.enable_receiver.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
@@ -401,15 +472,13 @@ class ActionGroupsOperations(object):
         body_content = self._serialize.body(enable_request, 'EnableRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 409, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 409]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    enable_receiver.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}/subscribe'}

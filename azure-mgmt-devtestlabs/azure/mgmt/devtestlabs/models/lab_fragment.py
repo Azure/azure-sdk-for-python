@@ -9,66 +9,70 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .update_resource import UpdateResource
 
 
-class LabFragment(Resource):
+class LabFragment(UpdateResource):
     """A lab.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param lab_storage_type: Type of storage used by the lab. It can be either
      Premium or Standard. Default is Premium. Possible values include:
      'Standard', 'Premium'
-    :type lab_storage_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
+    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :param mandatory_artifacts_resource_ids_linux: The ordered list of
+     artifact resource IDs that should be applied on all Linux VM creations by
+     default, prior to the artifacts specified by the user.
+    :type mandatory_artifacts_resource_ids_linux: list[str]
+    :param mandatory_artifacts_resource_ids_windows: The ordered list of
+     artifact resource IDs that should be applied on all Windows VM creations
+     by default, prior to the artifacts specified by the user.
+    :type mandatory_artifacts_resource_ids_windows: list[str]
     :param premium_data_disks: The setting to enable usage of premium data
      disks.
      When its value is 'Enabled', creation of standard or premium data disks is
      allowed.
      When its value is 'Disabled', only creation of standard data disks is
      allowed. Possible values include: 'Disabled', 'Enabled'
-    :type premium_data_disks: str or :class:`PremiumDataDisk
-     <azure.mgmt.devtestlabs.models.PremiumDataDisk>`
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
-     (Guid).
-    :type unique_identifier: str
+    :type premium_data_disks: str or
+     ~azure.mgmt.devtestlabs.models.PremiumDataDisk
+    :param environment_permission: The access rights to be granted to the user
+     when provisioning an environment. Possible values include: 'Reader',
+     'Contributor'
+    :type environment_permission: str or
+     ~azure.mgmt.devtestlabs.models.EnvironmentPermission
+    :param announcement: The properties of any lab announcement associated
+     with this lab
+    :type announcement:
+     ~azure.mgmt.devtestlabs.models.LabAnnouncementPropertiesFragment
+    :param support: The properties of any lab support message associated with
+     this lab
+    :type support: ~azure.mgmt.devtestlabs.models.LabSupportPropertiesFragment
+    :param extended_properties: Extended properties of the lab used for
+     experimental features
+    :type extended_properties: dict[str, str]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
+        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
+        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
         'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
+        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementPropertiesFragment'},
+        'support': {'key': 'properties.support', 'type': 'LabSupportPropertiesFragment'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None, lab_storage_type=None, premium_data_disks=None, provisioning_state=None, unique_identifier=None):
-        super(LabFragment, self).__init__(location=location, tags=tags)
-        self.lab_storage_type = lab_storage_type
-        self.premium_data_disks = premium_data_disks
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(LabFragment, self).__init__(**kwargs)
+        self.lab_storage_type = kwargs.get('lab_storage_type', None)
+        self.mandatory_artifacts_resource_ids_linux = kwargs.get('mandatory_artifacts_resource_ids_linux', None)
+        self.mandatory_artifacts_resource_ids_windows = kwargs.get('mandatory_artifacts_resource_ids_windows', None)
+        self.premium_data_disks = kwargs.get('premium_data_disks', None)
+        self.environment_permission = kwargs.get('environment_permission', None)
+        self.announcement = kwargs.get('announcement', None)
+        self.support = kwargs.get('support', None)
+        self.extended_properties = kwargs.get('extended_properties', None)

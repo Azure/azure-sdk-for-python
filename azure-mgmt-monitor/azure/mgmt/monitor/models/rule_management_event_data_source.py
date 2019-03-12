@@ -16,10 +16,12 @@ class RuleManagementEventDataSource(RuleDataSource):
     """A rule management event data source. The discriminator fields is always
     RuleManagementEventDataSource in this case.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param event_name: the event name.
     :type event_name: str
@@ -40,8 +42,8 @@ class RuleManagementEventDataSource(RuleDataSource):
     :param sub_status: the substatus.
     :type sub_status: str
     :param claims: the claims.
-    :type claims: :class:`RuleManagementEventClaimsDataSource
-     <azure.mgmt.monitor.models.RuleManagementEventClaimsDataSource>`
+    :type claims:
+     ~azure.mgmt.monitor.models.RuleManagementEventClaimsDataSource
     """
 
     _validation = {
@@ -62,15 +64,15 @@ class RuleManagementEventDataSource(RuleDataSource):
         'claims': {'key': 'claims', 'type': 'RuleManagementEventClaimsDataSource'},
     }
 
-    def __init__(self, resource_uri=None, event_name=None, event_source=None, level=None, operation_name=None, resource_group_name=None, resource_provider_name=None, status=None, sub_status=None, claims=None):
-        super(RuleManagementEventDataSource, self).__init__(resource_uri=resource_uri)
-        self.event_name = event_name
-        self.event_source = event_source
-        self.level = level
-        self.operation_name = operation_name
-        self.resource_group_name = resource_group_name
-        self.resource_provider_name = resource_provider_name
-        self.status = status
-        self.sub_status = sub_status
-        self.claims = claims
+    def __init__(self, **kwargs):
+        super(RuleManagementEventDataSource, self).__init__(**kwargs)
+        self.event_name = kwargs.get('event_name', None)
+        self.event_source = kwargs.get('event_source', None)
+        self.level = kwargs.get('level', None)
+        self.operation_name = kwargs.get('operation_name', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.resource_provider_name = kwargs.get('resource_provider_name', None)
+        self.status = kwargs.get('status', None)
+        self.sub_status = kwargs.get('sub_status', None)
+        self.claims = kwargs.get('claims', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'

@@ -16,8 +16,8 @@ class ExpressRouteCircuitsArpTableListResult(Model):
     """Response for ListArpTable associated with the Express Route Circuits API.
 
     :param value: Gets list of the ARP table.
-    :type value: list of :class:`ExpressRouteCircuitArpTable
-     <azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitArpTable>`
+    :type value:
+     list[~azure.mgmt.network.v2016_12_01.models.ExpressRouteCircuitArpTable]
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """
@@ -27,6 +27,7 @@ class ExpressRouteCircuitsArpTableListResult(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitsArpTableListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)

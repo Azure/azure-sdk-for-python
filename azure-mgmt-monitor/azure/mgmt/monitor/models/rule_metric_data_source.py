@@ -16,10 +16,12 @@ class RuleMetricDataSource(RuleDataSource):
     """A rule metric data source. The discriminator value is always
     RuleMetricDataSource in this case.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param metric_name: the name of the metric that defines what the rule
      monitors.
@@ -36,7 +38,7 @@ class RuleMetricDataSource(RuleDataSource):
         'metric_name': {'key': 'metricName', 'type': 'str'},
     }
 
-    def __init__(self, resource_uri=None, metric_name=None):
-        super(RuleMetricDataSource, self).__init__(resource_uri=resource_uri)
-        self.metric_name = metric_name
+    def __init__(self, **kwargs):
+        super(RuleMetricDataSource, self).__init__(**kwargs)
+        self.metric_name = kwargs.get('metric_name', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'

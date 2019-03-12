@@ -23,5 +23,6 @@ class NameIdentifier(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(NameIdentifier, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

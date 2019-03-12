@@ -9,17 +9,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.autoscale_settings_operations import AutoscaleSettingsOperations
-from .operations.alert_rules_operations import AlertRulesOperations
+from .operations.operations import Operations
 from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
-from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
+from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.log_profiles_operations import LogProfilesOperations
-from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
+from .operations.diagnostic_settings_operations import DiagnosticSettingsOperations
+from .operations.diagnostic_settings_category_operations import DiagnosticSettingsCategoryOperations
 from .operations.action_groups_operations import ActionGroupsOperations
+from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
+from .operations.activity_logs_operations import ActivityLogsOperations
+from .operations.event_categories_operations import EventCategoriesOperations
+from .operations.tenant_activity_logs_operations import TenantActivityLogsOperations
+from .operations.metric_definitions_operations import MetricDefinitionsOperations
+from .operations.metrics_operations import MetricsOperations
+from .operations.metric_baseline_operations import MetricBaselineOperations
+from .operations.metric_alerts_operations import MetricAlertsOperations
+from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
+from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
+from .operations.metric_namespaces_operations import MetricNamespacesOperations
+from .operations.vm_insights_operations import VMInsightsOperations
 from . import models
 
 
@@ -43,40 +56,64 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(MonitorManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('monitormanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-monitor/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class MonitorManagementClient(object):
-    """Composite Swagger for Monitor Management Client
+class MonitorManagementClient(SDKClient):
+    """Monitor Management Client
 
     :ivar config: Configuration for client.
     :vartype config: MonitorManagementClientConfiguration
 
     :ivar autoscale_settings: AutoscaleSettings operations
     :vartype autoscale_settings: azure.mgmt.monitor.operations.AutoscaleSettingsOperations
-    :ivar alert_rules: AlertRules operations
-    :vartype alert_rules: azure.mgmt.monitor.operations.AlertRulesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.monitor.operations.Operations
     :ivar alert_rule_incidents: AlertRuleIncidents operations
     :vartype alert_rule_incidents: azure.mgmt.monitor.operations.AlertRuleIncidentsOperations
-    :ivar activity_log_alerts: ActivityLogAlerts operations
-    :vartype activity_log_alerts: azure.mgmt.monitor.operations.ActivityLogAlertsOperations
+    :ivar alert_rules: AlertRules operations
+    :vartype alert_rules: azure.mgmt.monitor.operations.AlertRulesOperations
     :ivar log_profiles: LogProfiles operations
     :vartype log_profiles: azure.mgmt.monitor.operations.LogProfilesOperations
-    :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
-    :vartype service_diagnostic_settings: azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations
+    :ivar diagnostic_settings: DiagnosticSettings operations
+    :vartype diagnostic_settings: azure.mgmt.monitor.operations.DiagnosticSettingsOperations
+    :ivar diagnostic_settings_category: DiagnosticSettingsCategory operations
+    :vartype diagnostic_settings_category: azure.mgmt.monitor.operations.DiagnosticSettingsCategoryOperations
     :ivar action_groups: ActionGroups operations
     :vartype action_groups: azure.mgmt.monitor.operations.ActionGroupsOperations
+    :ivar activity_log_alerts: ActivityLogAlerts operations
+    :vartype activity_log_alerts: azure.mgmt.monitor.operations.ActivityLogAlertsOperations
+    :ivar activity_logs: ActivityLogs operations
+    :vartype activity_logs: azure.mgmt.monitor.operations.ActivityLogsOperations
+    :ivar event_categories: EventCategories operations
+    :vartype event_categories: azure.mgmt.monitor.operations.EventCategoriesOperations
+    :ivar tenant_activity_logs: TenantActivityLogs operations
+    :vartype tenant_activity_logs: azure.mgmt.monitor.operations.TenantActivityLogsOperations
+    :ivar metric_definitions: MetricDefinitions operations
+    :vartype metric_definitions: azure.mgmt.monitor.operations.MetricDefinitionsOperations
+    :ivar metrics: Metrics operations
+    :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
+    :ivar metric_baseline: MetricBaseline operations
+    :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
+    :ivar metric_alerts: MetricAlerts operations
+    :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
+    :ivar metric_alerts_status: MetricAlertsStatus operations
+    :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
+    :ivar scheduled_query_rules: ScheduledQueryRules operations
+    :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
+    :ivar metric_namespaces: MetricNamespaces operations
+    :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
+    :ivar vm_insights: VMInsights operations
+    :vartype vm_insights: azure.mgmt.monitor.operations.VMInsightsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -90,7 +127,7 @@ class MonitorManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MonitorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -98,15 +135,41 @@ class MonitorManagementClient(object):
 
         self.autoscale_settings = AutoscaleSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.alert_rules = AlertRulesOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rule_incidents = AlertRuleIncidentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.activity_log_alerts = ActivityLogAlertsOperations(
+        self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_profiles = LogProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
+        self.diagnostic_settings = DiagnosticSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostic_settings_category = DiagnosticSettingsCategoryOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.action_groups = ActionGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.activity_log_alerts = ActivityLogAlertsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.activity_logs = ActivityLogsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.event_categories = EventCategoriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tenant_activity_logs = TenantActivityLogsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_definitions = MetricDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metrics = MetricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_baseline = MetricBaselineOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_alerts = MetricAlertsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_alerts_status = MetricAlertsStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.scheduled_query_rules = ScheduledQueryRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_namespaces = MetricNamespacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vm_insights = VMInsightsOperations(
             self._client, self.config, self._serialize, self._deserialize)

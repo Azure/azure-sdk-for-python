@@ -40,7 +40,7 @@ except ImportError:
 
 setup(
     name='azure-servicemanagement-legacy',
-    version='0.20.6',
+    version='0.20.7',
     description='Microsoft Azure Legacy Service Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',

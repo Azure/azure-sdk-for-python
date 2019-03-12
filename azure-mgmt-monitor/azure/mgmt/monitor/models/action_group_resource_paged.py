@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ActionGroupResourcePaged(Paged):
     """
-    A paging container for iterating over a list of ActionGroupResource object
+    A paging container for iterating over a list of :class:`ActionGroupResource <azure.mgmt.monitor.models.ActionGroupResource>` object
     """
 
     _attribute_map = {

@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class JobResource(Model):
     """The Data Lake Analytics job resources.
 
-    :param name: the name of the resource.
+    :param name: The name of the resource.
     :type name: str
-    :param resource_path: the path to the resource.
+    :param resource_path: The path to the resource.
     :type resource_path: str
-    :param type: the job resource type. Possible values include:
+    :param type: The job resource type. Possible values include:
      'VertexResource', 'JobManagerResource', 'StatisticsResource',
      'VertexResourceInUserFolder', 'JobManagerResourceInUserFolder',
      'StatisticsResourceInUserFolder'
-    :type type: str or :class:`JobResourceType
-     <azure.mgmt.datalake.analytics.job.models.JobResourceType>`
+    :type type: str or
+     ~azure.mgmt.datalake.analytics.job.models.JobResourceType
     """
 
     _attribute_map = {
@@ -33,7 +33,8 @@ class JobResource(Model):
         'type': {'key': 'type', 'type': 'JobResourceType'},
     }
 
-    def __init__(self, name=None, resource_path=None, type=None):
-        self.name = name
-        self.resource_path = resource_path
-        self.type = type
+    def __init__(self, **kwargs):
+        super(JobResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.resource_path = kwargs.get('resource_path', None)
+        self.type = kwargs.get('type', None)

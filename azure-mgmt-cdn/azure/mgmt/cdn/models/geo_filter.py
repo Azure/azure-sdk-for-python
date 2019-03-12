@@ -13,18 +13,19 @@ from msrest.serialization import Model
 
 
 class GeoFilter(Model):
-    """Rules defining user geo access within a CDN endpoint.
+    """Rules defining user's geo access within a CDN endpoint.
 
-    :param relative_path: Relative path applicable to geo filter. (e.g.
-     '/mypictures', '/mypicture/kitty.jpg', and etc.)
+    All required parameters must be populated in order to send to Azure.
+
+    :param relative_path: Required. Relative path applicable to geo filter.
+     (e.g. '/mypictures', '/mypicture/kitty.jpg', and etc.)
     :type relative_path: str
-    :param action: Action of the geo filter, i.e. allow or block access.
-     Possible values include: 'Block', 'Allow'
-    :type action: str or :class:`GeoFilterActions
-     <azure.mgmt.cdn.models.GeoFilterActions>`
-    :param country_codes: Two letter country codes defining user country
-     access in a geo filter, e.g. AU, MX, US.
-    :type country_codes: list of str
+    :param action: Required. Action of the geo filter, i.e. allow or block
+     access. Possible values include: 'Block', 'Allow'
+    :type action: str or ~azure.mgmt.cdn.models.GeoFilterActions
+    :param country_codes: Required. Two letter country codes defining user
+     country access in a geo filter, e.g. AU, MX, US.
+    :type country_codes: list[str]
     """
 
     _validation = {
@@ -39,7 +40,8 @@ class GeoFilter(Model):
         'country_codes': {'key': 'countryCodes', 'type': '[str]'},
     }
 
-    def __init__(self, relative_path, action, country_codes):
-        self.relative_path = relative_path
-        self.action = action
-        self.country_codes = country_codes
+    def __init__(self, **kwargs):
+        super(GeoFilter, self).__init__(**kwargs)
+        self.relative_path = kwargs.get('relative_path', None)
+        self.action = kwargs.get('action', None)
+        self.country_codes = kwargs.get('country_codes', None)

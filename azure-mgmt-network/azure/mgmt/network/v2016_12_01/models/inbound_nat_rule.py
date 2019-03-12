@@ -21,19 +21,19 @@ class InboundNatRule(SubResource):
     :param id: Resource ID.
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
-    :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.v2016_12_01.models.SubResource>`
+    :type frontend_ip_configuration:
+     ~azure.mgmt.network.v2016_12_01.models.SubResource
     :ivar backend_ip_configuration: A reference to a private IP address
      defined on a network interface of a VM. Traffic sent to the frontend port
      of each of the frontend IP configurations is forwarded to the backed IP.
-    :vartype backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.v2016_12_01.models.NetworkInterfaceIPConfiguration>`
+    :vartype backend_ip_configuration:
+     ~azure.mgmt.network.v2016_12_01.models.NetworkInterfaceIPConfiguration
     :param protocol: The transport protocol for the endpoint. Possible values
      are: 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
-    :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.v2016_12_01.models.TransportProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2016_12_01.models.TransportProtocol
     :param frontend_port: The port for the external endpoint. Port numbers for
-     each Rule must be unique within the Load Balancer. Acceptable values range
+     each rule must be unique within the Load Balancer. Acceptable values range
      from 1 to 65534.
     :type frontend_port: int
     :param backend_port: The port used for the internal endpoint. Acceptable
@@ -78,15 +78,15 @@ class InboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
-        super(InboundNatRule, self).__init__(id=id)
-        self.frontend_ip_configuration = frontend_ip_configuration
+    def __init__(self, **kwargs):
+        super(InboundNatRule, self).__init__(**kwargs)
+        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
         self.backend_ip_configuration = None
-        self.protocol = protocol
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.enable_floating_ip = enable_floating_ip
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.protocol = kwargs.get('protocol', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

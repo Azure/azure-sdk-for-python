@@ -22,10 +22,9 @@ class CreateWorkspaceCollectionRequest(Model):
     :param location: Azure location
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar sku:
-    :vartype sku: :class:`AzureSku
-     <azure.mgmt.powerbiembedded.models.AzureSku>`
+    :vartype sku: ~azure.mgmt.powerbiembedded.models.AzureSku
     """
 
     _validation = {
@@ -40,6 +39,7 @@ class CreateWorkspaceCollectionRequest(Model):
 
     sku = AzureSku()
 
-    def __init__(self, location=None, tags=None):
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CreateWorkspaceCollectionRequest, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

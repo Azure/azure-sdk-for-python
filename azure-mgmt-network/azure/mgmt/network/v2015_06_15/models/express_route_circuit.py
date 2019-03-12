@@ -27,10 +27,9 @@ class ExpressRouteCircuit(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The SKU.
-    :type sku: :class:`ExpressRouteCircuitSku
-     <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitSku>`
+    :type sku: ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitSku
     :param circuit_provisioning_state: The CircuitProvisioningState state of
      the resource.
     :type circuit_provisioning_state: str
@@ -40,22 +39,20 @@ class ExpressRouteCircuit(Resource):
      Possible values include: 'NotProvisioned', 'Provisioning', 'Provisioned',
      'Deprovisioning'
     :type service_provider_provisioning_state: str or
-     :class:`ServiceProviderProvisioningState
-     <azure.mgmt.network.v2015_06_15.models.ServiceProviderProvisioningState>`
+     ~azure.mgmt.network.v2015_06_15.models.ServiceProviderProvisioningState
     :param authorizations: The list of authorizations.
-    :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
-     <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization>`
+    :type authorizations:
+     list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitAuthorization]
     :param peerings: The list of peerings.
-    :type peerings: list of :class:`ExpressRouteCircuitPeering
-     <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering>`
+    :type peerings:
+     list[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeering]
     :param service_key: The ServiceKey.
     :type service_key: str
     :param service_provider_notes: The ServiceProviderNotes.
     :type service_provider_notes: str
     :param service_provider_properties: The ServiceProviderProperties.
     :type service_provider_properties:
-     :class:`ExpressRouteCircuitServiceProviderProperties
-     <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitServiceProviderProperties>`
+     ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitServiceProviderProperties
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -87,15 +84,15 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None):
-        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
-        self.sku = sku
-        self.circuit_provisioning_state = circuit_provisioning_state
-        self.service_provider_provisioning_state = service_provider_provisioning_state
-        self.authorizations = authorizations
-        self.peerings = peerings
-        self.service_key = service_key
-        self.service_provider_notes = service_provider_notes
-        self.service_provider_properties = service_provider_properties
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuit, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.circuit_provisioning_state = kwargs.get('circuit_provisioning_state', None)
+        self.service_provider_provisioning_state = kwargs.get('service_provider_provisioning_state', None)
+        self.authorizations = kwargs.get('authorizations', None)
+        self.peerings = kwargs.get('peerings', None)
+        self.service_key = kwargs.get('service_key', None)
+        self.service_provider_notes = kwargs.get('service_provider_notes', None)
+        self.service_provider_properties = kwargs.get('service_provider_properties', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

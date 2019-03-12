@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class EncryptionProtectorPaged(Paged):
     """
-    A paging container for iterating over a list of EncryptionProtector object
+    A paging container for iterating over a list of :class:`EncryptionProtector <azure.mgmt.sql.models.EncryptionProtector>` object
     """
 
     _attribute_map = {

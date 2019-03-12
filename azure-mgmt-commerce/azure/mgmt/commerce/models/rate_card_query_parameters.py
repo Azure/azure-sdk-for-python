@@ -32,7 +32,7 @@ class RateCardQueryParameters(Model):
     """
 
     _validation = {
-        'offer_durable_id': {'required': True, 'pattern': '^MS-AZR-\d{4}P(-\d{4}P)*$'},
+        'offer_durable_id': {'required': True, 'pattern': r'^MS-AZR-\d{4}P(-\d{4}P)*$'},
         'currency': {'required': True},
         'locale': {'required': True},
         'region_info': {'required': True},
@@ -46,6 +46,7 @@ class RateCardQueryParameters(Model):
     }
 
     def __init__(self, offer_durable_id, currency, locale, region_info):
+        super(RateCardQueryParameters, self).__init__()
         self.offer_durable_id = offer_durable_id
         self.currency = currency
         self.locale = locale

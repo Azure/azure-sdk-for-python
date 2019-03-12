@@ -21,17 +21,14 @@ class JobProperties(Model):
     :param start_time: Gets or sets the job start time.
     :type start_time: datetime
     :param action: Gets or sets the job action.
-    :type action: :class:`JobAction <azure.mgmt.scheduler.models.JobAction>`
+    :type action: ~azure.mgmt.scheduler.models.JobAction
     :param recurrence: Gets or sets the job recurrence.
-    :type recurrence: :class:`JobRecurrence
-     <azure.mgmt.scheduler.models.JobRecurrence>`
+    :type recurrence: ~azure.mgmt.scheduler.models.JobRecurrence
     :param state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
-    :type state: str or :class:`JobState
-     <azure.mgmt.scheduler.models.JobState>`
+    :type state: str or ~azure.mgmt.scheduler.models.JobState
     :ivar status: Gets the job status.
-    :vartype status: :class:`JobStatus
-     <azure.mgmt.scheduler.models.JobStatus>`
+    :vartype status: ~azure.mgmt.scheduler.models.JobStatus
     """
 
     _validation = {
@@ -46,9 +43,10 @@ class JobProperties(Model):
         'status': {'key': 'status', 'type': 'JobStatus'},
     }
 
-    def __init__(self, start_time=None, action=None, recurrence=None, state=None):
-        self.start_time = start_time
-        self.action = action
-        self.recurrence = recurrence
-        self.state = state
+    def __init__(self, **kwargs):
+        super(JobProperties, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.action = kwargs.get('action', None)
+        self.recurrence = kwargs.get('recurrence', None)
+        self.state = kwargs.get('state', None)
         self.status = None

@@ -15,21 +15,31 @@ from msrest.serialization import Model
 class ServicePlacementPolicyDescription(Model):
     """Describes the policy to be used for placement of a Service Fabric service.
 
-    :param Type: Polymorphic Discriminator
-    :type Type: str
-    """ 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ServicePlacementInvalidDomainPolicyDescription,
+    ServicePlacementNonPartiallyPlaceServicePolicyDescription,
+    ServicePlacementPreferPrimaryDomainPolicyDescription,
+    ServicePlacementRequiredDomainPolicyDescription,
+    ServicePlacementRequireDomainDistributionPolicyDescription
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
 
     _validation = {
-        'Type': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
-        'Type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'Type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
+        'type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'PreferredPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequiredDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequiredDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
     }
 
-    def __init__(self):
-        self.Type = None
+    def __init__(self, **kwargs):
+        super(ServicePlacementPolicyDescription, self).__init__(**kwargs)
+        self.type = None

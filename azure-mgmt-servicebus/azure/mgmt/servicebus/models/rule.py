@@ -26,17 +26,14 @@ class Rule(Resource):
     :vartype type: str
     :param action: Represents the filter actions which are allowed for the
      transformation of a message that have been matched by a filter expression.
-    :type action: :class:`Action <azure.mgmt.servicebus.models.Action>`
+    :type action: ~azure.mgmt.servicebus.models.Action
     :param filter_type: Filter type that is evaluated against a
      BrokeredMessage. Possible values include: 'SqlFilter', 'CorrelationFilter'
-    :type filter_type: str or :class:`FilterType
-     <azure.mgmt.servicebus.models.FilterType>`
+    :type filter_type: str or ~azure.mgmt.servicebus.models.FilterType
     :param sql_filter: Properties of sqlFilter
-    :type sql_filter: :class:`SqlFilter
-     <azure.mgmt.servicebus.models.SqlFilter>`
+    :type sql_filter: ~azure.mgmt.servicebus.models.SqlFilter
     :param correlation_filter: Properties of correlationFilter
-    :type correlation_filter: :class:`CorrelationFilter
-     <azure.mgmt.servicebus.models.CorrelationFilter>`
+    :type correlation_filter: ~azure.mgmt.servicebus.models.CorrelationFilter
     """
 
     _validation = {
@@ -55,9 +52,9 @@ class Rule(Resource):
         'correlation_filter': {'key': 'properties.correlationFilter', 'type': 'CorrelationFilter'},
     }
 
-    def __init__(self, action=None, filter_type=None, sql_filter=None, correlation_filter=None):
-        super(Rule, self).__init__()
-        self.action = action
-        self.filter_type = filter_type
-        self.sql_filter = sql_filter
-        self.correlation_filter = correlation_filter
+    def __init__(self, **kwargs):
+        super(Rule, self).__init__(**kwargs)
+        self.action = kwargs.get('action', None)
+        self.filter_type = kwargs.get('filter_type', None)
+        self.sql_filter = kwargs.get('sql_filter', None)
+        self.correlation_filter = kwargs.get('correlation_filter', None)

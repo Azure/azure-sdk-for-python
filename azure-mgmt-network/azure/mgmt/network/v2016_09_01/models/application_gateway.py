@@ -27,71 +27,62 @@ class ApplicationGateway(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: SKU of the application gateway resource.
-    :type sku: :class:`ApplicationGatewaySku
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySku>`
+    :type sku: ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySku
     :param ssl_policy: SSL policy of the application gateway resource.
-    :type ssl_policy: :class:`ApplicationGatewaySslPolicy
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslPolicy>`
+    :type ssl_policy:
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslPolicy
     :ivar operational_state: Operational state of the application gateway
      resource. Possible values are: 'Stopped', 'Started', 'Running', and
      'Stopping'. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
     :vartype operational_state: str or
-     :class:`ApplicationGatewayOperationalState
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayOperationalState>`
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayOperationalState
     :param gateway_ip_configurations: Subnets of application the gateway
      resource.
-    :type gateway_ip_configurations: list of
-     :class:`ApplicationGatewayIPConfiguration
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayIPConfiguration>`
+    :type gateway_ip_configurations:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayIPConfiguration]
     :param authentication_certificates: Authentication certificates of the
      application gateway resource.
-    :type authentication_certificates: list of
-     :class:`ApplicationGatewayAuthenticationCertificate
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayAuthenticationCertificate>`
+    :type authentication_certificates:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayAuthenticationCertificate]
     :param ssl_certificates: SSL certificates of the application gateway
      resource.
-    :type ssl_certificates: list of :class:`ApplicationGatewaySslCertificate
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslCertificate>`
+    :type ssl_certificates:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslCertificate]
     :param frontend_ip_configurations: Frontend IP addresses of the
      application gateway resource.
-    :type frontend_ip_configurations: list of
-     :class:`ApplicationGatewayFrontendIPConfiguration
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFrontendIPConfiguration>`
+    :type frontend_ip_configurations:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFrontendIPConfiguration]
     :param frontend_ports: Frontend ports of the application gateway resource.
-    :type frontend_ports: list of :class:`ApplicationGatewayFrontendPort
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFrontendPort>`
+    :type frontend_ports:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFrontendPort]
     :param probes: Probes of the application gateway resource.
-    :type probes: list of :class:`ApplicationGatewayProbe
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProbe>`
+    :type probes:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProbe]
     :param backend_address_pools: Backend address pool of the application
      gateway resource.
-    :type backend_address_pools: list of
-     :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendAddressPool>`
+    :type backend_address_pools:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendAddressPool]
     :param backend_http_settings_collection: Backend http settings of the
      application gateway resource.
-    :type backend_http_settings_collection: list of
-     :class:`ApplicationGatewayBackendHttpSettings
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHttpSettings>`
+    :type backend_http_settings_collection:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHttpSettings]
     :param http_listeners: Http listeners of the application gateway resource.
-    :type http_listeners: list of :class:`ApplicationGatewayHttpListener
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayHttpListener>`
+    :type http_listeners:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayHttpListener]
     :param url_path_maps: URL path map of the application gateway resource.
-    :type url_path_maps: list of :class:`ApplicationGatewayUrlPathMap
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayUrlPathMap>`
+    :type url_path_maps:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayUrlPathMap]
     :param request_routing_rules: Request routing rules of the application
      gateway resource.
-    :type request_routing_rules: list of
-     :class:`ApplicationGatewayRequestRoutingRule
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRule>`
+    :type request_routing_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayRequestRoutingRule]
     :param web_application_firewall_configuration: Web application firewall
      configuration.
     :type web_application_firewall_configuration:
-     :class:`ApplicationGatewayWebApplicationFirewallConfiguration
-     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayWebApplicationFirewallConfiguration>`
+     ~azure.mgmt.network.v2016_09_01.models.ApplicationGatewayWebApplicationFirewallConfiguration
     :param resource_guid: Resource GUID property of the application gateway
      resource.
     :type resource_guid: str
@@ -135,23 +126,23 @@ class ApplicationGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
-        self.sku = sku
-        self.ssl_policy = ssl_policy
+    def __init__(self, **kwargs):
+        super(ApplicationGateway, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.ssl_policy = kwargs.get('ssl_policy', None)
         self.operational_state = None
-        self.gateway_ip_configurations = gateway_ip_configurations
-        self.authentication_certificates = authentication_certificates
-        self.ssl_certificates = ssl_certificates
-        self.frontend_ip_configurations = frontend_ip_configurations
-        self.frontend_ports = frontend_ports
-        self.probes = probes
-        self.backend_address_pools = backend_address_pools
-        self.backend_http_settings_collection = backend_http_settings_collection
-        self.http_listeners = http_listeners
-        self.url_path_maps = url_path_maps
-        self.request_routing_rules = request_routing_rules
-        self.web_application_firewall_configuration = web_application_firewall_configuration
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+        self.gateway_ip_configurations = kwargs.get('gateway_ip_configurations', None)
+        self.authentication_certificates = kwargs.get('authentication_certificates', None)
+        self.ssl_certificates = kwargs.get('ssl_certificates', None)
+        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
+        self.frontend_ports = kwargs.get('frontend_ports', None)
+        self.probes = kwargs.get('probes', None)
+        self.backend_address_pools = kwargs.get('backend_address_pools', None)
+        self.backend_http_settings_collection = kwargs.get('backend_http_settings_collection', None)
+        self.http_listeners = kwargs.get('http_listeners', None)
+        self.url_path_maps = kwargs.get('url_path_maps', None)
+        self.request_routing_rules = kwargs.get('request_routing_rules', None)
+        self.web_application_firewall_configuration = kwargs.get('web_application_firewall_configuration', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

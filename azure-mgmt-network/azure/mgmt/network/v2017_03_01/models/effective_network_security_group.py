@@ -17,15 +17,14 @@ class EffectiveNetworkSecurityGroup(Model):
 
     :param network_security_group: The ID of network security group that is
      applied.
-    :type network_security_group: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type network_security_group:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param association:
-    :type association: :class:`EffectiveNetworkSecurityGroupAssociation
-     <azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityGroupAssociation>`
+    :type association:
+     ~azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityGroupAssociation
     :param effective_security_rules: A collection of effective security rules.
-    :type effective_security_rules: list of
-     :class:`EffectiveNetworkSecurityRule
-     <azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityRule>`
+    :type effective_security_rules:
+     list[~azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityRule]
     """
 
     _attribute_map = {
@@ -34,7 +33,8 @@ class EffectiveNetworkSecurityGroup(Model):
         'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
     }
 
-    def __init__(self, network_security_group=None, association=None, effective_security_rules=None):
-        self.network_security_group = network_security_group
-        self.association = association
-        self.effective_security_rules = effective_security_rules
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityGroup, self).__init__(**kwargs)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.association = kwargs.get('association', None)
+        self.effective_security_rules = kwargs.get('effective_security_rules', None)

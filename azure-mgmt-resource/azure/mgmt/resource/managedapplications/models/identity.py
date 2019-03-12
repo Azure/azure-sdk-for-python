@@ -23,8 +23,8 @@ class Identity(Model):
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
     :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or :class:`ResourceIdentityType
-     <azure.mgmt.resource.managedapplications.models.ResourceIdentityType>`
+    :type type: str or
+     ~azure.mgmt.resource.managedapplications.models.ResourceIdentityType
     """
 
     _validation = {
@@ -38,7 +38,8 @@ class Identity(Model):
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
     }
 
-    def __init__(self, type=None):
+    def __init__(self, **kwargs):
+        super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = type
+        self.type = kwargs.get('type', None)

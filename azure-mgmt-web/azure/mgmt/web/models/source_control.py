@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class SourceControl(Resource):
+class SourceControl(ProxyOnlyResource):
     """The source control OAuth token.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,18 +20,12 @@ class SourceControl(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param source_control_name: Name or source control type.
-    :type source_control_name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param token: OAuth access token.
     :type token: str
     :param token_secret: OAuth access token secret.
@@ -44,27 +38,24 @@ class SourceControl(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source_control_name': {'key': 'properties.name', 'type': 'str'},
         'token': {'key': 'properties.token', 'type': 'str'},
         'token_secret': {'key': 'properties.tokenSecret', 'type': 'str'},
         'refresh_token': {'key': 'properties.refreshToken', 'type': 'str'},
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
-        super(SourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.source_control_name = source_control_name
-        self.token = token
-        self.token_secret = token_secret
-        self.refresh_token = refresh_token
-        self.expiration_time = expiration_time
+    def __init__(self, **kwargs):
+        super(SourceControl, self).__init__(**kwargs)
+        self.token = kwargs.get('token', None)
+        self.token_secret = kwargs.get('token_secret', None)
+        self.refresh_token = kwargs.get('refresh_token', None)
+        self.expiration_time = kwargs.get('expiration_time', None)

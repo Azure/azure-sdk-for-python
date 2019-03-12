@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.tenants_operations import TenantsOperations
 from . import models
@@ -39,18 +40,20 @@ class SubscriptionClientConfiguration(AzureConfiguration):
 
         super(SubscriptionClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('subscriptionclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
 
 
-class SubscriptionClient(object):
+class SubscriptionClient(SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.resource.subscriptions.v2016_06_01.operations.Operations
     :ivar subscriptions: Subscriptions operations
     :vartype subscriptions: azure.mgmt.resource.subscriptions.v2016_06_01.operations.SubscriptionsOperations
     :ivar tenants: Tenants operations
@@ -66,13 +69,15 @@ class SubscriptionClient(object):
             self, credentials, base_url=None):
 
         self.config = SubscriptionClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tenants = TenantsOperations(

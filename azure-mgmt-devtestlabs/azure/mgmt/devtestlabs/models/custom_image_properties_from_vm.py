@@ -18,11 +18,9 @@ class CustomImagePropertiesFromVm(Model):
     :param source_vm_id: The source vm identifier.
     :type source_vm_id: str
     :param windows_os_info: The Windows OS information of the VM.
-    :type windows_os_info: :class:`WindowsOsInfo
-     <azure.mgmt.devtestlabs.models.WindowsOsInfo>`
+    :type windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfo
     :param linux_os_info: The Linux OS information of the VM.
-    :type linux_os_info: :class:`LinuxOsInfo
-     <azure.mgmt.devtestlabs.models.LinuxOsInfo>`
+    :type linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfo
     """
 
     _attribute_map = {
@@ -31,7 +29,8 @@ class CustomImagePropertiesFromVm(Model):
         'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfo'},
     }
 
-    def __init__(self, source_vm_id=None, windows_os_info=None, linux_os_info=None):
-        self.source_vm_id = source_vm_id
-        self.windows_os_info = windows_os_info
-        self.linux_os_info = linux_os_info
+    def __init__(self, **kwargs):
+        super(CustomImagePropertiesFromVm, self).__init__(**kwargs)
+        self.source_vm_id = kwargs.get('source_vm_id', None)
+        self.windows_os_info = kwargs.get('windows_os_info', None)
+        self.linux_os_info = kwargs.get('linux_os_info', None)

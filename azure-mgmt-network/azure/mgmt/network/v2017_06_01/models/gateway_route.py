@@ -54,7 +54,8 @@ class GatewayRoute(Model):
         'weight': {'key': 'weight', 'type': 'int'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(GatewayRoute, self).__init__(**kwargs)
         self.local_address = None
         self.network = None
         self.next_hop = None

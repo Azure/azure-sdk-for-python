@@ -18,11 +18,9 @@ class IpAddressGroup(Model):
     :param delivery_region: The delivery region of the ip address group
     :type delivery_region: str
     :param ipv4_addresses: The list of ip v4 addresses.
-    :type ipv4_addresses: list of :class:`CidrIpAddress
-     <azure.mgmt.cdn.models.CidrIpAddress>`
+    :type ipv4_addresses: list[~azure.mgmt.cdn.models.CidrIpAddress]
     :param ipv6_addresses: The list of ip v6 addresses.
-    :type ipv6_addresses: list of :class:`CidrIpAddress
-     <azure.mgmt.cdn.models.CidrIpAddress>`
+    :type ipv6_addresses: list[~azure.mgmt.cdn.models.CidrIpAddress]
     """
 
     _attribute_map = {
@@ -31,7 +29,8 @@ class IpAddressGroup(Model):
         'ipv6_addresses': {'key': 'ipv6Addresses', 'type': '[CidrIpAddress]'},
     }
 
-    def __init__(self, delivery_region=None, ipv4_addresses=None, ipv6_addresses=None):
-        self.delivery_region = delivery_region
-        self.ipv4_addresses = ipv4_addresses
-        self.ipv6_addresses = ipv6_addresses
+    def __init__(self, **kwargs):
+        super(IpAddressGroup, self).__init__(**kwargs)
+        self.delivery_region = kwargs.get('delivery_region', None)
+        self.ipv4_addresses = kwargs.get('ipv4_addresses', None)
+        self.ipv6_addresses = kwargs.get('ipv6_addresses', None)

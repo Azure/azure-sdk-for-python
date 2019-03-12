@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SharedAccessAuthorizationRuleResourcePaged(Paged):
     """
-    A paging container for iterating over a list of SharedAccessAuthorizationRuleResource object
+    A paging container for iterating over a list of :class:`SharedAccessAuthorizationRuleResource <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>` object
     """
 
     _attribute_map = {

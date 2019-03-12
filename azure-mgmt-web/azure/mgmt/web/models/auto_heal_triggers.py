@@ -16,16 +16,13 @@ class AutoHealTriggers(Model):
     """Triggers for auto-heal.
 
     :param requests: A rule based on total requests.
-    :type requests: :class:`RequestsBasedTrigger
-     <azure.mgmt.web.models.RequestsBasedTrigger>`
+    :type requests: ~azure.mgmt.web.models.RequestsBasedTrigger
     :param private_bytes_in_kb: A rule based on private bytes.
     :type private_bytes_in_kb: int
     :param status_codes: A rule based on status codes.
-    :type status_codes: list of :class:`StatusCodesBasedTrigger
-     <azure.mgmt.web.models.StatusCodesBasedTrigger>`
+    :type status_codes: list[~azure.mgmt.web.models.StatusCodesBasedTrigger]
     :param slow_requests: A rule based on request execution time.
-    :type slow_requests: :class:`SlowRequestsBasedTrigger
-     <azure.mgmt.web.models.SlowRequestsBasedTrigger>`
+    :type slow_requests: ~azure.mgmt.web.models.SlowRequestsBasedTrigger
     """
 
     _attribute_map = {
@@ -35,8 +32,9 @@ class AutoHealTriggers(Model):
         'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
     }
 
-    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
-        self.requests = requests
-        self.private_bytes_in_kb = private_bytes_in_kb
-        self.status_codes = status_codes
-        self.slow_requests = slow_requests
+    def __init__(self, **kwargs):
+        super(AutoHealTriggers, self).__init__(**kwargs)
+        self.requests = kwargs.get('requests', None)
+        self.private_bytes_in_kb = kwargs.get('private_bytes_in_kb', None)
+        self.status_codes = kwargs.get('status_codes', None)
+        self.slow_requests = kwargs.get('slow_requests', None)

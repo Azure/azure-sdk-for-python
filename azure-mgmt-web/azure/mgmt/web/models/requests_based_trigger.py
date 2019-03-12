@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class RequestsBasedTrigger(Model):
     """Trigger based on total requests.
 
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str
@@ -26,6 +26,7 @@ class RequestsBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, count=None, time_interval=None):
-        self.count = count
-        self.time_interval = time_interval
+    def __init__(self, **kwargs):
+        super(RequestsBasedTrigger, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.time_interval = kwargs.get('time_interval', None)

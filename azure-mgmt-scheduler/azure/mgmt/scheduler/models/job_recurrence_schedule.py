@@ -17,22 +17,20 @@ class JobRecurrenceSchedule(Model):
 
     :param week_days: Gets or sets the days of the week that the job should
      execute on.
-    :type week_days: list of str or :class:`DayOfWeek
-     <azure.mgmt.scheduler.models.DayOfWeek>`
+    :type week_days: list[str or ~azure.mgmt.scheduler.models.DayOfWeek]
     :param hours: Gets or sets the hours of the day that the job should
      execute at.
-    :type hours: list of int
+    :type hours: list[int]
     :param minutes: Gets or sets the minutes of the hour that the job should
      execute at.
-    :type minutes: list of int
+    :type minutes: list[int]
     :param month_days: Gets or sets the days of the month that the job should
      execute on. Must be between 1 and 31.
-    :type month_days: list of int
+    :type month_days: list[int]
     :param monthly_occurrences: Gets or sets the occurrences of days within a
      month.
-    :type monthly_occurrences: list of
-     :class:`JobRecurrenceScheduleMonthlyOccurrence
-     <azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence>`
+    :type monthly_occurrences:
+     list[~azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence]
     """
 
     _attribute_map = {
@@ -43,9 +41,10 @@ class JobRecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[JobRecurrenceScheduleMonthlyOccurrence]'},
     }
 
-    def __init__(self, week_days=None, hours=None, minutes=None, month_days=None, monthly_occurrences=None):
-        self.week_days = week_days
-        self.hours = hours
-        self.minutes = minutes
-        self.month_days = month_days
-        self.monthly_occurrences = monthly_occurrences
+    def __init__(self, **kwargs):
+        super(JobRecurrenceSchedule, self).__init__(**kwargs)
+        self.week_days = kwargs.get('week_days', None)
+        self.hours = kwargs.get('hours', None)
+        self.minutes = kwargs.get('minutes', None)
+        self.month_days = kwargs.get('month_days', None)
+        self.monthly_occurrences = kwargs.get('monthly_occurrences', None)

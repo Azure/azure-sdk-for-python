@@ -22,33 +22,32 @@ class FrontendIPConfiguration(SubResource):
     :type id: str
     :ivar inbound_nat_rules: Read only. Inbound rules URIs that use this
      frontend IP.
-    :vartype inbound_nat_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :vartype inbound_nat_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.SubResource]
     :ivar inbound_nat_pools: Read only. Inbound pools URIs that use this
      frontend IP.
-    :vartype inbound_nat_pools: list of :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :vartype inbound_nat_pools:
+     list[~azure.mgmt.network.v2016_09_01.models.SubResource]
     :ivar outbound_nat_rules: Read only. Outbound rules URIs that use this
      frontend IP.
-    :vartype outbound_nat_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :vartype outbound_nat_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.SubResource]
     :ivar load_balancing_rules: Gets load balancing rules URIs that use this
      frontend IP.
-    :vartype load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v2016_09_01.models.SubResource>`
+    :vartype load_balancing_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.SubResource]
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The Private IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
-    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2016_09_01.models.IPAllocationMethod>`
+    :type private_ip_allocation_method: str or
+     ~azure.mgmt.network.v2016_09_01.models.IPAllocationMethod
     :param subnet: The reference of the subnet resource.
-    :type subnet: :class:`Subnet
-     <azure.mgmt.network.v2016_09_01.models.Subnet>`
+    :type subnet: ~azure.mgmt.network.v2016_09_01.models.Subnet
     :param public_ip_address: The reference of the Public IP resource.
-    :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v2016_09_01.models.PublicIPAddress>`
+    :type public_ip_address:
+     ~azure.mgmt.network.v2016_09_01.models.PublicIPAddress
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -82,16 +81,16 @@ class FrontendIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
-        super(FrontendIPConfiguration, self).__init__(id=id)
+    def __init__(self, **kwargs):
+        super(FrontendIPConfiguration, self).__init__(**kwargs)
         self.inbound_nat_rules = None
         self.inbound_nat_pools = None
         self.outbound_nat_rules = None
         self.load_balancing_rules = None
-        self.private_ip_address = private_ip_address
-        self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = subnet
-        self.public_ip_address = public_ip_address
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.private_ip_address = kwargs.get('private_ip_address', None)
+        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

@@ -14,12 +14,12 @@ from msrest.paging import Paged
 
 class ClientDiscoveryValueForSingleApiPaged(Paged):
     """
-    A paging container for iterating over a list of ClientDiscoveryValueForSingleApi object
+    A paging container for iterating over a list of :class:`ClientDiscoveryValueForSingleApi <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi>` object
     """
 
     _attribute_map = {
-        'next_link': {'key': 'NextLink', 'type': 'str'},
-        'current_page': {'key': 'Value', 'type': '[ClientDiscoveryValueForSingleApi]'}
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ClientDiscoveryValueForSingleApi]'}
     }
 
     def __init__(self, *args, **kwargs):

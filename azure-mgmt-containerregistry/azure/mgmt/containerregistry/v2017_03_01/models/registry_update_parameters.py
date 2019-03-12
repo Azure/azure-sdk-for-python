@@ -16,15 +16,15 @@ class RegistryUpdateParameters(Model):
     """The parameters for updating a container registry.
 
     :param tags: The tags for the container registry.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default.
+     is enabled.
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
      container registry. If specified, the storage account must be in the same
      physical location as the container registry.
-    :type storage_account: :class:`StorageAccountParameters
-     <azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters>`
+    :type storage_account:
+     ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
     """
 
     _attribute_map = {
@@ -33,7 +33,8 @@ class RegistryUpdateParameters(Model):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountParameters'},
     }
 
-    def __init__(self, tags=None, admin_user_enabled=None, storage_account=None):
-        self.tags = tags
-        self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
+    def __init__(self, **kwargs):
+        super(RegistryUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.admin_user_enabled = kwargs.get('admin_user_enabled', None)
+        self.storage_account = kwargs.get('storage_account', None)

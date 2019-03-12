@@ -13,43 +13,46 @@ from msrest.serialization import Model
 
 
 class ServerVersionCapability(Model):
-    """The server capabilities.
+    """The server capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: The server version name.
     :vartype name: str
-    :ivar status: The status of the server version. Possible values include:
-     'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
     :ivar supported_editions: The list of supported database editions.
-    :vartype supported_editions: list of :class:`EditionCapability
-     <azure.mgmt.sql.models.EditionCapability>`
+    :vartype supported_editions:
+     list[~azure.mgmt.sql.models.EditionCapability]
     :ivar supported_elastic_pool_editions: The list of supported elastic pool
      editions.
-    :vartype supported_elastic_pool_editions: list of
-     :class:`ElasticPoolEditionCapability
-     <azure.mgmt.sql.models.ElasticPoolEditionCapability>`
+    :vartype supported_elastic_pool_editions:
+     list[~azure.mgmt.sql.models.ElasticPoolEditionCapability]
+    :ivar status: The status of the capability. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
         'name': {'readonly': True},
-        'status': {'readonly': True},
         'supported_editions': {'readonly': True},
         'supported_elastic_pool_editions': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'supported_editions': {'key': 'supportedEditions', 'type': '[EditionCapability]'},
         'supported_elastic_pool_editions': {'key': 'supportedElasticPoolEditions', 'type': '[ElasticPoolEditionCapability]'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ServerVersionCapability, self).__init__(**kwargs)
         self.name = None
-        self.status = None
         self.supported_editions = None
         self.supported_elastic_pool_editions = None
+        self.status = None
+        self.reason = kwargs.get('reason', None)

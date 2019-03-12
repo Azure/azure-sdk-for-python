@@ -17,7 +17,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or :class:`LogLevel <azure.mgmt.web.models.LogLevel>`
+    :type level: str or ~azure.mgmt.web.models.LogLevel
     :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions.
     :type sas_url: str
@@ -33,7 +33,8 @@ class AzureBlobStorageApplicationLogsConfig(Model):
         'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
     }
 
-    def __init__(self, level=None, sas_url=None, retention_in_days=None):
-        self.level = level
-        self.sas_url = sas_url
-        self.retention_in_days = retention_in_days
+    def __init__(self, **kwargs):
+        super(AzureBlobStorageApplicationLogsConfig, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.sas_url = kwargs.get('sas_url', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)

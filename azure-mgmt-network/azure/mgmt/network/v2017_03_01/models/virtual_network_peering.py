@@ -35,13 +35,13 @@ class VirtualNetworkPeering(SubResource):
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual
      network.
-    :type remote_virtual_network: :class:`SubResource
-     <azure.mgmt.network.v2017_03_01.models.SubResource>`
+    :type remote_virtual_network:
+     ~azure.mgmt.network.v2017_03_01.models.SubResource
     :param peering_state: The status of the virtual network peering. Possible
      values are 'Initiated', 'Connected', and 'Disconnected'. Possible values
      include: 'Initiated', 'Connected', 'Disconnected'
-    :type peering_state: str or :class:`VirtualNetworkPeeringState
-     <azure.mgmt.network.v2017_03_01.models.VirtualNetworkPeeringState>`
+    :type peering_state: str or
+     ~azure.mgmt.network.v2017_03_01.models.VirtualNetworkPeeringState
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -65,14 +65,14 @@ class VirtualNetworkPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, allow_virtual_network_access=None, allow_forwarded_traffic=None, allow_gateway_transit=None, use_remote_gateways=None, remote_virtual_network=None, peering_state=None, provisioning_state=None, name=None, etag=None):
-        super(VirtualNetworkPeering, self).__init__(id=id)
-        self.allow_virtual_network_access = allow_virtual_network_access
-        self.allow_forwarded_traffic = allow_forwarded_traffic
-        self.allow_gateway_transit = allow_gateway_transit
-        self.use_remote_gateways = use_remote_gateways
-        self.remote_virtual_network = remote_virtual_network
-        self.peering_state = peering_state
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VirtualNetworkPeering, self).__init__(**kwargs)
+        self.allow_virtual_network_access = kwargs.get('allow_virtual_network_access', None)
+        self.allow_forwarded_traffic = kwargs.get('allow_forwarded_traffic', None)
+        self.allow_gateway_transit = kwargs.get('allow_gateway_transit', None)
+        self.use_remote_gateways = kwargs.get('use_remote_gateways', None)
+        self.remote_virtual_network = kwargs.get('remote_virtual_network', None)
+        self.peering_state = kwargs.get('peering_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

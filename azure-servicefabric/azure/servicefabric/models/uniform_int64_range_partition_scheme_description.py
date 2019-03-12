@@ -12,42 +12,43 @@
 from .partition_scheme_description import PartitionSchemeDescription
 
 
-# pylint: disable=too-few-public-methods
 class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     """Describes a partitioning scheme where an integer range is allocated evenly
     across a number of partitions.
 
-    :param PartitionScheme: Polymorphic Discriminator
-    :type PartitionScheme: str
-    :param count: The number of partitions.
+    All required parameters must be populated in order to send to Azure.
+
+    :param partition_scheme: Required. Constant filled by server.
+    :type partition_scheme: str
+    :param count: Required. The number of partitions.
     :type count: int
-    :param low_key: String indicating the lower bound of the partition key
-     range that
-     should be split between the partition ‘Count’
+    :param low_key: Required. String indicating the lower bound of the
+     partition key range that
+     should be split between the partitions.
     :type low_key: str
-    :param high_key: String indicating the upper bound of the partition key
-     range that
-     should be split between the partition ‘Count’
+    :param high_key: Required. String indicating the upper bound of the
+     partition key range that
+     should be split between the partitions.
     :type high_key: str
     """
 
     _validation = {
-        'PartitionScheme': {'required': True},
+        'partition_scheme': {'required': True},
         'count': {'required': True},
         'low_key': {'required': True},
         'high_key': {'required': True},
     }
 
     _attribute_map = {
-        'PartitionScheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
         'count': {'key': 'Count', 'type': 'int'},
         'low_key': {'key': 'LowKey', 'type': 'str'},
         'high_key': {'key': 'HighKey', 'type': 'str'},
     }
 
-    def __init__(self, count, low_key, high_key):
-        super(UniformInt64RangePartitionSchemeDescription, self).__init__()
-        self.count = count
-        self.low_key = low_key
-        self.high_key = high_key
-        self.PartitionScheme = 'UniformInt64Range'
+    def __init__(self, **kwargs):
+        super(UniformInt64RangePartitionSchemeDescription, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.low_key = kwargs.get('low_key', None)
+        self.high_key = kwargs.get('high_key', None)
+        self.partition_scheme = 'UniformInt64Range'

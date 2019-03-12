@@ -15,10 +15,15 @@ from msrest.serialization import Model
 class RuleDataSource(Model):
     """The resource from which the rule collects its data.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: RuleMetricDataSource, RuleManagementEventDataSource
+
+    All required parameters must be populated in order to send to Azure.
+
     :param resource_uri: the resource identifier of the resource the rule
-     monitors.
+     monitors. **NOTE**: this property cannot be updated for an existing rule.
     :type resource_uri: str
-    :param odatatype: Polymorphic Discriminator
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
 
@@ -35,6 +40,7 @@ class RuleDataSource(Model):
         'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource'}
     }
 
-    def __init__(self, resource_uri=None):
-        self.resource_uri = resource_uri
+    def __init__(self, **kwargs):
+        super(RuleDataSource, self).__init__(**kwargs)
+        self.resource_uri = kwargs.get('resource_uri', None)
         self.odatatype = None

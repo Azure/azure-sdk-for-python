@@ -18,8 +18,7 @@ class ErrorResponse(Model):
     incoming request. The reason is provided in the error message.
 
     :param error: The details of the error.
-    :type error: :class:`ErrorDetails
-     <azure.mgmt.consumption.models.ErrorDetails>`
+    :type error: ~azure.mgmt.consumption.models.ErrorDetails
     """
 
     _attribute_map = {
@@ -27,6 +26,7 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, error=None):
+        super(ErrorResponse, self).__init__()
         self.error = error
 
 

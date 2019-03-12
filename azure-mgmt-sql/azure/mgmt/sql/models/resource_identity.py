@@ -23,8 +23,7 @@ class ResourceIdentity(Model):
     :param type: The identity type. Set this to 'SystemAssigned' in order to
      automatically create and assign an Azure Active Directory principal for
      the resource. Possible values include: 'SystemAssigned'
-    :type type: str or :class:`IdentityType
-     <azure.mgmt.sql.models.IdentityType>`
+    :type type: str or ~azure.mgmt.sql.models.IdentityType
     :ivar tenant_id: The Azure Active Directory tenant id.
     :vartype tenant_id: str
     """
@@ -40,7 +39,8 @@ class ResourceIdentity(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, type=None):
+    def __init__(self, **kwargs):
+        super(ResourceIdentity, self).__init__(**kwargs)
         self.principal_id = None
-        self.type = type
+        self.type = kwargs.get('type', None)
         self.tenant_id = None

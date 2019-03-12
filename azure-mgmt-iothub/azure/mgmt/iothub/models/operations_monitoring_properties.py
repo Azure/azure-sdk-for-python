@@ -19,12 +19,14 @@ class OperationsMonitoringProperties(Model):
     C2DTwinOperations, TwinQueries, JobsOperations, DirectMethods.
 
     :param events:
-    :type events: dict
+    :type events: dict[str, str or
+     ~azure.mgmt.iothub.models.OperationMonitoringLevel]
     """
 
     _attribute_map = {
         'events': {'key': 'events', 'type': '{str}'},
     }
 
-    def __init__(self, events=None):
-        self.events = events
+    def __init__(self, **kwargs):
+        super(OperationsMonitoringProperties, self).__init__(**kwargs)
+        self.events = kwargs.get('events', None)

@@ -13,22 +13,25 @@
   ./ref/azure.mgmt.cdn.rst
   ./ref/azure.mgmt.cognitiveservices.rst
   ./ref/azure.mgmt.commerce.rst
-  ./ref/azure.mgmt.compute.compute.rst
-  ./ref/azure.mgmt.compute.containerservice.rst
+  ./ref/azure.mgmt.compute.rst
   ./ref/azure.mgmt.consumption.rst
-  ./ref/azure.mgmt.containerregistry.v2017_03_01.rst
-  ./ref/azure.mgmt.containerregistry.v2017_06_01_preview.rst
+  ./ref/azure.mgmt.containerinstance.rst
+  ./ref/azure.mgmt.containerregistry.rst
+  ./ref/azure.mgmt.containerservice.rst
+  ./ref/azure.mgmt.cosmosdb.rst
+  ./ref/azure.mgmt.datafactory.rst
   ./ref/azure.mgmt.datalake.analytics.account.rst
   ./ref/azure.mgmt.datalake.analytics.catalog.rst
   ./ref/azure.mgmt.datalake.analytics.job.rst
   ./ref/azure.mgmt.datalake.store.rst
   ./ref/azure.mgmt.devtestlabs.rst
   ./ref/azure.mgmt.dns.rst
-  ./ref/azure.mgmt.documentdb.rst
+  ./ref/azure.mgmt.eventgrid.rst
   ./ref/azure.mgmt.eventhub.rst
   ./ref/azure.mgmt.iothub.rst
   ./ref/azure.mgmt.keyvault.rst
   ./ref/azure.mgmt.logic.rst
+  ./ref/azure.mgmt.machinelearningcompute.rst
   ./ref/azure.mgmt.media.rst
   ./ref/azure.mgmt.monitor.rst
   ./ref/azure.mgmt.network.rst
@@ -36,6 +39,7 @@
   ./ref/azure.mgmt.powerbiembedded.rst
   ./ref/azure.mgmt.rdbms.mysql.rst
   ./ref/azure.mgmt.rdbms.postgresql.rst
+  ./ref/azure.mgmt.recoveryservices.rst
   ./ref/azure.mgmt.recoveryservicesbackup.rst
   ./ref/azure.mgmt.redis.rst
   ./ref/azure.mgmt.resource.features.rst
@@ -49,6 +53,7 @@
   ./ref/azure.mgmt.search.rst
   ./ref/azure.mgmt.servermanager.rst
   ./ref/azure.mgmt.servicebus.rst
+  ./ref/azure.mgmt.servicefabric.rst
   ./ref/azure.mgmt.sql.rst
   ./ref/azure.mgmt.storage.rst
   ./ref/azure.mgmt.trafficmanager.rst

@@ -21,8 +21,7 @@ class Usage(Model):
     :ivar unit: Gets the unit of measurement. Possible values include:
      'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
      'BytesPerSecond'
-    :vartype unit: str or :class:`UsageUnit
-     <azure.mgmt.storage.v2016_12_01.models.UsageUnit>`
+    :vartype unit: str or ~azure.mgmt.storage.v2016_12_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in
      the subscription.
     :vartype current_value: int
@@ -30,8 +29,7 @@ class Usage(Model):
      in the subscription.
     :vartype limit: int
     :ivar name: Gets the name of the type of usage.
-    :vartype name: :class:`UsageName
-     <azure.mgmt.storage.v2016_12_01.models.UsageName>`
+    :vartype name: ~azure.mgmt.storage.v2016_12_01.models.UsageName
     """
 
     _validation = {
@@ -48,7 +46,8 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.unit = None
         self.current_value = None
         self.limit = None

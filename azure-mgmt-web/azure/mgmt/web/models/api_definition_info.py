@@ -23,5 +23,6 @@ class ApiDefinitionInfo(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url=None):
-        self.url = url
+    def __init__(self, **kwargs):
+        super(ApiDefinitionInfo, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)

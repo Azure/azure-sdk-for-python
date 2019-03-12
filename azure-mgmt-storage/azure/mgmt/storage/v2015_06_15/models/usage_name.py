@@ -26,6 +26,7 @@ class UsageName(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value=None, localized_value=None):
-        self.value = value
-        self.localized_value = localized_value
+    def __init__(self, **kwargs):
+        super(UsageName, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.localized_value = kwargs.get('localized_value', None)

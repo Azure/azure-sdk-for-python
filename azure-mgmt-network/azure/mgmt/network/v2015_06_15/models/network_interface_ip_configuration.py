@@ -19,26 +19,27 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :type id: str
     :param load_balancer_backend_address_pools: The reference of
      LoadBalancerBackendAddressPool resource.
-    :type load_balancer_backend_address_pools: list of
-     :class:`BackendAddressPool
-     <azure.mgmt.network.v2015_06_15.models.BackendAddressPool>`
+    :type load_balancer_backend_address_pools:
+     list[~azure.mgmt.network.v2015_06_15.models.BackendAddressPool]
     :param load_balancer_inbound_nat_rules: A list of references of
      LoadBalancerInboundNatRules.
-    :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.v2015_06_15.models.InboundNatRule>`
+    :type load_balancer_inbound_nat_rules:
+     list[~azure.mgmt.network.v2015_06_15.models.InboundNatRule]
     :param private_ip_address:
     :type private_ip_address: str
     :param private_ip_allocation_method: Defines how a private IP address is
      assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
      include: 'Static', 'Dynamic'
-    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v2015_06_15.models.IPAllocationMethod>`
+    :type private_ip_allocation_method: str or
+     ~azure.mgmt.network.v2015_06_15.models.IPAllocationMethod
     :param subnet:
-    :type subnet: :class:`Subnet
-     <azure.mgmt.network.v2015_06_15.models.Subnet>`
+    :type subnet: ~azure.mgmt.network.v2015_06_15.models.Subnet
+    :param primary: Gets whether this is a primary customer address on the
+     network interface.
+    :type primary: bool
     :param public_ip_address:
-    :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
+    :type public_ip_address:
+     ~azure.mgmt.network.v2015_06_15.models.PublicIPAddress
     :param provisioning_state:
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -56,20 +57,22 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
-        super(NetworkInterfaceIPConfiguration, self).__init__(id=id)
-        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
-        self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
-        self.private_ip_address = private_ip_address
-        self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = subnet
-        self.public_ip_address = public_ip_address
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(NetworkInterfaceIPConfiguration, self).__init__(**kwargs)
+        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
+        self.load_balancer_inbound_nat_rules = kwargs.get('load_balancer_inbound_nat_rules', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
+        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.primary = kwargs.get('primary', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

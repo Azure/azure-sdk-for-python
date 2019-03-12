@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class ResourceNameAvailabilityRequest(Model):
     """Resource name availability request content.
 
-    :param name: Resource name to verify.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name to verify.
     :type name: str
-    :param type: Resource type used for verification. Possible values include:
-     'Site', 'Slot', 'HostingEnvironment'
-    :type type: str or :class:`CheckNameResourceTypes
-     <azure.mgmt.web.models.CheckNameResourceTypes>`
+    :param type: Required. Resource type used for verification. Possible
+     values include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
+     'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
+     'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
+    :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
     :param is_fqdn: Is fully qualified domain name.
     :type is_fqdn: bool
     """
@@ -36,7 +39,8 @@ class ResourceNameAvailabilityRequest(Model):
         'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
     }
 
-    def __init__(self, name, type, is_fqdn=None):
-        self.name = name
-        self.type = type
-        self.is_fqdn = is_fqdn
+    def __init__(self, **kwargs):
+        super(ResourceNameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.is_fqdn = kwargs.get('is_fqdn', None)

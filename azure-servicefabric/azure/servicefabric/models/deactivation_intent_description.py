@@ -16,19 +16,16 @@ class DeactivationIntentDescription(Model):
     """Describes the intent or reason for deactivating the node.
 
     :param deactivation_intent: Describes the intent or reason for
-     deactivating the node. The possible values are following.
-     - Pause - Indicates that the node should be paused. The value is 1.
-     - Restart - Indicates that the intent is for the node to be restarted
-     after a short period of time. The value is 2.
-     - RemoveData - Indicates the intent is for the node to remove data. The
-     value is 3.
-     . Possible values include: 'Pause', 'Restart', 'RemoveData'
-    :type deactivation_intent: str
-    """ 
+     deactivating the node. The possible values are following. Possible values
+     include: 'Pause', 'Restart', 'RemoveData'
+    :type deactivation_intent: str or
+     ~azure.servicefabric.models.DeactivationIntent
+    """
 
     _attribute_map = {
         'deactivation_intent': {'key': 'DeactivationIntent', 'type': 'str'},
     }
 
-    def __init__(self, deactivation_intent=None):
-        self.deactivation_intent = deactivation_intent
+    def __init__(self, **kwargs):
+        super(DeactivationIntentDescription, self).__init__(**kwargs)
+        self.deactivation_intent = kwargs.get('deactivation_intent', None)

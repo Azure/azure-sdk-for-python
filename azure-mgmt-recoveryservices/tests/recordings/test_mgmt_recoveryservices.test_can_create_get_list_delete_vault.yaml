@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {}, "sku": {"name": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
+  response:
+    body: {string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2017-10-27T22%3A44%3A20.2374552Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['439']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource?api-version=2016-06-01
+  response:
+    body: {string: '{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2017-10-27T22%3A44%3A20.2374552Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['439']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "westus", "properties": {}, "sku": {"name": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2?api-version=2016-06-01
+  response:
+    body: {string: '{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2017-10-27T22%3A44%3A24.9954149Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['427']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:25 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults?api-version=2016-06-01
+  response:
+    body: {string: '{"value":[{"location":"westus","name":"PythonSDKTestResource","etag":"W/\"datetime''2017-10-27T22%3A44%3A20.2374552Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKTestResource","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}},{"location":"westus","name":"PythonSDKVault2","etag":"W/\"datetime''2017-10-27T22%3A44%3A24.9954149Z''\"","properties":{"provisioningState":"Succeeded"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2","type":"Microsoft.RecoveryServices/vaults","sku":{"name":"Standard"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['879']
+      content-type: [application/json]
+      date: ['Fri, 27 Oct 2017 22:44:26 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.2 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.11 recoveryservicesclient/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_recoveryservices_test_can_create_get_list_delete_vault5eb91a70/providers/Microsoft.RecoveryServices/vaults/PythonSDKVault2?api-version=2016-06-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 27 Oct 2017 22:44:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+version: 1

@@ -14,24 +14,26 @@ from msrest.serialization import Model
 
 class NodeTransitionProgress(Model):
     """Information about an NodeTransition operation.  This class contains an
-    OperationState and a NodeTransitionResult.  The NodeTransitionResult is
-    not valid until OperationState
+    OperationState and a NodeTransitionResult.  The NodeTransitionResult is not
+    valid until OperationState
     is Completed or Faulted.
-    .
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str
-    :param node_transition_result:
-    :type node_transition_result: :class:`NodeTransitionResult
-     <azure.servicefabric.models.NodeTransitionResult>`
-    """ 
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param node_transition_result: Represents information about an operation
+     in a terminal state (Completed or Faulted).
+    :type node_transition_result:
+     ~azure.servicefabric.models.NodeTransitionResult
+    """
 
     _attribute_map = {
         'state': {'key': 'State', 'type': 'str'},
         'node_transition_result': {'key': 'NodeTransitionResult', 'type': 'NodeTransitionResult'},
     }
 
-    def __init__(self, state=None, node_transition_result=None):
-        self.state = state
-        self.node_transition_result = node_transition_result
+    def __init__(self, **kwargs):
+        super(NodeTransitionProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.node_transition_result = kwargs.get('node_transition_result', None)

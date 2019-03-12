@@ -18,13 +18,13 @@ class ResourceGroupPatchable(Model):
     :param name: The name of the resource group.
     :type name: str
     :param properties:
-    :type properties: :class:`ResourceGroupProperties
-     <azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupProperties>`
+    :type properties:
+     ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupProperties
     :param managed_by: The ID of the resource that manages this resource
      group.
     :type managed_by: str
     :param tags: The tags attached to the resource group.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -34,8 +34,9 @@ class ResourceGroupPatchable(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name=None, properties=None, managed_by=None, tags=None):
-        self.name = name
-        self.properties = properties
-        self.managed_by = managed_by
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ResourceGroupPatchable, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+        self.managed_by = kwargs.get('managed_by', None)
+        self.tags = kwargs.get('tags', None)

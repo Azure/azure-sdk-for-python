@@ -13,15 +13,23 @@ from msrest.serialization import Model
 
 
 class SsoUri(Model):
-    """SSO URI required to login to the supplemental portal.
+    """The URI required to login to the supplemental portal from the Azure portal.
 
-    :param sso_uri_value: The URI used to login to the supplemental portal.
-    :type sso_uri_value: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar sso_uri_value: The URI used to login to the supplemental portal.
+    :vartype sso_uri_value: str
     """
+
+    _validation = {
+        'sso_uri_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
     }
 
-    def __init__(self, sso_uri_value=None):
-        self.sso_uri_value = sso_uri_value
+    def __init__(self, **kwargs):
+        super(SsoUri, self).__init__(**kwargs)
+        self.sso_uri_value = None

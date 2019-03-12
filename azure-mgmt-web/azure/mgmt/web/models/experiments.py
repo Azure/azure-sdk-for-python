@@ -16,13 +16,13 @@ class Experiments(Model):
     """Routing rules in production experiments.
 
     :param ramp_up_rules: List of ramp-up rules.
-    :type ramp_up_rules: list of :class:`RampUpRule
-     <azure.mgmt.web.models.RampUpRule>`
+    :type ramp_up_rules: list[~azure.mgmt.web.models.RampUpRule]
     """
 
     _attribute_map = {
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
     }
 
-    def __init__(self, ramp_up_rules=None):
-        self.ramp_up_rules = ramp_up_rules
+    def __init__(self, **kwargs):
+        super(Experiments, self).__init__(**kwargs)
+        self.ramp_up_rules = kwargs.get('ramp_up_rules', None)

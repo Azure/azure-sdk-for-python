@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServiceRunnerPaged(Paged):
     """
-    A paging container for iterating over a list of ServiceRunner object
+    A paging container for iterating over a list of :class:`ServiceRunner <azure.mgmt.devtestlabs.models.ServiceRunner>` object
     """
 
     _attribute_map = {

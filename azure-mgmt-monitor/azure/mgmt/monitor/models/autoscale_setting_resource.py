@@ -18,24 +18,25 @@ class AutoscaleSettingResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
-    :param profiles: the collection of automatic scaling profiles that specify
-     different scaling parameters for different time periods. A maximum of 20
-     profiles can be specified.
-    :type profiles: list of :class:`AutoscaleProfile
-     <azure.mgmt.monitor.models.AutoscaleProfile>`
+    :type tags: dict[str, str]
+    :param profiles: Required. the collection of automatic scaling profiles
+     that specify different scaling parameters for different time periods. A
+     maximum of 20 profiles can be specified.
+    :type profiles: list[~azure.mgmt.monitor.models.AutoscaleProfile]
     :param notifications: the collection of notifications.
-    :type notifications: list of :class:`AutoscaleNotification
-     <azure.mgmt.monitor.models.AutoscaleNotification>`
+    :type notifications:
+     list[~azure.mgmt.monitor.models.AutoscaleNotification]
     :param enabled: the enabled flag. Specifies whether automatic scaling is
      enabled for the resource. The default value is 'true'. Default value: True
      .
@@ -68,10 +69,10 @@ class AutoscaleSettingResource(Resource):
         'target_resource_uri': {'key': 'properties.targetResourceUri', 'type': 'str'},
     }
 
-    def __init__(self, location, profiles, tags=None, notifications=None, enabled=True, autoscale_setting_resource_name=None, target_resource_uri=None):
-        super(AutoscaleSettingResource, self).__init__(location=location, tags=tags)
-        self.profiles = profiles
-        self.notifications = notifications
-        self.enabled = enabled
-        self.autoscale_setting_resource_name = autoscale_setting_resource_name
-        self.target_resource_uri = target_resource_uri
+    def __init__(self, **kwargs):
+        super(AutoscaleSettingResource, self).__init__(**kwargs)
+        self.profiles = kwargs.get('profiles', None)
+        self.notifications = kwargs.get('notifications', None)
+        self.enabled = kwargs.get('enabled', True)
+        self.autoscale_setting_resource_name = kwargs.get('autoscale_setting_resource_name', None)
+        self.target_resource_uri = kwargs.get('target_resource_uri', None)

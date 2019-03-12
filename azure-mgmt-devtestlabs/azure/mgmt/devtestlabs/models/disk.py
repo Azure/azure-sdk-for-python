@@ -27,12 +27,11 @@ class Disk(Resource):
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param disk_type: The storage type for the disk (i.e. Standard, Premium).
      Possible values include: 'Standard', 'Premium'
-    :type disk_type: str or :class:`StorageType
-     <azure.mgmt.devtestlabs.models.StorageType>`
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
+    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :param disk_size_gi_b: The size of the disk in Gibibytes.
     :type disk_size_gi_b: int
     :param leased_by_lab_vm_id: The resource ID of the VM to which this disk
      is leased.
@@ -50,11 +49,11 @@ class Disk(Resource):
     :param managed_disk_id: When backed by managed disk, this is the ID of the
      compute disk resource.
     :type managed_disk_id: str
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -62,6 +61,8 @@ class Disk(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'created_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -82,15 +83,15 @@ class Disk(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, disk_type=None, disk_size_gi_b=None, leased_by_lab_vm_id=None, disk_blob_name=None, disk_uri=None, host_caching=None, managed_disk_id=None, provisioning_state=None, unique_identifier=None):
-        super(Disk, self).__init__(location=location, tags=tags)
-        self.disk_type = disk_type
-        self.disk_size_gi_b = disk_size_gi_b
-        self.leased_by_lab_vm_id = leased_by_lab_vm_id
-        self.disk_blob_name = disk_blob_name
-        self.disk_uri = disk_uri
+    def __init__(self, **kwargs):
+        super(Disk, self).__init__(**kwargs)
+        self.disk_type = kwargs.get('disk_type', None)
+        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
+        self.leased_by_lab_vm_id = kwargs.get('leased_by_lab_vm_id', None)
+        self.disk_blob_name = kwargs.get('disk_blob_name', None)
+        self.disk_uri = kwargs.get('disk_uri', None)
         self.created_date = None
-        self.host_caching = host_caching
-        self.managed_disk_id = managed_disk_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.host_caching = kwargs.get('host_caching', None)
+        self.managed_disk_id = kwargs.get('managed_disk_id', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,9 +21,11 @@ class UsersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -39,21 +41,20 @@ class UsersOperations(object):
         """Create a new user.
 
         :param parameters: Parameters to create a user.
-        :type parameters: :class:`UserCreateParameters
-         <azure.graphrbac.models.UserCreateParameters>`
+        :type parameters: ~azure.graphrbac.models.UserCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.graphrbac.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: User or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.User or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -65,6 +66,7 @@ class UsersOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -77,9 +79,8 @@ class UsersOperations(object):
         body_content = self._serialize.body(parameters, 'UserCreateParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -94,6 +95,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/users'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -106,7 +108,9 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :return: An iterator like instance of User
+        :rtype:
+         ~azure.graphrbac.models.UserPaged[~azure.graphrbac.models.User]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -114,7 +118,7 @@ class UsersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/users'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -138,7 +142,7 @@ class UsersOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -147,9 +151,8 @@ class UsersOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -165,6 +168,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/users'}
 
     def get(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
@@ -178,16 +182,16 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.graphrbac.models.User>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: User or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.User or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -198,7 +202,7 @@ class UsersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -207,8 +211,8 @@ class UsersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -223,6 +227,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def update(
             self, upn_or_object_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -232,23 +237,21 @@ class UsersOperations(object):
          to update.
         :type upn_or_object_id: str
         :param parameters: Parameters to update an existing user.
-        :type parameters: :class:`UserUpdateParameters
-         <azure.graphrbac.models.UserUpdateParameters>`
+        :type parameters: ~azure.graphrbac.models.UserUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -271,9 +274,8 @@ class UsersOperations(object):
         body_content = self._serialize.body(parameters, 'UserUpdateParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -281,6 +283,7 @@ class UsersOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def delete(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
@@ -294,16 +297,15 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -314,7 +316,6 @@ class UsersOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -323,8 +324,8 @@ class UsersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.GraphErrorException(self._deserialize, response)
@@ -332,9 +333,10 @@ class UsersOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def get_member_groups(
-            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
+            self, object_id, security_enabled_only, additional_properties=None, custom_headers=None, raw=False, **operation_config):
         """Gets a collection that contains the object IDs of the groups of which
         the user is a member.
 
@@ -345,24 +347,28 @@ class UsersOperations(object):
          security-enabled groups should be checked. Otherwise, membership in
          all groups should be checked.
         :type security_enabled_only: bool
+        :param additional_properties: Unmatched properties from the message
+         are deserialized this collection
+        :type additional_properties: dict[str, object]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StrPaged <azure.graphrbac.models.StrPaged>`
+        :return: An iterator like instance of str
+        :rtype: ~azure.graphrbac.models.StrPaged[str]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
-        parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
+        parameters = models.UserGetMemberGroupsParameters(additional_properties=additional_properties, security_enabled_only=security_enabled_only)
 
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/users/{objectId}/getMemberGroups'
+                url = self.get_member_groups.metadata['url']
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -377,6 +383,7 @@ class UsersOperations(object):
 
             # Construct headers
             header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
             header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -389,9 +396,8 @@ class UsersOperations(object):
             body_content = self._serialize.body(parameters, 'UserGetMemberGroupsParameters')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, **operation_config)
+            request = self._client.post(url, query_parameters, header_parameters, body_content)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.GraphErrorException(self._deserialize, response)
@@ -399,11 +405,12 @@ class UsersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.strPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.StrPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.strPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.StrPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    get_member_groups.metadata = {'url': '/{tenantID}/users/{objectId}/getMemberGroups'}

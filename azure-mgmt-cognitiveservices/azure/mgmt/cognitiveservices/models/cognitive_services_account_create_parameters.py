@@ -15,30 +15,32 @@ from msrest.serialization import Model
 class CognitiveServicesAccountCreateParameters(Model):
     """The parameters to provide for the account.
 
-    :param sku: Required. Gets or sets the SKU of the resource.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
-    :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
-     'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
-     'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
-     'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
+    All required parameters must be populated in order to send to Azure.
+
+    :param sku: Required. Required. Gets or sets the SKU of the resource.
+    :type sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :param kind: Required. Required. Gets or sets the Kind of the resource.
+     Possible values include: 'Bing.Autosuggest.v7', 'Bing.CustomSearch',
+     'Bing.Search.v7', 'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision',
+     'ContentModerator', 'CustomSpeech', 'CustomVision.Prediction',
+     'CustomVision.Training', 'Emotion', 'Face', 'LUIS', 'QnAMaker',
+     'SpeakerRecognition', 'SpeechTranslation', 'TextAnalytics',
      'TextTranslation', 'WebLM'
-    :type kind: str or :class:`Kind
-     <azure.mgmt.cognitiveservices.models.Kind>`
-    :param location: Required. Gets or sets the location of the resource. This
-     will be one of the supported and registered Azure Geo Regions (e.g. West
-     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
-     changed once it is created, but if an identical geo region is specified on
-     update the request will succeed.
+    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
+    :param location: Required. Required. Gets or sets the location of the
+     resource. This will be one of the supported and registered Azure Geo
+     Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a
+     resource cannot be changed once it is created, but if an identical geo
+     region is specified on update the request will succeed.
     :type location: str
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
-    :type tags: dict
-    :param properties: Must exist in the request. Must be an empty object.
-     Must not be null.
+    :type tags: dict[str, str]
+    :param properties: Required. Must exist in the request. Must be an empty
+     object. Must not be null.
     :type properties: object
     """
 
@@ -57,9 +59,10 @@ class CognitiveServicesAccountCreateParameters(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, sku, kind, location, properties, tags=None):
-        self.sku = sku
-        self.kind = kind
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccountCreateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

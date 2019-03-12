@@ -27,9 +27,9 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: Porperties of Sku
-    :type sku: :class:`SBSku <azure.mgmt.servicebus.models.SBSku>`
+    :type sku: ~azure.mgmt.servicebus.models.SBSku
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created.
@@ -68,9 +68,9 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None):
-        super(SBNamespaceUpdateParameters, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(SBNamespaceUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

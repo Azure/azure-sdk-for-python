@@ -9,21 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 import uuid
+from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.load_balancers_operations import LoadBalancersOperations
-from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
 from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.network_watchers_operations import NetworkWatchersOperations
@@ -66,26 +67,26 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(NetworkManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-network/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class NetworkManagementClient(object):
-    """Composite Swagger for Network Client
+class NetworkManagementClient(SDKClient):
+    """Network Client
 
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
 
+    :ivar network_interfaces: NetworkInterfaces operations
+    :vartype network_interfaces: azure.mgmt.network.v2016_12_01.operations.NetworkInterfacesOperations
     :ivar application_gateways: ApplicationGateways operations
     :vartype application_gateways: azure.mgmt.network.v2016_12_01.operations.ApplicationGatewaysOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
@@ -98,8 +99,6 @@ class NetworkManagementClient(object):
     :vartype express_route_service_providers: azure.mgmt.network.v2016_12_01.operations.ExpressRouteServiceProvidersOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2016_12_01.operations.LoadBalancersOperations
-    :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2016_12_01.operations.NetworkInterfacesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
     :vartype network_security_groups: azure.mgmt.network.v2016_12_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
@@ -149,12 +148,15 @@ class NetworkManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(NetworkManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.application_gateways = ApplicationGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
@@ -166,8 +168,6 @@ class NetworkManagementClient(object):
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_security_groups = NetworkSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -220,16 +220,14 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DnsNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-12-01"
-
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'
+        url = self.check_dns_name_availability.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -240,11 +238,11 @@ class NetworkManagementClient(object):
         query_parameters = {}
         if domain_name_label is not None:
             query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -253,8 +251,8 @@ class NetworkManagementClient(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -271,3 +269,4 @@ class NetworkManagementClient(object):
             return client_raw_response
 
         return deserialized
+    check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}

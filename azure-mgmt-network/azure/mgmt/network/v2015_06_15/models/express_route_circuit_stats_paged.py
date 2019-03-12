@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ExpressRouteCircuitStatsPaged(Paged):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitStats object
+    A paging container for iterating over a list of :class:`ExpressRouteCircuitStats <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitStats>` object
     """
 
     _attribute_map = {

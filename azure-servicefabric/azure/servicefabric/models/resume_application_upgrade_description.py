@@ -16,10 +16,12 @@ class ResumeApplicationUpgradeDescription(Model):
     """Describes the parameters for resuming an unmonitored manual Service Fabric
     application upgrade.
 
-    :param upgrade_domain_name: The name of the upgrade domain in which to
-     resume the upgrade.
+    All required parameters must be populated in order to send to Azure.
+
+    :param upgrade_domain_name: Required. The name of the upgrade domain in
+     which to resume the upgrade.
     :type upgrade_domain_name: str
-    """ 
+    """
 
     _validation = {
         'upgrade_domain_name': {'required': True},
@@ -29,5 +31,6 @@ class ResumeApplicationUpgradeDescription(Model):
         'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
     }
 
-    def __init__(self, upgrade_domain_name):
-        self.upgrade_domain_name = upgrade_domain_name
+    def __init__(self, **kwargs):
+        super(ResumeApplicationUpgradeDescription, self).__init__(**kwargs)
+        self.upgrade_domain_name = kwargs.get('upgrade_domain_name', None)

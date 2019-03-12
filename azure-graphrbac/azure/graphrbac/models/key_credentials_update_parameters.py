@@ -15,9 +15,10 @@ from msrest.serialization import Model
 class KeyCredentialsUpdateParameters(Model):
     """Request parameters for a KeyCredentials update operation.
 
-    :param value: A collection of KeyCredentials.
-    :type value: list of :class:`KeyCredential
-     <azure.graphrbac.models.KeyCredential>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. A collection of KeyCredentials.
+    :type value: list[~azure.graphrbac.models.KeyCredential]
     """
 
     _validation = {
@@ -28,5 +29,6 @@ class KeyCredentialsUpdateParameters(Model):
         'value': {'key': 'value', 'type': '[KeyCredential]'},
     }
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(KeyCredentialsUpdateParameters, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

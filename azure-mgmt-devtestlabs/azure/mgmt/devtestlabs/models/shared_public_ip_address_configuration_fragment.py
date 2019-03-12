@@ -17,13 +17,14 @@ class SharedPublicIpAddressConfigurationFragment(Model):
     load balancer.
 
     :param inbound_nat_rules: The incoming NAT rules
-    :type inbound_nat_rules: list of :class:`InboundNatRuleFragment
-     <azure.mgmt.devtestlabs.models.InboundNatRuleFragment>`
+    :type inbound_nat_rules:
+     list[~azure.mgmt.devtestlabs.models.InboundNatRuleFragment]
     """
 
     _attribute_map = {
         'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRuleFragment]'},
     }
 
-    def __init__(self, inbound_nat_rules=None):
-        self.inbound_nat_rules = inbound_nat_rules
+    def __init__(self, **kwargs):
+        super(SharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
+        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)

@@ -15,32 +15,52 @@ from .service_info import ServiceInfo
 class StatelessServiceInfo(ServiceInfo):
     """Information about a stateless Service Fabric service.
 
-    :param id:
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: The identity of the service. This ID is an encoded
+     representation of the service name. This is used in the REST APIs to
+     identify the service resource.
+     Starting in version 6.0, hierarchical names are delimited with the "\\~"
+     character. For example, if the service name is "fabric:/myapp/app1/svc1",
+     the service identity would be "myapp~app1\\~svc1" in 6.0+ and
+     "myapp/app1/svc1" in previous versions.
     :type id: str
-    :param name: Full hierarchical name of the service in URI format starting
-     with `fabric:`.
+    :param name: The full name of the service with 'fabric:' URI scheme.
     :type name: str
-    :param type_name: The name of the service type as specified in the
-     service manifest.
+    :param type_name: Name of the service type as specified in the service
+     manifest.
     :type type_name: str
     :param manifest_version: The version of the service manifest.
     :type manifest_version: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str
-    :param service_status: Possible values include: 'Unknown', 'Active',
-     'Upgrading', 'Deleting', 'Creating', 'Failed'
-    :type service_status: str
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param service_status: The status of the application. Possible values
+     include: 'Unknown', 'Active', 'Upgrading', 'Deleting', 'Creating',
+     'Failed'
+    :type service_status: str or ~azure.servicefabric.models.ServiceStatus
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param ServiceKind: Polymorphic Discriminator
-    :type ServiceKind: str
-    """ 
+    :param service_kind: Required. Constant filled by server.
+    :type service_kind: str
+    """
 
     _validation = {
-        'ServiceKind': {'required': True},
+        'service_kind': {'required': True},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None):
-        super(StatelessServiceInfo, self).__init__(id=id, name=name, type_name=type_name, manifest_version=manifest_version, health_state=health_state, service_status=service_status, is_service_group=is_service_group)
-        self.ServiceKind = 'Stateless'
+    _attribute_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'type_name': {'key': 'TypeName', 'type': 'str'},
+        'manifest_version': {'key': 'ManifestVersion', 'type': 'str'},
+        'health_state': {'key': 'HealthState', 'type': 'str'},
+        'service_status': {'key': 'ServiceStatus', 'type': 'str'},
+        'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
+        'service_kind': {'key': 'ServiceKind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StatelessServiceInfo, self).__init__(**kwargs)
+        self.service_kind = 'Stateless'

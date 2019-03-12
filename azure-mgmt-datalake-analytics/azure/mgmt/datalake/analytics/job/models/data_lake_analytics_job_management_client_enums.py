@@ -12,17 +12,7 @@
 from enum import Enum
 
 
-class JobResourceType(Enum):
-
-    vertex_resource = "VertexResource"
-    job_manager_resource = "JobManagerResource"
-    statistics_resource = "StatisticsResource"
-    vertex_resource_in_user_folder = "VertexResourceInUserFolder"
-    job_manager_resource_in_user_folder = "JobManagerResourceInUserFolder"
-    statistics_resource_in_user_folder = "StatisticsResourceInUserFolder"
-
-
-class SeverityTypes(Enum):
+class SeverityTypes(str, Enum):
 
     warning = "Warning"
     error = "Error"
@@ -32,20 +22,14 @@ class SeverityTypes(Enum):
     user_warning = "UserWarning"
 
 
-class CompileMode(Enum):
-
-    semantic = "Semantic"
-    full = "Full"
-    single_box = "SingleBox"
-
-
-class JobType(Enum):
+class JobType(str, Enum):
 
     usql = "USql"
     hive = "Hive"
+    scope = "Scope"
 
 
-class JobState(Enum):
+class JobState(str, Enum):
 
     accepted = "Accepted"
     compiling = "Compiling"
@@ -59,9 +43,26 @@ class JobState(Enum):
     waiting_for_capacity = "WaitingForCapacity"
 
 
-class JobResult(Enum):
+class JobResult(str, Enum):
 
     none = "None"
     succeeded = "Succeeded"
     cancelled = "Cancelled"
     failed = "Failed"
+
+
+class JobResourceType(str, Enum):
+
+    vertex_resource = "VertexResource"
+    job_manager_resource = "JobManagerResource"
+    statistics_resource = "StatisticsResource"
+    vertex_resource_in_user_folder = "VertexResourceInUserFolder"
+    job_manager_resource_in_user_folder = "JobManagerResourceInUserFolder"
+    statistics_resource_in_user_folder = "StatisticsResourceInUserFolder"
+
+
+class CompileMode(str, Enum):
+
+    semantic = "Semantic"
+    full = "Full"
+    single_box = "SingleBox"

@@ -15,19 +15,32 @@ from msrest.serialization import Model
 class ApplicationDescription(Model):
     """Describes a Service Fabric application.
 
-    :param name:
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the application, including the
+     'fabric:' URI scheme.
     :type name: str
-    :param type_name:
+    :param type_name: Required. The application type name as defined in the
+     application manifest.
     :type type_name: str
-    :param type_version:
+    :param type_version: Required. The version of the application type as
+     defined in the application manifest.
     :type type_version: str
-    :param parameter_list:
-    :type parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
-    :param application_capacity:
-    :type application_capacity: :class:`ApplicationCapacityDescription
-     <azure.servicefabric.models.ApplicationCapacityDescription>`
-    """ 
+    :param parameter_list: List of application parameters with overridden
+     values from their default values specified in the application manifest.
+    :type parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
+    :param application_capacity: Describes capacity information for services
+     of this application. This description can be used for describing the
+     following.
+     - Reserving the capacity for the services on the nodes
+     - Limiting the total number of nodes that services of this application can
+     run on
+     - Limiting the custom capacity metrics to limit the total consumption of
+     this metric by the services of this application
+    :type application_capacity:
+     ~azure.servicefabric.models.ApplicationCapacityDescription
+    """
 
     _validation = {
         'name': {'required': True},
@@ -43,9 +56,10 @@ class ApplicationDescription(Model):
         'application_capacity': {'key': 'ApplicationCapacity', 'type': 'ApplicationCapacityDescription'},
     }
 
-    def __init__(self, name, type_name, type_version, parameter_list=None, application_capacity=None):
-        self.name = name
-        self.type_name = type_name
-        self.type_version = type_version
-        self.parameter_list = parameter_list
-        self.application_capacity = application_capacity
+    def __init__(self, **kwargs):
+        super(ApplicationDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type_name = kwargs.get('type_name', None)
+        self.type_version = kwargs.get('type_version', None)
+        self.parameter_list = kwargs.get('parameter_list', None)
+        self.application_capacity = kwargs.get('application_capacity', None)

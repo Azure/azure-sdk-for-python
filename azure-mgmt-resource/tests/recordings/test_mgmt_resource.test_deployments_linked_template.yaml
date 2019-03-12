@@ -1,0 +1,127 @@
+interactions:
+- request:
+    body: '{"properties": {"templateLink": {"uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json"},
+      "parametersLink": {"uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},
+      "mode": "Incremental"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['368']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
+          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"2474856064091212489","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2018-06-13T16:38:24.7328946Z","duration":"PT0.4635101S","correlationId":"30f5f127-eb12-45e3-a278-0cb91647761f","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586726989812082228?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['1010']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 13 Jun 2018 16:38:24 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
+          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e/operationStatuses/08586726989812082228?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['22']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 13 Jun 2018 16:38:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
+          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"2474856064091212489","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2018-06-13T16:38:37.0760289Z","duration":"PT12.8066444S","correlationId":"30f5f127-eb12-45e3-a278-0cb91647761f","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1230']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 13 Jun 2018 16:38:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
+          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/?api-version=2018-05-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"2474856064091212489","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2018-06-13T16:38:37.0760289Z","duration":"PT12.8066444S","correlationId":"30f5f127-eb12-45e3-a278-0cb91647761f","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1242']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 13 Jun 2018 16:38:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
+          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Resources/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json","contentVersion":"1.0.0.0"},"templateHash":"2474856064091212489","parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"westus"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2018-06-13T16:38:37.0760289Z","duration":"PT12.8066444S","correlationId":"30f5f127-eb12-45e3-a278-0cb91647761f","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/providers/Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1230']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 13 Jun 2018 16:38:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

@@ -35,7 +35,7 @@ class NodeLoadMetricInformation(Model):
     :param node_remaining_buffered_capacity: The remaining reserved capacity
      for this metric on the node.
     :type node_remaining_buffered_capacity: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
@@ -47,11 +47,12 @@ class NodeLoadMetricInformation(Model):
         'node_remaining_buffered_capacity': {'key': 'NodeRemainingBufferedCapacity', 'type': 'str'},
     }
 
-    def __init__(self, name=None, node_capacity=None, node_load=None, node_remaining_capacity=None, is_capacity_violation=None, node_buffered_capacity=None, node_remaining_buffered_capacity=None):
-        self.name = name
-        self.node_capacity = node_capacity
-        self.node_load = node_load
-        self.node_remaining_capacity = node_remaining_capacity
-        self.is_capacity_violation = is_capacity_violation
-        self.node_buffered_capacity = node_buffered_capacity
-        self.node_remaining_buffered_capacity = node_remaining_buffered_capacity
+    def __init__(self, **kwargs):
+        super(NodeLoadMetricInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.node_capacity = kwargs.get('node_capacity', None)
+        self.node_load = kwargs.get('node_load', None)
+        self.node_remaining_capacity = kwargs.get('node_remaining_capacity', None)
+        self.is_capacity_violation = kwargs.get('is_capacity_violation', None)
+        self.node_buffered_capacity = kwargs.get('node_buffered_capacity', None)
+        self.node_remaining_buffered_capacity = kwargs.get('node_remaining_buffered_capacity', None)

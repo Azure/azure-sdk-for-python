@@ -16,15 +16,15 @@ class EntityHealthStateChunkList(Model):
     """A base type for the list of health state chunks found in the cluster. It
     contains the total number of health states that match the input filters.
 
-    :param total_count: Total number of entity health state objects that
-     match the specified filters from the cluster health chunk query
-     description.
+    :param total_count: Total number of entity health state objects that match
+     the specified filters from the cluster health chunk query description.
     :type total_count: long
-    """ 
+    """
 
     _attribute_map = {
         'total_count': {'key': 'TotalCount', 'type': 'long'},
     }
 
-    def __init__(self, total_count=None):
-        self.total_count = total_count
+    def __init__(self, **kwargs):
+        super(EntityHealthStateChunkList, self).__init__(**kwargs)
+        self.total_count = kwargs.get('total_count', None)

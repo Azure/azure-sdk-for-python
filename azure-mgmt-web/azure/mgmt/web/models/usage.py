@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class Usage(Resource):
+class Usage(ProxyOnlyResource):
     """Usage of the quota resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,20 +20,14 @@ class Usage(Resource):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :param name: Resource Name.
-    :type name: str
+    :ivar name: Resource Name.
+    :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar display_name: Friendly name shown in the UI.
     :vartype display_name: str
-    :ivar usage_name: Name of the quota.
-    :vartype usage_name: str
     :ivar resource_name: Name of the quota resource.
     :vartype resource_name: str
     :ivar unit: Units of measurement for the quota resource.
@@ -46,17 +40,16 @@ class Usage(Resource):
     :vartype next_reset_time: datetime
     :ivar compute_mode: Compute mode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :vartype compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+    :vartype compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :ivar site_mode: Site mode used for this usage.
     :vartype site_mode: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'location': {'required': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'display_name': {'readonly': True},
-        'usage_name': {'readonly': True},
         'resource_name': {'readonly': True},
         'unit': {'readonly': True},
         'current_value': {'readonly': True},
@@ -70,11 +63,8 @@ class Usage(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'usage_name': {'key': 'properties.name', 'type': 'str'},
         'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
         'unit': {'key': 'properties.unit', 'type': 'str'},
         'current_value': {'key': 'properties.currentValue', 'type': 'long'},
@@ -84,10 +74,9 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(Usage, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.display_name = None
-        self.usage_name = None
         self.resource_name = None
         self.unit = None
         self.current_value = None

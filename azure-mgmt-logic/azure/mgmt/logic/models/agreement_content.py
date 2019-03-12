@@ -16,14 +16,11 @@ class AgreementContent(Model):
     """The integration account agreement content.
 
     :param a_s2: The AS2 agreement content.
-    :type a_s2: :class:`AS2AgreementContent
-     <azure.mgmt.logic.models.AS2AgreementContent>`
+    :type a_s2: ~azure.mgmt.logic.models.AS2AgreementContent
     :param x12: The X12 agreement content.
-    :type x12: :class:`X12AgreementContent
-     <azure.mgmt.logic.models.X12AgreementContent>`
+    :type x12: ~azure.mgmt.logic.models.X12AgreementContent
     :param edifact: The EDIFACT agreement content.
-    :type edifact: :class:`EdifactAgreementContent
-     <azure.mgmt.logic.models.EdifactAgreementContent>`
+    :type edifact: ~azure.mgmt.logic.models.EdifactAgreementContent
     """
 
     _attribute_map = {
@@ -32,7 +29,8 @@ class AgreementContent(Model):
         'edifact': {'key': 'edifact', 'type': 'EdifactAgreementContent'},
     }
 
-    def __init__(self, a_s2=None, x12=None, edifact=None):
-        self.a_s2 = a_s2
-        self.x12 = x12
-        self.edifact = edifact
+    def __init__(self, **kwargs):
+        super(AgreementContent, self).__init__(**kwargs)
+        self.a_s2 = kwargs.get('a_s2', None)
+        self.x12 = kwargs.get('x12', None)
+        self.edifact = kwargs.get('edifact', None)

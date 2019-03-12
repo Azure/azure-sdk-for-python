@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class LogProfileResourcePaged(Paged):
     """
-    A paging container for iterating over a list of LogProfileResource object
+    A paging container for iterating over a list of :class:`LogProfileResource <azure.mgmt.monitor.models.LogProfileResource>` object
     """
 
     _attribute_map = {

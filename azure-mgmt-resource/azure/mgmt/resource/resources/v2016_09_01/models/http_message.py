@@ -23,5 +23,6 @@ class HttpMessage(Model):
         'content': {'key': 'content', 'type': 'object'},
     }
 
-    def __init__(self, content=None):
-        self.content = content
+    def __init__(self, **kwargs):
+        super(HttpMessage, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)

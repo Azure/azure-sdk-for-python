@@ -18,30 +18,34 @@ class ManagementLockObject(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param level: The level of the lock. Possible values are: NotSpecified,
-     CanNotDelete, ReadOnly. CanNotDelete means authorized users are able to
-     read and modify the resources, but not delete. ReadOnly means authorized
-     users can only read from a resource, but they can't modify or delete it.
-     Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :type level: str or :class:`LockLevel
-     <azure.mgmt.resource.locks.v2016_09_01.models.LockLevel>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param level: Required. The level of the lock. Possible values are:
+     NotSpecified, CanNotDelete, ReadOnly. CanNotDelete means authorized users
+     are able to read and modify the resources, but not delete. ReadOnly means
+     authorized users can only read from a resource, but they can't modify or
+     delete it. Possible values include: 'NotSpecified', 'CanNotDelete',
+     'ReadOnly'
+    :type level: str or
+     ~azure.mgmt.resource.locks.v2016_09_01.models.LockLevel
     :param notes: Notes about the lock. Maximum of 512 characters.
     :type notes: str
     :param owners: The owners of the lock.
-    :type owners: list of :class:`ManagementLockOwner
-     <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner>`
+    :type owners:
+     list[~azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockOwner]
     :ivar id: The resource ID of the lock.
     :vartype id: str
     :ivar type: The resource type of the lock - Microsoft.Authorization/locks.
     :vartype type: str
-    :param name: The name of the lock.
-    :type name: str
+    :ivar name: The name of the lock.
+    :vartype name: str
     """
 
     _validation = {
         'level': {'required': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -53,10 +57,11 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level, notes=None, owners=None, name=None):
-        self.level = level
-        self.notes = notes
-        self.owners = owners
+    def __init__(self, **kwargs):
+        super(ManagementLockObject, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.notes = kwargs.get('notes', None)
+        self.owners = kwargs.get('owners', None)
         self.id = None
         self.type = None
-        self.name = name
+        self.name = None

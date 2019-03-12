@@ -20,25 +20,25 @@ class EffectiveRoute(Model):
     :param source: Who created the route. Possible values are: 'Unknown',
      'User', 'VirtualNetworkGateway', and 'Default'. Possible values include:
      'Unknown', 'User', 'VirtualNetworkGateway', 'Default'
-    :type source: str or :class:`EffectiveRouteSource
-     <azure.mgmt.network.v2016_12_01.models.EffectiveRouteSource>`
+    :type source: str or
+     ~azure.mgmt.network.v2016_12_01.models.EffectiveRouteSource
     :param state: The value of effective route. Possible values are: 'Active'
      and 'Invalid'. Possible values include: 'Active', 'Invalid'
-    :type state: str or :class:`EffectiveRouteState
-     <azure.mgmt.network.v2016_12_01.models.EffectiveRouteState>`
+    :type state: str or
+     ~azure.mgmt.network.v2016_12_01.models.EffectiveRouteState
     :param address_prefix: The address prefixes of the effective routes in
      CIDR notation.
-    :type address_prefix: list of str
+    :type address_prefix: list[str]
     :param next_hop_ip_address: The IP address of the next hop of the
      effective route.
-    :type next_hop_ip_address: list of str
+    :type next_hop_ip_address: list[str]
     :param next_hop_type: The type of Azure hop the packet should be sent to.
      Possible values are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
      'VirtualAppliance', and 'None'. Possible values include:
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
-    :type next_hop_type: str or :class:`RouteNextHopType
-     <azure.mgmt.network.v2016_12_01.models.RouteNextHopType>`
+    :type next_hop_type: str or
+     ~azure.mgmt.network.v2016_12_01.models.RouteNextHopType
     """
 
     _attribute_map = {
@@ -50,10 +50,11 @@ class EffectiveRoute(Model):
         'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
     }
 
-    def __init__(self, name=None, source=None, state=None, address_prefix=None, next_hop_ip_address=None, next_hop_type=None):
-        self.name = name
-        self.source = source
-        self.state = state
-        self.address_prefix = address_prefix
-        self.next_hop_ip_address = next_hop_ip_address
-        self.next_hop_type = next_hop_type
+    def __init__(self, **kwargs):
+        super(EffectiveRoute, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.source = kwargs.get('source', None)
+        self.state = kwargs.get('state', None)
+        self.address_prefix = kwargs.get('address_prefix', None)
+        self.next_hop_ip_address = kwargs.get('next_hop_ip_address', None)
+        self.next_hop_type = kwargs.get('next_hop_type', None)

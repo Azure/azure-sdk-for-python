@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class ProtectionPoliciesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -53,14 +55,14 @@ class ProtectionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProtectionPolicyResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ProtectionPolicyResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -85,7 +87,7 @@ class ProtectionPoliciesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -102,6 +104,7 @@ class ProtectionPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'}
 
     def create_or_update(
             self, vault_name, resource_group_name, policy_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -117,21 +120,21 @@ class ProtectionPoliciesOperations(object):
         :param policy_name: Backup policy to be created.
         :type policy_name: str
         :param parameters: resource backup policy
-        :type parameters: :class:`ProtectionPolicyResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>`
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProtectionPolicyResource
-         <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ProtectionPolicyResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -160,7 +163,7 @@ class ProtectionPoliciesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -177,6 +180,7 @@ class ProtectionPoliciesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'}
 
     def delete(
             self, vault_name, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
@@ -196,13 +200,12 @@ class ProtectionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -227,7 +230,7 @@ class ProtectionPoliciesOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -237,3 +240,4 @@ class ProtectionPoliciesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}'}

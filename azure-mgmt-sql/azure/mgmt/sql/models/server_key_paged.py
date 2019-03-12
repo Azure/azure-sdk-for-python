@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ServerKeyPaged(Paged):
     """
-    A paging container for iterating over a list of ServerKey object
+    A paging container for iterating over a list of :class:`ServerKey <azure.mgmt.sql.models.ServerKey>` object
     """
 
     _attribute_map = {
