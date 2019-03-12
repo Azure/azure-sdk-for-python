@@ -30,8 +30,8 @@ class MultiLanguageInput(Model):
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, language: str=None, id: str=None, text: str=None, **kwargs) -> None:
         super(MultiLanguageInput, self).__init__(**kwargs)
-        self.language = kwargs.get('language', None)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
+        self.language = language
+        self.id = id
+        self.text = text

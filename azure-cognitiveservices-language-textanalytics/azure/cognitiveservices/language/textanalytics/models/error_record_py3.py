@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class BatchInput(Model):
-    """BatchInput.
+class ErrorRecord(Model):
+    """ErrorRecord.
 
-    :param documents:
-    :type documents:
-     list[~azure.cognitiveservices.language.textanalytics.models.Input]
+    :param id: Input document unique identifier the error refers to.
+    :type id: str
+    :param message: Error message.
+    :type message: str
     """
 
     _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[Input]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, documents=None):
-        super(BatchInput, self).__init__()
-        self.documents = documents
+    def __init__(self, *, id: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorRecord, self).__init__(**kwargs)
+        self.id = id
+        self.message = message

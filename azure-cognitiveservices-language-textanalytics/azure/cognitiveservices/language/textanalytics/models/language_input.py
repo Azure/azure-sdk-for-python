@@ -12,21 +12,25 @@
 from msrest.serialization import Model
 
 
-class ErrorRecord(Model):
-    """ErrorRecord.
+class LanguageInput(Model):
+    """LanguageInput.
 
-    :param id: Input document unique identifier the error refers to.
+    :param country_hint:
+    :type country_hint: str
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param message: Error message.
-    :type message: str
+    :param text:
+    :type text: str
     """
 
     _attribute_map = {
+        'country_hint': {'key': 'countryHint', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorRecord, self).__init__(**kwargs)
+        super(LanguageInput, self).__init__(**kwargs)
+        self.country_hint = kwargs.get('country_hint', None)
         self.id = kwargs.get('id', None)
-        self.message = kwargs.get('message', None)
+        self.text = kwargs.get('text', None)
