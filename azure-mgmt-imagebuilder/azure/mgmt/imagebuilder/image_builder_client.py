@@ -13,7 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.virtual_machine_image_template_operations import VirtualMachineImageTemplateOperations
+from .operations.virtual_machine_image_templates_operations import VirtualMachineImageTemplatesOperations
 from .operations.operations import Operations
 from . import models
 
@@ -58,8 +58,8 @@ class ImageBuilderClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ImageBuilderClientConfiguration
 
-    :ivar virtual_machine_image_template: VirtualMachineImageTemplate operations
-    :vartype virtual_machine_image_template: azure.mgmt.imagebuilder.operations.VirtualMachineImageTemplateOperations
+    :ivar virtual_machine_image_templates: VirtualMachineImageTemplates operations
+    :vartype virtual_machine_image_templates: azure.mgmt.imagebuilder.operations.VirtualMachineImageTemplatesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.imagebuilder.operations.Operations
 
@@ -84,7 +84,7 @@ class ImageBuilderClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.virtual_machine_image_template = VirtualMachineImageTemplateOperations(
+        self.virtual_machine_image_templates = VirtualMachineImageTemplatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
