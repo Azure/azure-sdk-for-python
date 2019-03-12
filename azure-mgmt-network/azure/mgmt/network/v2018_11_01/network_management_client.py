@@ -24,6 +24,7 @@ from .operations.available_delegations_operations import AvailableDelegationsOpe
 from .operations.available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
 from .operations.azure_firewalls_operations import AzureFirewallsOperations
 from .operations.azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
+from .operations.ddos_custom_policies_operations import DdosCustomPoliciesOperations
 from .operations.ddos_protection_plans_operations import DdosProtectionPlansOperations
 from .operations.available_endpoint_services_operations import AvailableEndpointServicesOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
@@ -140,6 +141,8 @@ class NetworkManagementClient(SDKClient):
     :vartype azure_firewalls: azure.mgmt.network.v2018_11_01.operations.AzureFirewallsOperations
     :ivar azure_firewall_fqdn_tags: AzureFirewallFqdnTags operations
     :vartype azure_firewall_fqdn_tags: azure.mgmt.network.v2018_11_01.operations.AzureFirewallFqdnTagsOperations
+    :ivar ddos_custom_policies: DdosCustomPolicies operations
+    :vartype ddos_custom_policies: azure.mgmt.network.v2018_11_01.operations.DdosCustomPoliciesOperations
     :ivar ddos_protection_plans: DdosProtectionPlans operations
     :vartype ddos_protection_plans: azure.mgmt.network.v2018_11_01.operations.DdosProtectionPlansOperations
     :ivar available_endpoint_services: AvailableEndpointServices operations
@@ -294,6 +297,8 @@ class NetworkManagementClient(SDKClient):
         self.azure_firewalls = AzureFirewallsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.ddos_custom_policies = DdosCustomPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.ddos_protection_plans = DdosProtectionPlansOperations(
             self._client, self.config, self._serialize, self._deserialize)

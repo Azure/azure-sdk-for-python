@@ -14,8 +14,7 @@ from azure.mgmt.datafactory.models import *
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+raise unittest.SkipTest("Skipping all tests")
 
 class MgmtAdfTest(AzureMgmtTestCase):
 
@@ -50,7 +49,7 @@ class MgmtAdfTest(AzureMgmtTestCase):
         ls_for_ds = LinkedServiceReference(ls_name)
         ds_ab = AzureBlobDataset(ls_for_ds, folder_path='entitylogs', file_name='OutputBlobName', format=tx_f)
         return self._adf_client.datasets.create_or_update(resource_group.name, df_name, ds_name, ds_ab)
-    
+
     def create_pipeline_with_run(self, df_name, p_name, ls_name, dsin_name, dsout_name, act_name, resource_group):
         ls = self.create_azureblob_linkedservice(df_name, ls_name, resource_group)
         dsin = self.create_azureblob_dataset(df_name, ls_name, dsin_name, resource_group)
@@ -90,7 +89,7 @@ class MgmtAdfTest(AzureMgmtTestCase):
                "Dummy": "dummy"
             }
         )
-    
+
     def wait_for_factory(self, df, resource_group):
         if not self.is_playback():
             while df.provisioning_state != 'Succeeded':
@@ -105,12 +104,12 @@ class MgmtAdfTest(AzureMgmtTestCase):
         return CopyActivity(act_name, inputs=[dsin_ref], outputs=[dsOut_ref], source=bso, sink=bsi)
 
     def create_lookupactivity_blob(self, act_name, ds_name):
-        bso = BlobSource()        
-        ds_ref = DatasetReference(ds_name)        
+        bso = BlobSource()
+        ds_ref = DatasetReference(ds_name)
         return LookupActivity(act_name, source=bso, dataset=ds_ref)
 
     def create_getmetadataactivity_blob(self, act_name, ds_name):
-        ds_ref = DatasetReference(ds_name)        
+        ds_ref = DatasetReference(ds_name)
         return GetMetadataActivity(act_name, field_list = [], dataset=ds_ref)
 
     def create_pipeline(self, df_name, act, p_name, p_params, resource_group):
@@ -233,7 +232,7 @@ class MgmtAdfTest(AzureMgmtTestCase):
         df_name = 'testirregeneratekey'
         ir_name = 'ir1'
         df = self.create_datafactory(df_name, resource_group, location)
-        self.wait_for_factory(df, resource_group) 
+        self.wait_for_factory(df, resource_group)
         ir = self.create_integrationruntime(df_name, ir_name, resource_group)
         oldkey = self._adf_client.integration_runtimes.list_auth_keys(resource_group.name, df_name, ir_name).auth_key1
         newkey = self._adf_client.integration_runtimes.regenerate_auth_key(resource_group.name, df_name, ir_name, key_name='authKey1').auth_key1
@@ -252,7 +251,7 @@ class MgmtAdfTest(AzureMgmtTestCase):
 
         ir_status = self._adf_client.integration_runtimes.get_status(resource_group.name, df_name, ir_name)
         self.assertTrue(ir_name == ir_status.name)
-        
+
         self.clean_datafactory(df_name, resource_group)
 
 if __name__ == '__main__':

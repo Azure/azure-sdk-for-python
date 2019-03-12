@@ -200,6 +200,15 @@ class SiteAvailabilityState(str, Enum):
     disaster_recovery_mode = "DisasterRecoveryMode"
 
 
+class RedundancyMode(str, Enum):
+
+    none = "None"
+    manual = "Manual"
+    failover = "Failover"
+    active_active = "ActiveActive"
+    geo_redundant = "GeoRedundant"
+
+
 class StatusOptions(str, Enum):
 
     ready = "Ready"
@@ -544,3 +553,5 @@ class SkuName(str, Enum):
     dynamic = "Dynamic"
     isolated = "Isolated"
     premium_v2 = "PremiumV2"
+    elastic_premium = "ElasticPremium"
+    elastic_isolated = "ElasticIsolated"

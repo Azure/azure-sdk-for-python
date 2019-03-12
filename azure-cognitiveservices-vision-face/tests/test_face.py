@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from os.path import dirname, join, realpath
+from time import sleep
 
 from azure.cognitiveservices.vision.face import FaceClient
 from azure.cognitiveservices.vision.face.models import Gender
@@ -56,6 +57,59 @@ class FaceTest(ReplayableTest):
             )
 
         detected = result[0]
-        self.assertEquals(detected.face_attributes.age, 52.4)
-        self.assertEquals(detected.face_attributes.gender, Gender.female)
-        self.assertEquals(detected.face_attributes.emotion.happiness, 1.0)
+        self.assertEqual(detected.face_attributes.age, 52.4)
+        self.assertEqual(detected.face_attributes.gender, Gender.female)
+        self.assertEqual(detected.face_attributes.emotion.happiness, 1.0)
+
+    def test_snapshot(self):
+        credentials = CognitiveServicesCredentials(
+            self.settings.CS_SUBSCRIPTION_KEY
+        )
+        face_client = FaceClient("https://westus2.api.cognitive.microsoft.com", credentials=credentials)
+
+        # Create a PersonGroup.
+        personGroupId = "69ff3e98-2de7-468e-beae-f78aa85200db"
+        newPersonGroupId = "fb644ecf-3ed0-4b25-9270-1d174b980afb"
+
+        face_client.person_group.create(personGroupId, "test", "test")
+
+        # Take a snapshot for the PersonGroup
+        apply_scope = ["Apply-Scope-Subscriptions"]
+        snapshot_type = "PersonGroup"
+
+        takeSnapshotResponse = face_client.snapshot.take(snapshot_type, personGroupId, apply_scope, raw=True)
+        takeOperationId = takeSnapshotResponse.headers["Operation-Location"].split("/")[2]
+
+        getOperationStatusResponse = face_client.snapshot.get_operation_status(takeOperationId)
+        operationStatus = getOperationStatusResponse.additional_properties["Status"]
+        
+        # Wait for take operation to complete.        
+        while operationStatus != "succeeded" and operationStatus != "failed":
+          getOperationStatusResponse = face_client.snapshot.get_operation_status(takeOperationId)
+          operationStatus = getOperationStatusResponse.additional_properties["Status"]
+          if self.is_live:
+              sleep(1)
+
+        self.assertEqual(operationStatus, "succeeded")
+
+        snapshotId = getOperationStatusResponse.additional_properties["ResourceLocation"].split("/")[2]
+        
+        # Apply the snapshot to a new PersonGroup.
+        applySnapshotResponse = face_client.snapshot.apply(snapshotId, newPersonGroupId, raw=True)
+        applyOperationId = applySnapshotResponse.headers["Operation-Location"].split("/")[2]
+
+        applyOperationStatusResponse = face_client.snapshot.get_operation_status(applyOperationId)
+        operationStatus = applyOperationStatusResponse.additional_properties["Status"]
+        
+        # Wait for apply operation to complete.
+        while operationStatus != "succeeded" and operationStatus != "failed":
+          applyOperationStatusResponse = face_client.snapshot.get_operation_status(applyOperationId)
+          operationStatus = applyOperationStatusResponse.additional_properties["Status"]
+          if self.is_live:
+              sleep(1)
+
+        self.assertEqual(operationStatus, "succeeded")
+
+        face_client.snapshot.delete(snapshotId)
+        face_client.person_group.delete(personGroupId)
+        face_client.person_group.delete(newPersonGroupId)
