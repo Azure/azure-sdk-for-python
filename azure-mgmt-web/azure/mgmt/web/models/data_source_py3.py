@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DataSource(Model):
     """Class representing data source used by the detectors.
 
-    :param instructions: Instrunctions if any for the data source
+    :param instructions: Instructions if any for the data source
     :type instructions: list[str]
     :param data_source_uri: Datasource Uri Links
     :type data_source_uri: list[~azure.mgmt.web.models.NameValuePair]

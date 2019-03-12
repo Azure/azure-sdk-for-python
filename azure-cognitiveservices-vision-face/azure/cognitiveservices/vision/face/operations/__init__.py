@@ -16,6 +16,7 @@ from .face_list_operations import FaceListOperations
 from .large_person_group_person_operations import LargePersonGroupPersonOperations
 from .large_person_group_operations import LargePersonGroupOperations
 from .large_face_list_operations import LargeFaceListOperations
+from .snapshot_operations import SnapshotOperations
 
 __all__ = [
     'FaceOperations',
@@ -25,4 +26,5 @@ __all__ = [
     'LargePersonGroupPersonOperations',
     'LargePersonGroupOperations',
     'LargeFaceListOperations',
+    'SnapshotOperations',
 ]

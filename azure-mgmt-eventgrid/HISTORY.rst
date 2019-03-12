@@ -3,12 +3,25 @@
 Release History
 ===============
 
+2.1.0rc1 (2019-03-11)
++++++++++++++++++++++
+
+**Disclaimer**
+
+Preview features that were on 2.0.0rc2 only and not on 2.0.0 has been ported in this version.
+
+This version also adds the following preview features:
+-	Manual Add/delete of domain topics.
+-	Pagination/search filtering for list operations.
+-	Adding service bus queue as destination
+
+
 2.0.0 (2019-02-01)
 ++++++++++++++++++
 
 **Disclaimer**
 
-Note all preview features of the 2.0.0rc2 were confirmed in this 2.0.0 stable version. In particular, the following features will still be available only in the 2.0.0rc2 for now:
+Not all preview features of the 2.0.0rc2 were confirmed in this 2.0.0 stable version. In particular, the following features will still be available only in the 2.0.0rc2 for now:
 
 - Domains.
 -	Advanced filters support.

@@ -43,6 +43,14 @@ class EntityInfo(Model):
      ~azure.mgmt.managementgroups.models.enum
     :param number_of_descendants: Number of Descendants.
     :type number_of_descendants: int
+    :param number_of_children: Number of Children. Number of children is the
+     number of Groups and Subscriptions that are exactly one level underneath
+     the current Group.
+    :type number_of_children: int
+    :param number_of_child_groups: Number of Child Groups. Number of child
+     groups is the number of Groups that are exactly one level underneath the
+     current Group.
+    :type number_of_child_groups: int
     :param parent_display_name_chain: The parent display name chain from the
      root group to the immediate parent
     :type parent_display_name_chain: list[str]
@@ -67,6 +75,8 @@ class EntityInfo(Model):
         'permissions': {'key': 'properties.permissions', 'type': 'str'},
         'inherited_permissions': {'key': 'properties.inheritedPermissions', 'type': 'str'},
         'number_of_descendants': {'key': 'properties.numberOfDescendants', 'type': 'int'},
+        'number_of_children': {'key': 'properties.numberOfChildren', 'type': 'int'},
+        'number_of_child_groups': {'key': 'properties.numberOfChildGroups', 'type': 'int'},
         'parent_display_name_chain': {'key': 'properties.parentDisplayNameChain', 'type': '[str]'},
         'parent_name_chain': {'key': 'properties.parentNameChain', 'type': '[str]'},
     }
@@ -82,5 +92,7 @@ class EntityInfo(Model):
         self.permissions = kwargs.get('permissions', None)
         self.inherited_permissions = kwargs.get('inherited_permissions', None)
         self.number_of_descendants = kwargs.get('number_of_descendants', None)
+        self.number_of_children = kwargs.get('number_of_children', None)
+        self.number_of_child_groups = kwargs.get('number_of_child_groups', None)
         self.parent_display_name_chain = kwargs.get('parent_display_name_chain', None)
         self.parent_name_chain = kwargs.get('parent_name_chain', None)

@@ -22,6 +22,7 @@ class State(str, Enum):
     stopping = "Stopping"
     stopped = "Stopped"
     starting = "Starting"
+    updating = "Updating"
 
 
 class ProvisioningState(str, Enum):
@@ -35,14 +36,13 @@ class ProvisioningState(str, Enum):
 
 class AzureSkuName(str, Enum):
 
-    kc8 = "KC8"
-    kc16 = "KC16"
-    ks8 = "KS8"
-    ks16 = "KS16"
     d13_v2 = "D13_v2"
     d14_v2 = "D14_v2"
     l8 = "L8"
     l16 = "L16"
+    d11_v2 = "D11_v2"
+    d12_v2 = "D12_v2"
+    l4 = "L4"
 
 
 class AzureScaleType(str, Enum):
@@ -57,6 +57,14 @@ class DataFormat(str, Enum):
     multijson = "MULTIJSON"
     json = "JSON"
     csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
 
 
 class DatabasePrincipalRole(str, Enum):

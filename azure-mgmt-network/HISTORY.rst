@@ -3,7 +3,25 @@
 Release History
 ===============
 
-2.5.0 (2018-01-04)
+2.6.0rc1 (2019-02-15)
++++++++++++++++++++++
+
+**Features**
+
+- Model AzureFirewall has a new parameter threat_intel_mode
+- Model ApplicationGatewayRewriteRule has a new parameter conditions
+- Model ApplicationGatewayRewriteRule has a new parameter rule_sequence
+- Model ApplicationGatewayAutoscaleConfiguration has a new parameter max_capacity
+- Added operation SubnetsOperations.prepare_network_policies
+
+2.5.1 (2019-01-15)
+++++++++++++++++++
+
+**Features**
+
+- Add missing ddos_custom_policies operations
+
+2.5.0 (2019-01-04)
 ++++++++++++++++++
 
 **Features**

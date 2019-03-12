@@ -269,8 +269,8 @@ class ExpressRouteCircuitConnectionsOperations(object):
          connection.
         :type connection_name: str
         :param express_route_circuit_connection_parameters: Parameters
-         supplied to the create or update express route circuit circuit
-         connection operation.
+         supplied to the create or update express route circuit connection
+         operation.
         :type express_route_circuit_connection_parameters:
          ~azure.mgmt.network.v2018_10_01.models.ExpressRouteCircuitConnection
         :param dict custom_headers: headers that will be added to the request
