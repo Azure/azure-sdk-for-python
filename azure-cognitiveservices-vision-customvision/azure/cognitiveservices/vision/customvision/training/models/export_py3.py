@@ -18,34 +18,31 @@ class Export(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar platform: Required. Platform of the export. Possible values include:
-     'CoreML', 'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
+    :ivar platform: Platform of the export. Possible values include: 'CoreML',
+     'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
     :vartype platform: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
-    :ivar status: Required. Status of the export. Possible values include:
-     'Exporting', 'Failed', 'Done'
+    :ivar status: Status of the export. Possible values include: 'Exporting',
+     'Failed', 'Done'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportStatus
-    :ivar download_uri: Required. URI used to download the model.
+    :ivar download_uri: URI used to download the model.
     :vartype download_uri: str
     :ivar flavor: Flavor of the export. Possible values include: 'Linux',
      'Windows', 'ONNX10', 'ONNX12', 'ARM'
     :vartype flavor: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
-    :ivar newer_version_available: Required. Indicates an updated version of
-     the export package is available and should be re-exported for the latest
-     changes.
+    :ivar newer_version_available: Indicates an updated version of the export
+     package is available and should be re-exported for the latest changes.
     :vartype newer_version_available: bool
     """
 
     _validation = {
-        'platform': {'required': True, 'readonly': True},
-        'status': {'required': True, 'readonly': True},
-        'download_uri': {'required': True, 'readonly': True},
+        'platform': {'readonly': True},
+        'status': {'readonly': True},
+        'download_uri': {'readonly': True},
         'flavor': {'readonly': True},
-        'newer_version_available': {'required': True, 'readonly': True},
+        'newer_version_available': {'readonly': True},
     }
 
     _attribute_map = {
