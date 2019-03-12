@@ -25,7 +25,7 @@ class TopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class TopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-02-01-preview"
 
         self.config = config
 
@@ -106,9 +106,7 @@ class TopicsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, topic_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
-        topic_info = models.Topic(location=location, tags=tags)
-
+            self, resource_group_name, topic_name, topic_info, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -157,7 +155,7 @@ class TopicsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, topic_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, topic_name, topic_info, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a topic.
 
         Asynchronously creates a new topic with the specified parameters.
@@ -167,10 +165,8 @@ class TopicsOperations(object):
         :type resource_group_name: str
         :param topic_name: Name of the topic
         :type topic_name: str
-        :param location: Location of the resource
-        :type location: str
-        :param tags: Tags of the resource
-        :type tags: dict[str, str]
+        :param topic_info: Topic information
+        :type topic_info: ~azure.mgmt.eventgrid.models.Topic
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -187,8 +183,7 @@ class TopicsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             topic_name=topic_name,
-            location=location,
-            tags=tags,
+            topic_info=topic_info,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -400,11 +395,15 @@ class TopicsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'}
 
     def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List topics under an Azure subscription.
 
         List all the topics under an Azure subscription.
 
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -428,6 +427,10 @@ class TopicsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link
@@ -466,7 +469,7 @@ class TopicsOperations(object):
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/topics'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List topics under a resource group.
 
         List all the topics under a resource group.
@@ -474,6 +477,10 @@ class TopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -498,6 +505,10 @@ class TopicsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link

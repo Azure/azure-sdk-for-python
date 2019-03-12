@@ -17,7 +17,7 @@ class Source(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param query: Required. Log search query.
+    :param query: Log search query. Required for action type - AlertingAction
     :type query: str
     :param authorized_resources: List of  Resource referred into query
     :type authorized_resources: list[str]
@@ -30,7 +30,6 @@ class Source(Model):
     """
 
     _validation = {
-        'query': {'required': True},
         'data_source_id': {'required': True},
     }
 
@@ -41,7 +40,7 @@ class Source(Model):
         'query_type': {'key': 'queryType', 'type': 'str'},
     }
 
-    def __init__(self, *, query: str, data_source_id: str, authorized_resources=None, query_type=None, **kwargs) -> None:
+    def __init__(self, *, data_source_id: str, query: str=None, authorized_resources=None, query_type=None, **kwargs) -> None:
         super(Source, self).__init__(**kwargs)
         self.query = query
         self.authorized_resources = authorized_resources
