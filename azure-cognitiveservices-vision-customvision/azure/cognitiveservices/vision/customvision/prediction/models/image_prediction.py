@@ -18,27 +18,25 @@ class ImagePrediction(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. Prediction Id.
+    :ivar id: Prediction Id.
     :vartype id: str
-    :ivar project: Required. Project Id.
+    :ivar project: Project Id.
     :vartype project: str
-    :ivar iteration: Required. Iteration Id.
+    :ivar iteration: Iteration Id.
     :vartype iteration: str
-    :ivar created: Required. Date this prediction was created.
+    :ivar created: Date this prediction was created.
     :vartype created: datetime
-    :ivar predictions: Required. List of predictions.
+    :ivar predictions: List of predictions.
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.prediction.models.Prediction]
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
-        'project': {'required': True, 'readonly': True},
-        'iteration': {'required': True, 'readonly': True},
-        'created': {'required': True, 'readonly': True},
-        'predictions': {'required': True, 'readonly': True},
+        'id': {'readonly': True},
+        'project': {'readonly': True},
+        'iteration': {'readonly': True},
+        'created': {'readonly': True},
+        'predictions': {'readonly': True},
     }
 
     _attribute_map = {

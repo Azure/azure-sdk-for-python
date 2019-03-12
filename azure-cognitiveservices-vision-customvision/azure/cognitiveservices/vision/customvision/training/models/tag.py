@@ -20,7 +20,7 @@ class Tag(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Gets the Tag ID.
+    :ivar id: Gets the Tag ID.
     :vartype id: str
     :param name: Required. Gets or sets the name of the tag.
     :type name: str
@@ -30,16 +30,16 @@ class Tag(Model):
      include: 'Regular', 'Negative'
     :type type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.TagType
-    :ivar image_count: Required. Gets the number of images with this tag.
+    :ivar image_count: Gets the number of images with this tag.
     :vartype image_count: int
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
+        'id': {'readonly': True},
         'name': {'required': True},
         'description': {'required': True},
         'type': {'required': True},
-        'image_count': {'required': True, 'readonly': True},
+        'image_count': {'readonly': True},
     }
 
     _attribute_map = {
