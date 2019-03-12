@@ -40,13 +40,16 @@ class TriggersOperations(object):
         self.config = config
 
     def list_by_data_box_edge_device(
-            self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, device_name, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all the triggers configured in the device.
 
         :param device_name: The device name.
         :type device_name: str
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
+        :param expand: Specify $filter='CustomContextTag eq <tag>' to filter
+         on custom context tag property
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -72,6 +75,8 @@ class TriggersOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
             else:
                 url = next_link
