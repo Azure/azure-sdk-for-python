@@ -18,7 +18,6 @@ install:
 script: 
   - pytest
 after_success:
-  - coverage report
   - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
