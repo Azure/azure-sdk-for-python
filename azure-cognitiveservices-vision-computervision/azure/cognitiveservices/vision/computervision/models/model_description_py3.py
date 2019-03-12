@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ModelDescription(Model):
     """An object describing supported model by name and categories.
 
-    :param name:
+    :param name: The name of the model.
     :type name: str
-    :param categories:
+    :param categories: Categories of the model.
     :type categories: list[str]
     """
 

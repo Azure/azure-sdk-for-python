@@ -36,7 +36,7 @@ from azure.servicebus.common.errors import (
 async def process_message(message):
     print(message)
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     # [START create_async_servicebus_client]
@@ -238,7 +238,7 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
             await message.complete()
     # [END auto_lock_renew_async_message]
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     queue_client = QueueClient.from_connection_string(
@@ -339,7 +339,7 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     # [END auto_lock_renew_async_session]
             break
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_snippet_topics(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
@@ -398,7 +398,7 @@ async def test_async_snippet_topics(live_servicebus_config, standard_subscriptio
     except ServiceBusResourceNotFound:
         pass
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
     try:
@@ -407,7 +407,7 @@ async def test_async_sample_queue_send_receive_batch(live_servicebus_config, sta
         pytest.skip("")
     await sample_queue_send_receive_batch_async(live_servicebus_config, standard_queue)
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_batch(live_servicebus_config, session_queue):
     try:
@@ -416,7 +416,7 @@ async def test_async_sample_session_send_receive_batch(live_servicebus_config, s
         pytest.skip("")
     await sample_session_send_receive_batch_async(live_servicebus_config, session_queue)
 
-
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_async_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
     try:
