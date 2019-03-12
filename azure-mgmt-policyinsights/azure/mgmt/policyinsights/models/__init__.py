@@ -24,6 +24,9 @@ try:
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .policy_event_py3 import PolicyEvent
     from .policy_events_query_results_py3 import PolicyEventsQueryResults
+    from .expression_evaluation_details_py3 import ExpressionEvaluationDetails
+    from .if_not_exists_evaluation_details_py3 import IfNotExistsEvaluationDetails
+    from .policy_evaluation_details_py3 import PolicyEvaluationDetails
     from .policy_state_py3 import PolicyState
     from .policy_states_query_results_py3 import PolicyStatesQueryResults
     from .summary_results_py3 import SummaryResults
@@ -50,6 +53,9 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .policy_event import PolicyEvent
     from .policy_events_query_results import PolicyEventsQueryResults
+    from .expression_evaluation_details import ExpressionEvaluationDetails
+    from .if_not_exists_evaluation_details import IfNotExistsEvaluationDetails
+    from .policy_evaluation_details import PolicyEvaluationDetails
     from .policy_state import PolicyState
     from .policy_states_query_results import PolicyStatesQueryResults
     from .summary_results import SummaryResults
@@ -83,6 +89,9 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'PolicyEvent',
     'PolicyEventsQueryResults',
+    'ExpressionEvaluationDetails',
+    'IfNotExistsEvaluationDetails',
+    'PolicyEvaluationDetails',
     'PolicyState',
     'PolicyStatesQueryResults',
     'SummaryResults',
