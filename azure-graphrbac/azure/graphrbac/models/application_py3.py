@@ -55,6 +55,9 @@ class Application(DirectoryObject):
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
+    :param group_membership_claims: Configures the groups claim issued in a
+     user or OAuth 2.0 access token that the app expects.
+    :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
     :param identifier_uris: A collection of URIs for the application.
@@ -147,6 +150,7 @@ class Application(DirectoryObject):
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
+        'group_membership_claims': {'key': 'groupMembershipClaims', 'type': 'object'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
@@ -171,7 +175,7 @@ class Application(DirectoryObject):
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, app_id: str=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, app_id: str=None, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, display_name: str=None, error_url: str=None, group_membership_claims=None, homepage: str=None, identifier_uris=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
         super(Application, self).__init__(additional_properties=additional_properties, **kwargs)
         self.app_id = app_id
         self.allow_guests_sign_in = allow_guests_sign_in
@@ -182,6 +186,7 @@ class Application(DirectoryObject):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.error_url = error_url
+        self.group_membership_claims = group_membership_claims
         self.homepage = homepage
         self.identifier_uris = identifier_uris
         self.informational_urls = informational_urls

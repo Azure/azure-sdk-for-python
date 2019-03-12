@@ -38,6 +38,9 @@ class ApplicationCreateParameters(ApplicationBase):
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
+    :param group_membership_claims: Configures the groups claim issued in a
+     user or OAuth 2.0 access token that the app expects.
+    :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
     :param informational_urls: urls with more informations of the application.
@@ -126,6 +129,7 @@ class ApplicationCreateParameters(ApplicationBase):
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
+        'group_membership_claims': {'key': 'groupMembershipClaims', 'type': 'object'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
         'is_device_only_auth_supported': {'key': 'isDeviceOnlyAuthSupported', 'type': 'bool'},

@@ -55,6 +55,9 @@ class Application(DirectoryObject):
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
+    :param group_membership_claims: Configures the groups claim issued in a
+     user or OAuth 2.0 access token that the app expects.
+    :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
     :param identifier_uris: A collection of URIs for the application.
@@ -147,6 +150,7 @@ class Application(DirectoryObject):
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
+        'group_membership_claims': {'key': 'groupMembershipClaims', 'type': 'object'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
@@ -182,6 +186,7 @@ class Application(DirectoryObject):
         self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
         self.display_name = kwargs.get('display_name', None)
         self.error_url = kwargs.get('error_url', None)
+        self.group_membership_claims = kwargs.get('group_membership_claims', None)
         self.homepage = kwargs.get('homepage', None)
         self.identifier_uris = kwargs.get('identifier_uris', None)
         self.informational_urls = kwargs.get('informational_urls', None)
