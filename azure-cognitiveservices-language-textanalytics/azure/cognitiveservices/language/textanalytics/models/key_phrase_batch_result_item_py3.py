@@ -40,8 +40,8 @@ class KeyPhraseBatchResultItem(Model):
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, statistics=None, **kwargs) -> None:
         super(KeyPhraseBatchResultItem, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
         self.key_phrases = None
-        self.statistics = kwargs.get('statistics', None)
+        self.statistics = statistics

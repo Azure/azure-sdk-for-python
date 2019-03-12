@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class KeyPhraseBatchResultItem(Model):
-    """KeyPhraseBatchResultItem.
+class EntitiesBatchResultItem(Model):
+    """EntitiesBatchResultItem.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
-    :ivar key_phrases: A list of representative words or phrases. The number
-     of key phrases returned is proportional to the number of words in the
-     input document.
-    :vartype key_phrases: list[str]
+    :ivar entities: Recognized entities in the document.
+    :vartype entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.EntityRecord]
     :param statistics: (Optional) if showStats=true was specified in the
      request this field will contain information about the document payload.
     :type statistics:
@@ -31,17 +30,17 @@ class KeyPhraseBatchResultItem(Model):
     """
 
     _validation = {
-        'key_phrases': {'readonly': True},
+        'entities': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
+        'entities': {'key': 'entities', 'type': '[EntityRecord]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, **kwargs):
-        super(KeyPhraseBatchResultItem, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.key_phrases = None
-        self.statistics = kwargs.get('statistics', None)
+    def __init__(self, *, id: str=None, statistics=None, **kwargs) -> None:
+        super(EntitiesBatchResultItem, self).__init__(**kwargs)
+        self.id = id
+        self.entities = None
+        self.statistics = statistics

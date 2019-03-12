@@ -12,36 +12,30 @@
 from msrest.serialization import Model
 
 
-class KeyPhraseBatchResultItem(Model):
-    """KeyPhraseBatchResultItem.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class SentimentBatchResultItem(Model):
+    """SentimentBatchResultItem.
 
     :param id: Unique, non-empty document identifier.
     :type id: str
-    :ivar key_phrases: A list of representative words or phrases. The number
-     of key phrases returned is proportional to the number of words in the
-     input document.
-    :vartype key_phrases: list[str]
+    :param score: A decimal number between 0 and 1 denoting the sentiment of
+     the document. A score above 0.7 usually refers to a positive document
+     while a score below 0.3 normally has a negative connotation. Mid values
+     refer to neutral text.
+    :type score: float
     :param statistics: (Optional) if showStats=true was specified in the
      request this field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     """
 
-    _validation = {
-        'key_phrases': {'readonly': True},
-    }
-
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'key_phrases': {'key': 'keyPhrases', 'type': '[str]'},
+        'score': {'key': 'score', 'type': 'float'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, **kwargs):
-        super(KeyPhraseBatchResultItem, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.key_phrases = None
-        self.statistics = kwargs.get('statistics', None)
+    def __init__(self, *, id: str=None, score: float=None, statistics=None, **kwargs) -> None:
+        super(SentimentBatchResultItem, self).__init__(**kwargs)
+        self.id = id
+        self.score = score
+        self.statistics = statistics

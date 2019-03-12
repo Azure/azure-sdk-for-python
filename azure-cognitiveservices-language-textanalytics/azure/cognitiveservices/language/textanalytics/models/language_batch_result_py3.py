@@ -42,7 +42,7 @@ class LanguageBatchResult(Model):
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(LanguageBatchResult, self).__init__(**kwargs)
         self.documents = None
         self.errors = None
