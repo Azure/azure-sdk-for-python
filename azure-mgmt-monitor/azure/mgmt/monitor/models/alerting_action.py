@@ -13,7 +13,7 @@ from .action import Action
 
 
 class AlertingAction(Action):
-    """Specifiy action need to be taken when rule type is Alert.
+    """Specify action need to be taken when rule type is Alert.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -22,7 +22,7 @@ class AlertingAction(Action):
     :param severity: Required. Severity of the alert. Possible values include:
      '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
-    :param azns_action: Required. Azure action group reference.
+    :param azns_action: Azure action group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
     :param throttling_in_min: time (in minutes) for which Alerts should be
      throttled or suppressed.
@@ -35,7 +35,6 @@ class AlertingAction(Action):
     _validation = {
         'odatatype': {'required': True},
         'severity': {'required': True},
-        'azns_action': {'required': True},
         'trigger': {'required': True},
     }
 

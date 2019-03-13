@@ -16,7 +16,6 @@ class Gender(str, Enum):
 
     male = "male"
     female = "female"
-    genderless = "genderless"
 
 
 class GlassesType(str, Enum):
@@ -76,6 +75,27 @@ class FindSimilarMatchMode(str, Enum):
 class TrainingStatusType(str, Enum):
 
     nonstarted = "nonstarted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+
+
+class SnapshotApplyMode(str, Enum):
+
+    create_new = "CreateNew"
+
+
+class SnapshotObjectType(str, Enum):
+
+    face_list = "FaceList"
+    large_face_list = "LargeFaceList"
+    large_person_group = "LargePersonGroup"
+    person_group = "PersonGroup"
+
+
+class OperationStatusType(str, Enum):
+
+    notstarted = "notstarted"
     running = "running"
     succeeded = "succeeded"
     failed = "failed"

@@ -122,6 +122,11 @@ This version uses a next-generation code generator that *might* introduce breaki
   * Catalog_GrantAcl
   * Catalog_RevokeAcl
 
+0.2.1 (2019-03-12)
+++++++++++++++++++
+
+* Updating permissible versions of the msrestazure package to unblock `Azure/azure-cli#6973 <https://github.com/Azure/azure-cli/issues/6973>`_.
+
 0.2.0 (2017-08-17)
 ++++++++++++++++++
 
