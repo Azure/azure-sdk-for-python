@@ -65,7 +65,7 @@ class LinkedService(Model):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str

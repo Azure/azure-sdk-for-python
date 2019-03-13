@@ -28,8 +28,10 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
     :type catalog_admin_password: ~azure.mgmt.datafactory.models.SecureString
     :param catalog_pricing_tier: The pricing tier for the catalog database.
      The valid values could be found in
-     https://azure.microsoft.com/en-us/pricing/details/sql-database/
-    :type catalog_pricing_tier: str
+     https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
+     values include: 'Basic', 'Standard', 'Premium', 'PremiumRS'
+    :type catalog_pricing_tier: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogPricingTier
     """
 
     _validation = {
@@ -44,7 +46,7 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
         'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_server_endpoint: str=None, catalog_admin_user_name: str=None, catalog_admin_password=None, catalog_pricing_tier: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_server_endpoint: str=None, catalog_admin_user_name: str=None, catalog_admin_password=None, catalog_pricing_tier=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_server_endpoint = catalog_server_endpoint
