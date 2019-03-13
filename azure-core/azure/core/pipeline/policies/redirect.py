@@ -56,8 +56,8 @@ class RedirectPolicy(HTTPPolicy):
 
     def __init__(self, **kwargs):
         self.redirect_max = kwargs.pop('redirect_max', 30)
-        remove_headers = kwargs.pop('redirect_remove_headers', [])
-        self.remove_headers_on_redirect = set(remove_headers + self.REDIRECT_HEADERS_BLACKLIST)
+        remove_headers = kwargs.pop('redirect_remove_headers', set())
+        self.remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = kwargs.pop('redirect_on_status_codes', [])
         self.redirect_on_status_codes = set(redirect_status + self.REDIRECT_STATUSES)
         self.raise_on_redirect = True
