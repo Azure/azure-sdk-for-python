@@ -9,13 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_base_py3 import ApplicationBase
+from msrest.serialization import Model
 
 
-class ApplicationCreateParameters(ApplicationBase):
-    """Request parameters for creating a new application.
-
-    All required parameters must be populated in order to send to Azure.
+class ApplicationBase(Model):
+    """Active Directive Application common properties shared among GET, POST and
+    PATCH.
 
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
@@ -109,17 +108,7 @@ class ApplicationCreateParameters(ApplicationBase):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
-    :param display_name: Required. The display name of the application.
-    :type display_name: str
-    :param identifier_uris: Required. A collection of URIs for the
-     application.
-    :type identifier_uris: list[str]
     """
-
-    _validation = {
-        'display_name': {'required': True},
-        'identifier_uris': {'required': True},
-    }
 
     _attribute_map = {
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
@@ -151,11 +140,36 @@ class ApplicationCreateParameters(ApplicationBase):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
     }
 
-    def __init__(self, *, display_name: str, identifier_uris, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, error_url: str=None, group_membership_claims=None, homepage: str=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
-        super(ApplicationCreateParameters, self).__init__(allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, error_url=error_url, group_membership_claims=group_membership_claims, homepage=homepage, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
-        self.display_name = display_name
-        self.identifier_uris = identifier_uris
+    def __init__(self, **kwargs):
+        super(ApplicationBase, self).__init__(**kwargs)
+        self.allow_guests_sign_in = kwargs.get('allow_guests_sign_in', None)
+        self.allow_passthrough_users = kwargs.get('allow_passthrough_users', None)
+        self.app_logo_url = kwargs.get('app_logo_url', None)
+        self.app_roles = kwargs.get('app_roles', None)
+        self.app_permissions = kwargs.get('app_permissions', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.error_url = kwargs.get('error_url', None)
+        self.group_membership_claims = kwargs.get('group_membership_claims', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.informational_urls = kwargs.get('informational_urls', None)
+        self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.known_client_applications = kwargs.get('known_client_applications', None)
+        self.logout_url = kwargs.get('logout_url', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
+        self.oauth2_allow_url_path_matching = kwargs.get('oauth2_allow_url_path_matching', None)
+        self.oauth2_permissions = kwargs.get('oauth2_permissions', None)
+        self.oauth2_require_post_response = kwargs.get('oauth2_require_post_response', None)
+        self.org_restrictions = kwargs.get('org_restrictions', None)
+        self.optional_claims = kwargs.get('optional_claims', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.pre_authorized_applications = kwargs.get('pre_authorized_applications', None)
+        self.public_client = kwargs.get('public_client', None)
+        self.publisher_domain = kwargs.get('publisher_domain', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.required_resource_access = kwargs.get('required_resource_access', None)
+        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
+        self.sign_in_audience = kwargs.get('sign_in_audience', None)
+        self.www_homepage = kwargs.get('www_homepage', None)
