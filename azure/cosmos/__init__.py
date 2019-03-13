@@ -23,7 +23,7 @@
 Create, read, update, and delete databases, containers, and items in Azure Cosmos DB SQL API databases.
 """
 
-__all__ = ["ResponseMetadata", "User", "PartitionKey", "AccessCondition"]
+__all__ = ["ResponseMetadata", "PartitionKey", "AccessCondition"]
 
 from .query_iterator import QueryResultIterator
 from .cosmos_client_connection import CosmosClientConnection
@@ -34,13 +34,6 @@ from typing import (
     Dict,
     Union
 )
-
-DatabaseId = Union["Database", Dict[str, Any], str]
-ContainerId = Union["Container", Dict[str, Any], str]
-
-
-class User:
-    pass
 
 
 class PartitionKey(dict):

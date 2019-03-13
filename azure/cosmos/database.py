@@ -26,7 +26,7 @@ from .cosmos_client_connection import CosmosClientConnection
 from .query_iterator import QueryResultIterator
 from .container import Container
 from . import ResponseMetadata
-from . import User
+from .user import User
 
 from typing import (
     Any,
@@ -159,6 +159,7 @@ class Database(object):
             collection=definition,
             options=request_options,
         )
+        print(request_options)
         return Container(self.client_connection, self, data["id"], properties=data)
 
     def delete_container(
@@ -364,7 +365,7 @@ class Database(object):
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (Union[str, Container], PartitionKey, str, int, str, bool, str, Dict[str, Any], AccessCondition, bool) -> None
+        # type: (Union[str, Container], PartitionKey, str, int, str, bool, str, Dict[str, Any], AccessCondition, bool) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.

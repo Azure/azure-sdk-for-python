@@ -61,7 +61,7 @@ def teardown_new_object_model(request):
         host = config.host
         masterKey = config.masterKey
         connectionPolicy = config.connectionPolicy
-        client = cosmos_client.CosmosClient(host, masterKey, "Session", connectionPolicy)
+        client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
         database_ids_to_delete.append(config.TEST_DATABASE_ID)
         for database_id in database_ids_to_delete:
             try:

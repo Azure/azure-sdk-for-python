@@ -40,8 +40,8 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(self, url, key, consistency_level="Session", connection_policy=None):
-        # type: (str, str, str, Any) -> None
+    def __init__(self, url, auth, consistency_level="Session", connection_policy=None):
+        # type: (str, str, Dict[str, str], Any) -> None
         """ Instantiate a new CosmosClient.
 
         :param url: The URL of the Cosmos DB account.
@@ -58,7 +58,7 @@ class CosmosClient:
         """
         self.client_connection = CosmosClientConnection(
             url,
-            dict(masterKey=key),
+            auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
         )

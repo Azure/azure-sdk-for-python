@@ -259,7 +259,7 @@ class Container:
     ):
         # type: (Union[Item, str], Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Item
         """ Replaces the specified item if it exists in the container.
-
+        :param item: An Item object or link of the item to be replaced.
         :param body: A dict-like object representing the item to replace.
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param session_token: Token for use with Session consistency.

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
@@ -76,7 +77,7 @@ class CRUDTests(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    client = cosmos_client.CosmosClient(host, masterKey, "Session", connectionPolicy)
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
     databaseForTest = configs.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -102,8 +103,8 @@ class CRUDTests(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
-                                                                      self.connectionPolicy)
+        self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
+                                                 self.connectionPolicy)
 
     def test_database_crud(self):
         # read databases.
@@ -251,20 +252,16 @@ class CRUDTests(unittest.TestCase):
         self.assertIsNotNone(retrieved_collection.properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-    '''
+    #TODO: add fixture to remove container at the end of test
+    #TODO: add check for partition key in request options using spy
     def test_partitioned_collection_partition_key_extraction(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
-        collection_definition = {'id': 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4()),
-                                 'partitionKey':
-                                     {
-                                         'paths': ['/address/state'],
-                                         'kind': documents.PartitionKind.Hash
-                                     }
-                                 }
-
-        created_collection = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                         collection_definition)
+        collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
+        )
 
         document_definition = {'id': 'document1',
                                'address': {'street': '1 Microsoft Way',
@@ -275,91 +272,55 @@ class CRUDTests(unittest.TestCase):
                                }
 
         # create document without partition key being specified
-        created_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_document = created_collection.create_item(body=document_definition)
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
 
-        # create document by specifying a different partition key in options than what's in the document will result in BadRequest(status code 400)
-        document_definition['id'] = 'document2'
-        options = {'partitionKey': 'NY'}
-
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateItem,
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition,
-            options)
-
-        collection_definition1 = {'id': 'test_partitioned_collection_partition_key_extraction1 ' + str(uuid.uuid4()),
-                                  'partitionKey':
-                                      {
-                                          'paths': ['/address'],
-                                          'kind': documents.PartitionKind.Hash
-                                      }
-                                  }
-
-        created_collection1 = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                          collection_definition1)
+        collection_id = 'test_partitioned_collection_partition_key_extraction1 ' + str(uuid.uuid4())
+        created_collection1 = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
+        )
 
         # Create document with partitionkey not present as a leaf level property but a dict
-        options = {}
-        created_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection1),
-            document_definition, options)
+        created_document = created_collection1.create_item(document_definition)
 
-        self.assertEqual(options['partitionKey'], documents.Undefined)
+        #self.assertEqual(options['partitionKey'], documents.Undefined)
 
-        collection_definition2 = {'id': 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4()),
-                                  'partitionKey':
-                                      {
-                                          'paths': ['/address/state/city'],
-                                          'kind': documents.PartitionKind.Hash
-                                      }
-                                  }
-
-        created_collection2 = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                          collection_definition2)
+        collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
+        created_collection2 = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
+        )
 
         # Create document with partitionkey not present in the document
-        options = {}
-        created_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection2),
-            document_definition, options)
+        created_document = created_collection2.create_item(document_definition)
 
-        self.assertEqual(options['partitionKey'], documents.Undefined)
+        #self.assertEqual(options['partitionKey'], documents.Undefined)
 
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection))
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection1))
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection2))
+        created_db.delete_container(created_collection.id)
+        created_db.delete_container(created_collection1.id)
+        created_db.delete_container(created_collection2.id)
 
+    #TODO: add check for partition key in request options using spy
+    #TODO: add fixture to remove container at the end of test
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
-        collection_definition1 = {
-            'id': 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4()),
-            'partitionKey':
-                {
-                    'paths': ['/\"level\' 1*()\"/\"le/vel2\"'],
-                    'kind': documents.PartitionKind.Hash
-                }
-            }
+        collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
-        created_collection1 = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                          collection_definition1)
-
+        created_collection1 = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/\"level\' 1*()\"/\"le/vel2\"', kind=documents.PartitionKind.Hash)
+        )
         document_definition = {'id': 'document1',
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
 
-        options = {}
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection1),
-            document_definition, options)
+        created_collection1.create_item(body=document_definition)
 
-        self.assertEqual(options['partitionKey'], 'val1')
+        #self.assertEqual(options['partitionKey'], 'val1')
 
         collection_definition2 = {
             'id': 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4()),
@@ -370,22 +331,23 @@ class CRUDTests(unittest.TestCase):
                 }
             }
 
-        created_collection2 = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                          collection_definition2)
+        collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
+
+        created_collection2 = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/\'level\" 1*()\'/\'le/vel2\'', kind=documents.PartitionKind.Hash)
+        )
 
         document_definition = {'id': 'document2',
                                'level\" 1*()': {'le/vel2': 'val2'}
                                }
 
-        options = {}
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection2),
-            document_definition, options)
+        created_collection2.create_item(body=document_definition)
 
-        self.assertEqual(options['partitionKey'], 'val2')
+        #self.assertEqual(options['partitionKey'], 'val2')
 
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection1))
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, created_collection2))
+        created_db.delete_container(created_collection1.id)
+        created_db.delete_container(created_collection2.id)
 
     def test_partitioned_collection_path_parser(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -404,46 +366,40 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(parts, base.ParsePaths(paths))
 
     def test_partitioned_collection_document_crud_and_query(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         document_definition = {'id': 'document',
                                'key': 'value'}
 
-        created_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_document = created_collection.create_item(
+            body=document_definition
+        )
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('key'), document_definition.get('key'))
 
-        # For ReadDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        # self.__AssertHTTPFailureWithStatus(
-        #    StatusCodes.BAD_REQUEST,
-        #    client.ReadItem,
-        #    self.GetDocumentLink(created_db, created_collection, created_document))
-
         # read document
-        options = {'partitionKey': document_definition.get('id')}
-        read_document = self.client.ReadItem(
-            self.GetDocumentLink(created_db, created_collection, created_document),
-            options)
+        read_document = created_collection.get_item(
+            id=created_document.get('id'),
+            partition_key=created_document.get('id')
+        )
 
         self.assertEqual(read_document.get('id'), created_document.get('id'))
         self.assertEqual(read_document.get('key'), created_document.get('key'))
 
         # Read document feed doesn't require partitionKey as it's always a cross partition query
-        documentlist = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection)))
+        documentlist = list(created_collection.list_items())
         self.assertEqual(1, len(documentlist))
 
         # replace document
         document_definition['key'] = 'new value'
 
-        replaced_document = self.client.ReplaceItem(
-            self.GetDocumentLink(created_db, created_collection, created_document),
-            document_definition)
+        replaced_document = created_collection.replace_item(
+            item=read_document,
+            body=document_definition
+        )
 
         self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
 
@@ -451,31 +407,19 @@ class CRUDTests(unittest.TestCase):
         document_definition['id'] = 'document2'
         document_definition['key'] = 'value2'
 
-        upserted_document = self.client.UpsertItem(self.GetDocumentCollectionLink(created_db, created_collection),
-                                                   document_definition)
+        upserted_document = created_collection.upsert_item(body=document_definition)
 
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
 
-        documentlist = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection)))
+        documentlist = list(created_collection.list_items())
         self.assertEqual(2, len(documentlist))
 
-        # For DeleteDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.DeleteItem,
-            self.GetDocumentLink(created_db, created_collection, upserted_document))
-
         # delete document
-        options = {'partitionKey': upserted_document.get('id')}
-        self.client.DeleteItem(
-            self.GetDocumentLink(created_db, created_collection, upserted_document),
-            options)
+        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('id'))
 
         # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
-        documentlist = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(created_db, created_collection),
+        documentlist = list(created_collection.query_items(
             {
                 'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''
             }))
@@ -483,8 +427,7 @@ class CRUDTests(unittest.TestCase):
 
         # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
         try:
-            list(self.client.QueryItems(
-                self.GetDocumentCollectionLink(created_db, created_collection),
+            list(created_collection.query_items(
                 {
                     'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
                 }))
@@ -492,47 +435,42 @@ class CRUDTests(unittest.TestCase):
             pass
 
         # cross partition query
-        options = {'enableCrossPartitionQuery': True}
-        documentlist = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            {
-                'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
-            }, options))
+        documentlist = list(created_collection.query_items(
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',
+            enable_cross_partition_query=True
+        ))
 
         self.assertEqual(1, len(documentlist))
 
         # query document by providing the partitionKey value
         options = {'partitionKey': replaced_document.get('id')}
-        documentlist = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            {
-                'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
-            }, options))
+        documentlist = list(created_collection.query_items(
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',
+            enable_cross_partition_query=True
+        ))
 
         self.assertEqual(1, len(documentlist))
 
+    '''
+    #TODO: User class and Permission class implementations
     def test_partitioned_collection_permissions(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
-        collection_definition = {'id': 'sample collection ' + str(uuid.uuid4()),
-                                 'partitionKey':
-                                     {
-                                         'paths': ['/key'],
-                                         'kind': documents.PartitionKind.Hash
-                                     }
-                                 }
+        collection_id = 'test_partitioned_collection_permissions all collection'
 
-        collection_definition['id'] = 'test_partitioned_collection_permissions all collection'
+        all_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
+        )
 
-        all_collection = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                     collection_definition)
+        collection_id = 'test_partitioned_collection_permissions read collection'
 
-        collection_definition['id'] = 'test_partitioned_collection_permissions read collection'
+        read_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
+        )
 
-        read_collection = self.client.CreateContainer(self.GetDatabaseLink(created_db),
-                                                      collection_definition)
-
-        user = self.client.CreateUser(self.GetDatabaseLink(created_db), {'id': 'user'})
+        user = created_db.create_user(user={'id': 'user'})
 
         permission_definition = {
             'id': 'all permission',
@@ -611,6 +549,7 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, all_collection))
         self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, read_collection))
 
+    #TODO: Execute sproc implementation
     def test_partitioned_collection_execute_stored_procedure(self):
         created_db = self.databseForTest
 
@@ -643,232 +582,7 @@ class CRUDTests(unittest.TestCase):
             self.GetStoredProcedureLink(created_db, created_collection, created_sproc),
             None,
             {'partitionKey': 3})
-
-    def test_partitioned_collection_attachment_crud_and_query(self):
-        class ReadableStream(object):
-            """Customized file-like stream.
-            """
-
-            def __init__(self, chunks=['first chunk ', 'second chunk']):
-                """Initialization.
-
-                :Parameters:
-                    - `chunks`: list
-
-                """
-                if six.PY2:
-                    self._chunks = list(chunks)
-                else:
-                    # python3: convert to bytes
-                    self._chunks = [chunk.encode() for chunk in chunks]
-
-            def read(self, n=-1):
-                """Simulates the read method in a file stream.
-
-                :Parameters:
-                    - `n`: int
-
-                :Returns:
-                    bytes or str
-
-                """
-                if self._chunks:
-                    return self._chunks.pop(0)
-                else:
-                    return ''
-
-            def __len__(self):
-                """To make len(ReadableStream) work.
-                """
-                return sum([len(chunk) for chunk in self._chunks])
-
-        db = self.databseForTest
-        collection_definition = {'id': 'test_partitioned_collection_attachment_crud_and_query ' + str(uuid.uuid4()),
-                                 'partitionKey': {'paths': ['/id'], 'kind': 'Hash'}}
-
-        collection = self.client.CreateContainer(db['_self'], collection_definition)
-
-        document_definition = {'id': 'sample document' + str(uuid.uuid4()),
-                               'key': 'value'}
-
-        document = self.client.CreateItem(self.GetDocumentCollectionLink(db, collection),
-                                          document_definition)
-
-        content_stream = ReadableStream()
-        options = {'slug': 'sample attachment',
-                   'contentType': 'application/text'}
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        # self.__AssertHTTPFailureWithStatus(
-        #    StatusCodes.BAD_REQUEST,
-        #    client.CreateAttachmentAndUploadMedia,
-        #    self.GetDocumentLink(db, collection, document),
-        #    content_stream,
-        #    options)
-
-        content_stream = ReadableStream()
-        # Setting the partitionKey as part of options is required for attachment CRUD
-        options = {'slug': 'sample attachment' + str(uuid.uuid4()),
-                   'contentType': 'application/text',
-                   'partitionKey': document_definition.get('id')}
-
-        # create attachment and upload media
-        attachment = self.client.CreateAttachmentAndUploadMedia(
-            self.GetDocumentLink(db, collection, document), content_stream, options)
-
-        self.assertEqual(attachment['id'], options['slug'])
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        try:
-            list(self.client.ReadAttachments(
-                self.GetDocumentLink(db, collection, document)))
-        except Exception:
-            pass
-
-        # Read attachment feed requires partitionKey to be passed
-        options = {'partitionKey': document_definition.get('id')}
-        attachmentlist = list(self.client.ReadAttachments(
-            self.GetDocumentLink(db, collection, document), options))
-        self.assertEqual(1, len(attachmentlist))
-
-        content_stream = ReadableStream()
-        options = {'slug': 'new attachment' + str(uuid.uuid4()),
-                   'contentType': 'application/text'}
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.UpsertAttachmentAndUploadMedia,
-            self.GetDocumentLink(db, collection, document),
-            content_stream,
-            options)
-
-        content_stream = ReadableStream()
-        # Setting the partitionKey as part of options is required for attachment CRUD
-        options = {'slug': 'new attachment' + str(uuid.uuid4()),
-                   'contentType': 'application/text',
-                   'partitionKey': document_definition.get('id')}
-
-        # upsert attachment and upload media
-        attachment = self.client.UpsertAttachmentAndUploadMedia(
-            self.GetDocumentLink(db, collection, document), content_stream, options)
-
-        self.assertEqual(attachment['id'], options['slug'])
-
-        options = {'partitionKey': document_definition.get('id')}
-        attachmentlist = list(self.client.ReadAttachments(
-            self.GetDocumentLink(db, collection, document), options))
-        self.assertEqual(2, len(attachmentlist))
-
-        # create attachment with media link
-        dynamic_attachment = {
-            'id': 'dynamic attachment' + str(uuid.uuid4()),
-            'media': 'http://xstore.',
-            'MediaType': 'Book',
-            'Author': 'My Book Author',
-            'Title': 'My Book Title',
-            'contentType': 'application/text'
-        }
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateAttachment,
-            self.GetDocumentLink(db, collection, document),
-            dynamic_attachment)
-
-        # create dynamic attachment
-        options = {'partitionKey': document_definition.get('id')}
-        attachment = self.client.CreateAttachment(self.GetDocumentLink(db, collection, document),
-                                                  dynamic_attachment, options)
-
-        self.assertEqual(attachment['MediaType'], dynamic_attachment['MediaType'])
-        self.assertEqual(attachment['Author'], dynamic_attachment['Author'])
-
-        # Read Attachment feed
-        options = {'partitionKey': document_definition.get('id')}
-        attachmentlist = list(self.client.ReadAttachments(
-            self.GetDocumentLink(db, collection, document), options))
-        self.assertEqual(3, len(attachmentlist))
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        # self.__AssertHTTPFailureWithStatus(
-        #    StatusCodes.BAD_REQUEST,
-        #    client.ReadAttachment,
-        #    self.GetAttachmentLink(db, collection, document, attachment))
-
-        # Read attachment
-        options = {'partitionKey': document_definition.get('id')}
-        read_attachment = self.client.ReadAttachment(self.GetAttachmentLink(db, collection, document, attachment),
-                                                     options)
-
-        self.assertEqual(attachment['id'], read_attachment['id'])
-
-        attachment['Author'] = 'new author'
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.ReplaceAttachment,
-            self.GetAttachmentLink(db, collection, document, attachment),
-            attachment)
-
-        # replace the attachment
-        options = {'partitionKey': document_definition.get('id')}
-        replaced_attachment = self.client.ReplaceAttachment(
-            self.GetAttachmentLink(db, collection, document, attachment), attachment, options)
-
-        self.assertEqual(attachment['id'], replaced_attachment['id'])
-        self.assertEqual(attachment['Author'], replaced_attachment['Author'])
-
-        attachment['id'] = 'new dynamic attachment' + str(uuid.uuid4())
-        attachment['Title'] = 'new title'
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.UpsertAttachment,
-            self.GetDocumentLink(db, collection, document),
-            attachment)
-
-        # upsert attachment(create scenario)
-        options = {'partitionKey': document_definition.get('id')}
-        upserted_attachment = self.client.UpsertAttachment(self.GetDocumentLink(db, collection, document), attachment,
-                                                           options)
-
-        self.assertEqual(attachment['id'], upserted_attachment['id'])
-        self.assertEqual(attachment['Title'], upserted_attachment['Title'])
-
-        # query attachments will fail without passing in the partitionKey value
-        try:
-            list(self.client.QueryAttachments(
-                self.GetDocumentLink(db, collection, document),
-                {
-                    'query': 'SELECT * FROM root r WHERE r.MediaType=\'' + dynamic_attachment.get('MediaType') + '\''
-                }))
-        except Exception:
-            pass
-
-        # query attachments by providing the partitionKey value
-        options = {'partitionKey': document_definition.get('id')}
-        attachmentlist = list(self.client.QueryAttachments(
-            self.GetDocumentLink(db, collection, document),
-            {
-                'query': 'SELECT * FROM root r WHERE r.MediaType=\'' + dynamic_attachment.get('MediaType') + '\''
-            }, options))
-
-        self.assertEqual(2, len(attachmentlist))
-
-        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.DeleteAttachment,
-            self.GetAttachmentLink(db, collection, document, attachment))
-
-        # deleting attachment
-        options = {'partitionKey': document_definition.get('id')}
-        self.client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, attachment), options)
-        self.client.DeleteContainer(collection['_self'])
-
+    
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databseForTest
 
@@ -927,6 +641,7 @@ class CRUDTests(unittest.TestCase):
             self.GetDocumentCollectionLink(created_db, created_collection),
             document_definition)
 
+    
     def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databseForTest
 
@@ -1722,348 +1437,6 @@ class CRUDTests(unittest.TestCase):
             "SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000) "))
         self.assertEqual(1, len(results))
         self.assertEqual('loc1', results[0]['id'])
-
-    def test_attachment_crud_self_link(self):
-        self._test_attachment_crud(False)
-
-    def test_attachment_crud_name_based(self):
-        self._test_attachment_crud(True)
-
-    def _test_attachment_crud(self, is_name_based):
-        class ReadableStream(object):
-            """Customized file-like stream.
-            """
-
-            def __init__(self, chunks=['first chunk ', 'second chunk']):
-                """Initialization.
-
-                :Parameters:
-                    - `chunks`: list
-
-                """
-                if six.PY2:
-                    self._chunks = list(chunks)
-                else:
-                    # python3: convert to bytes
-                    self._chunks = [chunk.encode() for chunk in chunks]
-
-            def read(self, n=-1):
-                """Simulates the read method in a file stream.
-
-                :Parameters:
-                    - `n`: int
-
-                :Returns:
-                    str or bytes
-
-                """
-                if self._chunks:
-                    return self._chunks.pop(0)
-                else:
-                    return ''
-
-            def __len__(self):
-                """To make len(ReadableStream) work.
-                """
-                return sum([len(chunk) for chunk in self._chunks])
-
-        # Should do attachment CRUD operations successfully
-        self.client.connection_policy.MediaReadMode = documents.MediaReadMode.Buffered
-
-        # create database
-        db = self.databseForTest
-        # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-        # create document
-        document = self.client.CreateItem(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                          {'id': 'sample document',
-                                           'spam': 'eggs',
-                                           'key': 'value'})
-        # list all attachments
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        initial_count = len(attachments)
-        valid_media_options = {'slug': 'attachment name',
-                               'contentType': 'application/text'}
-        invalid_media_options = {'slug': 'attachment name',
-                                 'contentType': 'junt/test'}
-        # create attachment with invalid content-type
-        content_stream = ReadableStream()
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateAttachmentAndUploadMedia,
-            self.GetDocumentLink(db, collection, document, is_name_based),
-            content_stream,
-            invalid_media_options)
-        content_stream = ReadableStream()
-        # create streamed attachment with valid content-type
-        valid_attachment = self.client.CreateAttachmentAndUploadMedia(
-            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
-        self.assertEqual(valid_attachment['id'],
-                         'attachment name',
-                         'id of created attachment should be the'
-                         ' same as the one in the request')
-        content_stream = ReadableStream()
-        # create colliding attachment
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.CONFLICT,
-            self.client.CreateAttachmentAndUploadMedia,
-            self.GetDocumentLink(db, collection, document, is_name_based),
-            content_stream,
-            valid_media_options)
-
-        content_stream = ReadableStream()
-        # create attachment with media link
-        dynamic_attachment = {
-            'id': 'dynamic attachment',
-            'media': 'http://xstore.',
-            'MediaType': 'Book',
-            'Author': 'My Book Author',
-            'Title': 'My Book Title',
-            'contentType': 'application/text'
-        }
-        attachment = self.client.CreateAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
-                                                  dynamic_attachment)
-        self.assertEqual(attachment['MediaType'],
-                         'Book',
-                         'invalid media type')
-        self.assertEqual(attachment['Author'],
-                         'My Book Author',
-                         'invalid property value')
-        # list all attachments
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count + 2,
-                         'number of attachments should\'ve increased by 2')
-        attachment['Author'] = 'new author'
-        # replace the attachment
-        self.client.ReplaceAttachment(self.GetAttachmentLink(db, collection, document, attachment, is_name_based),
-                                      attachment)
-        self.assertEqual(attachment['MediaType'],
-                         'Book',
-                         'invalid media type')
-        self.assertEqual(attachment['Author'],
-                         'new author',
-                         'invalid property value')
-        # read attachment media
-        media_response = self.client.ReadMedia(valid_attachment['media'])
-        self.assertEqual(media_response,
-                         'first chunk second chunk')
-        content_stream = ReadableStream(['modified first chunk ',
-                                         'modified second chunk'])
-        # update attachment media
-        self.client.UpdateMedia(valid_attachment['media'],
-                                content_stream,
-                                valid_media_options)
-        # read attachment media after update
-        # read media buffered
-        media_response = self.client.ReadMedia(valid_attachment['media'])
-        self.assertEqual(media_response,
-                         'modified first chunk modified second chunk')
-        # read media streamed
-        self.client.connection_policy.MediaReadMode = (
-            documents.MediaReadMode.Streamed)
-        media_response = self.client.ReadMedia(valid_attachment['media'])
-        self.assertEqual(media_response.read(),
-                         b'modified first chunk modified second chunk')
-        # share attachment with a second document
-        document = self.client.CreateItem(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                          {'id': 'document 2'})
-        second_attachment = {
-            'id': valid_attachment['id'],
-            'contentType': valid_attachment['contentType'],
-            'media': valid_attachment['media']}
-        attachment = self.client.CreateAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
-                                                  second_attachment)
-        self.assertEqual(valid_attachment['id'],
-                         attachment['id'],
-                         'id mismatch')
-        self.assertEqual(valid_attachment['media'],
-                         attachment['media'],
-                         'media mismatch')
-        self.assertEqual(valid_attachment['contentType'],
-                         attachment['contentType'],
-                         'contentType mismatch')
-        # deleting attachment
-        self.client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, attachment, is_name_based))
-        # read attachments after deletion
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments), 0)
-
-    # Upsert test for Attachment resource - selflink version
-    def test_attachment_upsert_self_link(self):
-        self._test_attachment_upsert(False)
-
-    # Upsert test for Attachment resource - name based routing version
-    def test_attachment_upsert_name_based(self):
-        self._test_attachment_upsert(True)
-
-    def _test_attachment_upsert(self, is_name_based):
-        class ReadableStream(object):
-            """Customized file-like stream.
-            """
-
-            def __init__(self, chunks=['first chunk ', 'second chunk']):
-                """Initialization.
-
-                :Parameters:
-                    - `chunks`: list
-
-                """
-                if six.PY2:
-                    self._chunks = list(chunks)
-                else:
-                    # python3: convert to bytes
-                    self._chunks = [chunk.encode() for chunk in chunks]
-
-            def read(self, n=-1):
-                """Simulates the read method in a file stream.
-
-                :Parameters:
-                    - `n`: int
-
-                :Returns:
-                    str or bytes
-
-                """
-                if self._chunks:
-                    return self._chunks.pop(0)
-                else:
-                    return ''
-
-            def __len__(self):
-                """To make len(ReadableStream) work.
-                """
-                return sum([len(chunk) for chunk in self._chunks])
-
-        # create database
-        db = self.databseForTest
-
-        # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-
-        # create document
-        document = self.client.CreateItem(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                          {'id': 'sample document' + str(uuid.uuid4()),
-                                           'spam': 'eggs',
-                                           'key': 'value'})
-
-        # list all attachments and check count
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        initial_count = len(attachments)
-
-        valid_media_options = {'slug': 'attachment name',
-                               'contentType': 'application/text'}
-        content_stream = ReadableStream()
-
-        # create streamed attachment with valid content-type using Upsert API
-        valid_attachment = self.client.UpsertAttachmentAndUploadMedia(
-            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
-
-        # verify id property
-        self.assertEqual(valid_attachment['id'],
-                         'attachment name',
-                         'id of created attachment should be the same')
-
-        valid_media_options = {'slug': 'new attachment name',
-                               'contentType': 'application/text'}
-        content_stream = ReadableStream()
-
-        # Upsert should create new attachment since since id is different
-        new_valid_attachment = self.client.UpsertAttachmentAndUploadMedia(
-            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
-
-        # verify id property
-        self.assertEqual(new_valid_attachment['id'],
-                         'new attachment name',
-                         'id of new attachment should be the same')
-
-        # read all attachments and verify updated count
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count + 2,
-                         'number of attachments should have increased by 2')
-
-        # create attachment with media link
-        attachment_definition = {
-            'id': 'dynamic attachment',
-            'media': 'http://xstore.',
-            'MediaType': 'Book',
-            'Author': 'My Book Author',
-            'Title': 'My Book Title',
-            'contentType': 'application/text'
-        }
-
-        # create dynamic attachment using Upsert API
-        dynamic_attachment = self.client.UpsertAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
-                                                          attachment_definition)
-
-        # verify id property
-        self.assertEqual(dynamic_attachment['id'],
-                         attachment_definition['id'],
-                         'id of attachment should be the same')
-
-        # read all attachments and verify updated count
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count + 3,
-                         'number of attachments should have increased by 3')
-
-        dynamic_attachment['Author'] = 'new author'
-
-        # replace the attachment using Upsert API
-        upserted_attachment = self.client.UpsertAttachment(
-            self.GetDocumentLink(db, collection, document, is_name_based), dynamic_attachment)
-
-        # verify id property remains same
-        self.assertEqual(dynamic_attachment['id'],
-                         upserted_attachment['id'],
-                         'id should stay the same')
-
-        # verify author property gets updated
-        self.assertEqual(upserted_attachment['Author'],
-                         dynamic_attachment['Author'],
-                         'invalid property value')
-
-        # read all attachments and verify count doesn't increases again
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count + 3,
-                         'number of attachments should remain same')
-
-        dynamic_attachment['id'] = 'new dynamic attachment'
-
-        # Upsert should create new attachment since id is different
-        new_attachment = self.client.UpsertAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
-                                                      dynamic_attachment)
-
-        # verify id property remains same
-        self.assertEqual(dynamic_attachment['id'],
-                         new_attachment['id'],
-                         'id should be same')
-
-        # read all attachments and verify count increases
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count + 4,
-                         'number of attachments should have increased')
-
-        # deleting attachments
-        self.client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, valid_attachment, is_name_based))
-        self.client.DeleteAttachment(
-            self.GetAttachmentLink(db, collection, document, new_valid_attachment, is_name_based))
-        self.client.DeleteAttachment(
-            self.GetAttachmentLink(db, collection, document, upserted_attachment, is_name_based))
-        self.client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, new_attachment, is_name_based))
-
-        # wait to ensure deletes are propagated for multimaster enabled accounts
-        if self.configs.IS_MULTIMASTER_ENABLED:
-            time.sleep(2)
-
-        # read all attachments and verify count remains same
-        attachments = list(self.client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
-        self.assertEqual(len(attachments),
-                         initial_count,
-                         'number of attachments should remain the same')
 
     def test_user_crud_self_link(self):
         self._test_user_crud(False)
