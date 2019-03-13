@@ -36,7 +36,7 @@ class Volume(Model):
      file path for the volume. Used when creating mount targets
     :type creation_token: str
     :param service_level: Required. serviceLevel. The service level of the
-     file system. Possible values include: 'Standard', 'Premium', 'Extreme'.
+     file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
      Default value: "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
@@ -44,6 +44,8 @@ class Volume(Model):
      Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
      107374182400 .
     :type usage_threshold: long
+    :param export_policy: Export policy rule
+    :type export_policy: ~azure.mgmt.netapp.models.ExportPolicyRule
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
@@ -73,6 +75,7 @@ class Volume(Model):
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
+        'export_policy': {'key': 'properties.exportPolicy', 'type': 'ExportPolicyRule'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
@@ -88,5 +91,6 @@ class Volume(Model):
         self.creation_token = kwargs.get('creation_token', None)
         self.service_level = kwargs.get('service_level', "Premium")
         self.usage_threshold = kwargs.get('usage_threshold', 107374182400)
+        self.export_policy = kwargs.get('export_policy', None)
         self.provisioning_state = None
         self.subnet_id = kwargs.get('subnet_id', None)

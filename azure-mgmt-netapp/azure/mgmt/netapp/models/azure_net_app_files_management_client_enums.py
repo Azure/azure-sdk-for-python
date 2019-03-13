@@ -16,4 +16,4 @@ class ServiceLevel(str, Enum):
 
     standard = "Standard"  #: Standard service level
     premium = "Premium"  #: Premium service level
-    extreme = "Extreme"  #: Extreme service level
+    ultra = "Ultra"  #: Ultra service level
