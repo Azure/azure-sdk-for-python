@@ -55,8 +55,8 @@ class RetryPolicy(HTTPPolicy):
     BACKOFF_MAX = 120
 
     def __init__(self, **kwargs):
-        status_codes = kwargs.pop('retry_on_status_codes', [])
-        self.retry_on_status_codes = set(status_codes + self.RETRY_AFTER_STATUS_CODES)
+        status_codes = kwargs.pop('retry_on_status_codes', set())
+        self.retry_on_status_codes = status_codes.union(self.RETRY_AFTER_STATUS_CODES)
 
         self.total_retries = kwargs.pop('retry_count_total', 10)
         self.connect_retries = kwargs.pop('retry_count_connect', 3)

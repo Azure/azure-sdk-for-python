@@ -73,7 +73,7 @@ class _TransportRunner(HTTPPolicy):
 
     def send(self, request, **kwargs):
         return PipelineResponse(
-            request,
+            request.http_request,
             self._sender.send(request.http_request, **kwargs)
         )
 
@@ -93,7 +93,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         for policy in (policies or []):
             if isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
-            else:
+            elif policy:
                 self._impl_policies.append(policy)
         for index in range(len(self._impl_policies)-1):
             self._impl_policies[index].next = self._impl_policies[index+1]
