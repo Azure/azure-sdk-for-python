@@ -365,7 +365,7 @@ class Database(object):
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (Union[str, Container], PartitionKey, str, int, str, bool, str, Dict[str, Any], AccessCondition, bool) -> Container
+        # type: (Union[str, Container], PartitionKey, Dict[str, Any], int, Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.

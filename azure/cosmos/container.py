@@ -181,9 +181,10 @@ class Container:
         max_item_count=None,
         session_token=None,
         initial_headers=None,
+        enable_scan_in_query=None,
         populate_query_metrics=None
     ):
-        # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool) -> QueryResultIterator
+        # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool, bool) -> QueryResultIterator
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -233,6 +234,10 @@ class Container:
             request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if partition_key is not None:
+            request_options["partitionKey"] = partition_key
+        if enable_scan_in_query is not None:
+            request_options["enableScanInQuery"] = enable_scan_in_query
 
         items = self.client_connection.QueryItems(
             database_or_Container_link=self.collection_link,
@@ -348,6 +353,7 @@ class Container:
 
         """
         request_options = {}  # type: Dict[str, Any]
+
         request_options["disableIdGeneration"] = True
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage

@@ -121,6 +121,7 @@ class _test_config(object):
         # type: (CosmosClient, int, boolean) -> Container
         database = cls.create_database_if_not_exist(client)
 
+        partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
         if throughput == cls.THROUGHPUT_FOR_1_PARTITION:
             collection_id = cls.TEST_COLLECTION_SINGLE_PARTITION_ID
         else:

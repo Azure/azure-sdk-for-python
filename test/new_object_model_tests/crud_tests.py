@@ -443,13 +443,13 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(documentlist))
 
         # query document by providing the partitionKey value
-        options = {'partitionKey': replaced_document.get('id')}
         documentlist = list(created_collection.query_items(
             query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',
-            enable_cross_partition_query=True
+            partition_key=replaced_document.get('id')
         ))
 
         self.assertEqual(1, len(documentlist))
+
 
     '''
     #TODO: User class and Permission class implementations
@@ -551,7 +551,7 @@ class CRUDTests(unittest.TestCase):
 
     #TODO: Execute sproc implementation
     def test_partitioned_collection_execute_stored_procedure(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
 
@@ -582,9 +582,9 @@ class CRUDTests(unittest.TestCase):
             self.GetStoredProcedureLink(created_db, created_collection, created_sproc),
             None,
             {'partitionKey': 3})
-    
+    '''
     def test_partitioned_collection_partition_key_value_types(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
 
@@ -593,57 +593,46 @@ class CRUDTests(unittest.TestCase):
                                'spam': 'eggs'}
 
         # create document with partitionKey set as None here
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'spam': 'eggs'}
 
         # create document with partitionKey set as Undefined here
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': True,
                                'spam': 'eggs'}
 
         # create document with bool partitionKey
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 'value',
                                'spam': 'eggs'}
 
         # create document with string partitionKey
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 100,
                                'spam': 'eggs'}
 
         # create document with int partitionKey
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': 10.50,
                                'spam': 'eggs'}
 
         # create document with float partitionKey
-        self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition)
+        created_collection.create_item(body=document_definition)
 
-    
+    '''
+    TODO: Conflict type
     def test_partitioned_collection_conflict_crud_and_query(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
@@ -716,91 +705,88 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(0, len(conflictlist))
 
-    def test_document_crud_self_link(self):
-        self._test_document_crud(False)
+        #TODO: move to document test with multi partiion custom pk
+        #document_definition = {'name': 'sample document',
+        #                       'spam': 'eggs',
+        #                       'key': 'value'}
+        # Should throw an error because automatic id generation is disabled always.
+        #self.__AssertHTTPFailureWithStatus(
+        #    StatusCodes.BAD_REQUEST,
+        #    created_collection.create_item,
+        #    document_definition
+        #)
 
-    def test_document_crud_name_based(self):
-        self._test_document_crud(True)
-
-    def _test_document_crud(self, is_name_based):
+    '''
+    #TODO: fix on automatic id generation
+    def test_document_crud(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
         # create collection
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read documents
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
-
+        documents = list(created_collection.list_items())
         # create a document
         before_create_documents_count = len(documents)
+
         document_definition = {'name': 'sample document',
                                'spam': 'eggs',
-                               'key': 'value'}
-        # Should throw an error because automatic id generation is disabled.
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateItem,
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            document_definition,
-            {'disableAutomaticIdGeneration': True})
+                               'key': 'value',
+                               'id': str(uuid.uuid4())}
 
-        created_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            document_definition)
-        self.assertEqual(created_document['name'],
+        created_document = created_collection.create_item(body=document_definition)
+        self.assertEqual(created_document.get('name'),
                          document_definition['name'])
-        self.assertTrue(created_document['id'] != None)
+        self.assertEqual(created_document.get('id'),
+                         document_definition['id'])
+
+        # TODO : as above
         # duplicated documents are allowed when 'id' is not provided.
-        duplicated_document = self.client.CreateItem(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            document_definition)
-        self.assertEqual(duplicated_document['name'],
-                         document_definition['name'])
-        self.assert_(duplicated_document['id'])
-        self.assertNotEqual(duplicated_document['id'],
-                            created_document['id'])
+        #duplicated_document = created_collection.create_item(body=document_definition)
+        #self.assertEqual(duplicated_document['name'],
+        #                 document_definition['name'])
+        #self.assert_(duplicated_document['id'])
+        #self.assertNotEqual(duplicated_document['id'],
+        #                    created_document['id'])
+
         # duplicated documents are not allowed when 'id' is provided.
         duplicated_definition_with_id = document_definition.copy()
-        duplicated_definition_with_id['id'] = created_document['id']
         self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,
-                                           self.client.CreateItem,
-                                           self.GetDocumentCollectionLink(created_db, created_collection,
-                                                                          is_name_based),
+                                           created_collection.create_item,
                                            duplicated_definition_with_id)
         # read documents after creation
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
-            before_create_documents_count + 2,
+            before_create_documents_count + 1,
             'create should increase the number of documents')
         # query documents
-        documents = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+        documents = list(created_collection.query_items(
             {
                 'query': 'SELECT * FROM root r WHERE r.name=@name',
                 'parameters': [
                     {'name': '@name', 'value': document_definition['name']}
                 ]
-            }))
-        self.assert_(documents)
-        documents = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+            }, enable_cross_partition_query=True
+        ))
+        self.assertTrue(documents)
+        documents = list(created_collection.query_items(
             {
                 'query': 'SELECT * FROM root r WHERE r.name=@name',
                 'parameters': [
                     {'name': '@name', 'value': document_definition['name']}
-                ]
-            },
-            {'enableScanInQuery': True}))
-        self.assert_(documents)
+                ],
+            }, enable_cross_partition_query=True,
+            enable_scan_in_query=True
+        ))
+        self.assertTrue(documents)
         # replace document.
         created_document['name'] = 'replaced document'
         created_document['spam'] = 'not eggs'
         old_etag = created_document['_etag']
-        replaced_document = self.client.ReplaceItem(
-            self.GetDocumentLink(created_db, created_collection, created_document, is_name_based),
-            created_document)
+        replaced_document = created_collection.replace_item(
+            item=created_document['id'],
+            body=created_document
+        )
         self.assertEqual(replaced_document['name'],
                          'replaced document',
                          'document id property should change')
@@ -817,14 +803,21 @@ class CRUDTests(unittest.TestCase):
 
         # should fail for stale etag
         self.__AssertHTTPFailureWithStatus(
-            StatusCodes.PRECONDITION_FAILED, self.client.ReplaceItem,
-            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based),
-            replaced_document, {'accessCondition': {'type': 'IfMatch', 'condition': old_etag}})
+            StatusCodes.PRECONDITION_FAILED, created_collection.replace_item,
+            replaced_document['id'],
+            replaced_document,
+            None,
+            None,
+            None,
+            {'type': 'IfMatch', 'condition': old_etag},
+        )
 
         # should pass for most recent etag
-        replaced_document_conditional = self.client.ReplaceItem(
-            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based),
-            replaced_document, {'accessCondition': {'type': 'IfMatch', 'condition': replaced_document['_etag']}})
+        replaced_document_conditional = created_collection.replace_item(
+                access_condition={'type': 'IfMatch', 'condition': replaced_document['_etag']},
+                item=replaced_document['id'],
+                body=replaced_document
+            )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
                          'document id property should change')
@@ -835,32 +828,32 @@ class CRUDTests(unittest.TestCase):
                          replaced_document['id'],
                          'document id should stay the same')
         # read document
-        one_document_from_read = self.client.ReadItem(
-            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
+        one_document_from_read = created_collection.get_item(
+            id=replaced_document['id'],
+            partition_key=replaced_document['id']
+        )
         self.assertEqual(replaced_document['id'],
                          one_document_from_read['id'])
         # delete document
-        self.client.DeleteItem(self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
+        created_collection.delete_item(
+            item=replaced_document,
+            partition_key=replaced_document['id']
+        )
         # read documents after deletion
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           self.client.ReadItem,
-                                           self.GetDocumentLink(created_db, created_collection, replaced_document,
-                                                                is_name_based))
-
+                                           created_collection.get_item,
+                                           replaced_document['id'],
+                                           replaced_document['id'])
+    '''
+    TODO: nuke partition resolver tests    
     def test_partitioning(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # Create bunch of collections participating in partitioning
-        collection0 = self.client.CreateContainer(
-            self.GetDatabaseLink(created_db, True),
-            {'id': 'test_partitioning coll_0' + str(uuid.uuid4())})
-        collection1 = self.client.CreateContainer(
-            self.GetDatabaseLink(created_db, True),
-            {'id': 'test_partitioning coll_1' + str(uuid.uuid4())})
-        collection2 = self.client.CreateContainer(
-            self.GetDatabaseLink(created_db, True),
-            {'id': 'test_partitioning coll_2' + str(uuid.uuid4())})
+        collection0 = created_db.create_container('test_partitioning coll_0' + str(uuid.uuid4()))
+        collection1 = created_db.create_container('test_partitioning coll_1' + str(uuid.uuid4()))
+        collection2 = created_db.create_container('test_partitioning coll_2' + str(uuid.uuid4()))
 
         # Register the collection links for partitioning through partition resolver
         collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True),
@@ -983,11 +976,11 @@ class CRUDTests(unittest.TestCase):
         self.client.DeleteContainer(collection0['_self'])
         self.client.DeleteContainer(collection1['_self'])
         self.client.DeleteContainer(collection2['_self'])
-
+    
     # Partitioning test(with paging)
     def test_partition_paging(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # Create bunch of collections participating in partitioning
         collection0 = self.client.CreateContainer(
@@ -1074,9 +1067,9 @@ class CRUDTests(unittest.TestCase):
 
         self.client.DeleteContainer(collection0['_self'])
         self.client.DeleteContainer(collection1['_self'])
-
+    
     def test_hash_partition_resolver(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # Create bunch of collections participating in partitioning
         collection0 = {'id': 'coll_0 ' + str(uuid.uuid4())}
@@ -1162,7 +1155,7 @@ class CRUDTests(unittest.TestCase):
         collection_link = self.GetDocumentCollectionLink(created_db, collection, True)
 
         self.assertTrue(collection_link in read_collection_links)
-
+    '''
     def test_murmur_hash(self):
         str = 'afdgdd'
         bytes = bytearray(str, encoding='utf-8')
@@ -1216,9 +1209,10 @@ class CRUDTests(unittest.TestCase):
         expected_bytes = bytearray(b'\x6E\x6F\x73\x71\x6C')
         self.assertEqual(expected_bytes, actual_bytes)
 
+    '''
     def test_range_partition_resolver(self):
         # create test database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # Create bunch of collections participating in partitioning
         collection0 = {'id': 'coll_0'}
@@ -1282,25 +1276,17 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(collection_links[0] in read_collection_links)
         self.assertTrue(collection_links[1] in read_collection_links)
         self.assertTrue(collection_links[2] in read_collection_links)
+    '''
 
-    # Upsert test for Document resource - selflink version
-    def test_document_upsert_self_link(self):
-        self._test_document_upsert(False)
-
-    # Upsert test for Document resource - name based routing version
-    def test_document_upsert_name_based(self):
-        self._test_document_upsert(True)
-
-    def _test_document_upsert(self, is_name_based):
+    def test_document_upsert(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # create collection
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
 
         # read documents and check count
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         before_create_documents_count = len(documents)
 
         # create document definition
@@ -1310,17 +1296,14 @@ class CRUDTests(unittest.TestCase):
                                'key': 'value'}
 
         # create document using Upsert API
-        created_document = self.client.UpsertItem(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            document_definition)
+        created_document = created_collection.upsert_item(body=document_definition)
 
         # verify id property
         self.assertEqual(created_document['id'],
                          document_definition['id'])
 
         # read documents after creation and verify updated count
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -1331,14 +1314,12 @@ class CRUDTests(unittest.TestCase):
         created_document['spam'] = 'not eggs'
 
         # should replace document since it already exists
-        upserted_document = self.client.UpsertItem(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            created_document)
+        upserted_document = created_collection.upsert_item(body=created_document)
 
         # verify the changed properties
         self.assertEqual(upserted_document['name'],
                          created_document['name'],
-                         'document id property should change')
+                         'document name property should change')
         self.assertEqual(upserted_document['spam'],
                          created_document['spam'],
                          'property should have changed')
@@ -1349,8 +1330,7 @@ class CRUDTests(unittest.TestCase):
                          'document id should stay the same')
 
         # read documents after upsert and verify count doesn't increases again
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -1359,9 +1339,7 @@ class CRUDTests(unittest.TestCase):
         created_document['id'] = 'new id'
 
         # Upsert should create new document since the id is different
-        new_document = self.client.UpsertItem(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
-            created_document)
+        new_document = created_collection.upsert_item(body=created_document)
 
         # verify id property
         self.assertEqual(created_document['id'],
@@ -1369,75 +1347,74 @@ class CRUDTests(unittest.TestCase):
                          'document id should be same')
 
         # read documents after upsert and verify count increases
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 2,
             'upsert should increase the number of documents')
 
         # delete documents
-        self.client.DeleteItem(self.GetDocumentLink(created_db, created_collection, upserted_document, is_name_based))
-        self.client.DeleteItem(self.GetDocumentLink(created_db, created_collection, new_document, is_name_based))
+        created_collection.delete_item(item=upserted_document, partition_key=upserted_document['id'])
+        created_collection.delete_item(item=new_document, partition_key=new_document['id'])
 
         # read documents after delete and verify count is same as original
-        documents = list(self.client.ReadItems(
-            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count,
             'number of documents should remain same')
 
-    def test_spatial_index_self_link(self):
-        self._test_spatial_index(False)
-
-    def test_spatial_index_name_based(self):
-        self._test_spatial_index(True)
-
-    def _test_spatial_index(self, is_name_based):
-        db = self.databseForTest
+    def test_spatial_index(self):
+        db = self.databaseForTest
         # partial policy specified
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {
-                'id': 'collection with spatial index ' + str(uuid.uuid4()),
-                'indexingPolicy': {
-                    'includedPaths': [
-                        {
-                            'path': '/"Location"/?',
-                            'indexes': [
+        collection = db.create_container(
+            id='collection with spatial index ' + str(uuid.uuid4()),
+            indexing_policy={
+                            'includedPaths': [
                                 {
-                                    'kind': 'Spatial',
-                                    'dataType': 'Point'
+                                    'path': '/"Location"/?',
+                                    'indexes': [
+                                        {
+                                        'kind': 'Spatial',
+                                        'dataType': 'Point'
+                                        }
+                                    ]
+                                },
+                                {
+                                'path': '/'
                                 }
                             ]
                         },
-                        {
-                            'path': '/'
-                        }
-                    ]
+            partition_key=PartitionKey(path='/id', kind='Hash')
+            )
+        collection.create_item(
+            body={
+                 'id': 'loc1',
+                 'Location': {
+                    'type': 'Point',
+                    'coordinates': [20.0, 20.0]
+                 }
+            }
+        )
+        collection.create_item(
+            body={
+                'id': 'loc2',
+                'Location': {
+                    'type': 'Point',
+                    'coordinates': [100.0, 100.0]
                 }
-            })
-        self.client.CreateItem(self.GetDocumentCollectionLink(db, collection, is_name_based), {
-            'id': 'loc1',
-            'Location': {
-                'type': 'Point',
-                'coordinates': [20.0, 20.0]
             }
-        })
-        self.client.CreateItem(self.GetDocumentCollectionLink(db, collection, is_name_based), {
-            'id': 'loc2',
-            'Location': {
-                'type': 'Point',
-                'coordinates': [100.0, 100.0]
-            }
-        })
-        results = list(self.client.QueryItems(
-            self.GetDocumentCollectionLink(db, collection, is_name_based),
-            "SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000) "))
+        )
+        results = list(collection.query_items(
+            query="SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)",
+            enable_cross_partition_query=True
+        ))
         self.assertEqual(1, len(results))
         self.assertEqual('loc1', results[0]['id'])
 
+        db.delete_container(container=collection)
+
+    '''
     def test_user_crud_self_link(self):
         self._test_user_crud(False)
 
@@ -1447,7 +1424,7 @@ class CRUDTests(unittest.TestCase):
     def _test_user_crud(self, is_name_based):
         # Should do User CRUD operations successfully.
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # list users
         users = list(self.client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
         before_create_count = len(users)
@@ -1500,7 +1477,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_user_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # read users and check count
         users = list(self.client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
@@ -1558,7 +1535,7 @@ class CRUDTests(unittest.TestCase):
     def _test_permission_crud(self, is_name_based):
         # Should do Permission CRUD operations successfully
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create user
         user = self.client.CreateUser(self.GetDatabaseLink(db, is_name_based), {'id': 'new user' + str(uuid.uuid4())})
         # list permissions
@@ -1620,7 +1597,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_permission_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # create user
         user = self.client.CreateUser(self.GetDatabaseLink(db, is_name_based), {'id': 'new user' + str(uuid.uuid4())})
@@ -1710,7 +1687,7 @@ class CRUDTests(unittest.TestCase):
 
             """
             # create database
-            db = self.databseForTest
+            db = self.databaseForTest
             # create collection1
             collection1 = client.CreateContainer(
                 db['_self'], {'id': 'test_authorization ' + str(uuid.uuid4())})
@@ -1851,7 +1828,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_trigger_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read triggers
@@ -1927,7 +1904,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_trigger_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2014,7 +1991,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_udf_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read udfs
@@ -2080,7 +2057,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_udf_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2166,7 +2143,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_sproc_crud(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         # read sprocs
@@ -2239,7 +2216,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_sproc_upsert(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
@@ -2318,7 +2295,7 @@ class CRUDTests(unittest.TestCase):
                          'delete should keep the number of sprocs same')
 
     def test_scipt_logging_execute_stored_procedure(self):
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
 
@@ -2361,52 +2338,54 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(result, 'Success!')
         self.assertFalse(HttpHeaders.ScriptLogResults in self.client.last_response_headers)
+    '''
 
-    def test_collection_indexing_policy_self_link(self):
-        self._test_collection_indexing_policy(False)
-
-    def test_collection_indexing_policy_name_based(self):
-        self._test_collection_indexing_policy(True)
-
-    def _test_collection_indexing_policy(self, is_name_based):
+    def test_collection_indexing_policy(self):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {'id': 'test_collection_indexing_policy default policy' + str(uuid.uuid4())})
-        self.assertEqual(collection['indexingPolicy']['indexingMode'],
+        collection = db.create_container(
+            id='test_collection_indexing_policy default policy' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+
+        self.assertEqual(collection.properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'default indexing mode should be consistent')
-        lazy_collection_definition = {
-            'id': 'test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
-            'indexingPolicy': {
+
+        db.delete_container(container=collection)
+
+        lazy_collection = db.create_container(
+            id='test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
+            indexing_policy={
                 'indexingMode': documents.IndexingMode.Lazy
-            }
-        }
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(db, collection, is_name_based))
-        lazy_collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            lazy_collection_definition)
-        self.assertEqual(lazy_collection['indexingPolicy']['indexingMode'],
+            },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+
+        self.assertEqual(lazy_collection.properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Lazy,
                          'indexing mode should be lazy')
 
-        consistent_collection_definition = {
-            'id': 'test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
-            'indexingPolicy': {
+        db.delete_container(container=lazy_collection)
+
+        consistent_collection = db.create_container(
+            id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
+            indexing_policy={
                 'indexingMode': documents.IndexingMode.Consistent
-            }
-        }
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(db, lazy_collection, is_name_based))
-        consistent_collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based), consistent_collection_definition)
-        self.assertEqual(collection['indexingPolicy']['indexingMode'],
+            },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+
+        self.assertEqual(consistent_collection.properties['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'indexing mode should be consistent')
-        collection_definition = {
-            'id': 'CollectionWithIndexingPolicy',
-            'indexingPolicy': {
+
+        db.delete_container(container=consistent_collection)
+
+        collection_with_indexing_policy = db.create_container(
+            id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
+            indexing_policy={
                 'automatic': True,
                 'indexingMode': documents.IndexingMode.Lazy,
                 'includedPaths': [
@@ -2426,81 +2405,69 @@ class CRUDTests(unittest.TestCase):
                         'path': '/"systemMetadata"/*'
                     }
                 ]
-            }
-        }
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(db, consistent_collection, is_name_based))
-        collection_with_indexing_policy = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based),
-                                                                      collection_definition)
+            },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+
         self.assertEqual(1,
-                         len(collection_with_indexing_policy['indexingPolicy']['includedPaths']),
+                         len(collection_with_indexing_policy.properties['indexingPolicy']['includedPaths']),
                          'Unexpected includedPaths length')
         self.assertEqual(2,
-                         len(collection_with_indexing_policy['indexingPolicy']['excludedPaths']),
+                         len(collection_with_indexing_policy.properties['indexingPolicy']['excludedPaths']),
                          'Unexpected excluded path count')
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(db, collection_with_indexing_policy, is_name_based))
+        db.delete_container(container=collection_with_indexing_policy)
 
-    def test_create_default_indexing_policy_self_link(self):
-        self._test_create_default_indexing_policy(False)
-
-    def test_create_default_indexing_policy_name_based(self):
-        self._test_create_default_indexing_policy(True)
-
-    def _test_create_default_indexing_policy(self, is_name_based):
+    def test_create_default_indexing_policy(self):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
 
         # no indexing policy specified
-        collection = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based),
-                                                 {
-                                                     'id': 'test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(
-                                                         uuid.uuid4())})
-        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
-        self.client.DeleteContainer(collection['_self'])
+        collection = db.create_container(
+            id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        self._check_default_indexing_policy_paths(collection.properties['indexingPolicy'])
+        db.delete_container(container=collection)
 
         # partial policy specified
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {
-                'id': 'test_create_default_indexing_policy TestCreateDefaultPolicy02' + str(uuid.uuid4()),
-                'indexingPolicy': {
+        collection = db.create_container(
+            id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
+            indexing_policy={
                     'indexingMode': documents.IndexingMode.Lazy, 'automatic': True
-                }
-            })
-        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
-        self.client.DeleteContainer(collection['_self'])
+                },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        self._check_default_indexing_policy_paths(collection.properties['indexingPolicy'])
+        db.delete_container(container=collection)
 
         # default policy
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {
-                'id': 'test_create_default_indexing_policy TestCreateDefaultPolicy03' + str(uuid.uuid4()),
-                'indexingPolicy': {}
-            })
-        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
-        self.client.DeleteContainer(collection['_self'])
+        collection = db.create_container(
+            id='test_create_default_indexing_policy TestCreateDefaultPolicy03' + str(uuid.uuid4()),
+            indexing_policy={},
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        self._check_default_indexing_policy_paths(collection.properties['indexingPolicy'])
+        db.delete_container(container=collection)
 
         # missing indexes
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {
-                'id': 'test_create_default_indexing_policy TestCreateDefaultPolicy04' + str(uuid.uuid4()),
-                'indexingPolicy': {
+        collection = db.create_container(
+            id='test_create_default_indexing_policy TestCreateDefaultPolicy04' + str(uuid.uuid4()),
+            indexing_policy={
                     'includedPaths': [
                         {
                             'path': '/*'
                         }
                     ]
-                }
-            })
-        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
-        self.client.DeleteContainer(collection['_self'])
+                },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        self._check_default_indexing_policy_paths(collection.properties['indexingPolicy'])
+        db.delete_container(container=collection)
 
         # missing precision
-        collection = self.client.CreateContainer(
-            self.GetDatabaseLink(db, is_name_based),
-            {
-                'id': 'test_create_default_indexing_policy TestCreateDefaultPolicy05' + str(uuid.uuid4()),
-                'indexingPolicy': {
+        collection = db.create_container(
+            id='test_create_default_indexing_policy TestCreateDefaultPolicy05' + str(uuid.uuid4()),
+            indexing_policy={
                     'includedPaths': [
                         {
                             'path': '/*',
@@ -2516,10 +2483,11 @@ class CRUDTests(unittest.TestCase):
                             ]
                         }
                     ]
-                }
-            })
-        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
-        self.client.DeleteContainer(collection['_self'])
+                },
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        self._check_default_indexing_policy_paths(collection.properties['indexingPolicy'])
+        db.delete_container(container=collection)
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -2544,12 +2512,12 @@ class CRUDTests(unittest.TestCase):
         connection_policy.RequestTimeout = 1
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
-                                                            {'masterKey': CRUDTests.masterKey},
-                                                            connection_policy)
+            cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, "Session", connection_policy)
 
+    '''
+    TODO : fix on list_items and query return type
     def test_query_iterable_functionality(self):
-        def __CreateResources(client):
+        def __create_resources(client):
             """Creates resources for this test.
 
             :Parameters:
@@ -2559,17 +2527,10 @@ class CRUDTests(unittest.TestCase):
                 dict
 
             """
-            db = self.databseForTest
             collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-            doc1 = client.CreateItem(
-                collection['_self'],
-                {'id': 'doc1', 'prop1': 'value1'})
-            doc2 = client.CreateItem(
-                collection['_self'],
-                {'id': 'doc2', 'prop1': 'value2'})
-            doc3 = client.CreateItem(
-                collection['_self'],
-                {'id': 'doc3', 'prop1': 'value3'})
+            doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
+            doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
+            doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
             resources = {
                 'coll': collection,
                 'doc1': doc1,
@@ -2579,9 +2540,8 @@ class CRUDTests(unittest.TestCase):
             return resources
 
         # Validate QueryIterable by converting it to a list.
-        resources = __CreateResources(self.client)
-        results = self.client.ReadItems(resources['coll']['_self'],
-                                        {'maxItemCount': 2})
+        resources = __create_resources(self.client)
+        results = resources['coll'].list_items(max_item_count=2)
         docs = list(iter(results))
         self.assertEqual(3,
                          len(docs),
@@ -2592,6 +2552,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(resources['doc3']['id'], docs[2]['id'])
 
         # Validate QueryIterable iterator with 'for'.
+        results = resources['coll'].list_items(max_item_count=2)
         counter = 0
         # test QueryIterable with 'for'.
         for doc in iter(results):
@@ -2611,8 +2572,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(counter, 3)
 
         # Get query results page by page.
-        results = self.client.ReadItems(resources['coll']['_self'],
-                                        {'maxItemCount': 2})
+        results = resources['coll'].list_items(max_item_count=2)
         first_block = results.fetch_next_block()
         self.assertEqual(2,
                          len(first_block),
@@ -2718,7 +2678,7 @@ class CRUDTests(unittest.TestCase):
                         'property {property} should match'.format(property=property))
 
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collections
         collection1 = self.client.CreateContainer(
             self.GetDatabaseLink(db, is_name_based), {'id': 'test_trigger_functionality 1 ' + str(uuid.uuid4())})
@@ -2785,7 +2745,7 @@ class CRUDTests(unittest.TestCase):
 
     def _test_stored_procedure_functionality(self, is_name_based):
         # create database
-        db = self.databseForTest
+        db = self.databaseForTest
         # create collection
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
 
@@ -2853,7 +2813,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_offer_read_and_query(self):
         # Create database.
-        db = self.databseForTest
+        db = self.databaseForTest
 
         offers = list(self.client.ReadOffers())
         initial_count = len(offers)
@@ -2907,7 +2867,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_offer_replace(self):
         # Create database.
-        db = self.databseForTest
+        db = self.databaseForTest
         # Create collection.
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
         offers = self.GetCollectionOffers(self.client, collection['_rid'])
@@ -2948,7 +2908,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_collection_with_offer_type(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # create a collection
         offers = list(self.client.ReadOffers())
@@ -2972,239 +2932,170 @@ class CRUDTests(unittest.TestCase):
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), 'S2')
         self.client.DeleteContainer(collection['_self'])
 
+
+    '''
     def test_database_account_functionality(self):
         # Validate database account functionality.
-        database_account = self.client.GetDatabaseAccount()
+        database_account = self.client.get_database_account()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
         if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.last_response_headers):
+                self.client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.MaxMediaStorageUsageInMB,
-                self.client.last_response_headers[
+                self.client.client_connection.last_response_headers[
                     HttpHeaders.MaxMediaStorageUsageInMB])
         if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.last_response_headers):
+                self.client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.CurrentMediaStorageUsageInMB,
-                self.client.last_response_headers[
-                    HttpHeaders.
-                        CurrentMediaStorageUsageInMB])
-        self.assertTrue(
-            database_account.ConsistencyPolicy['defaultConsistencyLevel']
-            != None)
+                self.client.client_connection.last_response_headers[
+                    HttpHeaders.CurrentMediaStorageUsageInMB])
+        self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
-    def test_index_progress_headers_self_link(self):
-        self._test_index_progress_headers(False)
+    #TODO: fix tests
+    def test_index_progress_headers(self):
+        created_db = self.databaseForTest
+        consistent_coll = created_db.create_container(
+            id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id", kind='Hash')
+        )
+        created_db.get_container(container=consistent_coll)
+        self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-    def test_index_progress_headers_name_based(self):
-        self._test_index_progress_headers(True)
+        lazy_coll = created_db.create_container(
+            id='test_index_progress_headers lazy_coll ' + str(uuid.uuid4()),
+            indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
+            partition_key=PartitionKey(path="/id", kind='Hash')
+        )
+        created_db.get_container(container=lazy_coll)
+        self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-    def _test_index_progress_headers(self, is_name_based):
-        created_db = self.databseForTest
-        consistent_coll = self.client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based), {
-            'id': 'test_index_progress_headers consistent_coll ' + str(uuid.uuid4())})
-        self.client.ReadContainer(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
-        self.assertFalse(HttpHeaders.LazyIndexingProgress in self.client.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in self.client.last_response_headers)
-        lazy_coll = self.client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based),
-                                                {
-                                                    'id': 'test_index_progress_headers lazy_coll ' + str(uuid.uuid4()),
-                                                    'indexingPolicy': {'indexingMode': documents.IndexingMode.Lazy}
-                                                })
-        self.client.ReadContainer(self.GetDocumentCollectionLink(created_db, lazy_coll, is_name_based))
-        self.assertTrue(HttpHeaders.LazyIndexingProgress in self.client.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in self.client.last_response_headers)
-        none_coll = self.client.CreateContainer(self.GetDatabaseLink(created_db, is_name_based),
-                                                {
-                                                    'id': 'test_index_progress_headers none_coll ' + str(uuid.uuid4()),
-                                                    'indexingPolicy': {'indexingMode': documents.IndexingMode.NoIndex,
-                                                                       'automatic': False}
-                                                })
-        self.client.ReadContainer(self.GetDocumentCollectionLink(created_db, none_coll, is_name_based))
-        self.assertFalse(HttpHeaders.LazyIndexingProgress in self.client.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in self.client.last_response_headers)
+        none_coll = created_db.create_container(
+            id='test_index_progress_headers none_coll ' + str(uuid.uuid4()),
+            indexing_policy={
+                'indexingMode': documents.IndexingMode.NoIndex,
+                'automatic': False
+            },
+            partition_key=PartitionKey(path="/id", kind='Hash')
+        )
+        created_db.get_container(container=none_coll)
 
-        self.client.DeleteContainer(consistent_coll['_self'])
-        self.client.DeleteContainer(lazy_coll['_self'])
-        self.client.DeleteContainer(none_coll['_self'])
+        none_coll = self.client.CreateContainer
+        self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-    # To run this test, please provide your own CA certs file or download one from
-    #     http://curl.haxx.se/docs/caextract.html
-    #
-    # def test_ssl_connection(self):
-    #     connection_policy = documents.ConnectionPolicy()
-    #     connection_policy.SSLConfiguration = documents.SSLConfiguration()
-    #     connection_policy.SSLConfiguration.SSLCaCerts = './cacert.pem'
-    #     client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, connection_policy)
-    #     # Read databases after creation.
-    #     databases = list(client.ReadDatabases())
+        created_db.delete_container(consistent_coll)
+        created_db.delete_container(lazy_coll)
+        created_db.delete_container(none_coll)
 
     def test_id_validation(self):
         # Id shouldn't end with space.
-        database_definition = {'id': 'id_with_space '}
         try:
-            self.client.CreateDatabase(database_definition)
+            self.client.create_database(id='id_with_space ')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id ends with a space.', e.args[0])
         # Id shouldn't contain '/'.
-        database_definition = {'id': 'id_with_illegal/_char'}
+
         try:
-            self.client.CreateDatabase(database_definition)
+            self.client.create_database(id='id_with_illegal/_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '\\'.
-        database_definition = {'id': 'id_with_illegal\\_char'}
+
         try:
-            self.client.CreateDatabase(database_definition)
+            self.client.create_database(id='id_with_illegal\\_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '?'.
-        database_definition = {'id': 'id_with_illegal?_char'}
+
         try:
-            self.client.CreateDatabase(database_definition)
+            self.client.create_database(id='id_with_illegal?_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '#'.
-        database_definition = {'id': 'id_with_illegal#_char'}
+
         try:
-            self.client.CreateDatabase(database_definition)
+            self.client.create_database(id='id_with_illegal#_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
-        database_definition = {'id': ' id_begin_space'}
-        db = self.client.CreateDatabase(database_definition)
+        db = self.client.create_database(id=' id_begin_space')
         self.assertTrue(True)
 
-        self.client.DeleteDatabase(db['_self'])
+        self.client.delete_database(database=db)
 
     def test_id_case_validation(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         uuid_string = str(uuid.uuid4())
-        # pascalCase
-        collection_definition1 = {'id': 'sampleCollection ' + uuid_string}
-
-        # CamelCase
-        collection_definition2 = {'id': 'SampleCollection ' + uuid_string}
+        collection_id1 = 'sampleCollection ' + uuid_string
+        collection_id2 = 'SampleCollection ' + uuid_string
 
         # Verify that no collections exist
-        collections = list(self.client.ReadContainers(self.GetDatabaseLink(created_db, True)))
+        collections = list(created_db.list_containers())
         number_of_existing_collections = len(collections)
 
         # create 2 collections with different casing of IDs
-        created_collection1 = self.client.CreateContainer(self.GetDatabaseLink(created_db, True),
-                                                          collection_definition1)
+        # pascalCase
+        created_collection1 = created_db.create_container(
+            id=collection_id1,
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
 
-        created_collection2 = self.client.CreateContainer(self.GetDatabaseLink(created_db, True),
-                                                          collection_definition2)
+        # CamelCase
+        created_collection2 = created_db.create_container(
+            id=collection_id2,
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
 
-        collections = list(self.client.ReadContainers(self.GetDatabaseLink(created_db, True)))
+        collections = list(created_db.list_containers())
 
         # verify if a total of 2 collections got created
         self.assertEqual(len(collections), number_of_existing_collections + 2)
 
         # verify that collections are created with specified IDs
-        self.assertEqual(collection_definition1['id'], created_collection1['id'])
-        self.assertEqual(collection_definition2['id'], created_collection2['id'])
+        self.assertEqual(collection_id1, created_collection1.id)
+        self.assertEqual(collection_id2, created_collection2.id)
 
-        self.client.DeleteContainer(created_collection1['_self'])
-        self.client.DeleteContainer(created_collection2['_self'])
+        created_db.delete_container(created_collection1)
+        created_db.delete_container(created_collection2)
 
     def test_id_unicode_validation(self):
         # create database
-        created_db = self.databseForTest
+        created_db = self.databaseForTest
 
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_definition1 = {'id': u'हिन्दी भारत की राष्ट्रीय भाषा है'}
+        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'
 
         # Special chars for Id
-        collection_definition2 = {'id': "!@$%^&*()-~`'_[]{}|;:,.<>"}
+        collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
 
         # verify that collections are created with specified IDs
-        created_collection1 = self.client.CreateContainer(self.GetDatabaseLink(created_db, True),
-                                                          collection_definition1)
+        created_collection1 = created_db.create_container(
+            id=collection_id1,
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
+        created_collection2 = created_db.create_container(
+            id=collection_id2,
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
 
-        created_collection2 = self.client.CreateContainer(self.GetDatabaseLink(created_db, True),
-                                                          collection_definition2)
+        self.assertEqual(collection_id1, created_collection1.id)
+        self.assertEqual(collection_id2, created_collection2.id)
 
-        self.assertEqual(collection_definition1['id'], created_collection1['id'])
-        self.assertEqual(collection_definition2['id'], created_collection2['id'])
+        created_db.delete_container(created_collection1)
+        created_db.delete_container(created_collection2)
 
-        self.client.DeleteContainer(created_collection1['_self'])
-        self.client.DeleteContainer(created_collection2['_self'])
-    '''
-    def GetUserLink(self, database, user, is_name_based=True):
-        if is_name_based:
-            return self.GetDatabaseLink(database) + '/users/' + user['id']
-        else:
-            return user['_self']
-
-    def GetPermissionLink(self, database, user, permission, is_name_based=True):
-        if is_name_based:
-            return self.GetUserLink(database, user) + '/permissions/' + permission['id']
-        else:
-            return permission['_self']
-
-    def GetDocumentCollectionLink(self, database, document_collection, is_name_based=True):
-        if is_name_based:
-            return self.GetDatabaseLink(database) + '/colls/' + document_collection['id']
-        else:
-            return document_collection['_self']
-
-    def GetDocumentLink(self, database, document_collection, document, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection) + '/docs/' + document['id']
-        else:
-            return document['_self']
-
-    def GetAttachmentLink(self, database, document_collection, document, attachment, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentLink(database, document_collection, document) + '/attachments/' + attachment['id']
-        else:
-            return attachment['_self']
-
-    def GetTriggerLink(self, database, document_collection, trigger, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection) + '/triggers/' + trigger['id']
-        else:
-            return trigger['_self']
-
-    def GetUserDefinedFunctionLink(self, database, document_collection, user_defined_function, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection) + '/udfs/' + user_defined_function[
-                'id']
-        else:
-            return user_defined_function['_self']
-
-    def GetStoredProcedureLink(self, database, document_collection, stored_procedure, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection) + '/sprocs/' + stored_procedure['id']
-        else:
-            return stored_procedure['_self']
-
-    def GetConflictLink(self, database, document_collection, conflict, is_name_based=True):
-        if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection) + '/conflicts/' + conflict['id']
-        else:
-            return conflict['_self']
-
-    def get_collection_offers(self, client, collection_rid):
-        # type: (CosmosClient) -> str
-        return list(client.QueryOffers(
-            {
-                'query': 'SELECT * FROM root r WHERE r.offerResourceId=@offerResourceId',
-                'parameters': [
-                    {'name': '@offerResourceId', 'value': collection_rid}
-                ]
-            }))
 
 if __name__ == '__main__':
     try:
