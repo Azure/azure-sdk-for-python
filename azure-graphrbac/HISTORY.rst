@@ -3,6 +3,36 @@
 Release History
 ===============
 
+0.60.0 (2019-03-13)
++++++++++++++++++++
+
+**Features**
+
+- Model Application has a new parameter optional_claims
+- Model Application has a new parameter pre_authorized_applications
+- Model Application has a new parameter group_membership_claims
+- Model Application has a new parameter oauth2_allow_url_path_matching
+- Model Application has a new parameter allow_passthrough_users
+- Model Application has a new parameter is_device_only_auth_supported
+- Model Application has a new parameter saml_metadata_url
+- Model Application has a new parameter app_logo_url
+- Model Application has a new parameter sign_in_audience
+- Model Application has a new parameter logout_url
+- Model Application has a new parameter oauth2_permissions
+- Model Application has a new parameter oauth2_require_post_response
+- Model Application has a new parameter org_restrictions
+- Model Application has a new parameter allow_guests_sign_in
+- Model Application has a new parameter www_homepage
+- Model Application has a new parameter public_client
+- Model Application has a new parameter error_url
+- Model Application has a new parameter known_client_applications
+- Model Application has a new parameter publisher_domain
+- Model Application has a new parameter informational_urls
+
+**Breaking changes**
+
+- client.oauth2 has been renamed client.oauth2_permission_grant
+
 0.53.0 (2018-11-27)
 +++++++++++++++++++
 

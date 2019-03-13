@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_principal_base import ServicePrincipalBase
+from msrest.serialization import Model
 
 
-class ServicePrincipalUpdateParameters(ServicePrincipalBase):
-    """Request parameters for update an existing service principal.
+class ServicePrincipalBase(Model):
+    """Active Directory service principal common perperties shared among GET, POST
+    and PATCH.
 
     :param account_enabled: whether or not the service principal account is
      enabled
@@ -46,4 +47,10 @@ class ServicePrincipalUpdateParameters(ServicePrincipalBase):
     }
 
     def __init__(self, **kwargs):
-        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)
+        super(ServicePrincipalBase, self).__init__(**kwargs)
+        self.account_enabled = kwargs.get('account_enabled', None)
+        self.app_role_assignment_required = kwargs.get('app_role_assignment_required', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)
+        self.service_principal_type = kwargs.get('service_principal_type', None)
+        self.tags = kwargs.get('tags', None)
