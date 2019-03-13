@@ -1088,7 +1088,7 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/networkRuleSet/default'}
+    create_or_update_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/networkRuleSets/default'}
 
     def get_network_rule_set(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -1150,4 +1150,4 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/networkRuleSet/default'}
+    get_network_rule_set.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/networkRuleSets/default'}
