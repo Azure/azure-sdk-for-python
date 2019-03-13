@@ -25,6 +25,9 @@ class EmailReceiver(Model):
     :type name: str
     :param email_address: Required. The email address of this receiver.
     :type email_address: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     :ivar status: The receiver status of the e-mail. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled'
     :vartype status: str or ~azure.mgmt.monitor.models.ReceiverStatus
@@ -33,17 +36,20 @@ class EmailReceiver(Model):
     _validation = {
         'name': {'required': True},
         'email_address': {'required': True},
+        'use_common_alert_schema': {'required': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'email_address': {'key': 'emailAddress', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
         'status': {'key': 'status', 'type': 'ReceiverStatus'},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs) -> None:
+    def __init__(self, *, name: str, email_address: str, use_common_alert_schema: bool, **kwargs) -> None:
         super(EmailReceiver, self).__init__(**kwargs)
         self.name = name
         self.email_address = email_address
+        self.use_common_alert_schema = use_common_alert_schema
         self.status = None

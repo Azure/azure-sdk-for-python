@@ -22,19 +22,25 @@ class ArmRoleReceiver(Model):
     :type name: str
     :param role_id: Required. The arm role id.
     :type role_id: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'role_id': {'required': True},
+        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'role_id': {'key': 'roleId', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(ArmRoleReceiver, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.role_id = kwargs.get('role_id', None)
+        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)

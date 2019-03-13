@@ -26,18 +26,23 @@ class LogicAppReceiver(Model):
     :param callback_url: Required. The callback url where http request sent
      to.
     :type callback_url: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'resource_id': {'required': True},
         'callback_url': {'required': True},
+        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'callback_url': {'key': 'callbackUrl', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -45,3 +50,4 @@ class LogicAppReceiver(Model):
         self.name = kwargs.get('name', None)
         self.resource_id = kwargs.get('resource_id', None)
         self.callback_url = kwargs.get('callback_url', None)
+        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
