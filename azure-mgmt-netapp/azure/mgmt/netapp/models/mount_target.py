@@ -51,7 +51,7 @@ class MountTarget(Model):
      creating a new mount target
     :type netmask: str
     :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
-     Doman Name, FQDN
+     Domain Name, FQDN
     :type smb_server_fqdn: str
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str

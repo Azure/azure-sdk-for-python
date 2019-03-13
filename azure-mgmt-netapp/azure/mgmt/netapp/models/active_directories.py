@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ActiveDirectories(Model):
     """Active Directories.
 
-    :param active_directory_id: Id of the active drectory
+    :param active_directory_id: Id of the Active Directory
     :type active_directory_id: str
     :param username: Username of Active Directory domain administrator
     :type username: str
@@ -27,7 +27,7 @@ class ActiveDirectories(Model):
     :param d_ns: Comma separated list of DNS server IP addresses for the
      Active Directory domain
     :type d_ns: str
-    :param status: Status of the active drectory
+    :param status: Status of the Active Directory
     :type status: str
     :param s_mb_server_name: NetBIOS name of the SMB server. This name will be
      registered as a computer account in the AD and used to mount volumes

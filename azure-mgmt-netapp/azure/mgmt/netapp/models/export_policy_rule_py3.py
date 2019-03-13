@@ -27,7 +27,7 @@ class ExportPolicyRule(Model):
     :type nfsv3: bool
     :param nfsv4: Allows NFSv4 protocol
     :type nfsv4: bool
-    :param allowed_clients: Client ingress specification as comma seperated
+    :param allowed_clients: Client ingress specification as comma separated
      string with IPv4 CIDRs, IPv4 host addresses and host names
     :type allowed_clients: str
     """
