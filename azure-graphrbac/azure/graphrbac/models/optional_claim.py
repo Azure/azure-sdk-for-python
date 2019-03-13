@@ -19,7 +19,7 @@ class OptionalClaim(Model):
     :type name: str
     :param source: Claim source.
     :type source: str
-    :param essential: Is this a requied claim.
+    :param essential: Is this a required claim.
     :type essential: bool
     :param additional_properties:
     :type additional_properties: object

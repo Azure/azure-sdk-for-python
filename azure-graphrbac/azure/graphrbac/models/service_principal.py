@@ -33,7 +33,7 @@ class ServicePrincipal(DirectoryObject):
     :param account_enabled: whether or not the service principal account is
      enabled
     :type account_enabled: str
-    :param alternative_names: altenative names
+    :param alternative_names: alterative names
     :type alternative_names: list[str]
     :ivar app_display_name: The display name exposed by the associated
      application.
@@ -71,8 +71,8 @@ class ServicePrincipal(DirectoryObject):
      associated with the service principal.
     :type password_credentials:
      list[~azure.graphrbac.models.PasswordCredential]
-    :param preferred_token_signing_key_thumbprint: The thubmbprint of
-     preferred certificate to sign the token
+    :param preferred_token_signing_key_thumbprint: The thumbprint of preferred
+     certificate to sign the token
     :type preferred_token_signing_key_thumbprint: str
     :param publisher_name: The publisher's name of the associated application
     :type publisher_name: str
@@ -86,7 +86,7 @@ class ServicePrincipal(DirectoryObject):
     :type saml_metadata_url: str
     :param service_principal_names: A collection of service principal names.
     :type service_principal_names: list[str]
-    :param service_principal_type: the type of the servie principal
+    :param service_principal_type: the type of the service principal
     :type service_principal_type: str
     :param tags: Optional list of tags that you can apply to your service
      principals. Not nullable.
