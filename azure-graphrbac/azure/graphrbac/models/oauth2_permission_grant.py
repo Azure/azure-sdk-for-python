@@ -12,21 +12,30 @@
 from msrest.serialization import Model
 
 
-class Permissions(Model):
-    """Permissions.
+class OAuth2PermissionGrant(Model):
+    """OAuth2PermissionGrant.
 
     :param odatatype: Microsoft.DirectoryServices.OAuth2PermissionGrant
     :type odatatype: str
-    :param client_id: The objectId of the Service Principal associated with
-     the app
+    :param client_id: The id of the resource's service principal granted
+     consent to impersonate the user when accessing the resource (represented
+     by the resourceId property).
     :type client_id: str
-    :param consent_type: Typically set to AllPrincipals
-    :type consent_type: str
-    :param principal_id: Set to null if AllPrincipals is set
-    :type principal_id: object
-    :param resource_id: Service Principal Id of the resource you want to grant
+    :param object_id: The id of the permission grant
+    :type object_id: str
+    :param consent_type: Indicates if consent was provided by the
+     administrator (on behalf of the organization) or by an individual.
+     Possible values include: 'AllPrincipals', 'Principal'
+    :type consent_type: str or ~azure.graphrbac.models.ConsentType
+    :param principal_id: When consent type is Principal, this property
+     specifies the id of the user that granted consent and applies only for
+     that user.
+    :type principal_id: str
+    :param resource_id: Object Id of the resource you want to grant
     :type resource_id: str
-    :param scope: Typically set to user_impersonation
+    :param scope: Specifies the value of the scope claim that the resource
+     application should expect in the OAuth 2.0 access token. For example,
+     User.Read
     :type scope: str
     :param start_time: Start time for TTL
     :type start_time: str
@@ -37,8 +46,9 @@ class Permissions(Model):
     _attribute_map = {
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
         'consent_type': {'key': 'consentType', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'object'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'scope': {'key': 'scope', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'str'},
@@ -46,9 +56,10 @@ class Permissions(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Permissions, self).__init__(**kwargs)
+        super(OAuth2PermissionGrant, self).__init__(**kwargs)
         self.odatatype = kwargs.get('odatatype', None)
         self.client_id = kwargs.get('client_id', None)
+        self.object_id = kwargs.get('object_id', None)
         self.consent_type = kwargs.get('consent_type', None)
         self.principal_id = kwargs.get('principal_id', None)
         self.resource_id = kwargs.get('resource_id', None)
