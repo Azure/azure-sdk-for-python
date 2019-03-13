@@ -54,21 +54,19 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
-      - script: |
-          pip install setuptools wheel
-          sudo pip install https://dev.azure.com/azure-sdk/_apis/resources/Containers/1652083?itemPath=drop%2Fdoc_warden-0.2.0-py2.py3-none-any.whl
-          ward scan -d $(Build.SourcesDirectory)
-        displayName: 'Verify Readmes'
-
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: '$(PythonVersion)'
 
       - script: |
-          pip install wheel Jinja2
-        displayName: 'Prep Environment'
+          pip install setuptools wheel Jinja2
+          pip install https://azuresdkscratch.blob.core.windows.net/test/doc_warden-0.2.0-py2.py3-none-any.whl
+        displayName: 'Install Python Dependencies'
+
+      - script: |
+          ward scan -d $(Build.SourcesDirectory)
+        displayName: 'Verify Readmes'
 
       - task: PythonScript@0
         displayName: 'Analyze dependencies'
