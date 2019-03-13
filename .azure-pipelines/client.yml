@@ -57,7 +57,7 @@ jobs:
       # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
       - script: |
           pip install setuptools wheel
-          sudo pip install doc-warden
+          sudo pip install https://azuresdkscratch.blob.core.windows.net/test/doc_warden-0.2.0-py2.py3-none-any.whl
           ward scan -d $(Build.SourcesDirectory)
         displayName: 'Verify Readmes'
 
