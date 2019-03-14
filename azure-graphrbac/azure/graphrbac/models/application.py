@@ -101,7 +101,7 @@ class Application(DirectoryObject):
     :param password_credentials: A collection of PasswordCredential objects
     :type password_credentials:
      list[~azure.graphrbac.models.PasswordCredential]
-    :param pre_authorized_applications: list of pre-authorizaed applications.
+    :param pre_authorized_applications: list of pre-authorized applications.
     :type pre_authorized_applications:
      list[~azure.graphrbac.models.PreAuthorizedApplication]
     :param public_client: Specifies whether this application is a public
@@ -123,8 +123,8 @@ class Application(DirectoryObject):
      application.
     :type saml_metadata_url: str
     :param sign_in_audience: Audience for signing in to the application
-     (AzureADMyOrganizatio, AzureADAllorganizations,
-     AzureADAndMicrosofAccounts).
+     (AzureADMyOrganization, AzureADAllOrganizations,
+     AzureADAndMicrosoftAccounts).
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
