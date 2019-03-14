@@ -24,11 +24,11 @@ import uuid
 import time
 import pytest
 
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
-import test.test_config as test_config
-
+import test.new_object_model_tests.test_config as test_config
+from azure.cosmos import PartitionKey
 
 #IMPORTANT NOTES:
   
@@ -38,6 +38,7 @@ import test.test_config as test_config
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
+#TODO: fix 3/4 tests
 @pytest.mark.usefixtures("teardown")
 class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
@@ -46,7 +47,7 @@ class Test_ttl_tests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client_connection.CosmosClientConnection(host, {'masterKey': masterKey}, connectionPolicy)
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
     created_db = test_config._test_config.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -72,42 +73,25 @@ class Test_ttl_tests(unittest.TestCase):
                 "tests.")
 
     def test_collection_and_document_ttl_values(self):
-        collection_definition = {'id' : 'test_collection_and_document_ttl_values1' + str(uuid.uuid4()),
-                                 'defaultTtl' : 5
-                                 }
+        ttl = 5
+        created_collection = self.created_db.create_container(
+            id='test_collection_and_document_ttl_values1' + str(uuid.uuid4()),
+            default_ttl=ttl,
+            partition_key=PartitionKey(path='/id', kind='Hash')
+            )
+        self.assertEqual(created_collection.properties['defaultTtl'], ttl)
 
-        created_collection = self.client.CreateContainer(self.created_db['_self'], collection_definition)
-        self.assertEqual(created_collection['defaultTtl'], collection_definition['defaultTtl'])
-        
-        collection_definition['id'] = 'test_collection_and_document_ttl_values2' + str(uuid.uuid4())
-        collection_definition['defaultTtl'] = None
-
-        # None is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateContainer,
-            self.created_db['_self'],
-            collection_definition)
-
-        collection_definition['id'] = 'test_collection_and_document_ttl_values3' + str(uuid.uuid4())
-        collection_definition['defaultTtl'] = 0
-
-        # 0 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            self.client.CreateContainer,
-            self.created_db['_self'],
-            collection_definition)
-
-        collection_definition['id'] = 'test_collection_and_document_ttl_values4' + str(uuid.uuid4())
-        collection_definition['defaultTtl'] = -10
+        collection_id = 'test_collection_and_document_ttl_values4' + str(uuid.uuid4())
+        ttl = -10
 
         # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            self.client.CreateContainer,
-            self.created_db['_self'],
-            collection_definition)
+            self.created_db.create_container,
+            collection_id,
+            PartitionKey(path='/id', kind='Hash'),
+            None,
+            ttl)
 
         document_definition = { 'id': 'doc1' + str(uuid.uuid4()),
                                 'name': 'sample document',
@@ -117,8 +101,7 @@ class Test_ttl_tests(unittest.TestCase):
         # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            self.client.CreateItem,
-            created_collection['_self'],
+            created_collection.create_item,
             document_definition)
 
         document_definition['id'] = 'doc2' + str(uuid.uuid4())
@@ -127,8 +110,7 @@ class Test_ttl_tests(unittest.TestCase):
         # None is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            self.client.CreateItem,
-            created_collection['_self'],
+            created_collection.create_item,
             document_definition)
 
         document_definition['id'] = 'doc3' + str(uuid.uuid4())
@@ -137,11 +119,10 @@ class Test_ttl_tests(unittest.TestCase):
         # -10 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            self.client.CreateItem,
-            created_collection['_self'],
+            created_collection.create_item,
             document_definition)
 
-        self.client.DeleteContainer(created_collection['_self'])
+        self.created_db.delete_container(container=created_collection)
 
     def test_document_ttl_with_positive_defaultTtl(self):
         collection_definition = {'id' : 'test_document_ttl_with_positive_defaultTtl collection' + str(uuid.uuid4()),

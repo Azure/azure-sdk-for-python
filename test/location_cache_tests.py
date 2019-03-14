@@ -1,5 +1,4 @@
 import unittest
-import uuid
 import threading
 import pytest
 from time import sleep
@@ -9,11 +8,11 @@ import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos.request_object import _RequestObject
 from azure.cosmos.location_cache import LocationCache
-from azure.cosmos.global_endpoint_manager import _GlobalEndpointManager
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.retry_utility as retry_utility
 import six
+
 
 class RefreshThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -24,8 +23,10 @@ class RefreshThread(threading.Thread):
         else:
             super().__init__()
         self.endpoint_manager = kwargs['endpoint_manager']
+
     def run(self):
         self.endpoint_manager.force_refresh(None)
+
 
 @pytest.mark.usefixtures("teardown")
 class LocationCacheTest(unittest.TestCase):
@@ -261,8 +262,8 @@ class LocationCacheTest(unittest.TestCase):
                 # wait for TTL on unavailablity info
                 sleep(1.5)
 
-                self.assertEquals(current_write_endpoints, self.location_cache.get_write_endpoints())
-                self.assertEquals(current_read_endpoints, self.location_cache.get_read_endpoints())
+                self.assertEqual(current_write_endpoints, self.location_cache.get_write_endpoints())
+                self.assertEqual(current_read_endpoints, self.location_cache.get_read_endpoints())
 
     def validate_global_endpoint_location_cache_refresh(self):
         self.get_database_account_hit_counter = 0
@@ -321,7 +322,7 @@ class LocationCacheTest(unittest.TestCase):
         if not endpoint_discovery_enabled:
             self.assertFalse(should_refresh_endpoints)
         else:
-            self.assertEquals(is_most_preferred_location_unavailable_for_read or is_most_preferred_location_unavailable_for_write, should_refresh_endpoints)
+            self.assertEqual(is_most_preferred_location_unavailable_for_read or is_most_preferred_location_unavailable_for_write, should_refresh_endpoints)
 
     def validate_request_endpoint_resolution(self, use_multiple_write_locations, endpoint_discovery_enabled,
                                              available_write_endpoints, available_read_endpoints):

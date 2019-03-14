@@ -44,7 +44,7 @@ def teardown(request):
         database_ids_to_delete.append(config.TEST_DATABASE_ID)
         for database_id in database_ids_to_delete:
             try:
-                client.DeleteDatabase(database_id)
+                client.DeleteDatabase("dbs/" + database_id)
             except errors.HTTPFailure as e:
                 if e.status_code != StatusCodes.NOT_FOUND:
                     raise e

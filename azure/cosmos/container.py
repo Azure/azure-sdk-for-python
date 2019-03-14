@@ -127,7 +127,7 @@ class Container:
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Item]
+        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
         """ List all items in the container.
 
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
@@ -156,20 +156,24 @@ class Container:
         items = self.client_connection.ReadItems(
             collection_link=self.collection_link, feed_options=request_options
         )
-        headers = self.client_connection.last_response_headers
-        for item in [Item(headers=headers, data=item) for item in items]:
-            yield item
+        return items
+        #headers = self.client_connection.last_response_headers
+        #for item in [Item(headers=headers, data=item) for item in items]:
+        #    yield item
 
+    #TODO: fix feedoptions for change feed
     def query_items_change_feed(self, options=None):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
         """
         items = self.client_connection.QueryItemsChangeFeed(
             self.collection_link, options=options
         )
-        headers = self.client_connection.last_response_headers
-        for item in items:
-            yield Item(headers, item)
+        return items
+        #headers = self.client_connection.last_response_headers
+        #for item in items:
+        #    yield Item(headers, item)
 
+    #TODO: does ocntainer need osessiontoken
     def query_items(
         self,
         query,
@@ -184,7 +188,7 @@ class Container:
         enable_scan_in_query=None,
         populate_query_metrics=None
     ):
-        # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool, bool) -> QueryResultIterator
+        # type: (str, List, str, bool, bool, int, int, str, Dict[str, Any], bool, bool) -> QueryIterable
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -247,10 +251,11 @@ class Container:
             options=request_options,
             partition_key=partition_key,
         )
-        headers = self.client_connection.last_response_headers
-        self.session_token = headers["x-ms-session-token"]
-        items_iterator = iter(items)
-        return QueryResultIterator(items_iterator, metadata=ResponseMetadata(headers))
+        return items
+        #headers = self.client_connection.last_response_headers
+        #self.session_token = headers["x-ms-session-token"]
+        #items_iterator = iter(items)
+        #return QueryResultIterator(items_iterator, metadata=ResponseMetadata(headers))
 
     def replace_item(
         self,
