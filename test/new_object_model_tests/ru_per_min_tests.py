@@ -23,10 +23,11 @@ import unittest
 import uuid
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import query_iterable
 import azure.cosmos.base as base
-import test.test_config as test_config
+import test.new_object_model_tests.test_config as test_config
+
 
 # IMPORTANT NOTES:
   
@@ -39,6 +40,8 @@ import test.test_config as test_config
 #      values
 #   associated with your Azure Cosmos account.
 
+
+#TODO: Fix offer tests
 @pytest.mark.usefixtures("teardown")
 class RuPerMinTests(unittest.TestCase):
     """RuPerMinTests Tests.
@@ -47,7 +50,7 @@ class RuPerMinTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client_connection.CosmosClientConnection(host, {'masterKey': masterKey}, connectionPolicy)
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
     created_db = test_config._test_config.create_database_if_not_exist(client)
 
     @classmethod

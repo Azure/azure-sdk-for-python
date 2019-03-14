@@ -2,7 +2,7 @@ import json
 import os.path
 import unittest
 import uuid
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
@@ -11,7 +11,7 @@ import azure.cosmos.constants as constants
 import azure.cosmos.retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
-import test.test_config as test_config
+import test.new_object_model_tests.test_config as test_config
 
 @pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):
@@ -32,20 +32,22 @@ class MultiMasterTests(unittest.TestCase):
         self.EnableMultipleWritableLocations = False
         self._validate_tentative_write_headers()
 
+    #TODO: fix sproc test
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client_connection.CosmosClientConnection(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, connectionPolicy)
+        client = cosmos_client.CosmosClient(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, "Session",
+                                            connectionPolicy)
         
         created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
         document_definition = { 'id': 'doc' + str(uuid.uuid4()),
                                 'pk': 'pk',
                                 'name': 'sample document',
                                 'operation': 'insertion'}
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = created_collection.create_item(body=document_definition)
 
         sproc_definition = {
             'id': 'sample sproc' + str(uuid.uuid4()),
@@ -99,6 +101,7 @@ class MultiMasterTests(unittest.TestCase):
                 self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[5]['headers'] 
                                          and args[5]['headers'][HttpHeaders.AllowTentativeWrites] == 'true')
             return self.OriginalExecuteFunction(function, *args, **kwargs)
+
 
 if __name__ == '__main__':
     unittest.main()

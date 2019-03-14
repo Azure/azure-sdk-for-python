@@ -22,6 +22,7 @@
 """Represents an item in the Azure Cosmos DB SQL API service.
 """
 
+#TODO: check if items need headers
 class Item(dict):
     """ Represents a document in an Azure Cosmos DB SQL API container.
 
