@@ -5,6 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from msrest.serialization import Model
+
 try:
     import urllib.parse as parse
 except ImportError:
@@ -13,7 +15,7 @@ except ImportError:
 from collections import namedtuple
 
 
-VaultId = namedtuple('VaultId', ['vault_url', 'collection', 'name', 'version'])
+_VaultId = namedtuple('VaultId', ['vault_url', 'collection', 'name', 'version'])
 
 
 def _parse_vault_id(url):
@@ -29,7 +31,29 @@ def _parse_vault_id(url):
     if len(path) < 2 or len(path) > 3:
         raise ValueError("'{}' is not not a valid vault url".format(url))
 
-    return VaultId(vault_url='{}://{}'.format(parsed_uri.scheme, parsed_uri.hostname),
-                   collection=path[0],
-                   name=path[1],
-                   version=path[2] if len(path) == 3 else None)
+    return _VaultId(vault_url='{}://{}'.format(parsed_uri.scheme, parsed_uri.hostname),
+                    collection=path[0],
+                    name=path[1],
+                    version=path[2] if len(path) == 3 else None)
+
+
+class _BackupResult(Model):
+    """The backup secret result, containing the backup blob.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The backup blob containing the backed up secret.
+    :vartype value: bytes
+    """
+
+    _validation = {
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'base64'},
+    }
+
+    def __init__(self, **kwargs):
+        super(_BackupResult, self).__init__(**kwargs)
+        self.value = None

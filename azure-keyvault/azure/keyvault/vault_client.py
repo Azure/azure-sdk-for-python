@@ -1,4 +1,4 @@
-from .secrets.secret_client import SecretClient
+from .secrets._client import SecretClient
 
 
 class VaultClient(object):

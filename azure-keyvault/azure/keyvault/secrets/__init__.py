@@ -1,7 +1,8 @@
-from .secret_client import SecretClient
-from .secret_attributes import SecretAttributes
-from .secret import Secret
+from ._client import SecretClient
+from ._models import Secret, SecretAttributes, DeletedSecret, SecretPaged
 
 __all__ = ['SecretClient',
            'SecretAttributes',
-           'Secret']
+           'Secret',
+           'SecretPaged',
+           'DeletedSecret']
