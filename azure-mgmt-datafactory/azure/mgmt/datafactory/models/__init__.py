@@ -244,7 +244,6 @@ try:
     from .mongo_db_v2_collection_dataset_py3 import MongoDbV2CollectionDataset
     from .mongo_db_collection_dataset_py3 import MongoDbCollectionDataset
     from .file_share_dataset_py3 import FileShareDataset
-    from .azure_data_lake_store_cosmos_structured_stream_dataset_py3 import AzureDataLakeStoreCosmosStructuredStreamDataset
     from .office365_dataset_py3 import Office365Dataset
     from .azure_blob_fs_dataset_py3 import AzureBlobFSDataset
     from .azure_data_lake_store_dataset_py3 import AzureDataLakeStoreDataset
@@ -644,7 +643,6 @@ except (SyntaxError, ImportError):
     from .mongo_db_v2_collection_dataset import MongoDbV2CollectionDataset
     from .mongo_db_collection_dataset import MongoDbCollectionDataset
     from .file_share_dataset import FileShareDataset
-    from .azure_data_lake_store_cosmos_structured_stream_dataset import AzureDataLakeStoreCosmosStructuredStreamDataset
     from .office365_dataset import Office365Dataset
     from .azure_blob_fs_dataset import AzureBlobFSDataset
     from .azure_data_lake_store_dataset import AzureDataLakeStoreDataset
@@ -1118,7 +1116,6 @@ __all__ = [
     'MongoDbV2CollectionDataset',
     'MongoDbCollectionDataset',
     'FileShareDataset',
-    'AzureDataLakeStoreCosmosStructuredStreamDataset',
     'Office365Dataset',
     'AzureBlobFSDataset',
     'AzureDataLakeStoreDataset',
