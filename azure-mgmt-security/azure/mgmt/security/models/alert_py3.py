@@ -78,7 +78,8 @@ class Alert(Resource):
     :ivar workspace_arm_id: Azure resource ID of the workspace that the alert
      was reported to.
     :vartype workspace_arm_id: str
-    :ivar correlation_key: Correlation Key of the alert.
+    :ivar correlation_key: Alerts with the same CorrelationKey will be grouped
+     together in Ibiza.
     :vartype correlation_key: str
     """
 
