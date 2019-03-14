@@ -21,7 +21,7 @@ class Response(Model):
      data case.
     :type cost: float
     :param timespan: Required. The timespan for which the data was retrieved.
-     Its value consists of two datatimes concatenated, separated by '/'.  This
+     Its value consists of two datetimes concatenated, separated by '/'.  This
      may be adjusted in the future and returned back from what was originally
      requested.
     :type timespan: str

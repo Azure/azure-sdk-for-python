@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class Action(Model):
-    """Action.
+    """Action descriptor.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AlertingAction
+    sub-classes are: AlertingAction, LogToMetricAction
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,7 +33,7 @@ class Action(Model):
     }
 
     _subtype_map = {
-        'odatatype': {'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction': 'AlertingAction'}
+        'odatatype': {'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction': 'AlertingAction', 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction': 'LogToMetricAction'}
     }
 
     def __init__(self, **kwargs):

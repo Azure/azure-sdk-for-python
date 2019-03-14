@@ -20,7 +20,7 @@ class AzNsActionGroup(Model):
     :param email_subject: Custom subject override for all email ids in Azure
      action group
     :type email_subject: str
-    :param custom_webhook_payload: Custom payload to be sent for all webook
+    :param custom_webhook_payload: Custom payload to be sent for all webhook
      URI in Azure action group
     :type custom_webhook_payload: str
     """

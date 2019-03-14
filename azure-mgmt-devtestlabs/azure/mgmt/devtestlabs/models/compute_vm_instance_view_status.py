@@ -29,8 +29,8 @@ class ComputeVmInstanceViewStatus(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, display_status=None, message=None):
-        super(ComputeVmInstanceViewStatus, self).__init__()
-        self.code = code
-        self.display_status = display_status
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ComputeVmInstanceViewStatus, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.display_status = kwargs.get('display_status', None)
+        self.message = kwargs.get('message', None)

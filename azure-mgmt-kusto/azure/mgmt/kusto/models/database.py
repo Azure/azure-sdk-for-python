@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .proxy_resource import ProxyResource
 
 
-class Database(TrackedResource):
+class Database(ProxyResource):
     """Class representing a Kusto database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
@@ -28,22 +26,18 @@ class Database(TrackedResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives
+    :param location: Resource location.
     :type location: str
-    :ivar etag: An ETag of the resource created.
-    :vartype etag: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period_in_days: Required. The number of days data
-     should be kept before it stops being accessible to queries.
-    :type soft_delete_period_in_days: int
-    :param hot_cache_period_in_days: The number of days of data that should be
-     kept in cache for fast queries.
-    :type hot_cache_period_in_days: int
+    :param soft_delete_period: The time the data should be kept before it
+     stops being accessible to queries in TimeSpan.
+    :type soft_delete_period: timedelta
+    :param hot_cache_period: The time the data that should be kept in cache
+     for fast queries in TimeSpan.
+    :type hot_cache_period: timedelta
     :param statistics: The statistics of the database.
     :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     """
@@ -52,29 +46,24 @@ class Database(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
-        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'soft_delete_period_in_days': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
-        'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
     def __init__(self, **kwargs):
         super(Database, self).__init__(**kwargs)
-        self.etag = None
+        self.location = kwargs.get('location', None)
         self.provisioning_state = None
-        self.soft_delete_period_in_days = kwargs.get('soft_delete_period_in_days', None)
-        self.hot_cache_period_in_days = kwargs.get('hot_cache_period_in_days', None)
+        self.soft_delete_period = kwargs.get('soft_delete_period', None)
+        self.hot_cache_period = kwargs.get('hot_cache_period', None)
         self.statistics = kwargs.get('statistics', None)
