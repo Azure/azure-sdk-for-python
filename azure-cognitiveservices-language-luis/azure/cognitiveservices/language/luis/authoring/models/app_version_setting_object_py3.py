@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class ApplicationSettingUpdateObject(Model):
-    """Object model for updating an application's settings.
+class AppVersionSettingObject(Model):
+    """Object model of an application version setting.
 
-    :param is_public: Setting your application as public allows other people
-     to use your application's endpoint using their own keys.
-    :type is_public: bool
+    :param name: The application version setting name.
+    :type name: str
+    :param value: The application version setting value.
+    :type value: str
     """
 
     _attribute_map = {
-        'is_public': {'key': 'public', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ApplicationSettingUpdateObject, self).__init__(**kwargs)
-        self.is_public = kwargs.get('is_public', None)
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(AppVersionSettingObject, self).__init__(**kwargs)
+        self.name = name
+        self.value = value

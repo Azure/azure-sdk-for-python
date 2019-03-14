@@ -35,9 +35,20 @@ class ModelOperations(object):
         self.config = config
 
     def add_intent(
-            self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Adds an intent classifier to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -59,7 +70,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_intent.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -98,9 +110,20 @@ class ModelOperations(object):
     add_intent.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents'}
 
     def list_intents(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the intent models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -125,7 +148,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_intents.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -164,9 +188,20 @@ class ModelOperations(object):
     list_intents.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents'}
 
     def add_entity(
-            self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds an entity extractor to the application.
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
+        """Adds a simple entity extractor to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -188,7 +223,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -227,9 +263,20 @@ class ModelOperations(object):
     add_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities'}
 
     def list_entities(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -254,7 +301,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_entities.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -293,9 +341,20 @@ class ModelOperations(object):
     list_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities'}
 
     def add_hierarchical_entity(
-            self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", children=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a hierarchical entity extractor to the application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -319,7 +378,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_hierarchical_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -358,9 +418,20 @@ class ModelOperations(object):
     add_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities'}
 
     def list_hierarchical_entities(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the hierarchical entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -385,7 +456,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_hierarchical_entities.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -424,9 +496,20 @@ class ModelOperations(object):
     list_hierarchical_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities'}
 
     def add_composite_entity(
-            self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", children=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a composite entity extractor to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -450,7 +533,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_composite_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -489,9 +573,20 @@ class ModelOperations(object):
     add_composite_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities'}
 
     def list_composite_entities(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the composite entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -516,7 +611,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_composite_entities.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -555,9 +651,20 @@ class ModelOperations(object):
     list_composite_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities'}
 
     def list_closed_lists(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the closedlist models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -582,7 +689,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_closed_lists.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -621,9 +729,20 @@ class ModelOperations(object):
     list_closed_lists.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists'}
 
     def add_closed_list(
-            self, app_id, version_id, sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a closed list model to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -648,7 +767,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_closed_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -687,9 +807,20 @@ class ModelOperations(object):
     add_closed_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists'}
 
     def add_prebuilt(
-            self, app_id, version_id, prebuilt_extractor_names, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, prebuilt_extractor_names, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Adds a list of prebuilt entity extractors to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -712,7 +843,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_prebuilt.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -751,9 +883,20 @@ class ModelOperations(object):
     add_prebuilt.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts'}
 
     def list_prebuilts(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the prebuilt entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -778,7 +921,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_prebuilts.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -817,9 +961,20 @@ class ModelOperations(object):
     list_prebuilts.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts'}
 
     def list_prebuilt_entities(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets all the available prebuilt entity extractors for the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -839,7 +994,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_prebuilt_entities.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -874,9 +1030,20 @@ class ModelOperations(object):
     list_prebuilt_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/listprebuilts'}
 
     def list_models(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the application version models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -901,7 +1068,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_models.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -940,9 +1108,20 @@ class ModelOperations(object):
     list_models.metadata = {'url': '/apps/{appId}/versions/{versionId}/models'}
 
     def examples_method(
-            self, app_id, version_id, model_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, model_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets the utterances for the given model in the given app version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -969,7 +1148,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.examples_method.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'modelId': self._serialize.url("model_id", model_id, 'str')
@@ -1009,9 +1189,20 @@ class ModelOperations(object):
     examples_method.metadata = {'url': '/apps/{appId}/versions/{versionId}/models/{modelId}/examples'}
 
     def get_intent(
-            self, app_id, version_id, intent_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the intent model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1033,7 +1224,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_intent.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'intentId': self._serialize.url("intent_id", intent_id, 'str')
@@ -1069,9 +1261,20 @@ class ModelOperations(object):
     get_intent.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}'}
 
     def update_intent(
-            self, app_id, version_id, intent_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name of an intent classifier.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1097,7 +1300,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_intent.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'intentId': self._serialize.url("intent_id", intent_id, 'str')
@@ -1137,9 +1341,20 @@ class ModelOperations(object):
     update_intent.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}'}
 
     def delete_intent(
-            self, app_id, version_id, intent_id, delete_utterances=False, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, azure_region="westus", azure_cloud="com", delete_utterances=False, custom_headers=None, raw=False, **operation_config):
         """Deletes an intent classifier from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1164,7 +1379,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_intent.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'intentId': self._serialize.url("intent_id", intent_id, 'str')
@@ -1202,9 +1418,20 @@ class ModelOperations(object):
     delete_intent.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}'}
 
     def get_entity(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1226,7 +1453,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -1262,9 +1490,20 @@ class ModelOperations(object):
     get_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
 
     def update_entity(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name of an entity extractor.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1290,7 +1529,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -1330,9 +1570,20 @@ class ModelOperations(object):
     update_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
 
     def delete_entity(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes an entity extractor from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1354,7 +1605,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -1390,9 +1642,20 @@ class ModelOperations(object):
     delete_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
 
     def get_hierarchical_entity(
-            self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the hierarchical entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1414,7 +1677,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_hierarchical_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -1450,9 +1714,20 @@ class ModelOperations(object):
     get_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}'}
 
     def update_hierarchical_entity(
-            self, app_id, version_id, h_entity_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", children=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name and children of a hierarchical entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1480,7 +1755,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_hierarchical_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -1520,9 +1796,20 @@ class ModelOperations(object):
     update_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}'}
 
     def delete_hierarchical_entity(
-            self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a hierarchical entity extractor from the application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1544,7 +1831,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_hierarchical_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -1580,9 +1868,20 @@ class ModelOperations(object):
     delete_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}'}
 
     def get_composite_entity(
-            self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the composite entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1604,7 +1903,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_composite_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -1640,9 +1940,20 @@ class ModelOperations(object):
     get_composite_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}'}
 
     def update_composite_entity(
-            self, app_id, version_id, c_entity_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", children=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the composite entity extractor.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1670,7 +1981,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_composite_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -1710,9 +2022,20 @@ class ModelOperations(object):
     update_composite_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}'}
 
     def delete_composite_entity(
-            self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a composite entity extractor from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1734,7 +2057,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_composite_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -1770,9 +2094,20 @@ class ModelOperations(object):
     delete_composite_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}'}
 
     def get_closed_list(
-            self, app_id, version_id, cl_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information of a closed list model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1794,7 +2129,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_closed_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str')
@@ -1830,9 +2166,20 @@ class ModelOperations(object):
     get_closed_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}'}
 
     def update_closed_list(
-            self, app_id, version_id, cl_entity_id, sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, azure_region="westus", azure_cloud="com", sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the closed list model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1861,7 +2208,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_closed_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str')
@@ -1901,9 +2249,20 @@ class ModelOperations(object):
     update_closed_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}'}
 
     def patch_closed_list(
-            self, app_id, version_id, cl_entity_id, sub_lists=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, azure_region="westus", azure_cloud="com", sub_lists=None, custom_headers=None, raw=False, **operation_config):
         """Adds a batch of sublists to an existing closedlist.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1930,7 +2289,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.patch_closed_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str')
@@ -1970,9 +2330,20 @@ class ModelOperations(object):
     patch_closed_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}'}
 
     def delete_closed_list(
-            self, app_id, version_id, cl_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a closed list model from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -1994,7 +2365,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_closed_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str')
@@ -2030,9 +2402,20 @@ class ModelOperations(object):
     delete_closed_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}'}
 
     def get_prebuilt(
-            self, app_id, version_id, prebuilt_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, prebuilt_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the prebuilt entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2054,7 +2437,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_prebuilt.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'prebuiltId': self._serialize.url("prebuilt_id", prebuilt_id, 'str')
@@ -2090,9 +2474,20 @@ class ModelOperations(object):
     get_prebuilt.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{prebuiltId}'}
 
     def delete_prebuilt(
-            self, app_id, version_id, prebuilt_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, prebuilt_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a prebuilt entity extractor from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2114,7 +2509,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_prebuilt.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'prebuiltId': self._serialize.url("prebuilt_id", prebuilt_id, 'str')
@@ -2150,9 +2546,20 @@ class ModelOperations(object):
     delete_prebuilt.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{prebuiltId}'}
 
     def delete_sub_list(
-            self, app_id, version_id, cl_entity_id, sub_list_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, sub_list_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a sublist of a specific closed list model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2160,7 +2567,7 @@ class ModelOperations(object):
         :param cl_entity_id: The closed list entity extractor ID.
         :type cl_entity_id: str
         :param sub_list_id: The sublist ID.
-        :type sub_list_id: int
+        :type sub_list_id: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2176,11 +2583,12 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_sub_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str'),
-            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'int')
+            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'long')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2213,9 +2621,20 @@ class ModelOperations(object):
     delete_sub_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}/sublists/{subListId}'}
 
     def update_sub_list(
-            self, app_id, version_id, cl_entity_id, sub_list_id, canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, sub_list_id, azure_region="westus", azure_cloud="com", canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
         """Updates one of the closed list's sublists.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2223,7 +2642,7 @@ class ModelOperations(object):
         :param cl_entity_id: The closed list entity extractor ID.
         :type cl_entity_id: str
         :param sub_list_id: The sublist ID.
-        :type sub_list_id: int
+        :type sub_list_id: long
         :param canonical_form: The standard form that the list represents.
         :type canonical_form: str
         :param list: List of synonym words.
@@ -2245,11 +2664,12 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_sub_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str'),
-            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'int')
+            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'long')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2285,10 +2705,21 @@ class ModelOperations(object):
         return deserialized
     update_sub_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}/sublists/{subListId}'}
 
-    def get_intent_suggestions(
-            self, app_id, version_id, intent_id, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_intent_suggestions(
+            self, app_id, version_id, intent_id, azure_region="westus", azure_cloud="com", take=100, custom_headers=None, raw=False, **operation_config):
         """Suggests examples that would improve the accuracy of the intent model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2311,9 +2742,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_intent_suggestions.metadata['url']
+        url = self.list_intent_suggestions.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'intentId': self._serialize.url("intent_id", intent_id, 'str')
@@ -2348,13 +2780,24 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_intent_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/suggest'}
+    list_intent_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/suggest'}
 
-    def get_entity_suggestions(
-            self, app_id, version_id, entity_id, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_entity_suggestions(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", take=100, custom_headers=None, raw=False, **operation_config):
         """Get suggestion examples that would improve the accuracy of the entity
         model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2377,9 +2820,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_suggestions.metadata['url']
+        url = self.list_entity_suggestions.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -2414,12 +2858,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_entity_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/suggest'}
+    list_entity_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/suggest'}
 
     def add_sub_list(
-            self, app_id, version_id, cl_entity_id, canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, cl_entity_id, azure_region="westus", azure_cloud="com", canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
         """Adds a list to an existing closed list.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2435,8 +2890,8 @@ class ModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: int or ClientRawResponse if raw=true
-        :rtype: int or ~msrest.pipeline.ClientRawResponse
+        :return: long or ClientRawResponse if raw=true
+        :rtype: long or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
@@ -2445,7 +2900,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_sub_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str')
@@ -2475,7 +2931,7 @@ class ModelOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('int', response)
+            deserialized = self._deserialize('long', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2485,10 +2941,21 @@ class ModelOperations(object):
     add_sub_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}/sublists'}
 
     def add_custom_prebuilt_domain(
-            self, app_id, version_id, domain_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", domain_name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a customizable prebuilt domain along with all of its models to
         this application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2510,7 +2977,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_custom_prebuilt_domain.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2549,9 +3017,20 @@ class ModelOperations(object):
     add_custom_prebuilt_domain.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltdomains'}
 
     def add_custom_prebuilt_intent(
-            self, app_id, version_id, domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a custom prebuilt intent model to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2575,7 +3054,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_custom_prebuilt_intent.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2614,9 +3094,20 @@ class ModelOperations(object):
     add_custom_prebuilt_intent.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltintents'}
 
     def list_custom_prebuilt_intents(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets custom prebuilt intents information of this application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2636,7 +3127,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_custom_prebuilt_intents.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2671,9 +3163,20 @@ class ModelOperations(object):
     list_custom_prebuilt_intents.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltintents'}
 
     def add_custom_prebuilt_entity(
-            self, app_id, version_id, domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a custom prebuilt entity model to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2697,7 +3200,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_custom_prebuilt_entity.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2736,9 +3240,20 @@ class ModelOperations(object):
     add_custom_prebuilt_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities'}
 
     def list_custom_prebuilt_entities(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets all custom prebuilt entities information of this application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2758,7 +3273,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_custom_prebuilt_entities.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2793,9 +3309,20 @@ class ModelOperations(object):
     list_custom_prebuilt_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities'}
 
     def list_custom_prebuilt_models(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets all custom prebuilt models information of this application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2815,7 +3342,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.list_custom_prebuilt_models.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -2850,9 +3378,20 @@ class ModelOperations(object):
     list_custom_prebuilt_models.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltmodels'}
 
     def delete_custom_prebuilt_domain(
-            self, app_id, version_id, domain_name, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, domain_name, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a prebuilt domain's models from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2874,7 +3413,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_custom_prebuilt_domain.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str')
@@ -2910,9 +3450,20 @@ class ModelOperations(object):
     delete_custom_prebuilt_domain.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltdomains/{domainName}'}
 
     def get_hierarchical_entity_child(
-            self, app_id, version_id, h_entity_id, h_child_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, h_child_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the hierarchical entity child model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -2936,7 +3487,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_hierarchical_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -2973,9 +3525,20 @@ class ModelOperations(object):
     get_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children/{hChildId}'}
 
     def update_hierarchical_entity_child(
-            self, app_id, version_id, h_entity_id, h_child_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, h_child_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Renames a single child in an existing hierarchical entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3003,7 +3566,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_hierarchical_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -3044,9 +3608,20 @@ class ModelOperations(object):
     update_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children/{hChildId}'}
 
     def delete_hierarchical_entity_child(
-            self, app_id, version_id, h_entity_id, h_child_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, h_child_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a hierarchical entity extractor child from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3070,7 +3645,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_hierarchical_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -3107,9 +3683,20 @@ class ModelOperations(object):
     delete_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children/{hChildId}'}
 
     def add_hierarchical_entity_child(
-            self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Creates a single child in an existing hierarchical entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3133,7 +3720,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_hierarchical_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -3173,9 +3761,20 @@ class ModelOperations(object):
     add_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children'}
 
     def add_composite_entity_child(
-            self, app_id, version_id, c_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Creates a single child in an existing composite entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3199,7 +3798,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_composite_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -3239,9 +3839,20 @@ class ModelOperations(object):
     add_composite_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/children'}
 
     def delete_composite_entity_child(
-            self, app_id, version_id, c_entity_id, c_child_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, c_child_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a composite entity extractor child from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3265,7 +3876,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_composite_entity_child.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str'),
@@ -3301,10 +3913,21 @@ class ModelOperations(object):
         return deserialized
     delete_composite_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/children/{cChildId}'}
 
-    def get_regex_entity_infos(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_regex_entity_infos(
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets information about the regex entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3327,9 +3950,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_regex_entity_infos.metadata['url']
+        url = self.list_regex_entity_infos.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -3365,12 +3989,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_regex_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
+    list_regex_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
 
     def create_regex_entity_model(
-            self, app_id, version_id, regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Adds a regex entity model to the application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3394,7 +4029,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_regex_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -3432,10 +4068,21 @@ class ModelOperations(object):
         return deserialized
     create_regex_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
 
-    def get_pattern_any_entity_infos(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_pattern_any_entity_infos(
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Get information about the Pattern.Any entity models.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3458,9 +4105,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_pattern_any_entity_infos.metadata['url']
+        url = self.list_pattern_any_entity_infos.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -3496,12 +4144,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_pattern_any_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
+    list_pattern_any_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
 
     def create_pattern_any_entity_model(
-            self, app_id, version_id, name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
         """Adds a pattern.any entity extractor to the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3525,7 +4184,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_pattern_any_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -3563,10 +4223,21 @@ class ModelOperations(object):
         return deserialized
     create_pattern_any_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
 
-    def get_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3586,9 +4257,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_roles.metadata['url']
+        url = self.list_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3621,12 +4293,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
+    list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
 
     def create_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3650,7 +4333,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3689,10 +4373,21 @@ class ModelOperations(object):
         return deserialized
     create_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
 
-    def get_prebuilt_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_prebuilt_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3712,9 +4407,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_prebuilt_entity_roles.metadata['url']
+        url = self.list_prebuilt_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3747,12 +4443,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
+    list_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
 
     def create_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3776,7 +4483,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3815,10 +4523,21 @@ class ModelOperations(object):
         return deserialized
     create_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
 
-    def get_closed_list_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_closed_list_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3838,9 +4557,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_closed_list_entity_roles.metadata['url']
+        url = self.list_closed_list_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3873,12 +4593,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_closed_list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
+    list_closed_list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
 
     def create_closed_list_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3902,7 +4633,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_closed_list_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3941,10 +4673,21 @@ class ModelOperations(object):
         return deserialized
     create_closed_list_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
 
-    def get_regex_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_regex_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -3964,9 +4707,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_regex_entity_roles.metadata['url']
+        url = self.list_regex_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -3999,12 +4743,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_regex_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
+    list_regex_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
 
     def create_regex_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4028,7 +4783,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_regex_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4067,10 +4823,21 @@ class ModelOperations(object):
         return deserialized
     create_regex_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
 
-    def get_composite_entity_roles(
-            self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_composite_entity_roles(
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4090,9 +4857,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_composite_entity_roles.metadata['url']
+        url = self.list_composite_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -4125,12 +4893,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_composite_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
+    list_composite_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
 
     def create_composite_entity_role(
-            self, app_id, version_id, c_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4154,7 +4933,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_composite_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str')
@@ -4193,10 +4973,21 @@ class ModelOperations(object):
         return deserialized
     create_composite_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
 
-    def get_pattern_any_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_pattern_any_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4216,9 +5007,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_pattern_any_entity_roles.metadata['url']
+        url = self.list_pattern_any_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4251,12 +5043,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_pattern_any_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
+    list_pattern_any_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
 
     def create_pattern_any_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4280,7 +5083,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_pattern_any_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4319,10 +5123,21 @@ class ModelOperations(object):
         return deserialized
     create_pattern_any_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
 
-    def get_hierarchical_entity_roles(
-            self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_hierarchical_entity_roles(
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4342,9 +5157,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_hierarchical_entity_roles.metadata['url']
+        url = self.list_hierarchical_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -4377,12 +5193,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_hierarchical_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
+    list_hierarchical_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
 
     def create_hierarchical_entity_role(
-            self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4406,7 +5233,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_hierarchical_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
@@ -4445,10 +5273,21 @@ class ModelOperations(object):
         return deserialized
     create_hierarchical_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
 
-    def get_custom_prebuilt_entity_roles(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+    def list_custom_prebuilt_entity_roles(
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get All Entity Roles for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4468,9 +5307,10 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_custom_prebuilt_entity_roles.metadata['url']
+        url = self.list_custom_prebuilt_entity_roles.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4503,12 +5343,23 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_custom_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles'}
+    list_custom_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles'}
 
     def create_custom_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Create an entity role for an entity in the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4532,7 +5383,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.create_custom_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4572,9 +5424,20 @@ class ModelOperations(object):
     create_custom_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles'}
 
     def get_explicit_list(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get the explicit list of the pattern.any entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4596,7 +5459,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_explicit_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4632,9 +5496,20 @@ class ModelOperations(object):
     get_explicit_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/explicitlist'}
 
     def add_explicit_list_item(
-            self, app_id, version_id, entity_id, explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
         """Add a new item to the explicit list for the Pattern.Any entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4658,7 +5533,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.add_explicit_list_item.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4698,9 +5574,20 @@ class ModelOperations(object):
     add_explicit_list_item.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/explicitlist'}
 
     def get_regex_entity_entity_info(
-            self, app_id, version_id, regex_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, regex_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information of a regex entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4722,7 +5609,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_regex_entity_entity_info.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'regexEntityId': self._serialize.url("regex_entity_id", regex_entity_id, 'str')
@@ -4758,9 +5646,20 @@ class ModelOperations(object):
     get_regex_entity_entity_info.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{regexEntityId}'}
 
     def update_regex_entity_model(
-            self, app_id, version_id, regex_entity_id, regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, regex_entity_id, azure_region="westus", azure_cloud="com", regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Updates the regex entity model .
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4788,7 +5687,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_regex_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'regexEntityId': self._serialize.url("regex_entity_id", regex_entity_id, 'str')
@@ -4828,9 +5728,20 @@ class ModelOperations(object):
     update_regex_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{regexEntityId}'}
 
     def delete_regex_entity_model(
-            self, app_id, version_id, regex_entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, regex_entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a regex entity model from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4852,7 +5763,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_regex_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'regexEntityId': self._serialize.url("regex_entity_id", regex_entity_id, 'str')
@@ -4888,9 +5800,20 @@ class ModelOperations(object):
     delete_regex_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{regexEntityId}'}
 
     def get_pattern_any_entity_info(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets information about the application version's Pattern.Any model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4912,7 +5835,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_pattern_any_entity_info.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -4948,9 +5872,20 @@ class ModelOperations(object):
     get_pattern_any_entity_info.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}'}
 
     def update_pattern_any_entity_model(
-            self, app_id, version_id, entity_id, name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name and explicit list of a Pattern.Any entity model.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -4978,7 +5913,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_pattern_any_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -5018,9 +5954,20 @@ class ModelOperations(object):
     update_pattern_any_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}'}
 
     def delete_pattern_any_entity_model(
-            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a Pattern.Any entity extractor from the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5042,7 +5989,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_pattern_any_entity_model.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str')
@@ -5078,9 +6026,20 @@ class ModelOperations(object):
     delete_pattern_any_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}'}
 
     def get_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5104,7 +6063,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5141,9 +6101,20 @@ class ModelOperations(object):
     get_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles/{roleId}'}
 
     def update_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5171,7 +6142,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5212,9 +6184,20 @@ class ModelOperations(object):
     update_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles/{roleId}'}
 
     def delete_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5238,7 +6221,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5275,9 +6259,20 @@ class ModelOperations(object):
     delete_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles/{roleId}'}
 
     def get_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5301,7 +6296,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5338,9 +6334,20 @@ class ModelOperations(object):
     get_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles/{roleId}'}
 
     def update_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5368,7 +6375,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5409,9 +6417,20 @@ class ModelOperations(object):
     update_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles/{roleId}'}
 
     def delete_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5435,7 +6454,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5472,9 +6492,20 @@ class ModelOperations(object):
     delete_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles/{roleId}'}
 
     def get_closed_list_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5498,7 +6529,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_closed_list_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5535,9 +6567,20 @@ class ModelOperations(object):
     get_closed_list_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles/{roleId}'}
 
     def update_closed_list_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5565,7 +6608,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_closed_list_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5606,9 +6650,20 @@ class ModelOperations(object):
     update_closed_list_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles/{roleId}'}
 
     def delete_closed_list_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5632,7 +6687,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_closed_list_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5669,9 +6725,20 @@ class ModelOperations(object):
     delete_closed_list_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles/{roleId}'}
 
     def get_regex_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5695,7 +6762,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_regex_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5732,9 +6800,20 @@ class ModelOperations(object):
     get_regex_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles/{roleId}'}
 
     def update_regex_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5762,7 +6841,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_regex_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5803,9 +6883,20 @@ class ModelOperations(object):
     update_regex_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles/{roleId}'}
 
     def delete_regex_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5829,7 +6920,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_regex_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -5866,9 +6958,20 @@ class ModelOperations(object):
     delete_regex_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles/{roleId}'}
 
     def get_composite_entity_role(
-            self, app_id, version_id, c_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5892,7 +6995,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_composite_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str'),
@@ -5929,9 +7033,20 @@ class ModelOperations(object):
     get_composite_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles/{roleId}'}
 
     def update_composite_entity_role(
-            self, app_id, version_id, c_entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -5959,7 +7074,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_composite_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str'),
@@ -6000,9 +7116,20 @@ class ModelOperations(object):
     update_composite_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles/{roleId}'}
 
     def delete_composite_entity_role(
-            self, app_id, version_id, c_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, c_entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6026,7 +7153,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_composite_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'cEntityId': self._serialize.url("c_entity_id", c_entity_id, 'str'),
@@ -6063,9 +7191,20 @@ class ModelOperations(object):
     delete_composite_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles/{roleId}'}
 
     def get_pattern_any_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6089,7 +7228,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_pattern_any_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6126,9 +7266,20 @@ class ModelOperations(object):
     get_pattern_any_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles/{roleId}'}
 
     def update_pattern_any_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6156,7 +7307,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_pattern_any_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6197,9 +7349,20 @@ class ModelOperations(object):
     update_pattern_any_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles/{roleId}'}
 
     def delete_pattern_any_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6223,7 +7386,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_pattern_any_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6260,9 +7424,20 @@ class ModelOperations(object):
     delete_pattern_any_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles/{roleId}'}
 
     def get_hierarchical_entity_role(
-            self, app_id, version_id, h_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6286,7 +7461,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_hierarchical_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -6323,9 +7499,20 @@ class ModelOperations(object):
     get_hierarchical_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles/{roleId}'}
 
     def update_hierarchical_entity_role(
-            self, app_id, version_id, h_entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6353,7 +7540,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_hierarchical_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -6394,9 +7582,20 @@ class ModelOperations(object):
     update_hierarchical_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles/{roleId}'}
 
     def delete_hierarchical_entity_role(
-            self, app_id, version_id, h_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, h_entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6420,7 +7619,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_hierarchical_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str'),
@@ -6457,9 +7657,20 @@ class ModelOperations(object):
     delete_hierarchical_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles/{roleId}'}
 
     def get_custom_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get one entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6483,7 +7694,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_custom_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6520,9 +7732,20 @@ class ModelOperations(object):
     get_custom_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles/{roleId}'}
 
     def update_custom_prebuilt_entity_role(
-            self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", name=None, custom_headers=None, raw=False, **operation_config):
         """Update an entity role for a given entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6550,7 +7773,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_custom_prebuilt_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6591,9 +7815,20 @@ class ModelOperations(object):
     update_custom_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles/{roleId}'}
 
     def delete_custom_entity_role(
-            self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, role_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete an entity role.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6617,7 +7852,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_custom_entity_role.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6654,9 +7890,20 @@ class ModelOperations(object):
     delete_custom_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles/{roleId}'}
 
     def get_explicit_list_item(
-            self, app_id, version_id, entity_id, item_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, item_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Get the explicit list of the pattern.any entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6680,7 +7927,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.get_explicit_list_item.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6717,9 +7965,20 @@ class ModelOperations(object):
     get_explicit_list_item.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/explicitlist/{itemId}'}
 
     def update_explicit_list_item(
-            self, app_id, version_id, entity_id, item_id, explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, item_id, azure_region="westus", azure_cloud="com", explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
         """Updates an explicit list item for a Pattern.Any entity.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6747,7 +8006,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.update_explicit_list_item.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),
@@ -6788,9 +8048,20 @@ class ModelOperations(object):
     update_explicit_list_item.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/explicitlist/{itemId}'}
 
     def delete_explicit_list_item(
-            self, app_id, version_id, entity_id, item_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, item_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Delete the explicit list item from the Pattern.any explicit list.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -6814,7 +8085,8 @@ class ModelOperations(object):
         # Construct URL
         url = self.delete_explicit_list_item.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'entityId': self._serialize.url("entity_id", entity_id, 'str'),

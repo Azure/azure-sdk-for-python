@@ -33,10 +33,100 @@ class FeaturesOperations(object):
 
         self.config = config
 
+    def list_application_version_pattern_features(
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+        """[DEPRECATED NOTICE: This operation will soon be removed] Gets all the
+        pattern features.
+
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param skip: The number of entries to skip. Default value is 0.
+        :type skip: int
+        :param take: The number of entries to return. Maximum page size is
+         500. Default is 100.
+        :type take: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.PatternFeatureInfo]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_application_version_pattern_features.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if skip is not None:
+            query_parameters['skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+        if take is not None:
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=500, minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[PatternFeatureInfo]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_application_version_pattern_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/patterns'}
+
     def add_phrase_list(
-            self, app_id, version_id, phraselist_create_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, phraselist_create_object, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Creates a new phraselist feature.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -59,7 +149,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.add_phrase_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -98,9 +189,20 @@ class FeaturesOperations(object):
     add_phrase_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/phraselists'}
 
     def list_phrase_lists(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets all the phraselist features.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -125,7 +227,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.list_phrase_lists.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -164,9 +267,20 @@ class FeaturesOperations(object):
     list_phrase_lists.metadata = {'url': '/apps/{appId}/versions/{versionId}/phraselists'}
 
     def list(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Gets all the extraction features for the specified application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -191,7 +305,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -230,9 +345,20 @@ class FeaturesOperations(object):
     list.metadata = {'url': '/apps/{appId}/versions/{versionId}/features'}
 
     def get_phrase_list(
-            self, app_id, version_id, phraselist_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, phraselist_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets phraselist feature info.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -254,7 +380,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.get_phrase_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'phraselistId': self._serialize.url("phraselist_id", phraselist_id, 'int')
@@ -290,9 +417,20 @@ class FeaturesOperations(object):
     get_phrase_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/phraselists/{phraselistId}'}
 
     def update_phrase_list(
-            self, app_id, version_id, phraselist_id, phraselist_update_object=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, phraselist_id, azure_region="westus", azure_cloud="com", phraselist_update_object=None, custom_headers=None, raw=False, **operation_config):
         """Updates the phrases, the state and the name of the phraselist feature.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -320,7 +458,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.update_phrase_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'phraselistId': self._serialize.url("phraselist_id", phraselist_id, 'int')
@@ -363,9 +502,20 @@ class FeaturesOperations(object):
     update_phrase_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/phraselists/{phraselistId}'}
 
     def delete_phrase_list(
-            self, app_id, version_id, phraselist_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, phraselist_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes a phraselist feature.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -387,7 +537,8 @@ class FeaturesOperations(object):
         # Construct URL
         url = self.delete_phrase_list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'phraselistId': self._serialize.url("phraselist_id", phraselist_id, 'int')

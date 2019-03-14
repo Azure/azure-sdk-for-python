@@ -34,9 +34,20 @@ class PatternOperations(object):
         self.config = config
 
     def add_pattern(
-            self, app_id, version_id, pattern=None, intent=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", pattern=None, intent=None, custom_headers=None, raw=False, **operation_config):
         """Adds one pattern to the specified application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -62,7 +73,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.add_pattern.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -100,10 +112,21 @@ class PatternOperations(object):
         return deserialized
     add_pattern.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrule'}
 
-    def get_patterns(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_patterns(
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Returns an application version's patterns.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -126,9 +149,10 @@ class PatternOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_patterns.metadata['url']
+        url = self.list_patterns.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -164,12 +188,23 @@ class PatternOperations(object):
             return client_raw_response
 
         return deserialized
-    get_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
+    list_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
 
     def update_patterns(
-            self, app_id, version_id, patterns, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, patterns, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Updates patterns.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -192,7 +227,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.update_patterns.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -231,9 +267,20 @@ class PatternOperations(object):
     update_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
 
     def batch_add_patterns(
-            self, app_id, version_id, patterns, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, patterns, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Adds a batch of patterns to the specified application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -256,7 +303,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.batch_add_patterns.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -295,9 +343,20 @@ class PatternOperations(object):
     batch_add_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
 
     def delete_patterns(
-            self, app_id, version_id, pattern_ids, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, pattern_ids, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes the patterns with the specified IDs.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -319,7 +378,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.delete_patterns.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -358,9 +418,20 @@ class PatternOperations(object):
     delete_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
 
     def update_pattern(
-            self, app_id, version_id, pattern_id, pattern, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, pattern_id, pattern, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Updates a pattern.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -385,7 +456,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.update_pattern.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'patternId': self._serialize.url("pattern_id", pattern_id, 'str')
@@ -425,9 +497,20 @@ class PatternOperations(object):
     update_pattern.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules/{patternId}'}
 
     def delete_pattern(
-            self, app_id, version_id, pattern_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, pattern_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes the pattern with the specified ID.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -449,7 +532,8 @@ class PatternOperations(object):
         # Construct URL
         url = self.delete_pattern.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'patternId': self._serialize.url("pattern_id", pattern_id, 'str')
@@ -484,10 +568,21 @@ class PatternOperations(object):
         return deserialized
     delete_pattern.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules/{patternId}'}
 
-    def get_intent_patterns(
-            self, app_id, version_id, intent_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+    def list_intent_patterns(
+            self, app_id, version_id, intent_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """Returns patterns to be retrieved for the specific intent.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -512,9 +607,10 @@ class PatternOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_intent_patterns.metadata['url']
+        url = self.list_intent_patterns.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'intentId': self._serialize.url("intent_id", intent_id, 'str')
@@ -551,4 +647,4 @@ class PatternOperations(object):
             return client_raw_response
 
         return deserialized
-    get_intent_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/patternrules'}
+    list_intent_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/patternrules'}

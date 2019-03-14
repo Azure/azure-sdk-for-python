@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TrainOperations(object):
-    """TrainOperations operations.
+class SettingsOperations(object):
+    """SettingsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -33,88 +33,9 @@ class TrainOperations(object):
 
         self.config = config
 
-    def train_version(
+    def list(
             self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
-        """Sends a training request for a version of a specified LUIS app. This
-        POST request initiates a request asynchronously. To determine whether
-        the training request is successful, submit a GET request to get
-        training status. Note: The application version is not fully trained
-        unless all the models (intents and entities) are trained successfully
-        or are up to date. To verify training success, get the training status
-        at least once after training is complete.
-
-        :param azure_region: Supported Azure regions for Cognitive Services
-         endpoints. Possible values include: 'westus', 'westeurope',
-         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-         'brazilsouth', 'virginia'
-        :type azure_region: str or
-         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
-        :param azure_cloud: Supported Azure Clouds for Cognitive Services
-         endpoints. Possible values include: 'com', 'us'
-        :type azure_cloud: str or
-         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: EnqueueTrainingResponse or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.EnqueueTrainingResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.train_version.metadata['url']
-        path_format_arguments = {
-            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
-            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [202]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('EnqueueTrainingResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    train_version.metadata = {'url': '/apps/{appId}/versions/{versionId}/train'}
-
-    def get_status(
-            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
-        """Gets the training status of all models (intents and entities) for the
-        specified LUIS app. You must call the train API to train the LUIS app
-        before you call this API to get training status. "appID" specifies the
-        LUIS app ID. "versionId" specifies the version number of the LUIS app.
-        For example, "0.1".
+        """Gets the application version settings.
 
         :param azure_region: Supported Azure regions for Cognitive Services
          endpoints. Possible values include: 'westus', 'westeurope',
@@ -138,13 +59,13 @@ class TrainOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
         :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.ModelTrainingInfo]
+         list[~azure.cognitiveservices.language.luis.authoring.models.AppVersionSettingObject]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_status.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
             'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
@@ -172,11 +93,88 @@ class TrainOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[ModelTrainingInfo]', response)
+            deserialized = self._deserialize('[AppVersionSettingObject]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_status.metadata = {'url': '/apps/{appId}/versions/{versionId}/train'}
+    list.metadata = {'url': '/apps/{appId}/versions/{versionId}/settings'}
+
+    def update(
+            self, app_id, version_id, list_of_app_version_setting_object, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Updates the application version settings.
+
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param list_of_app_version_setting_object: A list of the updated
+         application version settings.
+        :type list_of_app_version_setting_object:
+         list[~azure.cognitiveservices.language.luis.authoring.models.AppVersionSettingObject]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(list_of_app_version_setting_object, '[AppVersionSettingObject]')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/apps/{appId}/versions/{versionId}/settings'}
