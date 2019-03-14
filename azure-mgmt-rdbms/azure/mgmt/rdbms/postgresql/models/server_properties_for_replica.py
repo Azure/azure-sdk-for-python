@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .server_properties_for_create import ServerPropertiesForCreate
 
 
-class ServerPropertiesForCreate(Model):
-    """The properties used to create a new server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ServerPropertiesForDefaultCreate,
-    ServerPropertiesForRestore, ServerPropertiesForGeoRestore,
-    ServerPropertiesForReplica
+class ServerPropertiesForReplica(ServerPropertiesForCreate):
+    """The properties to create a new replica.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,10 +28,14 @@ class ServerPropertiesForCreate(Model):
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
+    :param source_server_id: Required. The master server id to create replica
+     from.
+    :type source_server_id: str
     """
 
     _validation = {
         'create_mode': {'required': True},
+        'source_server_id': {'required': True},
     }
 
     _attribute_map = {
@@ -44,15 +43,10 @@ class ServerPropertiesForCreate(Model):
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore', 'Replica': 'ServerPropertiesForReplica'}
+        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ServerPropertiesForCreate, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.create_mode = None
+        super(ServerPropertiesForReplica, self).__init__(**kwargs)
+        self.source_server_id = kwargs.get('source_server_id', None)
+        self.create_mode = 'Replica'
