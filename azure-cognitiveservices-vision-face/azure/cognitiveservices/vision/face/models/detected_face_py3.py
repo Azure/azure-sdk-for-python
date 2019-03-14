@@ -19,6 +19,10 @@ class DetectedFace(Model):
 
     :param face_id:
     :type face_id: str
+    :param recognition_model: Required. Possible values include:
+     'recognition_01', 'recognition_02'. Default value: "recognition_01" .
+    :type recognition_model: str or
+     ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_rectangle: Required.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.face.models.FaceRectangle
@@ -31,19 +35,22 @@ class DetectedFace(Model):
     """
 
     _validation = {
+        'recognition_model': {'required': True},
         'face_rectangle': {'required': True},
     }
 
     _attribute_map = {
         'face_id': {'key': 'faceId', 'type': 'str'},
+        'recognition_model': {'key': 'recognitionModel', 'type': 'str'},
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
         'face_landmarks': {'key': 'faceLandmarks', 'type': 'FaceLandmarks'},
         'face_attributes': {'key': 'faceAttributes', 'type': 'FaceAttributes'},
     }
 
-    def __init__(self, *, face_rectangle, face_id: str=None, face_landmarks=None, face_attributes=None, **kwargs) -> None:
+    def __init__(self, *, face_rectangle, face_id: str=None, recognition_model="recognition_01", face_landmarks=None, face_attributes=None, **kwargs) -> None:
         super(DetectedFace, self).__init__(**kwargs)
         self.face_id = face_id
+        self.recognition_model = recognition_model
         self.face_rectangle = face_rectangle
         self.face_landmarks = face_landmarks
         self.face_attributes = face_attributes

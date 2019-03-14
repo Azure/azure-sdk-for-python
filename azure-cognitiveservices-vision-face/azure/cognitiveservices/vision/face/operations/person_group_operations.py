@@ -34,9 +34,40 @@ class PersonGroupOperations(object):
         self.config = config
 
     def create(
-            self, person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Create a new person group with specified personGroupId, name and
-        user-provided userData.
+            self, person_group_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+        """Create a new person group with specified personGroupId, name,
+        user-provided userData and recognitionModel.
+        <br /> A person group is the container of the uploaded person data,
+        including face images and face recognition features.
+        <br /> After creation, use [PersonGroup Person -
+        Create](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523c)
+        to add persons into the group, and then call [PersonGroup -
+        Train](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395249)
+        to get this group ready for [Face -
+        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239).
+        <br /> The person's face, image, and userData will be stored on server
+        until [PersonGroup Person -
+        Delete](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039523d)
+        or [PersonGroup -
+        Delete](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395245)
+        is called.
+        <br />
+        * Free-tier subscription quota: 1,000 person groups. Each holds up to
+        1,000 persons.
+        * S0-tier subscription quota: 1,000,000 person groups. Each holds up to
+        10,000 persons.
+        * to handle larger scale face identification problem, please consider
+        using
+        [LargePersonGroup](/docs/services/563879b61984550e40cbbe8d/operations/599acdee6ac60f11b48b5a9d).
+        <br />
+        'recognitionModel' should be specified to associate with this person
+        group. The default value for 'recognitionModel' is 'recognition_01', if
+        the latest model needed, please explicitly specify the model you need
+        in this parameter. New faces that are added to an existing person group
+        will use the recognition model that's already associated with the
+        collection. Existing face features in a person group can't be updated
+        to features extracted by another version of recognition model.
+        .
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
@@ -44,6 +75,10 @@ class PersonGroupOperations(object):
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
+        :param recognition_model: Possible values include: 'recognition_01',
+         'recognition_02'
+        :type recognition_model: str or
+         ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +89,7 @@ class PersonGroupOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.NameAndUserDataContract(name=name, user_data=user_data)
+        body = models.MetaDataContract(name=name, user_data=user_data, recognition_model=recognition_model)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -74,7 +109,7 @@ class PersonGroupOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'NameAndUserDataContract')
+        body_content = self._serialize.body(body, 'MetaDataContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -135,8 +170,9 @@ class PersonGroupOperations(object):
 
     def get(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the information of a person group, including its name and
-        userData.
+        """Retrieve person group name, userData and recognitionModel. To get
+        person information under this personGroup, use [PersonGroup Person -
+        List](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395241).
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
@@ -297,7 +333,22 @@ class PersonGroupOperations(object):
 
     def list(
             self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
-        """List person groups and their information.
+        """List person groups’s pesonGroupId, name, userData and
+        recognitionModel.<br />
+        * Person groups are stored in alphabetical order of personGroupId.
+        * "start" parameter (string, optional) is a user-provided personGroupId
+        value that returned entries have larger ids by string comparison.
+        "start" set to empty to indicate return from the first item.
+        * "top" parameter (int, optional) specifies the number of entries to
+        return. A maximal of 1000 entries can be returned in one call. To fetch
+        more, you can specify "start" with the last retuned entry’s Id of the
+        current call.
+        <br />
+        For example, total 5 person groups: "group1", ..., "group5".
+        <br /> "start=&top=" will return all 5 groups.
+        <br /> "start=&top=2" will return "group1", "group2".
+        <br /> "start=group2&top=3" will return "group3", "group4", "group5".
+        .
 
         :param start: List person groups from the least personGroupId greater
          than the "start".
