@@ -20,6 +20,8 @@ class ReplicaHealthState(EntityHealthState):
     sub-classes are: StatefulServiceReplicaHealthState,
     StatelessServiceInstanceHealthState
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -29,7 +31,7 @@ class ReplicaHealthState(EntityHealthState):
     :param partition_id: The ID of the partition to which this replica
      belongs.
     :type partition_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -47,8 +49,8 @@ class ReplicaHealthState(EntityHealthState):
         'service_kind': {'Stateful': 'StatefulServiceReplicaHealthState', 'Stateless': 'StatelessServiceInstanceHealthState'}
     }
 
-    def __init__(self, aggregated_health_state=None, partition_id=None):
-        super(ReplicaHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(ReplicaHealthState, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
         self.service_kind = None
         self.service_kind = 'ReplicaHealthState'

@@ -10,12 +10,6 @@ import re
 import os.path
 from io import open
 from setuptools import find_packages, setup
-try:
-    from azure_bdist_wheel import cmdclass
-except ImportError:
-    from distutils import log as logger
-    logger.warn("Wheel is not available, disabling bdist_wheel hook")
-    cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-mgmt-subscription"
@@ -69,17 +63,25 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=[
+        'tests',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.mgmt',
+    ]),
     install_requires=[
-        'msrestazure~=0.4.11',
+        'msrest>=0.5.0',
+        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
-    cmdclass=cmdclass
+    extras_require={
+        ":python_version<'3.0'": ['azure-mgmt-nspkg'],
+    }
 )

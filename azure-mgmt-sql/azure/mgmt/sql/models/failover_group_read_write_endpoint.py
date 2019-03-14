@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class FailoverGroupReadWriteEndpoint(Model):
     """Read-write endpoint of the failover group instance.
 
-    :param failover_policy: Failover policy of the read-write endpoint for the
-     failover group. If failoverPolicy is Automatic then
+    All required parameters must be populated in order to send to Azure.
+
+    :param failover_policy: Required. Failover policy of the read-write
+     endpoint for the failover group. If failoverPolicy is Automatic then
      failoverWithDataLossGracePeriodMinutes is required. Possible values
      include: 'Manual', 'Automatic'
     :type failover_policy: str or
@@ -37,7 +39,7 @@ class FailoverGroupReadWriteEndpoint(Model):
         'failover_with_data_loss_grace_period_minutes': {'key': 'failoverWithDataLossGracePeriodMinutes', 'type': 'int'},
     }
 
-    def __init__(self, failover_policy, failover_with_data_loss_grace_period_minutes=None):
-        super(FailoverGroupReadWriteEndpoint, self).__init__()
-        self.failover_policy = failover_policy
-        self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes
+    def __init__(self, **kwargs):
+        super(FailoverGroupReadWriteEndpoint, self).__init__(**kwargs)
+        self.failover_policy = kwargs.get('failover_policy', None)
+        self.failover_with_data_loss_grace_period_minutes = kwargs.get('failover_with_data_loss_grace_period_minutes', None)

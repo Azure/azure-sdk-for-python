@@ -15,39 +15,41 @@ from msrest.serialization import Model
 class IpsecPolicy(Model):
     """An IPSec Policy configuration for a virtual network gateway connection.
 
-    :param sa_life_time_seconds: The IPSec Security Association (also called
-     Quick Mode or Phase 2 SA) lifetime in seconds for a site to site VPN
-     tunnel.
+    All required parameters must be populated in order to send to Azure.
+
+    :param sa_life_time_seconds: Required. The IPSec Security Association
+     (also called Quick Mode or Phase 2 SA) lifetime in seconds for a site to
+     site VPN tunnel.
     :type sa_life_time_seconds: int
-    :param sa_data_size_kilobytes: The IPSec Security Association (also called
-     Quick Mode or Phase 2 SA) payload size in KB for a site to site VPN
-     tunnel.
+    :param sa_data_size_kilobytes: Required. The IPSec Security Association
+     (also called Quick Mode or Phase 2 SA) payload size in KB for a site to
+     site VPN tunnel.
     :type sa_data_size_kilobytes: int
-    :param ipsec_encryption: The IPSec encryption algorithm (IKE phase 1).
-     Possible values include: 'None', 'DES', 'DES3', 'AES128', 'AES192',
-     'AES256', 'GCMAES128', 'GCMAES192', 'GCMAES256'
+    :param ipsec_encryption: Required. The IPSec encryption algorithm (IKE
+     phase 1). Possible values include: 'None', 'DES', 'DES3', 'AES128',
+     'AES192', 'AES256', 'GCMAES128', 'GCMAES192', 'GCMAES256'
     :type ipsec_encryption: str or
      ~azure.mgmt.network.v2017_06_01.models.IpsecEncryption
-    :param ipsec_integrity: The IPSec integrity algorithm (IKE phase 1).
-     Possible values include: 'MD5', 'SHA1', 'SHA256', 'GCMAES128',
+    :param ipsec_integrity: Required. The IPSec integrity algorithm (IKE phase
+     1). Possible values include: 'MD5', 'SHA1', 'SHA256', 'GCMAES128',
      'GCMAES192', 'GCMAES256'
     :type ipsec_integrity: str or
      ~azure.mgmt.network.v2017_06_01.models.IpsecIntegrity
-    :param ike_encryption: The IKE encryption algorithm (IKE phase 2).
-     Possible values include: 'DES', 'DES3', 'AES128', 'AES192', 'AES256'
+    :param ike_encryption: Required. The IKE encryption algorithm (IKE phase
+     2). Possible values include: 'DES', 'DES3', 'AES128', 'AES192', 'AES256'
     :type ike_encryption: str or
      ~azure.mgmt.network.v2017_06_01.models.IkeEncryption
-    :param ike_integrity: The IKE integrity algorithm (IKE phase 2). Possible
-     values include: 'MD5', 'SHA1', 'SHA256', 'SHA384'
+    :param ike_integrity: Required. The IKE integrity algorithm (IKE phase 2).
+     Possible values include: 'MD5', 'SHA1', 'SHA256', 'SHA384'
     :type ike_integrity: str or
      ~azure.mgmt.network.v2017_06_01.models.IkeIntegrity
-    :param dh_group: The DH Groups used in IKE Phase 1 for initial SA.
-     Possible values include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14',
+    :param dh_group: Required. The DH Groups used in IKE Phase 1 for initial
+     SA. Possible values include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14',
      'DHGroup2048', 'ECP256', 'ECP384', 'DHGroup24'
     :type dh_group: str or ~azure.mgmt.network.v2017_06_01.models.DhGroup
-    :param pfs_group: The DH Groups used in IKE Phase 2 for new child SA.
-     Possible values include: 'None', 'PFS1', 'PFS2', 'PFS2048', 'ECP256',
-     'ECP384', 'PFS24'
+    :param pfs_group: Required. The DH Groups used in IKE Phase 2 for new
+     child SA. Possible values include: 'None', 'PFS1', 'PFS2', 'PFS2048',
+     'ECP256', 'ECP384', 'PFS24'
     :type pfs_group: str or ~azure.mgmt.network.v2017_06_01.models.PfsGroup
     """
 
@@ -73,13 +75,13 @@ class IpsecPolicy(Model):
         'pfs_group': {'key': 'pfsGroup', 'type': 'str'},
     }
 
-    def __init__(self, sa_life_time_seconds, sa_data_size_kilobytes, ipsec_encryption, ipsec_integrity, ike_encryption, ike_integrity, dh_group, pfs_group):
-        super(IpsecPolicy, self).__init__()
-        self.sa_life_time_seconds = sa_life_time_seconds
-        self.sa_data_size_kilobytes = sa_data_size_kilobytes
-        self.ipsec_encryption = ipsec_encryption
-        self.ipsec_integrity = ipsec_integrity
-        self.ike_encryption = ike_encryption
-        self.ike_integrity = ike_integrity
-        self.dh_group = dh_group
-        self.pfs_group = pfs_group
+    def __init__(self, **kwargs):
+        super(IpsecPolicy, self).__init__(**kwargs)
+        self.sa_life_time_seconds = kwargs.get('sa_life_time_seconds', None)
+        self.sa_data_size_kilobytes = kwargs.get('sa_data_size_kilobytes', None)
+        self.ipsec_encryption = kwargs.get('ipsec_encryption', None)
+        self.ipsec_integrity = kwargs.get('ipsec_integrity', None)
+        self.ike_encryption = kwargs.get('ike_encryption', None)
+        self.ike_integrity = kwargs.get('ike_integrity', None)
+        self.dh_group = kwargs.get('dh_group', None)
+        self.pfs_group = kwargs.get('pfs_group', None)

@@ -9,25 +9,46 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_article import NewsArticle
-from .news import News
-from .search_results_answer import SearchResultsAnswer
-from .image_object import ImageObject
-from .query import Query
-from .news_topic import NewsTopic
-from .answer import Answer
-from .article import Article
-from .thing import Thing
-from .response import Response
-from .trending_topics import TrendingTopics
-from .video_object import VideoObject
-from .creative_work import CreativeWork
-from .organization import Organization
-from .identifiable import Identifiable
-from .error import Error
-from .error_response import ErrorResponse, ErrorResponseException
-from .media_object import MediaObject
-from .response_base import ResponseBase
+try:
+    from .news_article_py3 import NewsArticle
+    from .news_py3 import News
+    from .search_results_answer_py3 import SearchResultsAnswer
+    from .image_object_py3 import ImageObject
+    from .query_py3 import Query
+    from .news_topic_py3 import NewsTopic
+    from .answer_py3 import Answer
+    from .article_py3 import Article
+    from .thing_py3 import Thing
+    from .response_py3 import Response
+    from .trending_topics_py3 import TrendingTopics
+    from .video_object_py3 import VideoObject
+    from .creative_work_py3 import CreativeWork
+    from .organization_py3 import Organization
+    from .identifiable_py3 import Identifiable
+    from .error_py3 import Error
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .media_object_py3 import MediaObject
+    from .response_base_py3 import ResponseBase
+except (SyntaxError, ImportError):
+    from .news_article import NewsArticle
+    from .news import News
+    from .search_results_answer import SearchResultsAnswer
+    from .image_object import ImageObject
+    from .query import Query
+    from .news_topic import NewsTopic
+    from .answer import Answer
+    from .article import Article
+    from .thing import Thing
+    from .response import Response
+    from .trending_topics import TrendingTopics
+    from .video_object import VideoObject
+    from .creative_work import CreativeWork
+    from .organization import Organization
+    from .identifiable import Identifiable
+    from .error import Error
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .media_object import MediaObject
+    from .response_base import ResponseBase
 from .news_search_api_enums import (
     ErrorCode,
     ErrorSubCode,

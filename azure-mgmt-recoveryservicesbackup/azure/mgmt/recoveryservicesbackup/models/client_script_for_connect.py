@@ -41,9 +41,10 @@ class ClientScriptForConnect(Model):
         'script_name_suffix': {'key': 'scriptNameSuffix', 'type': 'str'},
     }
 
-    def __init__(self, script_content=None, script_extension=None, os_type=None, url=None, script_name_suffix=None):
-        self.script_content = script_content
-        self.script_extension = script_extension
-        self.os_type = os_type
-        self.url = url
-        self.script_name_suffix = script_name_suffix
+    def __init__(self, **kwargs):
+        super(ClientScriptForConnect, self).__init__(**kwargs)
+        self.script_content = kwargs.get('script_content', None)
+        self.script_extension = kwargs.get('script_extension', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.url = kwargs.get('url', None)
+        self.script_name_suffix = kwargs.get('script_name_suffix', None)

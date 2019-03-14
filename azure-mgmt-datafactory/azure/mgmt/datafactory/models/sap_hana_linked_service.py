@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SapHanaLinkedService(LinkedService):
     """SAP HANA Linked Service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,10 +25,16 @@ class SapHanaLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Host name of the SAP HANA server. Type: string (or
-     Expression with resultType string).
+    :param server: Required. Host name of the SAP HANA server. Type: string
+     (or Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the SAP HANA server. Possible values include: 'Basic', 'Windows'
@@ -52,6 +60,8 @@ class SapHanaLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -60,11 +70,11 @@ class SapHanaLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, additional_properties=None, connect_via=None, description=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None):
-        super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.server = server
-        self.authentication_type = authentication_type
-        self.user_name = user_name
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SapHanaLinkedService, self).__init__(**kwargs)
+        self.server = kwargs.get('server', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SapHana'

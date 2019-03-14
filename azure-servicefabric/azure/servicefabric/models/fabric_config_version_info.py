@@ -23,6 +23,6 @@ class FabricConfigVersionInfo(Model):
         'config_version': {'key': 'ConfigVersion', 'type': 'str'},
     }
 
-    def __init__(self, config_version=None):
-        super(FabricConfigVersionInfo, self).__init__()
-        self.config_version = config_version
+    def __init__(self, **kwargs):
+        super(FabricConfigVersionInfo, self).__init__(**kwargs)
+        self.config_version = kwargs.get('config_version', None)

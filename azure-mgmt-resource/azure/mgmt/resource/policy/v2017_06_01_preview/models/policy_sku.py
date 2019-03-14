@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class PolicySku(Model):
     """The policy sku.
 
-    :param name: The name of the policy sku. Possible values are A0 and A1.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the policy sku. Possible values are A0
+     and A1.
     :type name: str
     :param tier: The policy sku tier. Possible values are Free and Standard.
     :type tier: str
@@ -30,7 +33,7 @@ class PolicySku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, name, tier=None):
-        super(PolicySku, self).__init__()
-        self.name = name
-        self.tier = tier
+    def __init__(self, **kwargs):
+        super(PolicySku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)

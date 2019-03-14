@@ -123,7 +123,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
                 }
             }
         )
-        iothub_account = async_iot_hub.result()
+        async_iot_hub.wait()
 
         cg_account_name = self.get_resource_name('consumergrp')
         consumer_group = self.iothub_client.iot_hub_resource.create_event_hub_consumer_group(
@@ -145,7 +145,7 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
             account_name,
             'events'
         ))
-        self.assertTrue(any(name == consumer_group.name for name in consumer_groups))
+        self.assertTrue(any(group.name == consumer_group.name for group in consumer_groups))
 
         self.iothub_client.iot_hub_resource.delete_event_hub_consumer_group(
             resource_group.name,

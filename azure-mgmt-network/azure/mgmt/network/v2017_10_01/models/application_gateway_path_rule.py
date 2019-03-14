@@ -56,13 +56,13 @@ class ApplicationGatewayPathRule(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, redirect_configuration=None, provisioning_state=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayPathRule, self).__init__(id=id)
-        self.paths = paths
-        self.backend_address_pool = backend_address_pool
-        self.backend_http_settings = backend_http_settings
-        self.redirect_configuration = redirect_configuration
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayPathRule, self).__init__(**kwargs)
+        self.paths = kwargs.get('paths', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings = kwargs.get('backend_http_settings', None)
+        self.redirect_configuration = kwargs.get('redirect_configuration', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

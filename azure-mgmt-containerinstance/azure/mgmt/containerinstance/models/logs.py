@@ -23,6 +23,6 @@ class Logs(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, content=None):
-        super(Logs, self).__init__()
-        self.content = content
+    def __init__(self, **kwargs):
+        super(Logs, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)

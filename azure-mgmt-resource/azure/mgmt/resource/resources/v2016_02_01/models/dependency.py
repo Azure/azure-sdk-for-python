@@ -33,9 +33,9 @@ class Dependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None):
-        super(Dependency, self).__init__()
-        self.depends_on = depends_on
-        self.id = id
-        self.resource_type = resource_type
-        self.resource_name = resource_name
+    def __init__(self, **kwargs):
+        super(Dependency, self).__init__(**kwargs)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.id = kwargs.get('id', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_name = kwargs.get('resource_name', None)

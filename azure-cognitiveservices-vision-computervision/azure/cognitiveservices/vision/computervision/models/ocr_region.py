@@ -23,7 +23,7 @@ class OcrRegion(Model):
      according to the detected text angle (see textAngle property), with the
      origin at the top-left corner, and the y-axis pointing down.
     :type bounding_box: str
-    :param lines:
+    :param lines: An array of recognized lines of text.
     :type lines:
      list[~azure.cognitiveservices.vision.computervision.models.OcrLine]
     """
@@ -33,7 +33,7 @@ class OcrRegion(Model):
         'lines': {'key': 'lines', 'type': '[OcrLine]'},
     }
 
-    def __init__(self, bounding_box=None, lines=None):
-        super(OcrRegion, self).__init__()
-        self.bounding_box = bounding_box
-        self.lines = lines
+    def __init__(self, **kwargs):
+        super(OcrRegion, self).__init__(**kwargs)
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.lines = kwargs.get('lines', None)

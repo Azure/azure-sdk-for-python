@@ -38,11 +38,11 @@ class AadMetadata(Model):
         'tenant': {'key': 'tenant', 'type': 'str'},
     }
 
-    def __init__(self, authority=None, client=None, cluster=None, login=None, redirect=None, tenant=None):
-        super(AadMetadata, self).__init__()
-        self.authority = authority
-        self.client = client
-        self.cluster = cluster
-        self.login = login
-        self.redirect = redirect
-        self.tenant = tenant
+    def __init__(self, **kwargs):
+        super(AadMetadata, self).__init__(**kwargs)
+        self.authority = kwargs.get('authority', None)
+        self.client = kwargs.get('client', None)
+        self.cluster = kwargs.get('cluster', None)
+        self.login = kwargs.get('login', None)
+        self.redirect = kwargs.get('redirect', None)
+        self.tenant = kwargs.get('tenant', None)

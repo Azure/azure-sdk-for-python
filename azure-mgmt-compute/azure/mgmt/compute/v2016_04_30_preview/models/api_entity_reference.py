@@ -16,7 +16,7 @@ class ApiEntityReference(Model):
     """The API entity reference.
 
     :param id: The ARM resource id in the form of
-     /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
     :type id: str
     """
 
@@ -24,6 +24,6 @@ class ApiEntityReference(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(ApiEntityReference, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(ApiEntityReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

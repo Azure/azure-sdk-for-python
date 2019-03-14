@@ -34,12 +34,12 @@ class ErrorResponse(Model):
         'inner_error': {'key': 'innerError', 'type': 'InternalError'},
     }
 
-    def __init__(self, code=None, message=None, target=None, inner_error=None):
-        super(ErrorResponse, self).__init__()
-        self.code = code
-        self.message = message
-        self.target = target
-        self.inner_error = inner_error
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.inner_error = kwargs.get('inner_error', None)
 
 
 class ErrorResponseException(HttpOperationError):

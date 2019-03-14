@@ -32,8 +32,8 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         # Create a Namespace
         namespace_name = "testingpythontestcaserule"
 
-        namespaceparameter = SBNamespace(location, {'tag1': 'value1', 'tag2': 'value2'}, SBSku(SkuName.standard))
-        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter,None,True).output
+        namespaceparameter = SBNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=SBSku(name=SkuName.standard))
+        creatednamespace = self.servicebus_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
         self.assertEqual(creatednamespace.name, namespace_name)
 
         while (self.servicebus_client.namespaces.get(resource_group_name, namespace_name).provisioning_state != 'Succeeded'):
@@ -43,25 +43,25 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
 
         # Create a Topic
         topic_name = "testingpythonsdktopic"
-        createtopicresponse = self.servicebus_client.topics.create_or_update(resource_group_name, namespace_name,topic_name,SBTopic())
+        createtopicresponse = self.servicebus_client.topics.create_or_update(resource_group_name, namespace_name, topic_name, SBTopic())
         self.assertEqual(createtopicresponse.name, topic_name)
 
         # Get the created Topic
-        gettopicresponse = self.servicebus_client.topics.get(resource_group_name, namespace_name,topic_name)
+        gettopicresponse = self.servicebus_client.topics.get(resource_group_name, namespace_name, topic_name)
         self.assertEqual(gettopicresponse.name, topic_name)
 
         # Create subscription
         subscription_name = "testingpythonsdksubscription"
-        createsubscriptionresponse =self.servicebus_client.subscriptions.create_or_update(resource_group_name, namespace_name,topic_name,subscription_name,SBSubscription())
+        createsubscriptionresponse =self.servicebus_client.subscriptions.create_or_update(resource_group_name, namespace_name, topic_name, subscription_name, SBSubscription())
         self.assertEqual(createsubscriptionresponse.name, subscription_name)
 
         # Get created subscription
-        getsubscriptionresponse = self.servicebus_client.subscriptions.get(resource_group_name,namespace_name, topic_name,subscription_name)
+        getsubscriptionresponse = self.servicebus_client.subscriptions.get(resource_group_name, namespace_name, topic_name,subscription_name)
         self.assertEqual(getsubscriptionresponse.name, subscription_name)
 
         # create rule
         rule_name = "testingpythonsdkrule"
-        createruleresponse = self.servicebus_client.rules.create_or_update(resource_group_name,namespace_name, topic_name,subscription_name,rule_name,Rule())
+        createruleresponse = self.servicebus_client.rules.create_or_update(resource_group_name, namespace_name, topic_name, subscription_name, rule_name, Rule())
         self.assertEqual(createruleresponse.name, rule_name)
 
         # get create rule
@@ -74,8 +74,8 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
 
         # update create rule with filter and action
         strSqlExp = "myproperty='test'"
-        ruleparameter = Rule(None,FilterType.sql_filter,SqlFilter(sql_expression=strSqlExp),None)
-        createruleresponse = self.servicebus_client.rules.create_or_update(resource_group_name, namespace_name,topic_name, subscription_name, rule_name,ruleparameter)
+        ruleparameter = Rule(action=None, filter_type=FilterType.sql_filter, sql_filter=SqlFilter(sql_expression=strSqlExp), correlation_filter=None)
+        createruleresponse = self.servicebus_client.rules.create_or_update(resource_group_name, namespace_name, topic_name, subscription_name, rule_name, ruleparameter)
         self.assertEqual(createruleresponse.name, rule_name)
 
         # Delete the created subscription
@@ -85,7 +85,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.servicebus_client.topics.delete(resource_group_name, namespace_name, topic_name)
 
         # Delete the create namespace
-        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name,None,True).output
+        deletenamespace = self.servicebus_client.namespaces.delete(resource_group_name, namespace_name).result()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

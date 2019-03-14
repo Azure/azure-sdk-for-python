@@ -31,7 +31,7 @@ class OcrWord(Model):
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, bounding_box=None, text=None):
-        super(OcrWord, self).__init__()
-        self.bounding_box = bounding_box
-        self.text = text
+    def __init__(self, **kwargs):
+        super(OcrWord, self).__init__(**kwargs)
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.text = kwargs.get('text', None)

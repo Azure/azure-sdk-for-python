@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class StorageAccountRegenerateKeyParameters(Model):
     """StorageAccountRegenerateKeyParameters.
 
-    :param key_name:
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required.
     :type key_name: str
     """
 
@@ -27,6 +29,6 @@ class StorageAccountRegenerateKeyParameters(Model):
         'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
-    def __init__(self, key_name):
-        super(StorageAccountRegenerateKeyParameters, self).__init__()
-        self.key_name = key_name
+    def __init__(self, **kwargs):
+        super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)

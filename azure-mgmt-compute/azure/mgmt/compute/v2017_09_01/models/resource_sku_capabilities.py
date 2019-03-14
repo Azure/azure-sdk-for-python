@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ResourceSkuCapabilities(Model):
-    """Describes The SKU capabilites object.
+    """Describes The SKU capabilities object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,7 +34,7 @@ class ResourceSkuCapabilities(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceSkuCapabilities, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuCapabilities, self).__init__(**kwargs)
         self.name = None
         self.value = None

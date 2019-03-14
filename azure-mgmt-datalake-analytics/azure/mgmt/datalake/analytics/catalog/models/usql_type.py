@@ -76,20 +76,20 @@ class USqlType(CatalogItem):
         'is_complex_type': {'key': 'isComplexType', 'type': 'bool'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None):
-        super(USqlType, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.type_family = type_family
-        self.c_sharp_name = c_sharp_name
-        self.full_csharp_name = full_csharp_name
-        self.system_type_id = system_type_id
-        self.user_type_id = user_type_id
-        self.schema_id = schema_id
-        self.principal_id = principal_id
-        self.is_nullable = is_nullable
-        self.is_user_defined = is_user_defined
-        self.is_assembly_type = is_assembly_type
-        self.is_table_type = is_table_type
-        self.is_complex_type = is_complex_type
+    def __init__(self, **kwargs):
+        super(USqlType, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.name = kwargs.get('name', None)
+        self.type_family = kwargs.get('type_family', None)
+        self.c_sharp_name = kwargs.get('c_sharp_name', None)
+        self.full_csharp_name = kwargs.get('full_csharp_name', None)
+        self.system_type_id = kwargs.get('system_type_id', None)
+        self.user_type_id = kwargs.get('user_type_id', None)
+        self.schema_id = kwargs.get('schema_id', None)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.is_nullable = kwargs.get('is_nullable', None)
+        self.is_user_defined = kwargs.get('is_user_defined', None)
+        self.is_assembly_type = kwargs.get('is_assembly_type', None)
+        self.is_table_type = kwargs.get('is_table_type', None)
+        self.is_complex_type = kwargs.get('is_complex_type', None)

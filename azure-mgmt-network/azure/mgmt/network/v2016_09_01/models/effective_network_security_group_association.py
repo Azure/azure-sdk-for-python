@@ -27,7 +27,7 @@ class EffectiveNetworkSecurityGroupAssociation(Model):
         'network_interface': {'key': 'networkInterface', 'type': 'SubResource'},
     }
 
-    def __init__(self, subnet=None, network_interface=None):
-        super(EffectiveNetworkSecurityGroupAssociation, self).__init__()
-        self.subnet = subnet
-        self.network_interface = network_interface
+    def __init__(self, **kwargs):
+        super(EffectiveNetworkSecurityGroupAssociation, self).__init__(**kwargs)
+        self.subnet = kwargs.get('subnet', None)
+        self.network_interface = kwargs.get('network_interface', None)

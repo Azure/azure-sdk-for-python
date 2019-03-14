@@ -27,9 +27,9 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param namespace_create_or_update_parameters_name: The name of the
      namespace.
     :type namespace_create_or_update_parameters_name: str
@@ -41,11 +41,15 @@ class NamespaceCreateOrUpdateParameters(Resource):
      USEast AsiaSoutheast AsiaBrazil SouthJapan EastJapan WestNorth EuropeWest
      Europe
     :type region: str
+    :ivar metric_id: Identifier for Azure Insights metrics
+    :vartype metric_id: str
     :param status: Status of the namespace. It can be any of these values:1 =
      Created/Active2 = Creating3 = Suspended4 = Deleting
     :type status: str
     :param created_at: The time the namespace was created.
     :type created_at: datetime
+    :param updated_at: The time the namespace was updated.
+    :type updated_at: datetime
     :param service_bus_endpoint: Endpoint you can use to perform
      NotificationHub operations.
     :type service_bus_endpoint: str
@@ -58,17 +62,19 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :type enabled: bool
     :param critical: Whether or not the namespace is set as Critical.
     :type critical: bool
+    :param data_center: Data center for the namespace
+    :type data_center: str
     :param namespace_type: The namespace type. Possible values include:
      'Messaging', 'NotificationHub'
-    :type namespace_type: str or :class:`NamespaceType
-     <azure.mgmt.notificationhubs.models.NamespaceType>`
+    :type namespace_type: str or
+     ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'metric_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -81,26 +87,32 @@ class NamespaceCreateOrUpdateParameters(Resource):
         'namespace_create_or_update_parameters_name': {'key': 'properties.name', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'region': {'key': 'properties.region', 'type': 'str'},
+        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
         'scale_unit': {'key': 'properties.scaleUnit', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'critical': {'key': 'properties.critical', 'type': 'bool'},
+        'data_center': {'key': 'properties.dataCenter', 'type': 'str'},
         'namespace_type': {'key': 'properties.namespaceType', 'type': 'NamespaceType'},
     }
 
-    def __init__(self, location, tags=None, sku=None, namespace_create_or_update_parameters_name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None):
-        super(NamespaceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku)
-        self.namespace_create_or_update_parameters_name = namespace_create_or_update_parameters_name
-        self.provisioning_state = provisioning_state
-        self.region = region
-        self.status = status
-        self.created_at = created_at
-        self.service_bus_endpoint = service_bus_endpoint
-        self.subscription_id = subscription_id
-        self.scale_unit = scale_unit
-        self.enabled = enabled
-        self.critical = critical
-        self.namespace_type = namespace_type
+    def __init__(self, **kwargs):
+        super(NamespaceCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.namespace_create_or_update_parameters_name = kwargs.get('namespace_create_or_update_parameters_name', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.region = kwargs.get('region', None)
+        self.metric_id = None
+        self.status = kwargs.get('status', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.service_bus_endpoint = kwargs.get('service_bus_endpoint', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.scale_unit = kwargs.get('scale_unit', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.critical = kwargs.get('critical', None)
+        self.data_center = kwargs.get('data_center', None)
+        self.namespace_type = kwargs.get('namespace_type', None)

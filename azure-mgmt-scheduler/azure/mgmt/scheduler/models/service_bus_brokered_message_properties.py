@@ -60,17 +60,18 @@ class ServiceBusBrokeredMessageProperties(Model):
         'via_partition_key': {'key': 'viaPartitionKey', 'type': 'str'},
     }
 
-    def __init__(self, content_type=None, correlation_id=None, force_persistence=None, label=None, message_id=None, partition_key=None, reply_to=None, reply_to_session_id=None, scheduled_enqueue_time_utc=None, session_id=None, time_to_live=None, to=None, via_partition_key=None):
-        self.content_type = content_type
-        self.correlation_id = correlation_id
-        self.force_persistence = force_persistence
-        self.label = label
-        self.message_id = message_id
-        self.partition_key = partition_key
-        self.reply_to = reply_to
-        self.reply_to_session_id = reply_to_session_id
-        self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
-        self.session_id = session_id
-        self.time_to_live = time_to_live
-        self.to = to
-        self.via_partition_key = via_partition_key
+    def __init__(self, **kwargs):
+        super(ServiceBusBrokeredMessageProperties, self).__init__(**kwargs)
+        self.content_type = kwargs.get('content_type', None)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.force_persistence = kwargs.get('force_persistence', None)
+        self.label = kwargs.get('label', None)
+        self.message_id = kwargs.get('message_id', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.reply_to = kwargs.get('reply_to', None)
+        self.reply_to_session_id = kwargs.get('reply_to_session_id', None)
+        self.scheduled_enqueue_time_utc = kwargs.get('scheduled_enqueue_time_utc', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
+        self.to = kwargs.get('to', None)
+        self.via_partition_key = kwargs.get('via_partition_key', None)

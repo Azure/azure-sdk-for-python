@@ -18,7 +18,9 @@ class Videos(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -33,7 +35,8 @@ class Videos(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param value: A list of video objects that are relevant to the query.
+    :param value: Required. A list of video objects that are relevant to the
+     query.
     :type value:
      list[~azure.cognitiveservices.search.videosearch.models.VideoObject]
     :ivar next_offset:
@@ -77,9 +80,9 @@ class Videos(SearchResultsAnswer):
         'pivot_suggestions': {'key': 'pivotSuggestions', 'type': '[PivotSuggestions]'},
     }
 
-    def __init__(self, value):
-        super(Videos, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Videos, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.next_offset = None
         self.scenario = None
         self.query_expansions = None

@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class QueryKeyPaged(Paged):
     """
-    A paging container for iterating over a list of QueryKey object
+    A paging container for iterating over a list of :class:`QueryKey <azure.mgmt.search.models.QueryKey>` object
     """
 
     _attribute_map = {

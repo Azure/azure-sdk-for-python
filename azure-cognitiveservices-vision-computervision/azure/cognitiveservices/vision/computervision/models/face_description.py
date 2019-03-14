@@ -20,20 +20,21 @@ class FaceDescription(Model):
     :param gender: Possible gender of the face. Possible values include:
      'Male', 'Female'
     :type gender: str or
-     ~azure.cognitiveservices.vision.computervision.models.enum
-    :param face_rectangle:
+     ~azure.cognitiveservices.vision.computervision.models.Gender
+    :param face_rectangle: Rectangle in the image containing the identified
+     face.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.computervision.models.FaceRectangle
     """
 
     _attribute_map = {
         'age': {'key': 'age', 'type': 'int'},
-        'gender': {'key': 'gender', 'type': 'str'},
+        'gender': {'key': 'gender', 'type': 'Gender'},
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
     }
 
-    def __init__(self, age=None, gender=None, face_rectangle=None):
-        super(FaceDescription, self).__init__()
-        self.age = age
-        self.gender = gender
-        self.face_rectangle = face_rectangle
+    def __init__(self, **kwargs):
+        super(FaceDescription, self).__init__(**kwargs)
+        self.age = kwargs.get('age', None)
+        self.gender = kwargs.get('gender', None)
+        self.face_rectangle = kwargs.get('face_rectangle', None)

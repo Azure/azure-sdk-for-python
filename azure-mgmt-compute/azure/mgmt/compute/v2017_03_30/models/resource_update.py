@@ -26,7 +26,7 @@ class ResourceUpdate(Model):
         'sku': {'key': 'sku', 'type': 'DiskSku'},
     }
 
-    def __init__(self, tags=None, sku=None):
-        super(ResourceUpdate, self).__init__()
-        self.tags = tags
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(ResourceUpdate, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)

@@ -23,6 +23,6 @@ class ComputeLongRunningOperationProperties(Model):
         'output': {'key': 'output', 'type': 'object'},
     }
 
-    def __init__(self, output=None):
-        super(ComputeLongRunningOperationProperties, self).__init__()
-        self.output = output
+    def __init__(self, **kwargs):
+        super(ComputeLongRunningOperationProperties, self).__init__(**kwargs)
+        self.output = kwargs.get('output', None)

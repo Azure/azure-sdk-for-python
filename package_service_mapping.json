@@ -1,10 +1,109 @@
 {
+  "azure-applicationinsights": {
+		"service_name": "Application Insights",
+		"category ": "Client",
+    "namespaces": [
+      "azure.applicationinsights"
+    ]
+	},
   "azure-batch": {
     "category ": "Client",
     "namespaces": [
       "azure.batch"
     ],
     "service_name": "Batch"
+  },
+  "azure-cognitiveservices-language-spellcheck": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.language.spellcheck"
+    ],
+    "service_name": "Cognitive Services Language Spellcheck"
+  },
+  "azure-cognitiveservices-language-textanalytics": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.language.textanalytics"
+    ],
+    "service_name": "Cognitive Services Language TextAnalytics"
+  },
+  "azure-cognitiveservices-search-customsearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.customsearch"
+    ],
+    "service_name": "Cognitive Services Search CustomSearch"
+  },
+  "azure-cognitiveservices-search-entitysearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.entitysearch"
+    ],
+    "service_name": "Cognitive Services Search EntitySearch"
+  },
+  "azure-cognitiveservices-search-imagesearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.imagesearch"
+    ],
+    "service_name": "Cognitive Services Search ImageSearch"
+  },
+  "azure-cognitiveservices-search-newssearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.newssearch"
+    ],
+    "service_name": "Cognitive Services Search NewsSearch"
+  },
+  "azure-cognitiveservices-search-videosearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.videosearch"
+    ],
+    "service_name": "Cognitive Services Search VideoSearch"
+  },
+  "azure-cognitiveservices-search-visualsearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.visualsearch"
+    ],
+    "service_name": "Cognitive Services Search VisualSearch"
+  },
+  "azure-cognitiveservices-search-websearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.websearch"
+    ],
+    "service_name": "Cognitive Services Search WebSearch"
+  },
+  "azure-cognitiveservices-vision-computervision": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.computervision"
+    ],
+    "service_name": "Cognitive Services Vision ComputerVision"
+  },
+  "azure-cognitiveservices-vision-contentmoderator": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.contentmoderator"
+    ],
+    "service_name": "Cognitive Services Vision ContentModerator"
+  },
+  "azure-cognitiveservices-vision-customvision": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.customvision.prediction",
+      "azure.cognitiveservices.vision.customvision.training"
+    ],
+    "service_name": "Cognitive Services Vision CustomVision"
+  },
+  "azure-cognitiveservices-vision-face": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.face"
+    ],
+    "service_name": "Cognitive Services Vision Face"
   },
   "azure-common": {
     "service_name": "Other"
@@ -30,6 +129,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-loganalytics": {
+		"service_name": "Log Analytics",
+		"category ": "Client",
+    "namespaces": [
+      "azure.loganalytics"
+    ]
+	},
   "azure-mgmt-advisor": {
     "category ": "Management",
     "namespaces": [
@@ -94,7 +200,8 @@
       "azure.mgmt.compute.v2016_04_30_preview",
       "azure.mgmt.compute.v2017_03_30",
       "azure.mgmt.compute.v2017_09_01",
-      "azure.mgmt.compute.v2017_12_01"
+      "azure.mgmt.compute.v2017_12_01",
+      "azure.mgmt.compute.v2018_04_01"
     ],
     "service_name": "Virtual Machines"
   },
@@ -220,6 +327,13 @@
     ],
     "service_name": "Key Vault"
   },
+  "azure-mgmt-loganalytics": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.loganalytics"
+    ],
+    "service_name": "Log Analytics"
+  },
   "azure-mgmt-logic": {
     "category ": "Management",
     "namespaces": [
@@ -233,6 +347,13 @@
       "azure.mgmt.machinelearningcompute"
     ],
     "service_name": "Machine Learning Compute"
+  },
+  "azure-mgmt-managementgroups": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.managementgroups"
+    ],
+    "service_name": "Management Groups"
   },
   "azure-mgmt-media": {
     "category ": "Management",
@@ -266,7 +387,9 @@
       "azure.mgmt.network.v2017_08_01",
       "azure.mgmt.network.v2017_09_01",
       "azure.mgmt.network.v2017_10_01",
-      "azure.mgmt.network.v2017_11_01"
+      "azure.mgmt.network.v2017_11_01",
+      "azure.mgmt.network.v2018_01_01",
+      "azure.mgmt.network.v2018_02_01"
     ],
     "service_name": "Network"
   },
@@ -276,6 +399,13 @@
       "azure.mgmt.notificationhubs"
     ],
     "service_name": "Notification Hubs"
+  },
+  "azure-mgmt-policyinsights": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.policyinsights"
+    ],
+    "service_name": "Policy Insights"
   },
   "azure-mgmt-powerbiembedded": {
     "category ": "Management",
@@ -337,6 +467,7 @@
       "azure.mgmt.resource.resources.v2016_02_01",
       "azure.mgmt.resource.resources.v2016_09_01",
       "azure.mgmt.resource.resources.v2017_05_10",
+      "azure.mgmt.resource.resources.v2018_02_01",
       "azure.mgmt.resource.policy.v2015_10_01_preview",
       "azure.mgmt.resource.policy.v2016_04_01",
       "azure.mgmt.resource.policy.v2016_12_01",
@@ -393,7 +524,8 @@
       "azure.mgmt.storage.v2016_01_01",
       "azure.mgmt.storage.v2016_12_01",
       "azure.mgmt.storage.v2017_06_01",
-      "azure.mgmt.storage.v2017_10_01"
+      "azure.mgmt.storage.v2017_10_01",
+      "azure.mgmt.storage.v2018_02_01"
     ],
     "service_name": "Storage"
   },

@@ -18,13 +18,15 @@ class RollingUpgradeStatusInfo(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -66,8 +68,8 @@ class RollingUpgradeStatusInfo(Resource):
         'error': {'key': 'properties.error', 'type': 'ApiError'},
     }
 
-    def __init__(self, location, tags=None):
-        super(RollingUpgradeStatusInfo, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(RollingUpgradeStatusInfo, self).__init__(**kwargs)
         self.policy = None
         self.running_status = None
         self.progress = None

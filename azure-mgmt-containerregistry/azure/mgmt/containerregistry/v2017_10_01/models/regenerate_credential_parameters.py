@@ -15,8 +15,11 @@ from msrest.serialization import Model
 class RegenerateCredentialParameters(Model):
     """The parameters used to regenerate the login credential.
 
-    :param name: Specifies name of the password which should be regenerated --
-     password or password2. Possible values include: 'password', 'password2'
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Specifies name of the password which should be
+     regenerated -- password or password2. Possible values include: 'password',
+     'password2'
     :type name: str or
      ~azure.mgmt.containerregistry.v2017_10_01.models.PasswordName
     """
@@ -29,5 +32,6 @@ class RegenerateCredentialParameters(Model):
         'name': {'key': 'name', 'type': 'PasswordName'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(RegenerateCredentialParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

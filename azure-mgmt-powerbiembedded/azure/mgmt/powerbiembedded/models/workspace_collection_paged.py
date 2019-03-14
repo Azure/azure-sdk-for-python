@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WorkspaceCollectionPaged(Paged):
     """
-    A paging container for iterating over a list of WorkspaceCollection object
+    A paging container for iterating over a list of :class:`WorkspaceCollection <azure.mgmt.powerbiembedded.models.WorkspaceCollection>` object
     """
 
     _attribute_map = {

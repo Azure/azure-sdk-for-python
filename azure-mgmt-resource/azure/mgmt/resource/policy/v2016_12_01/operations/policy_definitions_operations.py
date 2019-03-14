@@ -22,7 +22,7 @@ class PolicyDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-12-01".
     """
 
@@ -59,7 +59,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -72,6 +72,7 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -84,9 +85,8 @@ class PolicyDefinitionsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyDefinition')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             exp = CloudError(response)
@@ -103,6 +103,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def delete(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -121,7 +122,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -134,7 +135,6 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -143,8 +143,8 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -154,6 +154,7 @@ class PolicyDefinitionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def get(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -174,7 +175,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -187,7 +188,7 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -196,8 +197,8 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -214,6 +215,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def get_built_in(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -234,7 +236,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.get_built_in.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str')
         }
@@ -246,7 +248,7 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -255,8 +257,8 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -273,6 +275,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_built_in.metadata = {'url': '/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def create_or_update_at_management_group(
             self, policy_definition_name, parameters, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -298,7 +301,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.create_or_update_at_management_group.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -311,6 +314,7 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -323,9 +327,8 @@ class PolicyDefinitionsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicyDefinition')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             exp = CloudError(response)
@@ -342,6 +345,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def delete_at_management_group(
             self, policy_definition_name, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -362,7 +366,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.delete_at_management_group.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -375,7 +379,6 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -384,8 +387,8 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -395,6 +398,7 @@ class PolicyDefinitionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def get_at_management_group(
             self, policy_definition_name, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -417,7 +421,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'
+        url = self.get_at_management_group.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -430,7 +434,7 @@ class PolicyDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -439,8 +443,8 @@ class PolicyDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -457,6 +461,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -476,7 +481,7 @@ class PolicyDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -492,7 +497,7 @@ class PolicyDefinitionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -501,9 +506,8 @@ class PolicyDefinitionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -521,6 +525,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyDefinitions'}
 
     def list_built_in(
             self, custom_headers=None, raw=False, **operation_config):
@@ -540,7 +545,7 @@ class PolicyDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Authorization/policyDefinitions'
+                url = self.list_built_in.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -552,7 +557,7 @@ class PolicyDefinitionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -561,9 +566,8 @@ class PolicyDefinitionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -581,6 +585,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_built_in.metadata = {'url': '/providers/Microsoft.Authorization/policyDefinitions'}
 
     def list_by_management_group(
             self, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -603,7 +608,7 @@ class PolicyDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions'
+                url = self.list_by_management_group.metadata['url']
                 path_format_arguments = {
                     'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
@@ -619,7 +624,7 @@ class PolicyDefinitionsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -628,9 +633,8 @@ class PolicyDefinitionsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -648,3 +652,4 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policyDefinitions'}

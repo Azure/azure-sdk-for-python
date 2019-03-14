@@ -71,16 +71,16 @@ class FrontendIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
-        super(FrontendIPConfiguration, self).__init__(id=id)
-        self.inbound_nat_rules = inbound_nat_rules
-        self.inbound_nat_pools = inbound_nat_pools
-        self.outbound_nat_rules = outbound_nat_rules
-        self.load_balancing_rules = load_balancing_rules
-        self.private_ip_address = private_ip_address
-        self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = subnet
-        self.public_ip_address = public_ip_address
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(FrontendIPConfiguration, self).__init__(**kwargs)
+        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
+        self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
+        self.outbound_nat_rules = kwargs.get('outbound_nat_rules', None)
+        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
+        self.private_ip_address = kwargs.get('private_ip_address', None)
+        self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

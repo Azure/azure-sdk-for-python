@@ -27,7 +27,7 @@ class USqlDirectedColumn(Model):
         'descending': {'key': 'descending', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, descending=None):
-        super(USqlDirectedColumn, self).__init__()
-        self.name = name
-        self.descending = descending
+    def __init__(self, **kwargs):
+        super(USqlDirectedColumn, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.descending = kwargs.get('descending', None)

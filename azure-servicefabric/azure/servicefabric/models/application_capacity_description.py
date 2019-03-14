@@ -19,8 +19,7 @@ class ApplicationCapacityDescription(Model):
     - Limiting the total number of nodes that services of this application can
     run on
     - Limiting the custom capacity metrics to limit the total consumption of
-    this metric by the services of this application
-    .
+    this metric by the services of this application.
 
     :param minimum_nodes: The minimum number of nodes where Service Fabric
      will reserve capacity for this application. Note that this does not mean
@@ -52,8 +51,8 @@ class ApplicationCapacityDescription(Model):
         'application_metrics': {'key': 'ApplicationMetrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, minimum_nodes=None, maximum_nodes=0, application_metrics=None):
-        super(ApplicationCapacityDescription, self).__init__()
-        self.minimum_nodes = minimum_nodes
-        self.maximum_nodes = maximum_nodes
-        self.application_metrics = application_metrics
+    def __init__(self, **kwargs):
+        super(ApplicationCapacityDescription, self).__init__(**kwargs)
+        self.minimum_nodes = kwargs.get('minimum_nodes', None)
+        self.maximum_nodes = kwargs.get('maximum_nodes', 0)
+        self.application_metrics = kwargs.get('application_metrics', None)

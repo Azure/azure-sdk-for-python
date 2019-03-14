@@ -15,16 +15,18 @@ from .rule_condition import RuleCondition
 class ThresholdRuleCondition(RuleCondition):
     """A rule condition based on a metric crossing a threshold.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
     :type data_source: ~azure.mgmt.monitor.models.RuleDataSource
-    :param odatatype: Constant filled by server.
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param operator: the operator used to compare the data and the threshold.
-     Possible values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
-     'LessThanOrEqual'
+    :param operator: Required. the operator used to compare the data and the
+     threshold. Possible values include: 'GreaterThan', 'GreaterThanOrEqual',
+     'LessThan', 'LessThanOrEqual'
     :type operator: str or ~azure.mgmt.monitor.models.ConditionOperator
-    :param threshold: the threshold value that activates the alert.
+    :param threshold: Required. the threshold value that activates the alert.
     :type threshold: float
     :param window_size: the period of time (in ISO 8601 duration format) that
      is used to monitor alert activity based on the threshold. If specified
@@ -53,10 +55,10 @@ class ThresholdRuleCondition(RuleCondition):
         'time_aggregation': {'key': 'timeAggregation', 'type': 'TimeAggregationOperator'},
     }
 
-    def __init__(self, operator, threshold, data_source=None, window_size=None, time_aggregation=None):
-        super(ThresholdRuleCondition, self).__init__(data_source=data_source)
-        self.operator = operator
-        self.threshold = threshold
-        self.window_size = window_size
-        self.time_aggregation = time_aggregation
+    def __init__(self, **kwargs):
+        super(ThresholdRuleCondition, self).__init__(**kwargs)
+        self.operator = kwargs.get('operator', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.window_size = kwargs.get('window_size', None)
+        self.time_aggregation = kwargs.get('time_aggregation', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'

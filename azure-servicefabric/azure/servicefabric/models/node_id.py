@@ -24,6 +24,6 @@ class NodeId(Model):
         'id': {'key': 'Id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(NodeId, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(NodeId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

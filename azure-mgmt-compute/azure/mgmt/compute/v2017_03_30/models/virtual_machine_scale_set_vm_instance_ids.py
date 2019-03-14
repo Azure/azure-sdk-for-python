@@ -25,6 +25,6 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, instance_ids=None):
-        super(VirtualMachineScaleSetVMInstanceIDs, self).__init__()
-        self.instance_ids = instance_ids
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetVMInstanceIDs, self).__init__(**kwargs)
+        self.instance_ids = kwargs.get('instance_ids', None)

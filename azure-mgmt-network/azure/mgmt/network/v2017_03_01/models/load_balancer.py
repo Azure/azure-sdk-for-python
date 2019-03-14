@@ -97,15 +97,15 @@ class LoadBalancer(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(LoadBalancer, self).__init__(id=id, location=location, tags=tags)
-        self.frontend_ip_configurations = frontend_ip_configurations
-        self.backend_address_pools = backend_address_pools
-        self.load_balancing_rules = load_balancing_rules
-        self.probes = probes
-        self.inbound_nat_rules = inbound_nat_rules
-        self.inbound_nat_pools = inbound_nat_pools
-        self.outbound_nat_rules = outbound_nat_rules
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(LoadBalancer, self).__init__(**kwargs)
+        self.frontend_ip_configurations = kwargs.get('frontend_ip_configurations', None)
+        self.backend_address_pools = kwargs.get('backend_address_pools', None)
+        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
+        self.probes = kwargs.get('probes', None)
+        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)
+        self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)
+        self.outbound_nat_rules = kwargs.get('outbound_nat_rules', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

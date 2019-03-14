@@ -10,12 +10,8 @@ import unittest
 import azure.mgmt.recoveryservices
 import azure.mgmt.resource.resources.models
 import azure.common.exceptions
-from azure.mgmt.recoveryservices.models import (StorageModelType, Vault, Sku, SkuName, VaultProperties,
-                                                VaultExtendedInfoResource, VaultUsage, EnhancedSecurityState,
-                                                StorageModelType
-                                                      )
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from .recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
+from recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
 
 class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 

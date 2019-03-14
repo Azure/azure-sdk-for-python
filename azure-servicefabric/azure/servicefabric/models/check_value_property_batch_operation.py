@@ -19,13 +19,14 @@ class CheckValuePropertyBatchOperation(PropertyBatchOperation):
     for the write operations in the batch.
     Note that if one PropertyBatchOperation in a PropertyBatch fails,
     the entire batch fails and cannot be committed in a transactional manner.
-    .
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
-    :param value: The expected property value.
+    :param value: Required. The expected property value.
     :type value: ~azure.servicefabric.models.PropertyValue
     """
 
@@ -41,7 +42,7 @@ class CheckValuePropertyBatchOperation(PropertyBatchOperation):
         'value': {'key': 'Value', 'type': 'PropertyValue'},
     }
 
-    def __init__(self, property_name, value):
-        super(CheckValuePropertyBatchOperation, self).__init__(property_name=property_name)
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CheckValuePropertyBatchOperation, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.kind = 'CheckValue'

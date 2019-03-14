@@ -18,13 +18,15 @@ class Server(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: The location the resource resides in.
+    :param location: Required. The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
@@ -52,6 +54,13 @@ class Server(TrackedResource):
     :type earliest_restore_date: datetime
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
+    :param replication_role: The replication role of the server.
+    :type replication_role: str
+    :param master_server_id: The master server id of a replica server.
+    :type master_server_id: str
+    :param replica_capacity: The maximum number of replicas that a master
+     server can have.
+    :type replica_capacity: int
     """
 
     _validation = {
@@ -59,6 +68,7 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'replica_capacity': {'minimum': 0},
     }
 
     _attribute_map = {
@@ -75,15 +85,21 @@ class Server(TrackedResource):
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
+        'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
+        'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
-    def __init__(self, location, tags=None, sku=None, administrator_login=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name=None, earliest_restore_date=None, storage_profile=None):
-        super(Server, self).__init__(location=location, tags=tags)
-        self.sku = sku
-        self.administrator_login = administrator_login
-        self.version = version
-        self.ssl_enforcement = ssl_enforcement
-        self.user_visible_state = user_visible_state
-        self.fully_qualified_domain_name = fully_qualified_domain_name
-        self.earliest_restore_date = earliest_restore_date
-        self.storage_profile = storage_profile
+    def __init__(self, **kwargs):
+        super(Server, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.version = kwargs.get('version', None)
+        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.user_visible_state = kwargs.get('user_visible_state', None)
+        self.fully_qualified_domain_name = kwargs.get('fully_qualified_domain_name', None)
+        self.earliest_restore_date = kwargs.get('earliest_restore_date', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.replication_role = kwargs.get('replication_role', None)
+        self.master_server_id = kwargs.get('master_server_id', None)
+        self.replica_capacity = kwargs.get('replica_capacity', None)

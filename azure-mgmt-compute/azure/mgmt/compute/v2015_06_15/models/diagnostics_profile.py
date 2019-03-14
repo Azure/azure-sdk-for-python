@@ -18,8 +18,7 @@ class DiagnosticsProfile(Model):
 
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
-     <br><br> For Linux Virtual Machines, you can easily view the output of
-     your console log. <br><br> For both Windows and Linux virtual machines,
+     <br><br> You can easily view the output of your console log. <br><br>
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
      ~azure.mgmt.compute.v2015_06_15.models.BootDiagnostics
@@ -29,6 +28,6 @@ class DiagnosticsProfile(Model):
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
     }
 
-    def __init__(self, boot_diagnostics=None):
-        super(DiagnosticsProfile, self).__init__()
-        self.boot_diagnostics = boot_diagnostics
+    def __init__(self, **kwargs):
+        super(DiagnosticsProfile, self).__init__(**kwargs)
+        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)

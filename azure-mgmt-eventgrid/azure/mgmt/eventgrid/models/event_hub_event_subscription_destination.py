@@ -15,7 +15,9 @@ from .event_subscription_destination import EventSubscriptionDestination
 class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     """Information about the event hub destination for an event subscription.
 
-    :param endpoint_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param resource_id: The Azure Resource Id that represents the endpoint of
      an Event Hub destination of an event subscription.
@@ -31,7 +33,7 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None):
-        super(EventHubEventSubscriptionDestination, self).__init__()
-        self.resource_id = resource_id
+    def __init__(self, **kwargs):
+        super(EventHubEventSubscriptionDestination, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
         self.endpoint_type = 'EventHub'

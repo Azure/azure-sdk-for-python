@@ -18,16 +18,18 @@ class Usage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource identifier.
     :vartype id: str
-    :ivar unit: An enum describing the unit of measurement. Default value:
-     "Count" .
+    :ivar unit: Required. An enum describing the unit of measurement. Default
+     value: "Count" .
     :vartype unit: str
-    :param current_value: The current value of the usage.
+    :param current_value: Required. The current value of the usage.
     :type current_value: long
-    :param limit: The limit of usage.
+    :param limit: Required. The limit of usage.
     :type limit: long
-    :param name: The name of the type of usage.
+    :param name: Required. The name of the type of usage.
     :type name: ~azure.mgmt.network.v2017_11_01.models.UsageName
     """
 
@@ -49,9 +51,9 @@ class Usage(Model):
 
     unit = "Count"
 
-    def __init__(self, current_value, limit, name):
-        super(Usage, self).__init__()
+    def __init__(self, **kwargs):
+        super(Usage, self).__init__(**kwargs)
         self.id = None
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)

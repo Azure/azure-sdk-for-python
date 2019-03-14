@@ -43,8 +43,8 @@ class RankingRankingResponse(Model):
         'sidebar': {'key': 'sidebar', 'type': 'RankingRankingGroup'},
     }
 
-    def __init__(self):
-        super(RankingRankingResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(RankingRankingResponse, self).__init__(**kwargs)
         self.pole = None
         self.mainline = None
         self.sidebar = None

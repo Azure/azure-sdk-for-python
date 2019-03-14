@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ClusterHealthPolicy(Model):
     """Defines a health policy used to evaluate the health of the cluster or of a
     cluster node.
-    .
 
     :param consider_warning_as_error: Indicates whether warnings are treated
      with the same severity as errors. Default value: False .
@@ -32,8 +31,7 @@ class ClusterHealthPolicy(Model):
      The computation rounds up to tolerate one failure on small numbers of
      nodes. Default percentage is zero.
      In large clusters, some nodes will always be down or out for repairs, so
-     this percentage should be configured to tolerate that.
-     . Default value: 0 .
+     this percentage should be configured to tolerate that. Default value: 0 .
     :type max_percent_unhealthy_nodes: int
     :param max_percent_unhealthy_applications: The maximum allowed percentage
      of unhealthy applications before reporting an error. For example, to allow
@@ -47,8 +45,7 @@ class ClusterHealthPolicy(Model):
      applications of application types that are included in the
      ApplicationTypeHealthPolicyMap.
      The computation rounds up to tolerate one failure on small numbers of
-     applications. Default percentage is zero.
-     . Default value: 0 .
+     applications. Default percentage is zero. Default value: 0 .
     :type max_percent_unhealthy_applications: int
     :param application_type_health_policy_map: Defines a map with max
      percentage unhealthy applications for specific application types.
@@ -83,9 +80,9 @@ class ClusterHealthPolicy(Model):
         'application_type_health_policy_map': {'key': 'ApplicationTypeHealthPolicyMap', 'type': '[ApplicationTypeHealthPolicyMapItem]'},
     }
 
-    def __init__(self, consider_warning_as_error=False, max_percent_unhealthy_nodes=0, max_percent_unhealthy_applications=0, application_type_health_policy_map=None):
-        super(ClusterHealthPolicy, self).__init__()
-        self.consider_warning_as_error = consider_warning_as_error
-        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.application_type_health_policy_map = application_type_health_policy_map
+    def __init__(self, **kwargs):
+        super(ClusterHealthPolicy, self).__init__(**kwargs)
+        self.consider_warning_as_error = kwargs.get('consider_warning_as_error', False)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', 0)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', 0)
+        self.application_type_health_policy_map = kwargs.get('application_type_health_policy_map', None)

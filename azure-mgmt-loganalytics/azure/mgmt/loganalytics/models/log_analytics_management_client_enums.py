@@ -12,7 +12,25 @@
 from enum import Enum
 
 
-class DataSourceKind(Enum):
+class SearchSortEnum(str, Enum):
+
+    asc = "asc"
+    desc = "desc"
+
+
+class StorageInsightState(str, Enum):
+
+    ok = "OK"
+    error = "ERROR"
+
+
+class PurgeState(str, Enum):
+
+    pending = "Pending"
+    completed = "Completed"
+
+
+class DataSourceKind(str, Enum):
 
     azure_activity_log = "AzureActivityLog"
     change_tracking_path = "ChangeTrackingPath"
@@ -31,17 +49,18 @@ class DataSourceKind(Enum):
     windows_performance_counter = "WindowsPerformanceCounter"
 
 
-class SkuNameEnum(Enum):
+class SkuNameEnum(str, Enum):
 
     free = "Free"
     standard = "Standard"
     premium = "Premium"
     unlimited = "Unlimited"
     per_node = "PerNode"
+    per_gb2018 = "PerGB2018"
     standalone = "Standalone"
 
 
-class EntityStatus(Enum):
+class EntityStatus(str, Enum):
 
     creating = "Creating"
     succeeded = "Succeeded"
@@ -49,15 +68,3 @@ class EntityStatus(Enum):
     canceled = "Canceled"
     deleting = "Deleting"
     provisioning_account = "ProvisioningAccount"
-
-
-class SearchSortEnum(Enum):
-
-    asc = "asc"
-    desc = "desc"
-
-
-class StorageInsightState(Enum):
-
-    ok = "OK"
-    error = "ERROR"

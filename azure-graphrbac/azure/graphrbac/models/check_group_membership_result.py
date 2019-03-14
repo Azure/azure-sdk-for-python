@@ -29,7 +29,7 @@ class CheckGroupMembershipResult(Model):
         'value': {'key': 'value', 'type': 'bool'},
     }
 
-    def __init__(self, additional_properties=None, value=None):
-        super(CheckGroupMembershipResult, self).__init__()
-        self.additional_properties = additional_properties
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CheckGroupMembershipResult, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.value = kwargs.get('value', None)

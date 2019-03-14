@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class StorageInsightStatus(Model):
     """The status of the storage insight.
 
-    :param state: The state of the storage insight connection to the
+    All required parameters must be populated in order to send to Azure.
+
+    :param state: Required. The state of the storage insight connection to the
      workspace. Possible values include: 'OK', 'ERROR'
-    :type state: str or :class:`StorageInsightState
-     <azure.mgmt.loganalytics.models.StorageInsightState>`
+    :type state: str or ~azure.mgmt.loganalytics.models.StorageInsightState
     :param description: Description of the state of the storage insight.
     :type description: str
     """
@@ -32,6 +33,7 @@ class StorageInsightStatus(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, state, description=None):
-        self.state = state
-        self.description = description
+    def __init__(self, **kwargs):
+        super(StorageInsightStatus, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.description = kwargs.get('description', None)

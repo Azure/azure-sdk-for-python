@@ -25,6 +25,6 @@ class FailoverGroupReadOnlyEndpoint(Model):
         'failover_policy': {'key': 'failoverPolicy', 'type': 'str'},
     }
 
-    def __init__(self, failover_policy=None):
-        super(FailoverGroupReadOnlyEndpoint, self).__init__()
-        self.failover_policy = failover_policy
+    def __init__(self, **kwargs):
+        super(FailoverGroupReadOnlyEndpoint, self).__init__(**kwargs)
+        self.failover_policy = kwargs.get('failover_policy', None)

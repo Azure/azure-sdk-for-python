@@ -13,20 +13,24 @@ from msrest.serialization import Model
 
 
 class ImageTag(Model):
-    """An image caption, i.e. a brief description of what the image depicts.
+    """An entity observation in the image, along with the confidence score.
 
-    :param name: The tag value
+    :param name: Name of the entity.
     :type name: str
-    :param confidence: The level of confidence the service has in the caption
+    :param confidence: The level of confidence that the entity was observed.
     :type confidence: float
+    :param hint: Optional hint/details for this tag.
+    :type hint: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'confidence': {'key': 'confidence', 'type': 'float'},
+        'hint': {'key': 'hint', 'type': 'str'},
     }
 
-    def __init__(self, name=None, confidence=None):
-        super(ImageTag, self).__init__()
-        self.name = name
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(ImageTag, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.confidence = kwargs.get('confidence', None)
+        self.hint = kwargs.get('hint', None)

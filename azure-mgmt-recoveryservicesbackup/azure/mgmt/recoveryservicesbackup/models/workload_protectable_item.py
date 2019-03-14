@@ -16,16 +16,25 @@ class WorkloadProtectableItem(Model):
     """Base class for backup item. Workload-specific backup items are derived from
     this class.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureFileShareProtectableItem,
+    AzureVmWorkloadProtectableItem, IaaSVMProtectableItem
+
+    All required parameters must be populated in order to send to Azure.
+
     :param backup_management_type: Type of backup managemenent to backup an
      item.
     :type backup_management_type: str
+    :param workload_type: Type of workload for the backup management
+    :type workload_type: str
     :param friendly_name: Friendly name of the backup item.
     :type friendly_name: str
     :param protection_state: State of the back up item. Possible values
-     include: 'Invalid', 'NotProtected', 'Protecting', 'Protected'
-    :type protection_state: str or :class:`ProtectionStatus
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionStatus>`
-    :param protectable_item_type: Polymorphic Discriminator
+     include: 'Invalid', 'NotProtected', 'Protecting', 'Protected',
+     'ProtectionFailed'
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionStatus
+    :param protectable_item_type: Required. Constant filled by server.
     :type protectable_item_type: str
     """
 
@@ -35,17 +44,20 @@ class WorkloadProtectableItem(Model):
 
     _attribute_map = {
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'protectable_item_type': {'key': 'protectableItemType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'protectable_item_type': {'IaaSVMProtectableItem': 'IaaSVMProtectableItem'}
+        'protectable_item_type': {'AzureFileShare': 'AzureFileShareProtectableItem', 'AzureVmWorkloadProtectableItem': 'AzureVmWorkloadProtectableItem', 'IaaSVMProtectableItem': 'IaaSVMProtectableItem'}
     }
 
-    def __init__(self, backup_management_type=None, friendly_name=None, protection_state=None):
-        self.backup_management_type = backup_management_type
-        self.friendly_name = friendly_name
-        self.protection_state = protection_state
+    def __init__(self, **kwargs):
+        super(WorkloadProtectableItem, self).__init__(**kwargs)
+        self.backup_management_type = kwargs.get('backup_management_type', None)
+        self.workload_type = kwargs.get('workload_type', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.protection_state = kwargs.get('protection_state', None)
         self.protectable_item_type = None

@@ -17,9 +17,10 @@ class CelebritiesModel(Model):
 
     :param name: Name of the celebrity.
     :type name: str
-    :param confidence: Level of confidence ranging from 0 to 1.
+    :param confidence: Confidence level for the celebrity recognition as a
+     value ranging from 0 to 1.
     :type confidence: float
-    :param face_rectangle:
+    :param face_rectangle: Location of the identified face in the image.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.computervision.models.FaceRectangle
     """
@@ -30,8 +31,8 @@ class CelebritiesModel(Model):
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
     }
 
-    def __init__(self, name=None, confidence=None, face_rectangle=None):
-        super(CelebritiesModel, self).__init__()
-        self.name = name
-        self.confidence = confidence
-        self.face_rectangle = face_rectangle
+    def __init__(self, **kwargs):
+        super(CelebritiesModel, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.confidence = kwargs.get('confidence', None)
+        self.face_rectangle = kwargs.get('face_rectangle', None)

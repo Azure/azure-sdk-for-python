@@ -23,11 +23,11 @@ class ImageFileCreateBatch(Model):
     """
 
     _attribute_map = {
-        'images': {'key': 'Images', 'type': '[ImageFileCreateEntry]'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+        'images': {'key': 'images', 'type': '[ImageFileCreateEntry]'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
     }
 
-    def __init__(self, images=None, tag_ids=None):
-        super(ImageFileCreateBatch, self).__init__()
-        self.images = images
-        self.tag_ids = tag_ids
+    def __init__(self, **kwargs):
+        super(ImageFileCreateBatch, self).__init__(**kwargs)
+        self.images = kwargs.get('images', None)
+        self.tag_ids = kwargs.get('tag_ids', None)

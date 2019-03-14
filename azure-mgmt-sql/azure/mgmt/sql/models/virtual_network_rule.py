@@ -18,14 +18,16 @@ class VirtualNetworkRule(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param virtual_network_subnet_id: The ARM resource id of the virtual
-     network subnet.
+    :param virtual_network_subnet_id: Required. The ARM resource id of the
+     virtual network subnet.
     :type virtual_network_subnet_id: str
     :param ignore_missing_vnet_service_endpoint: Create firewall rule before
      the virtual network has vnet service endpoint enabled.
@@ -52,8 +54,8 @@ class VirtualNetworkRule(ProxyResource):
         'state': {'key': 'properties.state', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None):
-        super(VirtualNetworkRule, self).__init__()
-        self.virtual_network_subnet_id = virtual_network_subnet_id
-        self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
+    def __init__(self, **kwargs):
+        super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.virtual_network_subnet_id = kwargs.get('virtual_network_subnet_id', None)
+        self.ignore_missing_vnet_service_endpoint = kwargs.get('ignore_missing_vnet_service_endpoint', None)
         self.state = None

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectionMonitorQueryResult(Model):
-    """List of connection states snaphots.
+    """List of connection states snapshots.
 
     :param states: Information about connection states.
     :type states:
@@ -24,6 +24,6 @@ class ConnectionMonitorQueryResult(Model):
         'states': {'key': 'states', 'type': '[ConnectionStateSnapshot]'},
     }
 
-    def __init__(self, states=None):
-        super(ConnectionMonitorQueryResult, self).__init__()
-        self.states = states
+    def __init__(self, **kwargs):
+        super(ConnectionMonitorQueryResult, self).__init__(**kwargs)
+        self.states = kwargs.get('states', None)

@@ -58,14 +58,14 @@ class ApplicationGatewayHttpListener(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, frontend_port=None, protocol=None, host_name=None, ssl_certificate=None, require_server_name_indication=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayHttpListener, self).__init__(id=id)
-        self.frontend_ip_configuration = frontend_ip_configuration
-        self.frontend_port = frontend_port
-        self.protocol = protocol
-        self.host_name = host_name
-        self.ssl_certificate = ssl_certificate
-        self.require_server_name_indication = require_server_name_indication
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayHttpListener, self).__init__(**kwargs)
+        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.ssl_certificate = kwargs.get('ssl_certificate', None)
+        self.require_server_name_indication = kwargs.get('require_server_name_indication', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

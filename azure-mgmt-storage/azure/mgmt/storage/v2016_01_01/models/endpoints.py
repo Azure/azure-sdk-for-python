@@ -43,8 +43,8 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Endpoints, self).__init__()
+    def __init__(self, **kwargs):
+        super(Endpoints, self).__init__(**kwargs)
         self.blob = None
         self.queue = None
         self.table = None

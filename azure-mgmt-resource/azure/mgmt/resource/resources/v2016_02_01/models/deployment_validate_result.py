@@ -28,7 +28,7 @@ class DeploymentValidateResult(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, error=None, properties=None):
-        super(DeploymentValidateResult, self).__init__()
-        self.error = error
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentValidateResult, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+        self.properties = kwargs.get('properties', None)

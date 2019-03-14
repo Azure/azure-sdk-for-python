@@ -1,8 +1,9 @@
 {
+  "$schema": "https://raw.githubusercontent.com/lmazuel/swagger-to-sdk/master/swagger_to_sdk_config.schema.json",
   "meta": {
     "autorest_options": {
       "version": "preview",
-      "use": "@microsoft.azure/autorest.python@2.1.40",
+      "use": "@microsoft.azure/autorest.python@~3.0.56",
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": ".",
@@ -18,22 +19,6 @@
       "wrapper_filesOrDirs": [
         "azure-batch/azure/batch/batch_auth.py"
       ]
-    },
-    "keyvault.data": {
-      "build_dir": "azure-keyvault",
-      "markdown": "specification/keyvault/data-plane/readme.md",
-      "wrapper_filesOrDirs": [
-        "azure-keyvault/azure/keyvault/custom",
-        "azure-keyvault/azure/keyvault/generated",
-        "azure-keyvault/azure/keyvault/__init__.py"
-      ]
-    },
-    "subscription": {
-      "build_dir": "azure-mgmt-subscription",
-      "markdown": "specification/subscription/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-all-subscription"
-      }
     }
   }
 }

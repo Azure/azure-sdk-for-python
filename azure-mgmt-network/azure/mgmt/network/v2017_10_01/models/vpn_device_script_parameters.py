@@ -29,8 +29,8 @@ class VpnDeviceScriptParameters(Model):
         'firmware_version': {'key': 'firmwareVersion', 'type': 'str'},
     }
 
-    def __init__(self, vendor=None, device_family=None, firmware_version=None):
-        super(VpnDeviceScriptParameters, self).__init__()
-        self.vendor = vendor
-        self.device_family = device_family
-        self.firmware_version = firmware_version
+    def __init__(self, **kwargs):
+        super(VpnDeviceScriptParameters, self).__init__(**kwargs)
+        self.vendor = kwargs.get('vendor', None)
+        self.device_family = kwargs.get('device_family', None)
+        self.firmware_version = kwargs.get('firmware_version', None)

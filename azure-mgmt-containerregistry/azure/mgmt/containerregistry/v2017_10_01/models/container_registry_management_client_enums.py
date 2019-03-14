@@ -12,7 +12,13 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class ImportMode(str, Enum):
+
+    no_force = "NoForce"
+    force = "Force"
+
+
+class SkuName(str, Enum):
 
     classic = "Classic"
     basic = "Basic"
@@ -20,7 +26,7 @@ class SkuName(Enum):
     premium = "Premium"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     classic = "Classic"
     basic = "Basic"
@@ -28,7 +34,7 @@ class SkuTier(Enum):
     premium = "Premium"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
@@ -38,25 +44,50 @@ class ProvisioningState(Enum):
     canceled = "Canceled"
 
 
-class PasswordName(Enum):
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class Action(str, Enum):
+
+    allow = "Allow"
+
+
+class PasswordName(str, Enum):
 
     password = "password"
     password2 = "password2"
 
 
-class RegistryUsageUnit(Enum):
+class RegistryUsageUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"
 
 
-class WebhookStatus(Enum):
+class PolicyStatus(str, Enum):
 
     enabled = "enabled"
     disabled = "disabled"
 
 
-class WebhookAction(Enum):
+class TrustPolicyType(str, Enum):
+
+    notary = "Notary"
+
+
+class WebhookStatus(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"
+
+
+class WebhookAction(str, Enum):
 
     push = "push"
     delete = "delete"
+    quarantine = "quarantine"
+    chart_push = "chart_push"
+    chart_delete = "chart_delete"

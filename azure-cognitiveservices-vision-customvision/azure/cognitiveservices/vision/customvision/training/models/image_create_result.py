@@ -18,14 +18,16 @@ class ImageCreateResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar source_url:
+    :ivar source_url: Source URL of the image.
     :vartype source_url: str
-    :ivar status: Possible values include: 'OK', 'OKDuplicate', 'ErrorSource',
-     'ErrorImageFormat', 'ErrorImageSize', 'ErrorStorage', 'ErrorLimitExceed',
-     'ErrorTagLimitExceed', 'ErrorUnknown'
+    :ivar status: Status of the image creation. Possible values include: 'OK',
+     'OKDuplicate', 'ErrorSource', 'ErrorImageFormat', 'ErrorImageSize',
+     'ErrorStorage', 'ErrorLimitExceed', 'ErrorTagLimitExceed',
+     'ErrorRegionLimitExceed', 'ErrorUnknown',
+     'ErrorNegativeAndRegularTagOnSameImage'
     :vartype status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.enum
-    :ivar image:
+     ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateStatus
+    :ivar image: The image.
     :vartype image:
      ~azure.cognitiveservices.vision.customvision.training.models.Image
     """
@@ -37,13 +39,13 @@ class ImageCreateResult(Model):
     }
 
     _attribute_map = {
-        'source_url': {'key': 'SourceUrl', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'image': {'key': 'Image', 'type': 'Image'},
+        'source_url': {'key': 'sourceUrl', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'image': {'key': 'image', 'type': 'Image'},
     }
 
-    def __init__(self):
-        super(ImageCreateResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageCreateResult, self).__init__(**kwargs)
         self.source_url = None
         self.status = None
         self.image = None

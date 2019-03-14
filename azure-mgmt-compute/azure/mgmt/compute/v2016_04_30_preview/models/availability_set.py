@@ -19,7 +19,7 @@ class AvailabilitySet(Resource):
     information about availability sets, see [Manage the availability of
     virtual
     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    <br><br> For more information on Azure planned maintainance, see [Planned
+    <br><br> For more information on Azure planned maintenance, see [Planned
     maintenance for virtual machines in
     Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
     <br><br> Currently, a VM can only be added to availability set at creation
@@ -28,13 +28,15 @@ class AvailabilitySet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -77,11 +79,11 @@ class AvailabilitySet(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, managed=None, sku=None):
-        super(AvailabilitySet, self).__init__(location=location, tags=tags)
-        self.platform_update_domain_count = platform_update_domain_count
-        self.platform_fault_domain_count = platform_fault_domain_count
-        self.virtual_machines = virtual_machines
+    def __init__(self, **kwargs):
+        super(AvailabilitySet, self).__init__(**kwargs)
+        self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
+        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+        self.virtual_machines = kwargs.get('virtual_machines', None)
         self.statuses = None
-        self.managed = managed
-        self.sku = sku
+        self.managed = kwargs.get('managed', None)
+        self.sku = kwargs.get('sku', None)

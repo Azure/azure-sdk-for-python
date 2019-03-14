@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ImageMetadata(Model):
     """Image metadata.
 
-    :param width: Image width
+    :param width: Image width, in pixels.
     :type width: int
-    :param height: Image height
+    :param height: Image height, in pixels.
     :type height: int
-    :param format: Image format
+    :param format: Image format.
     :type format: str
     """
 
@@ -29,8 +29,8 @@ class ImageMetadata(Model):
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, width=None, height=None, format=None):
-        super(ImageMetadata, self).__init__()
-        self.width = width
-        self.height = height
-        self.format = format
+    def __init__(self, **kwargs):
+        super(ImageMetadata, self).__init__(**kwargs)
+        self.width = kwargs.get('width', None)
+        self.height = kwargs.get('height', None)
+        self.format = kwargs.get('format', None)

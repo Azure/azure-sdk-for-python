@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class VirtualNetworkConnectionGatewayReference(Model):
     """A reference to VirtualNetworkGateway or LocalNetworkGateway resource.
 
-    :param id: The ID of VirtualNetworkGateway or LocalNetworkGateway
-     resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The ID of VirtualNetworkGateway or
+     LocalNetworkGateway resource.
     :type id: str
     """
 
@@ -28,6 +30,6 @@ class VirtualNetworkConnectionGatewayReference(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(VirtualNetworkConnectionGatewayReference, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(VirtualNetworkConnectionGatewayReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

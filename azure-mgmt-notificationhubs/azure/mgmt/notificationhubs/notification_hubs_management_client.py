@@ -9,14 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
-from .operations.name_operations import NameOperations
 from .operations.notification_hubs_operations import NotificationHubsOperations
-from .operations.hubs_operations import HubsOperations
 from . import models
 
 
@@ -42,34 +41,30 @@ class NotificationHubsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(NotificationHubsManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('notificationhubsmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-notificationhubs/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class NotificationHubsManagementClient(object):
+class NotificationHubsManagementClient(SDKClient):
     """Azure NotificationHub client
 
     :ivar config: Configuration for client.
     :vartype config: NotificationHubsManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.notificationhubs.operations.Operations
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.notificationhubs.operations.NamespacesOperations
-    :ivar name: Name operations
-    :vartype name: azure.mgmt.notificationhubs.operations.NameOperations
     :ivar notification_hubs: NotificationHubs operations
     :vartype notification_hubs: azure.mgmt.notificationhubs.operations.NotificationHubsOperations
-    :ivar hubs: Hubs operations
-    :vartype hubs: azure.mgmt.notificationhubs.operations.HubsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,18 +80,16 @@ class NotificationHubsManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = NotificationHubsManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(NotificationHubsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.name = NameOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.notification_hubs = NotificationHubsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.hubs = HubsOperations(
             self._client, self.config, self._serialize, self._deserialize)

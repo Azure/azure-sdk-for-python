@@ -13,23 +13,23 @@ from msrest.serialization import Model
 
 
 class TextOperationResult(Model):
-    """TextOperationResult.
+    """Result of recognition text operation.
 
     :param status: Status of the text operation. Possible values include: 'Not
      Started', 'Running', 'Failed', 'Succeeded'
     :type status: str or
      ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
-    :param recognition_result:
+    :param recognition_result: Text recognition result of the text operation.
     :type recognition_result:
-     ~azure.cognitiveservices.vision.computervision.models.RecognitionResult
+     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResult
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'TextOperationStatusCodes'},
-        'recognition_result': {'key': 'recognitionResult', 'type': 'RecognitionResult'},
+        'recognition_result': {'key': 'recognitionResult', 'type': 'TextRecognitionResult'},
     }
 
-    def __init__(self, status=None, recognition_result=None):
-        super(TextOperationResult, self).__init__()
-        self.status = status
-        self.recognition_result = recognition_result
+    def __init__(self, **kwargs):
+        super(TextOperationResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.recognition_result = kwargs.get('recognition_result', None)

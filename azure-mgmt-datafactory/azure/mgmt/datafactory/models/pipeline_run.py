@@ -72,9 +72,9 @@ class PipelineRun(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(PipelineRun, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(PipelineRun, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.run_id = None
         self.pipeline_name = None
         self.parameters = None

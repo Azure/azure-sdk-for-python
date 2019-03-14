@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-mgmt-scheduler"
+package_pprint_name = "Scheduler Management"
+package_doc_id = "scheduler"
+is_stable = true
+

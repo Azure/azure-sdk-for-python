@@ -83,15 +83,15 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(NetworkInterface, self).__init__(id=id, location=location, tags=tags)
-        self.virtual_machine = virtual_machine
-        self.network_security_group = network_security_group
-        self.ip_configurations = ip_configurations
-        self.dns_settings = dns_settings
-        self.mac_address = mac_address
-        self.primary = primary
-        self.enable_ip_forwarding = enable_ip_forwarding
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(NetworkInterface, self).__init__(**kwargs)
+        self.virtual_machine = kwargs.get('virtual_machine', None)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.dns_settings = kwargs.get('dns_settings', None)
+        self.mac_address = kwargs.get('mac_address', None)
+        self.primary = kwargs.get('primary', None)
+        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

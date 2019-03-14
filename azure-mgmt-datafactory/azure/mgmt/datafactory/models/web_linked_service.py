@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class WebLinkedService(LinkedService):
     """Web linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,9 +25,15 @@ class WebLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param type_properties: Web linked service properties.
+    :param type_properties: Required. Web linked service properties.
     :type type_properties:
      ~azure.mgmt.datafactory.models.WebLinkedServiceTypeProperties
     """
@@ -39,11 +47,13 @@ class WebLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'type_properties': {'key': 'typeProperties', 'type': 'WebLinkedServiceTypeProperties'},
     }
 
-    def __init__(self, type_properties, additional_properties=None, connect_via=None, description=None):
-        super(WebLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.type_properties = type_properties
+    def __init__(self, **kwargs):
+        super(WebLinkedService, self).__init__(**kwargs)
+        self.type_properties = kwargs.get('type_properties', None)
         self.type = 'Web'

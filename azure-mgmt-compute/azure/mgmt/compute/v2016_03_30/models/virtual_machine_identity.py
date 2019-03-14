@@ -40,8 +40,8 @@ class VirtualMachineIdentity(Model):
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
     }
 
-    def __init__(self, type=None):
-        super(VirtualMachineIdentity, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = type
+        self.type = kwargs.get('type', None)

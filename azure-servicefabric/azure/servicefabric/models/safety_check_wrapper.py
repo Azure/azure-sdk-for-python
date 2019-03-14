@@ -27,6 +27,6 @@ class SafetyCheckWrapper(Model):
         'safety_check': {'key': 'SafetyCheck', 'type': 'SafetyCheck'},
     }
 
-    def __init__(self, safety_check=None):
-        super(SafetyCheckWrapper, self).__init__()
-        self.safety_check = safety_check
+    def __init__(self, **kwargs):
+        super(SafetyCheckWrapper, self).__init__(**kwargs)
+        self.safety_check = kwargs.get('safety_check', None)

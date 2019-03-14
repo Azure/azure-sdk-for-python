@@ -59,13 +59,13 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, id=None, name=None, subnet=None, primary=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None):
-        super(VirtualMachineScaleSetUpdateIPConfiguration, self).__init__(id=id)
-        self.name = name
-        self.subnet = subnet
-        self.primary = primary
-        self.public_ip_address_configuration = public_ip_address_configuration
-        self.private_ip_address_version = private_ip_address_version
-        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
-        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
-        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdateIPConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.primary = kwargs.get('primary', None)
+        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
+        self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
+        self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
+        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
+        self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)

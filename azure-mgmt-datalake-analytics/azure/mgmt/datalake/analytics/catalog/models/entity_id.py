@@ -27,7 +27,7 @@ class EntityId(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None):
-        super(EntityId, self).__init__()
-        self.name = name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(EntityId, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)

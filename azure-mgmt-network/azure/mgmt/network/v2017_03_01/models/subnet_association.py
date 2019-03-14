@@ -34,7 +34,7 @@ class SubnetAssociation(Model):
         'security_rules': {'key': 'securityRules', 'type': '[SecurityRule]'},
     }
 
-    def __init__(self, security_rules=None):
-        super(SubnetAssociation, self).__init__()
+    def __init__(self, **kwargs):
+        super(SubnetAssociation, self).__init__(**kwargs)
         self.id = None
-        self.security_rules = security_rules
+        self.security_rules = kwargs.get('security_rules', None)

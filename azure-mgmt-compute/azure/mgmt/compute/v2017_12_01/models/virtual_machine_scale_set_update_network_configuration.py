@@ -50,12 +50,12 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, name=None, primary=None, enable_accelerated_networking=None, network_security_group=None, dns_settings=None, ip_configurations=None, enable_ip_forwarding=None):
-        super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(id=id)
-        self.name = name
-        self.primary = primary
-        self.enable_accelerated_networking = enable_accelerated_networking
-        self.network_security_group = network_security_group
-        self.dns_settings = dns_settings
-        self.ip_configurations = ip_configurations
-        self.enable_ip_forwarding = enable_ip_forwarding
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.primary = kwargs.get('primary', None)
+        self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.dns_settings = kwargs.get('dns_settings', None)
+        self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)

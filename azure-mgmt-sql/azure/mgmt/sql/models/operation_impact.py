@@ -43,8 +43,8 @@ class OperationImpact(Model):
         'change_value_relative': {'key': 'changeValueRelative', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(OperationImpact, self).__init__()
+    def __init__(self, **kwargs):
+        super(OperationImpact, self).__init__(**kwargs)
         self.name = None
         self.unit = None
         self.change_value_absolute = None

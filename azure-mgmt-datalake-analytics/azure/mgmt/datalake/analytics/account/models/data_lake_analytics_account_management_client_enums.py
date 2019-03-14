@@ -12,26 +12,26 @@
 from enum import Enum
 
 
-class AADObjectType(Enum):
+class AADObjectType(str, Enum):
 
     user = "User"
     group = "Group"
     service_principal = "ServicePrincipal"
 
 
-class FirewallState(Enum):
+class FirewallState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class FirewallAllowAzureIpsState(Enum):
+class FirewallAllowAzureIpsState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class TierType(Enum):
+class TierType(str, Enum):
 
     consumption = "Consumption"
     commitment_100_au_hours = "Commitment_100AUHours"
@@ -44,7 +44,7 @@ class TierType(Enum):
     commitment_500000_au_hours = "Commitment_500000AUHours"
 
 
-class DataLakeAnalyticsAccountStatus(Enum):
+class DataLakeAnalyticsAccountStatus(str, Enum):
 
     failed = "Failed"
     creating = "Creating"
@@ -59,20 +59,20 @@ class DataLakeAnalyticsAccountStatus(Enum):
     canceled = "Canceled"
 
 
-class DataLakeAnalyticsAccountState(Enum):
+class DataLakeAnalyticsAccountState(str, Enum):
 
     active = "Active"
     suspended = "Suspended"
 
 
-class OperationOrigin(Enum):
+class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
     usersystem = "user,system"
 
 
-class SubscriptionState(Enum):
+class SubscriptionState(str, Enum):
 
     registered = "Registered"
     suspended = "Suspended"

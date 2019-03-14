@@ -37,7 +37,7 @@ class EndpointServiceResult(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(EndpointServiceResult, self).__init__(id=id)
+    def __init__(self, **kwargs):
+        super(EndpointServiceResult, self).__init__(**kwargs)
         self.name = None
         self.type = None

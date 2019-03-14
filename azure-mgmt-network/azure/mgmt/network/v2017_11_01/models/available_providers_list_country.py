@@ -30,8 +30,8 @@ class AvailableProvidersListCountry(Model):
         'states': {'key': 'states', 'type': '[AvailableProvidersListState]'},
     }
 
-    def __init__(self, country_name=None, providers=None, states=None):
-        super(AvailableProvidersListCountry, self).__init__()
-        self.country_name = country_name
-        self.providers = providers
-        self.states = states
+    def __init__(self, **kwargs):
+        super(AvailableProvidersListCountry, self).__init__(**kwargs)
+        self.country_name = kwargs.get('country_name', None)
+        self.providers = kwargs.get('providers', None)
+        self.states = kwargs.get('states', None)

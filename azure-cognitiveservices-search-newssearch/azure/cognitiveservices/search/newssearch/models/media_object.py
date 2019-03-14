@@ -21,7 +21,9 @@ class MediaObject(CreativeWork):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -102,8 +104,8 @@ class MediaObject(CreativeWork):
         '_type': {'ImageObject': 'ImageObject', 'VideoObject': 'VideoObject'}
     }
 
-    def __init__(self):
-        super(MediaObject, self).__init__()
+    def __init__(self, **kwargs):
+        super(MediaObject, self).__init__(**kwargs)
         self.content_url = None
         self.width = None
         self.height = None

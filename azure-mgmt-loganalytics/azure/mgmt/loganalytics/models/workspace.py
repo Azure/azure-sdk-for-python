@@ -27,12 +27,12 @@ class Workspace(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param provisioning_state: The provisioning state of the workspace.
      Possible values include: 'Creating', 'Succeeded', 'Failed', 'Canceled',
      'Deleting', 'ProvisioningAccount'
-    :type provisioning_state: str or :class:`EntityStatus
-     <azure.mgmt.loganalytics.models.EntityStatus>`
+    :type provisioning_state: str or
+     ~azure.mgmt.loganalytics.models.EntityStatus
     :param source: The source of the workspace.  Source defines where the
      workspace was created. 'Azure' implies it was created in Azure.
      'External' implies it was created via the Operational Insights Portal.
@@ -47,7 +47,7 @@ class Workspace(Resource):
      client side.
     :type portal_url: str
     :param sku: The SKU of the workspace.
-    :type sku: :class:`Sku <azure.mgmt.loganalytics.models.Sku>`
+    :type sku: ~azure.mgmt.loganalytics.models.Sku
     :param retention_in_days: The workspace data retention in days. -1 means
      Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
      for all other Skus.
@@ -60,7 +60,6 @@ class Workspace(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'retention_in_days': {'maximum': 730, 'minimum': -1},
     }
 
@@ -79,12 +78,12 @@ class Workspace(Resource):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, provisioning_state=None, source=None, customer_id=None, portal_url=None, sku=None, retention_in_days=None, e_tag=None):
-        super(Workspace, self).__init__(location=location, tags=tags)
-        self.provisioning_state = provisioning_state
-        self.source = source
-        self.customer_id = customer_id
-        self.portal_url = portal_url
-        self.sku = sku
-        self.retention_in_days = retention_in_days
-        self.e_tag = e_tag
+    def __init__(self, **kwargs):
+        super(Workspace, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.source = kwargs.get('source', None)
+        self.customer_id = kwargs.get('customer_id', None)
+        self.portal_url = kwargs.get('portal_url', None)
+        self.sku = kwargs.get('sku', None)
+        self.retention_in_days = kwargs.get('retention_in_days', None)
+        self.e_tag = kwargs.get('e_tag', None)

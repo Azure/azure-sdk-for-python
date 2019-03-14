@@ -18,9 +18,12 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name:
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
     :type name: str
-    :ivar type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :ivar type: Required.  Default value: "Microsoft.Storage/storageAccounts"
+     .
     :vartype type: str
     """
 
@@ -36,6 +39,6 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
 
     type = "Microsoft.Storage/storageAccounts"
 
-    def __init__(self, name):
-        super(StorageAccountCheckNameAvailabilityParameters, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

@@ -26,6 +26,7 @@ class WebhookNotification(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, service_uri=None, properties=None):
-        self.service_uri = service_uri
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(WebhookNotification, self).__init__(**kwargs)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.properties = kwargs.get('properties', None)

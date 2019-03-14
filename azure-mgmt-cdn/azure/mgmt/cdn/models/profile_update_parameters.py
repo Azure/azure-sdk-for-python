@@ -23,6 +23,6 @@ class ProfileUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, tags=None):
-        super(ProfileUpdateParameters, self).__init__()
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ProfileUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

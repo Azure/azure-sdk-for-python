@@ -18,9 +18,10 @@ class ImageCreateSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar is_batch_successful:
+    :ivar is_batch_successful: True if all of the images in the batch were
+     created successfully, otherwise false.
     :vartype is_batch_successful: bool
-    :ivar images:
+    :ivar images: List of the image creation results.
     :vartype images:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageCreateResult]
     """
@@ -31,11 +32,11 @@ class ImageCreateSummary(Model):
     }
 
     _attribute_map = {
-        'is_batch_successful': {'key': 'IsBatchSuccessful', 'type': 'bool'},
-        'images': {'key': 'Images', 'type': '[ImageCreateResult]'},
+        'is_batch_successful': {'key': 'isBatchSuccessful', 'type': 'bool'},
+        'images': {'key': 'images', 'type': '[ImageCreateResult]'},
     }
 
-    def __init__(self):
-        super(ImageCreateSummary, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageCreateSummary, self).__init__(**kwargs)
         self.is_batch_successful = None
         self.images = None

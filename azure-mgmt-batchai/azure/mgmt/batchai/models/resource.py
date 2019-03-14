@@ -27,7 +27,7 @@ class Resource(Model):
     :ivar location: The location of the resource
     :vartype location: str
     :ivar tags: The tags of the resource
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -46,7 +46,8 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None

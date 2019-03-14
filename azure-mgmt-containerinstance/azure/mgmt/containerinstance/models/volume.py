@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class Volume(Model):
     """The properties of the volume.
 
-    :param name: The name of the volume.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the volume.
     :type name: str
     :param azure_file: The Azure File volume.
     :type azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
@@ -39,10 +41,10 @@ class Volume(Model):
         'git_repo': {'key': 'gitRepo', 'type': 'GitRepoVolume'},
     }
 
-    def __init__(self, name, azure_file=None, empty_dir=None, secret=None, git_repo=None):
-        super(Volume, self).__init__()
-        self.name = name
-        self.azure_file = azure_file
-        self.empty_dir = empty_dir
-        self.secret = secret
-        self.git_repo = git_repo
+    def __init__(self, **kwargs):
+        super(Volume, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.azure_file = kwargs.get('azure_file', None)
+        self.empty_dir = kwargs.get('empty_dir', None)
+        self.secret = kwargs.get('secret', None)
+        self.git_repo = kwargs.get('git_repo', None)

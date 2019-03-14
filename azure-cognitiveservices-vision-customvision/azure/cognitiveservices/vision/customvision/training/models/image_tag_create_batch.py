@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class ImageTagCreateBatch(Model):
-    """ImageTagCreateBatch.
+    """Batch of image tags.
 
-    :param tags:
+    :param tags: Image Tag entries to include in this batch.
     :type tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateEntry]
     """
 
     _attribute_map = {
-        'tags': {'key': 'Tags', 'type': '[ImageTagCreateEntry]'},
+        'tags': {'key': 'tags', 'type': '[ImageTagCreateEntry]'},
     }
 
-    def __init__(self, tags=None):
-        super(ImageTagCreateBatch, self).__init__()
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ImageTagCreateBatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

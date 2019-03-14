@@ -50,7 +50,7 @@ class BgpServiceCommunity(Resource):
         'bgp_communities': {'key': 'properties.bgpCommunities', 'type': '[BGPCommunity]'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, service_name=None, bgp_communities=None):
-        super(BgpServiceCommunity, self).__init__(id=id, location=location, tags=tags)
-        self.service_name = service_name
-        self.bgp_communities = bgp_communities
+    def __init__(self, **kwargs):
+        super(BgpServiceCommunity, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.bgp_communities = kwargs.get('bgp_communities', None)

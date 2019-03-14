@@ -15,19 +15,21 @@ from msrest.serialization import Model
 class RegistryCreateParameters(Model):
     """The parameters for creating a container registry.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: The tags for the container registry.
     :type tags: dict[str, str]
-    :param location: The location of the container registry. This cannot be
-     changed after the resource is created.
+    :param location: Required. The location of the container registry. This
+     cannot be changed after the resource is created.
     :type location: str
-    :param sku: The SKU of the container registry.
+    :param sku: Required. The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2017_03_01.models.Sku
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
-    :param storage_account: The parameters of a storage account for the
-     container registry. If specified, the storage account must be in the same
-     physical location as the container registry.
+    :param storage_account: Required. The parameters of a storage account for
+     the container registry. If specified, the storage account must be in the
+     same physical location as the container registry.
     :type storage_account:
      ~azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters
     """
@@ -46,9 +48,10 @@ class RegistryCreateParameters(Model):
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountParameters'},
     }
 
-    def __init__(self, location, sku, storage_account, tags=None, admin_user_enabled=False):
-        self.tags = tags
-        self.location = location
-        self.sku = sku
-        self.admin_user_enabled = admin_user_enabled
-        self.storage_account = storage_account
+    def __init__(self, **kwargs):
+        super(RegistryCreateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
+        self.sku = kwargs.get('sku', None)
+        self.admin_user_enabled = kwargs.get('admin_user_enabled', False)
+        self.storage_account = kwargs.get('storage_account', None)

@@ -36,8 +36,17 @@ class PipelineResource(SubResource):
     :param parameters: List of parameters for pipeline.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param variables: List of variables for pipeline.
+    :type variables: dict[str,
+     ~azure.mgmt.datafactory.models.VariableSpecification]
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
+    :param annotations: List of tags that can be used for describing the
+     Pipeline.
+    :type annotations: list[object]
+    :param folder: The folder that this Pipeline is in. If not specified,
+     Pipeline will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
     """
 
     _validation = {
@@ -57,13 +66,19 @@ class PipelineResource(SubResource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'activities': {'key': 'properties.activities', 'type': '[Activity]'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterSpecification}'},
+        'variables': {'key': 'properties.variables', 'type': '{VariableSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
+        'annotations': {'key': 'properties.annotations', 'type': '[object]'},
+        'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
-    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, concurrency=None):
-        super(PipelineResource, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
-        self.activities = activities
-        self.parameters = parameters
-        self.concurrency = concurrency
+    def __init__(self, **kwargs):
+        super(PipelineResource, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
+        self.activities = kwargs.get('activities', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.variables = kwargs.get('variables', None)
+        self.concurrency = kwargs.get('concurrency', None)
+        self.annotations = kwargs.get('annotations', None)
+        self.folder = kwargs.get('folder', None)

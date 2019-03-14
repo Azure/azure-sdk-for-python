@@ -27,6 +27,9 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :param storage_account_id: The resource ID of the storage account to which
      you would like to send Diagnostic Logs.
     :type storage_account_id: str
+    :param service_bus_rule_id: The service bus rule Id of the diagnostic
+     setting. This is here to maintain backwards compatibility.
+    :type service_bus_rule_id: str
     :param event_hub_authorization_rule_id: The resource Id for the event hub
      authorization rule.
     :type event_hub_authorization_rule_id: str
@@ -55,6 +58,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
+        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
         'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
         'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
@@ -62,11 +66,12 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_id=None, event_hub_authorization_rule_id=None, event_hub_name=None, metrics=None, logs=None, workspace_id=None):
-        super(DiagnosticSettingsResource, self).__init__()
-        self.storage_account_id = storage_account_id
-        self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
-        self.event_hub_name = event_hub_name
-        self.metrics = metrics
-        self.logs = logs
-        self.workspace_id = workspace_id
+    def __init__(self, **kwargs):
+        super(DiagnosticSettingsResource, self).__init__(**kwargs)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.service_bus_rule_id = kwargs.get('service_bus_rule_id', None)
+        self.event_hub_authorization_rule_id = kwargs.get('event_hub_authorization_rule_id', None)
+        self.event_hub_name = kwargs.get('event_hub_name', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.logs = kwargs.get('logs', None)
+        self.workspace_id = kwargs.get('workspace_id', None)

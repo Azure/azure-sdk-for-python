@@ -55,10 +55,10 @@ class ApplicationLoadInfo(Model):
         'application_load_metric_information': {'key': 'ApplicationLoadMetricInformation', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, id=None, minimum_nodes=None, maximum_nodes=None, node_count=None, application_load_metric_information=None):
-        super(ApplicationLoadInfo, self).__init__()
-        self.id = id
-        self.minimum_nodes = minimum_nodes
-        self.maximum_nodes = maximum_nodes
-        self.node_count = node_count
-        self.application_load_metric_information = application_load_metric_information
+    def __init__(self, **kwargs):
+        super(ApplicationLoadInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.minimum_nodes = kwargs.get('minimum_nodes', None)
+        self.maximum_nodes = kwargs.get('maximum_nodes', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.application_load_metric_information = kwargs.get('application_load_metric_information', None)

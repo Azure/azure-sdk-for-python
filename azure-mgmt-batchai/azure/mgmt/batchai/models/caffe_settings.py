@@ -42,9 +42,10 @@ class CaffeSettings(Model):
         'process_count': {'key': 'processCount', 'type': 'int'},
     }
 
-    def __init__(self, config_file_path=None, python_script_file_path=None, python_interpreter_path=None, command_line_args=None, process_count=None):
-        self.config_file_path = config_file_path
-        self.python_script_file_path = python_script_file_path
-        self.python_interpreter_path = python_interpreter_path
-        self.command_line_args = command_line_args
-        self.process_count = process_count
+    def __init__(self, **kwargs):
+        super(CaffeSettings, self).__init__(**kwargs)
+        self.config_file_path = kwargs.get('config_file_path', None)
+        self.python_script_file_path = kwargs.get('python_script_file_path', None)
+        self.python_interpreter_path = kwargs.get('python_interpreter_path', None)
+        self.command_line_args = kwargs.get('command_line_args', None)
+        self.process_count = kwargs.get('process_count', None)

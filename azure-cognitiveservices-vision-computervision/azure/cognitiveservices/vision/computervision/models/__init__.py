@@ -9,52 +9,99 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .word import Word
-from .line import Line
-from .recognition_result import RecognitionResult
-from .text_operation_result import TextOperationResult
-from .face_rectangle import FaceRectangle
-from .celebrities_model import CelebritiesModel
-from .category_detail import CategoryDetail
-from .category import Category
-from .adult_info import AdultInfo
-from .color_info import ColorInfo
-from .image_type import ImageType
-from .image_tag import ImageTag
-from .image_caption import ImageCaption
-from .image_metadata import ImageMetadata
-from .image_description_details import ImageDescriptionDetails
-from .face_description import FaceDescription
-from .image_analysis import ImageAnalysis
-from .ocr_word import OcrWord
-from .ocr_line import OcrLine
-from .ocr_region import OcrRegion
-from .ocr_result import OcrResult
-from .model_description import ModelDescription
-from .list_models_result import ListModelsResult
-from .domain_model_results import DomainModelResults
-from .image_description import ImageDescription
-from .tag_result import TagResult
-from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
-from .image_url import ImageUrl
-from .computer_vision_api_enums import (
+try:
+    from .face_rectangle_py3 import FaceRectangle
+    from .celebrities_model_py3 import CelebritiesModel
+    from .landmarks_model_py3 import LandmarksModel
+    from .category_detail_py3 import CategoryDetail
+    from .category_py3 import Category
+    from .adult_info_py3 import AdultInfo
+    from .color_info_py3 import ColorInfo
+    from .image_type_py3 import ImageType
+    from .image_tag_py3 import ImageTag
+    from .image_caption_py3 import ImageCaption
+    from .image_description_details_py3 import ImageDescriptionDetails
+    from .face_description_py3 import FaceDescription
+    from .bounding_rect_py3 import BoundingRect
+    from .object_hierarchy_py3 import ObjectHierarchy
+    from .detected_object_py3 import DetectedObject
+    from .detected_brand_py3 import DetectedBrand
+    from .image_metadata_py3 import ImageMetadata
+    from .image_analysis_py3 import ImageAnalysis
+    from .image_description_py3 import ImageDescription
+    from .detect_result_py3 import DetectResult
+    from .model_description_py3 import ModelDescription
+    from .list_models_result_py3 import ListModelsResult
+    from .domain_model_results_py3 import DomainModelResults
+    from .ocr_word_py3 import OcrWord
+    from .ocr_line_py3 import OcrLine
+    from .ocr_region_py3 import OcrRegion
+    from .ocr_result_py3 import OcrResult
+    from .tag_result_py3 import TagResult
+    from .area_of_interest_result_py3 import AreaOfInterestResult
+    from .image_url_py3 import ImageUrl
+    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
+    from .landmark_results_py3 import LandmarkResults
+    from .celebrity_results_py3 import CelebrityResults
+    from .word_py3 import Word
+    from .line_py3 import Line
+    from .text_recognition_result_py3 import TextRecognitionResult
+    from .text_operation_result_py3 import TextOperationResult
+    from .read_operation_result_py3 import ReadOperationResult
+except (SyntaxError, ImportError):
+    from .face_rectangle import FaceRectangle
+    from .celebrities_model import CelebritiesModel
+    from .landmarks_model import LandmarksModel
+    from .category_detail import CategoryDetail
+    from .category import Category
+    from .adult_info import AdultInfo
+    from .color_info import ColorInfo
+    from .image_type import ImageType
+    from .image_tag import ImageTag
+    from .image_caption import ImageCaption
+    from .image_description_details import ImageDescriptionDetails
+    from .face_description import FaceDescription
+    from .bounding_rect import BoundingRect
+    from .object_hierarchy import ObjectHierarchy
+    from .detected_object import DetectedObject
+    from .detected_brand import DetectedBrand
+    from .image_metadata import ImageMetadata
+    from .image_analysis import ImageAnalysis
+    from .image_description import ImageDescription
+    from .detect_result import DetectResult
+    from .model_description import ModelDescription
+    from .list_models_result import ListModelsResult
+    from .domain_model_results import DomainModelResults
+    from .ocr_word import OcrWord
+    from .ocr_line import OcrLine
+    from .ocr_region import OcrRegion
+    from .ocr_result import OcrResult
+    from .tag_result import TagResult
+    from .area_of_interest_result import AreaOfInterestResult
+    from .image_url import ImageUrl
+    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
+    from .landmark_results import LandmarkResults
+    from .celebrity_results import CelebrityResults
+    from .word import Word
+    from .line import Line
+    from .text_recognition_result import TextRecognitionResult
+    from .text_operation_result import TextOperationResult
+    from .read_operation_result import ReadOperationResult
+from .computer_vision_client_enums import (
+    Gender,
     TextOperationStatusCodes,
-    ComputerVisionErrorCodes,
-    VisualFeatureTypes,
+    TextRecognitionResultDimensionUnit,
+    TextRecognitionResultConfidenceClass,
     OcrLanguages,
-    AzureRegions,
+    VisualFeatureTypes,
+    TextRecognitionMode,
     Details,
-    Language1,
-    DomainModels,
 )
 
 __all__ = [
-    'Word',
-    'Line',
-    'RecognitionResult',
-    'TextOperationResult',
     'FaceRectangle',
     'CelebritiesModel',
+    'LandmarksModel',
     'CategoryDetail',
     'Category',
     'AdultInfo',
@@ -62,27 +109,40 @@ __all__ = [
     'ImageType',
     'ImageTag',
     'ImageCaption',
-    'ImageMetadata',
     'ImageDescriptionDetails',
     'FaceDescription',
+    'BoundingRect',
+    'ObjectHierarchy',
+    'DetectedObject',
+    'DetectedBrand',
+    'ImageMetadata',
     'ImageAnalysis',
+    'ImageDescription',
+    'DetectResult',
+    'ModelDescription',
+    'ListModelsResult',
+    'DomainModelResults',
     'OcrWord',
     'OcrLine',
     'OcrRegion',
     'OcrResult',
-    'ModelDescription',
-    'ListModelsResult',
-    'DomainModelResults',
-    'ImageDescription',
     'TagResult',
-    'ComputerVisionError', 'ComputerVisionErrorException',
+    'AreaOfInterestResult',
     'ImageUrl',
+    'ComputerVisionError', 'ComputerVisionErrorException',
+    'LandmarkResults',
+    'CelebrityResults',
+    'Word',
+    'Line',
+    'TextRecognitionResult',
+    'TextOperationResult',
+    'ReadOperationResult',
+    'Gender',
     'TextOperationStatusCodes',
-    'ComputerVisionErrorCodes',
-    'VisualFeatureTypes',
+    'TextRecognitionResultDimensionUnit',
+    'TextRecognitionResultConfidenceClass',
     'OcrLanguages',
-    'AzureRegions',
+    'VisualFeatureTypes',
+    'TextRecognitionMode',
     'Details',
-    'Language1',
-    'DomainModels',
 ]

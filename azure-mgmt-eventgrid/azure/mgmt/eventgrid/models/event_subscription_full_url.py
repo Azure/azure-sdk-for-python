@@ -24,6 +24,6 @@ class EventSubscriptionFullUrl(Model):
         'endpoint_url': {'key': 'endpointUrl', 'type': 'str'},
     }
 
-    def __init__(self, endpoint_url=None):
-        super(EventSubscriptionFullUrl, self).__init__()
-        self.endpoint_url = endpoint_url
+    def __init__(self, **kwargs):
+        super(EventSubscriptionFullUrl, self).__init__(**kwargs)
+        self.endpoint_url = kwargs.get('endpoint_url', None)

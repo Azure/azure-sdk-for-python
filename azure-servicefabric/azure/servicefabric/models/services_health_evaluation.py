@@ -19,6 +19,8 @@ class ServicesHealthEvaluation(HealthEvaluation):
     returned when evaluating application health and the aggregated health state
     is either Error or Warning.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -28,7 +30,7 @@ class ServicesHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param service_type_name: Name of the service type of the services.
     :type service_type_name: str
@@ -59,10 +61,10 @@ class ServicesHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, service_type_name=None, max_percent_unhealthy_services=None, total_count=None, unhealthy_evaluations=None):
-        super(ServicesHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.service_type_name = service_type_name
-        self.max_percent_unhealthy_services = max_percent_unhealthy_services
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(ServicesHealthEvaluation, self).__init__(**kwargs)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.max_percent_unhealthy_services = kwargs.get('max_percent_unhealthy_services', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
         self.kind = 'Services'

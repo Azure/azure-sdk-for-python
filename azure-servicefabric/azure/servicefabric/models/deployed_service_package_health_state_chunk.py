@@ -16,7 +16,6 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a deployed service package, which
     contains the service manifest name and the service package aggregated
     health state.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
@@ -39,7 +38,7 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, service_manifest_name=None, service_package_activation_id=None):
-        super(DeployedServicePackageHealthStateChunk, self).__init__(health_state=health_state)
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageHealthStateChunk, self).__init__(**kwargs)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

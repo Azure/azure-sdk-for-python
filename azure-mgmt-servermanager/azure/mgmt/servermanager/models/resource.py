@@ -27,7 +27,7 @@ class Resource(Model):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     """
@@ -48,10 +48,11 @@ class Resource(Model):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, etag=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
         self.location = None
-        self.tags = tags
-        self.etag = etag
+        self.tags = kwargs.get('tags', None)
+        self.etag = kwargs.get('etag', None)

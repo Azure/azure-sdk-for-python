@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SparkLinkedService(LinkedService):
     """Spark Server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,12 +25,18 @@ class SparkLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: IP address or host name of the Spark server
+    :param host: Required. IP address or host name of the Spark server
     :type host: object
-    :param port: The TCP port that the Spark server uses to listen for client
-     connections.
+    :param port: Required. The TCP port that the Spark server uses to listen
+     for client connections.
     :type port: object
     :param server_type: The type of Spark server. Possible values include:
      'SharkServer', 'SharkServer2', 'SparkThriftServer'
@@ -37,8 +45,8 @@ class SparkLinkedService(LinkedService):
      Thrift layer. Possible values include: 'Binary', 'SASL', 'HTTP '
     :type thrift_transport_protocol: str or
      ~azure.mgmt.datafactory.models.SparkThriftTransportProtocol
-    :param authentication_type: The authentication method used to access the
-     Spark server. Possible values include: 'Anonymous', 'Username',
+    :param authentication_type: Required. The authentication method used to
+     access the Spark server. Possible values include: 'Anonymous', 'Username',
      'UsernameAndPassword', 'WindowsAzureHDInsightService'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.SparkAuthenticationType
@@ -85,6 +93,8 @@ class SparkLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
@@ -102,20 +112,20 @@ class SparkLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, port, authentication_type, additional_properties=None, connect_via=None, description=None, server_type=None, thrift_transport_protocol=None, username=None, password=None, http_path=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, encrypted_credential=None):
-        super(SparkLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.host = host
-        self.port = port
-        self.server_type = server_type
-        self.thrift_transport_protocol = thrift_transport_protocol
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.http_path = http_path
-        self.enable_ssl = enable_ssl
-        self.trusted_cert_path = trusted_cert_path
-        self.use_system_trust_store = use_system_trust_store
-        self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
-        self.allow_self_signed_server_cert = allow_self_signed_server_cert
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SparkLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.port = kwargs.get('port', None)
+        self.server_type = kwargs.get('server_type', None)
+        self.thrift_transport_protocol = kwargs.get('thrift_transport_protocol', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.http_path = kwargs.get('http_path', None)
+        self.enable_ssl = kwargs.get('enable_ssl', None)
+        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
+        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
+        self.allow_host_name_cn_mismatch = kwargs.get('allow_host_name_cn_mismatch', None)
+        self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Spark'

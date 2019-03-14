@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ConnectionResetSharedKey(Model):
     """ConnectionResetSharedKey.
 
-    :param key_length: The virtual network connection reset shared key length,
-     should between 1 and 128.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_length: Required. The virtual network connection reset shared
+     key length, should between 1 and 128.
     :type key_length: int
     """
 
@@ -28,6 +30,6 @@ class ConnectionResetSharedKey(Model):
         'key_length': {'key': 'keyLength', 'type': 'int'},
     }
 
-    def __init__(self, key_length):
-        super(ConnectionResetSharedKey, self).__init__()
-        self.key_length = key_length
+    def __init__(self, **kwargs):
+        super(ConnectionResetSharedKey, self).__init__(**kwargs)
+        self.key_length = kwargs.get('key_length', None)

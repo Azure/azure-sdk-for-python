@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class VirtualNetworkRule(Model):
     """Virtual Network rule.
 
-    :param virtual_network_resource_id: Resource ID of a subnet, for example:
+    All required parameters must be populated in order to send to Azure.
+
+    :param virtual_network_resource_id: Required. Resource ID of a subnet, for
+     example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
     :type virtual_network_resource_id: str
     :param action: The action of virtual network rule. Possible values
@@ -37,8 +40,8 @@ class VirtualNetworkRule(Model):
         'state': {'key': 'state', 'type': 'State'},
     }
 
-    def __init__(self, virtual_network_resource_id, action="Allow", state=None):
-        super(VirtualNetworkRule, self).__init__()
-        self.virtual_network_resource_id = virtual_network_resource_id
-        self.action = action
-        self.state = state
+    def __init__(self, **kwargs):
+        super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.virtual_network_resource_id = kwargs.get('virtual_network_resource_id', None)
+        self.action = kwargs.get('action', "Allow")
+        self.state = kwargs.get('state', None)

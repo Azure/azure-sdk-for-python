@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class RetentionPolicy(Model):
     """Specifies the retention policy for the log.
 
-    :param enabled: a value indicating whether the retention policy is
-     enabled.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. a value indicating whether the retention policy
+     is enabled.
     :type enabled: bool
-    :param days: the number of days for the retention in days. A value of 0
-     will retain the events indefinitely.
+    :param days: Required. the number of days for the retention in days. A
+     value of 0 will retain the events indefinitely.
     :type days: int
     """
 
@@ -33,6 +35,7 @@ class RetentionPolicy(Model):
         'days': {'key': 'days', 'type': 'int'},
     }
 
-    def __init__(self, enabled, days):
-        self.enabled = enabled
-        self.days = days
+    def __init__(self, **kwargs):
+        super(RetentionPolicy, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.days = kwargs.get('days', None)

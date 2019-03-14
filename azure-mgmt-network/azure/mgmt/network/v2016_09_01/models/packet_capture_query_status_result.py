@@ -43,11 +43,11 @@ class PacketCaptureQueryStatusResult(Model):
         'packet_capture_error': {'key': 'packetCaptureError', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, id=None, capture_start_time=None, packet_capture_status=None, stop_reason=None, packet_capture_error=None):
-        super(PacketCaptureQueryStatusResult, self).__init__()
-        self.name = name
-        self.id = id
-        self.capture_start_time = capture_start_time
-        self.packet_capture_status = packet_capture_status
-        self.stop_reason = stop_reason
-        self.packet_capture_error = packet_capture_error
+    def __init__(self, **kwargs):
+        super(PacketCaptureQueryStatusResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.capture_start_time = kwargs.get('capture_start_time', None)
+        self.packet_capture_status = kwargs.get('packet_capture_status', None)
+        self.stop_reason = kwargs.get('stop_reason', None)
+        self.packet_capture_error = kwargs.get('packet_capture_error', None)

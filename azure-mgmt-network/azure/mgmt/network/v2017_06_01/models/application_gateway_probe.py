@@ -76,18 +76,18 @@ class ApplicationGatewayProbe(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, pick_host_name_from_backend_http_settings=None, min_servers=None, match=None, provisioning_state=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayProbe, self).__init__(id=id)
-        self.protocol = protocol
-        self.host = host
-        self.path = path
-        self.interval = interval
-        self.timeout = timeout
-        self.unhealthy_threshold = unhealthy_threshold
-        self.pick_host_name_from_backend_http_settings = pick_host_name_from_backend_http_settings
-        self.min_servers = min_servers
-        self.match = match
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayProbe, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.host = kwargs.get('host', None)
+        self.path = kwargs.get('path', None)
+        self.interval = kwargs.get('interval', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.unhealthy_threshold = kwargs.get('unhealthy_threshold', None)
+        self.pick_host_name_from_backend_http_settings = kwargs.get('pick_host_name_from_backend_http_settings', None)
+        self.min_servers = kwargs.get('min_servers', None)
+        self.match = kwargs.get('match', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

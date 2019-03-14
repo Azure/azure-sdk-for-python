@@ -16,19 +16,24 @@ class ControlActivity(Activity):
     """Base class for all control activities like IfCondition, ForEach , Until.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UntilActivity, WaitActivity, ForEachActivity,
+    sub-classes are: AppendVariableActivity, SetVariableActivity,
+    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
     IfConditionActivity, ExecutePipelineActivity
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -37,10 +42,19 @@ class ControlActivity(Activity):
         'type': {'required': True},
     }
 
-    _subtype_map = {
-        'type': {'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None):
-        super(ControlActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
+    _subtype_map = {
+        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ControlActivity, self).__init__(**kwargs)
         self.type = 'Container'
