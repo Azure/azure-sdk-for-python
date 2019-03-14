@@ -1364,6 +1364,7 @@ class CRUDTests(unittest.TestCase):
             before_create_documents_count,
             'number of documents should remain same')
 
+    #TODO: add fixture to remove container at the end of test
     def test_spatial_index(self):
         db = self.databaseForTest
         # partial policy specified
@@ -2953,14 +2954,14 @@ class CRUDTests(unittest.TestCase):
                     HttpHeaders.CurrentMediaStorageUsageInMB])
         self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
-    #TODO: fix tests
+    #TODO: add fixture to remove container at the end of test
     def test_index_progress_headers(self):
         created_db = self.databaseForTest
         consistent_coll = created_db.create_container(
             id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/id", kind='Hash')
+            partition_key=PartitionKey(path="/id", kind='Hash'),
         )
-        created_db.get_container(container=consistent_coll)
+        created_db.get_container(container=consistent_coll, populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
@@ -2969,7 +2970,7 @@ class CRUDTests(unittest.TestCase):
             indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_db.get_container(container=lazy_coll)
+        created_db.get_container(container=lazy_coll, populate_quota_info=True)
         self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
@@ -2981,9 +2982,7 @@ class CRUDTests(unittest.TestCase):
             },
             partition_key=PartitionKey(path="/id", kind='Hash')
         )
-        created_db.get_container(container=none_coll)
-
-        none_coll = self.client.CreateContainer
+        created_db.get_container(container=none_coll, populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
@@ -3033,6 +3032,7 @@ class CRUDTests(unittest.TestCase):
 
         self.client.delete_database(database=db)
 
+    #TODO: add fixture to remove container at the end of test
     def test_id_case_validation(self):
         # create database
         created_db = self.databaseForTest
@@ -3070,6 +3070,7 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1)
         created_db.delete_container(created_collection2)
 
+    #TODO: add fixture to remove container at the end of test
     def test_id_unicode_validation(self):
         # create database
         created_db = self.databaseForTest
