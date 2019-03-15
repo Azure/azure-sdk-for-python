@@ -32,8 +32,9 @@ class H264Layer(VideoLayer):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param bitrate: The average bitrate in bits per second at which to encode
-     the input video when generating this layer. This is a required field.
+    :param bitrate: Required. The average bitrate in bits per second at which
+     to encode the input video when generating this layer. This is a required
+     field.
     :type bitrate: int
     :param max_bitrate: The maximum bitrate (in bits per second), at which the
      VBV buffer should be assumed to refill. If not specified, defaults to the
@@ -83,6 +84,7 @@ class H264Layer(VideoLayer):
 
     _validation = {
         'odatatype': {'required': True},
+        'bitrate': {'required': True},
     }
 
     _attribute_map = {
