@@ -101,8 +101,8 @@ class ReservedResourceType(str, Enum):
 
 class InstanceFlexibility(str, Enum):
 
-    on = "On"
-    off = "Off"
+    true = "true"
+    false = "false"
     not_supported = "NotSupported"
 
 

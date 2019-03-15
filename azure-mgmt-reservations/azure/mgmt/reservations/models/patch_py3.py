@@ -20,7 +20,7 @@ class Patch(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param instance_flexibility: Possible values include: 'On', 'Off',
+    :param instance_flexibility: Possible values include: 'true', 'false',
      'NotSupported'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility

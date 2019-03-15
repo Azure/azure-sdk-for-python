@@ -22,7 +22,7 @@ class ReservationProperties(Model):
      'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
-    :param instance_flexibility: Possible values include: 'On', 'Off',
+    :param instance_flexibility: Possible values include: 'true', 'false',
      'NotSupported'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
@@ -34,7 +34,7 @@ class ReservationProperties(Model):
     :param applied_scope_type: Possible values include: 'Single', 'Shared'
     :type applied_scope_type: str or
      ~azure.mgmt.reservations.models.AppliedScopeType
-    :param quantity: Quantity of the SKUs that are part of the Reservation.
+    :param quantity:
     :type quantity: int
     :param provisioning_state: Current state of the reservation.
     :type provisioning_state: str
