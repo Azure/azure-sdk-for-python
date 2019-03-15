@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NWRuleSetVirtualNetworkRules(Model):
-    """The response from the List namespace operation.
+    """Description of VirtualNetworkRules - NetworkRules resource.
 
     :param subnet: Subnet properties
     :type subnet: ~azure.mgmt.eventhub.v2017_04_01.models.Subnet

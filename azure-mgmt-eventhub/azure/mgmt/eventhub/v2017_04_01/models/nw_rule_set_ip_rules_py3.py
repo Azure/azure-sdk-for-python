@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NWRuleSetIpRules(Model):
-    """The response from the List namespace operation.
+    """Description of NetWorkRuleSet - IpRules resource.
 
     :param ip_mask: IP Mask
     :type ip_mask: str
