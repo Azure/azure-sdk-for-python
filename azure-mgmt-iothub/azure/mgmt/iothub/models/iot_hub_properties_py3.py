@@ -31,9 +31,9 @@ class IotHubProperties(Model):
     :ivar host_name: The name of the host.
     :vartype host_name: str
     :param event_hub_endpoints: The Event Hub-compatible endpoint properties.
-     The possible keys to this dictionary are events and
-     operationsMonitoringEvents. Both of these keys have to be present in the
-     dictionary while making create or update calls for the IoT hub.
+     The only possible keys to this dictionary is events. This key has to be
+     present in the dictionary while making create or update calls for the IoT
+     hub.
     :type event_hub_endpoints: dict[str,
      ~azure.mgmt.iothub.models.EventHubProperties]
     :param routing:
@@ -57,9 +57,6 @@ class IotHubProperties(Model):
     :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
-    :param operations_monitoring_properties:
-    :type operations_monitoring_properties:
-     ~azure.mgmt.iothub.models.OperationsMonitoringProperties
     :param device_streams: The device streams properties of iothub.
     :type device_streams:
      ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
@@ -87,12 +84,11 @@ class IotHubProperties(Model):
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
-        'operations_monitoring_properties': {'key': 'operationsMonitoringProperties', 'type': 'OperationsMonitoringProperties'},
         'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, operations_monitoring_properties=None, device_streams=None, features=None, **kwargs) -> None:
+    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
@@ -106,6 +102,5 @@ class IotHubProperties(Model):
         self.enable_file_upload_notifications = enable_file_upload_notifications
         self.cloud_to_device = cloud_to_device
         self.comments = comments
-        self.operations_monitoring_properties = operations_monitoring_properties
         self.device_streams = device_streams
         self.features = features
