@@ -54,21 +54,16 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
-      - script: |
-          pip install setuptools wheel
-          sudo pip install doc-warden
-          ward scan -d $(Build.SourcesDirectory)
-        displayName: 'Verify Readmes'
-
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: '$(PythonVersion)'
 
       - script: |
-          pip install wheel Jinja2
-        displayName: 'Prep Environment'
+          pip install setuptools wheel Jinja2
+          pip install doc-warden
+          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+        displayName: 'Verify Readmes'
 
       - task: PythonScript@0
         displayName: 'Analyze dependencies'
