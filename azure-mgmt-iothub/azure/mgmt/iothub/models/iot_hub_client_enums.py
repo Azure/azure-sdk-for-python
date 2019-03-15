@@ -46,14 +46,6 @@ class RoutingSource(str, Enum):
     device_job_lifecycle_events = "DeviceJobLifecycleEvents"
 
 
-class OperationMonitoringLevel(str, Enum):
-
-    none = "None"
-    error = "Error"
-    information = "Information"
-    error_information = "Error, Information"
-
-
 class Capabilities(str, Enum):
 
     none = "None"
