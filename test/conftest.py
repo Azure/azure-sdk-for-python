@@ -48,7 +48,9 @@ def teardown(request):
             except errors.HTTPFailure as e:
                 if e.status_code != StatusCodes.NOT_FOUND:
                     raise e
+        database_ids_to_delete.clear()
         print("Clean up completed!")
+
     request.addfinalizer(delete_database)
     return None
 
@@ -69,7 +71,9 @@ def teardown_new_object_model(request):
             except errors.HTTPFailure as e:
                 if e.status_code != StatusCodes.NOT_FOUND:
                     raise e
+        database_ids_to_delete.clear()
         print("Clean up completed!")
+
     request.addfinalizer(delete_database)
     return None
 

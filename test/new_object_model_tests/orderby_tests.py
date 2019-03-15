@@ -38,7 +38,7 @@ import test.new_object_model_tests.test_config as test_config
 #      To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
-@pytest.mark.usefixtures("teardown")
+@pytest.mark.usefixtures("teardown_new_object_model")
 class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
     """

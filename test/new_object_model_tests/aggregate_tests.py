@@ -191,7 +191,7 @@ class AggregateQueryTestSequenceMeta(type):
         return type.__new__(mcs, name, bases, dict)
 
 
-@pytest.mark.usefixtures("teardown")
+@pytest.mark.usefixtures("teardown_new_object_model")
 class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
     def _execute_query_and_validate_results(self, collection, query, expected):
         # type: (Container, str, [Dict[str, Any]]) -> None

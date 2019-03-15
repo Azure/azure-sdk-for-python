@@ -89,14 +89,13 @@ class Database(object):
         partition_key,
         indexing_policy=None,
         default_ttl=None,
-        disable_ru_per_minute_usage=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
         offer_throughput=None,
     ):
-        # type: (str, PartitionKey, Dict[str, Any], int, bool, str, Dict[str, Any], AccessCondition, bool, int) -> Container
+        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, Any], AccessCondition, bool, int) -> Container
         """
         Create a new container with the given ID (name).
 
@@ -106,7 +105,6 @@ class Database(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -141,8 +139,6 @@ class Database(object):
             definition["defaultTtl"] = default_ttl
 
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -165,26 +161,22 @@ class Database(object):
     def delete_container(
         self,
         container,
-        disable_ru_per_minute_usage=None,
         max_degree_parallelism=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (ContainerId, bool, int, str, Dict[str, Any], AccessCondition, bool) -> None
+        # type: (ContainerId, int, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Delete the container
 
         :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, or :class:`Container` instance.
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         """
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if max_degree_parallelism is not None:
             request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if session_token:
@@ -202,18 +194,16 @@ class Database(object):
     def get_container(
         self,
         container,
-        disable_ru_per_minute_usage=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
         populate_partition_key_range_statistics=None,
         populate_quota_info=None
     ):
-        # type: (ContainerId, bool, str, Dict[str, Any], bool) -> Container
+        # type: (ContainerId, str, Dict[str, Any], bool) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, or a :class:`Container` instance.
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
@@ -231,8 +221,6 @@ class Database(object):
 
         """
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -257,17 +245,15 @@ class Database(object):
 
     def list_containers(
         self,
-        disable_ru_per_minute_usage=None,
         max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (bool, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
+        # type: (int, int, str, Dict[str, Any], bool) -> Iterable[Container]
         """ List the containers in the database.
 
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
@@ -283,8 +269,6 @@ class Database(object):
 
         """
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if max_degree_parallelism is not None:
             request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
@@ -308,17 +292,15 @@ class Database(object):
         self,
         query=None,
         parameters=None,
-        disable_ru_per_minute_usage=None,
         max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (str, str, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
+        # type: (str, str, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
         """List properties for containers in the current database
 
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
@@ -326,8 +308,6 @@ class Database(object):
 
     """
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -359,18 +339,16 @@ class Database(object):
         indexing_policy=None,
         default_ttl=None,
         conflict_resolution_policy=None,
-        disable_ru_per_minute_usage=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (Union[str, Container], PartitionKey, Dict[str, Any], int, Dict[str, Any], bool, str, Dict[str, Any], AccessCondition, bool) -> Container
+        # type: (Union[str, Container], PartitionKey, Dict[str, Any], int, Dict[str, Any], str, Dict[str, Any], AccessCondition, bool) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.
 
-        :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -387,8 +365,6 @@ class Database(object):
         container_id = getattr(container, "id", container)
 
         request_options = {}  # type: Dict[str, Any]
-        if disable_ru_per_minute_usage is not None:
-            request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:

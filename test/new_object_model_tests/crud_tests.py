@@ -141,8 +141,9 @@ class CRUDTests(unittest.TestCase):
 
     def test_sql_query_crud(self):
         # create two databases.
-        db1 = self.client.create_database('database 1')
-        db2 = self.client.create_database('database 2')
+        db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
+        db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
+
 
         conftest.database_ids_to_delete.append(db1.id)
         conftest.database_ids_to_delete.append(db2.id)
@@ -151,7 +152,7 @@ class CRUDTests(unittest.TestCase):
         databases = list(self.client.list_database_properties({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
-                {'name': '@id', 'value': 'database 1'}
+                {'name': '@id', 'value': db1.id}
             ]
         }))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
@@ -163,7 +164,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.list_database_properties('SELECT * FROM root r WHERE r.id="database 2"'))
+        databases = list(self.client.list_database_properties('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
     def test_collection_crud(self):
@@ -794,10 +795,10 @@ class CRUDTests(unittest.TestCase):
 
         # should fail for stale etag
         self.__AssertHTTPFailureWithStatus(
-            StatusCodes.PRECONDITION_FAILED, created_collection.replace_item,
+            StatusCodes.PRECONDITION_FAILED,
+            created_collection.replace_item,
             replaced_document['id'],
             replaced_document,
-            None,
             None,
             None,
             {'type': 'IfMatch', 'condition': old_etag},
@@ -2410,141 +2411,56 @@ class CRUDTests(unittest.TestCase):
             self.GetStoredProcedureLink(db, collection, retrieved_sproc3, is_name_based),
             {'temp': 'so'})
         self.assertEqual(result, 'aso')
+    '''
 
     def __ValidateOfferResponseBody(self, offer, expected_coll_link, expected_offer_type):
-        self.assert_(offer.get('id'), 'Id cannot be null.')
-        self.assert_(offer.get('_rid'), 'Resource Id (Rid) cannot be null.')
-        self.assert_(offer.get('_self'), 'Self Link cannot be null.')
-        self.assert_(offer.get('resource'), 'Resource Link cannot be null.')
-        self.assertTrue(offer['_self'].find(offer['id']) != -1,
+        # type: (Offer, str, Any) -> None
+        self.assertIsNotNone(offer.properties['id'], 'Id cannot be null.')
+        self.assertIsNotNone(offer.properties.get('_rid'), 'Resource Id (Rid) cannot be null.')
+        self.assertIsNotNone(offer.properties.get('_self'), 'Self Link cannot be null.')
+        self.assertIsNotNone(offer.properties.get('resource'), 'Resource Link cannot be null.')
+        self.assertTrue(offer.properties['_self'].find(offer.properties['id']) != -1,
                         'Offer id not contained in offer self link.')
-        self.assertEqual(expected_coll_link.strip('/'), offer['resource'].strip('/'))
+        self.assertEqual(expected_coll_link.strip('/'), offer.properties['resource'].strip('/'))
         if (expected_offer_type):
-            self.assertEqual(expected_offer_type, offer.get('offerType'))
+            self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
     def test_offer_read_and_query(self):
         # Create database.
         db = self.databaseForTest
 
-        offers = list(self.client.ReadOffers())
-        initial_count = len(offers)
-
         # Create collection.
-        collection = self.client.CreateContainer(db['_self'], {'id': 'test_offer_read_and_query ' + str(uuid.uuid4())})
-        offers = list(self.client.ReadOffers())
-        self.assertEqual(initial_count + 1, len(offers))
-
-        offers = self.GetCollectionOffers(self.client, collection['_rid'])
-
-        self.assertEqual(1, len(offers))
-        expected_offer = offers[0]
-        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
+        collection = db.create_container(
+            id='test_offer_read_and_query ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
         # Read the offer.
-        read_offer = self.client.ReadOffer(expected_offer.get('_self'))
-        self.__ValidateOfferResponseBody(read_offer, collection.get('_self'), expected_offer.get('offerType'))
-        # Check if the read resource is what we expected.
-        self.assertEqual(expected_offer.get('id'), read_offer.get('id'))
-        self.assertEqual(expected_offer.get('_rid'), read_offer.get('_rid'))
-        self.assertEqual(expected_offer.get('_self'), read_offer.get('_self'))
-        self.assertEqual(expected_offer.get('resource'), read_offer.get('resource'))
-        # Query for the offer.
+        expected_offer = collection.read_offer()
+        self.__ValidateOfferResponseBody(expected_offer, collection.properties.get('_self'), None)
 
-        offers = list(self.client.QueryOffers(
-            {
-                'query': 'SELECT * FROM root r WHERE r.id=@id',
-                'parameters': [
-                    {'name': '@id', 'value': expected_offer['id']}
-                ]
-            }))
-
-        self.assertEqual(1, len(offers))
-        query_one_offer = offers[0]
-        self.__ValidateOfferResponseBody(query_one_offer, collection.get('_self'), expected_offer.get('offerType'))
-        # Check if the query result is what we expected.
-        self.assertEqual(expected_offer.get('id'), query_one_offer.get('id'))
-        self.assertEqual(expected_offer.get('_rid'), query_one_offer.get('_rid'))
-        self.assertEqual(expected_offer.get('_self'), query_one_offer.get('_self'))
-        self.assertEqual(expected_offer.get('resource'), query_one_offer.get('resource'))
-        # Expects an exception when reading offer with bad offer link.
-        self.__AssertHTTPFailureWithStatus(StatusCodes.BAD_REQUEST, self.client.ReadOffer,
-                                           expected_offer.get('_self')[:-1] + 'x')
         # Now delete the collection.
-        self.client.DeleteContainer(collection.get('_self'))
+        db.delete_container(container=collection)
         # Reading fails.
-        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, self.client.ReadOffer, expected_offer.get('_self'))
-        # Read feed now returns 0 results.
-        offers = list(self.client.ReadOffers())
-        self.assertEqual(initial_count, len(offers))
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.read_offer)
 
+    # TODO: fix on offer type
     def test_offer_replace(self):
         # Create database.
         db = self.databaseForTest
         # Create collection.
         collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-        offers = self.GetCollectionOffers(self.client, collection['_rid'])
-        self.assertEqual(1, len(offers))
-        expected_offer = offers[0]
-        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
+        # Read Offer
+        expected_offer = collection.read_offer()
+        self.__ValidateOfferResponseBody(expected_offer, collection.properties.get('_self'), None)
         # Replace the offer.
-        offer_to_replace = dict(expected_offer)
-        offer_to_replace['content']['offerThroughput'] += 100
-        replaced_offer = self.client.ReplaceOffer(offer_to_replace['_self'], offer_to_replace)
-        self.__ValidateOfferResponseBody(replaced_offer, collection.get('_self'), None)
+        replaced_offer = collection.replace_throughput(expected_offer.offer_throughput + 100)
+        self.__ValidateOfferResponseBody(replaced_offer, collection.properties.get('_self'), None)
         # Check if the replaced offer is what we expect.
-        self.assertEqual(offer_to_replace.get('id'), replaced_offer.get('id'))
-        self.assertEqual(offer_to_replace.get('_rid'), replaced_offer.get('_rid'))
-        self.assertEqual(offer_to_replace.get('_self'), replaced_offer.get('_self'))
-        self.assertEqual(offer_to_replace.get('resource'), replaced_offer.get('resource'))
-        self.assertEqual(offer_to_replace.get('content').get('offerThroughput'),
-                         replaced_offer.get('content').get('offerThroughput'))
-        # Expects an exception when replacing an offer with bad id.
-        offer_to_replace_bad_id = dict(offer_to_replace)
-        offer_to_replace_bad_id['_rid'] = 'NotAllowed'
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST, self.client.ReplaceOffer, offer_to_replace_bad_id['_self'],
-            offer_to_replace_bad_id)
-        # Expects an exception when replacing an offer with bad rid.
-        offer_to_replace_bad_rid = dict(offer_to_replace)
-        offer_to_replace_bad_rid['_rid'] = 'InvalidRid'
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST, self.client.ReplaceOffer, offer_to_replace_bad_rid['_self'],
-            offer_to_replace_bad_rid)
-        # Expects an exception when replaceing an offer with null id and rid.
-        offer_to_replace_null_ids = dict(offer_to_replace)
-        offer_to_replace_null_ids['id'] = None
-        offer_to_replace_null_ids['_rid'] = None
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST, self.client.ReplaceOffer, offer_to_replace_null_ids['_self'],
-            offer_to_replace_null_ids)
+        self.assertEqual(expected_offer.properties.get('content').get('offerThroughput') + 100,
+                         replaced_offer.properties.get('content').get('offerThroughput'))
+        self.assertEqual(expected_offer.offer_throughput + 100,
+                         replaced_offer.offer_throughput)
 
-    def test_collection_with_offer_type(self):
-        # create database
-        created_db = self.databaseForTest
-
-        # create a collection
-        offers = list(self.client.ReadOffers())
-        before_offers_count = len(offers)
-
-        collection_definition = {'id': 'test_collection_with_offer_type ' + str(uuid.uuid4())}
-        collection = self.client.CreateContainer(created_db['_self'],
-                                                 collection_definition,
-                                                 {
-                                                     'offerType': 'S2'
-                                                 })
-        offers = list(self.client.ReadOffers())
-        self.assertEqual(before_offers_count + 1, len(offers))
-
-        offers = self.GetCollectionOffers(self.client, collection['_rid'])
-
-        self.assertEqual(1, len(offers))
-        expected_offer = offers[0]
-
-        # We should have an offer of type S2.
-        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), 'S2')
-        self.client.DeleteContainer(collection['_self'])
-
-
-    '''
     def test_database_account_functionality(self):
         # Validate database account functionality.
         database_account = self.client.get_database_account()

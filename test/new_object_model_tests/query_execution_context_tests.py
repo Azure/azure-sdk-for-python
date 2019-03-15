@@ -38,7 +38,7 @@ from azure.cosmos import PartitionKey
 #      To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
-@pytest.mark.usefixtures("teardown")
+@pytest.mark.usefixtures("teardown_new_object_model")
 class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """

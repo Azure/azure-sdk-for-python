@@ -142,21 +142,20 @@ class _test_config(object):
     def remove_all_documents(cls, document_collection, use_id_as_partition_key):
         # type: (Container, boolean) -> None
         while True:
-            options = {'enableCrossPartitionQuery': True}
             query_iterable = document_collection.query_items(query="Select * from c", enable_cross_partition_query=True)
             read_documents = list(query_iterable)
             try:
                 for document in read_documents:
-                    options = {}
+                    partition_key = 'dummy_pk'
                     if use_id_as_partition_key is not None:
                         if use_id_as_partition_key:
-                            options['partitionKey'] = document[cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY]
+                            partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY]
                         else:
                             if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY in document:
-                                options['partitionKey'] = document[cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY]
+                                partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY]
                             else:
-                                options['partitionKey'] = {}
-                    document_collection.delete_item(document['_self'], options)
+                                document_collection.client_connection.DeleteItem(document['_self'], {'partitionKey': None})
+                    document_collection.delete_item(item=document, partition_key=partition_key)
                 if cls.IS_MULTIMASTER_ENABLED:
                     # sleep to ensure deletes are propagated for multimaster enabled accounts
                     time.sleep(2)

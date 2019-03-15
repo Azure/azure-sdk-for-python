@@ -8,7 +8,7 @@ import azure.cosmos.documents as documents
 import test.new_object_model_tests.test_config as test_config
 
 
-@pytest.mark.usefixtures("teardown")
+@pytest.mark.usefixtures("teardown_new_object_model")
 class EncodingTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
