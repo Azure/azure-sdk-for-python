@@ -119,7 +119,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
-        'name': {'required': True},
+        'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
     }
 
     _attribute_map = {
