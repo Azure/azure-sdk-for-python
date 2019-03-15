@@ -32,8 +32,6 @@ try:
     from .messaging_endpoint_properties_py3 import MessagingEndpointProperties
     from .feedback_properties_py3 import FeedbackProperties
     from .cloud_to_device_properties_py3 import CloudToDeviceProperties
-    from .operations_monitoring_properties_py3 import OperationsMonitoringProperties
-    from .iot_hub_properties_device_streams_py3 import IotHubPropertiesDeviceStreams
     from .iot_hub_properties_py3 import IotHubProperties
     from .iot_hub_sku_info_py3 import IotHubSkuInfo
     from .iot_hub_description_py3 import IotHubDescription
@@ -91,8 +89,6 @@ except (SyntaxError, ImportError):
     from .messaging_endpoint_properties import MessagingEndpointProperties
     from .feedback_properties import FeedbackProperties
     from .cloud_to_device_properties import CloudToDeviceProperties
-    from .operations_monitoring_properties import OperationsMonitoringProperties
-    from .iot_hub_properties_device_streams import IotHubPropertiesDeviceStreams
     from .iot_hub_properties import IotHubProperties
     from .iot_hub_sku_info import IotHubSkuInfo
     from .iot_hub_description import IotHubDescription
@@ -139,7 +135,6 @@ from .iot_hub_client_enums import (
     AccessRights,
     IpFilterActionType,
     RoutingSource,
-    OperationMonitoringLevel,
     Capabilities,
     IotHubSku,
     IotHubSkuTier,
@@ -175,8 +170,6 @@ __all__ = [
     'MessagingEndpointProperties',
     'FeedbackProperties',
     'CloudToDeviceProperties',
-    'OperationsMonitoringProperties',
-    'IotHubPropertiesDeviceStreams',
     'IotHubProperties',
     'IotHubSkuInfo',
     'IotHubDescription',
@@ -222,7 +215,6 @@ __all__ = [
     'AccessRights',
     'IpFilterActionType',
     'RoutingSource',
-    'OperationMonitoringLevel',
     'Capabilities',
     'IotHubSku',
     'IotHubSkuTier',

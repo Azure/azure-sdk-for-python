@@ -23,8 +23,8 @@ class RoutingStorageContainerProperties(Model):
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
-     reserved:  events, operationsMonitoringEvents, fileNotifications,
-     $default. Endpoint names must be unique across endpoint types.
+     reserved:  events, fileNotifications, $default. Endpoint names must be
+     unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the storage
      account.
@@ -48,9 +48,8 @@ class RoutingStorageContainerProperties(Model):
      524288000(500MB). Default value is 314572800(300MB).
     :type max_chunk_size_in_bytes: int
     :param encoding: Encoding that is used to serialize messages to blobs.
-     Supported values are 'avro', 'avrodeflate', and 'JSON'. Default value is
-     'avro'. Possible values include: 'Avro', 'AvroDeflate', 'JSON'
-    :type encoding: str or ~azure.mgmt.iothub.models.enum
+     Supported values are 'avro' and 'avroDeflate'. Default value is 'avro'.
+    :type encoding: str
     """
 
     _validation = {
