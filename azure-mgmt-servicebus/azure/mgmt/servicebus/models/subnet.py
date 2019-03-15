@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class Subnet(Model):
     """Properties supplied for Subnet.
 
-    :param id: Resource ID of Virtual Network Subnet
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Resource ID of Virtual Network Subnet
     :type id: str
     """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
