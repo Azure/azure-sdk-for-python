@@ -55,7 +55,6 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--disablecov',
-        dest = 'disable_coverage',
         help = ('Flag that disables code coverage.')
         action='store_true')
 
