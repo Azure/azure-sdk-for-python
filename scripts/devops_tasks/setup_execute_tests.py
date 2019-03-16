@@ -53,9 +53,19 @@ if __name__ == '__main__':
         help = ('The folder where the test results will be stored in xml format.'
                 'Example: --junitxml="junit/test-results.xml"'))
 
+    parser.add_argument(
+        '--disablecov',
+        dest = 'disable_coverage',
+        help = ('Flag that disables code coverage.')
+        action='store_true')
+
     args = parser.parse_args()
     targeted_packages = process_glob_string(args.glob_string, root_dir)
     test_results_arg = []
     if args.test_results:
         test_results_arg.extend(['--junitxml', args.test_results])
+
+    if args.disablecov:
+        test_results_arg.append('--no-cov')
+        
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
