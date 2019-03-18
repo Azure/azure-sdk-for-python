@@ -108,6 +108,8 @@ class ApplicationGateway(Resource):
      configuration.
     :type web_application_firewall_configuration:
      ~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayWebApplicationFirewallConfiguration
+    :param firewall_policy: Reference of the FirewallPolicy resource.
+    :type firewall_policy: ~azure.mgmt.network.v2018_12_01.models.SubResource
     :param enable_http2: Whether HTTP2 is enabled on the application gateway
      resource.
     :type enable_http2: bool
@@ -168,6 +170,7 @@ class ApplicationGateway(Resource):
         'rewrite_rule_sets': {'key': 'properties.rewriteRuleSets', 'type': '[ApplicationGatewayRewriteRuleSet]'},
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
+        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
         'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
@@ -199,6 +202,7 @@ class ApplicationGateway(Resource):
         self.rewrite_rule_sets = kwargs.get('rewrite_rule_sets', None)
         self.redirect_configurations = kwargs.get('redirect_configurations', None)
         self.web_application_firewall_configuration = kwargs.get('web_application_firewall_configuration', None)
+        self.firewall_policy = kwargs.get('firewall_policy', None)
         self.enable_http2 = kwargs.get('enable_http2', None)
         self.enable_fips = kwargs.get('enable_fips', None)
         self.autoscale_configuration = kwargs.get('autoscale_configuration', None)

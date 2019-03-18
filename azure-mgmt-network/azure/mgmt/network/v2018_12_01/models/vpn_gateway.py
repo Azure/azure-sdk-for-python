@@ -30,7 +30,7 @@ class VpnGateway(Resource):
     :type tags: dict[str, str]
     :param virtual_hub: The VirtualHub to which the gateway belongs
     :type virtual_hub: ~azure.mgmt.network.v2018_12_01.models.SubResource
-    :param connections: list of all vpn connections to the gateway.
+    :param connections: List of all vpn connections to the gateway.
     :type connections:
      list[~azure.mgmt.network.v2018_12_01.models.VpnConnection]
     :param bgp_settings: Local network gateway's BGP speaker settings.

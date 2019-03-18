@@ -108,6 +108,8 @@ class ApplicationGateway(Resource):
      configuration.
     :type web_application_firewall_configuration:
      ~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayWebApplicationFirewallConfiguration
+    :param firewall_policy: Reference of the FirewallPolicy resource.
+    :type firewall_policy: ~azure.mgmt.network.v2018_12_01.models.SubResource
     :param enable_http2: Whether HTTP2 is enabled on the application gateway
      resource.
     :type enable_http2: bool
@@ -168,6 +170,7 @@ class ApplicationGateway(Resource):
         'rewrite_rule_sets': {'key': 'properties.rewriteRuleSets', 'type': '[ApplicationGatewayRewriteRuleSet]'},
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
+        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
         'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
@@ -179,7 +182,7 @@ class ApplicationGateway(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, rewrite_rule_sets=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, custom_error_configurations=None, etag: str=None, zones=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, rewrite_rule_sets=None, redirect_configurations=None, web_application_firewall_configuration=None, firewall_policy=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, custom_error_configurations=None, etag: str=None, zones=None, identity=None, **kwargs) -> None:
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -199,6 +202,7 @@ class ApplicationGateway(Resource):
         self.rewrite_rule_sets = rewrite_rule_sets
         self.redirect_configurations = redirect_configurations
         self.web_application_firewall_configuration = web_application_firewall_configuration
+        self.firewall_policy = firewall_policy
         self.enable_http2 = enable_http2
         self.enable_fips = enable_fips
         self.autoscale_configuration = autoscale_configuration
