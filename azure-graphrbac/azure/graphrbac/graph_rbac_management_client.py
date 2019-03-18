@@ -18,6 +18,7 @@ from .operations.applications_operations import ApplicationsOperations
 from .operations.deleted_applications_operations import DeletedApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
+from .operations.service_principals_by_app_id_operations import ServicePrincipalsByAppIdOperations
 from .operations.users_operations import UsersOperations
 from .operations.objects_operations import ObjectsOperations
 from .operations.domains_operations import DomainsOperations
@@ -35,16 +36,20 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
+    :param application_id: The application ID.
+    :type application_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, tenant_id, base_url=None):
+            self, credentials, tenant_id, application_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if tenant_id is None:
             raise ValueError("Parameter 'tenant_id' must not be None.")
+        if application_id is None:
+            raise ValueError("Parameter 'application_id' must not be None.")
         if not base_url:
             base_url = 'https://graph.windows.net'
 
@@ -55,6 +60,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.tenant_id = tenant_id
+        self.application_id = application_id
 
 
 class GraphRbacManagementClient(SDKClient):
@@ -73,6 +79,8 @@ class GraphRbacManagementClient(SDKClient):
     :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
     :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
+    :ivar service_principals_by_app_id: ServicePrincipalsByAppId operations
+    :vartype service_principals_by_app_id: azure.graphrbac.operations.ServicePrincipalsByAppIdOperations
     :ivar users: Users operations
     :vartype users: azure.graphrbac.operations.UsersOperations
     :ivar objects: Objects operations
@@ -87,13 +95,15 @@ class GraphRbacManagementClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
+    :param application_id: The application ID.
+    :type application_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, tenant_id, base_url=None):
+            self, credentials, tenant_id, application_id, base_url=None):
 
-        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, base_url)
+        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, application_id, base_url)
         super(GraphRbacManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -110,6 +120,8 @@ class GraphRbacManagementClient(SDKClient):
         self.groups = GroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_principals = ServicePrincipalsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_principals_by_app_id = ServicePrincipalsByAppIdOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
             self._client, self.config, self._serialize, self._deserialize)
