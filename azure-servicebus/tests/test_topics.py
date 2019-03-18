@@ -33,7 +33,7 @@ def get_logger(level):
 
 _logger = get_logger(logging.DEBUG)
 
-
+@pytest.mark.liveTest
 def test_topic_by_topic_client_conn_str_send_basic(live_servicebus_config, standard_topic):
 
     topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=True)
@@ -43,7 +43,7 @@ def test_topic_by_topic_client_conn_str_send_basic(live_servicebus_config, stand
     message = Message(b"Another sample topic message")
     topic_client.send(message)
 
-
+@pytest.mark.liveTest
 def test_topic_by_servicebus_client_conn_str_send_basic(live_servicebus_config, standard_topic):
 
     client = ServiceBusClient(
@@ -59,7 +59,7 @@ def test_topic_by_servicebus_client_conn_str_send_basic(live_servicebus_config, 
     message = Message(b"Another sample topic message")
     topic_client.send(message)
 
-
+@pytest.mark.liveTest
 def test_topic_by_servicebus_client_list_topics(live_servicebus_config, standard_topic):
 
     client = ServiceBusClient(
@@ -72,7 +72,7 @@ def test_topic_by_servicebus_client_list_topics(live_servicebus_config, standard
     assert len(topics) >= 1
     assert all(isinstance(t, TopicClient) for t in topics)
 
-
+@pytest.mark.liveTest
 def test_topic_by_topic_client_conn_str_receive_fail(live_servicebus_config, standard_topic):
     topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=True)
     with pytest.raises(AttributeError):

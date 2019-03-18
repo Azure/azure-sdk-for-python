@@ -3,6 +3,11 @@
 Release History
 ===============
 
+6.0.1 (2019-2-26)
+++++++++++++++++++
+
+- Fix bug in TaskOperations.add_collection methods exception handling
+
 6.0.0 (2018-12-14)
 ++++++++++++++++++
 

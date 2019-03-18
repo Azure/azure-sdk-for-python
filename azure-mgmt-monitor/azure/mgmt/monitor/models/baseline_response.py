@@ -26,7 +26,7 @@ class BaselineResponse(Model):
      localizable string.
     :vartype name: ~azure.mgmt.monitor.models.LocalizableString
     :param timespan: The timespan for which the data was retrieved. Its value
-     consists of two datatimes concatenated, separated by '/'.  This may be
+     consists of two datetimes concatenated, separated by '/'.  This may be
      adjusted in the future and returned back from what was originally
      requested.
     :type timespan: str
