@@ -20,9 +20,9 @@ class Format(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param filename_pattern: The pattern of the file names for the generated
-     output files. The following macros are supported in the file name:
-     {Basename} - The base name of the input video {Extension} - The
+    :param filename_pattern: Required. The pattern of the file names for the
+     generated output files. The following macros are supported in the file
+     name: {Basename} - The base name of the input video {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the
      codec/layer. {Index} - A unique index for thumbnails. Only applicable to
      thumbnails. {Bitrate} - The audio/video bitrate. Not applicable to
@@ -34,6 +34,7 @@ class Format(Model):
     """
 
     _validation = {
+        'filename_pattern': {'required': True},
         'odatatype': {'required': True},
     }
 
@@ -46,7 +47,7 @@ class Format(Model):
         'odatatype': {'#Microsoft.Media.ImageFormat': 'ImageFormat', '#Microsoft.Media.MultiBitrateFormat': 'MultiBitrateFormat'}
     }
 
-    def __init__(self, *, filename_pattern: str=None, **kwargs) -> None:
+    def __init__(self, *, filename_pattern: str, **kwargs) -> None:
         super(Format, self).__init__(**kwargs)
         self.filename_pattern = filename_pattern
         self.odatatype = None
