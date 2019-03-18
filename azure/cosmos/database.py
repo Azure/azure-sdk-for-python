@@ -26,6 +26,9 @@ from .cosmos_client_connection import CosmosClientConnection
 from .query_iterator import QueryResultIterator
 from .container import Container
 from . import ResponseMetadata
+from .offer import Offer
+from .http_constants import StatusCodes
+from .errors import HTTPFailure
 from .user import User
 
 from typing import (
@@ -77,7 +80,7 @@ class Database(object):
         if isinstance(container_or_id, str):
             return "{}/colls/{}".format(self.database_link, container_or_id)
         try:
-            return cast("Container", container_or_id).collection_link
+            return cast("Container", container_or_id).container_link
         except AttributeError:
             pass
         container_id = cast("Dict[str, str]", container_or_id)["id"]
@@ -251,7 +254,7 @@ class Database(object):
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (int, int, str, Dict[str, Any], bool) -> Iterable[Container]
+        # type: (int, int, str, Dict[str, Any], bool) -> QueryIterable
         """ List the containers in the database.
 
         :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
@@ -280,15 +283,12 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        for container in [
-            Container(self.client_connection, self, container["id"], container)
-            for container in self.client_connection.ReadContainers(
-                database_link=self.database_link, options=request_options
-            )
-        ]:
-            yield container
+        return self.client_connection.ReadContainers(
+            database_link=self.database_link,
+            options=request_options
+        )
 
-    def list_container_properties(
+    def query_containers(
         self,
         query=None,
         parameters=None,
@@ -298,7 +298,7 @@ class Database(object):
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (str, str, int, int, str, Dict[str, Any], bool) -> Iterable[Container]
+        # type: (str, str, int, int, str, Dict[str, Any], bool) -> QueryIterable
         """List properties for containers in the current database
 
         :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
@@ -315,22 +315,13 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = iter(
-            list(
-                self.client_connection.QueryContainers(
+        return self.client_connection.QueryContainers(
                     database_link=self.database_link,
                     query=query
                     if parameters is None
                     else dict(query=query, parameters=parameters),
                     options=request_options,
                 )
-            )
-        )
-
-        return QueryResultIterator(
-            result,
-            metadata=ResponseMetadata(self.client_connection.last_response_headers),
-        )
 
     def replace_container(
         self,
@@ -397,7 +388,7 @@ class Database(object):
             properties=container_properties,
         )
 
-    def get_user_link(self, id_or_user):
+    def _get_user_link(self, id_or_user):
         # type: (Union[User, str]) -> str
         user_link = getattr(
             id_or_user,
@@ -406,12 +397,74 @@ class Database(object):
         )
         return user_link
 
-    def create_user(self, user, options=None):
-        """ Create a new user in the database.
+    def list_users(self, max_item_count=None):
+        # type: (int) -> QueryIterable
+        """ List all users in the container.
 
-        :param user: A dict-like object with an `id` key and value.
+        :param max_item_count: Max number of users to be returned in the enumeration operation.
 
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if max_item_count is not None:
+            request_options["maxItemCount"] = max_item_count
+
+        return self.client_connection.ReadUsers(
+            database_link=self.database_link,
+            options=request_options
+        )
+
+    #TODO: fix on feed options for not item queries
+    def query_users(self, query, parameters=None, max_item_count=None):
+        # type: (str, List, int) -> QueryIterable
+        """Return all users matching the given `query`.
+
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param max_item_count: Max number of users to be returned in the enumeration operation.
+        :returns: An `Iterator` containing each result returned by the query, if any.
+
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if max_item_count is not None:
+            request_options["maxItemCount"] = max_item_count
+
+        return self.client_connection.QueryUsers(
+            database_link=self.database_link,
+            query=query
+            if parameters is None
+            else dict(query=query, parameters=parameters),
+            options=request_options,
+        )
+
+    def get_user(self, id):
+        # type: (str) -> User
+        """
+        Get the user identified by `id`.
+
+        :param id: ID of the user to be retrieved.
+        :returns: The user as a dict, if present in the container.
+
+        """
+        user = self.client_connection.ReadUser(
+            user_link=self._get_user_link(id_or_user=id)
+        )
+        return User(
+            client_connection=self.client_connection,
+            id=user['id'],
+            database_link=self.database_link,
+            properties=user
+        )
+
+    def create_user(self, body):
+        # type: (Dict[str, Any]) -> User
+        """ Create a user in the container.
+
+        :param body: A dict-like object with an `id` key and value representing the user to be created.
         The user ID must be unique within the database, and consist of no more than 255 characters.
+
+        :raises `HTTPFailure`:
+
+        To update or replace an existing user, use the :func:`Container.upsert_user` method.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_user]
@@ -422,34 +475,110 @@ class Database(object):
             :name: create_user
 
         """
-        database = cast("Database", self)
-        return database.client_connection.CreateUser(
-            database.database_link, user, options
+        user = self.client_connection.CreateUser(
+            database_link=self.database_link,
+            user=body
         )
 
-    def get_user(self, id):
-        """ Get the specified user from the database.
+        return User(
+            client_connection=self.client_connection,
+            id=user['id'],
+            database_link=self.database_link,
+            properties=user
+        )
 
-        :param id: The ID of the user to retrieve.
+    def upsert_user(self, body):
+        # type: (Dict[str, Any]) -> User
+        """ Insert or update the specified user.
+
+        :param body: A dict-like object representing the user to update or insert.
+        :raises `HTTPFailure`:
+
+        If the user already exists in the container, it is replaced. If it does not, it is inserted.
         """
-        database = cast("Database", self)
-        return database.client_connection.ReadUser(self.get_user_link(id))
 
-    def list_users(self):
-        """ Get all database users.
+        user = self.client_connection.UpsertUser(
+            database_link=self.database_link,
+            user=body
+        )
+
+        return User(
+            client_connection=self.client_connection,
+            id=user['id'],
+            database_link=self.database_link,
+            properties=user
+        )
+
+    def replace_user(self, id, body):
+        # type: (str, Dict[str, Any]) -> User
+        """ Replaces the specified user if it exists in the container.
+
+        :param id: Id of the user to be replaced.
+        :param body: A dict-like object representing the user to replace.
+        :raises `HTTPFailure`:
+
         """
-        database = cast("Database", self)
-        for user in [User(user) for user in database.client_connection.ReadUsers()]:
-            yield user
+        user = self.client_connection.ReplaceUser(
+            user_link=self._get_user_link(id),
+            user=body
+        )
 
-    def list_user_properties(self, query=None, parameters=None):
-        # type: (str, Any) -> List[User]
-        pass
+        return User(
+            client_connection=self.client_connection,
+            id=user['id'],
+            database_link=self.database_link,
+            properties=user
+        )
 
-    def delete_user(self, user):
-        """ Delete the specified user from the database.
+    def delete_user(self, id):
+        # type: (str) -> None
+        """ Delete the specified user from the container.
+
+        :param id: Id of the user to delete from the container.
+        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not exist in the container, a `404` error is returned.
+
         """
-        database = cast("Database", self)
-        database.client_connection.DeleteUser(self.get_user_link(user))
 
-    #TODO: database level offer throughput
+        self.client_connection.DeleteUser(
+            user_link=self._get_user_link(id),
+        )
+
+    #TODO: add database level offer throughput tests
+    def read_offer(self):
+        # type: () -> Offer
+        link = self.properties['_self']
+        query_spec = {
+                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
+                        'parameters': [
+                            {'name': '@link', 'value': link}
+                        ]
+                     }
+        offers = list(self.client_connection.QueryOffers(query_spec))
+        if (len(offers) <= 0):
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
+        data = offers[0]
+        return Offer(
+            offer_throughput=offers[0]['content']['offerThroughput'],
+            properties=offers[0])
+
+    def replace_throughput(self, throughput):
+        # type: (int) -> Offer
+        link = self.properties['_self']
+        query_spec = {
+                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
+                        'parameters': [
+                            {'name': '@link', 'value': link}
+                        ]
+                     }
+        offers = list(self.client_connection.QueryOffers(query_spec))
+        if (len(offers) <= 0):
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
+        new_offer = offers[0].copy()
+        new_offer['content']['offerThroughput'] = throughput
+        data = self.client_connection.ReplaceOffer(
+            offer_link=offers[0]['_self'],
+            offer=offers[0]
+        )
+        return Offer(
+            offer_throughput=data['content']['offerThroughput'],
+            properties=data)

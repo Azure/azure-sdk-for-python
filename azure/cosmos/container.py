@@ -29,6 +29,7 @@ from . import ResponseMetadata
 from .errors import HTTPFailure
 from .http_constants import StatusCodes
 from .offer import Offer
+from .scripts import Scripts
 
 from typing import (
     Any,
@@ -59,13 +60,18 @@ class Container:
         self.id = id
         self.properties = properties
         database_link = CosmosClientConnection._get_database_link(database)
-        self.collection_link = "{}/colls/{}".format(database_link, self.id)
+        self.container_link = "{}/colls/{}".format(database_link, self.id)
+        self.scripts = Scripts(self.client_connection, self.container_link)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str, Item]) -> str
         if isinstance(item_or_link, str):
-            return "{}/docs/{}".format(self.collection_link, item_or_link)
+            return "{}/docs/{}".format(self.container_link, item_or_link)
         return cast("str", cast("Item", item_or_link)["_self"])
+
+    def _get_conflict_link(self, id):
+        # type: (str) -> str
+        return "{}/conflicts/{}".format(self.container_link, id)
 
     def get_item(
         self,
@@ -109,10 +115,11 @@ class Container:
         result = self.client_connection.ReadItem(
             document_link=doc_link, options=request_options
         )
-        headers = self.client_connection.last_response_headers
-        return Item(headers=headers, data=result)
+        return Item(data=result)
 
+    #TODO: add returns to everything
     #TODO: remove max degree of parallelism
+    #TODO: Fix return type in query iterator + tests
     def list_items(
         self,
         enable_cross_partition_query=None,
@@ -146,10 +153,11 @@ class Container:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         items = self.client_connection.ReadItems(
-            collection_link=self.collection_link, feed_options=request_options
+            collection_link=self.container_link, feed_options=request_options
         )
         return items
 
+    #TODO: replace all collection links
     def query_items_change_feed(
             self,
             partition_key_range_id=None,
@@ -177,7 +185,7 @@ class Container:
 
 
         items = self.client_connection.QueryItemsChangeFeed(
-            self.collection_link, options=request_options
+            self.container_link, options=request_options
         )
         return items
 
@@ -247,7 +255,7 @@ class Container:
             request_options["enableScanInQuery"] = enable_scan_in_query
 
         items = self.client_connection.QueryItems(
-            database_or_Container_link=self.collection_link,
+            database_or_Container_link=self.container_link,
             query=query
             if parameters is None
             else dict(query=query, parameters=parameters),
@@ -288,7 +296,7 @@ class Container:
         data = self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options
         )
-        return Item(headers=self.client_connection.last_response_headers, data=data)
+        return Item(data=data)
 
     def upsert_item(
         self,
@@ -320,10 +328,11 @@ class Container:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
+        #TODO: rename param
         result = self.client_connection.UpsertItem(
-            database_or_Container_link=self.collection_link, document=body
+            database_or_Container_link=self.container_link, document=body
         )
-        return Item(headers=self.client_connection.last_response_headers, data=result)
+        return Item(data=result)
 
     def create_item(
         self,
@@ -332,14 +341,18 @@ class Container:
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
+        pre_trigger_include=None,
+        post_trigger_include=None
     ):
-        # type: (Dict[str, Any], str, Dict[str, Any], AccessCondition, bool) -> Item
+        # type: (Dict[str, Any], str, Dict[str, Any], AccessCondition, bool, Any, Any) -> Item
         """ Create an item in the container.
 
         :param body: A dict-like object representing the item to create.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param post_trigger_include: trigger id to be used as post operation trigger.
         :returns: The :class:`Item` inserted into the container.
         :raises `HTTPFailure`:
 
@@ -348,22 +361,26 @@ class Container:
         """
         request_options = {}  # type: Dict[str, Any]
 
-        request_options["disableIdGeneration"] = True
+        request_options["disableAutomaticIdGeneration"] = True
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
             request_options["initialHeaders"] = initial_headers
         if access_condition:
             request_options["accessCondition"] = access_condition
-        if populate_query_metrics is not None:
+        if populate_query_metrics:
             request_options["populateQueryMetrics"] = populate_query_metrics
+        if pre_trigger_include:
+            request_options["preTriggerInclude"] = pre_trigger_include
+        if post_trigger_include:
+            request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.CreateItem(
-            database_or_Container_link=self.collection_link,
+            database_or_Container_link=self.container_link,
             document=body,
             options=request_options,
         )
-        return Item(headers=self.client_connection.last_response_headers, data=result)
+        return Item(data=result)
 
     def delete_item(
         self,
@@ -417,13 +434,16 @@ class Container:
                      }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if (len(offers) <= 0):
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.collection_link)
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.container_link)
         data = offers[0]
         return Offer(
             offer_throughput=offers[0]['content']['offerThroughput'],
             properties=offers[0])
 
-    def replace_throughput(self, throughput):
+    def replace_throughput(
+            self,
+            throughput
+    ):
         # type: (int) -> Offer
         link = self.properties['_self']
         query_spec = {
@@ -434,7 +454,7 @@ class Container:
                      }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if (len(offers) <= 0):
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.collection_link)
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.container_link)
         new_offer = offers[0].copy()
         new_offer['content']['offerThroughput'] = throughput
         data = self.client_connection.ReplaceOffer(
@@ -444,3 +464,99 @@ class Container:
         return Offer(
             offer_throughput=data['content']['offerThroughput'],
             properties=data)
+
+    def list_conflicts(
+            self,
+            max_item_count=None
+    ):
+        # type: (int) -> Dict[str, Any]
+        """ List all conflicts in the container.
+
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if max_item_count is not None:
+            request_options["maxItemCount"] = max_item_count
+
+        return self.client_connection.ReadConflicts(
+            collection_link=self.container_link,
+            feed_options=request_options
+        )
+
+    def query_conflicts(
+            self,
+            query,
+            parameters=None,
+            enable_cross_partition_query=None,
+            partition_key=None,
+            max_item_count=None
+    ):
+        # type: (str, List, int) -> QueryIterable
+        """Return all conflicts matching the given `query`.
+
+        :param query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param partition_key: Specifies the partition key value for the item.
+        :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :returns: An `Iterator` containing each result returned by the query, if any.
+
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if max_item_count is not None:
+            request_options["maxItemCount"] = max_item_count
+        if enable_cross_partition_query is not None:
+            request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+        if partition_key is not None:
+            request_options["partitionKey"] = partition_key
+
+        return self.client_connection.QueryConflicts(
+            collection_link=self.container_link,
+            query=query
+            if parameters is None
+            else dict(query=query, parameters=parameters),
+            options=request_options,
+        )
+
+    def get_conflict(
+            self,
+            id,
+            partition_key
+    ):
+        # type: (str, str) -> Dict[str, Any]
+        """
+        Get the conflict identified by `id`.
+
+        :param id: ID of the conflict to be retrieved.
+        :param partition_key: Partition key for the conflict to retrieve.
+        :returns: The conflict as a dict, if present in the container.
+
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if partition_key:
+            request_options["partitionKey"] = partition_key
+
+        return self.client_connection.ReadConflict(
+            conflict_link=self._get_conflict_link(id),
+            options=request_options
+        )
+
+    def delete_conflcit(self, id, partition_key):
+        # type: (str, str) -> None
+        """ Delete the specified conflict from the container.
+
+        :param id: Id of the conflict to delete from the container.
+        :param partition_key: Partition key for the conflict to delete.
+        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
+
+        """
+        request_options = {}  # type: Dict[str, Any]
+        if partition_key:
+            request_options["partitionKey"] = partition_key
+
+        self.client_connection.DeleteConflict(
+            conflict_link=self._get_conflict_link(id),
+            options=request_options
+        )
+

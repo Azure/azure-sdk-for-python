@@ -163,7 +163,7 @@ class CosmosClient:
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Database]
+        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
         """
         List the databases in a Cosmos DB SQL database account.
 
@@ -189,15 +189,11 @@ class CosmosClient:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        for database in [
-            Database(self.client_connection, properties["id"], properties=properties)
-            for properties in self.client_connection.ReadDatabases(
+        return self.client_connection.ReadDatabases(
                 options=request_options
             )
-        ]:
-            yield database
 
-    def list_database_properties(
+    def query_databases(
         self,
         query=None,
         parameters=None,
@@ -209,7 +205,7 @@ class CosmosClient:
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (str, str, bool, bool, int, int, str, Dict[str, Any], bool) -> Iterable[Union[Dict[str, Any], Any]]
+        # type: (str, str, bool, bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
         request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
@@ -232,24 +228,11 @@ class CosmosClient:
             # (just returning a generator did not initiate the first network call, so
             # the headers were misleading)
             # This needs to change for "real" implementation
-            results = iter(
-                list(
-                    self.client_connection.QueryDatabases(
+            return self.client_connection.QueryDatabases(
                         query, options=request_options
                     )
-                )
-            )
         else:
-            results = iter(
-                list(self.client_connection.ReadDatabases(options=request_options))
-            )
-        self.session_token = self.client_connection.last_response_headers.get(
-            "x-ms-session-token"
-        )
-        return QueryResultIterator(
-            results,
-            metadata=ResponseMetadata(self.client_connection.last_response_headers),
-        )
+            return self.client_connection.ReadDatabases(options=request_options)
 
     def delete_database(
         self,

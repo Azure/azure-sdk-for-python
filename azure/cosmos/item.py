@@ -22,7 +22,6 @@
 """Represents an item in the Azure Cosmos DB SQL API service.
 """
 
-#TODO: check if items need headers
 class Item(dict):
     """ Represents a document in an Azure Cosmos DB SQL API container.
 
@@ -30,8 +29,7 @@ class Item(dict):
     The Item must include an `id` key with a value that uniquely identifies the item within the container.
     """
 
-    def __init__(self, headers, data):
-        # type: (Dict[str, Any], Dict[str, Any]) -> None
+    def __init__(self, data):
+        # type: (Dict[str, Any]) -> None
         super().__init__()
-        self.response_headers = headers
         self.update(data)

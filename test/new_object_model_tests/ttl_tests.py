@@ -38,7 +38,7 @@ from azure.cosmos import PartitionKey
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your Azure Cosmos account.
 
-#TODO: fix 3/4 tests
+
 @pytest.mark.usefixtures("teardown_new_object_model")
 class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
@@ -329,7 +329,8 @@ class Test_ttl_tests(unittest.TestCase):
         self.assertEqual(created_document['id'], read_document['id'])
 
         self.created_db.delete_container(container=created_collection)
-    
+
+
 if __name__ == '__main__':
     try:
         unittest.main()
