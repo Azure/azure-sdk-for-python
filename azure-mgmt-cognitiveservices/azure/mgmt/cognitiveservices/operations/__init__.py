@@ -13,10 +13,12 @@ from .accounts_operations import AccountsOperations
 from .resource_skus_operations import ResourceSkusOperations
 from .operations import Operations
 from .check_sku_availability_operations import CheckSkuAvailabilityOperations
+from .locations_operations import LocationsOperations
 
 __all__ = [
     'AccountsOperations',
     'ResourceSkusOperations',
     'Operations',
     'CheckSkuAvailabilityOperations',
+    'LocationsOperations',
 ]
