@@ -21,7 +21,8 @@ try:
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_py3 import Operation
     from .contact_info_py3 import ContactInfo
-    from .peer_info_py3 import PeerInfo
+    from .peer_asn_properties_py3 import PeerAsnProperties
+    from .peer_asn_py3 import PeerAsn
     from .direct_peering_facility_py3 import DirectPeeringFacility
     from .peering_bandwidth_offer_py3 import PeeringBandwidthOffer
     from .peering_location_properties_direct_py3 import PeeringLocationPropertiesDirect
@@ -41,7 +42,8 @@ except (SyntaxError, ImportError):
     from .operation_display_info import OperationDisplayInfo
     from .operation import Operation
     from .contact_info import ContactInfo
-    from .peer_info import PeerInfo
+    from .peer_asn_properties import PeerAsnProperties
+    from .peer_asn import PeerAsn
     from .direct_peering_facility import DirectPeeringFacility
     from .peering_bandwidth_offer import PeeringBandwidthOffer
     from .peering_location_properties_direct import PeeringLocationPropertiesDirect
@@ -51,6 +53,7 @@ except (SyntaxError, ImportError):
     from .resource_tags import ResourceTags
 from .peering_paged import PeeringPaged
 from .operation_paged import OperationPaged
+from .peer_asn_paged import PeerAsnPaged
 from .peering_location_paged import PeeringLocationPaged
 from .peering_management_client_enums import (
     Name,
@@ -77,7 +80,8 @@ __all__ = [
     'OperationDisplayInfo',
     'Operation',
     'ContactInfo',
-    'PeerInfo',
+    'PeerAsnProperties',
+    'PeerAsn',
     'DirectPeeringFacility',
     'PeeringBandwidthOffer',
     'PeeringLocationPropertiesDirect',
@@ -87,6 +91,7 @@ __all__ = [
     'ResourceTags',
     'PeeringPaged',
     'OperationPaged',
+    'PeerAsnPaged',
     'PeeringLocationPaged',
     'Name',
     'Tier',

@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .legacy_peerings_operations import LegacyPeeringsOperations
-from .operations import Operations
-from .peer_asns_operations import PeerAsnsOperations
-from .peering_locations_operations import PeeringLocationsOperations
-from .peerings_operations import PeeringsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'LegacyPeeringsOperations',
-    'Operations',
-    'PeerAsnsOperations',
-    'PeeringLocationsOperations',
-    'PeeringsOperations',
-]
+
+class PeerAsnPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PeerAsn <azure.mgmt.peering.models.PeerAsn>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PeerAsn]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeerAsnPaged, self).__init__(*args, **kwargs)

@@ -12,8 +12,11 @@
 from msrest.serialization import Model
 
 
-class PeerInfo(Model):
-    """The essential information related to the peer.
+class PeerAsn(Model):
+    """The essential information related to the pee's ASN.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param peer_asn: The Autonomous System Number (ASN) of the peer.
     :type peer_asn: int
@@ -24,18 +27,36 @@ class PeerInfo(Model):
     :param validation_state: The validation state of the ASN associated with
      the peer. Possible values include: 'None', 'Pending', 'Approved', 'Failed'
     :type validation_state: str or ~azure.mgmt.peering.models.ValidationState
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     """
 
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'peer_asn': {'key': 'peerAsn', 'type': 'int'},
-        'peer_contact_info': {'key': 'peerContactInfo', 'type': 'ContactInfo'},
-        'peer_name': {'key': 'peerName', 'type': 'str'},
-        'validation_state': {'key': 'validationState', 'type': 'str'},
+        'peer_asn': {'key': 'properties.peerAsn', 'type': 'int'},
+        'peer_contact_info': {'key': 'properties.peerContactInfo', 'type': 'ContactInfo'},
+        'peer_name': {'key': 'properties.peerName', 'type': 'str'},
+        'validation_state': {'key': 'properties.validationState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(PeerInfo, self).__init__(**kwargs)
+        super(PeerAsn, self).__init__(**kwargs)
         self.peer_asn = kwargs.get('peer_asn', None)
         self.peer_contact_info = kwargs.get('peer_contact_info', None)
         self.peer_name = kwargs.get('peer_name', None)
         self.validation_state = kwargs.get('validation_state', None)
+        self.name = None
+        self.id = None
+        self.type = None
