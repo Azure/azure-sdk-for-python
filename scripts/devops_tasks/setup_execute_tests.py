@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--disablecov',
-        help = ('Flag that disables code coverage.')
+        help = ('Flag that disables code coverage.'),
         action='store_true')
 
     args = parser.parse_args()
@@ -66,5 +66,5 @@ if __name__ == '__main__':
 
     if args.disablecov:
         test_results_arg.append('--no-cov')
-        
+
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
