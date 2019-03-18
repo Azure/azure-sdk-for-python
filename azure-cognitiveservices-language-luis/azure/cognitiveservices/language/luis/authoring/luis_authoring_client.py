@@ -21,6 +21,8 @@ from .operations.versions_operations import VersionsOperations
 from .operations.train_operations import TrainOperations
 from .operations.permissions_operations import PermissionsOperations
 from .operations.pattern_operations import PatternOperations
+from .operations.settings_operations import SettingsOperations
+from .operations.azure_accounts_operations import AzureAccountsOperations
 from . import models
 
 
@@ -29,28 +31,22 @@ class LUISAuthoringClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, credentials):
 
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/api/v2.0'
+        base_url = 'http://{AzureRegion}.api.cognitive.microsoft.{AzureCloud}/luis/api/v2.0'
 
         super(LUISAuthoringClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-language-luis/{}'.format(VERSION))
 
-        self.endpoint = endpoint
         self.credentials = credentials
 
 
@@ -76,19 +72,20 @@ class LUISAuthoringClient(SDKClient):
     :vartype permissions: azure.cognitiveservices.language.luis.authoring.operations.PermissionsOperations
     :ivar pattern: Pattern operations
     :vartype pattern: azure.cognitiveservices.language.luis.authoring.operations.PatternOperations
+    :ivar settings: Settings operations
+    :vartype settings: azure.cognitiveservices.language.luis.authoring.operations.SettingsOperations
+    :ivar azure_accounts: AzureAccounts operations
+    :vartype azure_accounts: azure.cognitiveservices.language.luis.authoring.operations.AzureAccountsOperations
 
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, credentials):
 
-        self.config = LUISAuthoringClientConfiguration(endpoint, credentials)
+        self.config = LUISAuthoringClientConfiguration(credentials)
         super(LUISAuthoringClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -111,4 +108,8 @@ class LUISAuthoringClient(SDKClient):
         self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.pattern = PatternOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.settings = SettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.azure_accounts = AzureAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)

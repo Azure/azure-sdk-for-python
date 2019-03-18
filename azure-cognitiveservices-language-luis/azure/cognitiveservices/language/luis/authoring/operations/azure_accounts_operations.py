@@ -14,8 +14,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ExamplesOperations(object):
-    """ExamplesOperations operations.
+class AzureAccountsOperations(object):
+    """AzureAccountsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -33,9 +33,11 @@ class ExamplesOperations(object):
 
         self.config = config
 
-    def add(
-            self, app_id, version_id, example_label_object, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
-        """Adds a labeled example utterance in a version of the application.
+    def assign_to_app(
+            self, app_id, azure_region="westus", azure_cloud="com", azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+        """apps - Assign a LUIS Azure account to an application.
+
+        Assigns an Azure account to the application.
 
         :param azure_region: Supported Azure regions for Cognitive Services
          endpoints. Possible values include: 'westus', 'westeurope',
@@ -50,31 +52,28 @@ class ExamplesOperations(object):
          ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param example_label_object: A labeled example utterance with the
-         expected intent and entities.
-        :type example_label_object:
-         ~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject
+        :param azure_account_info_object: The Azure account information
+         object.
+        :type azure_account_info_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LabelExampleResponse or ClientRawResponse if raw=true
+        :return: OperationStatus or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.LabelExampleResponse
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.add.metadata['url']
+        url = self.assign_to_app.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
             'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
+            'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,7 +88,10 @@ class ExamplesOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(example_label_object, 'ExampleLabelObject')
+        if azure_account_info_object is not None:
+            body_content = self._serialize.body(azure_account_info_object, 'AzureAccountInfoObject')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -101,19 +103,21 @@ class ExamplesOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('LabelExampleResponse', response)
+            deserialized = self._deserialize('OperationStatus', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    add.metadata = {'url': '/apps/{appId}/versions/{versionId}/example'}
+    assign_to_app.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
-    def batch(
-            self, app_id, version_id, example_label_object_array, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
-        """Adds a batch of labeled example utterances to a version of the
-        application.
+    def get_assigned(
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """apps - Get LUIS Azure accounts assigned to the application.
+
+        Gets the LUIS Azure accounts assigned to the application for the user
+        using his ARM token.
 
         :param azure_region: Supported Azure regions for Cognitive Services
          endpoints. Possible values include: 'westus', 'westeurope',
@@ -128,11 +132,6 @@ class ExamplesOperations(object):
          ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param example_label_object_array: Array of example utterances.
-        :type example_label_object_array:
-         list[~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -140,108 +139,22 @@ class ExamplesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
         :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.BatchLabelExample]
+         list[~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.batch.metadata['url']
+        url = self.get_assigned.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
             'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
+            'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(example_label_object_array, '[ExampleLabelObject]')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [201, 207]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('[BatchLabelExample]', response)
-        if response.status_code == 207:
-            deserialized = self._deserialize('[BatchLabelExample]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    batch.metadata = {'url': '/apps/{appId}/versions/{versionId}/examples'}
-
-    def list(
-            self, app_id, version_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Returns example utterances to be reviewed from a version of the
-        application.
-
-        :param azure_region: Supported Azure regions for Cognitive Services
-         endpoints. Possible values include: 'westus', 'westeurope',
-         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
-         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
-         'brazilsouth', 'virginia'
-        :type azure_region: str or
-         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
-        :param azure_cloud: Supported Azure Clouds for Cognitive Services
-         endpoints. Possible values include: 'com', 'us'
-        :type azure_cloud: str or
-         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param skip: The number of entries to skip. Default value is 0.
-        :type skip: int
-        :param take: The number of entries to return. Maximum page size is
-         500. Default is 100.
-        :type take: int
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.LabeledUtterance]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
-            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if skip is not None:
-            query_parameters['skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
-        if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=500, minimum=0)
 
         # Construct headers
         header_parameters = {}
@@ -259,19 +172,20 @@ class ExamplesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[LabeledUtterance]', response)
+            deserialized = self._deserialize('[AzureAccountInfoObject]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/apps/{appId}/versions/{versionId}/examples'}
+    get_assigned.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
-    def delete(
-            self, app_id, version_id, example_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
-        """Deletes the labeled example utterances with the specified ID from a
-        version of the application.
+    def remove_from_app(
+            self, app_id, azure_region="westus", azure_cloud="com", azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
+        """apps - Removes an assigned LUIS Azure account from an application.
+
+        Removes assigned Azure account from the application.
 
         :param azure_region: Supported Azure regions for Cognitive Services
          endpoints. Possible values include: 'westus', 'westeurope',
@@ -286,10 +200,10 @@ class ExamplesOperations(object):
          ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param example_id: The example ID.
-        :type example_id: int
+        :param azure_account_info_object: The Azure account information
+         object.
+        :type azure_account_info_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -303,13 +217,11 @@ class ExamplesOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.remove_from_app.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
             'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str'),
-            'exampleId': self._serialize.url("example_id", example_id, 'int')
+            'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -319,11 +231,18 @@ class ExamplesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        if azure_account_info_object is not None:
+            body_content = self._serialize.body(azure_account_info_object, 'AzureAccountInfoObject')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
+        request = self._client.delete(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -339,4 +258,69 @@ class ExamplesOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/apps/{appId}/versions/{versionId}/examples/{exampleId}'}
+    remove_from_app.metadata = {'url': '/apps/{appId}/azureaccounts'}
+
+    def list_user_luis_accounts(
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """user - Get LUIS Azure accounts.
+
+        Gets the LUIS Azure accounts for the user using his ARM token.
+
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_user_luis_accounts.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[AzureAccountInfoObject]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_user_luis_accounts.metadata = {'url': '/azureaccounts'}

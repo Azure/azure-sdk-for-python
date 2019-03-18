@@ -34,10 +34,20 @@ class VersionsOperations(object):
         self.config = config
 
     def clone(
-            self, app_id, version_id, version=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new version using the current snapshot of the selected
-        application version.
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", version=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new version from the selected version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -54,14 +64,13 @@ class VersionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        version_clone_object = None
-        if version is not None:
-            version_clone_object = models.TaskUpdateObject(version=version)
+        version_clone_object = models.TaskUpdateObject(version=version)
 
         # Construct URL
         url = self.clone.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -78,10 +87,7 @@ class VersionsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        if version_clone_object is not None:
-            body_content = self._serialize.body(version_clone_object, 'TaskUpdateObject')
-        else:
-            body_content = None
+        body_content = self._serialize.body(version_clone_object, 'TaskUpdateObject')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -103,9 +109,20 @@ class VersionsOperations(object):
     clone.metadata = {'url': '/apps/{appId}/versions/{versionId}/clone'}
 
     def list(
-            self, app_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets the application versions info.
+            self, app_id, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of versions for this application ID.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param skip: The number of entries to skip. Default value is 0.
@@ -128,7 +145,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -166,9 +184,22 @@ class VersionsOperations(object):
     list.metadata = {'url': '/apps/{appId}/versions'}
 
     def get(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the version info.
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Gets the version information such as date created, last modified date,
+        endpoint URL, count of intents and entities, training and publishing
+        status.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -188,7 +219,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -223,9 +255,20 @@ class VersionsOperations(object):
     get.metadata = {'url': '/apps/{appId}/versions/{versionId}/'}
 
     def update(
-            self, app_id, version_id, version=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", version=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name or description of the application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -249,7 +292,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -288,9 +332,20 @@ class VersionsOperations(object):
     update.metadata = {'url': '/apps/{appId}/versions/{versionId}/'}
 
     def delete(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Deletes an application version.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -310,7 +365,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -345,9 +401,20 @@ class VersionsOperations(object):
     delete.metadata = {'url': '/apps/{appId}/versions/{versionId}/'}
 
     def export(
-            self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Exports a LUIS application to JSON format.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -367,7 +434,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.export.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
@@ -402,9 +470,20 @@ class VersionsOperations(object):
     export.metadata = {'url': '/apps/{appId}/versions/{versionId}/export'}
 
     def import_method(
-            self, app_id, luis_app, version_id=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, luis_app, azure_region="westus", azure_cloud="com", version_id=None, custom_headers=None, raw=False, **operation_config):
         """Imports a new version into a LUIS application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param luis_app: A LUIS application structure.
@@ -426,7 +505,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.import_method.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -466,9 +546,20 @@ class VersionsOperations(object):
     import_method.metadata = {'url': '/apps/{appId}/versions/import'}
 
     def delete_unlabelled_utterance(
-            self, app_id, version_id, utterance, custom_headers=None, raw=False, **operation_config):
-        """Deleted an unlabelled utterance.
+            self, app_id, version_id, utterance, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Deleted an unlabelled utterance in a version of the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
@@ -490,7 +581,8 @@ class VersionsOperations(object):
         # Construct URL
         url = self.delete_unlabelled_utterance.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }

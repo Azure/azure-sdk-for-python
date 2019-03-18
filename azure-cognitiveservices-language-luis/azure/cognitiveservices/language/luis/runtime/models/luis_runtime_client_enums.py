@@ -12,20 +12,6 @@
 from enum import Enum
 
 
-class TrainingStatus(str, Enum):
-
-    needs_training = "NeedsTraining"
-    in_progress = "InProgress"
-    trained = "Trained"
-
-
-class OperationStatusType(str, Enum):
-
-    failed = "Failed"
-    failed = "FAILED"
-    success = "Success"
-
-
 class AzureRegions(str, Enum):
 
     westus = "westus"

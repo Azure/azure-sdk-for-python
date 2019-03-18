@@ -35,14 +35,25 @@ class AppsOperations(object):
         self.config = config
 
     def add(
-            self, application_create_object, custom_headers=None, raw=False, **operation_config):
+            self, application_create_object, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Creates a new LUIS app.
 
-        :param application_create_object: A model containing Name, Description
-         (optional), Culture, Usage Scenario (optional), Domain (optional) and
-         initial version ID (optional) of the application. Default value for
-         the version ID is 0.1. Note: the culture cannot be changed after the
-         app is created.
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param application_create_object: An application containing Name,
+         Description (optional), Culture, Usage Scenario (optional), Domain
+         (optional) and initial version ID (optional) of the application.
+         Default value for the version ID is "0.1". Note: the culture cannot be
+         changed after the app is created.
         :type application_create_object:
          ~azure.cognitiveservices.language.luis.authoring.models.ApplicationCreateObject
         :param dict custom_headers: headers that will be added to the request
@@ -58,7 +69,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.add.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,9 +107,20 @@ class AppsOperations(object):
     add.metadata = {'url': '/apps/'}
 
     def list(
-            self, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the user applications.
+            self, azure_region="westus", azure_cloud="com", skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the user's applications.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param skip: The number of entries to skip. Default value is 0.
         :type skip: int
         :param take: The number of entries to return. Maximum page size is
@@ -118,7 +141,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -155,15 +179,27 @@ class AppsOperations(object):
     list.metadata = {'url': '/apps/'}
 
     def import_method(
-            self, luis_app, app_name=None, custom_headers=None, raw=False, **operation_config):
-        """Imports an application to LUIS, the application's structure should be
-        included in in the request body.
+            self, luis_app, azure_region="westus", azure_cloud="com", app_name=None, custom_headers=None, raw=False, **operation_config):
+        """Imports an application to LUIS, the application's structure is included
+        in the request body.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param luis_app: A LUIS application structure.
         :type luis_app:
          ~azure.cognitiveservices.language.luis.authoring.models.LuisApp
         :param app_name: The application name to create. If not specified, the
-         application name will be read from the imported object.
+         application name will be read from the imported object. If the
+         application name already exists, an error is returned.
         :type app_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -178,7 +214,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.import_method.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -217,9 +254,20 @@ class AppsOperations(object):
     import_method.metadata = {'url': '/apps/import'}
 
     def list_cortana_endpoints(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets the endpoint URLs for the prebuilt Cortana applications.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -235,7 +283,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_cortana_endpoints.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -268,9 +317,20 @@ class AppsOperations(object):
     list_cortana_endpoints.metadata = {'url': '/apps/assistants'}
 
     def list_domains(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets the available application domains.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -284,7 +344,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_domains.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -317,9 +378,20 @@ class AppsOperations(object):
     list_domains.metadata = {'url': '/apps/domains'}
 
     def list_usage_scenarios(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets the application available usage scenarios.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -333,7 +405,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_usage_scenarios.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -366,9 +439,22 @@ class AppsOperations(object):
     list_usage_scenarios.metadata = {'url': '/apps/usagescenarios'}
 
     def list_supported_cultures(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets the supported application cultures.
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Gets a list of supported cultures. Cultures are equivalent to the
+        written language and locale. For example,"en-us" represents the U.S.
+        variation of English.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -384,7 +470,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_supported_cultures.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -417,9 +504,20 @@ class AppsOperations(object):
     list_supported_cultures.metadata = {'url': '/apps/cultures'}
 
     def download_query_logs(
-            self, app_id, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Gets the query logs of the past month for the application.
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, callback=None, **operation_config):
+        """Gets the logs of the past month's endpoint queries for the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -440,7 +538,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.download_query_logs.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -474,9 +573,20 @@ class AppsOperations(object):
     download_query_logs.metadata = {'url': '/apps/{appId}/querylogs'}
 
     def get(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets the application info.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -494,7 +604,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -528,9 +639,20 @@ class AppsOperations(object):
     get.metadata = {'url': '/apps/{appId}'}
 
     def update(
-            self, app_id, name=None, description=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", name=None, description=None, custom_headers=None, raw=False, **operation_config):
         """Updates the name or description of the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param name: The application's new name.
@@ -554,7 +676,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -592,11 +715,24 @@ class AppsOperations(object):
     update.metadata = {'url': '/apps/{appId}'}
 
     def delete(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", force=False, custom_headers=None, raw=False, **operation_config):
         """Deletes an application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
+        :param force: A flag to indicate whether to force an operation.
+        :type force: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -612,13 +748,16 @@ class AppsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if force is not None:
+            query_parameters['force'] = self._serialize.query("force", force, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -646,15 +785,27 @@ class AppsOperations(object):
     delete.metadata = {'url': '/apps/{appId}'}
 
     def publish(
-            self, app_id, application_publish_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", version_id=None, is_staging=False, custom_headers=None, raw=False, **operation_config):
         """Publishes a specific version of the application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
-        :param application_publish_object: The application publish object. The
-         region is the target region that the application is published to.
-        :type application_publish_object:
-         ~azure.cognitiveservices.language.luis.authoring.models.ApplicationPublishObject
+        :param version_id: The version ID to publish.
+        :type version_id: str
+        :param is_staging: Indicates if the staging slot should be used,
+         instead of the Production one.
+        :type is_staging: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -668,10 +819,13 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
+        application_publish_object = models.ApplicationPublishObject(version_id=version_id, is_staging=is_staging)
+
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -693,12 +847,14 @@ class AppsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [201, 207]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 201:
+            deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
+        if response.status_code == 207:
             deserialized = self._deserialize('ProductionOrStagingEndpointInfo', response)
 
         if raw:
@@ -709,9 +865,20 @@ class AppsOperations(object):
     publish.metadata = {'url': '/apps/{appId}/publish'}
 
     def get_settings(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
-        """Get the application settings.
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Get the application settings including 'UseAllTrainingData'.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -729,7 +896,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.get_settings.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -763,14 +931,25 @@ class AppsOperations(object):
     get_settings.metadata = {'url': '/apps/{appId}/settings'}
 
     def update_settings(
-            self, app_id, public=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the application settings.
+            self, app_id, azure_region="westus", azure_cloud="com", is_public=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the application settings including 'UseAllTrainingData'.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
-        :param public: Setting your application as public allows other people
-         to use your application's endpoint using their own keys.
-        :type public: bool
+        :param is_public: Setting your application as public allows other
+         people to use your application's endpoint using their own keys.
+        :type is_public: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -783,12 +962,13 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        application_setting_update_object = models.ApplicationSettingUpdateObject(public=public)
+        application_setting_update_object = models.ApplicationSettingUpdateObject(is_public=is_public)
 
         # Construct URL
         url = self.update_settings.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -826,9 +1006,20 @@ class AppsOperations(object):
     update_settings.metadata = {'url': '/apps/{appId}/settings'}
 
     def get_publish_settings(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
-        """Get the application publish settings.
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Get the application publish settings including 'UseAllTrainingData'.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -846,7 +1037,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.get_publish_settings.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -880,9 +1072,21 @@ class AppsOperations(object):
     get_publish_settings.metadata = {'url': '/apps/{appId}/publishsettings'}
 
     def update_publish_settings(
-            self, app_id, publish_setting_update_object, custom_headers=None, raw=False, **operation_config):
-        """Updates the application publish settings.
+            self, app_id, publish_setting_update_object, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Updates the application publish settings including
+        'UseAllTrainingData'.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param publish_setting_update_object: An object containing the new
@@ -904,7 +1108,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.update_publish_settings.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -942,9 +1147,20 @@ class AppsOperations(object):
     update_publish_settings.metadata = {'url': '/apps/{appId}/publishsettings'}
 
     def list_endpoints(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Returns the available endpoint deployment regions and URLs.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -960,7 +1176,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_endpoints.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -994,9 +1211,20 @@ class AppsOperations(object):
     list_endpoints.metadata = {'url': '/apps/{appId}/endpoints'}
 
     def list_available_custom_prebuilt_domains(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets all the available custom prebuilt domains for all cultures.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1012,7 +1240,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_available_custom_prebuilt_domains.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1045,9 +1274,21 @@ class AppsOperations(object):
     list_available_custom_prebuilt_domains.metadata = {'url': '/apps/customprebuiltdomains'}
 
     def add_custom_prebuilt_domain(
-            self, domain_name=None, culture=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a prebuilt domain along with its models as a new application.
+            self, azure_region="westus", azure_cloud="com", domain_name=None, culture=None, custom_headers=None, raw=False, **operation_config):
+        """Adds a prebuilt domain along with its intent and entity models as a new
+        application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param domain_name: The domain name.
         :type domain_name: str
         :param culture: The culture of the new domain.
@@ -1067,7 +1308,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.add_custom_prebuilt_domain.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1104,9 +1346,20 @@ class AppsOperations(object):
     add_custom_prebuilt_domain.metadata = {'url': '/apps/customprebuiltdomains'}
 
     def list_available_custom_prebuilt_domains_for_culture(
-            self, culture, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available custom prebuilt domains for a specific culture.
+            self, culture, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
+        """Gets all the available prebuilt domains for a specific culture.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param culture: Culture.
         :type culture: str
         :param dict custom_headers: headers that will be added to the request
@@ -1124,7 +1377,8 @@ class AppsOperations(object):
         # Construct URL
         url = self.list_available_custom_prebuilt_domains_for_culture.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'culture': self._serialize.url("culture", culture, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1156,3 +1410,155 @@ class AppsOperations(object):
 
         return deserialized
     list_available_custom_prebuilt_domains_for_culture.metadata = {'url': '/apps/customprebuiltdomains/{culture}'}
+
+    def package_published_application_as_gzip(
+            self, app_id, slot_name, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, callback=None, **operation_config):
+        """package - Gets published LUIS application package in binary stream GZip
+        format.
+
+        Packages a published LUIS application as a GZip file to be used in the
+        LUIS container.
+
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param app_id: The application ID.
+        :type app_id: str
+        :param slot_name: The publishing slot name.
+        :type slot_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.package_published_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'slotName': self._serialize.url("slot_name", slot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_published_application_as_gzip.metadata = {'url': '/package/{appId}/slot/{slotName}/gzip'}
+
+    def package_trained_application_as_gzip(
+            self, app_id, version_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, callback=None, **operation_config):
+        """package - Gets trained LUIS application package in binary stream GZip
+        format.
+
+        Packages trained LUIS application as GZip file to be used in the LUIS
+        container.
+
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: object or ClientRawResponse if raw=true
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.package_trained_application_as_gzip.metadata['url']
+        path_format_arguments = {
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=True, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._client.stream_download(response, callback)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_trained_application_as_gzip.metadata = {'url': '/package/{appId}/versions/{versionId}/gzip'}

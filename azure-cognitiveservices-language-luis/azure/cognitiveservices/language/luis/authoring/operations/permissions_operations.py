@@ -34,10 +34,21 @@ class PermissionsOperations(object):
         self.config = config
 
     def list(
-            self, app_id, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", custom_headers=None, raw=False, **operation_config):
         """Gets the list of user emails that have permissions to access your
         application.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -55,7 +66,8 @@ class PermissionsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -89,10 +101,21 @@ class PermissionsOperations(object):
     list.metadata = {'url': '/apps/{appId}/permissions'}
 
     def add(
-            self, app_id, email=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", email=None, custom_headers=None, raw=False, **operation_config):
         """Adds a user to the allowed list of users to access this LUIS
         application. Users are added using their email address.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param email: The email address of the user.
@@ -114,7 +137,8 @@ class PermissionsOperations(object):
         # Construct URL
         url = self.add.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -152,10 +176,21 @@ class PermissionsOperations(object):
     add.metadata = {'url': '/apps/{appId}/permissions'}
 
     def delete(
-            self, app_id, email=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, azure_region="westus", azure_cloud="com", email=None, custom_headers=None, raw=False, **operation_config):
         """Removes a user from the allowed list of users to access this LUIS
         application. Users are removed using their email address.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param email: The email address of the user.
@@ -177,7 +212,8 @@ class PermissionsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -215,10 +251,22 @@ class PermissionsOperations(object):
     delete.metadata = {'url': '/apps/{appId}/permissions'}
 
     def update(
-            self, app_id, emails=None, custom_headers=None, raw=False, **operation_config):
-        """Replaces the current users access list with the one sent in the body.
-        If an empty list is sent, all access to other users will be removed.
+            self, app_id, azure_region="westus", azure_cloud="com", emails=None, custom_headers=None, raw=False, **operation_config):
+        """Replaces the current user access list with the new list sent in the
+        body. If an empty list is sent, all access to other users will be
+        removed.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.authoring.models.AzureClouds
         :param app_id: The application ID.
         :type app_id: str
         :param emails: The email address of the users.
@@ -240,7 +288,8 @@ class PermissionsOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

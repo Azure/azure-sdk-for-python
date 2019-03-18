@@ -34,10 +34,21 @@ class PredictionOperations(object):
         self.config = config
 
     def resolve(
-            self, app_id, query, timezone_offset=None, verbose=None, staging=None, spell_check=None, bing_spell_check_subscription_key=None, log=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, query, azure_region="westus", azure_cloud="com", timezone_offset=None, verbose=None, staging=None, spell_check=None, bing_spell_check_subscription_key=None, log=None, custom_headers=None, raw=False, **operation_config):
         """Gets predictions for a given utterance, in the form of intents and
         entities. The current maximum query size is 500 characters.
 
+        :param azure_region: Supported Azure regions for Cognitive Services
+         endpoints. Possible values include: 'westus', 'westeurope',
+         'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus',
+         'southcentralus', 'northeurope', 'eastasia', 'australiaeast',
+         'brazilsouth', 'virginia'
+        :type azure_region: str or
+         ~azure.cognitiveservices.language.luis.runtime.models.AzureRegions
+        :param azure_cloud: Supported Azure Clouds for Cognitive Services
+         endpoints. Possible values include: 'com', 'us'
+        :type azure_cloud: str or
+         ~azure.cognitiveservices.language.luis.runtime.models.AzureClouds
         :param app_id: The LUIS application ID (Guid).
         :type app_id: str
         :param query: The utterance to predict.
@@ -53,7 +64,7 @@ class PredictionOperations(object):
         :param spell_check: Enable spell checking.
         :type spell_check: bool
         :param bing_spell_check_subscription_key: The subscription key to use
-         when enabling bing spell check
+         when enabling Bing spell check
         :type bing_spell_check_subscription_key: str
         :param log: Log query (default is true)
         :type log: bool
@@ -72,7 +83,8 @@ class PredictionOperations(object):
         # Construct URL
         url = self.resolve.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'AzureRegion': self._serialize.url("azure_region", azure_region, 'AzureRegions', skip_quote=True),
+            'AzureCloud': self._serialize.url("azure_cloud", azure_cloud, 'AzureClouds', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
