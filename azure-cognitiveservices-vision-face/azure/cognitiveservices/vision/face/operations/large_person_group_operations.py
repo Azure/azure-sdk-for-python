@@ -339,7 +339,7 @@ class LargePersonGroupOperations(object):
 
     def list(
             self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
-        """List all existing large person groups’s largePesonGroupId, name,
+        """List all existing large person groups’s largePersonGroupId, name,
         userData and recognitionModel.<br />
         * Large person groups are stored in alphabetical order of
         largePersonGroupId.

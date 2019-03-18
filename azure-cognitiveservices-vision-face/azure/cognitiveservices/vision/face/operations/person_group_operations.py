@@ -333,7 +333,7 @@ class PersonGroupOperations(object):
 
     def list(
             self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
-        """List person groups’s pesonGroupId, name, userData and
+        """List person groups’s personGroupId, name, userData and
         recognitionModel.<br />
         * Person groups are stored in alphabetical order of personGroupId.
         * "start" parameter (string, optional) is a user-provided personGroupId
