@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class ServicePrincipalObjectResult(Model):
     """Service Principal Object Result.
 
-    :param value: Service Principal Application Object Id
-    :type value: str
+    :param value: A collection of Application Objects.
+    :type value: list[str]
     :param odatametadata: The URL representing edm equivalent.
     :type odatametadata: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[str]'},
         'odatametadata': {'key': 'odata\\.metadata', 'type': 'str'},
     }
 
