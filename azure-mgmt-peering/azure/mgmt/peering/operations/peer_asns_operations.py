@@ -95,14 +95,14 @@ class PeerAsnsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peerAsns/{peerAsnName}'}
 
     def create_or_update(
-            self, peer_asn_name, peer_info, custom_headers=None, raw=False, **operation_config):
+            self, peer_asn_name, peer_asn, custom_headers=None, raw=False, **operation_config):
         """Creates a new peer ASN or updates an existing peer ASN with the
         specified name under the given subscription.
 
         :param peer_asn_name: The peer ASN name.
         :type peer_asn_name: str
-        :param peer_info: The peer info.
-        :type peer_info: ~azure.mgmt.peering.models.PeerAsnProperties
+        :param peer_asn: The peer ASN.
+        :type peer_asn: ~azure.mgmt.peering.models.PeerAsn
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -138,7 +138,7 @@ class PeerAsnsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(peer_info, 'PeerAsnProperties')
+        body_content = self._serialize.body(peer_asn, 'PeerAsn')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

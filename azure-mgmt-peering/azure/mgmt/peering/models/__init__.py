@@ -21,7 +21,6 @@ try:
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_py3 import Operation
     from .contact_info_py3 import ContactInfo
-    from .peer_asn_properties_py3 import PeerAsnProperties
     from .peer_asn_py3 import PeerAsn
     from .direct_peering_facility_py3 import DirectPeeringFacility
     from .peering_bandwidth_offer_py3 import PeeringBandwidthOffer
@@ -42,7 +41,6 @@ except (SyntaxError, ImportError):
     from .operation_display_info import OperationDisplayInfo
     from .operation import Operation
     from .contact_info import ContactInfo
-    from .peer_asn_properties import PeerAsnProperties
     from .peer_asn import PeerAsn
     from .direct_peering_facility import DirectPeeringFacility
     from .peering_bandwidth_offer import PeeringBandwidthOffer
@@ -80,7 +78,6 @@ __all__ = [
     'OperationDisplayInfo',
     'Operation',
     'ContactInfo',
-    'PeerAsnProperties',
     'PeerAsn',
     'DirectPeeringFacility',
     'PeeringBandwidthOffer',
