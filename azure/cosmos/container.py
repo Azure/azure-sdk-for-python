@@ -23,18 +23,16 @@
 """
 
 from .cosmos_client_connection import CosmosClientConnection
-from .query_iterator import QueryResultIterator
 from .item import Item
-from . import ResponseMetadata
 from .errors import HTTPFailure
 from .http_constants import StatusCodes
 from .offer import Offer
 from .scripts import Scripts
+from .query_iterable import QueryIterable
 
 from typing import (
     Any,
     List,
-    Iterable,
     Dict,
     Union,
     cast
@@ -118,22 +116,19 @@ class Container:
         return Item(data=result)
 
     #TODO: add returns to everything
-    #TODO: remove max degree of parallelism
     #TODO: Fix return type in query iterator + tests
     def list_items(
         self,
         enable_cross_partition_query=None,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
+        # type: (bool, int, str, Dict[str, Any], bool) -> QueryIterable
         """ List all items in the container.
 
         :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -141,8 +136,6 @@ class Container:
         request_options = {}  # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
             request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
             request_options["maxItemCount"] = max_item_count
         if session_token:
@@ -195,21 +188,19 @@ class Container:
         parameters=None,
         partition_key=None,
         enable_cross_partition_query=None,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         enable_scan_in_query=None,
         populate_query_metrics=None
     ):
-        # type: (str, List, str, bool, int, int, str, Dict[str, Any], bool, bool) -> QueryIterable
+        # type: (str, List, str, bool, int, str, Dict[str, Any], bool, bool) -> QueryIterable
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
         :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -239,8 +230,6 @@ class Container:
         request_options = {}  # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
             request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
             request_options["maxItemCount"] = max_item_count
         if session_token:
@@ -386,18 +375,16 @@ class Container:
         self,
         item,
         partition_key,
-        max_degree_parallelism=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (Union[Item, Dict[str, Any], str], str, int, str, Dict[str, Any], AccessCondition, bool) -> None
+        # type: (Union[Item, Dict[str, Any], str], str, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Delete the specified item from the container.
 
         :param item: The :class:`Item` to delete from the container.
         :param partition_key: Specifies the partition key value for the item.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -407,8 +394,6 @@ class Container:
         request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = partition_key
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -492,7 +477,7 @@ class Container:
             partition_key=None,
             max_item_count=None
     ):
-        # type: (str, List, int) -> QueryIterable
+        # type: (str, List, bool, bool int) -> QueryIterable
         """Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.

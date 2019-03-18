@@ -23,18 +23,10 @@
 Create, read, update, and delete databases, containers, and items in Azure Cosmos DB SQL API databases.
 """
 
-__all__ = ["ResponseMetadata", "PartitionKey", "AccessCondition"]
+__all__ = ["PartitionKey"]
 
-from .query_iterator import QueryResultIterator
 from .cosmos_client_connection import CosmosClientConnection
 from .errors import HTTPFailure
-
-from typing import (
-    Any,
-    Dict,
-    Union
-)
-
 
 class PartitionKey(dict):
     """ Key used to partition a container into logical partitions.
@@ -68,11 +60,3 @@ class PartitionKey(dict):
     def path(self, value):
         # (str) -> None
         self["paths"] = [value]
-
-
-class AccessCondition(dict):
-    pass
-
-
-class ResponseMetadata(dict):
-    pass

@@ -73,19 +73,20 @@ class AggregateQueryTestSequenceMeta(type):
 
             values = [None, False, True, "abc", "cdfg", "opqrs", "ttttttt", "xyz", "oo", "ppp"]
             for value in values:
-                d = {_config.PARTITION_KEY: value}
+                d = {_config.PARTITION_KEY: value, 'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             for i in xrange(_config.DOCS_WITH_SAME_PARTITION_KEY):
                 d = {_config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
                      'resourceId': i,
-                     _config.FIELD: i + 1}
+                     _config.FIELD: i + 1,
+                     'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             _config.docs_with_numeric_id = \
                 _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
             for i in xrange(_config.docs_with_numeric_id):
-                d = {_config.PARTITION_KEY: i + 1}
+                d = {_config.PARTITION_KEY: i + 1, 'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             _config.sum = _config.docs_with_numeric_id \
@@ -177,6 +178,7 @@ class AggregateQueryTestSequenceMeta(type):
             # type: (Container, Dict[str, Any]) -> [Dict[str, Any]]
             created_docs = []
             for d in document_definitions:
+                print(d)
                 created_doc = collection.create_item(body=d)
                 created_docs.append(created_doc)
 

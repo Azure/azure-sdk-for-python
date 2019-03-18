@@ -23,18 +23,16 @@
 """
 
 from .cosmos_client_connection import CosmosClientConnection
-from .query_iterator import QueryResultIterator
 from .container import Container
-from . import ResponseMetadata
 from .offer import Offer
 from .http_constants import StatusCodes
 from .errors import HTTPFailure
 from .user import User
+from .query_iterable import QueryIterable
 
 from typing import (
     Any,
     List,
-    Iterable,
     Dict,
     Union,
     cast
@@ -164,24 +162,20 @@ class Database(object):
     def delete_container(
         self,
         container,
-        max_degree_parallelism=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (ContainerId, int, str, Dict[str, Any], AccessCondition, bool) -> None
+        # type: (ContainerId, str, Dict[str, Any], AccessCondition, bool) -> None
         """ Delete the container
 
         :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, or :class:`Container` instance.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         """
         request_options = {}  # type: Dict[str, Any]
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -248,16 +242,14 @@ class Database(object):
 
     def list_containers(
         self,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (int, int, str, Dict[str, Any], bool) -> QueryIterable
+        # type: (int, str, Dict[str, Any], bool) -> QueryIterable
         """ List the containers in the database.
 
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -272,8 +264,6 @@ class Database(object):
 
         """
         request_options = {}  # type: Dict[str, Any]
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
             request_options["maxItemCount"] = max_item_count
         if session_token:
@@ -292,16 +282,14 @@ class Database(object):
         self,
         query=None,
         parameters=None,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (str, str, int, int, str, Dict[str, Any], bool) -> QueryIterable
+        # type: (str, str, int, str, Dict[str, Any], bool) -> QueryIterable
         """List properties for containers in the current database
 
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.

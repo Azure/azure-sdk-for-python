@@ -22,17 +22,15 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from .query_iterator import QueryResultIterator
 from .cosmos_client_connection import CosmosClientConnection
 from .database import Database
-from . import ResponseMetadata
+from .documents import ConnectionPolicy
+from .query_iterable import QueryIterable
 from typing import (
     Any,
-    Iterable,
-    Dict,
-    Union,
-    cast
+    Dict
 )
+
 
 class CosmosClient:
     """
@@ -41,10 +39,15 @@ class CosmosClient:
     """
 
     def __init__(self, url, auth, consistency_level="Session", connection_policy=None):
-        # type: (str, str, Dict[str, str], Any) -> None
+        # type: (str, Dict[str, str],, str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
         :param url: The URL of the Cosmos DB account.
+        :param auth:
+            Contains 'masterKey' or 'resourceTokens', where
+            auth['masterKey'] is the default authorization key to use to
+            create the client, and auth['resourceTokens'] is the alternative
+            authorization key.
         :param consistency_level: Consistency level to use for the session.
 
         .. literalinclude:: ../../examples/examples.py
@@ -157,18 +160,16 @@ class CosmosClient:
         self,
         disable_ru_per_minute_usage=None,
         enable_cross_partition_query=None,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (bool, bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
+        # type: (bool, bool, int, str, Dict[str, Any], bool) -> QueryIterable
         """
         List the databases in a Cosmos DB SQL database account.
 
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -178,8 +179,6 @@ class CosmosClient:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
             request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
             request_options["maxItemCount"] = max_item_count
         if session_token:
@@ -199,20 +198,17 @@ class CosmosClient:
         parameters=None,
         disable_ru_per_minute_usage=None,
         enable_cross_partition_query=None,
-        max_degree_parallelism=None,
         max_item_count=None,
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
     ):
-        # type: (str, str, bool, bool, int, int, str, Dict[str, Any], bool) -> QueryIterable
+        # type: (str, str, bool, bool, int, str, Dict[str, Any], bool) -> QueryIterable
         request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if enable_cross_partition_query is not None:
             request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if max_item_count is not None:
             request_options["maxItemCount"] = max_item_count
         if session_token:
@@ -229,7 +225,7 @@ class CosmosClient:
             # the headers were misleading)
             # This needs to change for "real" implementation
             return self.client_connection.QueryDatabases(
-                        query, options=request_options
+                        query, options=request_options, parameters=parameters
                     )
         else:
             return self.client_connection.ReadDatabases(options=request_options)
@@ -238,19 +234,17 @@ class CosmosClient:
         self,
         database,
         disable_ru_per_minute_usage=None,
-        max_degree_parallelism=None,
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
     ):
-        # type: (DatabaseId, bool, str, int, Dict[str, Any], AccessCondition, bool) -> None
+        # type: (DatabaseId, bool, str, Dict[str, Any], AccessCondition, bool) -> None
         """
         Delete the database with the given ID (name).
 
         :param database: The ID (name) or :class:`Database` instance of the database to delete.
         :param disable_ru_per_minute_usage: Enable/disable Request Units(RUs)/minute capacity to serve the request if regular provisioned RUs/second is exhausted.
-        :param max_degree_parallelism: The maximum number of concurrent operations that run client side during parallel query execution in the Azure Cosmos DB database service. Negative values make the system automatically decides the number of concurrent operations to run.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -260,8 +254,6 @@ class CosmosClient:
         request_options = {}  # type: Dict[str, Any]
         if disable_ru_per_minute_usage is not None:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
-        if max_degree_parallelism is not None:
-            request_options["maxDegreeOfParallelism"] = max_degree_parallelism
         if session_token:
             request_options["sessionToken"] = session_token
             request_options["sessionToken"] = session_token

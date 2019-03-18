@@ -451,7 +451,7 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(1, len(documentlist))
 
-    '''
+    #TODO: Permission based on id not rid
     def test_partitioned_collection_permissions(self):
         created_db = self.databaseForTest
 
@@ -492,8 +492,8 @@ class CRUDTests(unittest.TestCase):
         #TODO: raise _token to first class attribute
         resource_tokens = {}
         # storing the resource tokens based on Resource IDs
-        resource_tokens[all_collection.properties['_rid']] = (all_permission.properties['_token'])
-        resource_tokens[read_collection.properties['_rid']] = (read_permission.properties['_token'])
+        resource_tokens[urllib.quote(all_collection.id)] = (all_permission.properties['_token'])
+        resource_tokens[urllib.quote(read_collection.id)] = (read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
             CRUDTests.host, {'resourceTokens': resource_tokens}, "Session", CRUDTests.connectionPolicy)
@@ -502,51 +502,40 @@ class CRUDTests(unittest.TestCase):
                                'key': 1
                                }
 
-        restricted_client.client_connection.CreateItem(all_collection.container_link, document_definition, options)
-        # Create document in all_collection should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object and it has all permissions
         all_collection.client_connection = restricted_client.client_connection
+        read_collection.client_connection = restricted_client.client_connection
+
+        # Create document in all_collection should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object and it has all permissions
         created_document = all_collection.create_item(body=document_definition)
 
         # Create document in read_collection should fail since it has only read permissions for this collection
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.FORBIDDEN,
-            all_collection.create_item,
+            read_collection.create_item,
             document_definition)
 
-        # Read document feed should succeed for this collection. Note that I need to pass in partitionKey here since permission has resourcePartitionKey defined
-        options = {'partitionKey': document_definition.get('key')}
-        documentlist = list(all_collection.list_items())
-
-        self.assertEqual(0, len(documentlist))
-
         document_definition['key'] = 2
-        options = {'partitionKey': document_definition.get('key')}
         # Create document should fail since the partitionKey is 2 which is different that what is specified as resourcePartitionKey in permission object
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.FORBIDDEN,
-            restricted_client.CreateItem,
-            self.GetDocumentCollectionLink(created_db, all_collection, False),
-            document_definition,
-            options)
+            all_collection.create_item,
+            document_definition)
 
         document_definition['key'] = 1
-        options = {'partitionKey': document_definition.get('key')}
         # Delete document should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object
-        created_document = restricted_client.DeleteItem(
-            self.GetDocumentLink(created_db, all_collection, created_document, False),
-            options)
+        created_document = all_collection.delete_item(item=created_document['id'], partition_key=document_definition['key'])
 
         # Delete document in read_collection should fail since it has only read permissions for this collection
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.FORBIDDEN,
-            restricted_client.DeleteItem,
-            self.GetDocumentCollectionLink(created_db, read_collection, False),
-            options)
+            read_collection.delete_item,
+            document_definition['id'],
+            document_definition['id']
+        )
 
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, all_collection))
-        self.client.DeleteContainer(self.GetDocumentCollectionLink(created_db, read_collection))
+        created_db.delete_container(all_collection)
+        created_db.delete_container(read_collection)
 
-    '''
     def test_partitioned_collection_execute_stored_procedure(self):
         created_db = self.databaseForTest
 
@@ -578,10 +567,14 @@ class CRUDTests(unittest.TestCase):
             created_sproc['id'],
             3)
 
+    #TODO: use custom pk collection
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        created_collection = created_db.create_container(
+            id='test_partitioned_collection_partition_key_value_types ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/pk', kind='Hash')
+        )
 
         document_definition = {'id': 'document1' + str(uuid.uuid4()),
                                'pk': None,
@@ -635,6 +628,7 @@ class CRUDTests(unittest.TestCase):
             document_definition
         )
 
+        created_db.delete_container(created_collection)
 
     def test_partitioned_collection_conflict_crud_and_query(self):
         created_db = self.databaseForTest
@@ -707,7 +701,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         created_db = self.databaseForTest
         # create collection
-        created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read documents
         documents = list(created_collection.list_items())
         # create a document
@@ -879,7 +873,7 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         # create collection
-        created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read documents and check count
         documents = list(created_collection.list_items())
@@ -1243,7 +1237,6 @@ class CRUDTests(unittest.TestCase):
         permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count)
 
-    '''
     def test_authorization(self):
         def __SetupEntities(client):
             """
@@ -1259,43 +1252,36 @@ class CRUDTests(unittest.TestCase):
             # create database
             db = self.databaseForTest
             # create collection1
-            collection1 = client.CreateContainer(
-                db['_self'], {'id': 'test_authorization ' + str(uuid.uuid4())})
+            collection1 = db.create_container(
+                id='test_authorization' + str(uuid.uuid4()),
+                partition_key=PartitionKey(path='/id', kind='Hash')
+            )
             # create document1
-            document1 = client.CreateItem(collection1['_self'],
-                                          {'id': 'coll1doc1',
-                                           'spam': 'eggs',
-                                           'key': 'value'})
+            document1 = collection1.create_item(
+                            body={'id': 'coll1doc1',
+                                  'spam': 'eggs',
+                                  'key': 'value'},
+            )
             # create document 2
-            document2 = client.CreateItem(
-                collection1['_self'],
-                {'id': 'coll1doc2', 'spam': 'eggs2', 'key': 'value2'})
-            # create attachment
-            dynamic_attachment = {
-                'id': 'dynamic attachment',
-                'media': 'http://xstore.',
-                'MediaType': 'Book',
-                'Author': 'My Book Author',
-                'Title': 'My Book Title',
-                'contentType': 'application/text'
-            }
-            attachment = client.CreateAttachment(document1['_self'],
-                                                 dynamic_attachment)
+            document2 = collection1.create_item(
+                body={'id': 'coll1doc2', 'spam': 'eggs2', 'key': 'value2'}
+            )
+
             # create collection 2
-            collection2 = client.CreateContainer(
-                db['_self'],
-                {'id': 'test_authorization2 ' + str(uuid.uuid4())})
+            collection2 = db.create_container(
+                id='test_authorization2' + str(uuid.uuid4()),
+                partition_key=PartitionKey(path='/id', kind='Hash')
+            )
             # create user1
-            user1 = client.CreateUser(db['_self'], {'id': 'user1'})
+            user1 = db.create_user(body={'id': 'user1'})
             permission = {
                 'id': 'permission On Coll1',
                 'permissionMode': documents.PermissionMode.Read,
-                'resource': collection1['_self']
+                'resource': collection1.properties['_self']
             }
             # create permission for collection1
-            permission_on_coll1 = client.CreatePermission(user1['_self'],
-                                                          permission)
-            self.assertTrue(permission_on_coll1['_token'] != None,
+            permission_on_coll1 = user1.create_permission(body=permission)
+            self.assertIsNotNone(permission_on_coll1.properties['_token'],
                             'permission token is invalid')
             permission = {
                 'id': 'permission On Doc1',
@@ -1303,20 +1289,20 @@ class CRUDTests(unittest.TestCase):
                 'resource': document2['_self']
             }
             # create permission for document 2
-            permission_on_doc2 = client.CreatePermission(user1['_self'],
-                                                         permission)
-            self.assertTrue(permission_on_doc2['_token'] != None,
+            permission_on_doc2 = user1.create_permission(body=permission)
+            self.assertIsNotNone(permission_on_doc2.properties['_token'],
                             'permission token is invalid')
             # create user 2
-            user2 = client.CreateUser(db['_self'], {'id': 'user2'})
+            user2 = db.create_user(body={'id': 'user2'})
             permission = {
                 'id': 'permission On coll2',
                 'permissionMode': documents.PermissionMode.All,
-                'resource': collection2['_self']
+                'resource': collection2.properties['_self']
             }
             # create permission on collection 2
-            permission_on_coll2 = client.CreatePermission(
-                user2['_self'], permission)
+            permission_on_coll2 = user2.create_permission(body=permission)
+            self.assertIsNotNone(permission_on_coll2.properties['_token'],
+                            'permission token is invalid')
             entities = {
                 'db': db,
                 'coll1': collection1,
@@ -1325,7 +1311,6 @@ class CRUDTests(unittest.TestCase):
                 'doc2': document2,
                 'user1': user1,
                 'user2': user2,
-                'attachment': attachment,
                 'permissionOnColl1': permission_on_coll1,
                 'permissionOnDoc2': permission_on_doc2,
                 'permissionOnColl2': permission_on_coll2
@@ -1333,69 +1318,75 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host, {}, CRUDTests.connectionPolicy)
+        client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
-                                           client.ReadDatabases())
+                                           client.list_databases())
         # Client with master key.
-        client = cosmos_client_connection.CosmosClientConnection(CRUDTests.host,
-                                                                 {'masterKey': CRUDTests.masterKey},
-                                                                 CRUDTests.connectionPolicy)
+        client = cosmos_client.CosmosClient(CRUDTests.host,
+                                            {'masterKey': CRUDTests.masterKey},
+                                            "Session",
+                                            CRUDTests.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {}
-        resource_tokens[entities['coll1']['_rid']] = (
-            entities['permissionOnColl1']['_token'])
-        resource_tokens[entities['doc1']['_rid']] = (
-            entities['permissionOnColl1']['_token'])
-        col1_client = cosmos_client_connection.CosmosClientConnection(
-            CRUDTests.host, {'resourceTokens': resource_tokens}, CRUDTests.connectionPolicy)
+        resource_tokens[entities['coll1'].id] = (
+            entities['permissionOnColl1'].properties['_token'])
+        resource_tokens[entities['doc1']['id']]= (
+            entities['permissionOnColl1'].properties['_token'])
+        col1_client = cosmos_client.CosmosClient(
+            CRUDTests.host, {'resourceTokens': resource_tokens},"Session", CRUDTests.connectionPolicy)
+        db = entities['db']
+
+        old_client_connection = db.client_connection
+        db.client_connection = col1_client.client_connection
         # 1. Success-- Use Col1 Permission to Read
-        success_coll1 = col1_client.ReadContainer(
-            entities['coll1']['_self'])
+        success_coll1 = db.get_container(container=entities['coll1'])
         # 2. Failure-- Use Col1 Permission to delete
         self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
-                                           col1_client.DeleteContainer,
-                                           success_coll1['_self'])
+                                           db.delete_container,
+                                           success_coll1)
         # 3. Success-- Use Col1 Permission to Read All Docs
-        success_documents = list(col1_client.ReadItems(
-            success_coll1['_self']))
+        success_documents = list(success_coll1.list_items())
         self.assertTrue(success_documents != None,
                         'error reading documents')
         self.assertEqual(len(success_documents),
                          2,
                          'Expected 2 Documents to be succesfully read')
         # 4. Success-- Use Col1 Permission to Read Col1Doc1
-        success_doc = col1_client.ReadItem(entities['doc1']['_self'])
+        success_doc = success_coll1.get_item(
+            id=entities['doc1']['id'],
+            partition_key=entities['doc1']['id']
+        )
         self.assertTrue(success_doc != None, 'error reading document')
         self.assertEqual(
             success_doc['id'],
             entities['doc1']['id'],
             'Expected to read children using parent permissions')
-        col2_client = cosmos_client_connection.CosmosClientConnection(
+        col2_client = cosmos_client.CosmosClient(
             CRUDTests.host,
-            {'permissionFeed': [entities['permissionOnColl2']]}, CRUDTests.connectionPolicy)
+            {'permissionFeed': [entities['permissionOnColl2'].properties]}, "Session", CRUDTests.connectionPolicy)
         doc = {
             'CustomProperty1': 'BBBBBB',
             'customProperty2': 1000,
             'id': entities['doc2']['id']
         }
-        success_doc = col2_client.CreateItem(
-            entities['coll2']['_self'], doc)
+        entities['coll2'].client_connection = col2_client.client_connection
+        success_doc = entities['coll2'].create_item(body=doc)
         self.assertTrue(success_doc != None, 'error creating document')
         self.assertEqual(success_doc['CustomProperty1'],
                          doc['CustomProperty1'],
                          'document should have been created successfully')
 
-        self.client.DeleteContainer(entities['coll1']['_self'])
-        self.client.DeleteContainer(entities['coll2']['_self'])
-    
-    '''
+        db.client_connection = old_client_connection
+        db.delete_container(entities['coll1'])
+        db.delete_container(entities['coll2'])
+
     def test_trigger_crud(self):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read triggers
         triggers = list(collection.scripts.list_triggers())
         # create a trigger
@@ -1455,91 +1446,11 @@ class CRUDTests(unittest.TestCase):
                                            collection.scripts.delete_trigger,
                                            replaced_trigger['id'])
 
-    '''
-    # TODO: check if test should be retained
-    def test_trigger_upsert(self):
-        # create database
-        db = self.databaseForTest
-
-        # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-
-        # read triggers and check count
-        triggers = list(collection.scripts.list_triggers())
-        before_create_triggers_count = len(triggers)
-
-        # create a trigger
-        trigger_definition = {
-            'id': 'sample trigger',
-            'serverScript': 'function() {var x = 10;}',
-            'triggerType': documents.TriggerType.Pre,
-            'triggerOperation': documents.TriggerOperation.All
-        }
-
-        # create trigger using Upsert API
-        created_trigger = collection.scripts.upsert_trigger(body=trigger_definition)
-
-        # verify id property
-        self.assertEqual(created_trigger['id'],
-                         trigger_definition['id'])
-
-        # read triggers after creation and verify updated count
-        triggers = list(collection.scripts.list_triggers())
-        self.assertEqual(len(triggers),
-                         before_create_triggers_count + 1,
-                         'create should increase the number of triggers')
-
-        # update trigger
-        created_trigger['body'] = 'function() {var x = 20;}'
-
-        # should replace trigger since it already exists
-        upserted_trigger = collection.scripts.upsert_trigger(body=created_trigger)
-
-        # verify id property
-        self.assertEqual(created_trigger['id'],
-                         upserted_trigger['id'])
-
-        # verify changed properties
-        self.assertEqual(upserted_trigger['body'],
-                         created_trigger['body'])
-
-        # read triggers after upsert and verify count remains same
-        triggers = list(collection.scripts.list_triggers())
-        self.assertEqual(len(triggers),
-                         before_create_triggers_count + 1,
-                         'upsert should keep the number of triggers same')
-
-        # update trigger
-        created_trigger['id'] = 'new trigger'
-
-        # should create new trigger since id is changed
-        new_trigger = collection.scripts.upsert_trigger(body=created_trigger)
-
-        # verify id property
-        self.assertEqual(created_trigger['id'],
-                         new_trigger['id'])
-
-        # read triggers after upsert and verify count increases
-        triggers = list(collection.scripts.list_triggers())
-        self.assertEqual(len(triggers),
-                         before_create_triggers_count + 2,
-                         'upsert should increase the number of triggers')
-
-        # delete triggers
-        collection.scripts.delete_trigger(upserted_trigger['id'])
-        collection.scripts.delete_trigger(new_trigger['id'])
-
-        # read triggers after delete and verify count remains the same
-        triggers = list(collection.scripts.list_triggers())
-        self.assertEqual(len(triggers),
-                         before_create_triggers_count,
-                         'delete should bring the number of triggers to original')
-    '''
     def test_udf_crud(self):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read udfs
         udfs = list(collection.scripts.list_user_defined_functions())
         # create a udf
@@ -1587,92 +1498,11 @@ class CRUDTests(unittest.TestCase):
                                            collection.scripts.get_user_defined_function,
                                            replaced_udf['id'])
 
-    ''''
-    TODO: check if test should be removed
-    def test_udf_upsert(self):
-        # create database
-        db = self.databaseForTest
-
-        # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-
-        # read udfs and check count
-        udfs = list(collection.scripts.list_user_defined_functions())
-        before_create_udfs_count = len(udfs)
-
-        # create a udf definition
-        udf_definition = {
-            'id': 'sample udf',
-            'body': 'function() {var x = 10;}'
-        }
-
-        # create udf using Upsert API
-        created_udf = collection.scripts.upsert_user_defined_function(udf_definition)
-
-        # verify id property
-        self.assertEqual(created_udf['id'],
-                         udf_definition['id'])
-
-        # read udfs after creation and verify updated count
-        udfs = list(self.client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(udfs),
-                         before_create_udfs_count + 1,
-                         'create should increase the number of udfs')
-
-        # update udf
-        created_udf['body'] = 'function() {var x = 20;}'
-
-        # should replace udf since it already exists
-        upserted_udf = self.client.UpsertUserDefinedFunction(
-            self.GetDocumentCollectionLink(db, collection, is_name_based), created_udf)
-
-        # verify id property
-        self.assertEqual(created_udf['id'],
-                         upserted_udf['id'])
-
-        # verify changed property
-        self.assertEqual(upserted_udf['body'],
-                         created_udf['body'])
-
-        # read udf and verify count doesn't increases again
-        udfs = list(self.client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(udfs),
-                         before_create_udfs_count + 1,
-                         'upsert should keep the number of udfs same')
-
-        created_udf['id'] = 'new udf'
-
-        # should create new udf since the id is different
-        new_udf = self.client.UpsertUserDefinedFunction(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                                        created_udf)
-
-        # verify id property
-        self.assertEqual(created_udf['id'],
-                         new_udf['id'])
-
-        # read udf and verify count increases
-        udfs = list(self.client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(udfs),
-                         before_create_udfs_count + 2,
-                         'upsert should keep the number of udfs same')
-
-        # delete udfs
-        self.client.DeleteUserDefinedFunction(
-            self.GetUserDefinedFunctionLink(db, collection, upserted_udf, is_name_based))
-        self.client.DeleteUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, new_udf, is_name_based))
-
-        # read udf and verify count remains the same
-        udfs = list(self.client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(udfs),
-                         before_create_udfs_count,
-                         'delete should keep the number of udfs same')
-    '''
-
     def test_sproc_crud(self):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read sprocs
         sprocs = list(collection.scripts.list_stored_procedures())
         # create a sproc
@@ -1726,92 +1556,11 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            collection.scripts.get_stored_procedure,
                                            replaced_sproc['id'])
-    '''
-    #TODO: check if test sould be removed
-    def _test_sproc_upsert(self, is_name_based):
-        # create database
-        db = self.databaseForTest
 
-        # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
-
-        # read sprocs and check count
-        sprocs = list(self.client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        before_create_sprocs_count = len(sprocs)
-
-        # create a sproc definition
-        sproc_definition = {
-            'id': 'sample sproc',
-            'serverScript': 'function() {var x = 10;}'
-        }
-
-        # create sproc using Upsert API
-        created_sproc = self.client.UpsertStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                                          sproc_definition)
-
-        # verify id property
-        self.assertEqual(created_sproc['id'],
-                         sproc_definition['id'])
-
-        # read sprocs after creation and verify updated count
-        sprocs = list(self.client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(sprocs),
-                         before_create_sprocs_count + 1,
-                         'create should increase the number of sprocs')
-
-        # update sproc
-        created_sproc['body'] = 'function() {var x = 20;}'
-
-        # should replace sproc since it already exists
-        upserted_sproc = self.client.UpsertStoredProcedure(
-            self.GetDocumentCollectionLink(db, collection, is_name_based),
-            created_sproc)
-
-        # verify id property
-        self.assertEqual(created_sproc['id'],
-                         upserted_sproc['id'])
-
-        # verify changed property
-        self.assertEqual(upserted_sproc['body'],
-                         created_sproc['body'])
-
-        # read sprocs after upsert and verify count remains the same
-        sprocs = list(self.client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(sprocs),
-                         before_create_sprocs_count + 1,
-                         'upsert should keep the number of sprocs same')
-
-        # update sproc
-        created_sproc['id'] = 'new sproc'
-
-        # should create new sproc since id is different
-        new_sproc = self.client.UpsertStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
-                                                      created_sproc)
-
-        # verify id property
-        self.assertEqual(created_sproc['id'],
-                         new_sproc['id'])
-
-        # read sprocs after upsert and verify count increases
-        sprocs = list(self.client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(sprocs),
-                         before_create_sprocs_count + 2,
-                         'upsert should keep the number of sprocs same')
-
-        # delete sprocs
-        self.client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, upserted_sproc, is_name_based))
-        self.client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, new_sproc, is_name_based))
-
-        # read sprocs after delete and verify count remains same
-        sprocs = list(self.client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
-        self.assertEqual(len(sprocs),
-                         before_create_sprocs_count,
-                         'delete should keep the number of sprocs same')
-    '''
-    def test_scipt_logging_execute_stored_procedure(self):
+    def test_script_logging_execute_stored_procedure(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -1831,14 +1580,18 @@ class CRUDTests(unittest.TestCase):
 
         created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
 
-        result = created_collection.scripts.execute_stored_procedure(created_sproc['id'])
+        result = created_collection.scripts.execute_stored_procedure(
+            id=created_sproc['id'],
+            partition_key=1
+        )
 
         self.assertEqual(result, 'Success!')
         self.assertFalse(HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
 
         result = created_collection.scripts.execute_stored_procedure(
             id=created_sproc['id'],
-            enable_script_logging=True
+            enable_script_logging=True,
+            partition_key=1
         )
 
         self.assertEqual(result, 'Success!')
@@ -1847,7 +1600,8 @@ class CRUDTests(unittest.TestCase):
 
         result = created_collection.scripts.execute_stored_procedure(
             id=created_sproc['id'],
-            enable_script_logging=False
+            enable_script_logging=False,
+            partition_key=1
         )
 
         self.assertEqual(result, 'Success!')
@@ -2038,7 +1792,7 @@ class CRUDTests(unittest.TestCase):
                 dict
 
             """
-            collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+            collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
             doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
             doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
             doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
@@ -2097,7 +1851,6 @@ class CRUDTests(unittest.TestCase):
                          len(results.fetch_next_block()),
                          'Then its empty.')
 
-    '''
     def test_trigger_functionality(self):
         triggers_in_collection1 = [
             {
@@ -2186,9 +1939,9 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
         # create collections
         pkd = PartitionKey(path='/id', kind='Hash')
-        collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/id', kind='Hash'))
-        collection2 = db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/id', kind='Hash'))
-        collection3 = db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/id', kind='Hash'))
+        collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
+        collection2 = db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
+        collection3 = db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
         # create triggers
         __CreateTriggers(collection1, triggers_in_collection1)
         __CreateTriggers(collection2, triggers_in_collection2)
@@ -2206,14 +1959,14 @@ class CRUDTests(unittest.TestCase):
                          'id should be capitalized')
 
         document_1_2 = collection1.create_item(
-            body={'id': 'testing post trigger'},
+            body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
         )
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
 
         document_1_3 = collection1.create_item(
-            body={'id': 'responseheaders'},
+            body={'id': 'responseheaders', 'key': 'value'},
             pre_trigger_include='t1'
         )
         self.assertEqual(document_1_3['id'], "RESPONSEHEADERSt1")
@@ -2222,7 +1975,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(triggers_2), 2)
         document_2_1 = collection2.create_item(
             body={'id': 'doc2',
-                  'key2': 'value2'},
+                  'key': 'value2'},
             pre_trigger_include='t2'
         )
         self.assertEqual(document_2_1['id'],
@@ -2230,7 +1983,8 @@ class CRUDTests(unittest.TestCase):
                          'id shouldn\'t change')
         document_2_2 = collection2.create_item(
             body={'id': 'Doc3',
-                  'prop': 'empty'},
+                  'prop': 'empty',
+                  'key': 'value2'},
             pre_trigger_include='t3')
         self.assertEqual(document_2_2['id'], 'doc3t3')
 
@@ -2238,7 +1992,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(triggers_3), 1)
         with self.assertRaises(Exception):
             collection3.create_item(
-                body={'id': 'Docoptype'},
+                body={'id': 'Docoptype', 'key': 'value2'},
                 post_trigger_include='triggerOpType'
             )
 
@@ -2246,12 +2000,11 @@ class CRUDTests(unittest.TestCase):
         db.delete_container(collection2)
         db.delete_container(collection3)
 
-    '''
     def test_stored_procedure_functionality(self):
         # create database
         db = self.databaseForTest
         # create collection
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
@@ -2267,7 +2020,8 @@ class CRUDTests(unittest.TestCase):
 
         retrieved_sproc = collection.scripts.create_stored_procedure(body=sproc1)
         result = collection.scripts.execute_stored_procedure(
-            id=retrieved_sproc['id']
+            id=retrieved_sproc['id'],
+            partition_key=1
         )
         self.assertEqual(result, 999)
         sproc2 = {
@@ -2281,7 +2035,8 @@ class CRUDTests(unittest.TestCase):
         }
         retrieved_sproc2 = collection.scripts.create_stored_procedure(body=sproc2)
         result = collection.scripts.execute_stored_procedure(
-            id=retrieved_sproc2['id']
+            id=retrieved_sproc2['id'],
+            partition_key=1
         )
         self.assertEqual(int(result), 123456789)
         sproc3 = {
@@ -2295,7 +2050,8 @@ class CRUDTests(unittest.TestCase):
         retrieved_sproc3 = collection.scripts.create_stored_procedure(body=sproc3)
         result = collection.scripts.execute_stored_procedure(
             id=retrieved_sproc3['id'],
-            params={'temp': 'so'}
+            params={'temp': 'so'},
+            partition_key=1
         )
         self.assertEqual(result, 'aso')
 
@@ -2334,7 +2090,7 @@ class CRUDTests(unittest.TestCase):
         # Create database.
         db = self.databaseForTest
         # Create collection.
-        collection = self.configs.create_single_partition_collection_if_not_exist(self.client)
+        collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # Read Offer
         expected_offer = collection.read_offer()
         self.__ValidateOfferResponseBody(expected_offer, collection.properties.get('_self'), None)

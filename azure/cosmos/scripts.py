@@ -99,25 +99,10 @@ class Scripts:
         :param body: A dict-like object representing the sproc to create.
         :raises `HTTPFailure`:
 
-        To update or replace an existing sproc, use the :func:`Container.scripts.upsert_stored_procedure` method.
+        To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
         """
         return self.client_connection.CreateStoredProcedure(
-            collection_link=self.container_link,
-            sproc=body
-        )
-
-    def upsert_stored_procedure(self, body):
-        # type: (Dict[str, Any]) -> Dict[str, Any]
-        """ Insert or update the specified stored procedure.
-
-        :param body: A dict-like object representing the sproc to update or insert.
-        :raises `HTTPFailure`:
-
-        If the sproc already exists in the container, it is replaced. If it does not, it is inserted.
-        """
-
-        return self.client_connection.UpsertStoredProcedure(
             collection_link=self.container_link,
             sproc=body
         )
@@ -230,26 +215,10 @@ class Scripts:
         :param body: A dict-like object representing the trigger to create.
         :raises `HTTPFailure`:
 
-        To update or replace an existing trigger, use the :func:`Container.scripts.upsert_trigger` method.
+        To replace an existing trigger, use the :func:`Container.scripts.replace_trigger` method.
 
         """
         return self.client_connection.CreateTrigger(
-            collection_link=self.container_link,
-            trigger=body
-        )
-
-    def upsert_trigger(self, body):
-        # type: (Dict[str, Any]) -> Dict[str, Any]
-        """ Insert or update the specified trigger.
-
-        :param body: A dict-like object representing the trigger to update or insert.
-        :raises `HTTPFailure`:
-
-        If the trigger already exists in the container, it is replaced. If it does not, it is inserted.
-
-        """
-
-        return self.client_connection.UpsertTrigger(
             collection_link=self.container_link,
             trigger=body
         )
@@ -339,26 +308,10 @@ class Scripts:
         :param body: A dict-like object representing the udf to create.
         :raises `HTTPFailure`:
 
-        To update or replace an existing udf, use the :func:`Container.scripts.upsert_user_defined_function` method.
+        To replace an existing udf, use the :func:`Container.scripts.replace_user_defined_function` method.
 
         """
         return self.client_connection.CreateUserDefinedFunction(
-            collection_link=self.container_link,
-            udf=body
-        )
-
-    def upsert_user_defined_function(self, body):
-        # type: (Dict[str, Any]) -> Dict[str, Any]
-        """ Insert or update the specified user defined function.
-
-        :param body: A dict-like object representing the udf to update or insert.
-        :raises `HTTPFailure`:
-
-        If the udf already exists in the container, it is replaced. If it does not, it is inserted.
-
-        """
-
-        return self.client_connection.UpsertUserDefinedFunction(
             collection_link=self.container_link,
             udf=body
         )

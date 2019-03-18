@@ -94,17 +94,18 @@ class _test_config(object):
         # type: (CosmosClient) -> Container
         if cls.TEST_COLLECTION_SINGLE_PARTITION is None:
             cls.TEST_COLLECTION_SINGLE_PARTITION = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_1_PARTITION, None)
-        cls.remove_all_documents(cls.TEST_COLLECTION_SINGLE_PARTITION,None)
+                    cls.THROUGHPUT_FOR_1_PARTITION, False)
+        cls.remove_all_documents(cls.TEST_COLLECTION_SINGLE_PARTITION, False)
         return cls.TEST_COLLECTION_SINGLE_PARTITION
+
 
     @classmethod
     def create_multi_partition_collection_if_not_exist(cls, client):
         # type: (CosmosClient) -> Container
         if cls.TEST_COLLECTION_MULTI_PARTITION is None:
             cls.TEST_COLLECTION_MULTI_PARTITION = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_5_PARTITIONS, True)
-        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION, True)
+                    cls.THROUGHPUT_FOR_5_PARTITIONS, False)
+        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION, False)
         return cls.TEST_COLLECTION_MULTI_PARTITION
 
     @classmethod
@@ -112,25 +113,25 @@ class _test_config(object):
         # type: (CosmosClient) -> Container
         if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK is None:
             cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_5_PARTITIONS, False)
-        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK, False)
+                    cls.THROUGHPUT_FOR_5_PARTITIONS, True)
+        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK, True)
         return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
 
     @classmethod
-    def create_collection_with_required_throughput(cls, client, throughput, use_id_as_partition_key):
+    def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):
         # type: (CosmosClient, int, boolean) -> Container
         database = cls.create_database_if_not_exist(client)
 
-        partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
         if throughput == cls.THROUGHPUT_FOR_1_PARTITION:
             collection_id = cls.TEST_COLLECTION_SINGLE_PARTITION_ID
+            partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
         else:
-            if use_id_as_partition_key:
-                collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_ID
-                partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
-            else:
+            if use_custom_partition_key:
                 collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID
                 partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY
+            else:
+                collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_ID
+                partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
 
         document_collection = database.create_container(
             id=collection_id,
@@ -139,7 +140,7 @@ class _test_config(object):
         return document_collection
 
     @classmethod
-    def remove_all_documents(cls, document_collection, use_id_as_partition_key):
+    def remove_all_documents(cls, document_collection, use_custom_partition_key):
         # type: (Container, boolean) -> None
         while True:
             query_iterable = document_collection.query_items(query="Select * from c", enable_cross_partition_query=True)
@@ -147,14 +148,13 @@ class _test_config(object):
             try:
                 for document in read_documents:
                     partition_key = 'dummy_pk'
-                    if use_id_as_partition_key is not None:
-                        if use_id_as_partition_key:
-                            partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY]
+                    if not use_custom_partition_key:
+                        partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY]
+                    else:
+                        if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY in document:
+                            partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY]
                         else:
-                            if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY in document:
-                                partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY]
-                            else:
-                                document_collection.client_connection.DeleteItem(document['_self'], {'partitionKey': None})
+                            document_collection.client_connection.DeleteItem(document['_self'], {'partitionKey': None})
                     document_collection.delete_item(item=document, partition_key=partition_key)
                 if cls.IS_MULTIMASTER_ENABLED:
                     # sleep to ensure deletes are propagated for multimaster enabled accounts
