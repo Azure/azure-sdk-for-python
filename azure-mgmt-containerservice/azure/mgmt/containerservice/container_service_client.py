@@ -72,14 +72,12 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
     :type profile: dict[str, str]
     """
 
-    DEFAULT_API_VERSION = '2018-09-01'
+    DEFAULT_API_VERSION = '2019-02-01'
     _PROFILE_TAG = "azure.mgmt.containerservice.ContainerServiceClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             'open_shift_managed_clusters': '2018-09-30-preview',
             'container_services': '2017-07-01',
-            'managed_clusters': '2018-03-31',
-            'operations': '2018-03-31',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
