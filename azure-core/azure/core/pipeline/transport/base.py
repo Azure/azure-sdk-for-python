@@ -133,49 +133,6 @@ class HttpRequest(object):
     def body(self, value):
         self.data = value
 
-    def format_parameters(self, params):
-        # type: (Dict[str, str]) -> None
-        """Format parameters into a valid query string.
-        It's assumed all parameters have already been quoted as
-        valid URL strings.
-
-        :param dict params: A dictionary of parameters.
-        """
-        query = urlparse(self.url).query
-        if query:
-            self.url = self.url.partition('?')[0]
-            existing_params = {
-                p[0]: p[-1]
-                for p in [p.partition('=') for p in query.split('&')]
-            }
-            params.update(existing_params)
-        query_params = ["{}={}".format(k, v) for k, v in params.items()]
-        query = '?' + '&'.join(query_params)
-        self.url = self.url + query
-
-    def add_content(self, data):
-        # type: (Optional[Union[Dict[str, Any], ET.Element]]) -> None
-        """Add a body to the request.
-
-        :param data: Request body data, can be a json serializable
-         object (e.g. dictionary) or a generator (e.g. file data).
-        """
-        if data is None:
-            return
-
-        if isinstance(data, ET.Element):
-            bytes_data = ET.tostring(data, encoding="utf8")
-            self.headers['Content-Length'] = str(len(bytes_data))
-            self.data = bytes_data
-            return
-
-        # By default, assume JSON
-        try:
-            self.data = json.dumps(data)
-            self.headers['Content-Length'] = str(len(self.data))
-        except TypeError:
-            self.data = data
-
     @staticmethod
     def _format_data(data):
         # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
@@ -196,9 +153,80 @@ class HttpRequest(object):
             return (data_name, data, "application/octet-stream")
         return (None, cast(str, data))
 
+    def format_parameters(self, params):
+        # type: (Dict[str, str]) -> None
+        """Format parameters into a valid query string.
+        It's assumed all parameters have already been quoted as
+        valid URL strings.
+
+        :param dict params: A dictionary of parameters.
+        """
+        query = urlparse(self.url).query
+        if query:
+            self.url = self.url.partition('?')[0]
+            existing_params = {
+                p[0]: p[-1]
+                for p in [p.partition('=') for p in query.split('&')]
+            }
+            params.update(existing_params)
+        query_params = ["{}={}".format(k, v) for k, v in params.items()]
+        query = '?' + '&'.join(query_params)
+        self.url = self.url + query
+
+    def set_xml_body(self, data):
+        if data is None:
+            self.data = None
+        else:
+            bytes_data = ET.tostring(data, encoding="utf8")
+            self.headers['Content-Length'] = str(len(bytes_data))
+            self.data = bytes_data
+        self.files = None
+
+    def set_json_body(self, data):
+        if data is None:
+            self.data = None
+        else:
+            self.data = json.dumps(data)
+            self.headers['Content-Length'] = str(len(self.data))
+        self.files = None
+
+    def set_multipart_body(self, data=None):
+        if data is None:
+            data = {}
+        content_type = self.headers.pop('Content-Type', None) if self.headers else None
+
+        if content_type and content_type.lower() == 'application/x-www-form-urlencoded':
+            self.data = {f: d for f, d in data.items() if d is not None}
+            self.files = None
+        else: # Assume "multipart/form-data"
+            self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
+            self.data = None
+
+    def set_bytes_body(self, data):
+        if data:
+            self.headers['Content-Length'] = str(len(data))
+        self.data = data
+        self.files = None
+
+    def add_content(self, data):
+        # type: (Optional[Union[Dict[str, Any], ET.Element]]) -> None
+        """Add a body to the request.
+        DEPRECATED
+
+        :param data: Request body data, can be a json serializable
+         object (e.g. dictionary) or a generator (e.g. file data).
+        """
+        if data is None:
+            return
+        if isinstance(data, ET.Element):
+            self.set_xml_body(data)
+        # By default, assume JSON
+        self.set_json_body(data)
+
     def add_formdata(self, content=None):
         # type: (Optional[Dict[str, str]]) -> None
         """Add data as a multipart form-data request to the request.
+        DEPRECATED
 
         We only deal with file-like objects or strings at this point.
         The requests is not yet streamed.
@@ -206,15 +234,7 @@ class HttpRequest(object):
         :param dict headers: Any headers to add to the request.
         :param dict content: Dictionary of the fields of the formdata.
         """
-        if content is None:
-            content = {}
-        content_type = self.headers.pop('Content-Type', None) if self.headers else None
-
-        if content_type and content_type.lower() == 'application/x-www-form-urlencoded':
-            # Do NOT use "add_content" that assumes input is JSON
-            self.data = {f: d for f, d in content.items() if d is not None}
-        else: # Assume "multipart/form-data"
-            self.files = {f: self._format_data(d) for f, d in content.items() if d is not None}
+        self.set_multipart_body(content)
 
 
 class _HttpResponseBase(object):

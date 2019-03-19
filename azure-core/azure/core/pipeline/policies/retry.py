@@ -34,6 +34,7 @@ from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Op
 import warnings
 
 from azure.core.exceptions import (
+    MaxRetryError,
     TokenExpiredError,
     TokenInvalidError,
     AuthenticationError,
@@ -49,14 +50,14 @@ _LOGGER = logging.getLogger(__name__)
 
 class RetryPolicy(HTTPPolicy):
 
-    RETRY_AFTER_STATUS_CODES = frozenset([413, 429, 503])
-
     #: Maximum backoff time.
     BACKOFF_MAX = 120
 
     def __init__(self, **kwargs):
+        safe_codes = [i for i in range(500) if i != 408] + [501, 505]
+        retry_codes = [i for i in range(999) if i not in safe_codes]
         status_codes = kwargs.pop('retry_on_status_codes', [])
-        self.retry_on_status_codes = set(status_codes + self.RETRY_AFTER_STATUS_CODES)
+        self.retry_on_status_codes = set(status_codes + retry_codes)
 
         self.total_retries = kwargs.pop('retry_count_total', 10)
         self.connect_retries = kwargs.pop('retry_count_connect', 3)
@@ -186,7 +187,7 @@ class RetryPolicy(HTTPPolicy):
 
     def is_exhausted(self):
         """ Are we out of retries? """
-        retry_counts = (self.total_retries, self.connect, self.read, self.status)
+        retry_counts = (self.total_retries, self.connect_retries, self.read_retries, self.status_retries)
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
             return False
@@ -213,32 +214,33 @@ class RetryPolicy(HTTPPolicy):
 
         if error and self._is_connection_error(error):
             # Connect retry?
-            if self.connect is False:
+            if self.connect_retries is False:
                 raise_with_traceback(error)
-            elif self.connect is not None:
-                self.connect -= 1
+            elif self.connect_retries is not None:
+                self.connect_retries -= 1
             self.history.append(RequestHistory(response.http_request, error=error))
 
-        elif error and self._is_read_error(error):
-            # Read retry?
-            if self.read is False or not self._is_method_retryable(method):
-                raise_with_traceback(error)
-            elif self.read is not None:
-                self.read -= 1
-            self.history.append(RequestHistory(response.http_request, error=error))
+        #elif error and self._is_read_error(error):
+        #    # Read retry?
+        #    if self.read is False or not self._is_method_retryable(method):
+        #        raise_with_traceback(error)
+        #    elif self.read is not None:
+        #        self.read -= 1
+        #    self.history.append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the whitelist
             if response:
-                if self.status_count is not None:
-                    self.status_count -= 1
-            self.history.append(RequestHistory(response.http_request, http_response=response.http_response))
+                if self.status_retries is not None:
+                    self.status_retries -= 1
+                self.history.append(RequestHistory(response.http_request, http_response=response.http_response))
 
         return not self.is_exhausted()
 
     def send(self, request, **kwargs):
         retryable = True
+        response = None
         while retryable:
             try:
                 response = self.next.send(request, **kwargs)
@@ -251,11 +253,11 @@ class RetryPolicy(HTTPPolicy):
             except AuthenticationError:
                 raise
             except ClientRequestError as err:
-                if retryable:
-                    retryable = self.increment(error=err)
-                    if retryable:
-                        self.sleep()
-                    continue
+                #if retryable:
+                #    retryable = self.increment(error=err)
+                #    if retryable:
+                #        self.sleep()
+                #    continue
                 raise
 
-        raise MaxRetryError(retry_history=self.history)
+        raise MaxRetryError(response, self.history)
