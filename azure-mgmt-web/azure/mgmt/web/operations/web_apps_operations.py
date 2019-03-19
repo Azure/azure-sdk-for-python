@@ -303,7 +303,7 @@ class WebAppsOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Unique name of the app to create or update. To create or
+        :param name: Unique name of the APP to create or update. To create or
          update a deployment slot, use the {slot} parameter.
         :type name: str
         :param site_envelope: A JSON representation of the app properties. See
