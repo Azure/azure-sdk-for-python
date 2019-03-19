@@ -25,6 +25,8 @@ class SkuName(str, Enum):
     standard = "standard"
     standard2 = "standard2"
     standard3 = "standard3"
+    storage_optimized_l1 = "storage_optimized_l1"
+    storage_optimized_l2 = "storage_optimized_l2"
 
 
 class HostingMode(str, Enum):
