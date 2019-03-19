@@ -27,6 +27,7 @@ from __future__ import absolute_import
 import contextlib
 import requests
 import threading
+import urllib3
 from urllib3.util.retry import Retry
 
 from .base import (
@@ -174,14 +175,16 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=self.config.connection.verify,
-                timeout=self.config.connection.timeout,
-                cert=self.config.connection.cert,
+                verify=kwargs.get('connection_verify', self.config.connection.verify),
+                timeout=kwargs.get('connection_timeout', self.config.connection.timeout),
+                cert=kwargs.get('connection_cert', self.config.connection.cert),
                 allow_redirects=False,
                 **kwargs)
 
+        except requests.ConnectionError as err:
+            raise ConnectionError(err)
         except requests.RequestException as err:
             msg = "Error occurred in request."
-            raise_with_traceback(ClientRequestError, msg, err)
+            raise ClientRequestError(msg, inner_exception=err)
 
         return RequestsTransportResponse(request, response)

@@ -34,7 +34,6 @@ from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Op
 import warnings
 
 from azure.core.exceptions import (
-    MaxRetryError,
     TokenExpiredError,
     TokenInvalidError,
     AuthenticationError,
@@ -54,11 +53,6 @@ class RetryPolicy(HTTPPolicy):
     BACKOFF_MAX = 120
 
     def __init__(self, **kwargs):
-        safe_codes = [i for i in range(500) if i != 408] + [501, 505]
-        retry_codes = [i for i in range(999) if i not in safe_codes]
-        status_codes = kwargs.pop('retry_on_status_codes', [])
-        self.retry_on_status_codes = set(status_codes + retry_codes)
-
         self.total_retries = kwargs.pop('retry_count_total', 10)
         self.connect_retries = kwargs.pop('retry_count_connect', 3)
         self.read_retries = kwargs.pop('retry_count_read', 3)
@@ -66,29 +60,40 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
 
-        self.history = []
-
-        self.status_forcelist = set()
-        self.method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
-        self.raise_on_status = True
-        self.respect_retry_after_header = True
+        safe_codes = [i for i in range(500) if i != 408] + [501, 505]
+        retry_codes = [i for i in range(999) if i not in safe_codes]
+        status_codes = kwargs.pop('retry_on_status_codes', [])
+        self._retry_on_status_codes = set(status_codes + retry_codes)
+        self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
+        self._respect_retry_after_header = True
 
     @classmethod
     def no_retries(cls):
-        return cls(retry_count_total=False)
+        return cls(retry_count_total=0)
 
-    def get_backoff_time(self):
+    def configure_retries(self, **kwargs):
+        return {
+            'total': kwargs.get("retry_count_total", self.total_retries),
+            'conenct': kwargs.get("retry_count_connect", self.connect_retries),
+            'read': kwargs.get("retry_count_read", self.read_retries),
+            'status': kwargs.get("retry_count_status", self.status_retries),
+            'backoff': kwargs.get("retry_backoff_factor", self.backoff_factor),
+            'max_backoff': kwargs.get("retry_backoff_max", self.BACKOFF_MAX),
+            'history': []
+        }
+
+    def get_backoff_time(self, settings):
         """ Formula for computing the current backoff
 
         :rtype: float
         """
         # We want to consider only the last consecutive errors sequence (Ignore redirects).
-        consecutive_errors_len = len(self.history)
+        consecutive_errors_len = len(settings['history'])
         if consecutive_errors_len <= 1:
             return 0
 
-        backoff_value = self.backoff_factor * (2 ** (consecutive_errors_len - 1))
-        return min(self.BACKOFF_MAX, backoff_value)
+        backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
+        return min(settings['max_backoff'], backoff_value)
 
     def parse_retry_after(self, retry_after):
         # Whitespace: https://tools.ietf.org/html/rfc7230#section-3.2.4
@@ -124,13 +129,13 @@ class RetryPolicy(HTTPPolicy):
 
         return False
 
-    def _sleep_backoff(self):
-        backoff = self.get_backoff_time()
+    def _sleep_backoff(self, settings):
+        backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
         time.sleep(backoff)
 
-    def sleep(self, response=None):
+    def sleep(self, settings, response=None):
         """ Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -144,7 +149,7 @@ class RetryPolicy(HTTPPolicy):
             if slept:
                 return
 
-        self._sleep_backoff()
+        self._sleep_backoff(settings)
 
     def _is_connection_error(self, err):
         """ Errors when we're fairly sure that the server did not receive the
@@ -156,18 +161,18 @@ class RetryPolicy(HTTPPolicy):
         """ Errors that occur after the request has been started, so we should
         assume that the server began processing it.
         """
-        return isinstance(err, ConnectionReadError)
+        return isinstance(err, ConnectionError)  # TODO
 
     def _is_method_retryable(self, method):
         """ Checks if a given HTTP method should be retried upon, depending if
         it is included on the method whitelist.
         """
-        if self.method_whitelist and method.upper() not in self.method_whitelist:
+        if method.upper() not in self._method_whitelist:
             return False
 
         return True
 
-    def is_retry(self, response):
+    def is_retry(self, response, settings):
         """ Is this method/status code retryable? (Based on whitelists and control
         variables such as the number of total retries to allow, whether to
         respect the Retry-After header, whether this header is present, and
@@ -179,22 +184,19 @@ class RetryPolicy(HTTPPolicy):
         if not self._is_method_retryable(response.http_request.method):
             return False
 
-        if self.status_forcelist and response.http_response.status_code in self.status_forcelist:
-            return True
+        return (settings['total'] and self._respect_retry_after_header and
+                has_retry_after and (response.http_response.status_code in self._retry_on_status_codes))
 
-        return (self.total_retries and self.respect_retry_after_header and
-                has_retry_after and (response.http_response.status_code in self.retry_on_status_codes))
-
-    def is_exhausted(self):
+    def is_exhausted(self, settings):
         """ Are we out of retries? """
-        retry_counts = (self.total_retries, self.connect_retries, self.read_retries, self.status_retries)
+        etry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
             return False
 
         return min(retry_counts) < 0
 
-    def increment(self, response=None, error=None):
+    def increment(self, settings, response=None, error=None):
         """ Return a new Retry object with incremented retry counters.
 
         :param response: A response object, or None, if the server did not
@@ -205,59 +207,45 @@ class RetryPolicy(HTTPPolicy):
 
         :return: A new ``Retry`` object.
         """
-        if self.total_retries is False and error:
-            # Disabled, indicate to re-raise the error.
-            raise_with_traceback(error)
-
-        if self.total_retries is not None:
-            self.total_retries -= 1
+        settings['total'] -= 1
 
         if error and self._is_connection_error(error):
             # Connect retry?
-            if self.connect_retries is False:
-                raise_with_traceback(error)
-            elif self.connect_retries is not None:
-                self.connect_retries -= 1
-            self.history.append(RequestHistory(response.http_request, error=error))
+            settings['connect'] -= 1
+            settings['history'].append(RequestHistory(response.http_request, error=error))
 
-        #elif error and self._is_read_error(error):
-        #    # Read retry?
-        #    if self.read is False or not self._is_method_retryable(method):
-        #        raise_with_traceback(error)
-        #    elif self.read is not None:
-        #        self.read -= 1
-        #    self.history.append(RequestHistory(response.http_request, error=error))
+        elif error and self._is_read_error(error):
+            # Read retry?
+            settings['read'] -= 1
+            settings['history'].append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the whitelist
             if response:
-                if self.status_retries is not None:
-                    self.status_retries -= 1
-                self.history.append(RequestHistory(response.http_request, http_response=response.http_response))
+                settings['status'] -= 1
+                settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 
-        return not self.is_exhausted()
+        return not self.is_exhausted(settings)
 
     def send(self, request, **kwargs):
         retryable = True
         response = None
+        retry_settings = self.configure_retries(**kwargs)
         while retryable:
             try:
                 response = self.next.send(request, **kwargs)
-                if self.is_retry(response):
-                    retryable = self.increment(response=response)
-                    if retryable or self.raise_on_status:
+                if self.is_retry(response, retry_settings):
+                    retryable = self.increment(retry_settings, response=response)
+                    if retryable:
+                        self.sleep(retry_settings)
                         continue
-                response.history = self.history
                 return response
-            except AuthenticationError:
-                raise
             except ClientRequestError as err:
-                #if retryable:
-                #    retryable = self.increment(error=err)
-                #    if retryable:
-                #        self.sleep()
-                #    continue
-                raise
-
-        raise MaxRetryError(response, self.history)
+                if retryable:
+                   retryable = self.increment(retry_settings, error=err)
+                   if retryable:
+                       self.sleep(retry_settings)
+                   continue
+                raise err
+        return response
