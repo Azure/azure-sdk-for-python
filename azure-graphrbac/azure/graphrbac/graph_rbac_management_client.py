@@ -18,7 +18,6 @@ from .operations.applications_operations import ApplicationsOperations
 from .operations.deleted_applications_operations import DeletedApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
-from .operations.service_principals_by_app_id_operations import ServicePrincipalsByAppIdOperations
 from .operations.users_operations import UsersOperations
 from .operations.objects_operations import ObjectsOperations
 from .operations.domains_operations import DomainsOperations
@@ -79,8 +78,6 @@ class GraphRbacManagementClient(SDKClient):
     :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
     :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
-    :ivar service_principals_by_app_id: ServicePrincipalsByAppId operations
-    :vartype service_principals_by_app_id: azure.graphrbac.operations.ServicePrincipalsByAppIdOperations
     :ivar users: Users operations
     :vartype users: azure.graphrbac.operations.UsersOperations
     :ivar objects: Objects operations
@@ -120,8 +117,6 @@ class GraphRbacManagementClient(SDKClient):
         self.groups = GroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_principals = ServicePrincipalsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.service_principals_by_app_id = ServicePrincipalsByAppIdOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
             self._client, self.config, self._serialize, self._deserialize)

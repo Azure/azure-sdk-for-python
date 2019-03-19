@@ -14,7 +14,6 @@ from .applications_operations import ApplicationsOperations
 from .deleted_applications_operations import DeletedApplicationsOperations
 from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
-from .service_principals_by_app_id_operations import ServicePrincipalsByAppIdOperations
 from .users_operations import UsersOperations
 from .objects_operations import ObjectsOperations
 from .domains_operations import DomainsOperations
@@ -26,7 +25,6 @@ __all__ = [
     'DeletedApplicationsOperations',
     'GroupsOperations',
     'ServicePrincipalsOperations',
-    'ServicePrincipalsByAppIdOperations',
     'UsersOperations',
     'ObjectsOperations',
     'DomainsOperations',
