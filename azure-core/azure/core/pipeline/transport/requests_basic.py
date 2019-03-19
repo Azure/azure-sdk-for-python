@@ -177,7 +177,6 @@ class RequestsTransport(HttpTransport):
                 verify=self.config.connection.verify,
                 timeout=self.config.connection.timeout,
                 cert=self.config.connection.cert,
-                proxies=self.config.proxy.proxies,
                 allow_redirects=False,
                 **kwargs)
 
