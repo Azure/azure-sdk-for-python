@@ -3,6 +3,16 @@
 Release History
 ===============
 
+1.7.1 (2019-03-18)
+++++++++++++++++++
+
+**Features (PostgreSQL only)**
+
+- Model Server has a new parameter replica_capacity
+- Model Server has a new parameter replication_role
+- Model Server has a new parameter master_server_id
+- Added operation group ReplicasOperations
+
 1.7.0 (2019-03-01)
 ++++++++++++++++++
 
