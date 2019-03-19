@@ -256,7 +256,6 @@ class CosmosClient:
             request_options["disableRUPerMinuteUsage"] = disable_ru_per_minute_usage
         if session_token:
             request_options["sessionToken"] = session_token
-            request_options["sessionToken"] = session_token
         if initial_headers:
             request_options["initialHeaders"] = initial_headers
         if access_condition:
