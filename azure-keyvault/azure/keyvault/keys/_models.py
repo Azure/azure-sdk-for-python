@@ -3,43 +3,6 @@ from msrest.serialization import Model
 from .._internal import _parse_vault_id
 
 
-class Attributes(Model):
-    """The object attributes managed by the KeyVault service.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: datetime
-    :param expires: Expiry date in UTC.
-    :type expires: datetime
-    :ivar created: Creation time in UTC.
-    :vartype created: datetime
-    :ivar updated: Last updated time in UTC.
-    :vartype updated: datetime
-    """
-
-    _validation = {"created": {"readonly": True}, "updated": {"readonly": True}}
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "not_before": {"key": "nbf", "type": "unix-time"},
-        "expires": {"key": "exp", "type": "unix-time"},
-        "created": {"key": "created", "type": "unix-time"},
-        "updated": {"key": "updated", "type": "unix-time"},
-    }
-
-    def __init__(self, **kwargs):
-        super(Attributes, self).__init__(**kwargs)
-        self.enabled = kwargs.get("enabled", None)
-        self.not_before = kwargs.get("not_before", None)
-        self.expires = kwargs.get("expires", None)
-        self.created = None
-        self.updated = None
-
-
 class JsonWebKey(Model):
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18.
 
@@ -210,7 +173,7 @@ class DeletedKey(Key):
         self.deleted_date = None
 
 
-class KeyAttributes(Attributes):
+class KeyAttributes(Model):
     """The attributes of a key managed by the key vault service.
 
     Variables are only populated by the server, and will be ignored when
@@ -253,6 +216,11 @@ class KeyAttributes(Attributes):
 
     def __init__(self, **kwargs):
         super(KeyAttributes, self).__init__(**kwargs)
+        self.enabled = kwargs.get("enabled", None)
+        self.not_before = kwargs.get("not_before", None)
+        self.expires = kwargs.get("expires", None)
+        self.created = None
+        self.updated = None
         self.recovery_level = None
 
 

@@ -3,7 +3,6 @@ from typing import Any, List, Mapping, Optional
 import uuid
 
 from ._models import (
-    Attributes,
     DeletedKey,
     DeletedKeyItem,
     DeletedKeyItemPaged,
@@ -79,7 +78,6 @@ class KeyClient:
         ]
         self._pipeline = Pipeline(transport, policies=policies)
         models = {
-            "Attributes": Attributes,
             "DeletedKey": DeletedKey,
             "DeletedKeyItem": DeletedKeyItem,
             "DeletedKeyItemPaged": DeletedKeyItemPaged,
