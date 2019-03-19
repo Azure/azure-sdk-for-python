@@ -1,8 +1,9 @@
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
+import azure.cosmos.partition_key as partition_key
 import datetime
-
+import uuid
 import samples.Shared.config as cfg
 
 # ----------------------------------------------------------------------------------------------------------
@@ -20,10 +21,7 @@ import samples.Shared.config as cfg
 HOST = cfg.settings['host']
 MASTER_KEY = cfg.settings['master_key']
 DATABASE_ID = cfg.settings['database_id']
-COLLECTION_ID = cfg.settings['collection_id']
-
-database_link = 'dbs/' + DATABASE_ID
-collection_link = database_link + '/colls/' + COLLECTION_ID
+CONTAINER_ID = cfg.settings['container_id']
 
 class IDisposable(cosmos_client.CosmosClient):
     """ A context manager to automatically close an object with a close method
@@ -42,46 +40,41 @@ class IDisposable(cosmos_client.CosmosClient):
 class ChangeFeedManagement:
     
     @staticmethod
-    def CreateDocuments(client):
+    def CreateDocuments(container, size):
         print('Creating Documents')
 
-        for i in range(1, 1000):
-            c = str(i)
-            document_definition = {'id': 'document'+ c,
-                                'address': {'street': '1 Microsoft Way'+c,
+        for i in range(1, size):
+            c = str(uuid.uuid4())
+            document_definition = {'id': 'document' + c,
+                                   'address': {'street': '1 Microsoft Way'+c,
                                             'city': 'Redmond'+c,
                                             'state': 'WA',
                                             'zip code': 98052
                                             }
-                                }
+                                  }
 
-            created_document = client.CreateItem(
-                collection_link,
-                document_definition)
+            created_document = container.create_item(body=document_definition)
 
     @staticmethod
-    def ReadFeed(client):
+    def ReadFeed(container):
         print('\nReading Change Feed from the beginning\n')
 
-        options = {}
-        # For a particular Partition Key Range we can use options['partitionKeyRangeId']
-        options["startFromBeginning"] = True
-        # Start from beginning will read from the beginning of the history of the collection
-        # If no startFromBeginning is specified, the read change feed loop will pickup the documents that happen while the loop / process is active
-        response = client.QueryItemsChangeFeed(collection_link, options)
+        # For a particular Partition Key Range we can use partition_key_range_id]
+        # 'is_start_from_beginning = True' will read from the beginning of the history of the collection
+        # If no is_start_from_beginning is specified, the read change feed loop will pickup the documents that happen while the loop / process is active
+        response = container.query_items_change_feed(is_start_from_beginning=True)
         for doc in response:
             print(doc)
 
         print('\nFinished reading all the change feed\n')
 
     @staticmethod
-    def ReadFeedForTime(client, time):
+    def ReadFeedForTime(container, time):
         print('\nReading Change Feed from point in time\n')
 
-        options = {}
+        #TODO: add start_time feature
         # Define a point in time to start reading the feed from
-        options["startTime"] = time
-        response = client.QueryItemsChangeFeed(collection_link, options)
+        response = container.query_items_change_feed()
         for doc in response:
             print(doc)
 
@@ -92,7 +85,7 @@ def run_sample():
         try:
             # setup database for this sample
             try:
-                client.CreateDatabase({"id": DATABASE_ID})
+                db = client.create_database(id=DATABASE_ID)
 
             except errors.HTTPFailure as e:
                 if e.status_code == 409:
@@ -101,36 +94,41 @@ def run_sample():
                     raise errors.HTTPFailure(e.status_code)
 
             # setup collection for this sample
-
-            collection_definition = {   'id': CONTAINER_ID, 
-                                    'partitionKey': 
-                                    {   
-                                        'paths': ['/address/state'],
-                                        'kind': documents.PartitionKind.Hash
-                                    }
-                                }
-
             try:
-                client.CreateContainer(database_link, collection_definition)
-                print('Collection with id \'{0}\' created'.format(COLLECTION_ID))
+                container = db.create_container(
+                    id=CONTAINER_ID,
+                    partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
+                )
+                print('Collection with id \'{0}\' created'.format(CONTAINER_ID))
 
             except errors.HTTPFailure as e:
                 if e.status_code == 409:
-                    print('Collection with id \'{0}\' was found'.format(COLLECTION_ID))
+                    print('Collection with id \'{0}\' was found'.format(CONTAINER_ID))
                 else:
                     raise errors.HTTPFailure(e.status_code)
 
-            ChangeFeedManagement.CreateDocuments(client)
-            ChangeFeedManagement.ReadFeed(client)
+            ChangeFeedManagement.CreateDocuments(container, 100)
+            ChangeFeedManagement.ReadFeed(container)
             time = datetime.datetime.now()
-            ChangeFeedManagement.CreateDocuments(client)
-            ChangeFeedManagement.ReadFeedForTime(client, time)
+            ChangeFeedManagement.CreateDocuments(container, 10)
+            ChangeFeedManagement.ReadFeedForTime(container, time)
+
+            # cleanup database after sample
+            try:
+                client.delete_database(db)
+
+            except errors.CosmosError as e:
+                if e.status_code == 404:
+                    pass
+                else:
+                    raise errors.HTTPFailure(e.status_code)
 
         except errors.HTTPFailure as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:
             print("\nrun_sample done")
+
 
 if __name__ == '__main__':
     try:

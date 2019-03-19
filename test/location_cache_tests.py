@@ -1,19 +1,18 @@
 import unittest
-import uuid
 import threading
 import pytest
 from time import sleep
 
 from azure.cosmos.http_constants import ResourceType
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos.request_object import _RequestObject
 from azure.cosmos.location_cache import LocationCache
-from azure.cosmos.global_endpoint_manager import _GlobalEndpointManager
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.retry_utility as retry_utility
 import six
+
 
 class RefreshThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -24,8 +23,10 @@ class RefreshThread(threading.Thread):
         else:
             super().__init__()
         self.endpoint_manager = kwargs['endpoint_manager']
+
     def run(self):
         self.endpoint_manager.force_refresh(None)
+
 
 @pytest.mark.usefixtures("teardown")
 class LocationCacheTest(unittest.TestCase):
@@ -57,7 +58,7 @@ class LocationCacheTest(unittest.TestCase):
         connectionPolicy.EnableEndpointDiscovery = enable_endpoint_discovery
         connectionPolicy.UseMultipleWriteLocations = use_multiple_write_locations
 
-        client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection(self.DEFAULT_ENDPOINT, {'masterKey': "SomeKeyValue"}, connectionPolicy)
         return client
 
     def test_validate_retry_on_session_not_availabe_with_disable_multiple_write_locations_and_endpoint_discovery_disabled(self):
@@ -74,8 +75,8 @@ class LocationCacheTest(unittest.TestCase):
         self.counter = 0
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
-        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
         enable_endpoint_discovery = False
         client = self.create_spy_client(use_multiple_write_locations, enable_endpoint_discovery, is_preferred_locations_list_empty)
         
@@ -92,7 +93,7 @@ class LocationCacheTest(unittest.TestCase):
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
 
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
@@ -116,8 +117,8 @@ class LocationCacheTest(unittest.TestCase):
         self.counter = 0
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureTwice
-        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
 
         enable_endpoint_discovery = True
         self.is_preferred_locations_list_empty = is_preferred_locations_list_empty
@@ -133,7 +134,7 @@ class LocationCacheTest(unittest.TestCase):
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
 
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionSessionReadFailureTwice(self, function, *args, **kwargs):
@@ -161,25 +162,25 @@ class LocationCacheTest(unittest.TestCase):
         raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
 
     def test_validate_location_cache(self):
-        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_get_database_account
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_get_database_account
         self.get_database_account_hit_counter = 0
         for i in range (0,8):
             use_multiple_write_locations = (i & 1) > 0
             endpoint_discovery_enabled = (i & 2) > 0
             is_preferred_list_empty = (i & 4) > 0
             self.validate_location_cache(use_multiple_write_locations, endpoint_discovery_enabled, is_preferred_list_empty)
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
 
     def test_validate_write_endpoint_order_with_client_side_disable_multiple_write_location(self):
-        self.original_get_database_account = cosmos_client.CosmosClient.GetDatabaseAccount
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.mock_get_database_account
+        self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_get_database_account
         self.get_database_account_hit_counter = 0
         self.initialize(False, True, False)
         self.assertEqual(self.location_cache.get_write_endpoints()[0], self.LOCATION_1_ENDPOINT)
         self.assertEqual(self.location_cache.get_write_endpoints()[1], self.LOCATION_2_ENDPOINT)
         self.assertEqual(self.location_cache.get_write_endpoints()[2], self.LOCATION_3_ENDPOINT)
-        cosmos_client.CosmosClient.GetDatabaseAccount = self.original_get_database_account
+        cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
 
     def mock_get_database_account(self, url_connection = None):
         self.get_database_account_hit_counter += 1
@@ -213,7 +214,7 @@ class LocationCacheTest(unittest.TestCase):
         self.location_cache.perform_on_database_account_read(self.database_account)
         connectionPolicy = documents.ConnectionPolicy()
         connectionPolicy.PreferredLocations = self.preferred_locations
-        client = cosmos_client.CosmosClient("", {}, connectionPolicy)
+        client = cosmos_client_connection.CosmosClientConnection("", {}, connectionPolicy)
         self.global_endpoint_manager = client._global_endpoint_manager
 
     def validate_location_cache(self, use_multiple_write_locations, endpoint_discovery_enabled, is_preferred_list_empty):
@@ -261,8 +262,8 @@ class LocationCacheTest(unittest.TestCase):
                 # wait for TTL on unavailablity info
                 sleep(1.5)
 
-                self.assertEquals(current_write_endpoints, self.location_cache.get_write_endpoints())
-                self.assertEquals(current_read_endpoints, self.location_cache.get_read_endpoints())
+                self.assertEqual(current_write_endpoints, self.location_cache.get_write_endpoints())
+                self.assertEqual(current_read_endpoints, self.location_cache.get_read_endpoints())
 
     def validate_global_endpoint_location_cache_refresh(self):
         self.get_database_account_hit_counter = 0
@@ -321,7 +322,7 @@ class LocationCacheTest(unittest.TestCase):
         if not endpoint_discovery_enabled:
             self.assertFalse(should_refresh_endpoints)
         else:
-            self.assertEquals(is_most_preferred_location_unavailable_for_read or is_most_preferred_location_unavailable_for_write, should_refresh_endpoints)
+            self.assertEqual(is_most_preferred_location_unavailable_for_read or is_most_preferred_location_unavailable_for_write, should_refresh_endpoints)
 
     def validate_request_endpoint_resolution(self, use_multiple_write_locations, endpoint_discovery_enabled,
                                              available_write_endpoints, available_read_endpoints):

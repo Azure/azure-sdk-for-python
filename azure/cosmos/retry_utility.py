@@ -24,12 +24,12 @@
 
 import time
 
-import azure.cosmos.errors as errors
-import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
-import azure.cosmos.resource_throttle_retry_policy as resource_throttle_retry_policy
-import azure.cosmos.default_retry_policy as default_retry_policy
-import azure.cosmos.session_retry_policy as session_retry_policy
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from . import errors
+from . import endpoint_discovery_retry_policy
+from . import resource_throttle_retry_policy
+from . import default_retry_policy
+from . import session_retry_policy
+from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies

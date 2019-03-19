@@ -1,5 +1,5 @@
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.errors as errors
 
 import samples.Shared.config as cfg
@@ -47,7 +47,7 @@ COLLECTION_ID = cfg.settings['collection_id']
 
 database_link = 'dbs/' + DATABASE_ID
 
-class IDisposable(cosmos_client.CosmosClient):
+class IDisposable(cosmos_client_connection.CosmosClientConnection):
     """ A context manager to automatically close an object with a close method
     in a with statement. """
 
@@ -239,7 +239,7 @@ class CollectionManagement:
 
 def run_sample():
 
-    with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
+    with IDisposable(cosmos_client_connection.CosmosClientConnection(HOST, {'masterKey': MASTER_KEY} )) as client:
         try:
             # setup database for this sample
             try:

@@ -22,7 +22,7 @@
 """Range partition resolver implementation in the Azure Cosmos database service.
 """
 
-import azure.cosmos.range as prange
+from . import range as prange
 
 class RangePartitionResolver(object):
     """RangePartitionResolver implements partitioning based on the ranges, allowing you to

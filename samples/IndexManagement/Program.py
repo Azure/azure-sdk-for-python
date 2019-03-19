@@ -1,5 +1,5 @@
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.errors as errors
 
 import requests
@@ -42,7 +42,7 @@ def ObtainClient():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     connection_policy.SSLConfiguration.SSLCaCerts = False
 
-    return cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, connection_policy)
+    return cosmos_client_connection.CosmosClientConnection(HOST, {'masterKey': MASTER_KEY}, connection_policy)
 
 def test_ssl_connection():
     client = ObtainClient()

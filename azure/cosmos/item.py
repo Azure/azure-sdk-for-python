@@ -18,3 +18,19 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
+
+"""Represents an item in the Azure Cosmos DB SQL API service.
+"""
+
+class Item(dict):
+    """ Represents a document in an Azure Cosmos DB SQL API container.
+
+    To create, read, update, and delete Items, use the associated methods on the :class:`Container`.
+    The Item must include an `id` key with a value that uniquely identifies the item within the container.
+    """
+
+    def __init__(self, data):
+        # type: (Dict[str, Any]) -> None
+
+        super(Item, self).__init__()
+        self.update(data)
