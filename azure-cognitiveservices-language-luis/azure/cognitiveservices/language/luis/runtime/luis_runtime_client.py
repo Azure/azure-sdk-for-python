@@ -21,28 +21,22 @@ class LUISRuntimeClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, credentials):
 
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/v2.0'
+        base_url = 'http://{AzureRegion}.api.cognitive.microsoft.{AzureCloud}/luis/v2.0'
 
         super(LUISRuntimeClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-language-luis/{}'.format(VERSION))
 
-        self.endpoint = endpoint
         self.credentials = credentials
 
 
@@ -55,18 +49,15 @@ class LUISRuntimeClient(SDKClient):
     :ivar prediction: Prediction operations
     :vartype prediction: azure.cognitiveservices.language.luis.runtime.operations.PredictionOperations
 
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
     :type credentials: None
     """
 
     def __init__(
-            self, endpoint, credentials):
+            self, credentials):
 
-        self.config = LUISRuntimeClientConfiguration(endpoint, credentials)
+        self.config = LUISRuntimeClientConfiguration(credentials)
         super(LUISRuntimeClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
