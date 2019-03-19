@@ -49,6 +49,7 @@ try:
     from .transactions_summary_py3 import TransactionsSummary
     from .transactions_list_result_py3 import TransactionsListResult
     from .policy_py3 import Policy
+    from .available_balance_py3 import AvailableBalance
     from .payment_method_py3 import PaymentMethod
     from .update_auto_renew_request_py3 import UpdateAutoRenewRequest
     from .operation_display_py3 import OperationDisplay
@@ -93,6 +94,7 @@ except (SyntaxError, ImportError):
     from .transactions_summary import TransactionsSummary
     from .transactions_list_result import TransactionsListResult
     from .policy import Policy
+    from .available_balance import AvailableBalance
     from .payment_method import PaymentMethod
     from .update_auto_renew_request import UpdateAutoRenewRequest
     from .operation_display import OperationDisplay
@@ -152,6 +154,7 @@ __all__ = [
     'TransactionsSummary',
     'TransactionsListResult',
     'Policy',
+    'AvailableBalance',
     'PaymentMethod',
     'UpdateAutoRenewRequest',
     'OperationDisplay',

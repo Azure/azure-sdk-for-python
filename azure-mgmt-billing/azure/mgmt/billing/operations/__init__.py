@@ -11,6 +11,7 @@
 
 from .billing_accounts_operations import BillingAccountsOperations
 from .billing_accounts_with_create_invoice_section_permission_operations import BillingAccountsWithCreateInvoiceSectionPermissionOperations
+from .available_balance_by_billing_profile_operations import AvailableBalanceByBillingProfileOperations
 from .payment_methods_by_billing_profile_operations import PaymentMethodsByBillingProfileOperations
 from .billing_profiles_by_billing_account_id_operations import BillingProfilesByBillingAccountIdOperations
 from .billing_profiles_operations import BillingProfilesOperations
@@ -40,6 +41,7 @@ from .operations import Operations
 __all__ = [
     'BillingAccountsOperations',
     'BillingAccountsWithCreateInvoiceSectionPermissionOperations',
+    'AvailableBalanceByBillingProfileOperations',
     'PaymentMethodsByBillingProfileOperations',
     'BillingProfilesByBillingAccountIdOperations',
     'BillingProfilesOperations',

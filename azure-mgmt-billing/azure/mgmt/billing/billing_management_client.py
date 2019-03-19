@@ -19,6 +19,7 @@ from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.billing_accounts_operations import BillingAccountsOperations
 from .operations.billing_accounts_with_create_invoice_section_permission_operations import BillingAccountsWithCreateInvoiceSectionPermissionOperations
+from .operations.available_balance_by_billing_profile_operations import AvailableBalanceByBillingProfileOperations
 from .operations.payment_methods_by_billing_profile_operations import PaymentMethodsByBillingProfileOperations
 from .operations.billing_profiles_by_billing_account_id_operations import BillingProfilesByBillingAccountIdOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
@@ -89,6 +90,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
     :ivar billing_accounts_with_create_invoice_section_permission: BillingAccountsWithCreateInvoiceSectionPermission operations
     :vartype billing_accounts_with_create_invoice_section_permission: azure.mgmt.billing.operations.BillingAccountsWithCreateInvoiceSectionPermissionOperations
+    :ivar available_balance_by_billing_profile: AvailableBalanceByBillingProfile operations
+    :vartype available_balance_by_billing_profile: azure.mgmt.billing.operations.AvailableBalanceByBillingProfileOperations
     :ivar payment_methods_by_billing_profile: PaymentMethodsByBillingProfile operations
     :vartype payment_methods_by_billing_profile: azure.mgmt.billing.operations.PaymentMethodsByBillingProfileOperations
     :ivar billing_profiles_by_billing_account_id: BillingProfilesByBillingAccountId operations
@@ -162,6 +165,8 @@ class BillingManagementClient(SDKClient):
         self.billing_accounts = BillingAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_accounts_with_create_invoice_section_permission = BillingAccountsWithCreateInvoiceSectionPermissionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_balance_by_billing_profile = AvailableBalanceByBillingProfileOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods_by_billing_profile = PaymentMethodsByBillingProfileOperations(
             self._client, self.config, self._serialize, self._deserialize)
