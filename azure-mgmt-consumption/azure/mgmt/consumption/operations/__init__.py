@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .budgets_operations import BudgetsOperations
 from .operations import Operations
 from .credit_summary_by_billing_profile_operations import CreditSummaryByBillingProfileOperations
 from .events_by_billing_profile_operations import EventsByBillingProfileOperations
@@ -21,7 +20,6 @@ from .charges_by_billing_profile_operations import ChargesByBillingProfileOperat
 from .charges_by_invoice_section_operations import ChargesByInvoiceSectionOperations
 
 __all__ = [
-    'BudgetsOperations',
     'Operations',
     'CreditSummaryByBillingProfileOperations',
     'EventsByBillingProfileOperations',

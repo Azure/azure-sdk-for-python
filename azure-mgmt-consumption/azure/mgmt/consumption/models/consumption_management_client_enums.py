@@ -12,20 +12,6 @@
 from enum import Enum
 
 
-class TimeGrainType(str, Enum):
-
-    monthly = "Monthly"
-    quarterly = "Quarterly"
-    annually = "Annually"
-
-
-class OperatorType(str, Enum):
-
-    equal_to = "EqualTo"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
-
-
 class EventType(str, Enum):
 
     new_credit = "NewCredit"
