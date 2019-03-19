@@ -111,9 +111,13 @@ class ClientRequestError(ClientException):
 
 class MaxRetryError(ClientException):
 
-    def __init__(self, history, *args, **kwargs):
+    def __init__(self, response, history, *args, **kwargs):
         self.history = history
         message = "Reached maximum retry attempts."
+        if response:
+            message += "Last error: [{}]{}".format(
+                response.http_response.status_code,
+                response.http_response.reason)
         super(MaxRetryError, self).__init__(message, *args, **kwargs)
 
 
@@ -122,7 +126,7 @@ class MaxRedirectError(ClientException):
     def __init__(self, history, *args, **kwargs):
         self.history = history
         message = "Reached maximum redirect attempts."
-        super(MaxRetryError, self).__init__(message, *args, **kwargs)
+        super(MaxRedirectError, self).__init__(message, *args, **kwargs)
 
 
 class ConnectionError(ClientException):

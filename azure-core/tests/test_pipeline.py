@@ -76,19 +76,28 @@ def test_sans_io_exception():
 
 
 class TestClientRequest(unittest.TestCase):
-    def test_request_data(self):
+    def test_request_json(self):
 
         request = HttpRequest("GET", "/")
         data = "Lots of dataaaa"
-        request.add_content(data)
+        request.set_json_body(data)
 
         self.assertEqual(request.data, json.dumps(data))
         self.assertEqual(request.headers.get("Content-Length"), "17")
 
+    def test_request_data(self):
+
+        request = HttpRequest("GET", "/")
+        data = "Lots of dataaaa"
+        request.set_bytes_body(data)
+
+        self.assertEqual(request.data, data)
+        self.assertEqual(request.headers.get("Content-Length"), "15")
+
     def test_request_xml(self):
         request = HttpRequest("GET", "/")
         data = ET.Element("root")
-        request.add_content(data)
+        request.set_xml_body(data)
 
         assert request.data == b"<?xml version='1.0' encoding='utf8'?>\n<root />"
 
