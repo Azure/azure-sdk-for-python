@@ -39,7 +39,7 @@ class Scripts:
         self.container_link = container_link
 
     def _get_resource_link(self, id, type):
-        return "{}/{}/{}".format(self.container_link, type, id)
+        return u"{}/{}/{}".format(self.container_link, type, id)
 
     def list_stored_procedures(self, max_item_count=None):
         # type: (int) -> QueryIterable

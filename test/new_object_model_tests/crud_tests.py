@@ -2232,6 +2232,7 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1)
         created_db.delete_container(created_collection2)
 
+    #TODO: fix test
     def test_id_unicode_validation(self):
         # create database
         created_db = self.databaseForTest
@@ -2255,8 +2256,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_id1, created_collection1.id)
         self.assertEqual(collection_id2, created_collection2.id)
 
-        created_db.delete_container(created_collection1)
-        created_db.delete_container(created_collection2)
+        created_db.client_connection.DeleteContainer(created_collection1.properties['_self'])
+        created_db.client_connection.DeleteContainer(created_collection2.properties['_self'])
 
 
 if __name__ == '__main__':

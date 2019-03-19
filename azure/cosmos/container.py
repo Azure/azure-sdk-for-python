@@ -59,18 +59,18 @@ class Container:
         self.id = id
         self.properties = properties
         database_link = CosmosClientConnection._get_database_link(database)
-        self.container_link = "{}/colls/{}".format(database_link, self.id)
+        self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self.scripts = Scripts(self.client_connection, self.container_link)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str, Item]) -> str
         if isinstance(item_or_link, six.string_types):
-            return "{}/docs/{}".format(self.container_link, item_or_link)
+            return u"{}/docs/{}".format(self.container_link, item_or_link)
         return cast("str", cast("Item", item_or_link)["_self"])
 
     def _get_conflict_link(self, id):
         # type: (str) -> str
-        return "{}/conflicts/{}".format(self.container_link, id)
+        return u"{}/conflicts/{}".format(self.container_link, id)
 
     def get_item(
         self,

@@ -30,12 +30,12 @@ class User:
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id
-        self.user_link = "{}/users/{}".format(database_link, id)
+        self.user_link = u"{}/users/{}".format(database_link, id)
         self.properties = properties
 
     def _get_permission_link(self, id):
         # type: (str) -> str
-        return "{}/permissions/{}".format(self.user_link, id)
+        return u"{}/permissions/{}".format(self.user_link, id)
 
     def list_permissions(self, max_item_count=None):
         # type: (int) -> QueryIterable

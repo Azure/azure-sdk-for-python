@@ -76,13 +76,13 @@ class Database(object):
     def _get_container_link(self, container_or_id):
         # type: (ContainerId) -> str
         if isinstance(container_or_id, six.string_types):
-            return "{}/colls/{}".format(self.database_link, container_or_id)
+            return u"{}/colls/{}".format(self.database_link, container_or_id)
         try:
             return cast("Container", container_or_id).container_link
         except AttributeError:
             pass
         container_id = cast("Dict[str, str]", container_or_id)["id"]
-        return "{}/colls/{}".format(self.database_link, container_id)
+        return u"{}/colls/{}".format(self.database_link, container_id)
 
     def create_container(
         self,
@@ -364,7 +364,7 @@ class Database(object):
             }.items()
             if value is not None
         }
-        collection_link = "{}/colls/{}".format(self.database_link, container_id)
+        collection_link = u"{}/colls/{}".format(self.database_link, container_id)
         container_properties = self.client_connection.ReplaceContainer(
             collection_link, collection=parameters, options=request_options
         )
@@ -381,7 +381,7 @@ class Database(object):
         user_link = getattr(
             id_or_user,
             "user_link",
-            "{}/users/{}".format(self.database_link, id_or_user),
+            u"{}/users/{}".format(self.database_link, id_or_user),
         )
         return user_link
 
