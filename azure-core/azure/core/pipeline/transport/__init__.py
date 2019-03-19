@@ -24,12 +24,11 @@
 #
 # --------------------------------------------------------------------------
 
-from .base import HttpTransport, HttpRequest, HttpResponse, TransportConfiguration
+from .base import HttpTransport, HttpRequest, HttpResponse
 from .requests_basic import RequestsTransport, RequestsTransportResponse, RequestsContext
 
 __all__ = [
     'HttpTransport',
-    'TransportConfiguration',
     'HttpRequest',
     'HttpResponse',
     'RequestsTransport',

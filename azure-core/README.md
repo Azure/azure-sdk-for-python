@@ -123,7 +123,7 @@ The policies that should currently be defined on the Configuration object are as
 - Configuration.redirect  # RedirectPolicu
 - Configuration.logging  # NetworkTraceLoggingPolicy
 - Configuration.user_agent  # UserAgentPolicy
-- Configuration.connection  # The is a TransportConfiguration, used to provide common transport parameters.
+- Configuration.connection  # The is a ConnectionConfiguration, used to provide common transport parameters.
 - Configuration.proxy  # While this is a ProxyPolicy object, current implementation is transport configuration.
 ```
 
@@ -157,7 +157,7 @@ from azure.core.pipeline.transport import (
 
 Some common properties can be configured on all transports, and can be set on the TransportConfiguration, found in the Configuration object described above. These include the following properties:
 ```python
-class TransportConfiguration(object):
+class ConnectionConfiguration(object):
 
     def __init__(self, **kwargs):
         self.timeout = kwargs.pop('connection_timeout', 100)
