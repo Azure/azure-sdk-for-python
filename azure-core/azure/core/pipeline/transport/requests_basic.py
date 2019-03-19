@@ -27,6 +27,7 @@ from __future__ import absolute_import
 import contextlib
 import requests
 import threading
+from urllib3.util.retry import Retry
 
 from .base import (
     HttpTransport,
@@ -34,6 +35,7 @@ from .base import (
     _HttpResponseBase
 )
 
+from azure.core.configuration import Configuration
 from azure.core.exceptions import (
     ClientRequestError,
     TokenExpiredError,
@@ -107,7 +109,7 @@ class RequestsTransport(HttpTransport):
     def __init__(self, configuration=None, session=None):
         # type: (Optional[requests.Session]) -> None
         self._session_mapping = threading.local()
-        self.config = configuration
+        self.config = configuration or Configuration()
         self.session = session or requests.Session()
 
     def __enter__(self):
@@ -123,7 +125,12 @@ class RequestsTransport(HttpTransport):
 
         This is initialization I want to do once only on a session.
         """
-        pass  # TODO: Apply configuration
+        if self.config.proxy:
+            session.trust_env = self.config.proxy.use_env_settings
+        disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
+        adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
+        for p in self._protocols:
+            session.mount(p, adapter)
 
     @property  # type: ignore
     def session(self):
@@ -158,6 +165,8 @@ class RequestsTransport(HttpTransport):
 
         :param HttpRequest request: The request object to be sent.
         """
+        if self.config.proxy and 'proxies' not in kwargs:
+            kwargs['proxies'] = self.config.proxy.proxies
         try:
             response = self.session.request(
                 request.method,
@@ -165,10 +174,10 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=self.config.verify,
-                timeout=self.config.timeout,
-                cert=self.config.cert,
-                proxies=self.config.proxies,
+                verify=self.config.connection.verify,
+                timeout=self.config.connection.timeout,
+                cert=self.config.connection.cert,
+                proxies=self.config.proxy.proxies,
                 allow_redirects=False,
                 **kwargs)
 

@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import abc
+import copy
 import logging
 
 from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
@@ -104,6 +105,6 @@ class RequestHistory(object):
  
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None
-        self.http_request = http_request
-        self.http_response = http_response
+        self.http_request = copy.deepcopy(http_request)
+        self.http_response = copy.deepcopy(http_response)
         self.error = error

@@ -36,6 +36,8 @@ import threading
 from typing import TYPE_CHECKING, cast, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import xml.etree.ElementTree as ET
 import warnings
+import types
+import re
 
 from azure.core import __version__  as azcore_version
 from .base import HTTPPolicy, SansIOHTTPPolicy

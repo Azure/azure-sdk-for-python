@@ -32,7 +32,8 @@ from .universal import (
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
-    ContentDecodePolicy
+    ContentDecodePolicy,
+    ProxyPolicy
 )
 
 __all__ = [
@@ -44,7 +45,8 @@ __all__ = [
     'NetworkTraceLoggingPolicy',
     'ContentDecodePolicy',
     'RetryPolicy',
-    'RedirectPolicy'
+    'RedirectPolicy',
+    'ProxyPolicy'
 ]
 
 try:
