@@ -87,7 +87,7 @@ class Key(Model):
     _validation = {"managed": {"readonly": True}}
 
     _attribute_map = {
-        "key": {"key": "key", "type": "JsonWebKey"},
+        "key_material": {"key": "key", "type": "JsonWebKey"},
         "attributes": {"key": "attributes", "type": "KeyAttributes"},
         "tags": {"key": "tags", "type": "{str}"},
         "managed": {"key": "managed", "type": "bool"},
@@ -95,13 +95,14 @@ class Key(Model):
 
     def __init__(self, **kwargs):
         super(Key, self).__init__(**kwargs)
-        self.key_material = kwargs.get("key", None)
-        if self.key_material:
-            self.id = self.key_material.kid
         self.attributes = kwargs.get("attributes", None)
         self.tags = kwargs.get("tags", None)
         self.managed = None
         self._vault_id = None
+
+    @property
+    def id(self):
+        return self.key_material.kid
 
     @property
     def name(self):
@@ -119,8 +120,8 @@ class Key(Model):
         return vault_id.version if vault_id else None
 
     def _get_vault_id(self):
-        if not self._vault_id and self.key and self.key.kid:
-            self._vault_id = _parse_vault_id(self.key.kid)
+        if not self._vault_id and self.key_material and self.key_material.kid:
+            self._vault_id = _parse_vault_id(self.key_material.kid)
         return self._vault_id
 
 
