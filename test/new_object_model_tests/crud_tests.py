@@ -100,7 +100,6 @@ class CRUDTests(unittest.TestCase):
     def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
                                                  self.connectionPolicy)
-
     def test_database_crud(self):
         # read databases.
         databases = list(self.client.list_databases())
@@ -290,7 +289,7 @@ class CRUDTests(unittest.TestCase):
         created_document = created_collection.create_item(body=document_definition)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["WA"]')
-        self.last_headers = []
+        del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
@@ -307,7 +306,7 @@ class CRUDTests(unittest.TestCase):
         created_document = created_collection1.create_item(document_definition)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
-        self.last_headers = []
+        del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
 
@@ -323,7 +322,7 @@ class CRUDTests(unittest.TestCase):
         created_document = created_collection2.create_item(document_definition)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], [{}])
-        self.last_headers = []
+        del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
 
@@ -349,7 +348,7 @@ class CRUDTests(unittest.TestCase):
         created_document = created_collection1.create_item(body=document_definition)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val1"]')
-        self.last_headers = []
+        del self.last_headers[:]
 
         collection_definition2 = {
             'id': 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4()),
@@ -377,7 +376,7 @@ class CRUDTests(unittest.TestCase):
         created_document = created_collection2.create_item(body=document_definition)
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
         self.assertEquals(self.last_headers[1], '["val2"]')
-        self.last_headers = []
+        del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
