@@ -1,15 +1,17 @@
-from setuptools import setup, find_packages
-import os
-from io import open
+#!/usr/bin/env python
+
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+#--------------------------------------------------------------------------
+
 import re
+import os.path
+from io import open
+from setuptools import find_packages, setup
 
-# example setup.py Feel free to copy the entire "azure-template" folder into a package folder named 
-# with "azure-<yourpackagename>". Ensure that the below arguments to setup() are updated to reflect 
-# your package.
-
-# this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way 
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
-
+# Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-template"
 PACKAGE_PPRINT_NAME = "Template Package"
 
@@ -18,32 +20,45 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 # a-b-c => a.b.c
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
+# azure v0.x is not compatible with this package
+# azure v0.x used to have a __version__ attribute (newer versions don't)
+try:
+    import azure
+    try:
+        ver = azure.__version__
+        raise Exception(
+            'This package is incompatible with azure=={}. '.format(ver) +
+            'Uninstall it with "pip uninstall azure".'
+        )
+    except AttributeError:
+        pass
+except ImportError:
+    pass
+
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
+
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-
-    # ensure that these are updated to reflect the package owners' information
-    long_description=long_description,
-    url='https://github.com/Azure/azure-sdk-for-python',
-    author='Microsoft Corporation',
-    author_email='azuresdkengsysadmins@microsoft.com',
-
+    long_description=readme + '\n\n' + history,
     license='MIT License',
-    # ensure that the development status reflects the status of your package
+    author='Microsoft Corporation',
+    author_email='azpysdkhelp@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 3 - Alpha',
-
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -54,21 +69,18 @@ setup(
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
+    zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'azure'
+        'azure',
     ]),
     install_requires=[
-        #'msrest>=0.5.0',
-        #'msrestazure>=0.4.32,<2.0.0',
-        #'azure-common~=1.1',
+        'msrest>=0.5.0',
+        'msrestazure>=0.4.32,<2.0.0',
+        'azure-common~=1.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
-    },
-    project_urls={
-        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
-        'Source': 'https://github.com/Azure/azure-sdk-python',
     }
 )
