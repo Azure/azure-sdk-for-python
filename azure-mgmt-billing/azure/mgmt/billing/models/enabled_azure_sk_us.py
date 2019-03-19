@@ -12,30 +12,28 @@
 from msrest.serialization import Model
 
 
-class DownloadUrl(Model):
-    """A secure URL that can be used to download a an entity until the URL
-    expires.
+class EnabledAzureSKUs(Model):
+    """Details about the product.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: datetime
-    :ivar url: The URL to the PDF file.
-    :vartype url: str
+    :param sku_id: The sku id.
+    :type sku_id: str
+    :ivar sku_description: The sku description.
+    :vartype sku_description: str
     """
 
     _validation = {
-        'expiry_time': {'readonly': True},
-        'url': {'readonly': True},
+        'sku_description': {'readonly': True},
     }
 
     _attribute_map = {
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'url': {'key': 'url', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
+        'sku_description': {'key': 'skuDescription', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(DownloadUrl, self).__init__(**kwargs)
-        self.expiry_time = None
-        self.url = None
+    def __init__(self, **kwargs):
+        super(EnabledAzureSKUs, self).__init__(**kwargs)
+        self.sku_id = kwargs.get('sku_id', None)
+        self.sku_description = None

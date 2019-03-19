@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ProductsByBillingSubscriptionsOperations(object):
+    """ProductsByBillingSubscriptionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,17 +37,19 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available billing REST API operations.
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
+        """Lists billing subscriptions by billingAccountId.
 
+        :param billing_account_id: billing Account Id.
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of BillingSubscriptionSummary
         :rtype:
-         ~azure.mgmt.billing.models.OperationPaged[~azure.mgmt.billing.models.Operation]
+         ~azure.mgmt.billing.models.BillingSubscriptionSummaryPaged[~azure.mgmt.billing.models.BillingSubscriptionSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -56,6 +58,10 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -85,12 +91,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BillingSubscriptionSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BillingSubscriptionSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingSubscriptions'}

@@ -12,30 +12,30 @@
 from msrest.serialization import Model
 
 
-class DownloadUrl(Model):
-    """A secure URL that can be used to download a an entity until the URL
-    expires.
+class ProductsListResult(Model):
+    """Result of listing products summary. It contains a list of available
+    products summaries in reverse chronological order by purchase date.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: datetime
-    :ivar url: The URL to the PDF file.
-    :vartype url: str
+    :ivar value: The list of products summary.
+    :vartype value: list[~azure.mgmt.billing.models.ProductSummary]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'expiry_time': {'readonly': True},
-        'url': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'url': {'key': 'url', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ProductSummary]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(DownloadUrl, self).__init__(**kwargs)
-        self.expiry_time = None
-        self.url = None
+        super(ProductsListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None

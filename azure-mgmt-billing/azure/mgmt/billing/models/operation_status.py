@@ -12,30 +12,32 @@
 from msrest.serialization import Model
 
 
-class DownloadUrl(Model):
-    """A secure URL that can be used to download a an entity until the URL
-    expires.
+class OperationStatus(Model):
+    """status of the Billing POST/PUT operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: datetime
-    :ivar url: The URL to the PDF file.
-    :vartype url: str
+    :ivar id: The operation Id.
+    :vartype id: str
+    :param status: Status of the pending operation
+    :type status: str
+    :param status_detail: Status Detail of the pending operation
+    :type status_detail: str
     """
 
     _validation = {
-        'expiry_time': {'readonly': True},
-        'url': {'readonly': True},
+        'id': {'readonly': True},
     }
 
     _attribute_map = {
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'url': {'key': 'url', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'status_detail': {'key': 'statusDetail', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(DownloadUrl, self).__init__(**kwargs)
-        self.expiry_time = None
-        self.url = None
+        super(OperationStatus, self).__init__(**kwargs)
+        self.id = None
+        self.status = kwargs.get('status', None)
+        self.status_detail = kwargs.get('status_detail', None)

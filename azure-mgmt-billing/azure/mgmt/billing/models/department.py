@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class EnrollmentAccount(Resource):
-    """An account resource.
+class Department(Resource):
+    """A department resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,21 +24,16 @@ class EnrollmentAccount(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param account_name: The account name.
-    :type account_name: str
+    :param department_name: The name for department.
+    :type department_name: str
     :param cost_center: The cost center name.
     :type cost_center: str
-    :param account_owner: The account owner
-    :type account_owner: str
-    :param status: The status for account.
+    :param status: The status for department.
     :type status: str
-    :param start_date: Account Start Date
-    :type start_date: datetime
-    :param end_date: Account End Date
-    :type end_date: datetime
-    :param department: Associated department. By default this is not
-     populated, unless it's specified in $expand.
-    :type department: ~azure.mgmt.billing.models.Department
+    :param enrollment_accounts: Associated enrollment accounts. By default
+     this is not populated, unless it's specified in $expand.
+    :type enrollment_accounts:
+     list[~azure.mgmt.billing.models.EnrollmentAccount]
     """
 
     _validation = {
@@ -51,21 +46,15 @@ class EnrollmentAccount(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
         'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
-        'account_owner': {'key': 'properties.accountOwner', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'start_date': {'key': 'properties.startDate', 'type': 'iso-8601'},
-        'end_date': {'key': 'properties.endDate', 'type': 'iso-8601'},
-        'department': {'key': 'properties.department', 'type': 'Department'},
+        'enrollment_accounts': {'key': 'properties.enrollmentAccounts', 'type': '[EnrollmentAccount]'},
     }
 
     def __init__(self, **kwargs):
-        super(EnrollmentAccount, self).__init__(**kwargs)
-        self.account_name = kwargs.get('account_name', None)
+        super(Department, self).__init__(**kwargs)
+        self.department_name = kwargs.get('department_name', None)
         self.cost_center = kwargs.get('cost_center', None)
-        self.account_owner = kwargs.get('account_owner', None)
         self.status = kwargs.get('status', None)
-        self.start_date = kwargs.get('start_date', None)
-        self.end_date = kwargs.get('end_date', None)
-        self.department = kwargs.get('department', None)
+        self.enrollment_accounts = kwargs.get('enrollment_accounts', None)

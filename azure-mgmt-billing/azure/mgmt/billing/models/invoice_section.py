@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class BillingPeriod(Resource):
-    """A billing period resource.
+class InvoiceSection(Resource):
+    """An InvoiceSection resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,36 +24,28 @@ class BillingPeriod(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar billing_period_start_date: The start of the date range covered by
-     the billing period.
-    :vartype billing_period_start_date: date
-    :ivar billing_period_end_date: The end of the date range covered by the
-     billing period.
-    :vartype billing_period_end_date: date
-    :ivar invoice_ids: Array of invoice ids that associated with.
-    :vartype invoice_ids: list[str]
+    :param display_name: The name of the InvoiceSection.
+    :type display_name: str
+    :param billing_profiles: The billing profiles associated to the billing
+     account.
+    :type billing_profiles: list[~azure.mgmt.billing.models.BillingProfile]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'billing_period_start_date': {'readonly': True},
-        'billing_period_end_date': {'readonly': True},
-        'invoice_ids': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'date'},
-        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'date'},
-        'invoice_ids': {'key': 'properties.invoiceIds', 'type': '[str]'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
     }
 
     def __init__(self, **kwargs):
-        super(BillingPeriod, self).__init__(**kwargs)
-        self.billing_period_start_date = None
-        self.billing_period_end_date = None
-        self.invoice_ids = None
+        super(InvoiceSection, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.billing_profiles = kwargs.get('billing_profiles', None)

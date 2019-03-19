@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ProductsByBillingAccountOperations(object):
+    """ProductsByBillingAccountOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,17 +37,24 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available billing REST API operations.
+            self, billing_account_id, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists products by billingAccountId.
 
+        :param billing_account_id: billing Account Id.
+        :type billing_account_id: str
+        :param filter: May be used to filter by product type. The filter
+         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
+         currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
+         string where key and value is separated by a colon (:).
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of ProductSummary
         :rtype:
-         ~azure.mgmt.billing.models.OperationPaged[~azure.mgmt.billing.models.Operation]
+         ~azure.mgmt.billing.models.ProductSummaryPaged[~azure.mgmt.billing.models.ProductSummary]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -56,10 +63,16 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -85,12 +98,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ProductSummaryPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ProductSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/products'}

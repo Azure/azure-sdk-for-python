@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class EnrollmentAccountPaged(Paged):
+class ProductSummaryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`EnrollmentAccount <azure.mgmt.billing.models.EnrollmentAccount>` object
+    A paging container for iterating over a list of :class:`ProductSummary <azure.mgmt.billing.models.ProductSummary>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EnrollmentAccount]'}
+        'current_page': {'key': 'value', 'type': '[ProductSummary]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(EnrollmentAccountPaged, self).__init__(*args, **kwargs)
+        super(ProductSummaryPaged, self).__init__(*args, **kwargs)

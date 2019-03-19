@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EnrollmentAccountsOperations(object):
-    """EnrollmentAccountsOperations operations.
+class BillingAccountsWithCreateInvoiceSectionPermissionOperations(object):
+    """BillingAccountsWithCreateInvoiceSectionPermissionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,47 +36,33 @@ class EnrollmentAccountsOperations(object):
 
         self.config = config
 
-    def get_by_enrollment_account_account_id(
-            self, billing_account_id, enrollment_account_id, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get the enrollment account by id.
+    def list(
+            self, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all billing accounts with create invoiceSection permission for a
+        user.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param enrollment_account_id: Enrollment Account Id.
-        :type enrollment_account_id: str
-        :param expand: May be used to expand the Department.
+        :param expand: May be used to expand the invoiceSections and
+         billingProfiles.
         :type expand: str
-        :param filter: The filter supports 'eq', 'lt', 'gt', 'le', 'ge', and
-         'and'. It does not currently support 'ne', 'or', or 'not'. Tag filter
-         is a key value pair string where key and value is separated by a colon
-         (:).
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EnrollmentAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount or
+        :return: BillingAccountListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingAccountListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_enrollment_account_account_id.metadata['url']
-        path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -98,11 +84,11 @@ class EnrollmentAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EnrollmentAccount', response)
+            deserialized = self._deserialize('BillingAccountListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_by_enrollment_account_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/listBillingAccountsWithCreateInvoiceSectionPermission'}

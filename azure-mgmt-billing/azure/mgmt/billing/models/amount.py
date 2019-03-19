@@ -12,30 +12,29 @@
 from msrest.serialization import Model
 
 
-class DownloadUrl(Model):
-    """A secure URL that can be used to download a an entity until the URL
-    expires.
+class Amount(Model):
+    """The Amount.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: datetime
-    :ivar url: The URL to the PDF file.
-    :vartype url: str
+    :ivar currency: The currency for the amount value.
+    :vartype currency: str
+    :ivar value: Amount value.
+    :vartype value: float
     """
 
     _validation = {
-        'expiry_time': {'readonly': True},
-        'url': {'readonly': True},
+        'currency': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'url': {'key': 'url', 'type': 'str'},
+        'currency': {'key': 'currency', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(DownloadUrl, self).__init__(**kwargs)
-        self.expiry_time = None
-        self.url = None
+    def __init__(self, **kwargs):
+        super(Amount, self).__init__(**kwargs)
+        self.currency = None
+        self.value = None
