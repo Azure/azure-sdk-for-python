@@ -45,20 +45,14 @@ import azure.cosmos.base as base
 import azure.cosmos.consistent_hash_ring as consistent_hash_ring
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
-import azure.cosmos.hash_partition_resolver as hash_partition_resolver
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.murmur_hash as murmur_hash
-import azure.cosmos.range_partition_resolver as range_partition_resolver
-import azure.cosmos.range as partition_range
 import test.new_object_model_tests.test_config as test_config
-import test.test_partition_resolver as test_partition_resolver
 import azure.cosmos.base as base
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.database import Database
-from azure.cosmos.container import Container
-from azure.cosmos.item import Item
 from azure.cosmos import PartitionKey
 import test.conftest as conftest
+import azure.cosmos.retry_utility as retry_utility
 
 # IMPORTANT NOTES:
 
@@ -79,6 +73,7 @@ class CRUDTests(unittest.TestCase):
     connectionPolicy = configs.connectionPolicy
     client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
     databaseForTest = configs.create_database_if_not_exist(client)
+    last_headers = []
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -139,11 +134,31 @@ class CRUDTests(unittest.TestCase):
                                            self.client.get_database,
                                            created_db.id)
 
+    def test_database_level_offer_throughput(self):
+        # Create a database with throughput
+        offer_throughput = 1000
+        database_id = str(uuid.uuid4())
+        created_db = self.client.create_database(
+            id=database_id,
+            offer_throughput=offer_throughput
+        )
+        self.assertEqual(created_db.id, database_id)
+
+        conftest.database_ids_to_delete.append(created_db.id)
+
+        # Verify offer throughput for database
+        offer = created_db.read_offer()
+        self.assertEquals(offer.offer_throughput, offer_throughput)
+
+        # Update database offer throughput
+        new_offer_throughput = 2000
+        offer = created_db.replace_throughput(new_offer_throughput)
+        self.assertEquals(offer.offer_throughput, new_offer_throughput)
+
     def test_sql_query_crud(self):
         # create two databases.
         db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
         db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
-
 
         conftest.database_ids_to_delete.append(db1.id)
         conftest.database_ids_to_delete.append(db2.id)
@@ -252,7 +267,6 @@ class CRUDTests(unittest.TestCase):
         self.assertIsNotNone(retrieved_collection.properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-    #TODO: add check for partition key in request options using spy
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databaseForTest
 
@@ -270,8 +284,13 @@ class CRUDTests(unittest.TestCase):
                                            }
                                }
 
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.last_headers[1], '["WA"]')
+        self.last_headers = []
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
@@ -282,8 +301,13 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
 
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.last_headers[1], [{}])
+        self.last_headers = []
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
 
@@ -293,8 +317,13 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
 
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.last_headers[1], [{}])
+        self.last_headers = []
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
 
@@ -302,7 +331,6 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
 
-    #TODO: add check for partition key in request options using spy
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
         created_db = self.databaseForTest
 
@@ -316,9 +344,12 @@ class CRUDTests(unittest.TestCase):
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
 
-        created_collection1.create_item(body=document_definition)
-
-        #self.assertEqual(options['partitionKey'], 'val1')
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        created_document = created_collection1.create_item(body=document_definition)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.last_headers[1], '["val1"]')
+        self.last_headers = []
 
         collection_definition2 = {
             'id': 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4()),
@@ -340,9 +371,13 @@ class CRUDTests(unittest.TestCase):
                                'level\" 1*()': {'le/vel2': 'val2'}
                                }
 
-        created_collection2.create_item(body=document_definition)
-
-        #self.assertEqual(options['partitionKey'], 'val2')
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
+        # create document without partition key being specified
+        created_document = created_collection2.create_item(body=document_definition)
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        self.assertEquals(self.last_headers[1], '["val2"]')
+        self.last_headers = []
 
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
@@ -448,7 +483,6 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(1, len(documentlist))
 
-    #TODO: Permission based on id not rid
     def test_partitioned_collection_permissions(self):
         created_db = self.databaseForTest
 
@@ -486,7 +520,6 @@ class CRUDTests(unittest.TestCase):
 
         read_permission = user.create_permission(body=permission_definition)
 
-        #TODO: raise _token to first class attribute
         resource_tokens = {}
         # storing the resource tokens based on Resource IDs
         resource_tokens[urllib.quote(all_collection.id)] = (all_permission.properties['_token'])
@@ -564,7 +597,6 @@ class CRUDTests(unittest.TestCase):
             created_sproc['id'],
             3)
 
-    #TODO: use custom pk collection
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
 
@@ -682,17 +714,6 @@ class CRUDTests(unittest.TestCase):
         ))
 
         self.assertEqual(0, len(conflictlist))
-
-        #TODO: move to document test with multi partiion custom pk
-        #document_definition = {'name': 'sample document',
-        #                       'spam': 'eggs',
-        #                       'key': 'value'}
-        # Should throw an error because automatic id generation is disabled always.
-        #self.__AssertHTTPFailureWithStatus(
-        #    StatusCodes.BAD_REQUEST,
-        #    created_collection.create_item,
-        #    document_definition
-        #)
 
     def test_document_crud(self):
         # create database
@@ -1001,7 +1022,6 @@ class CRUDTests(unittest.TestCase):
 
         db.delete_container(container=collection)
 
-    #TODO: replace user with User object
     # CRUD test for User resource
     def test_user_crud(self):
         # Should do User CRUD operations successfully.
@@ -1047,7 +1067,6 @@ class CRUDTests(unittest.TestCase):
                                            db.get_user,
                                            user.id)
 
-    # TODO: upsert with User body
     def test_user_upsert(self):
         # create database
         db = self.databaseForTest
@@ -1100,7 +1119,6 @@ class CRUDTests(unittest.TestCase):
         users = list(db.list_users())
         self.assertEqual(len(users), before_create_count)
 
-    # TODO: permissions replace with body
     def test_permission_crud(self):
         # Should do Permission CRUD operations successfully
         # create database
@@ -1153,7 +1171,6 @@ class CRUDTests(unittest.TestCase):
                                            user.get_permission,
                                            permission.id)
 
-    # TODO: permissions upsert with body
     def test_permission_upsert(self):
         # create database
         db = self.databaseForTest
@@ -2081,7 +2098,6 @@ class CRUDTests(unittest.TestCase):
         # Reading fails.
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, collection.read_offer)
 
-    # TODO: fix on offer type
     def test_offer_replace(self):
         # Create database.
         db = self.databaseForTest
@@ -2259,6 +2275,10 @@ class CRUDTests(unittest.TestCase):
         created_db.client_connection.DeleteContainer(created_collection1.properties['_self'])
         created_db.client_connection.DeleteContainer(created_collection2.properties['_self'])
 
+    def _MockExecuteFunction(self, function, *args, **kwargs):
+        self.last_headers.append(args[5]['headers'][HttpHeaders.PartitionKey]
+                                    if HttpHeaders.PartitionKey in args[5]['headers'] else '')
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 if __name__ == '__main__':
     try:

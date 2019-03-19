@@ -28,7 +28,6 @@ class MultiMasterTests(unittest.TestCase):
         self._validate_tentative_write_headers()
 
     
-    #TODO: fix sproc test
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction

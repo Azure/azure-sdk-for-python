@@ -401,7 +401,6 @@ class Database(object):
             options=request_options
         )
 
-    #TODO: fix on feed options for not item queries
     def query_users(self, query, parameters=None, max_item_count=None):
         # type: (str, List, int) -> QueryIterable
         """Return all users matching the given `query`.
@@ -531,7 +530,6 @@ class Database(object):
             user_link=self._get_user_link(id),
         )
 
-    #TODO: add database level offer throughput tests
     def read_offer(self):
         # type: () -> Offer
         link = self.properties['_self']

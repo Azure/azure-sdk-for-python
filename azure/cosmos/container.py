@@ -116,8 +116,6 @@ class Container:
         )
         return Item(data=result)
 
-    #TODO: add returns to everything
-    #TODO: Fix return type in query iterator + tests
     def list_items(
         self,
         enable_cross_partition_query=None,
@@ -151,7 +149,6 @@ class Container:
         )
         return items
 
-    #TODO: replace all collection links
     def query_items_change_feed(
             self,
             partition_key_range_id=None,
@@ -318,7 +315,6 @@ class Container:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        #TODO: rename param
         result = self.client_connection.UpsertItem(
             database_or_Container_link=self.container_link, document=body
         )
@@ -420,7 +416,7 @@ class Container:
                      }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if (len(offers) <= 0):
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.container_link)
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
         data = offers[0]
         return Offer(
             offer_throughput=offers[0]['content']['offerThroughput'],
@@ -440,7 +436,7 @@ class Container:
                      }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if (len(offers) <= 0):
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.container_link)
+            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
         new_offer = offers[0].copy()
         new_offer['content']['offerThroughput'] = throughput
         data = self.client_connection.ReplaceOffer(
