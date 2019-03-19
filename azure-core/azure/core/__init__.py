@@ -25,3 +25,10 @@
 # --------------------------------------------------------------------------
 
 __version__ = "0.0.1"
+
+from .configuration import Configuration
+
+
+__all__ = [
+    "Configuration"
+]

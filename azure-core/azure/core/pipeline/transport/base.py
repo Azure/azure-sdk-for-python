@@ -50,31 +50,6 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class TransportConfiguration(object):
-    """HTTP transport connection configuration settings."""
-
-    def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 100)
-        self.verify = kwargs.pop('connection_verify', True)
-        self.cert = kwargs.pop('connection_cert', None)
-        self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
-        self.keep_alive = kwargs.pop('connection_keep_alive', False)
-
-    def __iter__(self):
-        dict_values = dict(self.__dict__)
-        for attr, value in dict_values.items():
-            yield "connection_" + attr, value
-
-    def __call__(self):
-        # type: () -> Dict[str, Union[str, int]]
-        """Return configuration to be applied to connection."""
-        debug = "Configuring request: timeout=%r, verify=%r, cert=%r"
-        _LOGGER.debug(debug, self.timeout, self.verify, self.cert)
-        return {'timeout': self.timeout,
-                'verify': self.verify,
-                'cert': self.cert}
-
-
 class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC.
     """

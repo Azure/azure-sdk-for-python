@@ -74,51 +74,10 @@ class DeserializationError(ClientException):
     pass
 
 
-class ValidationError(ClientException):
-    """Request parameter validation failed."""
-
-    _messages = {
-        "min_length": "must have length greater than {!r}.",
-        "max_length": "must have length less than {!r}.",
-        "minimum": "must be greater than {!r}.",
-        "maximum": "must be less than {!r}.",
-        "minimum_ex": "must be equal to or greater than {!r}.",
-        "maximum_ex": "must be equal to or less than {!r}.",
-        "min_items": "must contain at least {!r} items.",
-        "max_items": "must contain at most {!r} items.",
-        "pattern": "must conform to the following pattern: {!r}.",
-        "unique": "must contain only unique items.",
-        "multiple": "must be a multiple of {!r}.",
-        "required": "can not be None.",
-        "type": "must be of type {!r}"
-    }
-
-    def __init__(self, rule, target, value, *args, **kwargs):
-        # type: (str, str, str, str, str) -> None
-        self.rule = rule
-        self.target = target
-        message = "Parameter {!r} ".format(target)
-        reason = self._messages.get(
-            rule, "failed to meet validation requirement.")
-        message += reason.format(value)
-        super(ValidationError, self).__init__(message, *args, **kwargs)
-
 
 class ClientRequestError(ClientException):
     """Client request failed."""
     pass
-
-
-class MaxRetryError(ClientException):
-
-    def __init__(self, response, history, *args, **kwargs):
-        self.history = history
-        message = "Reached maximum retry attempts."
-        if response:
-            message += "Last error: [{}]{}".format(
-                response.http_response.status_code,
-                response.http_response.reason)
-        super(MaxRetryError, self).__init__(message, *args, **kwargs)
 
 
 class MaxRedirectError(ClientException):

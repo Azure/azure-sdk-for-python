@@ -81,7 +81,6 @@ class PipelineResponse(object):
         # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
-        self.history = []
         self.context = context or {}
 
 

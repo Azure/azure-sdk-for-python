@@ -60,16 +60,21 @@ class RedirectPolicy(HTTPPolicy):
 
     def __init__(self, **kwargs):
         self.redirects = kwargs.pop('redirect_max', 30)
+
         remove_headers = kwargs.pop('redirect_remove_headers', set())
-        self.remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
+        self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = kwargs.pop('redirect_on_status_codes', set())
-        self.redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
-        self.raise_on_redirect = True
-        self.history = []
+        self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
 
     @classmethod
     def no_redirects(cls):
         return cls(redirect_max=0)
+
+    def configure_redirects(self, **kwargs):
+        return {
+            'redirects': kwargs.get("redirect_max", self.redirects),
+            'history': []
+        }
 
     def get_redirect_location(self, response):
         """
@@ -78,13 +83,13 @@ class RedirectPolicy(HTTPPolicy):
             code and valid location. ``None`` if redirect status and no
             location. ``False`` if not a redirect status code.
         """
-        if response.http_response.status_code in self.redirect_on_status_codes \
+        if response.http_response.status_code in self._redirect_on_status_codes \
                 and response.http_request.method in ['GET', 'HEAD']:
             return response.http_response.headers.get('location')
 
         return False
 
-    def increment(self, response, redirect_location):
+    def increment(self, settings, response, redirect_location):
         """ Return a new Retry object with incremented retry counters.
 
         :param response: A response object, or None, if the server did not
@@ -96,9 +101,8 @@ class RedirectPolicy(HTTPPolicy):
         :return: A new ``Retry`` object.
         """
         # Redirect retry?
-        if self.redirects:
-            self.redirects -= 1
-        self.history.append(RequestHistory(response.http_request, http_response=response.http_response))
+        settings['redirects'] -= 1
+        settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
         
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
@@ -111,20 +115,20 @@ class RedirectPolicy(HTTPPolicy):
             response.http_request.url = redirect_location
         if response.http_response.status_code == 303:
             response.http_request.method = 'GET'
-        for non_redirect_header in self.remove_headers_on_redirect:
+        for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
-        return self.redirects > 0
+        return settings['redirects'] > 0
 
     def send(self, request, **kwargs):
         retryable = True
+        redirect_settings = self.configure_redirects(**kwargs)
         while retryable:
             response = self.next.send(request, **kwargs)
             redirect_location = self.get_redirect_location(response)
             if redirect_location:
-                retryable = self.increment(response, redirect_location)
+                retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 continue
-            response.history = self.history
             return response
 
-        raise MaxRedirectError(self.history)
+        raise MaxRedirectError(redirect_settings['history'])
