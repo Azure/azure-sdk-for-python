@@ -27,7 +27,8 @@ class AzureConfigurationClient(object):
     def _create_azconfig_pipeline(self):
         policies = [
             UserAgentPolicy("azconfig"),  # UserAgent policy
-            AzConfigRequestsCredentialsPolicy(self._client.config)
+            AzConfigRequestsCredentialsPolicy(self._client.config),
+            NetworkTraceLoggingPolicy(True)
         ]
 
         config = Configuration()
@@ -42,21 +43,18 @@ class AzureConfigurationClient(object):
         )
 
     def list_key_values(
-            self, label=None, key=None, accept_date_time=None, fields=None, custom_headers=None):
+            self, labels=None, keys=None, fields=None, custom_headers=None):
         """List key values.
 
         List the key values in the configuration store, optionally filtered by
         label.
 
-        :param label: Filter returned values based on their label. '*' can be
+        :param labels: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type label: list[str]
-        :param key: Filter returned values based on their keys. '*' can be
+        :type labels: list[str]
+        :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type key: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
+        :type keys: list[str]
         :param fields: Specify which fields to return
         :type fields: list[str]
         :param dict custom_headers: headers that will be added to the request
@@ -65,10 +63,10 @@ class AzureConfigurationClient(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_key_values(label, key, accept_date_time, fields, custom_headers)
+        return self._client.list_key_values(labels, keys, None, fields, custom_headers)
     
     def get_key_value(
-            self, key, label="%00", accept_date_time=None, custom_headers=None):
+            self, key, label="%00", custom_headers=None):
         
         """Get a KeyValue.
 
@@ -78,42 +76,42 @@ class AzureConfigurationClient(object):
         :type key: str
         :param label: Label of key to retreive
         :type label: str
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
         :param dict custom_headers: headers that will be added to the request
         :return: KeyValue
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.get_key_value(key, label, accept_date_time, custom_headers)
+        return self._client.get_key_value(key, label, None, custom_headers)
 
-    def create_key_value(
-            self, key_value, key, label="%00", custom_headers=None):
+    def add_key_value(
+            self, key_value, custom_headers=None):
         """Create a KeyValue.
 
         Create a KeyValue.
 
         :param key_value:
         :type key_value: ~azure.configurationservice.models.KeyValue
-        :param key: string
-        :type key: str
-        :param label:
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :return: KeyValue
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if_none_match = {'If-None-Match':'*'}
+        if key_value is None:
+            #throw?
+            return None
+        key = key_value.key
+        if key is None:
+            #throw?
+            return None
+        if_none_match = {'If-None-Match':'"*"'}
         if custom_headers is None:
             custom_headers = if_none_match
-        elif custom_headers.get('If-None-Match', '*') == '*':
+        elif custom_headers.get('If-None-Match', '"*"') == '"*"':
             custom_headers.update(if_none_match)
-        return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
+        return self._client.create_or_update_key_value(key_value, key, key_value.label, custom_headers)
     
     def update_key_value(
-            self, key, value=None, content_type=None, tags=None, etag=None, label="%00", custom_headers=None):
+            self, key, value=None, content_type=None, tags=None, label="%00", etag=None, custom_headers=None):
         """Update a KeyValue.
 
         Update a KeyValue.
@@ -126,23 +124,26 @@ class AzureConfigurationClient(object):
         :type content_type: str
         :param tags:
         :type tags: dict
-        :param etag:
-        :type etag: str
         :param label:
         :type label: str
+        :param etag:
+        :type etag: str
         :param dict custom_headers: headers that will be added to the request
         :return: KeyValue
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        if key is None:
+            #throw?
+            return None
         current_key_value = self._client.get_key_value(key, label)
         if etag is not None:
-            if_match = {'If-Match': etag}
+            if_match = {'If-Match': '"' + etag + '"'}
         else:
-            if_match = {'If-Match': '*'}
+            if_match = {'If-Match': '"*"'}
         if custom_headers is None:
             custom_headers = if_match
-        elif custom_headers.get('If-Match', '*') == '*':
+        elif custom_headers.get('If-Match', '"*"') == '"*"':
             custom_headers.update(if_match)
         if value is not None:
             current_key_value.value = value
@@ -153,7 +154,7 @@ class AzureConfigurationClient(object):
         return self._client.create_or_update_key_value(current_key_value, key, label, custom_headers)
     
     def set_key_value(
-            self, key_value, key, label="%00", custom_headers=None):
+            self, key_value, custom_headers=None):
         """Set a KeyValue.
 
         Create or update a KeyValue.
@@ -169,58 +170,47 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.create_or_update_key_value(key_value, key, label, custom_headers)
+        if key_value is None:
+            #throw?
+            return None
+        key = key_value.key
+        if key is None:
+            #throw?
+            return None
+        etag = key_value.etag
+        if etag is not None:
+            if_match = {'If-Match': '"' + etag + '"'}
+            if custom_headers is None:
+                custom_headers = if_match
+            else:
+                custom_headers.update(if_match)
+        return self._client.create_or_update_key_value(key_value, key, key_value.label, custom_headers)
     
     def delete_key_value(
-            self, key, label=None, custom_headers=None):
+            self, key, label=None, etag=None, custom_headers=None):
         """Delete a KeyValue.
 
         :param key: string
         :type key: str
         :param label:
         :type label: str
+        :param etag:
+        :type etag: str
         :param dict custom_headers: headers that will be added to the request
         :return: KeyValue
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        if key is None:
+            #throw?
+            return None
+        if etag is not None:
+            if_match = {'If-Match': '"' + etag + '"'}
+            if custom_headers is None:
+                custom_headers = if_match
+            else:
+                custom_headers.update(if_match)
         return self._client.delete_key_value(key, label, custom_headers)
-
-    def list_keys(
-            self, name=None, accept_date_time=None, custom_headers=None):
-        """
-
-        :param name:
-        :type name: str
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
-        :param dict custom_headers: headers that will be added to the request
-        :return: An iterator like instance of Key
-        :rtype:
-         ~azure.configurationservice.models.KeyPaged[~azure.configurationservice.models.Key]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        return self._client.list_keys(name, accept_date_time, custom_headers)
-    
-    def list_labels(
-            self, accept_date_time=None, fields=None, name=None, custom_headers=None):
-        """List labels.
-
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
-        :param fields: Specify which fields to return
-        :type fields: list[str]
-        :param name:
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :return: An iterator like instance of Label
-        :rtype:
-         ~azure.configurationservice.models.LabelPaged[~azure.configurationservice.models.Label]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        return self._client.list_labels(accept_date_time, fields, name, custom_headers)
 
     def lock_key_value(
             self, key, label=None, custom_headers=None):
@@ -235,6 +225,9 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        if key is None:
+            #throw?
+            return None
         return self._client.lock_key_value(key, label, custom_headers)
     
     def unlock_key_value(
@@ -250,27 +243,27 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        if key is None:
+            #throw?
+            return None
         return self._client.unlock_key_value(key, label, custom_headers)
     
     def list_revisions(
-            self, label=None, key=None, fields=None, accept_date_time=None, custom_headers=None):
+            self, labels=None, keys=None, fields=None, custom_headers=None):
         """
 
-        :param label: Filter returned values based on their label. '*' can be
+        :param labels: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type label: list[str]
-        :param key: Filter returned values based on their keys. '*' can be
+        :type labels: list[str]
+        :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
-        :type key: list[str]
+        :type keys: list[str]
         :param fields: Specify which fields to return
         :type fields: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
         :param dict custom_headers: headers that will be added to the request
         :return: An iterator like instance of KeyValue
         :rtype:
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_revisions(label, key, fields, accept_date_time, custom_headers)
+        return self._client.list_revisions(labels, keys, fields, None, custom_headers)
