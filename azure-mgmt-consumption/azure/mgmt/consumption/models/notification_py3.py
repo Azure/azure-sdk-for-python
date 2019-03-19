@@ -32,9 +32,6 @@ class Notification(Model):
     :param contact_roles: Contact roles to send the budget notification to
      when the threshold is exceeded.
     :type contact_roles: list[str]
-    :param contact_groups: Action groups to send the budget notification to
-     when the threshold is exceeded.
-    :type contact_groups: list[str]
     """
 
     _validation = {
@@ -42,7 +39,6 @@ class Notification(Model):
         'operator': {'required': True},
         'threshold': {'required': True},
         'contact_emails': {'required': True, 'max_items': 50, 'min_items': 1},
-        'contact_groups': {'max_items': 50, 'min_items': 0},
     }
 
     _attribute_map = {
@@ -51,14 +47,12 @@ class Notification(Model):
         'threshold': {'key': 'threshold', 'type': 'decimal'},
         'contact_emails': {'key': 'contactEmails', 'type': '[str]'},
         'contact_roles': {'key': 'contactRoles', 'type': '[str]'},
-        'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
     }
 
-    def __init__(self, *, enabled: bool, operator, threshold, contact_emails, contact_roles=None, contact_groups=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool, operator, threshold, contact_emails, contact_roles=None, **kwargs) -> None:
         super(Notification, self).__init__(**kwargs)
         self.enabled = enabled
         self.operator = operator
         self.threshold = threshold
         self.contact_emails = contact_emails
         self.contact_roles = contact_roles
-        self.contact_groups = contact_groups
