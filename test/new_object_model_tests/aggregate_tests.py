@@ -47,7 +47,6 @@ class _config:
     sum = 0
 
 
-#TODO: verify Query results
 class AggregateQueryTestSequenceMeta(type):
     def __new__(mcs, name, bases, dict):
         def _run_one(query, expected_result):

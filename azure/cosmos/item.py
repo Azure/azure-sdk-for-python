@@ -31,5 +31,6 @@ class Item(dict):
 
     def __init__(self, data):
         # type: (Dict[str, Any]) -> None
-        super().__init__()
+
+        super(Item, self).__init__()
         self.update(data)

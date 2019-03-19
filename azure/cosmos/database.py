@@ -22,6 +22,7 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
+import six
 from .cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
@@ -61,8 +62,8 @@ class Database(object):
     * `_users`:	The addressable path of the users resource.
     """
 
-    def __init__(self, client_connection, id, properties=None, response_metadata=None):
-        # type: (CosmosClientConnection, str, Dict[str, Any], ResponseMetadata) -> None
+    def __init__(self, client_connection, id, properties=None):
+        # type: (CosmosClientConnection, str, Dict[str, Any]) -> None
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
         :param str id: ID (name) of the database.
@@ -70,12 +71,11 @@ class Database(object):
         self.client_connection = client_connection
         self.id = id
         self.properties = properties
-        self.response_metadata = response_metadata
         self.database_link = CosmosClientConnection._get_database_link(id)
 
     def _get_container_link(self, container_or_id):
         # type: (ContainerId) -> str
-        if isinstance(container_or_id, str):
+        if isinstance(container_or_id, six.string_types):
             return "{}/colls/{}".format(self.database_link, container_or_id)
         try:
             return cast("Container", container_or_id).container_link

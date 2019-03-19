@@ -150,10 +150,7 @@ class CosmosClient:
         return Database(
             self.client_connection,
             properties["id"],
-            properties=properties,
-            response_metadata=ResponseMetadata(
-                self.client_connection.last_response_headers
-            ),
+            properties=properties
         )
 
     def list_databases(
@@ -225,8 +222,11 @@ class CosmosClient:
             # the headers were misleading)
             # This needs to change for "real" implementation
             return self.client_connection.QueryDatabases(
-                        query, options=request_options, parameters=parameters
-                    )
+                query=query
+                if parameters is None
+                else dict(query=query, parameters=parameters),
+                options=request_options
+            )
         else:
             return self.client_connection.ReadDatabases(options=request_options)
 

@@ -2939,15 +2939,15 @@ class CosmosClientConnection(object):
 
     @staticmethod
     def _get_database_link(database_or_id):
-        # type: (DatabaseId) -> str
-        if isinstance(database_or_id, str):
+        # type: (str) -> str
+        if isinstance(database_or_id, six.string_types):
             return "dbs/{}".format(database_or_id)
         try:
             return cast("Database", database_or_id).database_link
         except AttributeError:
             pass
 
-        if isinstance(database_or_id, str):
+        if isinstance(database_or_id, six.string_types):
             database_id = database_or_id
         else:
             database_id = cast("Dict[str, str]", database_or_id)["id"]

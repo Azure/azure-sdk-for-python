@@ -35,8 +35,6 @@ class EncodingTest(unittest.TestCase):
         read_doc = self.created_collection.get_item(id=created_doc['id'], partition_key='pk')
         self.assertEqual(read_doc['unicode_content'], test_string)
 
-    #TODO: fix sproc test
-    '''
     def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes (self):
 
         test_string = 'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'
@@ -44,11 +42,10 @@ class EncodingTest(unittest.TestCase):
         test_string_unicode = u'Line Separator ( ) & Paragraph Separator ( ) & Next Line () & نیم‌فاصله'
 
         stored_proc_definition = {'id':'myid' + str(uuid.uuid4()), 'body': test_string}
-        created_sp = self.client.CreateStoredProcedure(self.created_collection['_self'], stored_proc_definition)
+        created_sp = self.created_collection.scripts.create_stored_procedure(body=stored_proc_definition)
 
-        read_sp = self.client.ReadStoredProcedure(created_sp['_self'], dict())
+        read_sp = self.created_collection.scripts.get_stored_procedure(created_sp['id'])
         self.assertEqual(read_sp['body'], test_string_unicode)
-        '''
 
 if __name__ == '__main__':
     unittest.main()

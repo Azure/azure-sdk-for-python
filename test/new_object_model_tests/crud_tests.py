@@ -208,7 +208,6 @@ class CRUDTests(unittest.TestCase):
                                            created_db.get_container,
                                            created_collection.id)
 
-    #TODO: add fixture to remove container at the end of test
     def test_partitioned_collection(self):
         created_db = self.databaseForTest
 
@@ -253,7 +252,6 @@ class CRUDTests(unittest.TestCase):
         self.assertIsNotNone(retrieved_collection.properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-    #TODO: add fixture to remove container at the end of test
     #TODO: add check for partition key in request options using spy
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databaseForTest
@@ -305,7 +303,6 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection2.id)
 
     #TODO: add check for partition key in request options using spy
-    #TODO: add fixture to remove container at the end of test
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
         created_db = self.databaseForTest
 
@@ -954,7 +951,6 @@ class CRUDTests(unittest.TestCase):
             before_create_documents_count,
             'number of documents should remain same')
 
-    #TODO: add fixture to remove container at the end of test
     def test_spatial_index(self):
         db = self.databaseForTest
         # partial policy specified
@@ -2122,7 +2118,6 @@ class CRUDTests(unittest.TestCase):
                     HttpHeaders.CurrentMediaStorageUsageInMB])
         self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
-    #TODO: add fixture to remove container at the end of test
     def test_index_progress_headers(self):
         created_db = self.databaseForTest
         consistent_coll = created_db.create_container(
@@ -2200,7 +2195,6 @@ class CRUDTests(unittest.TestCase):
 
         self.client.delete_database(database=db)
 
-    #TODO: add fixture to remove container at the end of test
     def test_id_case_validation(self):
         # create database
         created_db = self.databaseForTest
@@ -2238,7 +2232,6 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1)
         created_db.delete_container(created_collection2)
 
-    #TODO: add fixture to remove container at the end of test
     def test_id_unicode_validation(self):
         # create database
         created_db = self.databaseForTest

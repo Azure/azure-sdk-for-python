@@ -22,6 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
+import six
 from .cosmos_client_connection import CosmosClientConnection
 from .item import Item
 from .errors import HTTPFailure
@@ -63,7 +64,7 @@ class Container:
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str, Item]) -> str
-        if isinstance(item_or_link, str):
+        if isinstance(item_or_link, six.string_types):
             return "{}/docs/{}".format(self.container_link, item_or_link)
         return cast("str", cast("Item", item_or_link)["_self"])
 
