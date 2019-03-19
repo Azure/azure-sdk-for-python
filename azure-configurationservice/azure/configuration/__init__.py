@@ -10,9 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .azure_configuration_client import AzureConfigurationClient
+from ._generated import *
 
 __all__ = [
-    'AzureConfigurationClient'
+    'AzureConfigurationClient',
+    'KeyValue'
     ]
 
 

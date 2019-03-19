@@ -10,9 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .azure_configuration_client_imp import AzureConfigurationClientImp
+from .models import *
 from .version import VERSION
 
-__all__ = ['AzureConfigurationClientImp']
+__all__ = [
+    'AzureConfigurationClientImp',
+    'KeyValue'
+    ]
 
 __version__ = VERSION
 
