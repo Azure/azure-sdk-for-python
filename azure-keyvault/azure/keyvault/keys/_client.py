@@ -102,7 +102,7 @@ class KeyClient:
         attributes=None,
         tags=None,
         curve=None,
-        **kwargs,
+        **kwargs
     ):
         # type: (str, str, Optional[int], Optional[List[str]], Any, Any, Any, Any) -> Key
         url = "/".join([self.vault_url, "keys", name, "create"])
@@ -117,7 +117,7 @@ class KeyClient:
             key_attributes=attributes,
             tags=tags,
             curve=curve,
-            **kwargs,
+            **kwargs
         )
         body = self._serialize.body(create_params, "KeyCreateParameters")
         request = HttpRequest("POST", url, headers, data=body)
