@@ -18,7 +18,7 @@ class KeyValuePaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
         'current_page': {'key': 'items', 'type': '[KeyValue]'}
     }
 
