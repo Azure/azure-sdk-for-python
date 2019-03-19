@@ -767,9 +767,11 @@ class ApplicationsOperations(object):
     update_password_credentials.metadata = {'url': '/{tenantID}/applications/{applicationObjectId}/passwordCredentials'}
 
     def get_service_principals_id_by_app_id(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, application_id, custom_headers=None, raw=False, **operation_config):
         """Gets an object id for a given application id from the current tenant.
 
+        :param application_id: The application ID.
+        :type application_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -785,7 +787,7 @@ class ApplicationsOperations(object):
         url = self.get_service_principals_id_by_app_id.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str'),
-            'applicationID': self._serialize.url("self.config.application_id", self.config.application_id, 'str')
+            'applicationID': self._serialize.url("application_id", application_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

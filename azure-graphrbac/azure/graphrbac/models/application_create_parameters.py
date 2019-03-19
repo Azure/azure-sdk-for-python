@@ -111,14 +111,12 @@ class ApplicationCreateParameters(ApplicationBase):
     :type www_homepage: str
     :param display_name: Required. The display name of the application.
     :type display_name: str
-    :param identifier_uris: Required. A collection of URIs for the
-     application.
+    :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list[str]
     """
 
     _validation = {
         'display_name': {'required': True},
-        'identifier_uris': {'required': True},
     }
 
     _attribute_map = {

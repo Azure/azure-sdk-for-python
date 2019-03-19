@@ -111,14 +111,12 @@ class ApplicationCreateParameters(ApplicationBase):
     :type www_homepage: str
     :param display_name: Required. The display name of the application.
     :type display_name: str
-    :param identifier_uris: Required. A collection of URIs for the
-     application.
+    :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list[str]
     """
 
     _validation = {
         'display_name': {'required': True},
-        'identifier_uris': {'required': True},
     }
 
     _attribute_map = {
@@ -155,7 +153,7 @@ class ApplicationCreateParameters(ApplicationBase):
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
     }
 
-    def __init__(self, *, display_name: str, identifier_uris, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, error_url: str=None, group_membership_claims=None, homepage: str=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, error_url: str=None, group_membership_claims=None, homepage: str=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, identifier_uris=None, **kwargs) -> None:
         super(ApplicationCreateParameters, self).__init__(allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, error_url=error_url, group_membership_claims=group_membership_claims, homepage=homepage, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
         self.display_name = display_name
         self.identifier_uris = identifier_uris

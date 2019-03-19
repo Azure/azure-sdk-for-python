@@ -35,20 +35,16 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
-    :param application_id: The application ID.
-    :type application_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, tenant_id, application_id, base_url=None):
+            self, credentials, tenant_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if tenant_id is None:
             raise ValueError("Parameter 'tenant_id' must not be None.")
-        if application_id is None:
-            raise ValueError("Parameter 'application_id' must not be None.")
         if not base_url:
             base_url = 'https://graph.windows.net'
 
@@ -59,7 +55,6 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.tenant_id = tenant_id
-        self.application_id = application_id
 
 
 class GraphRbacManagementClient(SDKClient):
@@ -92,15 +87,13 @@ class GraphRbacManagementClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
-    :param application_id: The application ID.
-    :type application_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, tenant_id, application_id, base_url=None):
+            self, credentials, tenant_id, base_url=None):
 
-        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, application_id, base_url)
+        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, base_url)
         super(GraphRbacManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
