@@ -22,7 +22,7 @@
 import unittest
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 from azure.cosmos.routing import routing_range as routing_range
 import test.test_config as test_config
@@ -43,8 +43,8 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client_connection.CosmosClientConnection(host, {'masterKey': masterKey}, connectionPolicy)
-    collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)['_self']
+    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, "Session", connectionPolicy)
+    collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client).container_link
 
     @classmethod
     def setUpClass(cls):
@@ -56,18 +56,18 @@ class RoutingMapEndToEndTests(unittest.TestCase):
                 "tests.")
 
     def test_read_partition_key_ranges(self):
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         #"the number of expected partition ranges returned from the emulator is 5."
         self.assertEqual(5, len(partition_key_ranges))
         
     def test_routing_map_provider(self):
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
 
-        routing_mp = _PartitionKeyRangeCache(self.client)
+        routing_mp = _PartitionKeyRangeCache(self.client.client_connection)
         overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(self.collection_link, routing_range._Range("", "FF", True, False))
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

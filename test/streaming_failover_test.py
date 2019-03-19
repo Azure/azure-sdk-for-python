@@ -3,7 +3,6 @@ import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
-from requests.exceptions import ConnectionError
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
 import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy

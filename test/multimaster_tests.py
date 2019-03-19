@@ -1,17 +1,12 @@
-import json
-import os.path
 import unittest
 import uuid
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos.cosmos_client as cosmos_client
 import pytest
-import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
-import azure.cosmos.base as base
 import azure.cosmos.constants as constants
-import azure.cosmos.retry_options as retry_options
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.retry_utility as retry_utility
 import test.test_config as test_config
+from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):
@@ -32,61 +27,91 @@ class MultiMasterTests(unittest.TestCase):
         self.EnableMultipleWritableLocations = False
         self._validate_tentative_write_headers()
 
+    
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client_connection.CosmosClientConnection(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, connectionPolicy)
-        
-        created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
+        client = cosmos_client.CosmosClient(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, "Session",
+                                            connectionPolicy)
+
+        created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))
+
+        created_collection = created_db.create_container(id='test_db', partition_key=PartitionKey(path='/pk', kind='Hash'))
+
         document_definition = { 'id': 'doc' + str(uuid.uuid4()),
                                 'pk': 'pk',
                                 'name': 'sample document',
                                 'operation': 'insertion'}
-        created_document = client.CreateItem(created_collection['_self'], document_definition)
+        created_document = created_collection.create_item(body=document_definition)
 
         sproc_definition = {
             'id': 'sample sproc' + str(uuid.uuid4()),
             'serverScript': 'function() {var x = 10;}'
         }
-        sproc = client.CreateStoredProcedure(created_collection['_self'], sproc_definition)
+        sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition)
 
-        client.ExecuteStoredProcedure(sproc['_self'], None, {'partitionKey':'pk'})
+        created_collection.scripts.execute_stored_procedure(
+            id=sproc['id'],
+            partition_key='pk'
+        )
 
-        client.ReadItem(created_document['_self'], {'partitionKey':'pk'})
+        created_collection.get_item(
+            id=created_document,
+            partition_key='pk'
+        )
 
         created_document['operation'] = 'replace'
-        replaced_document = client.ReplaceItem(created_document['_self'], created_document)
+        replaced_document = created_collection.replace_item(
+            item=created_document['id'],
+            body=created_document
+        )
 
         replaced_document['operation'] = 'upsert'
-        upserted_document = client.UpsertItem(created_collection['_self'], replaced_document)
+        upserted_document = created_collection.upsert_item(body=replaced_document)
 
-        client.DeleteItem(upserted_document['_self'], {'partitionKey':'pk'})
+        created_collection.delete_item(
+            item=upserted_document,
+            partition_key='pk'
+        )
 
+        client.delete_database(created_db)
+
+        print(len(self.last_headers))
         is_allow_tentative_writes_set = self.EnableMultipleWritableLocations == True
-        # Create Document - Makes one initial call to fetch collection
+
+        # Create Database
         self.assertEqual(self.last_headers[0], is_allow_tentative_writes_set)
+
+        # Create Container
         self.assertEqual(self.last_headers[1], is_allow_tentative_writes_set)
 
-        # Create Stored procedure
+        # Create Document - Makes one initial call to fetch collection
         self.assertEqual(self.last_headers[2], is_allow_tentative_writes_set)
-
-        # Execute Stored procedure
         self.assertEqual(self.last_headers[3], is_allow_tentative_writes_set)
 
-        # Read Document
+        # Create Stored procedure
         self.assertEqual(self.last_headers[4], is_allow_tentative_writes_set)
 
-        # Replace Document
+        # Execute Stored procedure
         self.assertEqual(self.last_headers[5], is_allow_tentative_writes_set)
 
-        # Upsert Document
+        # Read Document
         self.assertEqual(self.last_headers[6], is_allow_tentative_writes_set)
 
-        # Delete Document
+        # Replace Document
         self.assertEqual(self.last_headers[7], is_allow_tentative_writes_set)
+
+        # Upsert Document
+        self.assertEqual(self.last_headers[8], is_allow_tentative_writes_set)
+
+        # Delete Document
+        self.assertEqual(self.last_headers[9], is_allow_tentative_writes_set)
+
+        # Delete Database
+        self.assertEqual(self.last_headers[10], is_allow_tentative_writes_set)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
@@ -99,6 +124,7 @@ class MultiMasterTests(unittest.TestCase):
                 self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[5]['headers'] 
                                          and args[5]['headers'][HttpHeaders.AllowTentativeWrites] == 'true')
             return self.OriginalExecuteFunction(function, *args, **kwargs)
+
 
 if __name__ == '__main__':
     unittest.main()

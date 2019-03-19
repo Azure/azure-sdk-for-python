@@ -23,7 +23,8 @@ import unittest
 import uuid
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+from azure.cosmos.partition_key import PartitionKey
+import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import query_iterable
 import azure.cosmos.base as base
 from six.moves import xrange
@@ -58,7 +59,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
-        cls.client = cosmos_client_connection.CosmosClientConnection(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
@@ -81,16 +82,16 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.client.DeleteContainer(cls.collection_link)
+        cls.created_db.delete_container(container=cls.created_collection)
 
     def setUp(self):
         
         # sanity check:
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         self.assertGreaterEqual(len(partition_key_ranges), 5)
         
         # sanity check: read documents after creation
-        queried_docs = list(self.client.ReadItems(self.collection_link))
+        queried_docs = list(self.created_collection.list_items())
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),
@@ -105,16 +106,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.spam',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_query_as_string(self):
         # test a simply order by query as string
@@ -122,16 +119,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         # an order by query
         query = 'SELECT * FROM root r order by r.spam'
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_asc_query(self):        
         # test an order by query with explicit ascending ordering
@@ -141,16 +134,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.spam ASC',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_desc_query(self):        
         # test an order by query with explicit descending ordering
@@ -160,16 +149,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.spam DESC',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key, reverse=True)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_top_query(self):        
         # test an order by query combined with top
@@ -183,15 +168,11 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  'query': 'SELECT top %d * FROM root r order by r.spam' % top_count
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)[:top_count]]
     
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_top_query_less_results_than_top_counts(self):        
         # test an order by query combined with top. where top is greater than the total number of docs
@@ -205,21 +186,17 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  'query': 'SELECT top %d * FROM root r order by r.spam' % top_count
         }  
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_top_query(self):
         # test a simple top query without order by. 
         # The rewrittenQuery in the query execution info responded by backend will be empty
        
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         
         docs_by_partition_key_range_id = self.find_docs_by_partition_key_range_id()
         
@@ -238,11 +215,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertEqual(cnt, 2)
         self.assertLess(2, len(partition_key_ranges))
  
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
-        # sanity check  
+        # sanity check
         self.assertLess(len(first_two_ranges_results), len(self.document_definitions)) 
         self.assertGreater(len(first_two_ranges_results), 1) 
 
@@ -252,13 +225,13 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         query = {
                  'query': 'SELECT top %d * FROM root r' % len(expected_ordered_ids)
         }
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_top_query_as_string(self):
         # test a simple top query without order by. 
         # The rewrittenQuery in the query execution info responded by backend will be empty
        
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         
         docs_by_partition_key_range_id = self.find_docs_by_partition_key_range_id()
         
@@ -277,11 +250,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertEqual(cnt, 2)
         self.assertLess(2, len(partition_key_ranges))
  
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
-        # sanity check  
+        # sanity check
         self.assertLess(len(first_two_ranges_results), len(self.document_definitions)) 
         self.assertGreater(len(first_two_ranges_results), 1) 
 
@@ -289,13 +258,13 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
 
         # a top query, the results will be sorted based on the target partition key range  
         query = 'SELECT top %d * FROM root r' % len(expected_ordered_ids)
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_parametrized_top_query(self):
         # test a simple parameterized query without order by. 
         # The rewrittenQuery in the query execution info responded by backend will be empty
        
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         
         docs_by_partition_key_range_id = self.find_docs_by_partition_key_range_id()
         
@@ -314,11 +283,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertEqual(cnt, 2)
         self.assertLess(2, len(partition_key_ranges))
  
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
-        # sanity check  
+        # sanity check
         self.assertLess(len(first_two_ranges_results), len(self.document_definitions)) 
         self.assertGreater(len(first_two_ranges_results), 1) 
 
@@ -332,7 +297,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                                     {"name": "@n", "value": len(expected_ordered_ids)}
                                 ] 
         }
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
 
     def test_orderby_query_with_parametrized_top(self):
         # test an order by query combined with parametrized top
@@ -341,10 +306,6 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         # sanity check  
         self.assertLess(top_count, len(self.document_definitions)) 
 
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)[:top_count]]
@@ -358,14 +319,11 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                                 ] 
         }
     
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_orderby_query_with_parametrized_predicate(self):
         # test an order by query combined with parametrized predicate
 
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
         # an order by query with parametrized predicate
         query = {
                  'query': 'SELECT * FROM root r where r.cnt > @cnt order by r.spam',
@@ -380,7 +338,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             return r['spam']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key) if r['cnt'] > 5]
     
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_orderby_query_noncomparable_orderby_item(self):        
         # test orderby with different order by item type
@@ -390,17 +348,13 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.spam2 DESC',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['id']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
 
         # validates the results size and order
         try:
-            self.execute_query_and_validate_results(query, options, expected_ordered_ids)
+            self.execute_query_and_validate_results(query, expected_ordered_ids)
             self.fail('non comparable order by items did not result in failure.')
         except ValueError as e:
             self.assertTrue(e.args[0] == "Expected String, but got Number." or e.message == "Expected Number, but got String.")
@@ -411,16 +365,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.cnt',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['cnt']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)      
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
         
     def test_orderby_floating_point_number_query(self):        
         # an orderby by floating point number query
@@ -428,16 +378,12 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.number',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
         def get_order_by_key(r):
             return r['number']
         expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)]
     
         # validates the results size and order
-        self.execute_query_and_validate_results(query, options, expected_ordered_ids)            
+        self.execute_query_and_validate_results(query, expected_ordered_ids)
           
     def test_orderby_boolean_query(self):        
         # an orderby by floating point number query
@@ -445,11 +391,11 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 'query': 'SELECT * FROM root r order by r.boolVar',
         }    
         
-        options = {} 
-        options['enableCrossPartitionQuery'] = True
-        options['maxItemCount'] = 2
-    
-        result_iterable = self.client.QueryItems(self.collection_link, query, options)
+        result_iterable = self.created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=2
+        )
         results = list(result_iterable)
         # validates the results size and order
 
@@ -474,7 +420,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  'query': 'SELECT * FROM root r'
         }  
         
-        partition_key_range = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_range = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
         docs_by_partition_key_range_id = {}
         for r in partition_key_range:
             options = {} 
@@ -482,19 +428,23 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             path = base.GetPathFromLink(self.collection_link, 'docs')
             collection_id = base.GetResourceIdOrFullNameFromLink(self.collection_link)
             def fetch_fn(options):
-                return self.client.QueryFeed(path, collection_id, query, options, r['id'])
-            docResultsIterable = query_iterable.QueryIterable(self.client, query, options, fetch_fn, self.collection_link)
+                return self.client.client_connection.QueryFeed(path, collection_id, query, options, r['id'])
+            docResultsIterable = query_iterable.QueryIterable(self.client.client_connection, query, options, fetch_fn, self.collection_link)
             
             docs = list(docResultsIterable)
             self.assertFalse(r['id'] in docs_by_partition_key_range_id)
             docs_by_partition_key_range_id[r['id']] = docs
         return docs_by_partition_key_range_id
 
-    def execute_query_and_validate_results(self, query, options, expected_ordered_ids):        
+    def execute_query_and_validate_results(self, query, expected_ordered_ids):
         # executes the query and validates the results against the expected results
-        page_size = options['maxItemCount']
+        page_size = 2
 
-        result_iterable = self.client.QueryItems(self.collection_link, query, options)
+        result_iterable = self.created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=page_size
+        )
         
         self.assertTrue(isinstance(result_iterable, query_iterable.QueryIterable))
         
@@ -544,19 +494,20 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
 
     @classmethod
     def create_collection(self, client, created_db):
+        # type: (CosmosClient, Database) -> Container
 
-        collection_definition = {  
-           'id': 'orderby_tests collection ' + str(uuid.uuid4()),
-           'indexingPolicy':{  
-              'includedPaths':[  
-                 {  
+        created_collection = created_db.create_container(
+            id='orderby_tests collection ' + str(uuid.uuid4()),
+            indexing_policy={
+              'includedPaths':[
+                 {
                     'path':'/',
-                    'indexes':[  
-                       {  
+                    'indexes':[
+                       {
                           'kind':'Range',
                           'dataType':'Number'
                        },
-                       {  
+                       {
                           'kind':'Range',
                           'dataType':'String'
                        }
@@ -564,19 +515,9 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                  }
               ]
            },
-           'partitionKey':{  
-              'paths':[  
-                 '/id'
-              ],
-              'kind':documents.PartitionKind.Hash
-           }
-        }
-        
-        collection_options = { 'offerThroughput': 30000 }
-
-        created_collection = client.CreateContainer(self.GetDatabaseLink(created_db),
-                                collection_definition, 
-                                collection_options)
+            partition_key=PartitionKey(path='/id', kind='Hash'),
+            offer_throughput=30000
+        )
 
         return created_collection
 
@@ -586,22 +527,22 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         created_docs = []
         for d in cls.document_definitions:
 
-            created_doc = cls.client.CreateItem(cls.collection_link, d)
+            created_doc = cls.created_collection.create_item(body=d)
             created_docs.append(created_doc)
             
         return created_docs
-    
+
     @classmethod
     def GetDatabaseLink(cls, database, is_name_based=True):
         if is_name_based:
-            return 'dbs/' + database['id']
+            return 'dbs/' + database.id
         else:
             return database['_self']
 
     @classmethod
     def GetDocumentCollectionLink(cls, database, document_collection, is_name_based=True):
         if is_name_based:
-            return cls.GetDatabaseLink(database) + '/colls/' + document_collection['id']
+            return cls.GetDatabaseLink(database) + '/colls/' + document_collection.id
         else:
             return document_collection['_self']
 
@@ -611,6 +552,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             return cls.GetDocumentCollectionLink(database, document_collection) + '/docs/' + document['id']
         else:
             return document['_self']
+
 
 if __name__ == "__main__":
     

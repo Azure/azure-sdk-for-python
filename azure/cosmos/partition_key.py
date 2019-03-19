@@ -18,3 +18,37 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
+
+
+class PartitionKey(dict):
+    """ Key used to partition a container into logical partitions.
+
+    See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey for more information
+    on how to choose partition keys.
+
+    :ivar path: The path of the partition key
+    :ivar kind: What kind of partition key is being defined
+    """
+
+    def __init__(self, path, kind="Hash"):
+        # (str, str) -> None
+        self.path = path
+        self.kind = kind
+
+    @property
+    def kind(self):
+        return self["kind"]
+
+    @kind.setter
+    def kind(self, value):
+        self["kind"] = value
+
+    @property
+    def path(self):
+        # () -> str
+        return self["paths"][0]
+
+    @path.setter
+    def path(self, value):
+        # (str) -> None
+        self["paths"] = [value]
