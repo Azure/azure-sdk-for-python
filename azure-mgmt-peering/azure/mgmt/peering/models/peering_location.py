@@ -19,9 +19,8 @@ class PeeringLocation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param kind: The kind of peering that the peering location supports.
-     Possible values include: 'Direct', 'Exchange'
-    :type kind: str or ~azure.mgmt.peering.models.Kind
+    All required parameters must be populated in order to send to Azure.
+
     :param direct: The properties that define a direct peering location.
     :type direct: ~azure.mgmt.peering.models.PeeringLocationPropertiesDirect
     :param exchange: The properties that define an exchange peering location.
@@ -40,16 +39,18 @@ class PeeringLocation(Model):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
         'direct': {'key': 'properties.direct', 'type': 'PeeringLocationPropertiesDirect'},
         'exchange': {'key': 'properties.exchange', 'type': 'PeeringLocationPropertiesExchange'},
         'peering_location': {'key': 'properties.peeringLocation', 'type': 'str'},
@@ -58,11 +59,11 @@ class PeeringLocation(Model):
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PeeringLocation, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
         self.direct = kwargs.get('direct', None)
         self.exchange = kwargs.get('exchange', None)
         self.peering_location = kwargs.get('peering_location', None)
@@ -71,3 +72,4 @@ class PeeringLocation(Model):
         self.name = None
         self.id = None
         self.type = None
+        self.kind = None

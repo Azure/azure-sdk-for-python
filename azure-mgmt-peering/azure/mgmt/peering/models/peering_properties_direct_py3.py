@@ -18,22 +18,21 @@ class PeeringPropertiesDirect(Model):
     :param connections: The set of connections that constitute a direct
      peering.
     :type connections: list[~azure.mgmt.peering.models.DirectConnection]
-    :param peer_asn: The Autonomous System Number (ASN) associated with the
-     peering.
-    :type peer_asn: int
     :param use_for_peering_service: The flag that indicates whether or not the
      peering is used for peering service.
     :type use_for_peering_service: bool
+    :param peer_asn: The reference of the peer ASN.
+    :type peer_asn: ~azure.mgmt.peering.models.SubResource
     """
 
     _attribute_map = {
         'connections': {'key': 'connections', 'type': '[DirectConnection]'},
-        'peer_asn': {'key': 'peerAsn', 'type': 'int'},
         'use_for_peering_service': {'key': 'useForPeeringService', 'type': 'bool'},
+        'peer_asn': {'key': 'peerAsn', 'type': 'SubResource'},
     }
 
-    def __init__(self, *, connections=None, peer_asn: int=None, use_for_peering_service: bool=None, **kwargs) -> None:
+    def __init__(self, *, connections=None, use_for_peering_service: bool=None, peer_asn=None, **kwargs) -> None:
         super(PeeringPropertiesDirect, self).__init__(**kwargs)
         self.connections = connections
-        self.peer_asn = peer_asn
         self.use_for_peering_service = use_for_peering_service
+        self.peer_asn = peer_asn

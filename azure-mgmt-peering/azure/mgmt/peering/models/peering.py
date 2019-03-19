@@ -24,9 +24,6 @@ class Peering(Model):
     :param sku: Required. The SKU that defines the tier and kind of the
      peering.
     :type sku: ~azure.mgmt.peering.models.PeeringSku
-    :param kind: Required. The kind of the peering. Possible values include:
-     'Direct', 'Exchange'
-    :type kind: str or ~azure.mgmt.peering.models.Kind
     :param direct: The properties that define a direct peering.
     :type direct: ~azure.mgmt.peering.models.PeeringPropertiesDirect
     :param exchange: The properties that define an exchange peering.
@@ -47,21 +44,22 @@ class Peering(Model):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'sku': {'required': True},
-        'kind': {'required': True},
         'provisioning_state': {'readonly': True},
         'location': {'required': True},
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'PeeringSku'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'direct': {'key': 'properties.direct', 'type': 'PeeringPropertiesDirect'},
         'exchange': {'key': 'properties.exchange', 'type': 'PeeringPropertiesExchange'},
         'peering_location': {'key': 'properties.peeringLocation', 'type': 'str'},
@@ -71,12 +69,12 @@ class Peering(Model):
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Peering, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
         self.direct = kwargs.get('direct', None)
         self.exchange = kwargs.get('exchange', None)
         self.peering_location = kwargs.get('peering_location', None)
@@ -86,3 +84,4 @@ class Peering(Model):
         self.name = None
         self.id = None
         self.type = None
+        self.kind = None

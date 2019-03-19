@@ -18,17 +18,16 @@ class PeeringPropertiesExchange(Model):
     :param connections: The set of connections that constitute an exchange
      peering.
     :type connections: list[~azure.mgmt.peering.models.ExchangeConnection]
-    :param peer_asn: The Autonomous System Number (ASN) associated with the
-     peering.
-    :type peer_asn: int
+    :param peer_asn: The reference of the peer ASN.
+    :type peer_asn: ~azure.mgmt.peering.models.SubResource
     """
 
     _attribute_map = {
         'connections': {'key': 'connections', 'type': '[ExchangeConnection]'},
-        'peer_asn': {'key': 'peerAsn', 'type': 'int'},
+        'peer_asn': {'key': 'peerAsn', 'type': 'SubResource'},
     }
 
-    def __init__(self, *, connections=None, peer_asn: int=None, **kwargs) -> None:
+    def __init__(self, *, connections=None, peer_asn=None, **kwargs) -> None:
         super(PeeringPropertiesExchange, self).__init__(**kwargs)
         self.connections = connections
         self.peer_asn = peer_asn

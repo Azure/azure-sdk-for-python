@@ -39,12 +39,6 @@ class Size(str, Enum):
     unlimited = "Unlimited"
 
 
-class Kind(str, Enum):
-
-    direct = "Direct"
-    exchange = "Exchange"
-
-
 class ConnectionState(str, Enum):
 
     none = "None"

@@ -13,6 +13,7 @@ try:
     from .peering_sku_py3 import PeeringSku
     from .bgp_session_py3 import BgpSession
     from .direct_connection_py3 import DirectConnection
+    from .sub_resource_py3 import SubResource
     from .peering_properties_direct_py3 import PeeringPropertiesDirect
     from .exchange_connection_py3 import ExchangeConnection
     from .peering_properties_exchange_py3 import PeeringPropertiesExchange
@@ -33,6 +34,7 @@ except (SyntaxError, ImportError):
     from .peering_sku import PeeringSku
     from .bgp_session import BgpSession
     from .direct_connection import DirectConnection
+    from .sub_resource import SubResource
     from .peering_properties_direct import PeeringPropertiesDirect
     from .exchange_connection import ExchangeConnection
     from .peering_properties_exchange import PeeringPropertiesExchange
@@ -58,7 +60,6 @@ from .peering_management_client_enums import (
     Tier,
     Family,
     Size,
-    Kind,
     ConnectionState,
     SessionStateV4,
     SessionStateV6,
@@ -70,6 +71,7 @@ __all__ = [
     'PeeringSku',
     'BgpSession',
     'DirectConnection',
+    'SubResource',
     'PeeringPropertiesDirect',
     'ExchangeConnection',
     'PeeringPropertiesExchange',
@@ -94,7 +96,6 @@ __all__ = [
     'Tier',
     'Family',
     'Size',
-    'Kind',
     'ConnectionState',
     'SessionStateV4',
     'SessionStateV6',
