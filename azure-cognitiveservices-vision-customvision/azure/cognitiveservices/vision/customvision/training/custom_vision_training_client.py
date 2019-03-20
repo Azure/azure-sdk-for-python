@@ -2298,8 +2298,8 @@ class CustomVisionTrainingClient(SDKClient):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or ClientRawResponse if raw=true
-        :rtype: bool or ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
@@ -2317,7 +2317,6 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
@@ -2326,19 +2325,12 @@ class CustomVisionTrainingClient(SDKClient):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('bool', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     unpublish_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/publish'}
 
     def get_exports(
