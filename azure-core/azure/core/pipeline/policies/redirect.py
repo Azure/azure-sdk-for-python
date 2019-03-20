@@ -38,11 +38,8 @@ except ImportError:
     from urllib.parse import urlparse
 
 from azure.core.exceptions import (
-    TokenExpiredError,
-    TokenInvalidError,
-    AuthenticationError,
     ClientRequestError,
-    MaxRedirectError,
+    TooManyRedirectsError,
     raise_with_traceback
 )
 
@@ -131,4 +128,4 @@ class RedirectPolicy(HTTPPolicy):
                 continue
             return response
 
-        raise MaxRedirectError(redirect_settings['history'])
+        raise TooManyRedirectsError(redirect_settings['history'])

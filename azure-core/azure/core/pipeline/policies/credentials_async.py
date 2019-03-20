@@ -33,7 +33,6 @@ import requests
 from requests.models import CONTENT_CHUNK_SIZE
 
 from azure.core.exceptions import (
-    TokenExpiredError,
     ClientRequestError,
     raise_with_traceback
 )
@@ -43,27 +42,4 @@ from azure.core.pipeline.policies import AsyncHTTPPolicy
 class AsyncCredentialsPolicy(AsyncHTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.
     """
-    def __init__(self, credentials, config=None):
-        super(AsyncCredentialsPolicy, self).__init__()
-        self._credentials = credentials
-
-    async def send(self, request, **kwargs):
-        session = request.context.session
-        try:
-            self._credentials.signed_session(session)
-        except TypeError: # Credentials does not support session injection
-            _LOGGER.warning("Your credentials class does not support session injection. Performance will not be optimal.")
-            request.context.session = session = self._credentials.signed_session()
-
-        try:
-            return await self.next.send(request, **kwargs)
-        except (TokenExpiredError, TokenInvalidError) as err:
-            _LOGGER.warning("Token expired or is invalid. Attempting to refresh.")
-
-        try:
-            self._credentials.refresh_session(session)
-        except TypeError: # Credentials does not support session injection
-            _LOGGER.warning("Your credentials class does not support session injection. Performance will not be optimal.")
-            request.context.session = session = self._credentials.refresh_session()
-
-        return await self.next.send(request, **kwargs)
+    pass  # TODO

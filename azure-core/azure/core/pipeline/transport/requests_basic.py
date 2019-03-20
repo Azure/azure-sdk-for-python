@@ -38,10 +38,10 @@ from .base import (
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
-    ClientRequestError,
-    TokenExpiredError,
-    TokenInvalidError,
-    AuthenticationError,
+    ServiceRequestError,
+    ConnectionError,
+    ConnectionReadError,
+    ReadTimeoutError,
     raise_with_traceback
 )
 
@@ -166,6 +166,7 @@ class RequestsTransport(HttpTransport):
 
         :param HttpRequest request: The request object to be sent.
         """
+        error = None
         if self.config.proxy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy.proxies
         try:
@@ -181,10 +182,18 @@ class RequestsTransport(HttpTransport):
                 allow_redirects=False,
                 **kwargs)
 
-        except requests.ConnectionError as err:
-            raise ConnectionError(err)
+        except urllib3.exceptions.NewConnectionError as err:
+            error = ConnectionError(err, error=err)
+        except requests.exceptions.ReadTimeout as err:
+            error = ReadTimeoutError(err, error=err)
+        except requests.exceptions.ConnectionError as err:
+            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+                error = ConnectionReadError(err, error=err)
+            else:
+                error = ConnectionError(err, error=err)
         except requests.RequestException as err:
-            msg = "Error occurred in request."
-            raise ClientRequestError(msg, inner_exception=err)
+            error = ServiceRequestError(err, error=err)
 
+        if error:
+            raise error
         return RequestsTransportResponse(request, response)

@@ -34,9 +34,6 @@ from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Op
 import warnings
 
 from ..exceptions import (
-    TokenExpiredError,
-    TokenInvalidError,
-    AuthenticationError,
     ClientRequestError,
     raise_with_traceback
 )
@@ -243,8 +240,6 @@ class AsyncRetryPolicy(AsyncHTTPPolicy):
                     continue
                 response.history = self.history
                 return response
-            except AuthenticationError:
-                raise
             except ClientRequestError as err:
                 if retryable:
                     retryable = self.increment(error=err)

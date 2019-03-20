@@ -6,6 +6,8 @@
 # Show snippets with per-call overrides
 
 ### Configuring retries
+
+The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 ```python
 config = FooService.create_config()
 # Total number of retries to allow. Takes precedence over other counts.
