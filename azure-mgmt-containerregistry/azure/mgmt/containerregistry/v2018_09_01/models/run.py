@@ -69,7 +69,8 @@ class Run(ProxyResource):
     :param custom_registries: The list of custom registries that were logged
      in during this run.
     :type custom_registries: list[str]
-    :param run_error_message: The run error message.
+    :param run_error_message: The error message received from backend systems
+     after the run is scheduled.
     :type run_error_message: str
     :param provisioning_state: The provisioning state of a run. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
