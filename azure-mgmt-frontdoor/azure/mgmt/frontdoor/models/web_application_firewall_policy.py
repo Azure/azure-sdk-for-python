@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class WebApplicationFirewallPolicy1(Resource):
+class WebApplicationFirewallPolicy(Resource):
     """Defines web application firewall policy.
 
     Variables are only populated by the server, and will be ignored when
@@ -44,7 +44,7 @@ class WebApplicationFirewallPolicy1(Resource):
      include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
      'Deleting'
     :vartype resource_state: str or
-     ~azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy
+     ~azure.mgmt.frontdoor.models.PolicyResourceState
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
@@ -74,12 +74,12 @@ class WebApplicationFirewallPolicy1(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, policy_settings=None, custom_rules=None, managed_rules=None, etag: str=None, **kwargs) -> None:
-        super(WebApplicationFirewallPolicy1, self).__init__(location=location, tags=tags, **kwargs)
-        self.policy_settings = policy_settings
-        self.custom_rules = custom_rules
-        self.managed_rules = managed_rules
+    def __init__(self, **kwargs):
+        super(WebApplicationFirewallPolicy, self).__init__(**kwargs)
+        self.policy_settings = kwargs.get('policy_settings', None)
+        self.custom_rules = kwargs.get('custom_rules', None)
+        self.managed_rules = kwargs.get('managed_rules', None)
         self.frontend_endpoint_links = None
         self.provisioning_state = None
         self.resource_state = None
-        self.etag = etag
+        self.etag = kwargs.get('etag', None)

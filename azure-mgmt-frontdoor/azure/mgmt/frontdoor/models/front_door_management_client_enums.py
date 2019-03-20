@@ -193,7 +193,7 @@ class ManagedRuleEnabledState(str, Enum):
     enabled = "Enabled"
 
 
-class WebApplicationFirewallPolicy(str, Enum):
+class PolicyResourceState(str, Enum):
 
     creating = "Creating"
     enabling = "Enabling"

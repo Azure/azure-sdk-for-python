@@ -48,7 +48,7 @@ try:
     from .managed_rule_set_py3 import ManagedRuleSet
     from .managed_rule_set_list_py3 import ManagedRuleSetList
     from .frontend_endpoint_link_py3 import FrontendEndpointLink
-    from .web_application_firewall_policy1_py3 import WebApplicationFirewallPolicy1
+    from .web_application_firewall_policy_py3 import WebApplicationFirewallPolicy
     from .managed_rule_definition_py3 import ManagedRuleDefinition
     from .managed_rule_group_definition_py3 import ManagedRuleGroupDefinition
     from .managed_rule_set_definition_py3 import ManagedRuleSetDefinition
@@ -91,7 +91,7 @@ except (SyntaxError, ImportError):
     from .managed_rule_set import ManagedRuleSet
     from .managed_rule_set_list import ManagedRuleSetList
     from .frontend_endpoint_link import FrontendEndpointLink
-    from .web_application_firewall_policy1 import WebApplicationFirewallPolicy1
+    from .web_application_firewall_policy import WebApplicationFirewallPolicy
     from .managed_rule_definition import ManagedRuleDefinition
     from .managed_rule_group_definition import ManagedRuleGroupDefinition
     from .managed_rule_set_definition import ManagedRuleSetDefinition
@@ -101,7 +101,7 @@ from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
 from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
 from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
-from .web_application_firewall_policy1_paged import WebApplicationFirewallPolicy1Paged
+from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
 from .front_door_management_client_enums import (
     FrontDoorResourceState,
@@ -128,7 +128,7 @@ from .front_door_management_client_enums import (
     TransformType,
     ActionType,
     ManagedRuleEnabledState,
-    WebApplicationFirewallPolicy,
+    PolicyResourceState,
 )
 
 __all__ = [
@@ -170,7 +170,7 @@ __all__ = [
     'ManagedRuleSet',
     'ManagedRuleSetList',
     'FrontendEndpointLink',
-    'WebApplicationFirewallPolicy1',
+    'WebApplicationFirewallPolicy',
     'ManagedRuleDefinition',
     'ManagedRuleGroupDefinition',
     'ManagedRuleSetDefinition',
@@ -180,7 +180,7 @@ __all__ = [
     'LoadBalancingSettingsModelPaged',
     'BackendPoolPaged',
     'FrontendEndpointPaged',
-    'WebApplicationFirewallPolicy1Paged',
+    'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',
     'FrontDoorResourceState',
     'CustomHttpsProvisioningState',
@@ -206,5 +206,5 @@ __all__ = [
     'TransformType',
     'ActionType',
     'ManagedRuleEnabledState',
-    'WebApplicationFirewallPolicy',
+    'PolicyResourceState',
 ]
