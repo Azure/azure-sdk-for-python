@@ -15,18 +15,19 @@ from msrest.serialization import Model
 class ServicePrincipalObjectResult(Model):
     """Service Principal Object Result.
 
-    :param value: A collection of Application Objects.
-    :type value: list[str]
+    :param value: The Object ID of the service principal with the specified
+     application ID.
+    :type value: str
     :param odatametadata: The URL representing edm equivalent.
     :type odatametadata: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
+        'value': {'key': 'value', 'type': 'str'},
         'odatametadata': {'key': 'odata\\.metadata', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, odatametadata: str=None, **kwargs) -> None:
+    def __init__(self, *, value: str=None, odatametadata: str=None, **kwargs) -> None:
         super(ServicePrincipalObjectResult, self).__init__(**kwargs)
         self.value = value
         self.odatametadata = odatametadata
