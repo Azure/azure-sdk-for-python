@@ -82,7 +82,7 @@ class ApplicationCreateParameters(ApplicationBase):
     :param password_credentials: A collection of PasswordCredential objects
     :type password_credentials:
      list[~azure.graphrbac.models.PasswordCredential]
-    :param pre_authorized_applications: list of pre-authorizaed applications.
+    :param pre_authorized_applications: list of pre-authorized applications.
     :type pre_authorized_applications:
      list[~azure.graphrbac.models.PreAuthorizedApplication]
     :param public_client: Specifies whether this application is a public
@@ -104,21 +104,19 @@ class ApplicationCreateParameters(ApplicationBase):
      application.
     :type saml_metadata_url: str
     :param sign_in_audience: Audience for signing in to the application
-     (AzureADMyOrganizatio, AzureADAllorganizations,
-     AzureADAndMicrosofAccounts).
+     (AzureADMyOrganization, AzureADAllOrganizations,
+     AzureADAndMicrosoftAccounts).
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
     :param display_name: Required. The display name of the application.
     :type display_name: str
-    :param identifier_uris: Required. A collection of URIs for the
-     application.
+    :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list[str]
     """
 
     _validation = {
         'display_name': {'required': True},
-        'identifier_uris': {'required': True},
     }
 
     _attribute_map = {
