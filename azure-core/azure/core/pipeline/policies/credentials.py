@@ -39,9 +39,6 @@ from requests.models import CONTENT_CHUNK_SIZE
 from urllib3 import Retry  # Needs requests 2.16 at least to be safe
 
 from azure.core.exceptions import (
-    TokenExpiredError,
-    TokenInvalidError,
-    AuthenticationError,
     ClientRequestError,
     raise_with_traceback
 )
@@ -54,28 +51,4 @@ _LOGGER = logging.getLogger(__name__)
 
 class CredentialsPolicy(HTTPPolicy):
     # TODO: This is deprecated: Need to remove
-
-    def __init__(self, credentials, config=None):
-        super(CredentialsPolicy, self).__init__()
-        self._credentials = credentials
-
-    def send(self, request, **kwargs):
-        session = request.context.session
-        try:
-            self._credentials.signed_session(session)
-        except TypeError: # Credentials does not support session injection
-            _LOGGER.warning("Your credentials class does not support session injection. Performance will not be optimal.")
-            request.context.session = session = self._credentials.signed_session()
-
-        try:
-            return self.next.send(request, **kwargs)
-        except (TokenExpiredError, TokenInvalidError) as err:
-            _LOGGER.warning("Token expired or is invalid. Attempting to refresh.")
-
-        try:
-            self._credentials.refresh_session(session)
-        except TypeError: # Credentials does not support session injection
-            _LOGGER.warning("Your credentials class does not support session injection. Performance will not be optimal.")
-            request.context.session = session = self._credentials.refresh_session()
-
-        return self.next.send(request, **kwargs)
+    pass

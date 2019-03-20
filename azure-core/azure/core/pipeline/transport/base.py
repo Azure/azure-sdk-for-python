@@ -41,7 +41,7 @@ import xml.etree.ElementTree as ET
 from requests.structures import CaseInsensitiveDict
 
 from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
-from azure.core.exceptions import ClientRequestError
+from azure.core.exceptions import ClientRequestError, ServerError
 from azure.core.pipeline import ABC, AbstractContextManager
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -245,8 +245,10 @@ class _HttpResponseBase(object):
     def raise_for_status(self):
         """Raise for status. Should be overriden, but basic implementation provided.
         """
-        if self.status_code >= 400:
-            raise ClientRequestError("Received status code {}".format(self.status_code))
+        if self.status_code >= 400 and self.status_code < 500:
+            raise ClientRequestError("Received status code {}".format(self.status_code), response=self)
+        if self.status_code >= 500:
+            raise ServerError("Received status code {}".format(self.status_code), respone=self)
 
 
 class HttpResponse(_HttpResponseBase):
