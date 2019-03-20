@@ -3,6 +3,7 @@ from typing import Any, List, Mapping, Optional
 import uuid
 
 from ._models import (
+    DeletedKey,
     DeletedKeyItem,
     DeletedKeyItemPaged,
     JsonWebKey,
@@ -77,6 +78,7 @@ class KeyClient:
         ]
         self._pipeline = Pipeline(transport, policies=policies)
         models = {
+            "DeletedKey": DeletedKey,
             "DeletedKeyItem": DeletedKeyItem,
             "DeletedKeyItemPaged": DeletedKeyItemPaged,
             "JsonWebKey": JsonWebKey,
@@ -132,7 +134,7 @@ class KeyClient:
         return key
 
     def delete_key(self, name, **kwargs):
-        # type: (str, Any) -> Key
+        # type: (str, Any) -> DeletedKey
         url = "/".join([self.vault_url, "keys", name])
 
         request = HttpRequest("DELETE", url)
@@ -144,7 +146,7 @@ class KeyClient:
                     response.status_code, response.text()
                 )
             )
-        deleted_key = self._deserialize("Key", response)
+        deleted_key = self._deserialize("DeletedKey", response)
 
         return deleted_key
 
@@ -180,7 +182,7 @@ class KeyClient:
         return key
 
     def get_deleted_key(self, name, **kwargs):
-        # type: (str, Any) -> Key
+        # type: (str, Any) -> DeletedKey
 
         url = "/".join([self.vault_url, "deletedkeys", name])
 
@@ -193,7 +195,7 @@ class KeyClient:
                     response.status_code, response.text()
                 )
             )
-        deleted_key = self._deserialize("Key", response)
+        deleted_key = self._deserialize("DeletedKey", response)
 
         return deleted_key
 

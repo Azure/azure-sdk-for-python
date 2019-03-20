@@ -84,29 +84,19 @@ class JsonWebKey(Model):
 
 
 class Key(Model):
-    _validation = {
-        "managed": {"readonly": True},
-        "scheduled_purge_date": {"readonly": True},
-        "deleted_date": {"readonly": True}
-    }
+    _validation = {"managed": {"readonly": True}}
 
     _attribute_map = {
         "key_material": {"key": "key", "type": "JsonWebKey"},
         "attributes": {"key": "attributes", "type": "KeyAttributes"},
         "tags": {"key": "tags", "type": "{str}"},
         "managed": {"key": "managed", "type": "bool"},
-        "recovery_id": {"key": "recoveryId", "type": "str"},
-        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
-        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
     }
 
     def __init__(self, **kwargs):
         super(Key, self).__init__(**kwargs)
         self.attributes = kwargs.get("attributes", None)
         self.tags = kwargs.get("tags", None)
-        self.recovery_id = kwargs.get("recovery_id", None)
-        self.scheduled_purge_date = None
-        self.deleted_date = None
         self.managed = None
         self._vault_id = None
 
@@ -133,6 +123,55 @@ class Key(Model):
         if not self._vault_id and self.key_material and self.key_material.kid:
             self._vault_id = _parse_vault_id(self.key_material.kid)
         return self._vault_id
+
+
+class DeletedKey(Key):
+    """A DeletedKey consisting of a JsonWebKey plus its Attributes and deletion
+    info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param key: The Json web key.
+    :type key: ~azure.keyvault.v7_0.models.JsonWebKey
+    :param attributes: The key management attributes.
+    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :param tags: Application specific metadata in the form of key-value pairs.
+    :type tags: dict[str, str]
+    :ivar managed: True if the key's lifetime is managed by key vault. If this
+     is a key backing a certificate, then managed will be true.
+    :vartype managed: bool
+    :param recovery_id: The url of the recovery object, used to identify and
+     recover the deleted key.
+    :type recovery_id: str
+    :ivar scheduled_purge_date: The time when the key is scheduled to be
+     purged, in UTC
+    :vartype scheduled_purge_date: datetime
+    :ivar deleted_date: The time when the key was deleted, in UTC
+    :vartype deleted_date: datetime
+    """
+
+    _validation = {
+        "managed": {"readonly": True},
+        "scheduled_purge_date": {"readonly": True},
+        "deleted_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "JsonWebKey"},
+        "attributes": {"key": "attributes", "type": "KeyAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "managed": {"key": "managed", "type": "bool"},
+        "recovery_id": {"key": "recoveryId", "type": "str"},
+        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
+        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletedKey, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get("recovery_id", None)
+        self.scheduled_purge_date = None
+        self.deleted_date = None
 
 
 class KeyAttributes(Model):
