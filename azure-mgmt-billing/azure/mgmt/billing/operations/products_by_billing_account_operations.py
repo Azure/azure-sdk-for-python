@@ -37,11 +37,11 @@ class ProductsByBillingAccountOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists products by billingAccountId.
+            self, billing_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists products by billingAccountName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param filter: May be used to filter by product type. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -64,7 +64,7 @@ class ProductsByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -106,4 +106,4 @@ class ProductsByBillingAccountOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/products'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/products'}

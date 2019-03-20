@@ -37,13 +37,13 @@ class PolicyOperations(object):
         self.config = config
 
     def get_by_billing_profile(
-            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
-        """The policy for a given billingAccountId and billingProfileId.
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+        """The policy for a given billingAccountName and billingProfileName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -58,8 +58,8 @@ class PolicyOperations(object):
         # Construct URL
         url = self.get_by_billing_profile.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,16 +94,16 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/policies/default'}
+    get_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/policies/default'}
 
     def update(
-            self, billing_account_id, billing_profile_id, reservation_purchases_allowed=None, marketplace_purchases_allowed=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, reservation_purchases_allowed=None, marketplace_purchases_allowed=None, custom_headers=None, raw=False, **operation_config):
         """The operation to update a policy.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param reservation_purchases_allowed: The reservationPurchasesAllowed
          flag.
         :type reservation_purchases_allowed: bool
@@ -126,8 +126,8 @@ class PolicyOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -166,4 +166,4 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/policies/default'}
+    update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/policies/default'}

@@ -21,14 +21,14 @@ from .operations.billing_accounts_operations import BillingAccountsOperations
 from .operations.billing_accounts_with_create_invoice_section_permission_operations import BillingAccountsWithCreateInvoiceSectionPermissionOperations
 from .operations.available_balance_by_billing_profile_operations import AvailableBalanceByBillingProfileOperations
 from .operations.payment_methods_by_billing_profile_operations import PaymentMethodsByBillingProfileOperations
-from .operations.billing_profiles_by_billing_account_id_operations import BillingProfilesByBillingAccountIdOperations
+from .operations.billing_profiles_by_billing_account_name_operations import BillingProfilesByBillingAccountNameOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
-from .operations.invoice_sections_by_billing_account_id_operations import InvoiceSectionsByBillingAccountIdOperations
+from .operations.invoice_sections_by_billing_account_name_operations import InvoiceSectionsByBillingAccountNameOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
 from .operations.invoice_sections_with_create_subscription_permission_operations import InvoiceSectionsWithCreateSubscriptionPermissionOperations
-from .operations.departments_by_billing_account_id_operations import DepartmentsByBillingAccountIdOperations
+from .operations.departments_by_billing_account_name_operations import DepartmentsByBillingAccountNameOperations
 from .operations.departments_operations import DepartmentsOperations
-from .operations.enrollment_accounts_by_billing_account_id_operations import EnrollmentAccountsByBillingAccountIdOperations
+from .operations.enrollment_accounts_by_billing_account_name_operations import EnrollmentAccountsByBillingAccountNameOperations
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.invoices_by_billing_account_operations import InvoicesByBillingAccountOperations
 from .operations.invoice_pricesheet_operations import InvoicePricesheetOperations
@@ -45,6 +45,15 @@ from .operations.transactions_by_billing_account_operations import TransactionsB
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.operations import Operations
+from .operations.billing_accountbilling_permissions_operations import BillingAccountbillingPermissionsOperations
+from .operations.invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
+from .operations.billing_profilebilling_permissions_operations import BillingProfilebillingPermissionsOperations
+from .operations.billing_accountbilling_role_definition_operations import BillingAccountbillingRoleDefinitionOperations
+from .operations.invoice_sectionbilling_role_definition_operations import InvoiceSectionbillingRoleDefinitionOperations
+from .operations.billing_profilebilling_role_definition_operations import BillingProfilebillingRoleDefinitionOperations
+from .operations.billing_accountbilling_role_assignment_operations import BillingAccountbillingRoleAssignmentOperations
+from .operations.invoice_sectionbilling_role_assignment_operations import InvoiceSectionbillingRoleAssignmentOperations
+from .operations.billing_profilebilling_role_assignment_operations import BillingProfilebillingRoleAssignmentOperations
 from . import models
 
 
@@ -94,22 +103,22 @@ class BillingManagementClient(SDKClient):
     :vartype available_balance_by_billing_profile: azure.mgmt.billing.operations.AvailableBalanceByBillingProfileOperations
     :ivar payment_methods_by_billing_profile: PaymentMethodsByBillingProfile operations
     :vartype payment_methods_by_billing_profile: azure.mgmt.billing.operations.PaymentMethodsByBillingProfileOperations
-    :ivar billing_profiles_by_billing_account_id: BillingProfilesByBillingAccountId operations
-    :vartype billing_profiles_by_billing_account_id: azure.mgmt.billing.operations.BillingProfilesByBillingAccountIdOperations
+    :ivar billing_profiles_by_billing_account_name: BillingProfilesByBillingAccountName operations
+    :vartype billing_profiles_by_billing_account_name: azure.mgmt.billing.operations.BillingProfilesByBillingAccountNameOperations
     :ivar billing_profiles: BillingProfiles operations
     :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
-    :ivar invoice_sections_by_billing_account_id: InvoiceSectionsByBillingAccountId operations
-    :vartype invoice_sections_by_billing_account_id: azure.mgmt.billing.operations.InvoiceSectionsByBillingAccountIdOperations
+    :ivar invoice_sections_by_billing_account_name: InvoiceSectionsByBillingAccountName operations
+    :vartype invoice_sections_by_billing_account_name: azure.mgmt.billing.operations.InvoiceSectionsByBillingAccountNameOperations
     :ivar invoice_sections: InvoiceSections operations
     :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar invoice_sections_with_create_subscription_permission: InvoiceSectionsWithCreateSubscriptionPermission operations
     :vartype invoice_sections_with_create_subscription_permission: azure.mgmt.billing.operations.InvoiceSectionsWithCreateSubscriptionPermissionOperations
-    :ivar departments_by_billing_account_id: DepartmentsByBillingAccountId operations
-    :vartype departments_by_billing_account_id: azure.mgmt.billing.operations.DepartmentsByBillingAccountIdOperations
+    :ivar departments_by_billing_account_name: DepartmentsByBillingAccountName operations
+    :vartype departments_by_billing_account_name: azure.mgmt.billing.operations.DepartmentsByBillingAccountNameOperations
     :ivar departments: Departments operations
     :vartype departments: azure.mgmt.billing.operations.DepartmentsOperations
-    :ivar enrollment_accounts_by_billing_account_id: EnrollmentAccountsByBillingAccountId operations
-    :vartype enrollment_accounts_by_billing_account_id: azure.mgmt.billing.operations.EnrollmentAccountsByBillingAccountIdOperations
+    :ivar enrollment_accounts_by_billing_account_name: EnrollmentAccountsByBillingAccountName operations
+    :vartype enrollment_accounts_by_billing_account_name: azure.mgmt.billing.operations.EnrollmentAccountsByBillingAccountNameOperations
     :ivar enrollment_accounts: EnrollmentAccounts operations
     :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
     :ivar invoices_by_billing_account: InvoicesByBillingAccount operations
@@ -142,6 +151,24 @@ class BillingManagementClient(SDKClient):
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
+    :ivar billing_accountbilling_permissions: BillingAccountbillingPermissions operations
+    :vartype billing_accountbilling_permissions: azure.mgmt.billing.operations.BillingAccountbillingPermissionsOperations
+    :ivar invoice_sectionsbilling_permissions: InvoiceSectionsbillingPermissions operations
+    :vartype invoice_sectionsbilling_permissions: azure.mgmt.billing.operations.InvoiceSectionsbillingPermissionsOperations
+    :ivar billing_profilebilling_permissions: BillingProfilebillingPermissions operations
+    :vartype billing_profilebilling_permissions: azure.mgmt.billing.operations.BillingProfilebillingPermissionsOperations
+    :ivar billing_accountbilling_role_definition: BillingAccountbillingRoleDefinition operations
+    :vartype billing_accountbilling_role_definition: azure.mgmt.billing.operations.BillingAccountbillingRoleDefinitionOperations
+    :ivar invoice_sectionbilling_role_definition: InvoiceSectionbillingRoleDefinition operations
+    :vartype invoice_sectionbilling_role_definition: azure.mgmt.billing.operations.InvoiceSectionbillingRoleDefinitionOperations
+    :ivar billing_profilebilling_role_definition: BillingProfilebillingRoleDefinition operations
+    :vartype billing_profilebilling_role_definition: azure.mgmt.billing.operations.BillingProfilebillingRoleDefinitionOperations
+    :ivar billing_accountbilling_role_assignment: BillingAccountbillingRoleAssignment operations
+    :vartype billing_accountbilling_role_assignment: azure.mgmt.billing.operations.BillingAccountbillingRoleAssignmentOperations
+    :ivar invoice_sectionbilling_role_assignment: InvoiceSectionbillingRoleAssignment operations
+    :vartype invoice_sectionbilling_role_assignment: azure.mgmt.billing.operations.InvoiceSectionbillingRoleAssignmentOperations
+    :ivar billing_profilebilling_role_assignment: BillingProfilebillingRoleAssignment operations
+    :vartype billing_profilebilling_role_assignment: azure.mgmt.billing.operations.BillingProfilebillingRoleAssignmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -170,21 +197,21 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods_by_billing_profile = PaymentMethodsByBillingProfileOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_profiles_by_billing_account_id = BillingProfilesByBillingAccountIdOperations(
+        self.billing_profiles_by_billing_account_name = BillingProfilesByBillingAccountNameOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profiles = BillingProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_sections_by_billing_account_id = InvoiceSectionsByBillingAccountIdOperations(
+        self.invoice_sections_by_billing_account_name = InvoiceSectionsByBillingAccountNameOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections = InvoiceSectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections_with_create_subscription_permission = InvoiceSectionsWithCreateSubscriptionPermissionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.departments_by_billing_account_id = DepartmentsByBillingAccountIdOperations(
+        self.departments_by_billing_account_name = DepartmentsByBillingAccountNameOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.departments = DepartmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.enrollment_accounts_by_billing_account_id = EnrollmentAccountsByBillingAccountIdOperations(
+        self.enrollment_accounts_by_billing_account_name = EnrollmentAccountsByBillingAccountNameOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.enrollment_accounts = EnrollmentAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -218,16 +245,34 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.billing_accountbilling_permissions = BillingAccountbillingPermissionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_sectionsbilling_permissions = InvoiceSectionsbillingPermissionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_profilebilling_permissions = BillingProfilebillingPermissionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_accountbilling_role_definition = BillingAccountbillingRoleDefinitionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_sectionbilling_role_definition = InvoiceSectionbillingRoleDefinitionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_profilebilling_role_definition = BillingProfilebillingRoleDefinitionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_accountbilling_role_assignment = BillingAccountbillingRoleAssignmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_sectionbilling_role_assignment = InvoiceSectionbillingRoleAssignmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_profilebilling_role_assignment = BillingProfilebillingRoleAssignmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def transactions_by_billing_profile(
-            self, billing_account_id, billing_profile_id, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the transactions by billingProfileId for given start date and end
-        date.
+            self, billing_account_name, billing_profile_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the transactions by billingProfileName for given start date and
+        end date.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param start_date: Start date
         :type start_date: str
         :param end_date: End date
@@ -251,8 +296,8 @@ class BillingManagementClient(SDKClient):
         # Construct URL
         url = self.transactions_by_billing_profile.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -291,14 +336,14 @@ class BillingManagementClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    transactions_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/transactions'}
+    transactions_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/transactions'}
 
     def update_auto_renew_for_billing_account(
-            self, billing_account_id, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
         """Cancel product by product id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param product_name: Invoide Id.
         :type product_name: str
         :param auto_renew: Request parameters to update auto renew policy a
@@ -321,7 +366,7 @@ class BillingManagementClient(SDKClient):
         # Construct URL
         url = self.update_auto_renew_for_billing_account.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -361,16 +406,16 @@ class BillingManagementClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    update_auto_renew_for_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/products/{productName}/updateAutoRenew'}
+    update_auto_renew_for_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/products/{productName}/updateAutoRenew'}
 
     def update_auto_renew_for_invoice_section(
-            self, billing_account_id, invoice_section_id, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
         """Cancel auto renew for product by product id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param product_name: Invoide Id.
         :type product_name: str
         :param auto_renew: Request parameters to update auto renew policy a
@@ -393,8 +438,8 @@ class BillingManagementClient(SDKClient):
         # Construct URL
         url = self.update_auto_renew_for_invoice_section.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str'),
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'productName': self._serialize.url("product_name", product_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -434,4 +479,4 @@ class BillingManagementClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    update_auto_renew_for_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/products/{productName}/updateAutoRenew'}
+    update_auto_renew_for_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/updateAutoRenew'}

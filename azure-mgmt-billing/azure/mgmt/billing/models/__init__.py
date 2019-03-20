@@ -54,6 +54,13 @@ try:
     from .update_auto_renew_request_py3 import UpdateAutoRenewRequest
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
+    from .billing_role_assignment_payload_py3 import BillingRoleAssignmentPayload
+    from .billing_role_assignment_py3 import BillingRoleAssignment
+    from .billing_role_assignment_list_result_py3 import BillingRoleAssignmentListResult
+    from .billing_permissions_py3 import BillingPermissions
+    from .billing_permissions_list_result_py3 import BillingPermissionsListResult
+    from .billing_role_definition_py3 import BillingRoleDefinition
+    from .billing_role_definition_list_result_py3 import BillingRoleDefinitionListResult
 except (SyntaxError, ImportError):
     from .transfer_product_request_properties import TransferProductRequestProperties
     from .transfer_billing_subscription_result import TransferBillingSubscriptionResult
@@ -99,6 +106,13 @@ except (SyntaxError, ImportError):
     from .update_auto_renew_request import UpdateAutoRenewRequest
     from .operation_display import OperationDisplay
     from .operation import Operation
+    from .billing_role_assignment_payload import BillingRoleAssignmentPayload
+    from .billing_role_assignment import BillingRoleAssignment
+    from .billing_role_assignment_list_result import BillingRoleAssignmentListResult
+    from .billing_permissions import BillingPermissions
+    from .billing_permissions_list_result import BillingPermissionsListResult
+    from .billing_role_definition import BillingRoleDefinition
+    from .billing_role_definition_list_result import BillingRoleDefinitionListResult
 from .payment_method_paged import PaymentMethodPaged
 from .billing_subscription_summary_paged import BillingSubscriptionSummaryPaged
 from .product_summary_paged import ProductSummaryPaged
@@ -159,6 +173,13 @@ __all__ = [
     'UpdateAutoRenewRequest',
     'OperationDisplay',
     'Operation',
+    'BillingRoleAssignmentPayload',
+    'BillingRoleAssignment',
+    'BillingRoleAssignmentListResult',
+    'BillingPermissions',
+    'BillingPermissionsListResult',
+    'BillingRoleDefinition',
+    'BillingRoleDefinitionListResult',
     'PaymentMethodPaged',
     'BillingSubscriptionSummaryPaged',
     'ProductSummaryPaged',

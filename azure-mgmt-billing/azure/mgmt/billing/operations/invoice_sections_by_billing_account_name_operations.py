@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EnrollmentAccountsOperations(object):
-    """EnrollmentAccountsOperations operations.
+class InvoiceSectionsByBillingAccountNameOperations(object):
+    """InvoiceSectionsByBillingAccountNameOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,37 +36,29 @@ class EnrollmentAccountsOperations(object):
 
         self.config = config
 
-    def get_by_enrollment_account_account_id(
-            self, billing_account_name, enrollment_account_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get the enrollment account by id.
+    def list(
+            self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all invoice sections for a user which he has access to.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param enrollment_account_name: Enrollment Account Id.
-        :type enrollment_account_name: str
-        :param expand: May be used to expand the Department.
+        :param expand: May be used to expand the billingProfiles.
         :type expand: str
-        :param filter: The filter supports 'eq', 'lt', 'gt', 'le', 'ge', and
-         'and'. It does not currently support 'ne', 'or', or 'not'. Tag filter
-         is a key value pair string where key and value is separated by a colon
-         (:).
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EnrollmentAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount or
+        :return: InvoiceSectionListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.InvoiceSectionListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_enrollment_account_account_id.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'enrollmentAccountName': self._serialize.url("enrollment_account_name", enrollment_account_name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -75,8 +67,6 @@ class EnrollmentAccountsOperations(object):
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -92,17 +82,23 @@ class EnrollmentAccountsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EnrollmentAccount', response)
+            deserialized = self._deserialize('InvoiceSectionListResult', response)
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    get_by_enrollment_account_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections'}

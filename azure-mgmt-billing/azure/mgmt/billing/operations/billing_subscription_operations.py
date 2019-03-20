@@ -39,15 +39,15 @@ class BillingSubscriptionOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_id, invoice_section_id, billing_subscription_id, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, billing_subscription_name, custom_headers=None, raw=False, **operation_config):
         """Get a single billing subscription by name.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
-        :param billing_subscription_id: Billing Subscription Id.
-        :type billing_subscription_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
+        :param billing_subscription_name: Billing Subscription Id.
+        :type billing_subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -62,9 +62,9 @@ class BillingSubscriptionOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str'),
-            'billingSubscriptionId': self._serialize.url("billing_subscription_id", billing_subscription_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
+            'billingSubscriptionName': self._serialize.url("billing_subscription_name", billing_subscription_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -99,19 +99,19 @@ class BillingSubscriptionOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/billingSubscriptions/{billingSubscriptionId}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/billingSubscriptions/{billingSubscriptionName}'}
 
 
     def _transfer_initial(
-            self, billing_account_id, invoice_section_id, destination_invoice_section_id=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_name=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_name=destination_invoice_section_name)
 
         # Construct URL
         url = self.transfer.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
+            'billingSubscriptionName': self._serialize.url("billing_subscription_name", billing_subscription_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -158,17 +158,19 @@ class BillingSubscriptionOperations(object):
         return deserialized
 
     def transfer(
-            self, billing_account_id, invoice_section_id, destination_invoice_section_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_name=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Transfers the GTM subscription from one invoice section to another
         within a billing account.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
-        :param destination_invoice_section_id: The destination
-         invoiceSectionId.
-        :type destination_invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
+        :param billing_subscription_name: Billing Subscription Id.
+        :type billing_subscription_name: str
+        :param destination_invoice_section_name: The destination
+         invoiceSectionName.
+        :type destination_invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -185,9 +187,10 @@ class BillingSubscriptionOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         raw_result = self._transfer_initial(
-            billing_account_id=billing_account_id,
-            invoice_section_id=invoice_section_id,
-            destination_invoice_section_id=destination_invoice_section_id,
+            billing_account_name=billing_account_name,
+            invoice_section_name=invoice_section_name,
+            billing_subscription_name=billing_subscription_name,
+            destination_invoice_section_name=destination_invoice_section_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -215,4 +218,4 @@ class BillingSubscriptionOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/billingSubscriptions/{subscriptionId}/transfer'}
+    transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/billingSubscriptions/{billingSubscriptionName}/transfer'}

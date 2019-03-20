@@ -21,20 +21,20 @@ class EnrollmentAccountContext(Model):
     :type start_date: datetime
     :param end_date: Account End Date
     :type end_date: datetime
-    :param enrollment_account_id: The enrollment account id.
-    :type enrollment_account_id: str
+    :param enrollment_account_name: The enrollment account id.
+    :type enrollment_account_name: str
     """
 
     _attribute_map = {
         'cost_center': {'key': 'costCenter', 'type': 'str'},
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
-        'enrollment_account_id': {'key': 'enrollmentAccountId', 'type': 'str'},
+        'enrollment_account_name': {'key': 'enrollmentAccountName', 'type': 'str'},
     }
 
-    def __init__(self, *, cost_center: str=None, start_date=None, end_date=None, enrollment_account_id: str=None, **kwargs) -> None:
+    def __init__(self, *, cost_center: str=None, start_date=None, end_date=None, enrollment_account_name: str=None, **kwargs) -> None:
         super(EnrollmentAccountContext, self).__init__(**kwargs)
         self.cost_center = cost_center
         self.start_date = start_date
         self.end_date = end_date
-        self.enrollment_account_id = enrollment_account_id
+        self.enrollment_account_name = enrollment_account_name

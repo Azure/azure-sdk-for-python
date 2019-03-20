@@ -37,13 +37,13 @@ class DepartmentsOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_id, department_id, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, department_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get the department by id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param department_id: Department Id.
-        :type department_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param department_name: Department Id.
+        :type department_name: str
         :param expand: May be used to expand the enrollmentAccounts.
         :type expand: str
         :param filter: The filter supports 'eq', 'lt', 'gt', 'le', 'ge', and
@@ -65,8 +65,8 @@ class DepartmentsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'departmentId': self._serialize.url("department_id", department_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'departmentName': self._serialize.url("department_name", department_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -105,4 +105,4 @@ class DepartmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/departments/{departmentName}'}

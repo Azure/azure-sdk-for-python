@@ -37,12 +37,12 @@ class InvoiceSectionsWithCreateSubscriptionPermissionOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all invoiceSections with create subscription permission for a
         user.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param expand: May be used to expand the billingProfiles.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -59,7 +59,7 @@ class InvoiceSectionsWithCreateSubscriptionPermissionOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -102,4 +102,4 @@ class InvoiceSectionsWithCreateSubscriptionPermissionOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/listInvoiceSectionsWithCreateSubscriptionPermission'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/listInvoiceSectionsWithCreateSubscriptionPermission'}

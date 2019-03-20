@@ -37,13 +37,13 @@ class BillingSubscriptionsByInvoiceSectionOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, invoice_section_id, custom_headers=None, raw=False, **operation_config):
-        """Lists billing subscription by invoiceSectionId.
+            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+        """Lists billing subscription by invoiceSectionName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,8 +59,8 @@ class BillingSubscriptionsByInvoiceSectionOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,4 +95,4 @@ class BillingSubscriptionsByInvoiceSectionOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/billingSubscriptions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/billingSubscriptions'}

@@ -40,13 +40,13 @@ class InvoiceSectionsOperations(object):
 
 
     def _create_initial(
-            self, billing_account_id, display_name=None, billing_profiles=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.InvoiceSectionProperties(display_name=display_name, billing_profiles=billing_profiles)
 
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,11 +94,11 @@ class InvoiceSectionsOperations(object):
         return deserialized
 
     def create(
-            self, billing_account_id, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to create a InvoiceSection.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param display_name: The name of the InvoiceSection.
         :type display_name: str
         :param billing_profiles: The billing profiles associated to the
@@ -120,7 +120,7 @@ class InvoiceSectionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
-            billing_account_id=billing_account_id,
+            billing_account_name=billing_account_name,
             display_name=display_name,
             billing_profiles=billing_profiles,
             custom_headers=custom_headers,
@@ -150,16 +150,16 @@ class InvoiceSectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections'}
+    create.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections'}
 
     def get(
-            self, billing_account_id, invoice_section_id, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the InvoiceSection by id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param expand: May be used to expand the billingProfiles.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -176,8 +176,8 @@ class InvoiceSectionsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -214,18 +214,18 @@ class InvoiceSectionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}'}
 
 
     def _update_initial(
-            self, billing_account_id, invoice_section_id, display_name=None, billing_profiles=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.InvoiceSection(display_name=display_name, billing_profiles=billing_profiles)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -272,13 +272,13 @@ class InvoiceSectionsOperations(object):
         return deserialized
 
     def update(
-            self, billing_account_id, invoice_section_id, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_section_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a InvoiceSection.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param display_name: The name of the InvoiceSection.
         :type display_name: str
         :param billing_profiles: The billing profiles associated to the
@@ -300,8 +300,8 @@ class InvoiceSectionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
-            billing_account_id=billing_account_id,
-            invoice_section_id=invoice_section_id,
+            billing_account_name=billing_account_name,
+            invoice_section_name=invoice_section_name,
             display_name=display_name,
             billing_profiles=billing_profiles,
             custom_headers=custom_headers,
@@ -330,4 +330,4 @@ class InvoiceSectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'}
+    update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}'}

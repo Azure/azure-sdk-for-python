@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ProductsOperations(object):
-    """ProductsOperations operations.
+class InvoiceSectionbillingRoleDefinitionOperations(object):
+    """InvoiceSectionbillingRoleDefinitionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,22 +37,22 @@ class ProductsOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_name, invoice_section_name, product_name, custom_headers=None, raw=False, **operation_config):
-        """Get a single product by name.
+            self, billing_account_name, invoice_section_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the role definition for a role.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param product_name: Invoide Id.
-        :type product_name: str
+        :param billing_role_definition_name: role definition id.
+        :type billing_role_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ProductSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.ProductSummary or
+        :return: BillingRoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingRoleDefinition or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -62,7 +62,7 @@ class ProductsOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
-            'productName': self._serialize.url("product_name", product_name, 'str')
+            'billingRoleDefinitionName': self._serialize.url("billing_role_definition_name", billing_role_definition_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -90,47 +90,40 @@ class ProductsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ProductSummary', response)
+            deserialized = self._deserialize('BillingRoleDefinition', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleDefinitions/{billingRoleDefinitionName}'}
 
-    def transfer(
-            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_name=None, custom_headers=None, raw=False, **operation_config):
-        """The operation to transfer a Product to another InvoiceSection.
+    def list(
+            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the role definition for a invoice Section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param product_name: Invoide Id.
-        :type product_name: str
-        :param destination_invoice_section_name: Destination invoice section
-         id.
-        :type destination_invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ProductSummary or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.ProductSummary or
+        :return: BillingRoleDefinitionListResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingRoleDefinitionListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = models.TransferProductRequestProperties(destination_invoice_section_name=destination_invoice_section_name)
-
         # Construct URL
-        url = self.transfer.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
-            'productName': self._serialize.url("product_name", product_name, 'str')
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -141,7 +134,6 @@ class ProductsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -149,31 +141,21 @@ class ProductsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'TransferProductRequestProperties')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ProductSummary', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-                'Azure-AsyncOperation': 'str',
-            }
+            deserialized = self._deserialize('BillingRoleDefinitionListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/transfer'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleDefinitions'}

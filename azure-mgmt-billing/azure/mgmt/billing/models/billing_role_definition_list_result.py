@@ -12,18 +12,24 @@
 from msrest.serialization import Model
 
 
-class TransferBillingSubscriptionRequestProperties(Model):
-    """Request parameters to transfer billing subscription.
+class BillingRoleDefinitionListResult(Model):
+    """list the role definitions.
 
-    :param destination_invoice_section_name: The destination
-     invoiceSectionName.
-    :type destination_invoice_section_name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of role definitions.
+    :vartype value: list[~azure.mgmt.billing.models.BillingRoleDefinition]
     """
 
+    _validation = {
+        'value': {'readonly': True},
+    }
+
     _attribute_map = {
-        'destination_invoice_section_name': {'key': 'destinationInvoiceSectionName', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[BillingRoleDefinition]'},
     }
 
     def __init__(self, **kwargs):
-        super(TransferBillingSubscriptionRequestProperties, self).__init__(**kwargs)
-        self.destination_invoice_section_name = kwargs.get('destination_invoice_section_name', None)
+        super(BillingRoleDefinitionListResult, self).__init__(**kwargs)
+        self.value = None

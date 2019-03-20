@@ -13,14 +13,14 @@ from .billing_accounts_operations import BillingAccountsOperations
 from .billing_accounts_with_create_invoice_section_permission_operations import BillingAccountsWithCreateInvoiceSectionPermissionOperations
 from .available_balance_by_billing_profile_operations import AvailableBalanceByBillingProfileOperations
 from .payment_methods_by_billing_profile_operations import PaymentMethodsByBillingProfileOperations
-from .billing_profiles_by_billing_account_id_operations import BillingProfilesByBillingAccountIdOperations
+from .billing_profiles_by_billing_account_name_operations import BillingProfilesByBillingAccountNameOperations
 from .billing_profiles_operations import BillingProfilesOperations
-from .invoice_sections_by_billing_account_id_operations import InvoiceSectionsByBillingAccountIdOperations
+from .invoice_sections_by_billing_account_name_operations import InvoiceSectionsByBillingAccountNameOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
 from .invoice_sections_with_create_subscription_permission_operations import InvoiceSectionsWithCreateSubscriptionPermissionOperations
-from .departments_by_billing_account_id_operations import DepartmentsByBillingAccountIdOperations
+from .departments_by_billing_account_name_operations import DepartmentsByBillingAccountNameOperations
 from .departments_operations import DepartmentsOperations
-from .enrollment_accounts_by_billing_account_id_operations import EnrollmentAccountsByBillingAccountIdOperations
+from .enrollment_accounts_by_billing_account_name_operations import EnrollmentAccountsByBillingAccountNameOperations
 from .enrollment_accounts_operations import EnrollmentAccountsOperations
 from .invoices_by_billing_account_operations import InvoicesByBillingAccountOperations
 from .invoice_pricesheet_operations import InvoicePricesheetOperations
@@ -37,20 +37,29 @@ from .transactions_by_billing_account_operations import TransactionsByBillingAcc
 from .policy_operations import PolicyOperations
 from .billing_property_operations import BillingPropertyOperations
 from .operations import Operations
+from .billing_accountbilling_permissions_operations import BillingAccountbillingPermissionsOperations
+from .invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
+from .billing_profilebilling_permissions_operations import BillingProfilebillingPermissionsOperations
+from .billing_accountbilling_role_definition_operations import BillingAccountbillingRoleDefinitionOperations
+from .invoice_sectionbilling_role_definition_operations import InvoiceSectionbillingRoleDefinitionOperations
+from .billing_profilebilling_role_definition_operations import BillingProfilebillingRoleDefinitionOperations
+from .billing_accountbilling_role_assignment_operations import BillingAccountbillingRoleAssignmentOperations
+from .invoice_sectionbilling_role_assignment_operations import InvoiceSectionbillingRoleAssignmentOperations
+from .billing_profilebilling_role_assignment_operations import BillingProfilebillingRoleAssignmentOperations
 
 __all__ = [
     'BillingAccountsOperations',
     'BillingAccountsWithCreateInvoiceSectionPermissionOperations',
     'AvailableBalanceByBillingProfileOperations',
     'PaymentMethodsByBillingProfileOperations',
-    'BillingProfilesByBillingAccountIdOperations',
+    'BillingProfilesByBillingAccountNameOperations',
     'BillingProfilesOperations',
-    'InvoiceSectionsByBillingAccountIdOperations',
+    'InvoiceSectionsByBillingAccountNameOperations',
     'InvoiceSectionsOperations',
     'InvoiceSectionsWithCreateSubscriptionPermissionOperations',
-    'DepartmentsByBillingAccountIdOperations',
+    'DepartmentsByBillingAccountNameOperations',
     'DepartmentsOperations',
-    'EnrollmentAccountsByBillingAccountIdOperations',
+    'EnrollmentAccountsByBillingAccountNameOperations',
     'EnrollmentAccountsOperations',
     'InvoicesByBillingAccountOperations',
     'InvoicePricesheetOperations',
@@ -67,4 +76,13 @@ __all__ = [
     'PolicyOperations',
     'BillingPropertyOperations',
     'Operations',
+    'BillingAccountbillingPermissionsOperations',
+    'InvoiceSectionsbillingPermissionsOperations',
+    'BillingProfilebillingPermissionsOperations',
+    'BillingAccountbillingRoleDefinitionOperations',
+    'InvoiceSectionbillingRoleDefinitionOperations',
+    'BillingProfilebillingRoleDefinitionOperations',
+    'BillingAccountbillingRoleAssignmentOperations',
+    'InvoiceSectionbillingRoleAssignmentOperations',
+    'BillingProfilebillingRoleAssignmentOperations',
 ]

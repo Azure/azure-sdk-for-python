@@ -15,14 +15,15 @@ from msrest.serialization import Model
 class TransferBillingSubscriptionRequest(Model):
     """Request parameters to transfer billing subscription.
 
-    :param destination_invoice_section_id: The destination invoiceSectionId.
-    :type destination_invoice_section_id: str
+    :param destination_invoice_section_name: The destination
+     invoiceSectionName.
+    :type destination_invoice_section_name: str
     """
 
     _attribute_map = {
-        'destination_invoice_section_id': {'key': 'properties.destinationInvoiceSectionId', 'type': 'str'},
+        'destination_invoice_section_name': {'key': 'properties.destinationInvoiceSectionName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(TransferBillingSubscriptionRequest, self).__init__(**kwargs)
-        self.destination_invoice_section_id = kwargs.get('destination_invoice_section_id', None)
+        self.destination_invoice_section_name = kwargs.get('destination_invoice_section_name', None)

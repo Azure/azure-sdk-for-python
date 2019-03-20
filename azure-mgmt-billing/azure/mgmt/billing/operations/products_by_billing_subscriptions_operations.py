@@ -37,11 +37,11 @@ class ProductsByBillingSubscriptionsOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Lists billing subscriptions by billingAccountId.
+            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists billing subscriptions by billingAccountName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,7 +59,7 @@ class ProductsByBillingSubscriptionsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -99,4 +99,4 @@ class ProductsByBillingSubscriptionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingSubscriptions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingSubscriptions'}

@@ -37,13 +37,13 @@ class InvoiceOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_id, billing_profile_id, invoice_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_name, custom_headers=None, raw=False, **operation_config):
         """Get the invoice by id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param invoice_name: Invoide Id.
         :type invoice_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -60,8 +60,8 @@ class InvoiceOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str'),
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -97,4 +97,4 @@ class InvoiceOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoices/{invoiceName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoices/{invoiceName}'}

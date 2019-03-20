@@ -37,13 +37,13 @@ class InvoicesByBillingProfileOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, billing_profile_id, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
         """List of invoices for a billing profile.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param period_start_date: Invoice period start date.
         :type period_start_date: str
         :param period_end_date: Invoice period end date.
@@ -62,8 +62,8 @@ class InvoicesByBillingProfileOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,4 +100,4 @@ class InvoicesByBillingProfileOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/invoices'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoices'}

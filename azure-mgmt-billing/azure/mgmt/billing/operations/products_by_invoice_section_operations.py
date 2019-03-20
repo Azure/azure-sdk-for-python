@@ -37,13 +37,13 @@ class ProductsByInvoiceSectionOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, invoice_section_id, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists products by invoiceSectionId.
+            self, billing_account_name, invoice_section_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists products by invoiceSectionName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param invoice_section_id: InvoiceSection Id.
-        :type invoice_section_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param filter: May be used to filter by product type. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -63,8 +63,8 @@ class ProductsByInvoiceSectionOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'invoiceSectionId': self._serialize.url("invoice_section_id", invoice_section_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,4 +101,4 @@ class ProductsByInvoiceSectionOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}/products'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products'}

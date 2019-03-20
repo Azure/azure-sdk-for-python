@@ -40,11 +40,11 @@ class InvoicePricesheetOperations(object):
 
 
     def _download_initial(
-            self, billing_account_id, invoice_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -90,11 +90,11 @@ class InvoicePricesheetOperations(object):
         return deserialized
 
     def download(
-            self, billing_account_id, invoice_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Get pricesheet data for invoice id (invoiceName).
 
-        :param billing_account_id: Azure Billing Account ID.
-        :type billing_account_id: str
+        :param billing_account_name: Azure Billing Account ID.
+        :type billing_account_name: str
         :param invoice_name: The name of an invoice resource.
         :type invoice_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -112,7 +112,7 @@ class InvoicePricesheetOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         raw_result = self._download_initial(
-            billing_account_id=billing_account_id,
+            billing_account_name=billing_account_name,
             invoice_name=invoice_name,
             custom_headers=custom_headers,
             raw=True,
@@ -142,4 +142,4 @@ class InvoicePricesheetOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoices/{invoiceName}/pricesheet/default/download'}
+    download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoices/{invoiceName}/pricesheet/default/download'}

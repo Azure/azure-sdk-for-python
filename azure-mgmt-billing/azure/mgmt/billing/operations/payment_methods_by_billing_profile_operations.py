@@ -37,13 +37,13 @@ class PaymentMethodsByBillingProfileOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing profile Id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,8 +61,8 @@ class PaymentMethodsByBillingProfileOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-                    'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -102,4 +102,4 @@ class PaymentMethodsByBillingProfileOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}/paymentMethods'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/paymentMethods'}

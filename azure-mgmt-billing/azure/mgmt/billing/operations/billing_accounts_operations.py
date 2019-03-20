@@ -93,11 +93,11 @@ class BillingAccountsOperations(object):
     list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts'}
 
     def get(
-            self, billing_account_id, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the billing account by id.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param expand: May be used to expand the invoiceSections and
          billingProfiles.
         :type expand: str
@@ -115,7 +115,7 @@ class BillingAccountsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -152,4 +152,4 @@ class BillingAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}'}

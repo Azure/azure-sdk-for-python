@@ -37,12 +37,12 @@ class TransactionsByBillingAccountOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the transactions by billingAccountId for given start and end
+            self, billing_account_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the transactions by billingAccountName for given start and end
         date.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
         :param start_date: Start date
         :type start_date: str
         :param end_date: End date
@@ -69,7 +69,7 @@ class TransactionsByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -113,4 +113,4 @@ class TransactionsByBillingAccountOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/transactions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/transactions'}

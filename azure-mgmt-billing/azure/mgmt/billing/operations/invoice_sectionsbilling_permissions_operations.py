@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class InvoiceSectionsByBillingAccountIdOperations(object):
-    """InvoiceSectionsByBillingAccountIdOperations operations.
+class InvoiceSectionsbillingPermissionsOperations(object):
+    """InvoiceSectionsbillingPermissionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,20 +37,20 @@ class InvoiceSectionsByBillingAccountIdOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all invoice sections for a user which he has access to.
+            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all billingPermissions for the caller has for a Invoice Section.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param expand: May be used to expand the billingProfiles.
-        :type expand: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: InvoiceSectionListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.InvoiceSectionListResult or
+        :return: BillingPermissionsListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.BillingPermissionsListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -58,15 +58,14 @@ class InvoiceSectionsByBillingAccountIdOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -82,23 +81,17 @@ class InvoiceSectionsByBillingAccountIdOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('InvoiceSectionListResult', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'str',
-            }
+            deserialized = self._deserialize('BillingPermissionsListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingPermissions'}

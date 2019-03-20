@@ -37,13 +37,13 @@ class BillingSubscriptionsByBillingProfileOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_id, billing_profile_id, custom_headers=None, raw=False, **operation_config):
-        """Lists billing subscriptions by billingProfileId.
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+        """Lists billing subscriptions by billingProfileName.
 
-        :param billing_account_id: billing Account Id.
-        :type billing_account_id: str
-        :param billing_profile_id: Billing Profile Id.
-        :type billing_profile_id: str
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,8 +59,8 @@ class BillingSubscriptionsByBillingProfileOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
-            'billingProfileId': self._serialize.url("billing_profile_id", billing_profile_id, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,4 +95,4 @@ class BillingSubscriptionsByBillingProfileOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfile/{billingProfileId}/billingSubscriptions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfile/{billingProfileName}/billingSubscriptions'}
