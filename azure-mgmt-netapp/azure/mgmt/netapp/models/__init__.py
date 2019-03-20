@@ -15,10 +15,12 @@ try:
     from .metric_specification_py3 import MetricSpecification
     from .service_specification_py3 import ServiceSpecification
     from .operation_py3 import Operation
+    from .active_directories_py3 import ActiveDirectories
     from .net_app_account_py3 import NetAppAccount
     from .net_app_account_patch_py3 import NetAppAccountPatch
     from .capacity_pool_py3 import CapacityPool
     from .capacity_pool_patch_py3 import CapacityPoolPatch
+    from .export_policy_rule_py3 import ExportPolicyRule
     from .volume_py3 import Volume
     from .volume_patch_py3 import VolumePatch
     from .mount_target_py3 import MountTarget
@@ -31,10 +33,12 @@ except (SyntaxError, ImportError):
     from .metric_specification import MetricSpecification
     from .service_specification import ServiceSpecification
     from .operation import Operation
+    from .active_directories import ActiveDirectories
     from .net_app_account import NetAppAccount
     from .net_app_account_patch import NetAppAccountPatch
     from .capacity_pool import CapacityPool
     from .capacity_pool_patch import CapacityPoolPatch
+    from .export_policy_rule import ExportPolicyRule
     from .volume import Volume
     from .volume_patch import VolumePatch
     from .mount_target import MountTarget
@@ -57,10 +61,12 @@ __all__ = [
     'MetricSpecification',
     'ServiceSpecification',
     'Operation',
+    'ActiveDirectories',
     'NetAppAccount',
     'NetAppAccountPatch',
     'CapacityPool',
     'CapacityPoolPatch',
+    'ExportPolicyRule',
     'Volume',
     'VolumePatch',
     'MountTarget',

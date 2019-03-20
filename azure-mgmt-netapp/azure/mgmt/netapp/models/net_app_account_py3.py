@@ -32,6 +32,8 @@ class NetAppAccount(Model):
     :type tags: object
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
+    :param active_directories: Active Directories
+    :type active_directories: ~azure.mgmt.netapp.models.ActiveDirectories
     """
 
     _validation = {
@@ -49,9 +51,10 @@ class NetAppAccount(Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'active_directories': {'key': 'properties.activeDirectories', 'type': 'ActiveDirectories'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, active_directories=None, **kwargs) -> None:
         super(NetAppAccount, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -59,3 +62,4 @@ class NetAppAccount(Model):
         self.type = None
         self.tags = tags
         self.provisioning_state = None
+        self.active_directories = active_directories
