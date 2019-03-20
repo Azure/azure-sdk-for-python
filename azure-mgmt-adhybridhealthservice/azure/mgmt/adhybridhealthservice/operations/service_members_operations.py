@@ -936,3 +936,64 @@ class ServiceMembersOperations(object):
 
         return deserialized
     get_service_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/serviceconfiguration'}
+
+    def get_connector_metadata(
+            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of connectors and run profile names.
+
+        :param service_name: The name of the service.
+        :type service_name: str
+        :param service_member_id: The server id.
+        :type service_member_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ConnectorMetadata or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.adhybridhealthservice.models.ConnectorMetadata or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_connector_metadata.metadata['url']
+        path_format_arguments = {
+            'serviceName': self._serialize.url("service_name", service_name, 'str'),
+            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConnectorMetadata', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_connector_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/connectormetadata'}
