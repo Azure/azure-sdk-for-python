@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectorMetadataDetails(Model):
-    """Details of the connector. Only has ConnectorId & Display Name.
+    """Details of the connector.
 
     :param connector_id: The Connector Id.
     :type connector_id: str

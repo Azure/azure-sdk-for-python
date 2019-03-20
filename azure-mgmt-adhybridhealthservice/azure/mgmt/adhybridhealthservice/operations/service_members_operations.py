@@ -938,13 +938,15 @@ class ServiceMembersOperations(object):
     get_service_configuration.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/serviceconfiguration'}
 
     def get_connector_metadata(
-            self, service_name, service_member_id, custom_headers=None, raw=False, **operation_config):
+            self, service_name, service_member_id, metric_name, custom_headers=None, raw=False, **operation_config):
         """Gets the list of connectors and run profile names.
 
         :param service_name: The name of the service.
         :type service_name: str
-        :param service_member_id: The server id.
+        :param service_member_id: The servic member id.
         :type service_member_id: str
+        :param metric_name: The name of the metric.
+        :type metric_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -959,7 +961,8 @@ class ServiceMembersOperations(object):
         url = self.get_connector_metadata.metadata['url']
         path_format_arguments = {
             'serviceName': self._serialize.url("service_name", service_name, 'str'),
-            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str')
+            'serviceMemberId': self._serialize.url("service_member_id", service_member_id, 'str'),
+            'metricName': self._serialize.url("metric_name", metric_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -996,4 +999,4 @@ class ServiceMembersOperations(object):
             return client_raw_response
 
         return deserialized
-    get_connector_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/connectormetadata'}
+    get_connector_metadata.metadata = {'url': '/providers/Microsoft.ADHybridHealthService/services/{serviceName}/servicemembers/{serviceMemberId}/metrics/{metricName}'}
