@@ -95,8 +95,9 @@ class Database(object):
         access_condition=None,
         populate_query_metrics=None,
         offer_throughput=None,
+        unique_key_policy=None
     ):
-        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, Any], AccessCondition, bool, int) -> Container
+        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, Any], AccessCondition, bool, int, Dict[str, Any]) -> Container
         """
         Create a new container with the given ID (name).
 
@@ -110,6 +111,7 @@ class Database(object):
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
+        :param unique_key_policy: The unique key policy to apply to the container.
 
         :raise HTTPFailure: The container creation failed.
 
@@ -138,6 +140,8 @@ class Database(object):
             definition["indexingPolicy"] = indexing_policy
         if default_ttl:
             definition["defaultTtl"] = default_ttl
+        if unique_key_policy:
+            definition["uniqueKeyPolicy"] = unique_key_policy
 
         request_options = {}  # type: Dict[str, Any]
         if session_token:
