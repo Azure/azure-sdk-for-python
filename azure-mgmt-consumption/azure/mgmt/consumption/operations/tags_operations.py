@@ -22,7 +22,7 @@ class TagsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-01-01. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-03-01-preview. Constant value: "2019-03-01-preview".
     """
 
     models = models
@@ -32,27 +32,16 @@ class TagsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-03-01-preview"
 
         self.config = config
 
     def get(
-            self, scope, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
         """Get all available tag keys for the defined scope.
 
-        :param scope: The scope associated with tags operations. This includes
-         '/subscriptions/{subscriptionId}/' for subscription scope,
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
-         for resourceGroup scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
-         Billing Account scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
-         for Department scope,
-         '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope..
-        :type scope: str
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -67,7 +56,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -102,4 +91,4 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/tags'}
+    get.metadata = {'url': '/providers/Microsoft.billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/tags'}
