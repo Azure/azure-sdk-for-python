@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class ManagedClusterAgentPoolProfile(Model):
-    """Profile for the container service agent pool.
+class ContainerServiceMasterProfile(Model):
+    """Profile for the container service master.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Unique name of the agent pool profile in the
-     context of the subscription and resource group.
-    :type name: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+    :param count: Number of masters (VMs) in the container service cluster.
+     Allowed values are 1, 3, and 5. The default value is 1. Default value: 1 .
     :type count: int
+    :param dns_prefix: Required. DNS prefix to be used to create the FQDN for
+     the master pool.
+    :type dns_prefix: str
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
      'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3',
@@ -79,53 +78,51 @@ class ManagedClusterAgentPoolProfile(Model):
      'Standard_NC6s_v3', 'Standard_ND12s', 'Standard_ND24rs', 'Standard_ND24s',
      'Standard_ND6s', 'Standard_NV12', 'Standard_NV24', 'Standard_NV6'
     :type vm_size: str or
-     ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceVMSizeTypes
+     ~azure.mgmt.containerservice.v2019_02_01.models.ContainerServiceVMSizeTypes
     :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :ivar storage_profile: Storage profile specifies what kind of storage
-     used. Defaults to ManagedDisks. Possible values include: 'StorageAccount',
-     'ManagedDisks'
-    :vartype storage_profile: str or
-     ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceStorageProfileTypes
     :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet
      identifier.
     :type vnet_subnet_id: str
-    :param max_pods: Maximum number of pods that can run on a node.
-    :type max_pods: int
-    :param os_type: OsType to be used to specify os type. Choose from Linux
-     and Windows. Default to Linux. Possible values include: 'Linux',
-     'Windows'. Default value: "Linux" .
-    :type os_type: str or
-     ~azure.mgmt.containerservice.v2018_03_31.models.OSType
+    :param first_consecutive_static_ip: FirstConsecutiveStaticIP used to
+     specify the first static ip of masters. Default value: "10.240.255.5" .
+    :type first_consecutive_static_ip: str
+    :param storage_profile: Storage profile specifies what kind of storage
+     used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
+     choose for you based on the orchestrator choice. Possible values include:
+     'StorageAccount', 'ManagedDisks'
+    :type storage_profile: str or
+     ~azure.mgmt.containerservice.v2019_02_01.models.ContainerServiceStorageProfileTypes
+    :ivar fqdn: FQDN for the master pool.
+    :vartype fqdn: str
     """
 
     _validation = {
-        'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
-        'count': {'maximum': 100, 'minimum': 1},
+        'dns_prefix': {'required': True},
         'vm_size': {'required': True},
-        'storage_profile': {'readonly': True},
+        'fqdn': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
+        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
-        'max_pods': {'key': 'maxPods', 'type': 'int'},
-        'os_type': {'key': 'osType', 'type': 'str'},
+        'first_consecutive_static_ip': {'key': 'firstConsecutiveStaticIP', 'type': 'str'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", **kwargs) -> None:
-        super(ManagedClusterAgentPoolProfile, self).__init__(**kwargs)
-        self.name = name
+    def __init__(self, *, dns_prefix: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, first_consecutive_static_ip: str="10.240.255.5", storage_profile=None, **kwargs) -> None:
+        super(ContainerServiceMasterProfile, self).__init__(**kwargs)
         self.count = count
+        self.dns_prefix = dns_prefix
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
-        self.storage_profile = None
         self.vnet_subnet_id = vnet_subnet_id
-        self.max_pods = max_pods
-        self.os_type = os_type
+        self.first_consecutive_static_ip = first_consecutive_static_ip
+        self.storage_profile = storage_profile
+        self.fqdn = None
