@@ -55,6 +55,9 @@ class Iteration(Model):
     :vartype reserved_budget_in_hours: int
     :ivar publish_name: Name of the published model.
     :vartype publish_name: str
+    :ivar original_publish_resource_id: Resource Provider Id this iteration
+     was originally published to.
+    :vartype original_publish_resource_id: str
     """
 
     _validation = {
@@ -72,6 +75,7 @@ class Iteration(Model):
         'training_type': {'readonly': True},
         'reserved_budget_in_hours': {'readonly': True},
         'publish_name': {'readonly': True},
+        'original_publish_resource_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -89,6 +93,7 @@ class Iteration(Model):
         'training_type': {'key': 'trainingType', 'type': 'str'},
         'reserved_budget_in_hours': {'key': 'reservedBudgetInHours', 'type': 'int'},
         'publish_name': {'key': 'publishName', 'type': 'str'},
+        'original_publish_resource_id': {'key': 'originalPublishResourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -107,3 +112,4 @@ class Iteration(Model):
         self.training_type = None
         self.reserved_budget_in_hours = None
         self.publish_name = None
+        self.original_publish_resource_id = None
