@@ -116,6 +116,7 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_invalid_publish_name = "BadRequestInvalidPublishName"
     bad_request_invalid_publish_target = "BadRequestInvalidPublishTarget"
     bad_request_unpublish_failed = "BadRequestUnpublishFailed"
+    bad_request_iteration_not_published = "BadRequestIterationNotPublished"
     bad_request_subscription_api = "BadRequestSubscriptionApi"
     bad_request_exceed_project_limit = "BadRequestExceedProjectLimit"
     bad_request_exceed_iteration_per_project_limit = "BadRequestExceedIterationPerProjectLimit"
