@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.61.0 (2019-03-20)
++++++++++++++++++++
+
+**Features**
+
+- Adding applications.get_service_principals_id_by_app_id
+
+**Bugfix**
+
+- identifier_uris is not a required application parameter
+
 0.60.0 (2019-03-13)
 +++++++++++++++++++
 
