@@ -28,6 +28,7 @@ try:
     from .application_create_parameters_py3 import ApplicationCreateParameters
     from .application_update_parameters_py3 import ApplicationUpdateParameters
     from .application_py3 import Application
+    from .service_principal_object_result_py3 import ServicePrincipalObjectResult
     from .add_owner_parameters_py3 import AddOwnerParameters
     from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters_py3 import PasswordCredentialsUpdateParameters
@@ -70,6 +71,7 @@ except (SyntaxError, ImportError):
     from .application_create_parameters import ApplicationCreateParameters
     from .application_update_parameters import ApplicationUpdateParameters
     from .application import Application
+    from .service_principal_object_result import ServicePrincipalObjectResult
     from .add_owner_parameters import AddOwnerParameters
     from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
     from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
@@ -127,6 +129,7 @@ __all__ = [
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
     'Application',
+    'ServicePrincipalObjectResult',
     'AddOwnerParameters',
     'KeyCredentialsUpdateParameters',
     'PasswordCredentialsUpdateParameters',
