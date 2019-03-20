@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connection_py3 import DataConnection
+from .proxy_resource import ProxyResource
 
 
-class EventHubDataConnection(DataConnection):
-    """Class representing an event hub data connection.
+class EventHubConnection(ProxyResource):
+    """Class representing an event hub connection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,8 +30,6 @@ class EventHubDataConnection(DataConnection):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
     :param event_hub_resource_id: Required. The resource ID of the event hub
      to be used to create a data connection.
     :type event_hub_resource_id: str
@@ -45,8 +43,7 @@ class EventHubDataConnection(DataConnection):
     :type mapping_rule_name: str
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
-     'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO'
+     'JSON', 'CSV'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
     """
 
@@ -54,7 +51,6 @@ class EventHubDataConnection(DataConnection):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
     }
@@ -64,7 +60,6 @@ class EventHubDataConnection(DataConnection):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'event_hub_resource_id': {'key': 'properties.eventHubResourceId', 'type': 'str'},
         'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
@@ -72,11 +67,11 @@ class EventHubDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
     }
 
-    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, **kwargs) -> None:
-        super(EventHubDataConnection, self).__init__(location=location, **kwargs)
-        self.event_hub_resource_id = event_hub_resource_id
-        self.consumer_group = consumer_group
-        self.table_name = table_name
-        self.mapping_rule_name = mapping_rule_name
-        self.data_format = data_format
-        self.kind = 'EventHub'
+    def __init__(self, **kwargs):
+        super(EventHubConnection, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.event_hub_resource_id = kwargs.get('event_hub_resource_id', None)
+        self.consumer_group = kwargs.get('consumer_group', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
+        self.data_format = kwargs.get('data_format', None)

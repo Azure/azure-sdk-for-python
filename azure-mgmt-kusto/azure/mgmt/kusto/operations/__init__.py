@@ -11,12 +11,12 @@
 
 from .clusters_operations import ClustersOperations
 from .databases_operations import DatabasesOperations
-from .data_connections_operations import DataConnectionsOperations
+from .event_hub_connections_operations import EventHubConnectionsOperations
 from .operations import Operations
 
 __all__ = [
     'ClustersOperations',
     'DatabasesOperations',
-    'DataConnectionsOperations',
+    'EventHubConnectionsOperations',
     'Operations',
 ]

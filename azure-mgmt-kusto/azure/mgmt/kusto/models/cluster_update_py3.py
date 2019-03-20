@@ -30,11 +30,13 @@ class ClusterUpdate(Resource):
     :type tags: dict[str, str]
     :param location: Resource location.
     :type location: str
+    :ivar etag: An ETag of the resource updated.
+    :vartype etag: str
     :param sku: The SKU of the cluster.
     :type sku: ~azure.mgmt.kusto.models.AzureSku
     :ivar state: The state of the resource. Possible values include:
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
-     'Stopped', 'Starting', 'Updating'
+     'Stopped', 'Starting'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
@@ -53,6 +55,7 @@ class ClusterUpdate(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'uri': {'readonly': True},
@@ -65,6 +68,7 @@ class ClusterUpdate(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AzureSku'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -77,6 +81,7 @@ class ClusterUpdate(Resource):
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
+        self.etag = None
         self.sku = sku
         self.state = None
         self.provisioning_state = None

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AzureCapacity(Model):
-    """Azure capacity definition.
+    """AzureCapacity.
 
     All required parameters must be populated in order to send to Azure.
 

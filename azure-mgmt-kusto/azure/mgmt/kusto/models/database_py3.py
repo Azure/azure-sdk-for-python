@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource_py3 import ProxyResource
+from .tracked_resource_py3 import TrackedResource
 
 
-class Database(ProxyResource):
+class Database(TrackedResource):
     """Class representing a Kusto database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
@@ -26,18 +28,22 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location.
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
     :type location: str
+    :ivar etag: An ETag of the resource created.
+    :vartype etag: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period: The time the data should be kept before it
-     stops being accessible to queries in TimeSpan.
-    :type soft_delete_period: timedelta
-    :param hot_cache_period: The time the data that should be kept in cache
-     for fast queries in TimeSpan.
-    :type hot_cache_period: timedelta
+    :param soft_delete_period_in_days: Required. The number of days data
+     should be kept before it stops being accessible to queries.
+    :type soft_delete_period_in_days: int
+    :param hot_cache_period_in_days: The number of days of data that should be
+     kept in cache for fast queries.
+    :type hot_cache_period_in_days: int
     :param statistics: The statistics of the database.
     :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     """
@@ -46,24 +52,29 @@ class Database(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'soft_delete_period_in_days': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
-        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'soft_delete_period_in_days': {'key': 'properties.softDeletePeriodInDays', 'type': 'int'},
+        'hot_cache_period_in_days': {'key': 'properties.hotCachePeriodInDays', 'type': 'int'},
         'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
-    def __init__(self, *, location: str=None, soft_delete_period=None, hot_cache_period=None, statistics=None, **kwargs) -> None:
-        super(Database, self).__init__(**kwargs)
-        self.location = location
+    def __init__(self, *, location: str, soft_delete_period_in_days: int, tags=None, hot_cache_period_in_days: int=None, statistics=None, **kwargs) -> None:
+        super(Database, self).__init__(tags=tags, location=location, **kwargs)
+        self.etag = None
         self.provisioning_state = None
-        self.soft_delete_period = soft_delete_period
-        self.hot_cache_period = hot_cache_period
+        self.soft_delete_period_in_days = soft_delete_period_in_days
+        self.hot_cache_period_in_days = hot_cache_period_in_days
         self.statistics = statistics

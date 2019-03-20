@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AzureResourceSku(Model):
-    """Azure resource SKU definition.
+    """AzureResourceSku.
 
     :param resource_type: Resource Namespace and Type.
     :type resource_type: str

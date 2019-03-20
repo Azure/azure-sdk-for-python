@@ -15,19 +15,18 @@ try:
     from .azure_capacity_py3 import AzureCapacity
     from .azure_resource_sku_py3 import AzureResourceSku
     from .database_statistics_py3 import DatabaseStatistics
+    from .event_hub_connection_validation_py3 import EventHubConnectionValidation
     from .cluster_py3 import Cluster
     from .cluster_update_py3 import ClusterUpdate
     from .database_py3 import Database
     from .database_update_py3 import DatabaseUpdate
     from .database_principal_py3 import DatabasePrincipal
+    from .event_hub_connection_update_py3 import EventHubConnectionUpdate
+    from .event_hub_connection_py3 import EventHubConnection
+    from .event_hub_connection_validation_result_py3 import EventHubConnectionValidationResult
     from .database_principal_list_result_py3 import DatabasePrincipalListResult
-    from .data_connection_py3 import DataConnection
-    from .data_connection_validation_result_py3 import DataConnectionValidationResult
     from .database_principal_list_request_py3 import DatabasePrincipalListRequest
-    from .data_connection_validation_py3 import DataConnectionValidation
-    from .event_hub_data_connection_py3 import EventHubDataConnection
-    from .event_grid_data_connection_py3 import EventGridDataConnection
-    from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
+    from .event_hub_connection_validation_list_result_py3 import EventHubConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
     from .database_check_name_request_py3 import DatabaseCheckNameRequest
     from .check_name_result_py3 import CheckNameResult
@@ -43,19 +42,18 @@ except (SyntaxError, ImportError):
     from .azure_capacity import AzureCapacity
     from .azure_resource_sku import AzureResourceSku
     from .database_statistics import DatabaseStatistics
+    from .event_hub_connection_validation import EventHubConnectionValidation
     from .cluster import Cluster
     from .cluster_update import ClusterUpdate
     from .database import Database
     from .database_update import DatabaseUpdate
     from .database_principal import DatabasePrincipal
+    from .event_hub_connection_update import EventHubConnectionUpdate
+    from .event_hub_connection import EventHubConnection
+    from .event_hub_connection_validation_result import EventHubConnectionValidationResult
     from .database_principal_list_result import DatabasePrincipalListResult
-    from .data_connection import DataConnection
-    from .data_connection_validation_result import DataConnectionValidationResult
     from .database_principal_list_request import DatabasePrincipalListRequest
-    from .data_connection_validation import DataConnectionValidation
-    from .event_hub_data_connection import EventHubDataConnection
-    from .event_grid_data_connection import EventGridDataConnection
-    from .data_connection_validation_list_result import DataConnectionValidationListResult
+    from .event_hub_connection_validation_list_result import EventHubConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
     from .database_check_name_request import DatabaseCheckNameRequest
     from .check_name_result import CheckNameResult
@@ -70,7 +68,7 @@ from .azure_sku_paged import AzureSkuPaged
 from .azure_resource_sku_paged import AzureResourceSkuPaged
 from .database_paged import DatabasePaged
 from .database_principal_paged import DatabasePrincipalPaged
-from .data_connection_paged import DataConnectionPaged
+from .event_hub_connection_paged import EventHubConnectionPaged
 from .operation_paged import OperationPaged
 from .kusto_management_client_enums import (
     State,
@@ -88,19 +86,18 @@ __all__ = [
     'AzureCapacity',
     'AzureResourceSku',
     'DatabaseStatistics',
+    'EventHubConnectionValidation',
     'Cluster',
     'ClusterUpdate',
     'Database',
     'DatabaseUpdate',
     'DatabasePrincipal',
+    'EventHubConnectionUpdate',
+    'EventHubConnection',
+    'EventHubConnectionValidationResult',
     'DatabasePrincipalListResult',
-    'DataConnection',
-    'DataConnectionValidationResult',
     'DatabasePrincipalListRequest',
-    'DataConnectionValidation',
-    'EventHubDataConnection',
-    'EventGridDataConnection',
-    'DataConnectionValidationListResult',
+    'EventHubConnectionValidationListResult',
     'ClusterCheckNameRequest',
     'DatabaseCheckNameRequest',
     'CheckNameResult',
@@ -115,7 +112,7 @@ __all__ = [
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
-    'DataConnectionPaged',
+    'EventHubConnectionPaged',
     'OperationPaged',
     'State',
     'ProvisioningState',

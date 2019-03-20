@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TrustedExternalTenant(Model):
-    """Represents a tenant ID that is trusted by the cluster.
+    """TrustedExternalTenant.
 
     :param value: GUID representing an external tenant.
     :type value: str

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CheckNameResult(Model):
-    """The result returned from a check name availability request.
+    """CheckNameResult.
 
     :param name_available: Specifies a Boolean value that indicates if the
      name is available.

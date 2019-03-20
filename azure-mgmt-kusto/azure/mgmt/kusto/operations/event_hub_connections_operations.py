@@ -18,14 +18,14 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class DataConnectionsOperations(object):
-    """DataConnectionsOperations operations.
+class EventHubConnectionsOperations(object):
+    """EventHubConnectionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-01-21".
+    :ivar api_version: Client API Version. Constant value: "2019-03-20".
     """
 
     models = models
@@ -35,13 +35,13 @@ class DataConnectionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-21"
+        self.api_version = "2019-03-20"
 
         self.config = config
 
     def list_by_database(
             self, resource_group_name, cluster_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the list of data connections of the given Kusto database.
+        """Returns the list of Event Hub connections of the given Kusto database.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -55,9 +55,9 @@ class DataConnectionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DataConnection
+        :return: An iterator like instance of EventHubConnection
         :rtype:
-         ~azure.mgmt.kusto.models.DataConnectionPaged[~azure.mgmt.kusto.models.DataConnection]
+         ~azure.mgmt.kusto.models.EventHubConnectionPaged[~azure.mgmt.kusto.models.EventHubConnection]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -103,19 +103,19 @@ class DataConnectionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DataConnectionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.EventHubConnectionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DataConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.EventHubConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnections'}
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubconnections'}
 
-    def data_connection_validation_method(
-            self, resource_group_name, cluster_name, database_name, data_connection_name=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Checks that the data connection parameters are valid.
+    def eventhub_connection_validation(
+            self, resource_group_name, cluster_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Checks that the Event Hub data connection parameters are valid.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -124,25 +124,24 @@ class DataConnectionsOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param data_connection_name: The name of the data connection.
-        :type data_connection_name: str
-        :param properties: The data connection properties to validate.
-        :type properties: ~azure.mgmt.kusto.models.DataConnection
+        :param parameters: The Event Hub connection parameters supplied to the
+         CreateOrUpdate operation.
+        :type parameters:
+         ~azure.mgmt.kusto.models.EventHubConnectionValidation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataConnectionValidationListResult or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.kusto.models.DataConnectionValidationListResult or
+        :return: EventHubConnectionValidationListResult or ClientRawResponse
+         if raw=true
+        :rtype:
+         ~azure.mgmt.kusto.models.EventHubConnectionValidationListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.DataConnectionValidation(data_connection_name=data_connection_name, properties=properties)
-
         # Construct URL
-        url = self.data_connection_validation_method.metadata['url']
+        url = self.eventhub_connection_validation.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
@@ -167,7 +166,7 @@ class DataConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DataConnectionValidation')
+        body_content = self._serialize.body(parameters, 'EventHubConnectionValidation')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -181,18 +180,18 @@ class DataConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnectionValidationListResult', response)
+            deserialized = self._deserialize('EventHubConnectionValidationListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    data_connection_validation_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnectionValidation'}
+    eventhub_connection_validation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubConnectionValidation'}
 
     def get(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a data connection.
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, custom_headers=None, raw=False, **operation_config):
+        """Returns an Event Hub connection.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -201,15 +200,16 @@ class DataConnectionsOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param data_connection_name: The name of the data connection.
-        :type data_connection_name: str
+        :param event_hub_connection_name: The name of the event hub
+         connection.
+        :type event_hub_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DataConnection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.kusto.models.DataConnection or
+        :return: EventHubConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.kusto.models.EventHubConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -219,7 +219,7 @@ class DataConnectionsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'dataConnectionName': self._serialize.url("data_connection_name", data_connection_name, 'str'),
+            'eventHubConnectionName': self._serialize.url("event_hub_connection_name", event_hub_connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -250,25 +250,25 @@ class DataConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnections/{dataConnectionName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubconnections/{eventHubConnectionName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'dataConnectionName': self._serialize.url("data_connection_name", data_connection_name, 'str'),
+            'eventHubConnectionName': self._serialize.url("event_hub_connection_name", event_hub_connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -289,7 +289,7 @@ class DataConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DataConnection')
+        body_content = self._serialize.body(parameters, 'EventHubConnection')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -303,9 +303,9 @@ class DataConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -314,8 +314,8 @@ class DataConnectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a data connection.
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a Event Hub connection.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -324,29 +324,30 @@ class DataConnectionsOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param data_connection_name: The name of the data connection.
-        :type data_connection_name: str
-        :param parameters: The data connection parameters supplied to the
+        :param event_hub_connection_name: The name of the event hub
+         connection.
+        :type event_hub_connection_name: str
+        :param parameters: The Event Hub connection parameters supplied to the
          CreateOrUpdate operation.
-        :type parameters: ~azure.mgmt.kusto.models.DataConnection
+        :type parameters: ~azure.mgmt.kusto.models.EventHubConnection
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DataConnection or
-         ClientRawResponse<DataConnection> if raw==True
+        :return: An instance of LROPoller that returns EventHubConnection or
+         ClientRawResponse<EventHubConnection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.kusto.models.DataConnection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.kusto.models.EventHubConnection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.kusto.models.DataConnection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.kusto.models.EventHubConnection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
-            data_connection_name=data_connection_name,
+            event_hub_connection_name=event_hub_connection_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -354,7 +355,7 @@ class DataConnectionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -369,18 +370,18 @@ class DataConnectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnections/{dataConnectionName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubconnections/{eventHubConnectionName}'}
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'dataConnectionName': self._serialize.url("data_connection_name", data_connection_name, 'str'),
+            'eventHubConnectionName': self._serialize.url("event_hub_connection_name", event_hub_connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -401,7 +402,7 @@ class DataConnectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DataConnection')
+        body_content = self._serialize.body(parameters, 'EventHubConnectionUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -415,9 +416,9 @@ class DataConnectionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -426,8 +427,8 @@ class DataConnectionsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates a data connection.
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates a Event Hub connection.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -436,29 +437,30 @@ class DataConnectionsOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param data_connection_name: The name of the data connection.
-        :type data_connection_name: str
-        :param parameters: The data connection parameters supplied to the
+        :param event_hub_connection_name: The name of the event hub
+         connection.
+        :type event_hub_connection_name: str
+        :param parameters: The Event Hub connection parameters supplied to the
          Update operation.
-        :type parameters: ~azure.mgmt.kusto.models.DataConnection
+        :type parameters: ~azure.mgmt.kusto.models.EventHubConnectionUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DataConnection or
-         ClientRawResponse<DataConnection> if raw==True
+        :return: An instance of LROPoller that returns EventHubConnection or
+         ClientRawResponse<EventHubConnection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.kusto.models.DataConnection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.kusto.models.EventHubConnection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.kusto.models.DataConnection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.kusto.models.EventHubConnection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
-            data_connection_name=data_connection_name,
+            event_hub_connection_name=event_hub_connection_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -466,7 +468,7 @@ class DataConnectionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('DataConnection', response)
+            deserialized = self._deserialize('EventHubConnection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -481,18 +483,18 @@ class DataConnectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnections/{dataConnectionName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubconnections/{eventHubConnectionName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'dataConnectionName': self._serialize.url("data_connection_name", data_connection_name, 'str'),
+            'eventHubConnectionName': self._serialize.url("event_hub_connection_name", event_hub_connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -524,8 +526,8 @@ class DataConnectionsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, cluster_name, database_name, data_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the data connection with the given name.
+            self, resource_group_name, cluster_name, database_name, event_hub_connection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the Event Hub connection with the given name.
 
         :param resource_group_name: The name of the resource group containing
          the Kusto cluster.
@@ -534,8 +536,9 @@ class DataConnectionsOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param data_connection_name: The name of the data connection.
-        :type data_connection_name: str
+        :param event_hub_connection_name: The name of the event hub
+         connection.
+        :type event_hub_connection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -551,7 +554,7 @@ class DataConnectionsOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
-            data_connection_name=data_connection_name,
+            event_hub_connection_name=event_hub_connection_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -569,4 +572,4 @@ class DataConnectionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/dataConnections/{dataConnectionName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/eventhubconnections/{eventHubConnectionName}'}

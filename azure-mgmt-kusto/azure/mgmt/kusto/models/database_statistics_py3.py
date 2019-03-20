@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DatabaseStatistics(Model):
-    """A class that contains database statistics information.
+    """DatabaseStatistics.
 
     :param size: The database size - the total size of compressed data and
      index in bytes.

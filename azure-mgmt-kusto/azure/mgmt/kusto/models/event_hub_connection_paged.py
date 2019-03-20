@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class DataConnectionPaged(Paged):
+class EventHubConnectionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DataConnection <azure.mgmt.kusto.models.DataConnection>` object
+    A paging container for iterating over a list of :class:`EventHubConnection <azure.mgmt.kusto.models.EventHubConnection>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DataConnection]'}
+        'current_page': {'key': 'value', 'type': '[EventHubConnection]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(DataConnectionPaged, self).__init__(*args, **kwargs)
+        super(EventHubConnectionPaged, self).__init__(*args, **kwargs)

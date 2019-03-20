@@ -32,11 +32,13 @@ class Cluster(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
+    :ivar etag: An ETag of the resource created.
+    :vartype etag: str
     :param sku: Required. The SKU of the cluster.
     :type sku: ~azure.mgmt.kusto.models.AzureSku
     :ivar state: The state of the resource. Possible values include:
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
-     'Stopped', 'Starting', 'Updating'
+     'Stopped', 'Starting'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
@@ -56,6 +58,7 @@ class Cluster(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'etag': {'readonly': True},
         'sku': {'required': True},
         'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -69,6 +72,7 @@ class Cluster(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AzureSku'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -79,6 +83,7 @@ class Cluster(TrackedResource):
 
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
+        self.etag = None
         self.sku = kwargs.get('sku', None)
         self.state = None
         self.provisioning_state = None
