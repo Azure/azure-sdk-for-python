@@ -40,11 +40,11 @@ class KeyClientTests(KeyvaultTestCase):
 
         # delete the new key
         delete_result = client.delete_key(key_name)
-        assert delete_result.key.kid == new_key.id
+        assert delete_result.id == new_key.id
 
         # verify deletion
         deleted_key = client.get_deleted_key(key_name)
-        assert deleted_key.key.kid == key.id
+        assert deleted_key.id == key.id
         keys_after_delete = client.get_all_keys()
         key_ids_after_delete = {key.kid for key in keys_after_delete}
         assert len(key_ids_after_delete.symmetric_difference(key_ids_at_start)) == 0
