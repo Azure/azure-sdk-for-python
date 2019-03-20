@@ -44,11 +44,7 @@ from .base import HTTPPolicy, SansIOHTTPPolicy
 from urllib3 import Retry  # Needs requests 2.16 at least to be safe
 
 from azure.core.exceptions import (
-    DeserializationError,
-    TokenExpiredError,
-    TokenInvalidError,
-    AuthenticationError,
-    ClientRequestError,
+    DecodeError,
     raise_with_traceback
 )
 
@@ -89,8 +85,6 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             )
         else:
             self._user_agent = base_user_agent
-        
-        # TODO: Confirm whether overwrite was for customers or services.
 
     @property
     def user_agent(self):
@@ -113,7 +107,14 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        if self.overwrite or self._USERAGENT not in http_request.headers:
+        if 'user_agent' in kwargs:
+            if kwargs.get('user_agent_overwrite', self.overwrite):
+                http_request.headers[self._USERAGENT] = kwargs['user_agent']
+            else:
+                user_agent = "{} {}".format(self.user_agent, user_agent)
+                http_request.headers[self._USERAGENT] = user_agent
+
+        elif self.overwrite or self._USERAGENT not in http_request.headers:
             http_request.headers[self._USERAGENT] = self.user_agent
 
 
@@ -222,7 +223,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
-                raise DeserializationError("JSON is invalid: {}".format(err), err)
+                raise DecodeError("JSON is invalid: {}".format(err), error=err)
         elif "xml" in (content_type or []):
             try:
                 return ET.fromstring(data_as_str)
@@ -244,8 +245,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # The function hack is because Py2.7 messes up with exception
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
-                raise_with_traceback(DeserializationError, "XML is invalid")
-        raise DeserializationError("Cannot deserialize content-type: {}".format(content_type))
+                raise_with_traceback(DecodeError, "XML is invalid")
+        raise DecodeError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod
     def deserialize_from_http_generics(cls, body_bytes, headers):

@@ -32,7 +32,7 @@ import requests
 
 import pytest
 
-from azure.core.exceptions import DeserializationError
+from azure.core.exceptions import DecodeError
 from azure.core.configuration import Configuration
 from azure.core.pipeline import (
     PipelineResponse,
@@ -132,10 +132,10 @@ def test_raw_deserializer():
     assert result["ugly"] is True
 
     # Be sure I catch the correct exception if it's neither XML nor JSON
-    with pytest.raises(DeserializationError):
+    with pytest.raises(DecodeError):
         response = build_response(b'gibberish', content_type="application/xml")
         raw_deserializer.on_response(None, response, stream=False)
-    with pytest.raises(DeserializationError):
+    with pytest.raises(DecodeError):
         response = build_response(b'{{gibberish}}', content_type="application/xml")
         raw_deserializer.on_response(None, response, stream=False)
 

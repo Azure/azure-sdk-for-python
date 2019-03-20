@@ -54,54 +54,89 @@ def raise_with_traceback(exception, message="", *args, **kwargs):
         raise error
 
 
-class ClientException(Exception):
-    """Base exception for all Client Runtime exceptions."""
+class AzureError(Exception):
+    """Base exception for all errors."""
 
-    def __init__(self, message, inner_exception=None, *args, **kwargs):
-        # type: (str, Any, str, str) -> None
-        self.inner_exception = inner_exception
-        _LOGGER.debug(message)
-        super(ClientException, self).__init__(message, *args, **kwargs)  # type: ignore
-
-
-class SerializationError(ClientException):
-    """Error raised during request serialization."""
-    pass
+    def __init__(self, message, *args, **kwargs):
+        self.inner_exception = kwargs.get('error')
+        self.response = kwargs.get('response')
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        # If not called inside a "except", exc_type will be None. Assume it will not happen
+        self.exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
+        self.message = str(message)
+        super(AzureError, self).__init__(self.message, *args)
 
 
-class DeserializationError(ClientException):
+class AzureLibraryError(AzureError):
+    """An error occurred in the client while processing the pipeline."""
+
+
+class AzureLibraryResponse(AzureLibraryError):
+    """An error occurred in the client while processing the response."""
+
+
+class AzureLibraryRequest(AzureLibraryError):
+    """An error occurred in the client while building the request."""
+
+
+class DecodeError(AzureLibraryResponse):
     """Error raised during response deserialization."""
-    pass
+
+
+class ServiceRequestError(AzureError):
+    """An error occurred while attempt to make a request to the service."""
+
+
+class ConnectionError(ServiceRequestError):
+    """An error occurred while attempting to establish the connection.
+    These errors are safe to retry."""
+
+
+class ConnectionTimeoutError(ConnectionError):
+    """The request timed out while trying to connect to the remote server.
+    These errors are safe to retry."""
+
+
+class ConnectionReadError(ServiceRequestError):
+    """An error occurred during the request/response.
+    These errors may not be safe to retry."""
+
+
+class ReadTimeoutError(ConnectionReadError):
+    """The server did not send any data in the allotted amount of time.
+    These errors may not be safe to retry."""
+
+
+class ClientRequestError(ServiceRequestError):
+    """An error response with status code 4xx.
+    This will not be raised directly by the Azure core pipeline."""
+
+
+class ResourceExistsError(ClientRequestError):
+    """An error response with status code 4xx.
+    This will not be raised directly by the Azure core pipeline."""
+
+
+class ClientAuthenticationError(ClientRequestError):
+    """An error response with status code 4xx.
+    This will not be raised directly by the Azure core pipeline."""
+
+
+class ResourceModifiedError(ClientRequestError):
+    """An error response with status code 4xx.
+    This will not be raised directly by the Azure core pipeline."""
+
+
+class ServerError(ServiceRequestError):
+    """An error response with status code 5xx.
+    This will not be raised directly by the Azure core pipeline."""
 
 
 
-class ClientRequestError(ClientException):
-    """Client request failed."""
-    pass
-
-
-class MaxRedirectError(ClientException):
+class TooManyRedirectsError(ServiceRequestError):
+    """Reached the maximum number of redirect attempts."""
 
     def __init__(self, history, *args, **kwargs):
         self.history = history
         message = "Reached maximum redirect attempts."
-        super(MaxRedirectError, self).__init__(message, *args, **kwargs)
-
-
-class ConnectionError(ClientException):
-    pass
-
-
-class AuthenticationError(ClientException):
-    """Client request failed to authenticate."""
-    pass
-
-
-class TokenExpiredError(AuthenticationError):
-    """OAuth token expired, request failed."""
-    pass
-
-
-class TokenInvalidError(AuthenticationError):
-    """OAuth token invalid, request failed."""
-    pass
+        super(TooManyRedirectsError, self).__init__(message, *args, **kwargs)

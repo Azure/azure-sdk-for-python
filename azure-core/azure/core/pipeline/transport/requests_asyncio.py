@@ -36,7 +36,6 @@ from .base import HttpRequest
 from .base_async import AsyncHttpTransport, AsyncHttpResponse
 from .requests_basic import RequestsTransport, RequestsTransportResponse
 from azure.core.exceptions import (
-    TokenExpiredError,
     ClientRequestError,
     raise_with_traceback)
 
