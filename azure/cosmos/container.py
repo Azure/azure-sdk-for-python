@@ -328,7 +328,8 @@ class Container:
         access_condition=None,
         populate_query_metrics=None,
         pre_trigger_include=None,
-        post_trigger_include=None
+        post_trigger_include=None,
+        indexing_directive=None
     ):
         # type: (Dict[str, Any], str, Dict[str, Any], AccessCondition, bool, Any, Any) -> Item
         """ Create an item in the container.
@@ -339,6 +340,7 @@ class Container:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param indexing_directive: Indicate whether the document should be omitted from indexing.
         :returns: The :class:`Item` inserted into the container.
         :raises `HTTPFailure`:
 
@@ -360,6 +362,8 @@ class Container:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
+        if indexing_directive:
+            request_options["indexingDirective"] = indexing_directive
 
         result = self.client_connection.CreateItem(
             database_or_Container_link=self.container_link,

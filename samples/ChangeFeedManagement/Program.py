@@ -40,12 +40,12 @@ class IDisposable(cosmos_client.CosmosClient):
 class ChangeFeedManagement:
     
     @staticmethod
-    def CreateDocuments(container, size):
-        print('Creating Documents')
+    def CreateItems(container, size):
+        print('Creating Items')
 
         for i in range(1, size):
             c = str(uuid.uuid4())
-            document_definition = {'id': 'document' + c,
+            item_definition = {'id': 'item' + c,
                                    'address': {'street': '1 Microsoft Way'+c,
                                             'city': 'Redmond'+c,
                                             'state': 'WA',
@@ -53,32 +53,20 @@ class ChangeFeedManagement:
                                             }
                                   }
 
-            created_document = container.create_item(body=document_definition)
+            created_item = container.create_item(body=item_definition)
 
     @staticmethod
-    def ReadFeed(container):
+    def ReadChangeFeed(container):
         print('\nReading Change Feed from the beginning\n')
 
         # For a particular Partition Key Range we can use partition_key_range_id]
-        # 'is_start_from_beginning = True' will read from the beginning of the history of the collection
-        # If no is_start_from_beginning is specified, the read change feed loop will pickup the documents that happen while the loop / process is active
+        # 'is_start_from_beginning = True' will read from the beginning of the history of the container
+        # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
         response = container.query_items_change_feed(is_start_from_beginning=True)
         for doc in response:
             print(doc)
 
         print('\nFinished reading all the change feed\n')
-
-    @staticmethod
-    def ReadFeedForTime(container, time):
-        print('\nReading Change Feed from point in time\n')
-
-        #TODO: add start_time feature
-        # Define a point in time to start reading the feed from
-        response = container.query_items_change_feed()
-        for doc in response:
-            print(doc)
-
-        print('\nFinished reading all the changes from point in time\n')
 
 def run_sample():
     with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
@@ -93,25 +81,22 @@ def run_sample():
                 else:
                     raise errors.HTTPFailure(e.status_code)
 
-            # setup collection for this sample
+            # setup container for this sample
             try:
                 container = db.create_container(
                     id=CONTAINER_ID,
                     partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
                 )
-                print('Collection with id \'{0}\' created'.format(CONTAINER_ID))
+                print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
             except errors.HTTPFailure as e:
                 if e.status_code == 409:
-                    print('Collection with id \'{0}\' was found'.format(CONTAINER_ID))
+                    print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
                 else:
                     raise errors.HTTPFailure(e.status_code)
 
-            ChangeFeedManagement.CreateDocuments(container, 100)
-            ChangeFeedManagement.ReadFeed(container)
-            time = datetime.datetime.now()
-            ChangeFeedManagement.CreateDocuments(container, 10)
-            ChangeFeedManagement.ReadFeedForTime(container, time)
+            ChangeFeedManagement.CreateItems(container, 100)
+            ChangeFeedManagement.ReadChangeFeed(container)
 
             # cleanup database after sample
             try:
