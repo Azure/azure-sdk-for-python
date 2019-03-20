@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class CustomRules(Model):
-    """Defines contents of custom rules.
-
-    :param rules: List of rules
-    :type rules: list[~azure.mgmt.frontdoor.models.CustomRule]
+class ManagedRuleSetDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedRuleSetDefinition <azure.mgmt.frontdoor.models.ManagedRuleSetDefinition>` object
     """
 
     _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[CustomRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedRuleSetDefinition]'}
     }
 
-    def __init__(self, *, rules=None, **kwargs) -> None:
-        super(CustomRules, self).__init__(**kwargs)
-        self.rules = rules
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedRuleSetDefinitionPaged, self).__init__(*args, **kwargs)

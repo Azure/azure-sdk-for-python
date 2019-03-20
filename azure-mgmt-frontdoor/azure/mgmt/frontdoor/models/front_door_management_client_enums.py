@@ -117,16 +117,22 @@ class NetworkOperationStatus(str, Enum):
     failed = "Failed"
 
 
-class EnabledState(str, Enum):
+class PolicyEnabledState(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
 
 
-class Mode(str, Enum):
+class PolicyMode(str, Enum):
 
     prevention = "Prevention"
     detection = "Detection"
+
+
+class CustomRuleEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class RuleType(str, Enum):
@@ -135,7 +141,7 @@ class RuleType(str, Enum):
     rate_limit_rule = "RateLimitRule"
 
 
-class MatchCondition(str, Enum):
+class MatchVariable(str, Enum):
 
     remote_addr = "RemoteAddr"
     request_method = "RequestMethod"
@@ -144,6 +150,7 @@ class MatchCondition(str, Enum):
     request_uri = "RequestUri"
     request_header = "RequestHeader"
     request_body = "RequestBody"
+    cookies = "Cookies"
 
 
 class Operator(str, Enum):
@@ -159,16 +166,10 @@ class Operator(str, Enum):
     greater_than_or_equal = "GreaterThanOrEqual"
     begins_with = "BeginsWith"
     ends_with = "EndsWith"
+    reg_ex = "RegEx"
 
 
-class Action(str, Enum):
-
-    allow = "Allow"
-    block = "Block"
-    log = "Log"
-
-
-class Transform(str, Enum):
+class TransformType(str, Enum):
 
     lowercase = "Lowercase"
     uppercase = "Uppercase"
@@ -176,7 +177,20 @@ class Transform(str, Enum):
     url_decode = "UrlDecode"
     url_encode = "UrlEncode"
     remove_nulls = "RemoveNulls"
-    html_entity_decode = "HtmlEntityDecode"
+
+
+class ActionType(str, Enum):
+
+    allow = "Allow"
+    block = "Block"
+    log = "Log"
+    redirect = "Redirect"
+
+
+class ManagedRuleEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class WebApplicationFirewallPolicy(str, Enum):
@@ -187,9 +201,3 @@ class WebApplicationFirewallPolicy(str, Enum):
     disabling = "Disabling"
     disabled = "Disabled"
     deleting = "Deleting"
-
-
-class RuleGroupOverride(str, Enum):
-
-    sql_injection = "SqlInjection"
-    xss = "XSS"

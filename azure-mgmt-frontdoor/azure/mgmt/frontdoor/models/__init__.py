@@ -40,14 +40,18 @@ try:
     from .azure_async_operation_result_py3 import AzureAsyncOperationResult
     from .tags_object_py3 import TagsObject
     from .policy_settings_py3 import PolicySettings
-    from .match_condition1_py3 import MatchCondition1
+    from .match_condition_py3 import MatchCondition
     from .custom_rule_py3 import CustomRule
-    from .custom_rules_py3 import CustomRules
+    from .custom_rule_list_py3 import CustomRuleList
+    from .managed_rule_override_py3 import ManagedRuleOverride
+    from .managed_rule_group_override_py3 import ManagedRuleGroupOverride
     from .managed_rule_set_py3 import ManagedRuleSet
-    from .managed_rule_sets_py3 import ManagedRuleSets
+    from .managed_rule_set_list_py3 import ManagedRuleSetList
+    from .frontend_endpoint_link_py3 import FrontendEndpointLink
     from .web_application_firewall_policy1_py3 import WebApplicationFirewallPolicy1
-    from .azure_managed_override_rule_group_py3 import AzureManagedOverrideRuleGroup
-    from .azure_managed_rule_set_py3 import AzureManagedRuleSet
+    from .managed_rule_definition_py3 import ManagedRuleDefinition
+    from .managed_rule_group_definition_py3 import ManagedRuleGroupDefinition
+    from .managed_rule_set_definition_py3 import ManagedRuleSetDefinition
 except (SyntaxError, ImportError):
     from .front_door import FrontDoor
     from .routing_rule import RoutingRule
@@ -79,14 +83,18 @@ except (SyntaxError, ImportError):
     from .azure_async_operation_result import AzureAsyncOperationResult
     from .tags_object import TagsObject
     from .policy_settings import PolicySettings
-    from .match_condition1 import MatchCondition1
+    from .match_condition import MatchCondition
     from .custom_rule import CustomRule
-    from .custom_rules import CustomRules
+    from .custom_rule_list import CustomRuleList
+    from .managed_rule_override import ManagedRuleOverride
+    from .managed_rule_group_override import ManagedRuleGroupOverride
     from .managed_rule_set import ManagedRuleSet
-    from .managed_rule_sets import ManagedRuleSets
+    from .managed_rule_set_list import ManagedRuleSetList
+    from .frontend_endpoint_link import FrontendEndpointLink
     from .web_application_firewall_policy1 import WebApplicationFirewallPolicy1
-    from .azure_managed_override_rule_group import AzureManagedOverrideRuleGroup
-    from .azure_managed_rule_set import AzureManagedRuleSet
+    from .managed_rule_definition import ManagedRuleDefinition
+    from .managed_rule_group_definition import ManagedRuleGroupDefinition
+    from .managed_rule_set_definition import ManagedRuleSetDefinition
 from .front_door_paged import FrontDoorPaged
 from .routing_rule_paged import RoutingRulePaged
 from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
@@ -94,6 +102,7 @@ from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
 from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
 from .web_application_firewall_policy1_paged import WebApplicationFirewallPolicy1Paged
+from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
 from .front_door_management_client_enums import (
     FrontDoorResourceState,
     CustomHttpsProvisioningState,
@@ -110,15 +119,16 @@ from .front_door_management_client_enums import (
     ResourceType,
     Availability,
     NetworkOperationStatus,
-    EnabledState,
-    Mode,
+    PolicyEnabledState,
+    PolicyMode,
+    CustomRuleEnabledState,
     RuleType,
-    MatchCondition,
+    MatchVariable,
     Operator,
-    Action,
-    Transform,
+    TransformType,
+    ActionType,
+    ManagedRuleEnabledState,
     WebApplicationFirewallPolicy,
-    RuleGroupOverride,
 )
 
 __all__ = [
@@ -152,14 +162,18 @@ __all__ = [
     'AzureAsyncOperationResult',
     'TagsObject',
     'PolicySettings',
-    'MatchCondition1',
+    'MatchCondition',
     'CustomRule',
-    'CustomRules',
+    'CustomRuleList',
+    'ManagedRuleOverride',
+    'ManagedRuleGroupOverride',
     'ManagedRuleSet',
-    'ManagedRuleSets',
+    'ManagedRuleSetList',
+    'FrontendEndpointLink',
     'WebApplicationFirewallPolicy1',
-    'AzureManagedOverrideRuleGroup',
-    'AzureManagedRuleSet',
+    'ManagedRuleDefinition',
+    'ManagedRuleGroupDefinition',
+    'ManagedRuleSetDefinition',
     'FrontDoorPaged',
     'RoutingRulePaged',
     'HealthProbeSettingsModelPaged',
@@ -167,6 +181,7 @@ __all__ = [
     'BackendPoolPaged',
     'FrontendEndpointPaged',
     'WebApplicationFirewallPolicy1Paged',
+    'ManagedRuleSetDefinitionPaged',
     'FrontDoorResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
@@ -182,13 +197,14 @@ __all__ = [
     'ResourceType',
     'Availability',
     'NetworkOperationStatus',
-    'EnabledState',
-    'Mode',
+    'PolicyEnabledState',
+    'PolicyMode',
+    'CustomRuleEnabledState',
     'RuleType',
-    'MatchCondition',
+    'MatchVariable',
     'Operator',
-    'Action',
-    'Transform',
+    'TransformType',
+    'ActionType',
+    'ManagedRuleEnabledState',
     'WebApplicationFirewallPolicy',
-    'RuleGroupOverride',
 ]

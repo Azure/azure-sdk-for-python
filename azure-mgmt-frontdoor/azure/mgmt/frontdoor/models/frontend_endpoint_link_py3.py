@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class ManagedRuleSets(Model):
-    """Defines ManagedRuleSets - array of managedRuleSet.
+class FrontendEndpointLink(Model):
+    """Defines the Resource ID for a Frontend Endpoint.
 
-    :param rule_sets: List of rules
-    :type rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+    :param id: Resource ID.
+    :type id: str
     """
 
     _attribute_map = {
-        'rule_sets': {'key': 'ruleSets', 'type': '[ManagedRuleSet]'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, rule_sets=None, **kwargs) -> None:
-        super(ManagedRuleSets, self).__init__(**kwargs)
-        self.rule_sets = rule_sets
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(FrontendEndpointLink, self).__init__(**kwargs)
+        self.id = id

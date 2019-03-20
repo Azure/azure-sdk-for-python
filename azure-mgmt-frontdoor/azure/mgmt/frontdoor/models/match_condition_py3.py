@@ -12,27 +12,30 @@
 from msrest.serialization import Model
 
 
-class MatchCondition1(Model):
-    """Define match conditions.
+class MatchCondition(Model):
+    """Define a match condition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param match_variable: Required. Match Variable. Possible values include:
-     'RemoteAddr', 'RequestMethod', 'QueryString', 'PostArgs', 'RequestUri',
-     'RequestHeader', 'RequestBody'
-    :type match_variable: str or ~azure.mgmt.frontdoor.models.MatchCondition
-    :param selector: Name of selector in RequestHeader or RequestBody to be
-     matched
+    :param match_variable: Required. Match variable to compare against.
+     Possible values include: 'RemoteAddr', 'RequestMethod', 'QueryString',
+     'PostArgs', 'RequestUri', 'RequestHeader', 'RequestBody', 'Cookies'
+    :type match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
+    :param selector: Selector can used to match against a specific key from
+     QueryString, PostArgs, RequestHeader or Cookies.
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'IPMatch', 'GeoMatch', 'Equal', 'Contains',
      'LessThan', 'GreaterThan', 'LessThanOrEqual', 'GreaterThanOrEqual',
-     'BeginsWith', 'EndsWith'
+     'BeginsWith', 'EndsWith', 'RegEx'
     :type operator: str or ~azure.mgmt.frontdoor.models.Operator
-    :param negate_condition: Describes if this is negate condition or not
+    :param negate_condition: Describes if the result of this condition should
+     be negated.
     :type negate_condition: bool
-    :param match_value: Required. Match value
+    :param match_value: Required. List of possible match values.
     :type match_value: list[str]
+    :param transforms: List of transforms.
+    :type transforms: list[str or ~azure.mgmt.frontdoor.models.TransformType]
     """
 
     _validation = {
@@ -47,12 +50,14 @@ class MatchCondition1(Model):
         'operator': {'key': 'operator', 'type': 'str'},
         'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
         'match_value': {'key': 'matchValue', 'type': '[str]'},
+        'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MatchCondition1, self).__init__(**kwargs)
-        self.match_variable = kwargs.get('match_variable', None)
-        self.selector = kwargs.get('selector', None)
-        self.operator = kwargs.get('operator', None)
-        self.negate_condition = kwargs.get('negate_condition', None)
-        self.match_value = kwargs.get('match_value', None)
+    def __init__(self, *, match_variable, operator, match_value, selector: str=None, negate_condition: bool=None, transforms=None, **kwargs) -> None:
+        super(MatchCondition, self).__init__(**kwargs)
+        self.match_variable = match_variable
+        self.selector = selector
+        self.operator = operator
+        self.negate_condition = negate_condition
+        self.match_value = match_value
+        self.transforms = transforms

@@ -28,14 +28,17 @@ class WebApplicationFirewallPolicy1(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param policy_settings: Describes  policySettings for policy
+    :param policy_settings: Describes settings for the policy.
     :type policy_settings: ~azure.mgmt.frontdoor.models.PolicySettings
-    :param custom_rules: Describes custom rules inside the policy
-    :type custom_rules: ~azure.mgmt.frontdoor.models.CustomRules
-    :param managed_rules: Describes managed rules inside the policy
-    :type managed_rules: ~azure.mgmt.frontdoor.models.ManagedRuleSets
-    :ivar provisioning_state: Provisioning state of the
-     WebApplicationFirewallPolicy.
+    :param custom_rules: Describes custom rules inside the policy.
+    :type custom_rules: ~azure.mgmt.frontdoor.models.CustomRuleList
+    :param managed_rules: Describes managed rules inside the policy.
+    :type managed_rules: ~azure.mgmt.frontdoor.models.ManagedRuleSetList
+    :ivar frontend_endpoint_links: Describes Frontend Endpoints associated
+     with this Web Application Firewall policy.
+    :vartype frontend_endpoint_links:
+     list[~azure.mgmt.frontdoor.models.FrontendEndpointLink]
+    :ivar provisioning_state: Provisioning state of the policy.
     :vartype provisioning_state: str
     :ivar resource_state: Resource status of the policy. Possible values
      include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
@@ -51,6 +54,7 @@ class WebApplicationFirewallPolicy1(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'frontend_endpoint_links': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
     }
@@ -62,8 +66,9 @@ class WebApplicationFirewallPolicy1(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
-        'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRules'},
-        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSets'},
+        'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRuleList'},
+        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSetList'},
+        'frontend_endpoint_links': {'key': 'properties.frontendEndpointLinks', 'type': '[FrontendEndpointLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -74,6 +79,7 @@ class WebApplicationFirewallPolicy1(Resource):
         self.policy_settings = policy_settings
         self.custom_rules = custom_rules
         self.managed_rules = managed_rules
+        self.frontend_endpoint_links = None
         self.provisioning_state = None
         self.resource_state = None
         self.etag = etag

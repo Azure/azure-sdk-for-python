@@ -17,6 +17,7 @@ from .backend_pools_operations import BackendPoolsOperations
 from .frontend_endpoints_operations import FrontendEndpointsOperations
 from .endpoints_operations import EndpointsOperations
 from .policies_operations import PoliciesOperations
+from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
 __all__ = [
     'FrontDoorsOperations',
@@ -27,4 +28,5 @@ __all__ = [
     'FrontendEndpointsOperations',
     'EndpointsOperations',
     'PoliciesOperations',
+    'ManagedRuleSetsOperations',
 ]
