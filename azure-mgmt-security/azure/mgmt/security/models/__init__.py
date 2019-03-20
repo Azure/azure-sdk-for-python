@@ -10,10 +10,13 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .pricing_py3 import Pricing
-    from .pricing_list_py3 import PricingList
+    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
+    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
     from .asc_location_py3 import AscLocation
     from .resource_py3 import Resource
+    from .pricing_py3 import Pricing
+    from .pricing_list_py3 import PricingList
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
     from .auto_provisioning_setting_py3 import AutoProvisioningSetting
@@ -65,10 +68,13 @@ try:
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
 except (SyntaxError, ImportError):
-    from .pricing import Pricing
-    from .pricing_list import PricingList
+    from .regulatory_compliance_standard import RegulatoryComplianceStandard
+    from .regulatory_compliance_control import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
     from .asc_location import AscLocation
     from .resource import Resource
+    from .pricing import Pricing
+    from .pricing_list import PricingList
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
     from .auto_provisioning_setting import AutoProvisioningSetting
@@ -119,6 +125,9 @@ except (SyntaxError, ImportError):
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
+from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
+from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
+from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
@@ -135,6 +144,7 @@ from .external_security_solution_paged import ExternalSecuritySolutionPaged
 from .topology_resource_paged import TopologyResourcePaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .security_center_enums import (
+    State,
     PricingTier,
     AlertNotifications,
     AlertsToAdmins,
@@ -151,10 +161,13 @@ from .security_center_enums import (
 )
 
 __all__ = [
-    'Pricing',
-    'PricingList',
+    'RegulatoryComplianceStandard',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceAssessment',
     'AscLocation',
     'Resource',
+    'Pricing',
+    'PricingList',
     'SecurityContact',
     'WorkspaceSetting',
     'AutoProvisioningSetting',
@@ -205,6 +218,9 @@ __all__ = [
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',
@@ -220,6 +236,7 @@ __all__ = [
     'ExternalSecuritySolutionPaged',
     'TopologyResourcePaged',
     'AllowedConnectionsResourcePaged',
+    'State',
     'PricingTier',
     'AlertNotifications',
     'AlertsToAdmins',
