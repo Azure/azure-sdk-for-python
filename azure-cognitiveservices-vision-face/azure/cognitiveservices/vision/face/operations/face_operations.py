@@ -397,7 +397,7 @@ class FaceOperations(object):
     verify_face_to_face.metadata = {'url': '/verify'}
 
     def detect_with_url(
-            self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Detect human faces in an image, return face rectangles, and optionally
         with faceIds, landmarks, and attributes.<br />
         * Optional parameters including faceId, landmarks, and attributes.
@@ -467,6 +467,9 @@ class FaceOperations(object):
          'recognition_02'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -497,6 +500,8 @@ class FaceOperations(object):
             query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeType]', div=',')
         if recognition_model is not None:
             query_parameters['recognitionModel'] = self._serialize.query("recognition_model", recognition_model, 'str')
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -601,7 +606,7 @@ class FaceOperations(object):
     verify_face_to_person.metadata = {'url': '/verify'}
 
     def detect_with_stream(
-            self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect human faces in an image and returns face locations, and
         optionally with faceIds, landmarks, and attributes.
 
@@ -631,6 +636,9 @@ class FaceOperations(object):
          'recognition_02'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -664,6 +672,8 @@ class FaceOperations(object):
             query_parameters['returnFaceAttributes'] = self._serialize.query("return_face_attributes", return_face_attributes, '[FaceAttributeType]', div=',')
         if recognition_model is not None:
             query_parameters['recognitionModel'] = self._serialize.query("recognition_model", recognition_model, 'str')
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}

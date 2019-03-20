@@ -19,8 +19,8 @@ class DetectedFace(Model):
 
     :param face_id:
     :type face_id: str
-    :param recognition_model: Required. Possible values include:
-     'recognition_01', 'recognition_02'. Default value: "recognition_01" .
+    :param recognition_model: Possible values include: 'recognition_01',
+     'recognition_02'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_rectangle: Required.
@@ -35,7 +35,6 @@ class DetectedFace(Model):
     """
 
     _validation = {
-        'recognition_model': {'required': True},
         'face_rectangle': {'required': True},
     }
 

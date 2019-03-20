@@ -168,7 +168,7 @@ class LargePersonGroupOperations(object):
     delete.metadata = {'url': '/largepersongroups/{largePersonGroupId}'}
 
     def get(
-            self, large_person_group_id, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Retrieve the information of a large person group, including its name,
         userData and recognitionModel. This API returns large person group
         information only, use [LargePersonGroup Person -
@@ -179,6 +179,9 @@ class LargePersonGroupOperations(object):
         :param large_person_group_id: Id referencing a particular large person
          group.
         :type large_person_group_id: str
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -200,6 +203,8 @@ class LargePersonGroupOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -338,7 +343,7 @@ class LargePersonGroupOperations(object):
     get_training_status.metadata = {'url': '/largepersongroups/{largePersonGroupId}/training'}
 
     def list(
-            self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
+            self, start=None, top=1000, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """List all existing large person groups’s largePersonGroupId, name,
         userData and recognitionModel.<br />
         * Large person groups are stored in alphabetical order of
@@ -363,6 +368,9 @@ class LargePersonGroupOperations(object):
         :type start: str
         :param top: The number of large person groups to list.
         :type top: int
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -388,6 +396,8 @@ class LargePersonGroupOperations(object):
             query_parameters['start'] = self._serialize.query("start", start, 'str', max_length=64)
         if top is not None:
             query_parameters['top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}

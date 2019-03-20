@@ -121,13 +121,16 @@ class FaceListOperations(object):
     create.metadata = {'url': '/facelists/{faceListId}'}
 
     def get(
-            self, face_list_id, custom_headers=None, raw=False, **operation_config):
+            self, face_list_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Retrieve a face list’s faceListId, name, userData, recognitionModel and
         faces in the face list.
         .
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -149,6 +152,8 @@ class FaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -275,13 +280,16 @@ class FaceListOperations(object):
     delete.metadata = {'url': '/facelists/{faceListId}'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """List face lists’ faceListId, name, userData and recognitionModel. <br
         />
         To get face information inside faceList use [FaceList -
         Get](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039524c)
         .
 
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -302,6 +310,8 @@ class FaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}

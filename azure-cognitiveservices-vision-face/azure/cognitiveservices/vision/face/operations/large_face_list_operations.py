@@ -127,13 +127,16 @@ class LargeFaceListOperations(object):
     create.metadata = {'url': '/largefacelists/{largeFaceListId}'}
 
     def get(
-            self, large_face_list_id, custom_headers=None, raw=False, **operation_config):
+            self, large_face_list_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Retrieve a large face list’s largeFaceListId, name, userData and
         recognitionModel.
 
         :param large_face_list_id: Id referencing a particular large face
          list.
         :type large_face_list_id: str
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -155,6 +158,8 @@ class LargeFaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -338,7 +343,7 @@ class LargeFaceListOperations(object):
     get_training_status.metadata = {'url': '/largefacelists/{largeFaceListId}/training'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """List large face lists’ information of largeFaceListId, name, userData
         and recognitionModel. <br />
         To get face information inside largeFaceList use [LargeFaceList Face -
@@ -360,6 +365,9 @@ class LargeFaceListOperations(object):
         <br /> "start=list2&top=3" will return "list3", "list4", "list5".
         .
 
+        :param return_recognition_model: Whether to return the
+         'RecognitionModel' required for the current operation.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -381,6 +389,8 @@ class LargeFaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
