@@ -12,27 +12,53 @@
 from enum import Enum
 
 
-class CategoryType(Enum):
+class BillingFrequency(str, Enum):
+
+    month = "Month"
+    quarter = "Quarter"
+    year = "Year"
+
+
+class CategoryType(str, Enum):
 
     cost = "Cost"
     usage = "Usage"
 
 
-class TimeGrainType(Enum):
+class TimeGrainType(str, Enum):
 
     monthly = "Monthly"
     quarterly = "Quarterly"
     annually = "Annually"
 
 
-class OperatorType(Enum):
+class OperatorType(str, Enum):
 
     equal_to = "EqualTo"
     greater_than = "GreaterThan"
     greater_than_or_equal_to = "GreaterThanOrEqualTo"
 
 
-class Datagrain(Enum):
+class Grain(str, Enum):
 
-    daily_grain = "daily"
-    monthly_grain = "monthly"
+    daily = "Daily"
+    monthly = "Monthly"
+    yearly = "Yearly"
+
+
+class ChargeType(str, Enum):
+
+    actual = "Actual"
+    forecast = "Forecast"
+
+
+class Bound(str, Enum):
+
+    upper = "Upper"
+    lower = "Lower"
+
+
+class Datagrain(str, Enum):
+
+    daily_grain = "daily"  #: Daily grain of data
+    monthly_grain = "monthly"  #: Monthly grain of data

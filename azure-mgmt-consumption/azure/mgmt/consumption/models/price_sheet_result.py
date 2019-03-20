@@ -51,7 +51,7 @@ class PriceSheetResult(Resource):
         'next_link': {'key': 'properties.nextLink', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PriceSheetResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(PriceSheetResult, self).__init__(**kwargs)
         self.pricesheets = None
         self.next_link = None
