@@ -11,18 +11,7 @@ from msrest import Serializer, Deserializer
 
 from ._models import Secret, SecretPaged, SecretAttributes
 
-from .._internal import _BackupResult
-
-class BearerTokenCredentialPolicy(HTTPPolicy):
-
-    def __init__(self, credentials):
-        self._credentials = credentials
-
-    def send(self, request, **kwargs):
-        auth_header = 'Bearer ' + self._credentials.token['access_token']
-        request.http_request.headers['Authorization'] = auth_header
-
-        return self.next.send(request, **kwargs)
+from .._internal import _BackupResult, _BearerTokenCredentialPolicy
 
 
 class SecretClient:
@@ -58,7 +47,7 @@ class SecretClient:
         policies = [
             config.user_agent,
             config.headers,
-            BearerTokenCredentialPolicy(credentials),
+            _BearerTokenCredentialPolicy(credentials),
             config.redirect,
             config.retry,
             config.logging,
@@ -83,8 +72,7 @@ class SecretClient:
             the secret is returned
         :return: Secret
         :rtype: ~azure.keyvault.secrets.Secret
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
+        :raises: ~azure.core.ClientRequestError
         """
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version or '')])
 
@@ -120,12 +108,9 @@ class SecretClient:
         :type attributes: ~azure.keyvault.secrets.SecretAttributes
         :param dict[str, str] tags: Application specific metadata in the form of key-value
             deserialized response
-        :param operation_config: :ref:`Operation configuration
-            overrides<msrest:optionsforoperations>`.
         :return: The created secret
         :rtype: ~azure.keyvault.secret.Secret
-        :raises:
-        :class:`azure.core.ClientRequestError`
+        :raises: ~azure.core.ClientRequestError
         """
         secret = Secret(value=value, content_type=content_type, attributes=attributes, tags=tags)
 
@@ -153,7 +138,24 @@ class SecretClient:
 
 
     def update_secret(self, name, version, content_type=None, attributes=None, tags=None, **kwargs):
+        """Updates the attributes associated with a specified secret in a given
+        key vault.
 
+        The UPDATE operation changes specified attributes of an existing stored
+        secret. Attributes that are not specified in the request are left
+        unchanged. The value of a secret itself cannot be changed. This
+        operation requires the secrets/set permission.
+
+        :param str name: The name of the secret
+        :param str content_type: Type of the secret value such as a password
+        :param attributes: The secret management attributes
+        :type attributes: ~azure.keyvault.secrets.SecretAttributes
+        :param dict[str, str] tags: Application specific metadata in the form of key-value
+            deserialized response
+        :return: The created secret
+        :rtype: ~azure.keyvault.secret.Secret
+        :raises: ~azure.core.ClientRequestError
+        """
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version)])
 
         secret = Secret(content_type=content_type, attributes=attributes, tags=tags)
@@ -191,10 +193,8 @@ class SecretClient:
          not max_page_size, the service will return up to 25 results.
         :type maxresults: int
         :return: An iterator like instance of Secrets
-        :rtype:
-         ~azure.keyvault.secrets.SecretPaged[~azure.keyvault.secret.Secret]
-        :raises:
-         :class:`ClientRequestError<azure.core.ClientRequestError>`
+        :rtype: ~azure.keyvault.secrets.SecretPaged[~azure.keyvault.secret.Secret]
+        :raises: ~azure.core.ClientRequestError
         """
         def internal_paging(next_link=None, raw=False):
             if not next_link:
@@ -243,8 +243,7 @@ class SecretClient:
         :return: An iterator like instance of Secret
         :rtype:
          ~azure.keyvault.secrets.SecretPaged[~azure.keyvault.secret.Secret]
-        :raises:
-         :class:`ClientRequestError<azure.core.ClientRequestError>`
+        :raises: ~azure.core.ClientRequestError
         """
         def internal_paging(next_link=None, raw=False):
             if not next_link:
@@ -288,8 +287,7 @@ class SecretClient:
         :param str name: The name of the secret.
         :return: The raw bytes of the secret backup.
         :rtype: bytes
-        :raises:
-         :class:azure.core.ClientRequestError
+        :raises: ~azure.core.ClientRequestError
         """
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, 'backup')])
 
@@ -320,8 +318,7 @@ class SecretClient:
         :param bytes backup: The raw bytes of the secret backup
         :return: The restored secret
         :rtype: ~azure.keyvault.secrets.Secret
-        :raises:
-         :class:azure.core.ClientRequestError
+        :raises: ~azure.core.ClientRequestError
         """
         backup = _BackupResult(value=backup)
 
@@ -348,18 +345,74 @@ class SecretClient:
         return self._deserialize('Secret', response)
 
     def delete_secret(self, name, **kwargs):
+        """Deletes a secret from a specified key vault.
+
+        The DELETE operation applies to any secret stored in Azure Key Vault.
+        DELETE cannot be applied to an individual version of a secret. This
+        operation requires the secrets/delete permission.
+
+        :param str name: The name of the secret.
+        :type secret_name: str
+        :return: The deleted secret
+        :rtype: ~azure.keyvault.secret.DeletedSecret
+        :raises: ~azure.core.ClientRequestError
+        """
         pass
 
+
     def get_deleted_secret(self, name, **kwargs):
+        """Gets the specified deleted secret.
+
+        The Get Deleted Secret operation returns the specified deleted secret
+        along with its attributes. This operation requires the secrets/get
+        permission.
+
+        :param str name: The name of the deleted secret.
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: The deleted secret
+        :rtype: ~azure.keyvault.secret.DeletedSecret
+        :raises: ~azure.core.ClientRequestError
+        """
         pass
 
     def list_deleted_secrets(self, max_page_size=None, **kwargs):
         pass
 
     def purge_deleted_secret(self, name, **kwargs):
+        """Permanently deletes the specified secret.
+
+        The purge deleted secret operation removes the secret permanently,
+        without the possibility of recovery. This operation can only be enabled
+        on a soft-delete enabled vault. This operation requires the
+        secrets/purge permission.
+
+        :param str name: The name of the deleted secret.
+        :return: None
+        :raises: ~azure.core.ClientRequestError
+        """
         pass
 
     def recover_deleted_secret(self, name, **kwargs):
+        """Recovers the deleted secret to the latest version.
+
+        Recovers the deleted secret in the specified vault. This operation can
+        only be performed on a soft-delete enabled vault. This operation
+        requires the secrets/recover permission.
+
+        :param str name: The name of the deleted secret.
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: The recovered secret
+        :rtype: ~azure.keyvault.secret.Secret
+        :raises: ~azure.core.ClientRequestError
+        """
         pass
 
 
