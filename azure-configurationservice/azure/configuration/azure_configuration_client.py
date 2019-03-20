@@ -69,7 +69,7 @@ class AzureConfigurationClient(object):
         return self._client.list_key_values(labels, keys, None, fields, custom_headers)
     
     def get_key_value(
-            self, key, label="%00", **kwargs):
+            self, key, label=None, **kwargs):
         """Get a KeyValue.
 
         Get the KeyValue for the given key and label.
@@ -119,7 +119,7 @@ class AzureConfigurationClient(object):
         return self._client.create_or_update_key_value(key_value, key, key_value.label, custom_headers)
     
     def update_key_value(
-            self, key, value=None, content_type=None, tags=None, label="%00", etag=None, **kwargs):
+            self, key, value=None, content_type=None, tags=None, label=None, etag=None, **kwargs):
         """Update a KeyValue.
 
         Update a KeyValue.
