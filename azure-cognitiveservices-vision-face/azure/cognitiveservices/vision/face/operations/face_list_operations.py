@@ -128,8 +128,8 @@ class FaceListOperations(object):
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -287,8 +287,8 @@ class FaceListOperations(object):
         Get](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039524c)
         .
 
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

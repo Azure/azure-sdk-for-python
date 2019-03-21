@@ -134,8 +134,8 @@ class LargeFaceListOperations(object):
         :param large_face_list_id: Id referencing a particular large face
          list.
         :type large_face_list_id: str
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -365,8 +365,8 @@ class LargeFaceListOperations(object):
         <br /> "start=list2&top=3" will return "list3", "list4", "list5".
         .
 
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

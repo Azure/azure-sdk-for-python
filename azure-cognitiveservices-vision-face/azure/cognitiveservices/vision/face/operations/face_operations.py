@@ -467,8 +467,8 @@ class FaceOperations(object):
          'recognition_02'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -636,8 +636,8 @@ class FaceOperations(object):
          'recognition_02'
         :type recognition_model: str or
          ~azure.cognitiveservices.vision.face.models.RecognitionModel
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

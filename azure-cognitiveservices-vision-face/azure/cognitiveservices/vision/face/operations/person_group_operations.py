@@ -176,8 +176,8 @@ class PersonGroupOperations(object):
 
         :param person_group_id: Id referencing a particular person group.
         :type person_group_id: str
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -360,8 +360,8 @@ class PersonGroupOperations(object):
         :type start: str
         :param top: The number of person groups to list.
         :type top: int
-        :param return_recognition_model: Whether to return the
-         'RecognitionModel' required for the current operation.
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
