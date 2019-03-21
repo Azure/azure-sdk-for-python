@@ -95,3 +95,14 @@ class RoleDisasterRecovery(str, Enum):
     primary = "Primary"
     primary_not_replicating = "PrimaryNotReplicating"
     secondary = "Secondary"
+
+
+class NetworkRuleIPAction(str, Enum):
+
+    allow = "Allow"
+
+
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"

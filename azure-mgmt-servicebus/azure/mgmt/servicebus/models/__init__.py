@@ -42,6 +42,10 @@ try:
     from .eventhub_py3 import Eventhub
     from .arm_disaster_recovery_py3 import ArmDisasterRecovery
     from .migration_config_properties_py3 import MigrationConfigProperties
+    from .subnet_py3 import Subnet
+    from .nw_rule_set_ip_rules_py3 import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules_py3 import NWRuleSetVirtualNetworkRules
+    from .network_rule_set_py3 import NetworkRuleSet
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -75,6 +79,10 @@ except (SyntaxError, ImportError):
     from .eventhub import Eventhub
     from .arm_disaster_recovery import ArmDisasterRecovery
     from .migration_config_properties import MigrationConfigProperties
+    from .subnet import Subnet
+    from .nw_rule_set_ip_rules import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules import NWRuleSetVirtualNetworkRules
+    from .network_rule_set import NetworkRuleSet
 from .operation_paged import OperationPaged
 from .sb_namespace_paged import SBNamespacePaged
 from .sb_authorization_rule_paged import SBAuthorizationRulePaged
@@ -98,6 +106,8 @@ from .service_bus_management_client_enums import (
     EncodingCaptureDescription,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    NetworkRuleIPAction,
+    DefaultAction,
 )
 
 __all__ = [
@@ -133,6 +143,10 @@ __all__ = [
     'Eventhub',
     'ArmDisasterRecovery',
     'MigrationConfigProperties',
+    'Subnet',
+    'NWRuleSetIpRules',
+    'NWRuleSetVirtualNetworkRules',
+    'NetworkRuleSet',
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
@@ -155,4 +169,6 @@ __all__ = [
     'EncodingCaptureDescription',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'NetworkRuleIPAction',
+    'DefaultAction',
 ]
