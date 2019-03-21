@@ -943,7 +943,7 @@ class ServiceMembersOperations(object):
 
         :param service_name: The name of the service.
         :type service_name: str
-        :param service_member_id: The servic member id.
+        :param service_member_id: The service member id.
         :type service_member_id: str
         :param metric_name: The name of the metric.
         :type metric_name: str
