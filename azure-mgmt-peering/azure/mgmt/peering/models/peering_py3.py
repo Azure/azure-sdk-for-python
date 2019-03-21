@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class Peering(Model):
+class Peering(Resource):
     """Peering is a logical representation of a set of connections to the
     Microsoft Cloud Edge at a location.
 
@@ -21,6 +21,12 @@ class Peering(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :param sku: Required. The SKU that defines the tier and kind of the
      peering.
     :type sku: ~azure.mgmt.peering.models.PeeringSku
@@ -41,25 +47,22 @@ class Peering(Model):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar id: The ID of the resource.
-    :vartype id: str
-    :ivar type: The type of the resource.
-    :vartype type: str
     """
 
     _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
         'sku': {'required': True},
         'kind': {'required': True},
         'provisioning_state': {'readonly': True},
         'location': {'required': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'PeeringSku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'direct': {'key': 'properties.direct', 'type': 'PeeringPropertiesDirect'},
@@ -68,9 +71,6 @@ class Peering(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, sku, kind, location: str, direct=None, exchange=None, peering_location: str=None, tags=None, **kwargs) -> None:
@@ -83,6 +83,3 @@ class Peering(Model):
         self.provisioning_state = None
         self.location = location
         self.tags = tags
-        self.name = None
-        self.id = None
-        self.type = None

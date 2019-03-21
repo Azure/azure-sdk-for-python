@@ -19,6 +19,7 @@ try:
     from .peering_properties_exchange_py3 import PeeringPropertiesExchange
     from .peering_py3 import Peering
     from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .resource_py3 import Resource
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_py3 import Operation
     from .contact_info_py3 import ContactInfo
@@ -40,6 +41,7 @@ except (SyntaxError, ImportError):
     from .peering_properties_exchange import PeeringPropertiesExchange
     from .peering import Peering
     from .error_response import ErrorResponse, ErrorResponseException
+    from .resource import Resource
     from .operation_display_info import OperationDisplayInfo
     from .operation import Operation
     from .contact_info import ContactInfo
@@ -78,6 +80,7 @@ __all__ = [
     'PeeringPropertiesExchange',
     'Peering',
     'ErrorResponse', 'ErrorResponseException',
+    'Resource',
     'OperationDisplayInfo',
     'Operation',
     'ContactInfo',
