@@ -13,7 +13,7 @@ from .image_template_customizer_py3 import ImageTemplateCustomizer
 
 
 class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
-    """Runs the specified PowerSehll on the VM (Windows). Corresponds to Packer
+    """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer
     powershell provisioner.
 
     All required parameters must be populated in order to send to Azure.
