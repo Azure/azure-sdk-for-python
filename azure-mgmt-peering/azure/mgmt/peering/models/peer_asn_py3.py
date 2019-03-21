@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PeerAsn(Model):
-    """The essential information related to the pee's ASN.
+    """The essential information related to the peer's ASN.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
