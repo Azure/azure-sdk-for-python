@@ -36,7 +36,7 @@ class ModelOperations(object):
 
     def add_intent(
             self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds an intent classifier to the application.
+        """Adds an intent to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -99,7 +99,8 @@ class ModelOperations(object):
 
     def list_intents(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the intent models.
+        """Gets information about the intent models in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -165,7 +166,7 @@ class ModelOperations(object):
 
     def add_entity(
             self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a simple entity extractor to the application.
+        """Adds a simple entity extractor to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -228,7 +229,8 @@ class ModelOperations(object):
 
     def list_entities(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the entity models.
+        """Gets information about all the simple entity models in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -294,7 +296,7 @@ class ModelOperations(object):
 
     def add_hierarchical_entity(
             self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a hierarchical entity extractor to the application version.
+        """Adds a hierarchical entity extractor to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -359,7 +361,8 @@ class ModelOperations(object):
 
     def list_hierarchical_entities(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the hierarchical entity models.
+        """Gets information about all the hierarchical entity models in a version
+        of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -425,7 +428,7 @@ class ModelOperations(object):
 
     def add_composite_entity(
             self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a composite entity extractor to the application.
+        """Adds a composite entity extractor to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -490,7 +493,8 @@ class ModelOperations(object):
 
     def list_composite_entities(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the composite entity models.
+        """Gets information about all the composite entity models in a version of
+        the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -556,7 +560,8 @@ class ModelOperations(object):
 
     def list_closed_lists(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the closedlist models.
+        """Gets information about all the list entity models in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -622,7 +627,7 @@ class ModelOperations(object):
 
     def add_closed_list(
             self, app_id, version_id, sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a closed list model to the application.
+        """Adds a list entity model to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -631,7 +636,7 @@ class ModelOperations(object):
         :param sub_lists: Sublists for the feature.
         :type sub_lists:
          list[~azure.cognitiveservices.language.luis.authoring.models.WordListObject]
-        :param name: Name of the closed list feature.
+        :param name: Name of the list entity.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -688,7 +693,7 @@ class ModelOperations(object):
 
     def add_prebuilt(
             self, app_id, version_id, prebuilt_extractor_names, custom_headers=None, raw=False, **operation_config):
-        """Adds a list of prebuilt entity extractors to the application.
+        """Adds a list of prebuilt entities to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -752,7 +757,8 @@ class ModelOperations(object):
 
     def list_prebuilts(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the prebuilt entity models.
+        """Gets information about all the prebuilt entities in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -818,7 +824,8 @@ class ModelOperations(object):
 
     def list_prebuilt_entities(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available prebuilt entity extractors for the application.
+        """Gets all the available prebuilt entities in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -875,7 +882,8 @@ class ModelOperations(object):
 
     def list_models(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the application version models.
+        """Gets information about all the intent and entity models in a version of
+        the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -941,7 +949,8 @@ class ModelOperations(object):
 
     def examples_method(
             self, app_id, version_id, model_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets the utterances for the given model in the given app version.
+        """Gets the example utterances for the given intent or entity model in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1010,7 +1019,8 @@ class ModelOperations(object):
 
     def get_intent(
             self, app_id, version_id, intent_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the intent model.
+        """Gets information about the intent model in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1070,7 +1080,7 @@ class ModelOperations(object):
 
     def update_intent(
             self, app_id, version_id, intent_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name of an intent classifier.
+        """Updates the name of an intent in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1138,7 +1148,7 @@ class ModelOperations(object):
 
     def delete_intent(
             self, app_id, version_id, intent_id, delete_utterances=False, custom_headers=None, raw=False, **operation_config):
-        """Deletes an intent classifier from the application.
+        """Deletes an intent from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1146,8 +1156,9 @@ class ModelOperations(object):
         :type version_id: str
         :param intent_id: The intent classifier ID.
         :type intent_id: str
-        :param delete_utterances: Also delete the intent's utterances (true).
-         Or move the utterances to the None intent (false - the default value).
+        :param delete_utterances: If true, deletes the intent's example
+         utterances. If false, moves the example utterances to the None intent.
+         The default value is false.
         :type delete_utterances: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1203,7 +1214,7 @@ class ModelOperations(object):
 
     def get_entity(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the entity model.
+        """Gets information about an entity model in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1263,7 +1274,7 @@ class ModelOperations(object):
 
     def update_entity(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name of an entity extractor.
+        """Updates the name of an entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1331,7 +1342,7 @@ class ModelOperations(object):
 
     def delete_entity(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes an entity extractor from the application.
+        """Deletes an entity from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1391,7 +1402,8 @@ class ModelOperations(object):
 
     def get_hierarchical_entity(
             self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the hierarchical entity model.
+        """Gets information about a hierarchical entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1451,7 +1463,8 @@ class ModelOperations(object):
 
     def update_hierarchical_entity(
             self, app_id, version_id, h_entity_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name and children of a hierarchical entity model.
+        """Updates the name and children of a hierarchical entity model in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1521,7 +1534,7 @@ class ModelOperations(object):
 
     def delete_hierarchical_entity(
             self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a hierarchical entity extractor from the application version.
+        """Deletes a hierarchical entity from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1581,7 +1594,8 @@ class ModelOperations(object):
 
     def get_composite_entity(
             self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the composite entity model.
+        """Gets information about a composite entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1641,7 +1655,7 @@ class ModelOperations(object):
 
     def update_composite_entity(
             self, app_id, version_id, c_entity_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the composite entity extractor.
+        """Updates a composite entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1711,7 +1725,7 @@ class ModelOperations(object):
 
     def delete_composite_entity(
             self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a composite entity extractor from the application.
+        """Deletes a composite entity from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1771,13 +1785,13 @@ class ModelOperations(object):
 
     def get_closed_list(
             self, app_id, version_id, cl_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information of a closed list model.
+        """Gets information about a list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list model ID.
+        :param cl_entity_id: The list model ID.
         :type cl_entity_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1831,18 +1845,18 @@ class ModelOperations(object):
 
     def update_closed_list(
             self, app_id, version_id, cl_entity_id, sub_lists=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the closed list model.
+        """Updates the list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list model ID.
+        :param cl_entity_id: The list model ID.
         :type cl_entity_id: str
         :param sub_lists: The new sublists for the feature.
         :type sub_lists:
          list[~azure.cognitiveservices.language.luis.authoring.models.WordListObject]
-        :param name: The new name of the closed list feature.
+        :param name: The new name of the list entity.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1902,13 +1916,14 @@ class ModelOperations(object):
 
     def patch_closed_list(
             self, app_id, version_id, cl_entity_id, sub_lists=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a batch of sublists to an existing closedlist.
+        """Adds a batch of sublists to an existing list entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list model ID.
+        :param cl_entity_id: The list entity model ID.
         :type cl_entity_id: str
         :param sub_lists: Sublists to add.
         :type sub_lists:
@@ -1971,13 +1986,13 @@ class ModelOperations(object):
 
     def delete_closed_list(
             self, app_id, version_id, cl_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a closed list model from the application.
+        """Deletes a list entity model from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list model ID.
+        :param cl_entity_id: The list entity model ID.
         :type cl_entity_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2031,7 +2046,8 @@ class ModelOperations(object):
 
     def get_prebuilt(
             self, app_id, version_id, prebuilt_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the prebuilt entity model.
+        """Gets information about a prebuilt entity model in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2091,7 +2107,7 @@ class ModelOperations(object):
 
     def delete_prebuilt(
             self, app_id, version_id, prebuilt_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a prebuilt entity extractor from the application.
+        """Deletes a prebuilt entity extractor from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2151,16 +2167,17 @@ class ModelOperations(object):
 
     def delete_sub_list(
             self, app_id, version_id, cl_entity_id, sub_list_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a sublist of a specific closed list model.
+        """Deletes a sublist of a specific list entity model from a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list entity extractor ID.
+        :param cl_entity_id: The list entity extractor ID.
         :type cl_entity_id: str
         :param sub_list_id: The sublist ID.
-        :type sub_list_id: int
+        :type sub_list_id: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2180,7 +2197,7 @@ class ModelOperations(object):
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str'),
-            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'int')
+            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'long')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2214,16 +2231,17 @@ class ModelOperations(object):
 
     def update_sub_list(
             self, app_id, version_id, cl_entity_id, sub_list_id, canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
-        """Updates one of the closed list's sublists.
+        """Updates one of the list entity's sublists in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list entity extractor ID.
+        :param cl_entity_id: The list entity extractor ID.
         :type cl_entity_id: str
         :param sub_list_id: The sublist ID.
-        :type sub_list_id: int
+        :type sub_list_id: long
         :param canonical_form: The standard form that the list represents.
         :type canonical_form: str
         :param list: List of synonym words.
@@ -2249,7 +2267,7 @@ class ModelOperations(object):
             'appId': self._serialize.url("app_id", app_id, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str'),
             'clEntityId': self._serialize.url("cl_entity_id", cl_entity_id, 'str'),
-            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'int')
+            'subListId': self._serialize.url("sub_list_id", sub_list_id, 'long')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2285,9 +2303,10 @@ class ModelOperations(object):
         return deserialized
     update_sub_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}/sublists/{subListId}'}
 
-    def get_intent_suggestions(
+    def list_intent_suggestions(
             self, app_id, version_id, intent_id, take=100, custom_headers=None, raw=False, **operation_config):
-        """Suggests examples that would improve the accuracy of the intent model.
+        """Suggests example utterances that would improve the accuracy of the
+        intent model in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2311,7 +2330,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_intent_suggestions.metadata['url']
+        url = self.list_intent_suggestions.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -2348,12 +2367,12 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_intent_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/suggest'}
+    list_intent_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/suggest'}
 
-    def get_entity_suggestions(
+    def list_entity_suggestions(
             self, app_id, version_id, entity_id, take=100, custom_headers=None, raw=False, **operation_config):
-        """Get suggestion examples that would improve the accuracy of the entity
-        model.
+        """Get suggested example utterances that would improve the accuracy of the
+        entity model in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2377,7 +2396,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_suggestions.metadata['url']
+        url = self.list_entity_suggestions.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -2414,17 +2433,18 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_entity_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/suggest'}
+    list_entity_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/suggest'}
 
     def add_sub_list(
             self, app_id, version_id, cl_entity_id, canonical_form=None, list=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a list to an existing closed list.
+        """Adds a sublist to an existing list entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param cl_entity_id: The closed list entity extractor ID.
+        :param cl_entity_id: The list entity extractor ID.
         :type cl_entity_id: str
         :param canonical_form: The standard form that the list represents.
         :type canonical_form: str
@@ -2435,8 +2455,8 @@ class ModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: int or ClientRawResponse if raw=true
-        :rtype: int or ~msrest.pipeline.ClientRawResponse
+        :return: long or ClientRawResponse if raw=true
+        :rtype: long or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
@@ -2475,7 +2495,7 @@ class ModelOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('int', response)
+            deserialized = self._deserialize('long', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2486,8 +2506,8 @@ class ModelOperations(object):
 
     def add_custom_prebuilt_domain(
             self, app_id, version_id, domain_name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a customizable prebuilt domain along with all of its models to
-        this application.
+        """Adds a customizable prebuilt domain along with all of its intent and
+        entity models in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2550,7 +2570,8 @@ class ModelOperations(object):
 
     def add_custom_prebuilt_intent(
             self, app_id, version_id, domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a custom prebuilt intent model to the application.
+        """Adds a customizable prebuilt intent model to a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2615,7 +2636,8 @@ class ModelOperations(object):
 
     def list_custom_prebuilt_intents(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets custom prebuilt intents information of this application.
+        """Gets information about customizable prebuilt intents added to a version
+        of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2672,7 +2694,7 @@ class ModelOperations(object):
 
     def add_custom_prebuilt_entity(
             self, app_id, version_id, domain_name=None, model_name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a custom prebuilt entity model to the application.
+        """Adds a prebuilt entity model to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2737,7 +2759,7 @@ class ModelOperations(object):
 
     def list_custom_prebuilt_entities(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets all custom prebuilt entities information of this application.
+        """Gets all prebuilt entities used in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2794,7 +2816,8 @@ class ModelOperations(object):
 
     def list_custom_prebuilt_models(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets all custom prebuilt models information of this application.
+        """Gets all prebuilt intent and entity model information used in a version
+        of this application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2851,7 +2874,7 @@ class ModelOperations(object):
 
     def delete_custom_prebuilt_domain(
             self, app_id, version_id, domain_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a prebuilt domain's models from the application.
+        """Deletes a prebuilt domain's models in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2911,7 +2934,8 @@ class ModelOperations(object):
 
     def get_hierarchical_entity_child(
             self, app_id, version_id, h_entity_id, h_child_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the hierarchical entity child model.
+        """Gets information about the child's model contained in an hierarchical
+        entity child model in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -2974,7 +2998,8 @@ class ModelOperations(object):
 
     def update_hierarchical_entity_child(
             self, app_id, version_id, h_entity_id, h_child_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Renames a single child in an existing hierarchical entity model.
+        """Renames a single child in an existing hierarchical entity model in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3045,7 +3070,8 @@ class ModelOperations(object):
 
     def delete_hierarchical_entity_child(
             self, app_id, version_id, h_entity_id, h_child_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a hierarchical entity extractor child from the application.
+        """Deletes a hierarchical entity extractor child in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3108,7 +3134,8 @@ class ModelOperations(object):
 
     def add_hierarchical_entity_child(
             self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a single child in an existing hierarchical entity model.
+        """Creates a single child in an existing hierarchical entity model in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3174,7 +3201,8 @@ class ModelOperations(object):
 
     def add_composite_entity_child(
             self, app_id, version_id, c_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a single child in an existing composite entity model.
+        """Creates a single child in an existing composite entity model in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3240,7 +3268,8 @@ class ModelOperations(object):
 
     def delete_composite_entity_child(
             self, app_id, version_id, c_entity_id, c_child_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a composite entity extractor child from the application.
+        """Deletes a composite entity extractor child from a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3301,9 +3330,10 @@ class ModelOperations(object):
         return deserialized
     delete_composite_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/children/{cChildId}'}
 
-    def get_regex_entity_infos(
+    def list_regex_entity_infos(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the regex entity models.
+        """Gets information about the regular expression entity models in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3327,7 +3357,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_regex_entity_infos.metadata['url']
+        url = self.list_regex_entity_infos.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3365,17 +3395,17 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_regex_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
+    list_regex_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
 
     def create_regex_entity_model(
             self, app_id, version_id, regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a regex entity model to the application version.
+        """Adds a regular expression entity model to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param regex_pattern: The regex entity pattern.
+        :param regex_pattern: The regular expression entity pattern.
         :type regex_pattern: str
         :param name: The model name.
         :type name: str
@@ -3432,9 +3462,10 @@ class ModelOperations(object):
         return deserialized
     create_regex_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities'}
 
-    def get_pattern_any_entity_infos(
+    def list_pattern_any_entity_infos(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Get information about the Pattern.Any entity models.
+        """Get information about the Pattern.Any entity models in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3458,7 +3489,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_pattern_any_entity_infos.metadata['url']
+        url = self.list_pattern_any_entity_infos.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3496,11 +3527,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_pattern_any_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
+    list_pattern_any_entity_infos.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
 
     def create_pattern_any_entity_model(
             self, app_id, version_id, name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a pattern.any entity extractor to the application.
+        """Adds a pattern.any entity extractor to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3563,9 +3594,9 @@ class ModelOperations(object):
         return deserialized
     create_pattern_any_entity_model.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities'}
 
-    def get_entity_roles(
+    def list_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for an entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3586,7 +3617,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_roles.metadata['url']
+        url = self.list_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3621,11 +3652,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
+    list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
 
     def create_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create an entity role in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3689,9 +3720,9 @@ class ModelOperations(object):
         return deserialized
     create_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/roles'}
 
-    def get_prebuilt_entity_roles(
+    def list_prebuilt_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get a prebuilt entity's roles in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3712,7 +3743,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_prebuilt_entity_roles.metadata['url']
+        url = self.list_prebuilt_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3747,11 +3778,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
+    list_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
 
     def create_prebuilt_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for a prebuilt entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3815,9 +3846,9 @@ class ModelOperations(object):
         return deserialized
     create_prebuilt_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/prebuilts/{entityId}/roles'}
 
-    def get_closed_list_entity_roles(
+    def list_closed_list_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3838,7 +3869,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_closed_list_entity_roles.metadata['url']
+        url = self.list_closed_list_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3873,11 +3904,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_closed_list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
+    list_closed_list_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
 
     def create_closed_list_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for a list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3941,9 +3972,10 @@ class ModelOperations(object):
         return deserialized
     create_closed_list_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{entityId}/roles'}
 
-    def get_regex_entity_roles(
+    def list_regex_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a regular expression entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -3964,7 +3996,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_regex_entity_roles.metadata['url']
+        url = self.list_regex_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -3999,11 +4031,12 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_regex_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
+    list_regex_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
 
     def create_regex_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for an regular expression entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4067,9 +4100,9 @@ class ModelOperations(object):
         return deserialized
     create_regex_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/regexentities/{entityId}/roles'}
 
-    def get_composite_entity_roles(
+    def list_composite_entity_roles(
             self, app_id, version_id, c_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a composite entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4090,7 +4123,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_composite_entity_roles.metadata['url']
+        url = self.list_composite_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -4125,11 +4158,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_composite_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
+    list_composite_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
 
     def create_composite_entity_role(
             self, app_id, version_id, c_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for a composite entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4193,9 +4226,9 @@ class ModelOperations(object):
         return deserialized
     create_composite_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities/{cEntityId}/roles'}
 
-    def get_pattern_any_entity_roles(
+    def list_pattern_any_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a Pattern.any entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4216,7 +4249,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_pattern_any_entity_roles.metadata['url']
+        url = self.list_pattern_any_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -4251,11 +4284,12 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_pattern_any_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
+    list_pattern_any_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
 
     def create_pattern_any_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for an Pattern.any entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4319,9 +4353,10 @@ class ModelOperations(object):
         return deserialized
     create_pattern_any_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternanyentities/{entityId}/roles'}
 
-    def get_hierarchical_entity_roles(
+    def list_hierarchical_entity_roles(
             self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a hierarchical entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4342,7 +4377,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_hierarchical_entity_roles.metadata['url']
+        url = self.list_hierarchical_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -4377,11 +4412,12 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_hierarchical_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
+    list_hierarchical_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
 
     def create_hierarchical_entity_role(
             self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for an hierarchical entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4445,9 +4481,9 @@ class ModelOperations(object):
         return deserialized
     create_hierarchical_entity_role.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/roles'}
 
-    def get_custom_prebuilt_entity_roles(
+    def list_custom_prebuilt_entity_roles(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get All Entity Roles for a given entity.
+        """Get all roles for a prebuilt entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4468,7 +4504,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_custom_prebuilt_entity_roles.metadata['url']
+        url = self.list_custom_prebuilt_entity_roles.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -4503,11 +4539,11 @@ class ModelOperations(object):
             return client_raw_response
 
         return deserialized
-    get_custom_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles'}
+    list_custom_prebuilt_entity_roles.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltentities/{entityId}/roles'}
 
     def create_custom_prebuilt_entity_role(
             self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Create an entity role for an entity in the application.
+        """Create a role for a prebuilt entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4573,7 +4609,8 @@ class ModelOperations(object):
 
     def get_explicit_list(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Get the explicit list of the pattern.any entity.
+        """Get the explicit (exception) list of the pattern.any entity in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4633,7 +4670,8 @@ class ModelOperations(object):
 
     def add_explicit_list_item(
             self, app_id, version_id, entity_id, explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
-        """Add a new item to the explicit list for the Pattern.Any entity.
+        """Add a new exception to the explicit list for the Pattern.Any entity in
+        a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4699,13 +4737,14 @@ class ModelOperations(object):
 
     def get_regex_entity_entity_info(
             self, app_id, version_id, regex_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information of a regex entity model.
+        """Gets information about a regular expression entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param regex_entity_id: The regex entity model ID.
+        :param regex_entity_id: The regular expression entity model ID.
         :type regex_entity_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4759,15 +4798,15 @@ class ModelOperations(object):
 
     def update_regex_entity_model(
             self, app_id, version_id, regex_entity_id, regex_pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the regex entity model .
+        """Updates the regular expression entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param regex_entity_id: The regex entity extractor ID.
+        :param regex_entity_id: The regular expression entity extractor ID.
         :type regex_entity_id: str
-        :param regex_pattern: The regex entity pattern.
+        :param regex_pattern: The regular expression entity pattern.
         :type regex_pattern: str
         :param name: The model name.
         :type name: str
@@ -4829,13 +4868,13 @@ class ModelOperations(object):
 
     def delete_regex_entity_model(
             self, app_id, version_id, regex_entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a regex entity model from the application.
+        """Deletes a regular expression entity from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param regex_entity_id: The regex entity extractor ID.
+        :param regex_entity_id: The regular expression entity extractor ID.
         :type regex_entity_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4889,7 +4928,8 @@ class ModelOperations(object):
 
     def get_pattern_any_entity_info(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the application version's Pattern.Any model.
+        """Gets information about the Pattern.Any model in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -4949,7 +4989,8 @@ class ModelOperations(object):
 
     def update_pattern_any_entity_model(
             self, app_id, version_id, entity_id, name=None, explicit_list=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name and explicit list of a Pattern.Any entity model.
+        """Updates the name and explicit (exception) list of a Pattern.Any entity
+        model in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5019,7 +5060,8 @@ class ModelOperations(object):
 
     def delete_pattern_any_entity_model(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Pattern.Any entity extractor from the application.
+        """Deletes a Pattern.Any entity extractor from a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5079,7 +5121,7 @@ class ModelOperations(object):
 
     def get_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5142,7 +5184,7 @@ class ModelOperations(object):
 
     def update_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5213,7 +5255,7 @@ class ModelOperations(object):
 
     def delete_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete an entity role in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5276,7 +5318,8 @@ class ModelOperations(object):
 
     def get_prebuilt_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given prebuilt entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5339,7 +5382,8 @@ class ModelOperations(object):
 
     def update_prebuilt_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given prebuilt entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5410,7 +5454,7 @@ class ModelOperations(object):
 
     def delete_prebuilt_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role in a prebuilt entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5473,7 +5517,7 @@ class ModelOperations(object):
 
     def get_closed_list_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5536,7 +5580,7 @@ class ModelOperations(object):
 
     def update_closed_list_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5607,7 +5651,7 @@ class ModelOperations(object):
 
     def delete_closed_list_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given list entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5670,7 +5714,8 @@ class ModelOperations(object):
 
     def get_regex_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given regular expression entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5733,7 +5778,8 @@ class ModelOperations(object):
 
     def update_regex_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given regular expression entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5804,7 +5850,8 @@ class ModelOperations(object):
 
     def delete_regex_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given regular expression in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5867,7 +5914,8 @@ class ModelOperations(object):
 
     def get_composite_entity_role(
             self, app_id, version_id, c_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given composite entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -5930,7 +5978,8 @@ class ModelOperations(object):
 
     def update_composite_entity_role(
             self, app_id, version_id, c_entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given composite entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6001,7 +6050,8 @@ class ModelOperations(object):
 
     def delete_composite_entity_role(
             self, app_id, version_id, c_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given composite entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6064,7 +6114,8 @@ class ModelOperations(object):
 
     def get_pattern_any_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given Pattern.any entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6127,7 +6178,8 @@ class ModelOperations(object):
 
     def update_pattern_any_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given Pattern.any entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6198,7 +6250,8 @@ class ModelOperations(object):
 
     def delete_pattern_any_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given Pattern.any entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6261,7 +6314,8 @@ class ModelOperations(object):
 
     def get_hierarchical_entity_role(
             self, app_id, version_id, h_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given hierarchical entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6324,7 +6378,8 @@ class ModelOperations(object):
 
     def update_hierarchical_entity_role(
             self, app_id, version_id, h_entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given hierarchical entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6395,7 +6450,8 @@ class ModelOperations(object):
 
     def delete_hierarchical_entity_role(
             self, app_id, version_id, h_entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given hierarchical role in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6458,7 +6514,8 @@ class ModelOperations(object):
 
     def get_custom_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Get one entity role for a given entity.
+        """Get one role for a given prebuilt entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6521,7 +6578,8 @@ class ModelOperations(object):
 
     def update_custom_prebuilt_entity_role(
             self, app_id, version_id, entity_id, role_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Update an entity role for a given entity.
+        """Update a role for a given prebuilt entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6592,7 +6650,8 @@ class ModelOperations(object):
 
     def delete_custom_entity_role(
             self, app_id, version_id, entity_id, role_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an entity role.
+        """Delete a role for a given prebuilt entity in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6655,7 +6714,8 @@ class ModelOperations(object):
 
     def get_explicit_list_item(
             self, app_id, version_id, entity_id, item_id, custom_headers=None, raw=False, **operation_config):
-        """Get the explicit list of the pattern.any entity.
+        """Get the explicit (exception) list of the pattern.any entity in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6718,7 +6778,8 @@ class ModelOperations(object):
 
     def update_explicit_list_item(
             self, app_id, version_id, entity_id, item_id, explicit_list_item=None, custom_headers=None, raw=False, **operation_config):
-        """Updates an explicit list item for a Pattern.Any entity.
+        """Updates an explicit (exception) list item for a Pattern.Any entity in a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -6789,7 +6850,8 @@ class ModelOperations(object):
 
     def delete_explicit_list_item(
             self, app_id, version_id, entity_id, item_id, custom_headers=None, raw=False, **operation_config):
-        """Delete the explicit list item from the Pattern.any explicit list.
+        """Delete an item from the explicit (exception) list for a Pattern.any
+        entity in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
