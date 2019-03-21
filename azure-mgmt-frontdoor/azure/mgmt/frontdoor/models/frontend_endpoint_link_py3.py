@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class WebApplicationFirewallPolicy1Paged(Paged):
-    """
-    A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy1 <azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy1>` object
+class FrontendEndpointLink(Model):
+    """Defines the Resource ID for a Frontend Endpoint.
+
+    :param id: Resource ID.
+    :type id: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WebApplicationFirewallPolicy1]'}
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(WebApplicationFirewallPolicy1Paged, self).__init__(*args, **kwargs)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(FrontendEndpointLink, self).__init__(**kwargs)
+        self.id = id

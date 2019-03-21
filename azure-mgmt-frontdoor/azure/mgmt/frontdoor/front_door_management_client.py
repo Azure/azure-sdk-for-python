@@ -26,6 +26,7 @@ from .operations.backend_pools_operations import BackendPoolsOperations
 from .operations.frontend_endpoints_operations import FrontendEndpointsOperations
 from .operations.endpoints_operations import EndpointsOperations
 from .operations.policies_operations import PoliciesOperations
+from .operations.managed_rule_sets_operations import ManagedRuleSetsOperations
 from . import models
 
 
@@ -85,6 +86,8 @@ class FrontDoorManagementClient(SDKClient):
     :vartype endpoints: azure.mgmt.frontdoor.operations.EndpointsOperations
     :ivar policies: Policies operations
     :vartype policies: azure.mgmt.frontdoor.operations.PoliciesOperations
+    :ivar managed_rule_sets: ManagedRuleSets operations
+    :vartype managed_rule_sets: azure.mgmt.frontdoor.operations.ManagedRuleSetsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -121,6 +124,8 @@ class FrontDoorManagementClient(SDKClient):
         self.endpoints = EndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_rule_sets = ManagedRuleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_front_door_name_availability(

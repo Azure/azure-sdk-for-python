@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class ManagedRuleSets(Model):
-    """Defines ManagedRuleSets - array of managedRuleSet.
+class CustomRuleList(Model):
+    """Defines contents of custom rules.
 
-    :param rule_sets: List of rules
-    :type rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+    :param rules: List of rules
+    :type rules: list[~azure.mgmt.frontdoor.models.CustomRule]
     """
 
     _attribute_map = {
-        'rule_sets': {'key': 'ruleSets', 'type': '[ManagedRuleSet]'},
+        'rules': {'key': 'rules', 'type': '[CustomRule]'},
     }
 
-    def __init__(self, *, rule_sets=None, **kwargs) -> None:
-        super(ManagedRuleSets, self).__init__(**kwargs)
-        self.rule_sets = rule_sets
+    def __init__(self, *, rules=None, **kwargs) -> None:
+        super(CustomRuleList, self).__init__(**kwargs)
+        self.rules = rules
