@@ -45,7 +45,8 @@ class Volume(Model):
      107374182400 .
     :type usage_threshold: long
     :param export_policy: Export policy rule
-    :type export_policy: ~azure.mgmt.netapp.models.ExportPolicyRule
+    :type export_policy:
+     ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
@@ -75,7 +76,7 @@ class Volume(Model):
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
-        'export_policy': {'key': 'properties.exportPolicy', 'type': 'ExportPolicyRule'},
+        'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePropertiesExportPolicy'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
