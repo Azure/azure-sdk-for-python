@@ -14,7 +14,8 @@ from ._generated import *
 
 __all__ = [
     'AzureConfigurationClient',
-    'KeyValue'
+    'KeyValue',
+    'KeyValuePaged'
     ]
 
 

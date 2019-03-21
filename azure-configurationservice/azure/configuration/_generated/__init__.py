@@ -15,7 +15,8 @@ from .version import VERSION
 
 __all__ = [
     'AzureConfigurationClientImp',
-    'KeyValue'
+    'KeyValue',
+    'KeyValuePaged'
     ]
 
 __version__ = VERSION
