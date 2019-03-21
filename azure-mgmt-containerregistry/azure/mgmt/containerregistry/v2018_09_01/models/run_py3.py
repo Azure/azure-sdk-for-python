@@ -69,9 +69,9 @@ class Run(ProxyResource):
     :param custom_registries: The list of custom registries that were logged
      in during this run.
     :type custom_registries: list[str]
-    :param run_error_message: The error message received from backend systems
+    :ivar run_error_message: The error message received from backend systems
      after the run is scheduled.
-    :type run_error_message: str
+    :vartype run_error_message: str
     :param provisioning_state: The provisioning state of a run. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -86,6 +86,7 @@ class Run(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'run_error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -112,7 +113,7 @@ class Run(ProxyResource):
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, run_error_message: str=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
@@ -129,6 +130,6 @@ class Run(ProxyResource):
         self.agent_configuration = agent_configuration
         self.source_registry_auth = source_registry_auth
         self.custom_registries = custom_registries
-        self.run_error_message = run_error_message
+        self.run_error_message = None
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled

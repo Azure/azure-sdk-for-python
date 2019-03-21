@@ -69,9 +69,9 @@ class Run(ProxyResource):
     :param custom_registries: The list of custom registries that were logged
      in during this run.
     :type custom_registries: list[str]
-    :param run_error_message: The error message received from backend systems
+    :ivar run_error_message: The error message received from backend systems
      after the run is scheduled.
-    :type run_error_message: str
+    :vartype run_error_message: str
     :param provisioning_state: The provisioning state of a run. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -86,6 +86,7 @@ class Run(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'run_error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -129,6 +130,6 @@ class Run(ProxyResource):
         self.agent_configuration = kwargs.get('agent_configuration', None)
         self.source_registry_auth = kwargs.get('source_registry_auth', None)
         self.custom_registries = kwargs.get('custom_registries', None)
-        self.run_error_message = kwargs.get('run_error_message', None)
+        self.run_error_message = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.is_archive_enabled = kwargs.get('is_archive_enabled', False)
