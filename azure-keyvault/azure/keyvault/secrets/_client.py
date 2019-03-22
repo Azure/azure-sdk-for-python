@@ -9,7 +9,7 @@ from azure.core.exceptions import ClientRequestError
 
 from msrest import Serializer, Deserializer
 
-from ._models import Secret, SecretPaged, SecretAttributes
+from ._models import Secret, SecretPaged, SecretAttributes, DeletedSecret
 
 from .._internal import _BackupResult, _BearerTokenCredentialPolicy
 
@@ -55,6 +55,7 @@ class SecretClient:
         client_models = {
             'Secret': Secret,
             'SecretAttributes': SecretAttributes,
+            'DeletedSecret': DeletedSecret,            
             '_BackupResult': _BackupResult
         }
         self._serialize = Serializer(client_models)
@@ -357,8 +358,25 @@ class SecretClient:
         :rtype: ~azure.keyvault.secret.DeletedSecret
         :raises: ~azure.core.ClientRequestError
         """
-        pass
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name)])
 
+        query_parameters = {'api-version': self._api_version}
+
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
+
+        request = HttpRequest('DELETE', url, headers)
+
+        request.format_parameters(query_parameters)
+
+        response = self._pipeline.run(request, **kwargs).http_response
+
+        if response.status_code != 200:
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+
+        return self._deserialize('DeletedSecret', response)
 
     def get_deleted_secret(self, name, **kwargs):
         """Gets the specified deleted secret.
