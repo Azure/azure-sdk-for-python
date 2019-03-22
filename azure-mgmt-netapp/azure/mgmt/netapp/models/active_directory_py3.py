@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ActiveDirectories(Model):
-    """Active Directories.
+class ActiveDirectory(Model):
+    """Active Directory.
 
     :param active_directory_id: Id of the Active Directory
     :type active_directory_id: str
@@ -48,13 +48,13 @@ class ActiveDirectories(Model):
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ActiveDirectories, self).__init__(**kwargs)
-        self.active_directory_id = kwargs.get('active_directory_id', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.domain = kwargs.get('domain', None)
-        self.d_ns = kwargs.get('d_ns', None)
-        self.status = kwargs.get('status', None)
-        self.s_mb_server_name = kwargs.get('s_mb_server_name', None)
-        self.organizational_unit = kwargs.get('organizational_unit', None)
+    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, d_ns: str=None, status: str=None, s_mb_server_name: str=None, organizational_unit: str=None, **kwargs) -> None:
+        super(ActiveDirectory, self).__init__(**kwargs)
+        self.active_directory_id = active_directory_id
+        self.username = username
+        self.password = password
+        self.domain = domain
+        self.d_ns = d_ns
+        self.status = status
+        self.s_mb_server_name = s_mb_server_name
+        self.organizational_unit = organizational_unit

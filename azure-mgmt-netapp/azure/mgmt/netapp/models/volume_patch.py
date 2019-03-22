@@ -38,7 +38,8 @@ class VolumePatch(Model):
      107374182400 .
     :type usage_threshold: long
     :param export_policy: Export policy rule
-    :type export_policy: ~azure.mgmt.netapp.models.ExportPolicyRule
+    :type export_policy:
+     ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
     """
 
     _validation = {
@@ -56,7 +57,7 @@ class VolumePatch(Model):
         'tags': {'key': 'tags', 'type': 'object'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
-        'export_policy': {'key': 'properties.exportPolicy', 'type': 'ExportPolicyRule'},
+        'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePatchPropertiesExportPolicy'},
     }
 
     def __init__(self, **kwargs):
