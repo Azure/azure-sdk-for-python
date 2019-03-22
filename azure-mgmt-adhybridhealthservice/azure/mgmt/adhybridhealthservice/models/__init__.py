@@ -33,6 +33,8 @@ try:
     from .connector_py3 import Connector
     from .connector_connection_error_py3 import ConnectorConnectionError
     from .connector_connection_errors_py3 import ConnectorConnectionErrors
+    from .connector_metadata_details_py3 import ConnectorMetadataDetails
+    from .connector_metadata_py3 import ConnectorMetadata
     from .connector_object_error_py3 import ConnectorObjectError
     from .connector_object_errors_py3 import ConnectorObjectErrors
     from .credential_py3 import Credential
@@ -100,6 +102,8 @@ except (SyntaxError, ImportError):
     from .connector import Connector
     from .connector_connection_error import ConnectorConnectionError
     from .connector_connection_errors import ConnectorConnectionErrors
+    from .connector_metadata_details import ConnectorMetadataDetails
+    from .connector_metadata import ConnectorMetadata
     from .connector_object_error import ConnectorObjectError
     from .connector_object_errors import ConnectorObjectErrors
     from .credential import Credential
@@ -199,6 +203,8 @@ __all__ = [
     'Connector',
     'ConnectorConnectionError',
     'ConnectorConnectionErrors',
+    'ConnectorMetadataDetails',
+    'ConnectorMetadata',
     'ConnectorObjectError',
     'ConnectorObjectErrors',
     'Credential',
