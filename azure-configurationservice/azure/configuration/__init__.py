@@ -9,19 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from .azure_configuration_client import AzureConfigurationClient
+from ._generated import *
+
+__all__ = [
+    'AzureConfigurationClient',
+    'KeyValue',
+    'KeyValuePaged'
+    ]
 
 
-class KeyValuePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`KeyValue <azure.configurationservice.models.KeyValue>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'current_page': {'key': 'items', 'type': '[KeyValue]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(KeyValuePaged, self).__init__(*args, **kwargs)

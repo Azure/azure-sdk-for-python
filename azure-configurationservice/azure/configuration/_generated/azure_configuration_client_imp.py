@@ -17,58 +17,52 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 import uuid
 from . import models
-
+from .. import utils
 
 class AzureConfigurationClientImpConfiguration(AzureConfiguration):
     """Configuration for AzureConfigurationClientImp
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param connection_string: Contains 'endpoint', 'id' and 'secret', where id and secret are credentials
+    :type connection_string: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, connection_string):
 
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'http://localhost'
+        if connection_string is None:
+            raise ValueError("Parameter 'connection_string' must not be None.")
+        base_url = "https://" + utils.get_endpoint_from_connection_string(connection_string)
 
         super(AzureConfigurationClientImpConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-configurationservice/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
-        self.credentials = credentials
+        self.connection_string = connection_string
 
 
 class AzureConfigurationClientImp(object):
-    """Represents an azconfig client
+    """Implementation of AzConfig client
 
     :ivar config: Configuration for client.
     :vartype config: AzureConfigurationClientImpConfiguration
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
+    :param connection_string: Credentials needed for the client to connect to Azure.
+    :type connection_string: str
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, connection_string):
 
-        self.config = AzureConfigurationClientImpConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = AzureConfigurationClientImpConfiguration(connection_string)
+        self._client = ServiceClient(credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
-
 
     def list_key_values(
             self, label=None, key=None, accept_date_time=None, fields=None, custom_headers=None, raw=False, **operation_config):
@@ -203,7 +197,7 @@ class AzureConfigurationClientImp(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 304]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
