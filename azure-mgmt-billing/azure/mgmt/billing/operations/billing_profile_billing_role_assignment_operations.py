@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountbillingRoleAssignmentOperations(object):
-    """BillingAccountbillingRoleAssignmentOperations operations.
+class BillingProfileBillingRoleAssignmentOperations(object):
+    """BillingProfileBillingRoleAssignmentOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,11 +37,13 @@ class BillingAccountbillingRoleAssignmentOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Get the role assignment for the caller.
+            self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
+        """Get the role assignment for the caller on the Billing Profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -59,6 +61,7 @@ class BillingAccountbillingRoleAssignmentOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'billingRoleAssignmentName': self._serialize.url("billing_role_assignment_name", billing_role_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -94,14 +97,16 @@ class BillingAccountbillingRoleAssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def delete(
-            self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Delete the role assignment on this billing account.
+            self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
+        """Delete the role assignment on this Billing Profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -119,6 +124,7 @@ class BillingAccountbillingRoleAssignmentOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'billingRoleAssignmentName': self._serialize.url("billing_role_assignment_name", billing_role_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -154,14 +160,16 @@ class BillingAccountbillingRoleAssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
+    delete.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments/{billingRoleAssignmentName}'}
 
     def list(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
-        """Get the role assignments on the Billing Account.
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+        """Get the role assignments on the Billing Profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -177,7 +185,8 @@ class BillingAccountbillingRoleAssignmentOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -212,14 +221,16 @@ class BillingAccountbillingRoleAssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments'}
 
     def add(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to add a role assignment to a billing account.
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+        """The operation to add a role assignment to a billing profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -237,7 +248,8 @@ class BillingAccountbillingRoleAssignmentOperations(object):
         # Construct URL
         url = self.add.metadata['url']
         path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -276,4 +288,4 @@ class BillingAccountbillingRoleAssignmentOperations(object):
             return client_raw_response
 
         return deserialized
-    add.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/createBillingRoleAssignment'}
+    add.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/createBillingRoleAssignment'}

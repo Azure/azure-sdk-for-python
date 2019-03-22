@@ -28,8 +28,8 @@ class BillingProperty(Model):
     :vartype billing_account_name: str
     :ivar billing_profile_id: Billing profile Id.
     :vartype billing_profile_id: str
-    :ivar billing_proflie_name: Billing profile name.
-    :vartype billing_proflie_name: str
+    :ivar billing_profile_name: Billing profile name.
+    :vartype billing_profile_name: str
     :ivar invoice_section_id: Invoice Section Id.
     :vartype invoice_section_id: str
     :ivar invoice_section_name: Invoice Section name.
@@ -46,7 +46,7 @@ class BillingProperty(Model):
         'billing_account_id': {'readonly': True},
         'billing_account_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
-        'billing_proflie_name': {'readonly': True},
+        'billing_profile_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
         'sku_id': {'readonly': True},
@@ -59,7 +59,7 @@ class BillingProperty(Model):
         'billing_account_id': {'key': 'billingAccountId', 'type': 'str'},
         'billing_account_name': {'key': 'billingAccountName', 'type': 'str'},
         'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
-        'billing_proflie_name': {'key': 'billingProflieName', 'type': 'str'},
+        'billing_profile_name': {'key': 'billingProfileName', 'type': 'str'},
         'invoice_section_id': {'key': 'invoiceSectionId', 'type': 'str'},
         'invoice_section_name': {'key': 'invoiceSectionName', 'type': 'str'},
         'sku_id': {'key': 'skuId', 'type': 'str'},
@@ -73,7 +73,7 @@ class BillingProperty(Model):
         self.billing_account_id = None
         self.billing_account_name = None
         self.billing_profile_id = None
-        self.billing_proflie_name = None
+        self.billing_profile_name = None
         self.invoice_section_id = None
         self.invoice_section_name = None
         self.sku_id = None

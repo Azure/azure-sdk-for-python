@@ -37,15 +37,15 @@ from .transactions_by_billing_account_operations import TransactionsByBillingAcc
 from .policy_operations import PolicyOperations
 from .billing_property_operations import BillingPropertyOperations
 from .operations import Operations
-from .billing_accountbilling_permissions_operations import BillingAccountbillingPermissionsOperations
+from .billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
 from .invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
-from .billing_profilebilling_permissions_operations import BillingProfilebillingPermissionsOperations
-from .billing_accountbilling_role_definition_operations import BillingAccountbillingRoleDefinitionOperations
-from .invoice_sectionbilling_role_definition_operations import InvoiceSectionbillingRoleDefinitionOperations
-from .billing_profilebilling_role_definition_operations import BillingProfilebillingRoleDefinitionOperations
-from .billing_accountbilling_role_assignment_operations import BillingAccountbillingRoleAssignmentOperations
-from .invoice_sectionbilling_role_assignment_operations import InvoiceSectionbillingRoleAssignmentOperations
-from .billing_profilebilling_role_assignment_operations import BillingProfilebillingRoleAssignmentOperations
+from .billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
+from .billing_account_billing_role_definition_operations import BillingAccountBillingRoleDefinitionOperations
+from .invoice_section_billing_role_definition_operations import InvoiceSectionBillingRoleDefinitionOperations
+from .billing_profile_billing_role_definition_operations import BillingProfileBillingRoleDefinitionOperations
+from .billing_account_billing_role_assignment_operations import BillingAccountBillingRoleAssignmentOperations
+from .invoice_section_billing_role_assignment_operations import InvoiceSectionBillingRoleAssignmentOperations
+from .billing_profile_billing_role_assignment_operations import BillingProfileBillingRoleAssignmentOperations
 
 __all__ = [
     'BillingAccountsOperations',
@@ -76,13 +76,13 @@ __all__ = [
     'PolicyOperations',
     'BillingPropertyOperations',
     'Operations',
-    'BillingAccountbillingPermissionsOperations',
+    'BillingAccountBillingPermissionsOperations',
     'InvoiceSectionsbillingPermissionsOperations',
-    'BillingProfilebillingPermissionsOperations',
-    'BillingAccountbillingRoleDefinitionOperations',
-    'InvoiceSectionbillingRoleDefinitionOperations',
-    'BillingProfilebillingRoleDefinitionOperations',
-    'BillingAccountbillingRoleAssignmentOperations',
-    'InvoiceSectionbillingRoleAssignmentOperations',
-    'BillingProfilebillingRoleAssignmentOperations',
+    'BillingProfileBillingPermissionsOperations',
+    'BillingAccountBillingRoleDefinitionOperations',
+    'InvoiceSectionBillingRoleDefinitionOperations',
+    'BillingProfileBillingRoleDefinitionOperations',
+    'BillingAccountBillingRoleAssignmentOperations',
+    'InvoiceSectionBillingRoleAssignmentOperations',
+    'BillingProfileBillingRoleAssignmentOperations',
 ]

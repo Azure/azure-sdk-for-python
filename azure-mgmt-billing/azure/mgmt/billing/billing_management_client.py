@@ -45,15 +45,15 @@ from .operations.transactions_by_billing_account_operations import TransactionsB
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.operations import Operations
-from .operations.billing_accountbilling_permissions_operations import BillingAccountbillingPermissionsOperations
+from .operations.billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
 from .operations.invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
-from .operations.billing_profilebilling_permissions_operations import BillingProfilebillingPermissionsOperations
-from .operations.billing_accountbilling_role_definition_operations import BillingAccountbillingRoleDefinitionOperations
-from .operations.invoice_sectionbilling_role_definition_operations import InvoiceSectionbillingRoleDefinitionOperations
-from .operations.billing_profilebilling_role_definition_operations import BillingProfilebillingRoleDefinitionOperations
-from .operations.billing_accountbilling_role_assignment_operations import BillingAccountbillingRoleAssignmentOperations
-from .operations.invoice_sectionbilling_role_assignment_operations import InvoiceSectionbillingRoleAssignmentOperations
-from .operations.billing_profilebilling_role_assignment_operations import BillingProfilebillingRoleAssignmentOperations
+from .operations.billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
+from .operations.billing_account_billing_role_definition_operations import BillingAccountBillingRoleDefinitionOperations
+from .operations.invoice_section_billing_role_definition_operations import InvoiceSectionBillingRoleDefinitionOperations
+from .operations.billing_profile_billing_role_definition_operations import BillingProfileBillingRoleDefinitionOperations
+from .operations.billing_account_billing_role_assignment_operations import BillingAccountBillingRoleAssignmentOperations
+from .operations.invoice_section_billing_role_assignment_operations import InvoiceSectionBillingRoleAssignmentOperations
+from .operations.billing_profile_billing_role_assignment_operations import BillingProfileBillingRoleAssignmentOperations
 from . import models
 
 
@@ -151,24 +151,24 @@ class BillingManagementClient(SDKClient):
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
-    :ivar billing_accountbilling_permissions: BillingAccountbillingPermissions operations
-    :vartype billing_accountbilling_permissions: azure.mgmt.billing.operations.BillingAccountbillingPermissionsOperations
+    :ivar billing_account_billing_permissions: BillingAccountBillingPermissions operations
+    :vartype billing_account_billing_permissions: azure.mgmt.billing.operations.BillingAccountBillingPermissionsOperations
     :ivar invoice_sectionsbilling_permissions: InvoiceSectionsbillingPermissions operations
     :vartype invoice_sectionsbilling_permissions: azure.mgmt.billing.operations.InvoiceSectionsbillingPermissionsOperations
-    :ivar billing_profilebilling_permissions: BillingProfilebillingPermissions operations
-    :vartype billing_profilebilling_permissions: azure.mgmt.billing.operations.BillingProfilebillingPermissionsOperations
-    :ivar billing_accountbilling_role_definition: BillingAccountbillingRoleDefinition operations
-    :vartype billing_accountbilling_role_definition: azure.mgmt.billing.operations.BillingAccountbillingRoleDefinitionOperations
-    :ivar invoice_sectionbilling_role_definition: InvoiceSectionbillingRoleDefinition operations
-    :vartype invoice_sectionbilling_role_definition: azure.mgmt.billing.operations.InvoiceSectionbillingRoleDefinitionOperations
-    :ivar billing_profilebilling_role_definition: BillingProfilebillingRoleDefinition operations
-    :vartype billing_profilebilling_role_definition: azure.mgmt.billing.operations.BillingProfilebillingRoleDefinitionOperations
-    :ivar billing_accountbilling_role_assignment: BillingAccountbillingRoleAssignment operations
-    :vartype billing_accountbilling_role_assignment: azure.mgmt.billing.operations.BillingAccountbillingRoleAssignmentOperations
-    :ivar invoice_sectionbilling_role_assignment: InvoiceSectionbillingRoleAssignment operations
-    :vartype invoice_sectionbilling_role_assignment: azure.mgmt.billing.operations.InvoiceSectionbillingRoleAssignmentOperations
-    :ivar billing_profilebilling_role_assignment: BillingProfilebillingRoleAssignment operations
-    :vartype billing_profilebilling_role_assignment: azure.mgmt.billing.operations.BillingProfilebillingRoleAssignmentOperations
+    :ivar billing_profile_billing_permissions: BillingProfileBillingPermissions operations
+    :vartype billing_profile_billing_permissions: azure.mgmt.billing.operations.BillingProfileBillingPermissionsOperations
+    :ivar billing_account_billing_role_definition: BillingAccountBillingRoleDefinition operations
+    :vartype billing_account_billing_role_definition: azure.mgmt.billing.operations.BillingAccountBillingRoleDefinitionOperations
+    :ivar invoice_section_billing_role_definition: InvoiceSectionBillingRoleDefinition operations
+    :vartype invoice_section_billing_role_definition: azure.mgmt.billing.operations.InvoiceSectionBillingRoleDefinitionOperations
+    :ivar billing_profile_billing_role_definition: BillingProfileBillingRoleDefinition operations
+    :vartype billing_profile_billing_role_definition: azure.mgmt.billing.operations.BillingProfileBillingRoleDefinitionOperations
+    :ivar billing_account_billing_role_assignment: BillingAccountBillingRoleAssignment operations
+    :vartype billing_account_billing_role_assignment: azure.mgmt.billing.operations.BillingAccountBillingRoleAssignmentOperations
+    :ivar invoice_section_billing_role_assignment: InvoiceSectionBillingRoleAssignment operations
+    :vartype invoice_section_billing_role_assignment: azure.mgmt.billing.operations.InvoiceSectionBillingRoleAssignmentOperations
+    :ivar billing_profile_billing_role_assignment: BillingProfileBillingRoleAssignment operations
+    :vartype billing_profile_billing_role_assignment: azure.mgmt.billing.operations.BillingProfileBillingRoleAssignmentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -245,23 +245,23 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_accountbilling_permissions = BillingAccountbillingPermissionsOperations(
+        self.billing_account_billing_permissions = BillingAccountBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sectionsbilling_permissions = InvoiceSectionsbillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_profilebilling_permissions = BillingProfilebillingPermissionsOperations(
+        self.billing_profile_billing_permissions = BillingProfileBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_accountbilling_role_definition = BillingAccountbillingRoleDefinitionOperations(
+        self.billing_account_billing_role_definition = BillingAccountBillingRoleDefinitionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_sectionbilling_role_definition = InvoiceSectionbillingRoleDefinitionOperations(
+        self.invoice_section_billing_role_definition = InvoiceSectionBillingRoleDefinitionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_profilebilling_role_definition = BillingProfilebillingRoleDefinitionOperations(
+        self.billing_profile_billing_role_definition = BillingProfileBillingRoleDefinitionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_accountbilling_role_assignment = BillingAccountbillingRoleAssignmentOperations(
+        self.billing_account_billing_role_assignment = BillingAccountBillingRoleAssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_sectionbilling_role_assignment = InvoiceSectionbillingRoleAssignmentOperations(
+        self.invoice_section_billing_role_assignment = InvoiceSectionBillingRoleAssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_profilebilling_role_assignment = BillingProfilebillingRoleAssignmentOperations(
+        self.billing_profile_billing_role_assignment = BillingProfileBillingRoleAssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def transactions_by_billing_profile(

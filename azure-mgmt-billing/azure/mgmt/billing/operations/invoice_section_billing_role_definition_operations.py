@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountbillingRoleDefinitionOperations(object):
-    """BillingAccountbillingRoleDefinitionOperations operations.
+class InvoiceSectionBillingRoleDefinitionOperations(object):
+    """InvoiceSectionBillingRoleDefinitionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,11 +37,13 @@ class BillingAccountbillingRoleDefinitionOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param billing_role_definition_name: role definition id.
         :type billing_role_definition_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -59,6 +61,7 @@ class BillingAccountbillingRoleDefinitionOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
             'billingRoleDefinitionName': self._serialize.url("billing_role_definition_name", billing_role_definition_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -94,14 +97,16 @@ class BillingAccountbillingRoleDefinitionOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleDefinitions/{billingRoleDefinitionName}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleDefinitions/{billingRoleDefinitionName}'}
 
     def list(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the role definition for a billing account.
+            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the role definition for a invoice Section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param invoice_section_name: InvoiceSection Id.
+        :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -117,7 +122,8 @@ class BillingAccountbillingRoleDefinitionOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -152,4 +158,4 @@ class BillingAccountbillingRoleDefinitionOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleDefinitions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleDefinitions'}

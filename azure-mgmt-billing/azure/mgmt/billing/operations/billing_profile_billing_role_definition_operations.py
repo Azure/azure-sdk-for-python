@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingProfilebillingRoleDefinitionOperations(object):
-    """BillingProfilebillingRoleDefinitionOperations operations.
+class BillingProfileBillingRoleDefinitionOperations(object):
+    """BillingProfileBillingRoleDefinitionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

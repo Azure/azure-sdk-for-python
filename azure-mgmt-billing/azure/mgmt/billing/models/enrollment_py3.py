@@ -34,8 +34,8 @@ class Enrollment(Model):
     :vartype country_code: str
     :ivar status: Enrollment status
     :vartype status: str
-    :ivar billing_cylce: Enrollment billing cycle
-    :vartype billing_cylce: str
+    :ivar billing_cycle: Enrollment billing cycle
+    :vartype billing_cycle: str
     """
 
     _validation = {
@@ -45,7 +45,7 @@ class Enrollment(Model):
         'language': {'readonly': True},
         'country_code': {'readonly': True},
         'status': {'readonly': True},
-        'billing_cylce': {'readonly': True},
+        'billing_cycle': {'readonly': True},
     }
 
     _attribute_map = {
@@ -57,7 +57,7 @@ class Enrollment(Model):
         'language': {'key': 'language', 'type': 'str'},
         'country_code': {'key': 'countryCode', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        'billing_cylce': {'key': 'billingCylce', 'type': 'str'},
+        'billing_cycle': {'key': 'billingCycle', 'type': 'str'},
     }
 
     def __init__(self, *, start_date=None, end_date=None, **kwargs) -> None:
@@ -70,4 +70,4 @@ class Enrollment(Model):
         self.language = None
         self.country_code = None
         self.status = None
-        self.billing_cylce = None
+        self.billing_cycle = None

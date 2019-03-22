@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountbillingPermissionsOperations(object):
-    """BillingAccountbillingPermissionsOperations operations.
+class BillingProfileBillingPermissionsOperations(object):
+    """BillingProfileBillingPermissionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,11 +37,13 @@ class BillingAccountbillingPermissionsOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists all billingPermissions for the caller has for a billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,7 +58,8 @@ class BillingAccountbillingPermissionsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -91,4 +94,4 @@ class BillingAccountbillingPermissionsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingPermissions'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingPermissions'}
