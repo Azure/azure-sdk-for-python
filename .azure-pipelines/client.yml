@@ -231,6 +231,8 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)"
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true
+
+
