@@ -6,19 +6,24 @@
 The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 ```python
 config = FooService.create_config()
+
 # Total number of retries to allow. Takes precedence over other counts.
 # Default value is 10.
 config.retry.total_retries = 5
+
 # How many connection-related errors to retry on.
 # These are errors raised before the request is sent to the remote server,
 # which we assume has not triggered the server to process the request. Default value is 3
 config.retry.connect_retries = 2
+
 # How many times to retry on read errors.
 # These errors are raised after the request was sent to the server, so the
 # request may have side-effects. Default value is 3.
 config.retry.read_retries = 4
+
 # How many times to retry on bad status codes. Default value is 3.
 config.retry.status_retries = 3
+
 # A backoff factor to apply between attempts after the second try
 # (most errors are resolved immediately by a second try without a delay).
 # Retry policy will sleep for:
@@ -27,6 +32,7 @@ config.retry.status_retries = 3
 # for [0.0s, 0.2s, 0.4s, ...] between retries.
 # The default value is 0.8.
 config.retry.backoff_factor = 0.5
+
 # The maximum back off time. Default value is 120 seconds (2 minutes).
 config.retry.backoff_max
 
