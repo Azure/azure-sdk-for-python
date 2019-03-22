@@ -48,10 +48,10 @@ class SignalRResource(TrackedResource):
     :ivar host_name: FQDN of the SignalR service instance. Format:
      xxx.service.signalr.net
     :vartype host_name: str
-    :ivar public_port: The publicly accessibly port of the SignalR service
+    :ivar public_port: The publicly accessible port of the SignalR service
      which is designed for browser/client side usage.
     :vartype public_port: int
-    :ivar server_port: The publicly accessibly port of the SignalR service
+    :ivar server_port: The publicly accessible port of the SignalR service
      which is designed for customer server side usage.
     :vartype server_port: int
     :param version: Version of the SignalR resource. Probably you need the
