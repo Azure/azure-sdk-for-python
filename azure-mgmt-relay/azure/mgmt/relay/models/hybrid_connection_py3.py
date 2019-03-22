@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class HybridConnection(Resource):
@@ -62,10 +62,10 @@ class HybridConnection(Resource):
         'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, requires_client_authorization: bool=None, user_metadata: str=None, **kwargs) -> None:
         super(HybridConnection, self).__init__(**kwargs)
         self.created_at = None
         self.updated_at = None
         self.listener_count = None
-        self.requires_client_authorization = kwargs.get('requires_client_authorization', None)
-        self.user_metadata = kwargs.get('user_metadata', None)
+        self.requires_client_authorization = requires_client_authorization
+        self.user_metadata = user_metadata

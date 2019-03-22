@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .tracked_resource_py3 import TrackedResource
 
 
 class RelayNamespace(TrackedResource):
@@ -73,9 +73,9 @@ class RelayNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RelayNamespace, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, tags=None, sku=None, **kwargs) -> None:
+        super(RelayNamespace, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
