@@ -34,7 +34,7 @@ class BillingRoleAssignment(Resource):
     :vartype billing_role_assignment_name: str
     :ivar principal_id: The user's principal id that the role gets assigned to
     :vartype principal_id: str
-    :ivar role_definition_name: The role defintion id
+    :ivar role_definition_name: The role definition id
     :vartype role_definition_name: str
     :ivar scope: The scope the role get assigned to
     :vartype scope: str

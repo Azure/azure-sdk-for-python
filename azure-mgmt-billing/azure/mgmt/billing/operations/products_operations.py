@@ -44,7 +44,7 @@ class ProductsOperations(object):
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param product_name: Invoide Id.
+        :param product_name: Invoice Id.
         :type product_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -107,7 +107,7 @@ class ProductsOperations(object):
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param product_name: Invoide Id.
+        :param product_name: Invoice Id.
         :type product_name: str
         :param destination_invoice_section_name: Destination invoice section
          id.

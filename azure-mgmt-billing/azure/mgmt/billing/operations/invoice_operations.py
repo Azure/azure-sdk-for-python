@@ -44,7 +44,7 @@ class InvoiceOperations(object):
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param invoice_name: Invoide Id.
+        :param invoice_name: Invoice Id.
         :type invoice_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -30,7 +30,7 @@ class BillingProfile(Resource):
     :type po_number: str
     :param billing_address: Billing address.
     :type billing_address: ~azure.mgmt.billing.models.Address
-    :ivar invoice_email_opt_in: If the billing profile is opted in to recieve
+    :ivar invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :vartype invoice_email_opt_in: bool
     :ivar is_classic: Is OMS bootstrapped billing profile.

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UpdateAutoRenewRequest(Model):
-    """Request parameters to update auto renew for support prouct.
+    """Request parameters to update auto renew for support product.
 
     :param auto_renew: Request parameters to update auto renew policy a
      product. Possible values include: 'true', 'false'

@@ -20,7 +20,7 @@ class BillingRoleAssignmentPayload(Model):
 
     :ivar principal_id: The user's principal id that the role gets assigned to
     :vartype principal_id: str
-    :ivar billing_role_definition_name: The role defintion id
+    :ivar billing_role_definition_name: The role definition id
     :vartype billing_role_definition_name: str
     """
 

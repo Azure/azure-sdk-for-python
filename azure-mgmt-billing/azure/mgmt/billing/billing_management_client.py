@@ -46,7 +46,7 @@ from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.operations import Operations
 from .operations.billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
-from .operations.invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
+from .operations.invoice_sections_billing_permissions_operations import InvoiceSectionsBillingPermissionsOperations
 from .operations.billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
 from .operations.billing_account_billing_role_definition_operations import BillingAccountBillingRoleDefinitionOperations
 from .operations.invoice_section_billing_role_definition_operations import InvoiceSectionBillingRoleDefinitionOperations
@@ -153,8 +153,8 @@ class BillingManagementClient(SDKClient):
     :vartype operations: azure.mgmt.billing.operations.Operations
     :ivar billing_account_billing_permissions: BillingAccountBillingPermissions operations
     :vartype billing_account_billing_permissions: azure.mgmt.billing.operations.BillingAccountBillingPermissionsOperations
-    :ivar invoice_sectionsbilling_permissions: InvoiceSectionsbillingPermissions operations
-    :vartype invoice_sectionsbilling_permissions: azure.mgmt.billing.operations.InvoiceSectionsbillingPermissionsOperations
+    :ivar invoice_sections_billing_permissions: InvoiceSectionsBillingPermissions operations
+    :vartype invoice_sections_billing_permissions: azure.mgmt.billing.operations.InvoiceSectionsBillingPermissionsOperations
     :ivar billing_profile_billing_permissions: BillingProfileBillingPermissions operations
     :vartype billing_profile_billing_permissions: azure.mgmt.billing.operations.BillingProfileBillingPermissionsOperations
     :ivar billing_account_billing_role_definition: BillingAccountBillingRoleDefinition operations
@@ -247,7 +247,7 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_account_billing_permissions = BillingAccountBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_sectionsbilling_permissions = InvoiceSectionsbillingPermissionsOperations(
+        self.invoice_sections_billing_permissions = InvoiceSectionsBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profile_billing_permissions = BillingProfileBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -344,7 +344,7 @@ class BillingManagementClient(SDKClient):
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param product_name: Invoide Id.
+        :param product_name: Invoice Id.
         :type product_name: str
         :param auto_renew: Request parameters to update auto renew policy a
          product. Possible values include: 'true', 'false'
@@ -416,7 +416,7 @@ class BillingManagementClient(SDKClient):
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param product_name: Invoide Id.
+        :param product_name: Invoice Id.
         :type product_name: str
         :param auto_renew: Request parameters to update auto renew policy a
          product. Possible values include: 'true', 'false'

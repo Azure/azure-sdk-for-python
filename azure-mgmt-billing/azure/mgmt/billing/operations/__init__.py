@@ -38,7 +38,7 @@ from .policy_operations import PolicyOperations
 from .billing_property_operations import BillingPropertyOperations
 from .operations import Operations
 from .billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
-from .invoice_sectionsbilling_permissions_operations import InvoiceSectionsbillingPermissionsOperations
+from .invoice_sections_billing_permissions_operations import InvoiceSectionsBillingPermissionsOperations
 from .billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
 from .billing_account_billing_role_definition_operations import BillingAccountBillingRoleDefinitionOperations
 from .invoice_section_billing_role_definition_operations import InvoiceSectionBillingRoleDefinitionOperations
@@ -77,7 +77,7 @@ __all__ = [
     'BillingPropertyOperations',
     'Operations',
     'BillingAccountBillingPermissionsOperations',
-    'InvoiceSectionsbillingPermissionsOperations',
+    'InvoiceSectionsBillingPermissionsOperations',
     'BillingProfileBillingPermissionsOperations',
     'BillingAccountBillingRoleDefinitionOperations',
     'InvoiceSectionBillingRoleDefinitionOperations',
