@@ -29,10 +29,6 @@ except (SyntaxError, ImportError):
     from .entity_with_score import EntityWithScore
     from .entity_with_resolution import EntityWithResolution
     from .api_error import APIError, APIErrorException
-from .luis_runtime_client_enums import (
-    AzureRegions,
-    AzureClouds,
-)
 
 __all__ = [
     'IntentModel',
@@ -44,6 +40,4 @@ __all__ = [
     'EntityWithScore',
     'EntityWithResolution',
     'APIError', 'APIErrorException',
-    'AzureRegions',
-    'AzureClouds',
 ]
