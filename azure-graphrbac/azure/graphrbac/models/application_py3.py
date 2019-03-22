@@ -62,7 +62,8 @@ class Application(DirectoryObject):
     :type homepage: str
     :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list[str]
-    :param informational_urls: urls with more informations of the application.
+    :param informational_urls: URLs with more information about the
+     application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
      supports device authentication without a user. The default is false.

@@ -42,7 +42,8 @@ class ApplicationBase(Model):
     :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
-    :param informational_urls: urls with more informations of the application.
+    :param informational_urls: URLs with more information about the
+     application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
      supports device authentication without a user. The default is false.
