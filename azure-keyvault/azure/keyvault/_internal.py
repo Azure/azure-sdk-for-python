@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-
+from azure.core.pipeline.policies import HTTPPolicy
 try:
     import urllib.parse as parse
 except ImportError:
@@ -57,3 +57,15 @@ class _BackupResult(Model):
     def __init__(self, **kwargs):
         super(_BackupResult, self).__init__(**kwargs)
         self.value = None
+
+
+class _BearerTokenCredentialPolicy(HTTPPolicy):
+
+    def __init__(self, credentials):
+        self._credentials = credentials
+
+    def send(self, request, **kwargs):
+        auth_header = 'Bearer ' + self._credentials.token['access_token']
+        request.http_request.headers['Authorization'] = auth_header
+
+        return self.next.send(request, **kwargs)
