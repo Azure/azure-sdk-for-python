@@ -13,7 +13,7 @@ This is a stable release of the Cognitive Services Custom Vision SDK.
 - Added an advanced training option to set a budget to train longer for improved iteration performance.
 - Added additional export options targetting Vision AI Dev Kit and Docker ARM for Raspberry Pi.
 
-**Prediction **
+**Prediction**
 
 - PredictImage and PredictImageUrl have been replaced with project type specific calls.
   ClassifyImage and ClassifyImageUrl for image classification projects.
