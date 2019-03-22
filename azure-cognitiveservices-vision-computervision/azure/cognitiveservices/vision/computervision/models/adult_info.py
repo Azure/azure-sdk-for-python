@@ -19,10 +19,10 @@ class AdultInfo(Model):
     :param is_adult_content: A value indicating if the image contains
      adult-oriented content.
     :type is_adult_content: bool
-    :param is_racy_content: A value indicating if the image is race.
+    :param is_racy_content: A value indicating if the image is racy.
     :type is_racy_content: bool
-    :param adult_score: Score from 0 to 1 that indicates how much of adult
-     content is within the image.
+    :param adult_score: Score from 0 to 1 that indicates how much the content
+     is considered adult-oriented within the image.
     :type adult_score: float
     :param racy_score: Score from 0 to 1 that indicates how suggestive is the
      image.

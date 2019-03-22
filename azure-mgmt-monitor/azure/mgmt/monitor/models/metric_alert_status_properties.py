@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class MetricAlertStatusProperties(Model):
     """An alert status properties.
 
-    :param dimensions:
+    :param dimensions: An object describing the type of the dimensions.
     :type dimensions: dict[str, str]
     :param status: status value
     :type status: str

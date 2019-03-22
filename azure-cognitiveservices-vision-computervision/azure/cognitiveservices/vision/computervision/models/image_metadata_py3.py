@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ImageMetadata(Model):
     """Image metadata.
 
-    :param width: Image width
+    :param width: Image width, in pixels.
     :type width: int
-    :param height: Image height
+    :param height: Image height, in pixels.
     :type height: int
-    :param format: Image format
+    :param format: Image format.
     :type format: str
     """
 
