@@ -21,6 +21,15 @@ try:
     from .facet_result_py3 import FacetResult
     from .error_details_py3 import ErrorDetails
     from .facet_error_py3 import FacetError
+    from .resource_changes_request_parameters_interval_py3 import ResourceChangesRequestParametersInterval
+    from .resource_changes_request_parameters_py3 import ResourceChangesRequestParameters
+    from .resource_change_data_before_snapshot_py3 import ResourceChangeDataBeforeSnapshot
+    from .resource_change_data_after_snapshot_py3 import ResourceChangeDataAfterSnapshot
+    from .resource_change_data_py3 import ResourceChangeData
+    from .resource_change_list_py3 import ResourceChangeList
+    from .resource_snapshot_data_py3 import ResourceSnapshotData
+    from .resource_change_details_request_parameters_py3 import ResourceChangeDetailsRequestParameters
+    from .date_time_interval_py3 import DateTimeInterval
     from .error_py3 import Error
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .operation_display_py3 import OperationDisplay
@@ -37,6 +46,15 @@ except (SyntaxError, ImportError):
     from .facet_result import FacetResult
     from .error_details import ErrorDetails
     from .facet_error import FacetError
+    from .resource_changes_request_parameters_interval import ResourceChangesRequestParametersInterval
+    from .resource_changes_request_parameters import ResourceChangesRequestParameters
+    from .resource_change_data_before_snapshot import ResourceChangeDataBeforeSnapshot
+    from .resource_change_data_after_snapshot import ResourceChangeDataAfterSnapshot
+    from .resource_change_data import ResourceChangeData
+    from .resource_change_list import ResourceChangeList
+    from .resource_snapshot_data import ResourceSnapshotData
+    from .resource_change_details_request_parameters import ResourceChangeDetailsRequestParameters
+    from .date_time_interval import DateTimeInterval
     from .error import Error
     from .error_response import ErrorResponse, ErrorResponseException
     from .operation_display import OperationDisplay
@@ -60,6 +78,15 @@ __all__ = [
     'FacetResult',
     'ErrorDetails',
     'FacetError',
+    'ResourceChangesRequestParametersInterval',
+    'ResourceChangesRequestParameters',
+    'ResourceChangeDataBeforeSnapshot',
+    'ResourceChangeDataAfterSnapshot',
+    'ResourceChangeData',
+    'ResourceChangeList',
+    'ResourceSnapshotData',
+    'ResourceChangeDetailsRequestParameters',
+    'DateTimeInterval',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',
