@@ -12,77 +12,6 @@
 from enum import Enum
 
 
-class DomainType(str, Enum):
-
-    classification = "Classification"
-    object_detection = "ObjectDetection"
-
-
-class ImageCreateStatus(str, Enum):
-
-    ok = "OK"
-    ok_duplicate = "OKDuplicate"
-    error_source = "ErrorSource"
-    error_image_format = "ErrorImageFormat"
-    error_image_size = "ErrorImageSize"
-    error_storage = "ErrorStorage"
-    error_limit_exceed = "ErrorLimitExceed"
-    error_tag_limit_exceed = "ErrorTagLimitExceed"
-    error_region_limit_exceed = "ErrorRegionLimitExceed"
-    error_unknown = "ErrorUnknown"
-    error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
-
-
-class OrderBy(str, Enum):
-
-    newest = "Newest"
-    oldest = "Oldest"
-    suggested = "Suggested"
-
-
-class Classifier(str, Enum):
-
-    multiclass = "Multiclass"
-    multilabel = "Multilabel"
-
-
-class TrainingType(str, Enum):
-
-    regular = "Regular"
-    advanced = "Advanced"
-
-
-class ExportPlatform(str, Enum):
-
-    core_ml = "CoreML"
-    tensor_flow = "TensorFlow"
-    docker_file = "DockerFile"
-    onnx = "ONNX"
-    vaidk = "VAIDK"
-
-
-class ExportStatus(str, Enum):
-
-    exporting = "Exporting"
-    failed = "Failed"
-    done = "Done"
-
-
-class ExportFlavor(str, Enum):
-
-    linux = "Linux"
-    windows = "Windows"
-    onnx10 = "ONNX10"
-    onnx12 = "ONNX12"
-    arm = "ARM"
-
-
-class TagType(str, Enum):
-
-    regular = "Regular"
-    negative = "Negative"
-
-
 class CustomVisionErrorCodes(str, Enum):
 
     no_error = "NoError"
@@ -116,7 +45,6 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_invalid_publish_name = "BadRequestInvalidPublishName"
     bad_request_invalid_publish_target = "BadRequestInvalidPublishTarget"
     bad_request_unpublish_failed = "BadRequestUnpublishFailed"
-    bad_request_iteration_not_published = "BadRequestIterationNotPublished"
     bad_request_subscription_api = "BadRequestSubscriptionApi"
     bad_request_exceed_project_limit = "BadRequestExceedProjectLimit"
     bad_request_exceed_iteration_per_project_limit = "BadRequestExceedIterationPerProjectLimit"
