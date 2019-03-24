@@ -20,6 +20,13 @@ try:
     from .compliance_segment_py3 import ComplianceSegment
     from .compliance_py3 import Compliance
     from .advanced_threat_protection_setting_py3 import AdvancedThreatProtectionSetting
+    from .threshold_custom_alert_rule_py3 import ThresholdCustomAlertRule
+    from .time_window_custom_alert_rule_py3 import TimeWindowCustomAlertRule
+    from .allowlist_custom_alert_rule_py3 import AllowlistCustomAlertRule
+    from .denylist_custom_alert_rule_py3 import DenylistCustomAlertRule
+    from .device_security_group_py3 import DeviceSecurityGroup
+    from .custom_alert_rule_py3 import CustomAlertRule
+    from .list_custom_alert_rule_py3 import ListCustomAlertRule
     from .setting_py3 import Setting
     from .data_export_setting_py3 import DataExportSetting
     from .setting_resource_py3 import SettingResource
@@ -75,6 +82,13 @@ except (SyntaxError, ImportError):
     from .compliance_segment import ComplianceSegment
     from .compliance import Compliance
     from .advanced_threat_protection_setting import AdvancedThreatProtectionSetting
+    from .threshold_custom_alert_rule import ThresholdCustomAlertRule
+    from .time_window_custom_alert_rule import TimeWindowCustomAlertRule
+    from .allowlist_custom_alert_rule import AllowlistCustomAlertRule
+    from .denylist_custom_alert_rule import DenylistCustomAlertRule
+    from .device_security_group import DeviceSecurityGroup
+    from .custom_alert_rule import CustomAlertRule
+    from .list_custom_alert_rule import ListCustomAlertRule
     from .setting import Setting
     from .data_export_setting import DataExportSetting
     from .setting_resource import SettingResource
@@ -123,6 +137,7 @@ from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
 from .compliance_paged import CompliancePaged
+from .device_security_group_paged import DeviceSecurityGroupPaged
 from .setting_paged import SettingPaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .operation_paged import OperationPaged
@@ -139,6 +154,7 @@ from .security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
     AutoProvision,
+    ValueType,
     SettingKind,
     ReportedSeverity,
     SecurityFamily,
@@ -161,6 +177,13 @@ __all__ = [
     'ComplianceSegment',
     'Compliance',
     'AdvancedThreatProtectionSetting',
+    'ThresholdCustomAlertRule',
+    'TimeWindowCustomAlertRule',
+    'AllowlistCustomAlertRule',
+    'DenylistCustomAlertRule',
+    'DeviceSecurityGroup',
+    'CustomAlertRule',
+    'ListCustomAlertRule',
     'Setting',
     'DataExportSetting',
     'SettingResource',
@@ -209,6 +232,7 @@ __all__ = [
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',
     'CompliancePaged',
+    'DeviceSecurityGroupPaged',
     'SettingPaged',
     'InformationProtectionPolicyPaged',
     'OperationPaged',
@@ -224,6 +248,7 @@ __all__ = [
     'AlertNotifications',
     'AlertsToAdmins',
     'AutoProvision',
+    'ValueType',
     'SettingKind',
     'ReportedSeverity',
     'SecurityFamily',

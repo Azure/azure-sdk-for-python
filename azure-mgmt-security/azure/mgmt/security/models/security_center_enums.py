@@ -36,6 +36,12 @@ class AutoProvision(str, Enum):
     off = "Off"  #: Do not install security agent on the VMs automatically
 
 
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
+
+
 class SettingKind(str, Enum):
 
     data_export_setting = "DataExportSetting"
