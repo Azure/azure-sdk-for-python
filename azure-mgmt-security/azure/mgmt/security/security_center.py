@@ -19,7 +19,6 @@ from .operations.workspace_settings_operations import WorkspaceSettingsOperation
 from .operations.auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .operations.compliances_operations import CompliancesOperations
 from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
-from .operations.device_security_groups_operations import DeviceSecurityGroupsOperations
 from .operations.settings_operations import SettingsOperations
 from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations.operations import Operations
@@ -90,8 +89,6 @@ class SecurityCenter(SDKClient):
     :vartype compliances: azure.mgmt.security.operations.CompliancesOperations
     :ivar advanced_threat_protection: AdvancedThreatProtection operations
     :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
-    :ivar device_security_groups: DeviceSecurityGroups operations
-    :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
     :ivar settings: Settings operations
     :vartype settings: azure.mgmt.security.operations.SettingsOperations
     :ivar information_protection_policies: InformationProtectionPolicies operations
@@ -147,8 +144,6 @@ class SecurityCenter(SDKClient):
         self.compliances = CompliancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.advanced_threat_protection = AdvancedThreatProtectionOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.device_security_groups = DeviceSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
