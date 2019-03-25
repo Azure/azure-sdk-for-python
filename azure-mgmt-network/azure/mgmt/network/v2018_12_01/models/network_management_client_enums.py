@@ -304,6 +304,7 @@ class ExpressRouteCircuitSkuTier(str, Enum):
     standard = "Standard"
     premium = "Premium"
     basic = "Basic"
+    local = "Local"
 
 
 class ExpressRouteCircuitSkuFamily(str, Enum):
@@ -738,3 +739,74 @@ class HubVirtualNetworkConnectionStatus(str, Enum):
     connecting = "Connecting"
     connected = "Connected"
     not_connected = "NotConnected"
+
+
+class WebApplicationFirewallEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class WebApplicationFirewallMode(str, Enum):
+
+    prevention = "Prevention"
+    detection = "Detection"
+
+
+class WebApplicationFirewallRuleType(str, Enum):
+
+    match_rule = "MatchRule"
+    invalid = "Invalid"
+
+
+class WebApplicationFirewallMatchVariable(str, Enum):
+
+    remote_addr = "RemoteAddr"
+    request_method = "RequestMethod"
+    query_string = "QueryString"
+    post_args = "PostArgs"
+    request_uri = "RequestUri"
+    request_headers = "RequestHeaders"
+    request_body = "RequestBody"
+    request_cookies = "RequestCookies"
+
+
+class WebApplicationFirewallOperator(str, Enum):
+
+    ip_match = "IPMatch"
+    equal = "Equal"
+    contains = "Contains"
+    less_than = "LessThan"
+    greater_than = "GreaterThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    regex = "Regex"
+
+
+class WebApplicationFirewallTransform(str, Enum):
+
+    lowercase = "Lowercase"
+    trim = "Trim"
+    url_decode = "UrlDecode"
+    url_encode = "UrlEncode"
+    remove_nulls = "RemoveNulls"
+    html_entity_decode = "HtmlEntityDecode"
+
+
+class WebApplicationFirewallAction(str, Enum):
+
+    allow = "Allow"
+    block = "Block"
+    log = "Log"
+
+
+class WebApplicationFirewallPolicyResourceState(str, Enum):
+
+    creating = "Creating"
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    deleting = "Deleting"

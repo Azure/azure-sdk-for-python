@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.2.1 (2019-03-22)
+++++++++++++++++++
+
+**Bug Fixes**
+
+- Fixed a bug in marketplace_agreements.sign
+- Fixed a bug in marketplace_agreements.cancel
+
 0.2.0 (2019-03-11)
 ++++++++++++++++++
 

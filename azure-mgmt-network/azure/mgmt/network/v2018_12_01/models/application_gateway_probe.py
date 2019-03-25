@@ -30,7 +30,7 @@ class ApplicationGatewayProbe(SubResource):
      interval between two consecutive probes. Acceptable values are from 1
      second to 86400 seconds.
     :type interval: int
-    :param timeout: the probe timeout in seconds. Probe marked as failed if
+    :param timeout: The probe timeout in seconds. Probe marked as failed if
      valid response is not received with this timeout period. Acceptable values
      are from 1 second to 86400 seconds.
     :type timeout: int
