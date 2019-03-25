@@ -47,6 +47,7 @@ try:
     from .update_face_request_py3 import UpdateFaceRequest
     from .training_status_py3 import TrainingStatus
     from .name_and_user_data_contract_py3 import NameAndUserDataContract
+    from .meta_data_contract_py3 import MetaDataContract
     from .apply_snapshot_request_py3 import ApplySnapshotRequest
     from .snapshot_py3 import Snapshot
     from .take_snapshot_request_py3 import TakeSnapshotRequest
@@ -91,6 +92,7 @@ except (SyntaxError, ImportError):
     from .update_face_request import UpdateFaceRequest
     from .training_status import TrainingStatus
     from .name_and_user_data_contract import NameAndUserDataContract
+    from .meta_data_contract import MetaDataContract
     from .apply_snapshot_request import ApplySnapshotRequest
     from .snapshot import Snapshot
     from .take_snapshot_request import TakeSnapshotRequest
@@ -98,6 +100,7 @@ except (SyntaxError, ImportError):
     from .operation_status import OperationStatus
     from .image_url import ImageUrl
 from .face_client_enums import (
+    RecognitionModel,
     Gender,
     GlassesType,
     HairColorType,
@@ -151,12 +154,14 @@ __all__ = [
     'UpdateFaceRequest',
     'TrainingStatus',
     'NameAndUserDataContract',
+    'MetaDataContract',
     'ApplySnapshotRequest',
     'Snapshot',
     'TakeSnapshotRequest',
     'UpdateSnapshotRequest',
     'OperationStatus',
     'ImageUrl',
+    'RecognitionModel',
     'Gender',
     'GlassesType',
     'HairColorType',
