@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """Object that desctibes a single Microsoft.ManagedServices operation.
+    """Object that describes a single Microsoft.ManagedServices operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

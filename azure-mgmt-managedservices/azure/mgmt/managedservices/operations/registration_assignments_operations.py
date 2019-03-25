@@ -35,18 +35,19 @@ class RegistrationAssignmentsOperations(object):
         self.config = config
 
     def get(
-            self, scope, registraton_assignment_id, api_version, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, api_version, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
         """Gets the details of specified registration assignment.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
-        :param registraton_assignment_id: Guid of the registration assignment.
-        :type registraton_assignment_id: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
         :param expand_registration_definition: Tells whether to return
          registration definition details also along with registration
-         assingmnet details.
+         assignment details.
         :type expand_registration_definition: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -63,7 +64,7 @@ class RegistrationAssignmentsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'registratonAssignmentId': self._serialize.url("registraton_assignment_id", registraton_assignment_id, 'str')
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,16 +101,17 @@ class RegistrationAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registratonAssignmentId}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def delete(
-            self, scope, registraton_assignment_id, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified registration assignment.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
-        :param registraton_assignment_id: Guid of the registration assignment.
-        :type registraton_assignment_id: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -127,7 +129,7 @@ class RegistrationAssignmentsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'registratonAssignmentId': self._serialize.url("registraton_assignment_id", registraton_assignment_id, 'str')
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -162,16 +164,17 @@ class RegistrationAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registratonAssignmentId}'}
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def create_or_update(
-            self, scope, registraton_assignment_id, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a registration assignment.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
-        :param registraton_assignment_id: Guid of the registration assignment.
-        :type registraton_assignment_id: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
         :param properties: Properties of a registration assignment.
@@ -194,7 +197,7 @@ class RegistrationAssignmentsOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'registratonAssignmentId': self._serialize.url("registraton_assignment_id", registraton_assignment_id, 'str')
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -235,19 +238,19 @@ class RegistrationAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registratonAssignmentId}'}
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def list(
             self, scope, api_version, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the registration assignments.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
         :param expand_registration_definition: Tells whether to return
          registration definition details also along with registration
-         assingmnet details.
+         assignment details.
         :type expand_registration_definition: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

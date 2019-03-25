@@ -17,7 +17,7 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(Model):
 
     :param description: Description of the registration definition.
     :type description: str
-    :param authorizations: Authorization tuple containing prinicpal id of the
+    :param authorizations: Authorization tuple containing principal id of the
      user/security group or service principal and id of the build-in role.
     :type authorizations:
      list[~azure.mgmt.managedservices.models.Authorization]

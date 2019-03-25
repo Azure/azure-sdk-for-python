@@ -22,7 +22,7 @@ class RegistrationDefinitionProperties(Model):
 
     :param description: Description of the registration definition.
     :type description: str
-    :param authorizations: Required. Authorization tuple containing prinicpal
+    :param authorizations: Required. Authorization tuple containing principal
      id of the user/security group or service principal and id of the build-in
      role.
     :type authorizations:

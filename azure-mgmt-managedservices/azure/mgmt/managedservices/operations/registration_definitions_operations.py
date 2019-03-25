@@ -35,13 +35,14 @@ class RegistrationDefinitionsOperations(object):
         self.config = config
 
     def get(
-            self, scope, registraton_definition_id, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, registration_definition_id, api_version, custom_headers=None, raw=False, **operation_config):
         """Gets the registration definition details.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
-        :param registraton_definition_id: Guid of the registration definition.
-        :type registraton_definition_id: str
+        :param registration_definition_id: Guid of the registration
+         definition.
+        :type registration_definition_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -59,7 +60,7 @@ class RegistrationDefinitionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'registratonDefinitionId': self._serialize.url("registraton_definition_id", registraton_definition_id, 'str')
+            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,17 +95,18 @@ class RegistrationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registratonDefinitionId}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def delete(
-            self, registraton_definition_id, api_version, scope, custom_headers=None, raw=False, **operation_config):
+            self, registration_definition_id, api_version, scope, custom_headers=None, raw=False, **operation_config):
         """Deletes the registration definition.
 
-        :param registraton_definition_id: Guid of the registration definition.
-        :type registraton_definition_id: str
+        :param registration_definition_id: Guid of the registration
+         definition.
+        :type registration_definition_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -120,7 +122,7 @@ class RegistrationDefinitionsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'registratonDefinitionId': self._serialize.url("registraton_definition_id", registraton_definition_id, 'str'),
+            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str'),
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -156,17 +158,18 @@ class RegistrationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registratonDefinitionId}'}
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def create_or_update(
-            self, registraton_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
+            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a registration definition.
 
-        :param registraton_definition_id: Guid of the registration definition.
-        :type registraton_definition_id: str
+        :param registration_definition_id: Guid of the registration
+         definition.
+        :type registration_definition_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
         :param properties: Properties of a registration definition.
         :type properties:
@@ -189,7 +192,7 @@ class RegistrationDefinitionsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'registratonDefinitionId': self._serialize.url("registraton_definition_id", registraton_definition_id, 'str'),
+            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str'),
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -231,13 +234,13 @@ class RegistrationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registratonDefinitionId}'}
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def list(
             self, scope, api_version, custom_headers=None, raw=False, **operation_config):
         """Gets a list of the registration definitions.
 
-        :param scope: Id of the source subscription.
+        :param scope: Scope of the resource.
         :type scope: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
