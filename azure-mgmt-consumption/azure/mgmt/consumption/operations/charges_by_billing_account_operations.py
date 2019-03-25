@@ -41,7 +41,7 @@ class ChargesByBillingAccountOperations(object):
         """Lists the charges by billingAccountId for given start and end date.
         Start and end date are used to determine the billing period. For
         current month, the data will be provided from month to date. If there
-        are no chages for a month then that month will show all zeroes.
+        are no charges for a month then that month will show all zeroes.
 
         :param billing_account_id: BillingAccount ID
         :type billing_account_id: str
