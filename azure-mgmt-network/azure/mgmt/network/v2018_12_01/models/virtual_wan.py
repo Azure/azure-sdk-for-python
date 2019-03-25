@@ -49,7 +49,7 @@ class VirtualWAN(Resource):
      'None'
     :type office365_local_breakout_category: str or
      ~azure.mgmt.network.v2018_12_01.models.OfficeTrafficCategory
-    :param p2_svpn_server_configurations: list of all
+    :param p2_svpn_server_configurations: List of all
      P2SVpnServerConfigurations associated with the virtual wan.
     :type p2_svpn_server_configurations:
      list[~azure.mgmt.network.v2018_12_01.models.P2SVpnServerConfiguration]
