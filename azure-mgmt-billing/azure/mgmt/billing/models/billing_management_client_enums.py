@@ -12,6 +12,38 @@
 from enum import Enum
 
 
+class ProductType(str, Enum):
+
+    azure_subscription = "AzureSubscription"
+    azure_reservation = "AzureReservation"
+
+
+class TransferStatus(str, Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    completed = "Completed"
+    completed_with_errors = "CompletedWithErrors"
+    failed = "Failed"
+    canceled = "Canceled"
+    declined = "Declined"
+
+
+class ProductTransferStatus(str, Enum):
+
+    not_started = "NotStarted"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+
+
+class EligibleProductType(str, Enum):
+
+    dev_test_azure_subscription = "DevTestAzureSubscription"
+    standard_azure_subscription = "StandardAzureSubscription"
+    azure_reservation = "AzureReservation"
+
+
 class ProductStatusType(str, Enum):
 
     active = "Active"

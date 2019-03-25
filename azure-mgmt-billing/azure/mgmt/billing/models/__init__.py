@@ -10,6 +10,13 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .initiate_transfer_request_py3 import InitiateTransferRequest
+    from .product_details_py3 import ProductDetails
+    from .accept_transfer_request_py3 import AcceptTransferRequest
+    from .error_py3 import Error
+    from .detailed_transfer_status_py3 import DetailedTransferStatus
+    from .transfer_details_py3 import TransferDetails
+    from .recipient_transfer_details_py3 import RecipientTransferDetails
     from .transfer_product_request_properties_py3 import TransferProductRequestProperties
     from .transfer_billing_subscription_result_py3 import TransferBillingSubscriptionResult
     from .transfer_billing_subscription_request_properties_py3 import TransferBillingSubscriptionRequestProperties
@@ -62,6 +69,13 @@ try:
     from .billing_role_definition_py3 import BillingRoleDefinition
     from .billing_role_definition_list_result_py3 import BillingRoleDefinitionListResult
 except (SyntaxError, ImportError):
+    from .initiate_transfer_request import InitiateTransferRequest
+    from .product_details import ProductDetails
+    from .accept_transfer_request import AcceptTransferRequest
+    from .error import Error
+    from .detailed_transfer_status import DetailedTransferStatus
+    from .transfer_details import TransferDetails
+    from .recipient_transfer_details import RecipientTransferDetails
     from .transfer_product_request_properties import TransferProductRequestProperties
     from .transfer_billing_subscription_result import TransferBillingSubscriptionResult
     from .transfer_billing_subscription_request_properties import TransferBillingSubscriptionRequestProperties
@@ -117,8 +131,14 @@ from .payment_method_paged import PaymentMethodPaged
 from .billing_subscription_summary_paged import BillingSubscriptionSummaryPaged
 from .product_summary_paged import ProductSummaryPaged
 from .transactions_summary_paged import TransactionsSummaryPaged
+from .transfer_details_paged import TransferDetailsPaged
+from .recipient_transfer_details_paged import RecipientTransferDetailsPaged
 from .operation_paged import OperationPaged
 from .billing_management_client_enums import (
+    ProductType,
+    TransferStatus,
+    ProductTransferStatus,
+    EligibleProductType,
     ProductStatusType,
     BillingFrequency,
     BillingSubscriptionStatusType,
@@ -129,6 +149,13 @@ from .billing_management_client_enums import (
 )
 
 __all__ = [
+    'InitiateTransferRequest',
+    'ProductDetails',
+    'AcceptTransferRequest',
+    'Error',
+    'DetailedTransferStatus',
+    'TransferDetails',
+    'RecipientTransferDetails',
     'TransferProductRequestProperties',
     'TransferBillingSubscriptionResult',
     'TransferBillingSubscriptionRequestProperties',
@@ -184,7 +211,13 @@ __all__ = [
     'BillingSubscriptionSummaryPaged',
     'ProductSummaryPaged',
     'TransactionsSummaryPaged',
+    'TransferDetailsPaged',
+    'RecipientTransferDetailsPaged',
     'OperationPaged',
+    'ProductType',
+    'TransferStatus',
+    'ProductTransferStatus',
+    'EligibleProductType',
     'ProductStatusType',
     'BillingFrequency',
     'BillingSubscriptionStatusType',
