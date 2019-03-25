@@ -44,9 +44,8 @@ from .operations.products_operations import ProductsOperations
 from .operations.transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
-from .operations.transfer_operations import TransferOperations
 from .operations.transfers_operations import TransfersOperations
-from .operations.recipient_transfer_operations import RecipientTransferOperations
+from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
 from .operations.billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
 from .operations.invoice_sections_billing_permissions_operations import InvoiceSectionsBillingPermissionsOperations
@@ -152,12 +151,10 @@ class BillingManagementClient(SDKClient):
     :vartype policy: azure.mgmt.billing.operations.PolicyOperations
     :ivar billing_property: BillingProperty operations
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
-    :ivar transfer: Transfer operations
-    :vartype transfer: azure.mgmt.billing.operations.TransferOperations
     :ivar transfers: Transfers operations
     :vartype transfers: azure.mgmt.billing.operations.TransfersOperations
-    :ivar recipient_transfer: RecipientTransfer operations
-    :vartype recipient_transfer: azure.mgmt.billing.operations.RecipientTransferOperations
+    :ivar recipient_transfers: RecipientTransfers operations
+    :vartype recipient_transfers: azure.mgmt.billing.operations.RecipientTransfersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
     :ivar billing_account_billing_permissions: BillingAccountBillingPermissions operations
@@ -252,11 +249,9 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.transfer = TransferOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.transfers = TransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.recipient_transfer = RecipientTransferOperations(
+        self.recipient_transfers = RecipientTransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -36,9 +36,8 @@ from .products_operations import ProductsOperations
 from .transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
 from .policy_operations import PolicyOperations
 from .billing_property_operations import BillingPropertyOperations
-from .transfer_operations import TransferOperations
 from .transfers_operations import TransfersOperations
-from .recipient_transfer_operations import RecipientTransferOperations
+from .recipient_transfers_operations import RecipientTransfersOperations
 from .operations import Operations
 from .billing_account_billing_permissions_operations import BillingAccountBillingPermissionsOperations
 from .invoice_sections_billing_permissions_operations import InvoiceSectionsBillingPermissionsOperations
@@ -78,9 +77,8 @@ __all__ = [
     'TransactionsByBillingAccountOperations',
     'PolicyOperations',
     'BillingPropertyOperations',
-    'TransferOperations',
     'TransfersOperations',
-    'RecipientTransferOperations',
+    'RecipientTransfersOperations',
     'Operations',
     'BillingAccountBillingPermissionsOperations',
     'InvoiceSectionsBillingPermissionsOperations',
