@@ -36,6 +36,7 @@ try:
     from .assignment_lock_settings_py3 import AssignmentLockSettings
     from .assignment_py3 import Assignment
     from .tracked_resource_py3 import TrackedResource
+    from .who_is_blueprint_contract_py3 import WhoIsBlueprintContract
     from .azure_resource_manager_error_py3 import AzureResourceManagerError
     from .assignment_job_created_resource_py3 import AssignmentJobCreatedResource
     from .assignment_deployment_job_result_py3 import AssignmentDeploymentJobResult
@@ -68,6 +69,7 @@ except (SyntaxError, ImportError):
     from .assignment_lock_settings import AssignmentLockSettings
     from .assignment import Assignment
     from .tracked_resource import TrackedResource
+    from .who_is_blueprint_contract import WhoIsBlueprintContract
     from .azure_resource_manager_error import AzureResourceManagerError
     from .assignment_job_created_resource import AssignmentJobCreatedResource
     from .assignment_deployment_job_result import AssignmentDeploymentJobResult
@@ -113,6 +115,7 @@ __all__ = [
     'AssignmentLockSettings',
     'Assignment',
     'TrackedResource',
+    'WhoIsBlueprintContract',
     'AzureResourceManagerError',
     'AssignmentJobCreatedResource',
     'AssignmentDeploymentJobResult',
